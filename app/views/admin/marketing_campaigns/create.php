@@ -26,7 +26,7 @@ ob_start();
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Campaign Details</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label class="form-label">Campaign Name *</label>
@@ -75,7 +75,7 @@ ob_start();
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Content</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3" id="subjectGroup">
                             <label class="form-label">Subject Line</label>
                             <input type="text" class="form-control" name="subject" id="subjectField" placeholder="Email subject line">
@@ -97,7 +97,7 @@ ob_start();
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0"><i class="fas fa-users me-2"></i>Target Audience</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Audience Size</label>
                             <input type="text" class="form-control" value="<?= number_format($audience_count) ?> recipients" disabled>

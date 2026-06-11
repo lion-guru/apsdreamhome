@@ -11,10 +11,10 @@
     </div>
     <div class="row g-4">
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-arrow-up text-success me-2"></i>Income Breakdown</h6></div><div class="card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center" style="min-height:200px"><p class="text-muted mb-0"><i class="fas fa-chart-bar me-2"></i>Income chart placeholder</p></div></div></div>
+            <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-arrow-up text-success me-2"></i>Income Breakdown</h6></div><div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center" style="min-height:200px"><p class="text-muted mb-0"><i class="fas fa-chart-bar me-2"></i>Income chart placeholder</p></div></div></div>
         </div>
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-arrow-down text-danger me-2"></i>Expense Breakdown</h6></div><div class="card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center" style="min-height:200px"><p class="text-muted mb-0"><i class="fas fa-chart-bar me-2"></i>Expense chart placeholder</p></div></div></div>
+            <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-arrow-down text-danger me-2"></i>Expense Breakdown</h6></div><div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center" style="min-height:200px"><p class="text-muted mb-0"><i class="fas fa-chart-bar me-2"></i>Expense chart placeholder</p></div></div></div>
         </div>
     </div>
     <div class="card border-0 shadow-sm mt-4">

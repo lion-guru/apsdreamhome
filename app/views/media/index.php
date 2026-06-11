@@ -5,7 +5,7 @@
     </div>
 
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="d-flex gap-2 flex-wrap">
                 <a href="?category=" class="btn btn-sm <?= empty($filters ?? '') ? 'btn-primary' : 'btn-outline-secondary' ?>">All</a>
                 <a href="?category=images" class="btn btn-sm <?= ($filters ?? '') === 'images' ? 'btn-primary' : 'btn-outline-secondary' ?>">Images</a>

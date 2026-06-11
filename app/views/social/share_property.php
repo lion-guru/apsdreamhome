@@ -1,7 +1,7 @@
 <?php $pageTitle = $pageTitle ?? $page_title ?? "Share Property"; $property = $property ?? []; $base = $base ?? BASE_URL; ?>
 <div class="container py-4">
     <h4><i class="fas fa-share-alt me-2"></i>Share Property</h4>
-    <div class="card mt-3"><div class="card-body">
+    <div class="card mt-3"><div class="card-body aps-cp-card-body">
         <h5><?= h($property["title"] ?? "Property") ?></h5>
         <p class="text-muted"><?= h($property["location"] ?? "") ?> - ?<?= number_format($property["price"] ?? 0) ?></p>
         <hr>

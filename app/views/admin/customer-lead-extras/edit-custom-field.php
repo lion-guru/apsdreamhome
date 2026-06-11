@@ -19,7 +19,7 @@ $page_description = 'Edit existing custom field for lead tracking';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Edit Custom Field</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/customer-lead/custom-fields/update/<?php echo $customField['id']; ?>">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="row">

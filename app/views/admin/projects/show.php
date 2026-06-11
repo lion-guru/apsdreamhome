@@ -24,7 +24,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= $project['name'] ?></h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Location</div><div class="col-sm-8"><strong><?= $project['location'] ?? '-' ?></strong></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Type</div><div class="col-sm-8"><span class="badge bg-primary-subtle text-primary rounded-pill px-3"><?= $project['type'] ?? 'Residential' ?></span></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Status</div><div class="col-sm-8"><span class="badge bg-<?= ($project['status'] ?? 'active') === 'completed' ? 'success' : (($project['status'] ?? 'active') === 'active' ? 'primary' : 'secondary') ?>-subtle text-<?= ($project['status'] ?? 'active') === 'completed' ? 'success' : (($project['status'] ?? 'active') === 'active' ? 'primary' : 'secondary') ?> rounded-pill px-3"><?= ucfirst($project['status'] ?? 'Active') ?></span></div></div>
@@ -38,7 +38,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-chart-simple me-2"></i>Project Stats</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3"><small class="text-muted d-block">Sales Progress</small><div class="progress" style="height:8px"><div class="progress-bar bg-success" style="width:<?= ($project['total_units'] ?? 0) > 0 ? round((($project['total_units'] ?? 0) - ($project['available_units'] ?? 0)) / $project['total_units'] * 100) : 0 ?>%"></div></div><small class="text-muted"><?= ($project['total_units'] ?? 0) > 0 ? round((($project['total_units'] ?? 0) - ($project['available_units'] ?? 0)) / $project['total_units'] * 100) : 0 ?>% sold</small></div>
                     <div class="mb-3"><small class="text-muted d-block">Plots/Units</small><strong class="text-primary"><?= number_format($project['total_units'] ?? 0) ?></strong> total</div>
                     <div class="mb-3"><small class="text-muted d-block">Available</small><strong class="text-success"><?= number_format($project['available_units'] ?? 0) ?></strong></div>

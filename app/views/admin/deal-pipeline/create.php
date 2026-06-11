@@ -8,8 +8,8 @@
         <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
-    <div class="card">
-        <div class="card-body">
+    <div class="card aps-cp-card">
+        <div class="card-body aps-cp-card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/deal-pipeline/store">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <div class="row">

@@ -4,7 +4,7 @@
         <a href="<?= BASE_URL ?>/admin/gst" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="card shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/gst/store">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row">

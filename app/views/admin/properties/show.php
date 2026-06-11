@@ -35,7 +35,7 @@ $property = $property ?? [
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($property['title']) ?></h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted">Property Type</div>
                             <div class="col-sm-8"><span class="badge bg-primary-subtle text-primary rounded-pill px-3"><?= htmlspecialchars($property['type'] ?? 'N/A') ?></span></div>
@@ -68,7 +68,7 @@ $property = $property ?? [
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0"><i class="fas fa-user me-2"></i>Owner Info</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="mb-2"><strong><?= htmlspecialchars($property['owner_name'] ?? 'N/A') ?></strong></p>
                         <p class="mb-1 text-muted"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($property['owner_phone'] ?? '-') ?></p>
                         <p class="mb-0 text-muted"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($property['owner_email'] ?? '-') ?></p>
@@ -78,7 +78,7 @@ $property = $property ?? [
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0"><i class="fas fa-chart-simple me-2"></i>Engagement</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="mb-2"><i class="fas fa-eye me-2 text-muted"></i><?= number_format($property['views'] ?? 0) ?> Views</p>
                         <p class="mb-2"><i class="fas fa-heart me-2 text-muted"></i><?= number_format($property['inquiries'] ?? 0) ?> Inquiries</p>
                         <p class="mb-0"><i class="fas fa-calendar me-2 text-muted"></i>Listed <?= date('d M Y', strtotime($property['created_at'] ?? 'now')) ?></p>

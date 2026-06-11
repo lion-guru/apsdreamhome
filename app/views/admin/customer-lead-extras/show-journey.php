@@ -20,7 +20,7 @@ $page_description = 'Detailed view of customer journey';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Customer Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-3">
                         <img src="<?= BASE_URL ?>/assets/img/default-avatar.png" alt="Avatar" class="img-fluid rounded-circle" />
@@ -47,7 +47,7 @@ $page_description = 'Detailed view of customer journey';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Journey Overview</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Journey Type:</strong> <?php echo htmlspecialchars($journey['journey'] ?? 'Unknown'); ?></p>
@@ -80,7 +80,7 @@ $page_description = 'Detailed view of customer journey';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Journey Timeline</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <!-- This would typically be populated with actual timeline events from a separate table -->
                 <!-- For now, we'll show a placeholder -->
                 <div class="timeline">
@@ -109,7 +109,7 @@ $page_description = 'Detailed view of customer journey';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Journey Metadata</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Created At:</strong> <?php echo date('M d, Y H:i', strtotime($journey['created_at'])); ?></p>

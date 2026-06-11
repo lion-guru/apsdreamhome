@@ -26,11 +26,11 @@ $company = $company ?? [];
     </div>
     <?php unset($_SESSION['error']); endif; ?>
 
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-header bg-white py-3">
             <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Organization Details</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/company/settings/update">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-4">

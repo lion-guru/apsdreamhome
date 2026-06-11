@@ -18,7 +18,7 @@
         <?php foreach ($efficient as $key => $prop): ?>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 text-center h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
                     <h5><?= ucfirst(str_replace('_', ' ', $key)) ?></h5>
                     <h3 class="text-primary"><?= ($prop['count'] ?? 0) ?></h3>
@@ -35,7 +35,7 @@
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-certificate me-2 text-primary"></i>Green Building Standards</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($standards as $key => $std): ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <h6><?= ($std['standard'] ?? $key) ?></h6>
@@ -50,7 +50,7 @@
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-star me-2 text-warning"></i>Sustainability Ratings</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($ratings as $key => $rating): ?>
                     <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
                         <span><?= ucfirst(str_replace('_', ' ', $key)) ?></span>
@@ -64,7 +64,7 @@
         <div class="col-12">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-leaf me-2 text-success"></i>Eco-Friendly Features</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-4">
                         <?php foreach ($eco as $category => $features): ?>
                         <div class="col-md-4">

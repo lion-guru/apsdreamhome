@@ -53,7 +53,7 @@
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Attendance</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($attendance)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
                             <thead><tr><th>Employee</th><th>Date</th><th>Status</th></tr></thead>
@@ -76,7 +76,7 @@
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-file-invoice me-2"></i>Payroll Summary</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($payrollSummary)): ?>
                         <div class="d-flex justify-content-between mb-2"><span>This Month</span><strong>₹<?= number_format($payrollSummary['this_month'] ?? 0) ?></strong></div>
                         <div class="d-flex justify-content-between mb-2"><span>Last Month</span><strong>₹<?= number_format($payrollSummary['last_month'] ?? 0) ?></strong></div>

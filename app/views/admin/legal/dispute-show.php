@@ -23,7 +23,7 @@ $dispute = $dispute ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Dispute Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3">
                         <div class="col-sm-4 text-muted">Party A</div>
                         <div class="col-sm-8"><strong><?php echo $dispute['party_a'] ?? '-'; ?></strong></div>
@@ -75,7 +75,7 @@ $dispute = $dispute ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Status</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/legal/disputes/update/<?php echo $dispute['id'] ?? 0; ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">

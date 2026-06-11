@@ -18,7 +18,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-hand-holding-usd me-2 text-success"></i>Green Bonds</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-2"><span>Issued Bonds</span><strong>₹<?= ($bonds['issued_bonds'] ?? '0') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Projects Funded</span><strong><?= ($bonds['green_projects_funded'] ?? 0) ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Interest Rate</span><strong><?= ($bonds['interest_rate'] ?? '0%') ?></strong></div>
@@ -30,7 +30,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>Sustainable Investments</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-2"><span>Total AUM</span><strong>₹<?= ($investments['total_aum'] ?? '0') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Sustainable Properties</span><strong>₹<?= ($investments['sustainable_properties'] ?? '0') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Green Tech</span><strong>₹<?= ($investments['green_technologies'] ?? '0') ?></strong></div>
@@ -42,7 +42,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-cloud me-2 text-info"></i>Carbon Credits</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-2"><span>Credits Generated</span><strong><?= ($credits['credits_generated'] ?? '0') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Credits Sold</span><strong><?= ($credits['credits_sold'] ?? '0') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Market Value</span><strong>₹<?= ($credits['market_value'] ?? '0') ?></strong></div>
@@ -54,7 +54,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-heart me-2 text-danger"></i>Impact Investing</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-2"><span>Impact Funds</span><strong>₹<?= ($impact['impact_funds'] ?? '0') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Social Impact</span><strong><?php $si = $impact['social_impact'] ?? 0; echo is_numeric($si) ? number_format($si) : htmlspecialchars($si); ?> beneficiaries</strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Environmental Impact</span><strong><?= ($impact['environmental_impact'] ?? '0') ?></strong></div>

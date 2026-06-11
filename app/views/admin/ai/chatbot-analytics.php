@@ -24,7 +24,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white"><h5 class="mb-0">Popular Questions</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($popular_questions)): ?>
                         <ul class="list-group list-group-flush">
                             <?php foreach ($popular_questions as $q): ?>
@@ -43,7 +43,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white"><h5 class="mb-0">Satisfaction Trend</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <canvas id="satisfactionChart" height="200"></canvas>
                     </div>
                 </div>

@@ -12,12 +12,12 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="mb-0">
                         <i class="fas fa-building me-2"></i>Property Details
                     </h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <h4 class="text-primary"><?php echo htmlspecialchars($property['name'] ?? ''); ?></h4>
@@ -77,10 +77,10 @@
         <div class="col-lg-4">
             <!-- Owner Info -->
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h6 class="mb-0"><i class="fas fa-user me-2"></i>Owner Details</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="mb-2">
                         <strong><?php echo htmlspecialchars($property['name'] ?? ''); ?></strong>
                     </p>
@@ -99,11 +99,11 @@
 
             <!-- Actions -->
             <?php if ($property['status'] === 'pending'): ?>
-                <div class="card">
-                    <div class="card-header">
+                <div class="card aps-cp-card">
+                    <div class="card-header aps-cp-card-header">
                         <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Actions</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="id" value="<?php echo $property['id']; ?>">
@@ -127,20 +127,20 @@
                     </div>
                 </div>
             <?php elseif ($property['status'] === 'approved'): ?>
-                <div class="card">
-                    <div class="card-header">
+                <div class="card aps-cp-card">
+                    <div class="card-header aps-cp-card-header">
                         <h6 class="mb-0"><i class="fas fa-check-circle me-2 text-success"></i>Approved</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="text-muted mb-0">This property has been approved and is now visible to users.</p>
                     </div>
                 </div>
             <?php elseif ($property['status'] === 'rejected'): ?>
-                <div class="card">
-                    <div class="card-header">
+                <div class="card aps-cp-card">
+                    <div class="card-header aps-cp-card-header">
                         <h6 class="mb-0"><i class="fas fa-times-circle me-2 text-danger"></i>Rejected</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="text-muted mb-0">This property has been rejected.</p>
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action" class="mt-3">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">

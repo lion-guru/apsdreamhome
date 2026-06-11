@@ -5,7 +5,7 @@
         <?php foreach (($partners ?? []) as $key => $p): ?>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><?= htmlspecialchars($p['name'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h5>
                         <span class="badge bg-info mb-2"><?= htmlspecialchars($p['type'] ?? '') ?></span>
                         <p class="small mb-1"><strong>Focus:</strong> <?= htmlspecialchars($p['focus'] ?? '') ?></p>

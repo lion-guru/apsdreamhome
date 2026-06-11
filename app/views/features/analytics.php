@@ -6,7 +6,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Usage by Feature</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="usageChart" height="200"></canvas>
                 </div>
             </div>
@@ -14,7 +14,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Status Distribution</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="statusChart" height="200"></canvas>
                 </div>
             </div>

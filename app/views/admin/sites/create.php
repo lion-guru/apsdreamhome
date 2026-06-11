@@ -15,8 +15,8 @@ $active_page = 'sites';
 </div>
 
 <!-- Site Form -->
-<div class="card">
-    <div class="card-body">
+<div class="card aps-cp-card">
+    <div class="card-body aps-cp-card-body">
         <form method="POST" action="/admin/sites">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 

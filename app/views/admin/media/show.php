@@ -35,7 +35,7 @@
         <div class="col-md-7">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>File Information</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Title</div><div class="col-sm-8"><strong><?= $media['title'] ?? '-' ?></strong></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Filename</div><div class="col-sm-8"><?= $media['filename'] ?? '-' ?></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Type</div><div class="col-sm-8"><span class="badge bg-info-subtle text-info rounded-pill px-3"><?= $media['type'] ?? 'Image' ?></span></div></div>

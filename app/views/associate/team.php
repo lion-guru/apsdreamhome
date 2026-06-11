@@ -22,11 +22,11 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">
+    <div class="card aps-cp-card">
+        <div class="card-header aps-cp-card-header">
             <h5>Team Members</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover table-responsive">
                     <thead>

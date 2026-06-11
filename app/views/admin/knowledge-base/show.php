@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Article Details</h5>
                     <div>
@@ -13,7 +13,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-12">
                             <table class="table table-bordered">
@@ -52,11 +52,11 @@
                     </div>
                     <div class="row mt-3">
                         <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
+                            <div class="card aps-cp-card">
+                                <div class="card-header aps-cp-card-header">
                                     <h6 class="mb-0">Content</h6>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <?php echo nl2br(htmlspecialchars($article['content'])); ?>
                                 </div>
                             </div>

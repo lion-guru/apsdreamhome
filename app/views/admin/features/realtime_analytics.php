@@ -15,28 +15,28 @@ ob_start();
 
   <div class="row mb-4">
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-primary text-white">
-      <div class="card-body">
+      <div class="card-body aps-cp-card-body">
         <small class="opacity-75">Leads (30d)</small>
         <h3 class="mb-0" id="kpiLeads">—</h3>
         <small><i class="fas fa-arrow-up"></i> <span id="kpiLeadsDelta">0</span>% vs prev</small>
       </div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-success text-white">
-      <div class="card-body">
+      <div class="card-body aps-cp-card-body">
         <small class="opacity-75">Bookings (30d)</small>
         <h3 class="mb-0" id="kpiBookings">—</h3>
         <small>₹<span id="kpiRevenue">0</span>L revenue</small>
       </div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-info text-white">
-      <div class="card-body">
+      <div class="card-body aps-cp-card-body">
         <small class="opacity-75">Active Users</small>
         <h3 class="mb-0" id="kpiUsers">—</h3>
         <small>Total customers</small>
       </div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-warning text-white">
-      <div class="card-body">
+      <div class="card-body aps-cp-card-body">
         <small class="opacity-75">Conversion Rate</small>
         <h3 class="mb-0" id="kpiConv">—</h3>
         <small>Lead → Booking</small>
@@ -48,13 +48,13 @@ ob_start();
     <div class="col-lg-8">
       <div class="card shadow-sm">
         <div class="card-header bg-white"><h5 class="mb-0">Leads Over Time (Last 30 Days)</h5></div>
-        <div class="card-body"><canvas id="leadsChart" height="80"></canvas></div>
+        <div class="card-body aps-cp-card-body"><canvas id="leadsChart" height="80"></canvas></div>
       </div>
     </div>
     <div class="col-lg-4">
       <div class="card shadow-sm">
         <div class="card-header bg-white"><h5 class="mb-0">Lead Sources</h5></div>
-        <div class="card-body"><canvas id="sourcesChart"></canvas></div>
+        <div class="card-body aps-cp-card-body"><canvas id="sourcesChart"></canvas></div>
       </div>
     </div>
   </div>
@@ -63,13 +63,13 @@ ob_start();
     <div class="col-lg-6">
       <div class="card shadow-sm">
         <div class="card-header bg-white"><h5 class="mb-0">Pipeline Stages</h5></div>
-        <div class="card-body"><canvas id="pipelineChart" height="120"></canvas></div>
+        <div class="card-body aps-cp-card-body"><canvas id="pipelineChart" height="120"></canvas></div>
       </div>
     </div>
     <div class="col-lg-6">
       <div class="card shadow-sm">
         <div class="card-header bg-white"><h5 class="mb-0">Property Type Distribution</h5></div>
-        <div class="card-body"><canvas id="propertyTypeChart" height="120"></canvas></div>
+        <div class="card-body aps-cp-card-body"><canvas id="propertyTypeChart" height="120"></canvas></div>
       </div>
     </div>
   </div>
@@ -81,7 +81,7 @@ ob_start();
           <h5 class="mb-0"><i class="fas fa-robot me-2"></i>AI Insights</h5>
           <button class="btn btn-sm btn-outline-primary" id="refreshAI"><i class="fas fa-sync"></i> Refresh</button>
         </div>
-        <div class="card-body" id="aiInsights">
+        <div class="card-body aps-cp-card-body" id="aiInsights">
           <div class="text-center text-muted py-3"><i class="fas fa-spinner fa-spin"></i> Loading insights...</div>
         </div>
       </div>

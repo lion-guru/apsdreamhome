@@ -21,11 +21,11 @@ $active_page = 'registry';
     </div>
 <?php endif; ?>
 
-<div class="card">
-    <div class="card-header">
+<div class="card aps-cp-card">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0"><i class="fas fa-list"></i> Activity Timeline</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <?php if (empty($activities)): ?>
             <p class="text-muted text-center py-4">No activity recorded yet.</p>
         <?php else: ?>

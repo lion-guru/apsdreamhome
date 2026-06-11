@@ -33,7 +33,7 @@ ob_start();
                                 <i class="fas fa-gavel fa-3x"></i>
                             </div>
                         <?php endif; ?>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <span class="badge bg-danger mb-2">LIVE</span>
                             <h5 class="card-title"><?= htmlspecialchars($a['title']) ?></h5>
                             <?php if ($a['property_title']): ?>
@@ -71,7 +71,7 @@ ob_start();
             <?php foreach ($upcoming as $a): ?>
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <span class="badge bg-info mb-2">SCHEDULED</span>
                             <h6><?= htmlspecialchars($a['title']) ?></h6>
                             <p class="text-muted small">Starts: <?= date('M j, Y H:i', strtotime($a['starts_at'])) ?></p>
@@ -92,7 +92,7 @@ ob_start();
             <?php foreach ($closed as $a): ?>
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <span class="badge bg-success mb-2">SOLD</span>
                             <h6><?= htmlspecialchars($a['title']) ?></h6>
                             <p class="text-success mb-0"><strong>Final: ₹<?= number_format($a['winning_bid'] ?? 0) ?></strong></p>

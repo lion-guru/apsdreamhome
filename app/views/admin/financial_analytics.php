@@ -44,7 +44,7 @@
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0"><i class="fas fa-coins me-2"></i>Commission Analysis</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $comm = $finData['commission_analysis'] ?? []; ?>
                     <div class="d-flex justify-content-between mb-2"><span>Total Commission Paid</span><strong>₹<?= number_format($comm['total_commission_paid'] ?? 0) ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Avg Commission/Sale</span><strong>₹<?= number_format($comm['avg_commission_per_sale'] ?? 0) ?></strong></div>
@@ -86,7 +86,7 @@
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0"><i class="fas fa-percentage me-2"></i>Profit Margins</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $margins = $finData['profit_margins'] ?? []; ?>
                     <div class="d-flex justify-content-between mb-2"><span>Avg Margin</span><strong><?= $margins['avg_margin'] ?? 'N/A' ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Highest Margin</span><strong><?= $margins['highest_margin'] ?? 'N/A' ?></strong></div>

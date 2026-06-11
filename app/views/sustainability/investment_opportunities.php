@@ -18,7 +18,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-hand-holding-usd me-2 text-success"></i>Green Bonds</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h3 class="text-primary mb-3">₹<?= ($gb['total_issued'] ?? '0') ?></h3>
                     <div class="d-flex justify-content-between mb-2"><span>Returns</span><strong class="text-success"><?= ($gb['investor_returns'] ?? '0%') ?></strong></div>
                     <div class="mb-2"><small class="text-muted d-block">Maturities:</small><?php foreach (($gb['maturity_periods'] ?? []) as $m): ?><span class="badge bg-secondary me-1"><?= htmlspecialchars($m, ENT_QUOTES, 'UTF-8') ?></span><?php endforeach; ?></div>
@@ -29,7 +29,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-building me-2 text-info"></i>Sustainable Properties</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-2"><span>Available</span><strong><?= ($sp['properties_available'] ?? 0) ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Avg Premium</span><strong>₹<?php $ap = $sp['avg_premium'] ?? 0; echo is_numeric($ap) ? number_format($ap) : htmlspecialchars($ap); ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Rental Yield</span><strong class="text-success"><?= ($sp['rental_yield'] ?? '0%') ?></strong></div>
@@ -40,7 +40,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-microchip me-2 text-warning"></i>Green Technologies</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-2"><span>Investment Required</span><strong>₹<?= ($gt['investment_required'] ?? '0') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Expected Returns</span><strong class="text-success"><?= ($gt['expected_returns'] ?? '0%') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Risk Level</span><strong><?= ($gt['risk_level'] ?? 'N/A') ?></strong></div>

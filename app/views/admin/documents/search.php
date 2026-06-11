@@ -6,7 +6,7 @@
     </div>
 
     <div class="card shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/documents/search">
                 <div class="input-group">
                     <input type="text" name="q" class="form-control form-control-lg" placeholder="Search by title, name, description, or OCR text..." value="<?= htmlspecialchars($query ?? '') ?>" autofocus>
@@ -22,7 +22,7 @@
                 <span><i class="fas fa-list me-2"></i>Search Results for "<?= htmlspecialchars($query) ?>"</span>
                 <span class="badge bg-primary"><?= count($results) ?> found</span>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($results)): ?>
                     <div class="table-responsive">
                         <table class="table table-hover">

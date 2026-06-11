@@ -11,7 +11,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
         <div class="col-lg-8">
             <div class="card shadow">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Task Details</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= $base ?>/admin/scheduler/create">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -55,7 +55,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
         <div class="col-lg-4">
             <div class="card shadow">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-info">Schedule Examples</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-unstyled small">
                         <li class="mb-2"><code>* * * * *</code> Every minute</li>
                         <li class="mb-2"><code>0 * * * *</code> Every hour</li>

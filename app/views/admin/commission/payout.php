@@ -12,7 +12,7 @@ $total_amount = $total_amount ?? 0;
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-primary text-uppercase mb-1">Pending Commissions</div><div class="h5 mb-0 fw-bold"><?= number_format($pending_count) ?></div></div>
                         <div class="col-auto"><i class="fas fa-clock fa-2x text-gray-300"></i></div>
@@ -22,7 +22,7 @@ $total_amount = $total_amount ?? 0;
         </div>
         <div class="col-md-6">
             <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-success text-uppercase mb-1">Total Payout Amount</div><div class="h5 mb-0 fw-bold">₹<?= number_format($total_amount, 2) ?></div></div>
                         <div class="col-auto"><i class="fas fa-rupee-sign fa-2x text-gray-300"></i></div>
@@ -33,7 +33,7 @@ $total_amount = $total_amount ?? 0;
     </div>
     <div class="card shadow">
         <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Process Payout</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if ($pending_count < 1): ?>
                 <p class="text-muted text-center py-4"><i class="fas fa-check-circle fa-2x d-block mb-2 text-success"></i>No pending payouts to process.</p>
             <?php else: ?>

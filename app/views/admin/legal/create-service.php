@@ -20,7 +20,7 @@ $page_title = $page_title ?? 'Add Legal Service';
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-gavel me-2"></i>Service Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/legal/services/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-3">
@@ -73,7 +73,7 @@ $page_title = $page_title ?? 'Add Legal Service';
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Icon Reference</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="small text-muted mb-2">Common Font Awesome icons:</p>
                     <ul class="list-unstyled small">
                         <li class="mb-1"><i class="fas fa-gavel me-2 text-primary"></i>fa-gavel - General Legal</li>

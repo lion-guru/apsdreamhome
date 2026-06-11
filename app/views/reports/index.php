@@ -10,7 +10,7 @@
         <?php foreach ($reports as $r): ?>
         <div class="col-md-4 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="badge bg-<?= ($r['category'] ?? '') === 'sales' ? 'success' : (($r['category'] ?? '') === 'financial' ? 'warning' : (($r['category'] ?? '') === 'properties' ? 'info' : 'primary')) ?>"><?= htmlspecialchars($categories[$r['category'] ?? ''] ?? ucfirst($r['category'] ?? 'General')) ?></span>
                         <small class="text-muted"><?= htmlspecialchars($r['created_at'] ?? '') ?></small>

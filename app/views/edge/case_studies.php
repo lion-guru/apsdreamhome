@@ -5,7 +5,7 @@
         <?php foreach (($case_studies ?? []) as $key => $cs): ?>
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><?= htmlspecialchars($cs['title'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h5>
                         <span class="badge bg-info mb-2"><?= htmlspecialchars($cs['industry'] ?? '') ?></span>
                         <p class="small"><strong>Challenge:</strong> <?= htmlspecialchars($cs['challenge'] ?? '') ?></p>

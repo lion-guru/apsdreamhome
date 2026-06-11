@@ -105,7 +105,7 @@ $gamify = $gamify ?? [];
                     <h5 class="card-title mb-0"><i class="fas fa-chart-line text-primary me-2"></i>Performance Overview</h5>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row text-center mb-4">
                     <div class="col-3">
                         <h4 class="text-primary mb-1"><?php echo $stats['direct_referrals']; ?></h4>
@@ -220,7 +220,7 @@ $gamify = $gamify ?? [];
             <div class="card-header bg-white border-0 py-3">
                 <h5 class="card-title mb-0"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-grid gap-2">
                     <a href="<?php echo BASE_URL; ?>/associate/leads/add" class="btn btn-primary">
                         <i class="fas fa-plus me-2"></i>Add New Lead
@@ -243,7 +243,7 @@ $gamify = $gamify ?? [];
             <div class="card-header bg-white border-0 py-3">
                 <h5 class="card-title mb-0"><i class="fas fa-clock text-info me-2"></i>Recent Activity</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="activity-list">
                     <?php foreach ($activities as $activity): ?>
                         <div class="d-flex gap-3 mb-3 pb-3 border-bottom">
@@ -267,7 +267,7 @@ $gamify = $gamify ?? [];
             <div class="card-header bg-white border-0 py-3">
                 <h5 class="card-title mb-0"><i class="fas fa-network-wired text-purple me-2"></i>Network Summary</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between mb-3">
                     <span class="text-muted"><i class="fas fa-user text-primary me-1"></i>Direct Referrals</span>
                     <strong><?php echo $stats['direct_referrals']; ?></strong>

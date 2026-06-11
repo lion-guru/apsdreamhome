@@ -31,7 +31,7 @@ $action_text = $action_text ?? 'View';
                 </a>
             <?php endif; ?>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php echo $card_content ?? ''; ?>
         </div>
     </div>

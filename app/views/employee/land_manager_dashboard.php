@@ -52,7 +52,7 @@
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i>Site Visits Scheduled</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($siteVisits)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
                             <thead><tr><th>Plot</th><th>Customer</th><th>Date</th><th>Status</th></tr></thead>
@@ -76,7 +76,7 @@
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Plot Status Distribution</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($plotDistribution)): ?>
                         <?php foreach ($plotDistribution as $item): ?>
                         <div class="d-flex justify-content-between align-items-center mb-2">

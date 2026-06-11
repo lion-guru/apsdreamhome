@@ -23,7 +23,7 @@
             <div class="row g-3 mb-4">
                 <div class="col-lg-3 col-sm-6">
                     <div class="card border-0 shadow-sm bg-gradient-primary text-white h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="text-uppercase small opacity-75">Total Leads</div>
@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <div class="card border-0 shadow-sm bg-gradient-success text-white h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="text-uppercase small opacity-75">Bookings (30d)</div>
@@ -51,7 +51,7 @@
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <div class="card border-0 shadow-sm bg-gradient-warning text-white h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="text-uppercase small opacity-75">Conversion Rate</div>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="col-lg-3 col-sm-6">
                     <div class="card border-0 shadow-sm bg-gradient-info text-white h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="text-uppercase small opacity-75">Commissions (30d)</div>
@@ -85,7 +85,7 @@
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-chart-bar me-2 text-primary"></i>Lead Trend (Last 6 Months)</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <canvas id="leadTrendChart" height="100"></canvas>
                         </div>
                     </div>
@@ -174,7 +174,7 @@
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-filter me-2 text-info"></i>Pipeline Breakdown</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <?php
                             $stageColors = [
                                 'new' => 'primary', 'contacted' => 'info', 'qualified' => 'success',

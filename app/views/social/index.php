@@ -48,7 +48,7 @@
 
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3"><h6 class="mb-0"><i class="fas fa-share-alt me-2"></i>Social Sharing Platforms</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row g-3">
                 <div class="col-md-4">
                     <div class="card border h-100">

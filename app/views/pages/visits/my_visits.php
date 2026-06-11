@@ -17,7 +17,7 @@ $visits = $visits ?? [];
             <?php foreach ($visits as $v): ?>
                 <div class="col-md-6">
                     <div class="card border-0 shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between mb-2">
                                 <h5 class="mb-0"><?= htmlspecialchars($v['property_title'] ?? 'Property') ?></h5>
                                 <?php $statusClass = ['scheduled' => 'warning', 'confirmed' => 'info', 'completed' => 'success', 'cancelled' => 'danger'][$v['status']] ?? 'secondary'; ?>

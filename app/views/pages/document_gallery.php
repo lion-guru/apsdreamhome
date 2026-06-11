@@ -22,7 +22,7 @@ $searchQuery = $search_query ?? '';
 
     <!-- Filters -->
     <div class="card mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/documents" class="row g-3">
                 <div class="col-md-6">
                     <label for="q" class="form-label">Search</label>
@@ -54,7 +54,7 @@ $searchQuery = $search_query ?? '';
             <?php foreach ($documents as $doc): ?>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100 document-card">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex align-items-center mb-3">
                                 <div class="document-icon me-3">
                                     <?php
@@ -95,7 +95,7 @@ $searchQuery = $search_query ?? '';
             <?php endforeach; ?>
         <?php else: ?>
             <div class="col-12">
-                <div class="card">
+                <div class="card aps-cp-card">
                     <div class="card-body text-center py-5">
                         <i class="fas fa-file fa-4x text-muted mb-3"></i>
                         <h5 class="text-muted">No documents found</h5>

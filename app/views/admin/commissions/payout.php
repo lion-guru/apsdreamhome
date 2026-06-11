@@ -52,7 +52,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <table class="table table-hover table-center mb-0 datatable">
                             <thead>

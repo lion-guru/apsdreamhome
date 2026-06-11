@@ -3,7 +3,7 @@
     <h4 class="mb-0">Call Scripts</h4>
     <button class="btn btn-primary btn-sm" onclick="alert('Create new script')"><i class="fas fa-plus"></i> New Script</button>
 </div>
-<div class="card">
+<div class="card aps-cp-card">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">

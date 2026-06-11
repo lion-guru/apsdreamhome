@@ -27,7 +27,7 @@
                     <div class="card-header aps-cp-card-header">
                         <span><i class="fas fa-user me-2"></i>Client Details</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Client Type <span class="text-danger">*</span></label>
@@ -129,7 +129,7 @@
                     <div class="card-header aps-cp-card-header">
                         <span><i class="fas fa-cog me-2"></i>Invoice Settings</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Invoice Number</label>
                             <input type="text" class="form-control" value="<?= htmlspecialchars($invoice_number ?? '') ?>" readonly>
@@ -178,7 +178,7 @@
                     <div class="card-header aps-cp-card-header">
                         <span><i class="fas fa-sticky-note me-2"></i>Notes & Terms</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Payment Terms</label>
                             <textarea name="payment_terms" class="form-control" rows="2" placeholder="e.g., Payment due within 30 days..."><?= htmlspecialchars($company['payment_terms'] ?? 'Payment due within 30 days from invoice date.') ?></textarea>

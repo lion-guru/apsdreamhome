@@ -113,7 +113,7 @@ $user_profile = $user_profile ?? null;
             <div class="card-header bg-white border-0 py-3">
                 <h5 class="card-title mb-0"><i class="fas fa-calculator text-success me-2"></i>How Differential Commission Works</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <p class="text-muted">As you grow in rank, you earn a higher commission percentage. The system pays you the <strong>difference</strong> between your rank percentage and what's already been paid to your downline.</p>
                 <div class="bg-light p-3 rounded-3">
                     <strong>Example:</strong>
@@ -133,7 +133,7 @@ $user_profile = $user_profile ?? null;
             <div class="card-header bg-white border-0 py-3">
                 <h5 class="card-title mb-0"><i class="fas fa-gift text-info me-2"></i>Additional Earning Opportunities</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between mb-3 pb-2 border-bottom">
                     <span><i class="fas fa-user-plus text-success me-2"></i>Direct Associate Referral</span>
                     <strong>₹200 reward</strong>
@@ -159,7 +159,7 @@ $user_profile = $user_profile ?? null;
     <div class="card-header bg-white border-0 py-3">
         <h5 class="card-title mb-0"><i class="fas fa-link text-primary me-2"></i>Your Referral Link</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <p class="text-muted">Share this link with potential users to grow your team:</p>
         <div class="input-group">
             <input type="text" class="form-control" id="refLink" value="<?php echo BASE_URL; ?>/associate/register?ref=<?php echo urlencode($_SESSION['referral_code'] ?? ''); ?>" readonly>

@@ -54,7 +54,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Monthly Performance</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($monthlyData)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
                             <thead><tr><th>Month</th><th>Properties</th><th>Sales</th><th>Revenue</th><th>Commission</th></tr></thead>
@@ -79,7 +79,7 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-star me-2"></i>Summary</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($metrics)): ?>
                         <div class="mb-2"><small class="text-muted">Avg. Deal Size</small><br><strong>₹<?= number_format($metrics['avg_deal_size'] ?? 0) ?></strong></div>
                         <div class="mb-2"><small class="text-muted">Total Commission Earned</small><br><strong>₹<?= number_format($metrics['total_commission'] ?? 0) ?></strong></div>

@@ -75,7 +75,7 @@ $page_title = "SMS Dashboard";
 
         <!-- Filters -->
         <div class="card mb-4">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-3">
                         <select class="form-select" id="typeFilter">
@@ -108,11 +108,11 @@ $page_title = "SMS Dashboard";
         </div>
 
         <!-- SMS Logs Table -->
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-header bg-white">
                 <h5 class="mb-0"><i class="fas fa-list me-2"></i>SMS Logs</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="table-responsive">
                     <table class="table table-hover log-table" id="smsLogsTable">
                         <thead class="table-light">

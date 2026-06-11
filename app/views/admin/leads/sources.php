@@ -5,7 +5,7 @@
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted">Total Leads</h6>
                     <h2 class="mb-0"><?= number_format($totalLeads ?? 0) ?></h2>
                 </div>
@@ -13,7 +13,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted">Sources Active</h6>
                     <h2 class="mb-0"><?= count($sourceData ?? []) ?></h2>
                 </div>
@@ -21,7 +21,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted">Top Source</h6>
                     <h2 class="mb-0 text-truncate">
                         <?php 
@@ -34,7 +34,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted">This Month</h6>
                     <h2 class="mb-0"><?= number_format($monthlyLeads ?? 0) ?></h2>
                 </div>
@@ -47,7 +47,7 @@
         <div class="col-md-5">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0">Source Distribution</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($sourceData)): ?>
                         <?php 
                         $colors = ['#3498db','#e74c3c','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#34495e'];
@@ -73,7 +73,7 @@
         <div class="col-md-7">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0">Monthly Trend</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($monthlyTrend)): ?>
                         <div class="d-flex align-items-end gap-2" style="height:200px;">
                             <?php $maxM = max(array_column($monthlyTrend, 'count')) ?: 1; ?>

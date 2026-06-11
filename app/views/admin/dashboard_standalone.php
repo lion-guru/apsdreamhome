@@ -97,7 +97,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
 <!-- Quick Actions -->
 <div class="card mb-4">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <h6 class="mb-3"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
         <div class="row g-3">
             <div class="col-md-3">
@@ -127,8 +127,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 <!-- Recent Leads + System -->
 <div class="row g-4">
     <div class="col-lg-6">
-        <div class="card">
-            <div class="card-body">
+        <div class="card aps-cp-card">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="mb-0"><i class="fas fa-user-clock me-2"></i>Recent Leads</h6>
                     <a href="<?php echo $base; ?>/admin/leads" class="btn btn-sm btn-primary">View All</a>
@@ -154,8 +154,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         </div>
     </div>
     <div class="col-lg-6">
-        <div class="card">
-            <div class="card-body">
+        <div class="card aps-cp-card">
+            <div class="card-body aps-cp-card-body">
                 <h6 class="mb-3"><i class="fas fa-server me-2"></i>System Overview</h6>
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1"><span>Database</span><span class="fw-semibold text-success">Connected</span></div>

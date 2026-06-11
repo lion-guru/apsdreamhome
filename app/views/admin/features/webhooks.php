@@ -24,22 +24,22 @@ ob_start();
 
   <div class="row mb-3">
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-primary text-white">
-      <div class="card-body"><small class="opacity-75">Total (7d)</small><h3 class="mb-0"><?= $stats['total'] ?? 0 ?></h3></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Total (7d)</small><h3 class="mb-0"><?= $stats['total'] ?? 0 ?></h3></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-success text-white">
-      <div class="card-body"><small class="opacity-75">Success</small><h3 class="mb-0"><?= $stats['success'] ?? 0 ?></h3></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Success</small><h3 class="mb-0"><?= $stats['success'] ?? 0 ?></h3></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-warning text-white">
-      <div class="card-body"><small class="opacity-75">Retrying</small><h3 class="mb-0"><?= $stats['retrying'] ?? 0 ?></h3></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Retrying</small><h3 class="mb-0"><?= $stats['retrying'] ?? 0 ?></h3></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-danger text-white">
-      <div class="card-body"><small class="opacity-75">Failed</small><h3 class="mb-0"><?= $stats['failed'] ?? 0 ?></h3></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Failed</small><h3 class="mb-0"><?= $stats['failed'] ?? 0 ?></h3></div>
     </div></div>
   </div>
 
   <div class="card shadow-sm mb-4">
     <div class="card-header bg-white"><h5 class="mb-0">Add New Endpoint</h5></div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
       <form method="post" action="<?= BASE_URL ?>/admin/webhooks/create">
                           <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="row g-2">

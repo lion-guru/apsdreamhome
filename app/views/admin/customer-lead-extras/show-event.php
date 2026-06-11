@@ -20,7 +20,7 @@ $page_description = 'Detailed view of lead event';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Lead Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-3">
                         <img src="<?= BASE_URL ?>/assets/img/default-avatar.png" alt="Avatar" class="img-fluid rounded-circle" />
@@ -53,7 +53,7 @@ $page_description = 'Detailed view of lead event';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Event Details</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Event Type:</strong> 
@@ -102,7 +102,7 @@ $page_description = 'Detailed view of lead event';
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">Event Data</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <pre class="bg-light p-3 rounded"><?php echo htmlspecialchars($event['event_data']); ?></pre>
                 </div>
             </div>
@@ -113,7 +113,7 @@ $page_description = 'Detailed view of lead event';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Event Metadata</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Created At:</strong> <?php echo date('M d, Y H:i', strtotime($event['created_at'])); ?></p>

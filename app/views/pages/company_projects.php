@@ -95,7 +95,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="card-body">
+                                        <div class="card-body aps-cp-card-body">
                                             <h5 class="card-title fw-bold"><?php echo htmlspecialchars($project->site_name); ?></h5>
                                             <p class="text-muted small mb-2">
                                                 <i class="fas fa-map-marker-alt me-1 text-danger"></i>

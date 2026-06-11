@@ -13,7 +13,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0];
 <div class="row mb-4">
     <div class="col-xl-3 col-md-6">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
@@ -30,7 +30,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0];
     </div>
     <div class="col-xl-3 col-md-6">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <div class="bg-success bg-opacity-10 text-success rounded p-3">
@@ -47,7 +47,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0];
     </div>
     <div class="col-xl-3 col-md-6">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <div class="bg-danger bg-opacity-10 text-danger rounded p-3">

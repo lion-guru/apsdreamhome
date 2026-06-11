@@ -16,10 +16,10 @@
             </div>
 
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="mb-0">Project Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <p><strong>Project Name:</strong> <?php echo htmlspecialchars($project['name'] ?? ''); ?></p>
@@ -95,10 +95,10 @@
             <?php $amenities = json_decode($project['amenities'], true); ?>
             <?php if (is_array($amenities) && !empty($amenities)): ?>
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="mb-0">Amenities</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul>
                         <?php foreach ($amenities as $amenity): ?>
                             <li><?php echo htmlspecialchars($amenity); ?></li>

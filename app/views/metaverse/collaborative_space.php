@@ -35,7 +35,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2 text-warning"></i>Space Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p><?= ($space['description'] ?? 'No description available.') ?></p>
                     <div class="row g-3">
                         <div class="col-md-4">
@@ -66,7 +66,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-user-friends me-2 text-warning"></i>Participants (<?= count($participants) ?>)</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($participants)): ?>
                     <p class="text-muted text-center py-3">No participants yet.</p>
                     <?php else: ?>

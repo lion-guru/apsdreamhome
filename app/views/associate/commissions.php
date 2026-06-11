@@ -28,7 +28,7 @@ $pagination_url = $pagination_url ?? BASE_URL . '/associate/commissions?';
     <div class="row g-4 mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm bg-success text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6><i class="fas fa-check-circle me-1"></i>Total Earned</h6>
                     <h3 class="mb-0">₹<?php echo number_format($total_earned); ?></h3>
                 </div>
@@ -36,7 +36,7 @@ $pagination_url = $pagination_url ?? BASE_URL . '/associate/commissions?';
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm bg-warning text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6><i class="fas fa-clock me-1"></i>Pending</h6>
                     <h3 class="mb-0">₹<?php echo number_format($total_pending); ?></h3>
                 </div>
@@ -44,7 +44,7 @@ $pagination_url = $pagination_url ?? BASE_URL . '/associate/commissions?';
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm bg-info text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6><i class="fas fa-list me-1"></i>Total Transactions</h6>
                     <h3 class="mb-0"><?php echo count($commissions); ?></h3>
                 </div>
@@ -54,7 +54,7 @@ $pagination_url = $pagination_url ?? BASE_URL . '/associate/commissions?';
 
     <!-- Filters -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label small">Status</label>

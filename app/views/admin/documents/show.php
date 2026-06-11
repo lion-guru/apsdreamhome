@@ -14,7 +14,7 @@
 
     <?php if (!empty($document)): ?>
         <div class="card shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-8">
                         <h4><?= htmlspecialchars($document['title'] ?? 'Untitled') ?></h4>

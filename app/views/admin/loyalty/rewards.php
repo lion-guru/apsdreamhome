@@ -13,7 +13,7 @@ $rewards = $rewards ?? [];
     </div>
     <div class="card shadow">
         <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Available Rewards</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($rewards)): ?>
                 <p class="text-muted text-center py-4"><i class="fas fa-gift fa-2x d-block mb-2"></i>No rewards defined yet.</p>
             <?php else: ?>

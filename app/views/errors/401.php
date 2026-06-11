@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="icon"><i class="fas fa-user-lock"></i></div>
         <h1>401</h1>
         <h2>Authentication Required</h2>

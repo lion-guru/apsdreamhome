@@ -6,8 +6,8 @@ $page_title = $page_title ?? 'Commission Payouts';
         <h1 class="h3">Commission Payouts</h1>
         <a href="<?php echo BASE_URL; ?>/admin/commission" class="btn btn-secondary">Back</a>
     </div>
-    <div class="card">
-        <div class="card-body">
+    <div class="card aps-cp-card">
+        <div class="card-body aps-cp-card-body">
             <p class="text-muted">Payout management interface coming soon.</p>
         </div>
     </div>

@@ -52,7 +52,7 @@ $variantNames = array_keys($results);
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Total Users</div>
                     <h3 class="mb-0 fw-bold text-primary"><?= number_format($totals['users']) ?></h3>
                     <div class="text-muted small mt-1">Traffic allocation: <?= (int)($experiment['traffic_allocation'] ?? 100) ?>%</div>
@@ -61,7 +61,7 @@ $variantNames = array_keys($results);
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Total Conversions</div>
                     <h3 class="mb-0 fw-bold text-success"><?= number_format($totals['conversions']) ?></h3>
                     <div class="text-muted small mt-1">Overall rate: <?= number_format((float)($totals['rate'] ?? 0), 2) ?>%</div>
@@ -70,7 +70,7 @@ $variantNames = array_keys($results);
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Variants</div>
                     <h3 class="mb-0 fw-bold text-info"><?= count($variantNames) ?></h3>
                     <div class="text-muted small mt-1"><?= htmlspecialchars(implode(', ', $variantNames)) ?></div>
@@ -79,7 +79,7 @@ $variantNames = array_keys($results);
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Statistical Significance</div>
                     <?php if ($chi && isset($chi['stat'])): ?>
                         <h3 class="mb-0 fw-bold text-<?= !empty($chi['significant']) ? 'success' : 'warning' ?>">
@@ -106,7 +106,7 @@ $variantNames = array_keys($results);
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-chart-column me-1"></i> Conversion Rate by Variant</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($results)): ?>
                         <div class="text-center text-muted py-5">No data yet. Variants will be assigned as users visit pages with this experiment.</div>
                     <?php else: ?>
@@ -156,7 +156,7 @@ $variantNames = array_keys($results);
             <?php if ($status === 'running'): ?>
                 <div class="card border-warning shadow-sm">
                     <div class="card-header bg-warning bg-opacity-25"><h6 class="mb-0"><i class="fas fa-flag-checkered me-1"></i> End Experiment</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$experiment['id'] ?>/end"
                               onsubmit="return confirm('End this experiment? You can still view results afterwards.');">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">

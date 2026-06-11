@@ -9,7 +9,7 @@
                 <div class="card-header bg-white border-bottom">
                     <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Upload File</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form action="<?= $base ?? BASE_URL ?>/admin/import-export/import" method="POST" enctype="multipart/form-data">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -50,7 +50,7 @@
                 <div class="card-header bg-white border-bottom">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Instructions</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="mb-0">
                         <li>Supported formats: CSV, XLSX, JSON</li>
                         <li>First row must contain column headers</li>

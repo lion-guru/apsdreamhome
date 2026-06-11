@@ -22,7 +22,7 @@ $profile = $profile ?? [];
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="mb-0"><i class="fas fa-edit text-success me-2"></i>Edit Profile</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($error)): ?>
                         <div class="alert alert-danger alert-dismissible fade show">
                             <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error); ?>
@@ -73,7 +73,7 @@ $profile = $profile ?? [];
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="mb-0"><i class="fas fa-id-card text-info me-2"></i>KYC Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if ($profile): ?>
                     <div class="mb-2">
                         <small class="text-muted d-block">Aadhar Number</small>

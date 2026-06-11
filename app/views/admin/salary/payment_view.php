@@ -13,7 +13,7 @@
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Payment Information</h5>
                     <span class="badge bg-<?= match($payment['status']??'pending') { 'paid'=>'success', 'pending'=>'warning', 'cancelled'=>'danger', default=>'secondary' } ?> fs-6"><?= ucfirst($payment['status'] ?? 'pending') ?></span>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3">
                         <div class="col-md-6"><strong>Employee:</strong> <?= htmlspecialchars($payment['employee_name'] ?? '') ?></div>
                         <div class="col-md-6"><strong>Email:</strong> <?= htmlspecialchars($payment['employee_email'] ?? '') ?></div>
@@ -42,7 +42,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-cog me-2"></i>Payment Flow</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-unstyled">
                         <li class="mb-2"><i class="fas fa-user me-2 text-primary"></i>Employee: <?= htmlspecialchars($payment['employee_name'] ?? '') ?></li>
                         <li class="mb-2"><i class="fas fa-calculator me-2 text-info"></i>Gross: ₹<?= number_format($payment['gross_salary'] ?? 0, 2) ?></li>

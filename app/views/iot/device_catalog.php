@@ -4,12 +4,12 @@
     <?php foreach (($catalog ?? []) as $category => $devices): ?>
         <div class="card border-0 shadow-sm mb-3">
             <div class="card-header bg-transparent"><h5 class="mb-0 text-capitalize"><i class="fas fa-<?= $category === 'lighting' ? 'lightbulb' : ($category === 'security' ? 'shield-alt' : ($category === 'climate' ? 'thermometer-half' : 'plug')) ?> me-2"></i><?= ucfirst($category) ?></h5></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row g-3">
                     <?php foreach ($devices as $key => $d): ?>
                         <div class="col-md-4">
                             <div class="card h-100 border">
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <h6 class="card-title"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $key))) ?></h6>
                                     <p class="text-primary fw-bold mb-2">₹<?= number_format($d['price'] ?? 0) ?></p>
                                     <ul class="list-unstyled small mb-0">

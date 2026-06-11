@@ -15,8 +15,8 @@
     <div class="row">
         <div class="col-md-4">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><i class="fas fa-plus me-2"></i>Add Review</div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-plus me-2"></i>Add Review</div>
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/documents/reviews/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -58,7 +58,7 @@
                         <a href="?status=rejected" class="btn btn-sm <?= $status_filter === 'rejected' ? 'btn-danger' : 'btn-outline-danger' ?>">Rejected</a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($reviews)): ?>
                         <div class="table-responsive">
                             <table class="table table-hover">

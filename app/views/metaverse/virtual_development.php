@@ -20,7 +20,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-plus-circle me-2 text-success"></i>Create Virtual Property</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= $base ?? BASE_URL ?>metaverse/virtual-development">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-3">
@@ -85,7 +85,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-layer-group me-2 text-info"></i>Templates</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($templates as $key => $template): ?>
                     <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
                         <div class="flex-shrink-0">
@@ -104,7 +104,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-globe me-2 text-info"></i>Environments</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($environments as $key => $env): ?>
                     <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
                         <div class="flex-shrink-0">

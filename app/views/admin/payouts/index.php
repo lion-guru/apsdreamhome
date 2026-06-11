@@ -20,7 +20,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="row mb-4">
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Pending Payouts</p>
@@ -35,7 +35,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Processed Today</p>
@@ -50,7 +50,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Total Paid (Month)</p>
@@ -73,7 +73,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <i class="fas fa-sync me-2"></i>Process Batch
                 </button>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($payouts)): ?>
                     <div class="table-responsive">
                         <table class="table table-hover">

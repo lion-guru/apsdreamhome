@@ -140,7 +140,7 @@
                     </div>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="card-title"><?= htmlspecialchars($property['title']) ?></h5>
                     <p class="text-muted small">
                         <i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location']) ?>
@@ -199,7 +199,7 @@
     <!-- Detailed Comparison Table -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-table me-2"></i>Detailed Comparison</h5>
                 </div>

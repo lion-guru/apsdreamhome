@@ -40,7 +40,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         
         <!-- Search -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form method="GET" class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Associate ID</label>

@@ -17,7 +17,7 @@
     <?php foreach ($res as $category => $items): ?>
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-<?= $category === 'calculators' ? 'calculator' : ($category === 'guides' ? 'book' : 'flask') ?> me-2 text-success"></i><?= ucfirst($category) ?></h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row g-3">
                 <?php foreach ($items as $name => $desc): ?>
                 <div class="col-md-6">

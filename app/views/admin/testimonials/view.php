@@ -26,7 +26,7 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                 <div class="card-header bg-light">
                     <h5 class="mb-0">Customer Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <table class="table table-borderless">
@@ -85,7 +85,7 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><?php echo htmlspecialchars($t['title'] ?? 'Testimonial'); ?></h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="lead"><?php echo nl2br(htmlspecialchars($t['testimonial'] ?? 'No content')); ?></p>
                 </div>
             </div>
@@ -95,7 +95,7 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                 <div class="card-header bg-light">
                     <h5 class="mb-0">Customer Photo</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <img src="<?= $base ?>/<?= htmlspecialchars($t['photo_path'] ?? '') ?>" alt="Customer" class="img-fluid rounded" style="max-height: 300px;">
                 </div>
             </div>
@@ -107,7 +107,7 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Actions</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form id="testimonialActionForm">
                         <div class="mb-3">
                             <label class="form-label">Update Status</label>
@@ -150,7 +150,7 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                 <div class="card-header bg-light">
                     <h6 class="mb-0">Review History</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <small class="text-muted">
                         <i class="fas fa-user me-1"></i>Reviewed by: <?php echo htmlspecialchars(t['reviewed_by_name'] ?? ''); ?><br>
                         <i class="fas fa-clock me-1"></i>Reviewed at: <?php echo date('M d, Y H:i', strtotime($t['reviewed_at'] ?? 'now')); ?>

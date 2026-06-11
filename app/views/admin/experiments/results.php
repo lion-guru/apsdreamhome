@@ -60,7 +60,7 @@ foreach ($results as $variant => $r) {
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-uppercase text-muted small mb-1">Status</div>
                     <?php $st = $experiment['status'] ?? 'draft'; $stBadge = ['draft' => 'secondary', 'running' => 'success', 'ended' => 'dark'][$st] ?? 'secondary'; ?>
                     <h3 class="mb-0"><span class="badge bg-<?= $stBadge ?>"><?= ucfirst($st) ?></span></h3>
@@ -69,7 +69,7 @@ foreach ($results as $variant => $r) {
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-uppercase text-muted small mb-1">Total Users</div>
                     <h3 class="mb-0 fw-bold"><?= number_format((int)$totals['users']) ?></h3>
                 </div>
@@ -77,7 +77,7 @@ foreach ($results as $variant => $r) {
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-uppercase text-muted small mb-1">Conversions</div>
                     <h3 class="mb-0 fw-bold"><?= number_format((int)$totals['conversions']) ?></h3>
                 </div>
@@ -85,7 +85,7 @@ foreach ($results as $variant => $r) {
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-uppercase text-muted small mb-1">Conversion Rate</div>
                     <h3 class="mb-0 fw-bold"><?= number_format((float)$totals['rate'], 2) ?>%</h3>
                 </div>
@@ -99,7 +99,7 @@ foreach ($results as $variant => $r) {
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Variant Performance</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="expResultsChart" height="120"></canvas>
                 </div>
             </div>
@@ -109,7 +109,7 @@ foreach ($results as $variant => $r) {
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Chi-Square Test</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($chi['note'])): ?>
                         <p class="text-muted small"><?= htmlspecialchars($chi['note']) ?></p>
                     <?php else: ?>
@@ -186,7 +186,7 @@ foreach ($results as $variant => $r) {
         <div class="card-header bg-white">
             <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Actions</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row g-3">
                 <div class="col-md-4">
                     <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$experiment['id'] ?>/set-winner">

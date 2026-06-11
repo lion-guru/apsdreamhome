@@ -14,7 +14,7 @@ $reportingStructure = $reportingStructure ?? [];
         </div>
     <?php else: ?>
         <div class="card shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php foreach ($reportingStructure as $level => $group): ?>
                     <?php if (is_numeric($level)): ?>
                         <!-- Top-level manager -->

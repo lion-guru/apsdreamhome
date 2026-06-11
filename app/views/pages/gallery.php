@@ -47,7 +47,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h6 class="card-title">Suyoday Colony - Premium Plots</h6>
                         <p class="text-muted small mb-0">Gorakhpur, Uttar Pradesh</p>
                     </div>
@@ -64,7 +64,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h6 class="card-title">Raghunat Nagri - Integrated Township</h6>
                         <p class="text-muted small mb-0">Gorakhpur, Uttar Pradesh</p>
                     </div>
@@ -81,7 +81,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h6 class="card-title">Braj Radha Nagri - Affordable Plots</h6>
                         <p class="text-muted small mb-0">Gorakhpur, Uttar Pradesh</p>
                     </div>
@@ -98,7 +98,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h6 class="card-title">Budh Bihar Colony - Township</h6>
                         <p class="text-muted small mb-0">Kushinagar, Uttar Pradesh</p>
                     </div>
@@ -115,7 +115,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h6 class="card-title">Awadhpuri - Premium Project</h6>
                         <p class="text-muted small mb-0">Lucknow, Uttar Pradesh</p>
                     </div>
@@ -132,7 +132,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h6 class="card-title">Commercial Complex - Prime Location</h6>
                         <p class="text-muted small mb-0">Gorakhpur, Uttar Pradesh</p>
                     </div>

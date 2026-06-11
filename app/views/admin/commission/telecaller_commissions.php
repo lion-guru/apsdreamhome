@@ -9,7 +9,7 @@
         <div class="col-md-6"><div class="card bg-success text-white text-center p-2"><h5>&#8377;<?= number_format((float)($summary['total']??0),2) ?></h5><small>Total</small></div></div>
     </div>
 
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-body p-0">
             <table class="table table-striped mb-0">
                 <thead><tr><th>#</th><th>Telecaller</th><th>Lead</th><th>Rule</th><th>Type</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>

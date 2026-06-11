@@ -66,7 +66,7 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
 
             <!-- Filters -->
             <div class="card mb-4">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-end">
                         <div class="col-md-4 mb-2 mb-md-0">
                             <label class="form-label fw-bold">Colony / Site</label>
@@ -112,7 +112,7 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
             </div>
 
             <!-- Plots Table -->
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered mb-0" id="plotsTable">

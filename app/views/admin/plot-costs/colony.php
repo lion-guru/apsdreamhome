@@ -82,7 +82,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
         <div class="card-header bg-primary text-white">
             <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add Cost Entry</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form action="/admin/plot-costs/add-cost" method="POST" class="row g-3">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="colony_id" value="<?= $colony['id'] ?>">
@@ -134,7 +134,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
         <div class="card-header bg-info text-white">
             <h5 class="mb-0"><i class="fas fa-list me-2"></i>Cost Breakdown</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <table class="table table-sm">
                 <thead>
                     <tr>
@@ -176,7 +176,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
         <div class="card-header bg-success text-white">
             <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Calculate Plot Prices</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form action="/admin/plot-costs/calculate" method="POST" class="row g-3 align-items-end">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="colony_id" value="<?= $colony['id'] ?>">
@@ -203,11 +203,11 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
     </div>
 
     <!-- Plots List -->
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-header bg-secondary text-white">
             <h5 class="mb-0"><i class="fas fa-th me-2"></i>Plots (<?= count($plots) ?>)</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($plots)): ?>
                 <p class="text-muted text-center py-4">No plots found for this colony.</p>
             <?php else: ?>

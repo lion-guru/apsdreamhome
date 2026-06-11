@@ -12,8 +12,8 @@
                 </div>
             </div>
             
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i> Rules Management - Complete Commission System
                     </div>

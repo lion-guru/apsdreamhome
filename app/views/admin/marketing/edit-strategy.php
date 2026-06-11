@@ -21,7 +21,7 @@ $s = $strategy ?? [];
     </div>
 
     <div class="card shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/marketing/strategies/update/<?= $s['id'] ?? 0 ?>">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="mb-3">

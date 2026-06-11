@@ -116,7 +116,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                             </div>
                         </div>
 
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <!-- Property Title -->
                             <h5 class="card-title property-title">
                                 <a href="/properties/<?= $property['id'] ?>" class="text-decoration-none">
@@ -208,7 +208,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
         <div class="row mt-4">
             <div class="col-12 text-center">
                 <div class="card bg-primary text-white">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h4 class="card-title">
                             <i class="fas fa-search mr-2"></i>
                             View More Properties

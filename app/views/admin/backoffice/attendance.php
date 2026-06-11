@@ -10,8 +10,8 @@ $today = $today ?? date('Y-m-d');
   </div>
 
   <div class="card aps-cp-card mb-4">
-    <div class="card-header"><strong><?= __('admin_mark_attendance') ?></strong></div>
-    <div class="card-body">
+    <div class="card-header aps-cp-card-header"><strong><?= __('admin_mark_attendance') ?></strong></div>
+    <div class="card-body aps-cp-card-body">
       <form id="attendanceForm" class="row g-3">
         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
         <input type="hidden" name="attendance_date" value="<?= $today ?>">
@@ -50,7 +50,7 @@ $today = $today ?? date('Y-m-d');
   </div>
 
   <div class="card aps-cp-card">
-    <div class="card-header"><strong><?= __('admin_todays_records') ?></strong></div>
+    <div class="card-header aps-cp-card-header"><strong><?= __('admin_todays_records') ?></strong></div>
     <div class="table-responsive">
       <table class="table table-hover mb-0">
         <thead><tr><th><?= __('admin_employee_label') ?></th><th><?= __('admin_date_label') ?></th><th><?= __('admin_status_label') ?></th><th><?= __('admin_check_in') ?></th><th><?= __('admin_check_out') ?></th><th><?= __('admin_hours_label') ?></th><th><?= __('admin_ot_label') ?></th><th><?= __('admin_late_min') ?></th></tr></thead>

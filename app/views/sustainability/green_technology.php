@@ -18,7 +18,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-check-circle me-2 text-success"></i>Adopted Technologies</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><div class="table-responsive"><table class="table table-responsive"><thead class="table-light"><tr><th>Technology</th><th>Adoption Date</th><th>Energy Savings</th><th>Cost Savings</th></tr></thead><tbody>
                         <?php foreach ($adopted as $ad): ?><tr><td><?= ($ad['technology'] ?? '') ?></td><td><?= ($ad['adoption_date'] ?? '') ?></td><td class="text-success"><?= ($ad['energy_savings'] ?? '') ?></td><td><?= ($ad['cost_savings'] ?? '') ?></td></tr><?php endforeach; ?>
                         <?php if (empty($adopted)): ?><tr><td colspan="4" class="text-center text-muted py-3">No adopted technologies.</td></tr><?php endif; ?>
@@ -28,7 +28,7 @@
 
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-clock me-2 text-info"></i>Implementation Timeline</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <?php foreach ($timeline as $quarter => $items): ?>
                         <div class="col-md-3">
@@ -49,7 +49,7 @@
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-calculator me-2 text-primary"></i>Cost-Benefit Analysis</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-2"><span>Investment</span><strong><?= ($cba['investment_required'] ?? 'N/A') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Annual Savings</span><strong class="text-success"><?= ($cba['annual_savings'] ?? 'N/A') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Payback Period</span><strong><?= ($cba['payback_period'] ?? 'N/A') ?></strong></div>
@@ -62,7 +62,7 @@
 
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-globe me-2 text-success"></i>Environmental Impact</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Carbon Reduction</h6>
                     <div class="d-flex justify-content-between small mb-2"><span>Current</span><strong class="text-success"><?= ($env_impact['carbon_reduction']['current_reduction'] ?? 'N/A') ?></strong></div>
                     <div class="d-flex justify-content-between small mb-2"><span>Target</span><strong><?= ($env_impact['carbon_reduction']['target_reduction'] ?? 'N/A') ?></strong></div>

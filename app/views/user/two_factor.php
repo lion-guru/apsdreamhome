@@ -21,7 +21,7 @@ $content = $content ?? '';
         <div class="card-header bg-primary text-white">
           <h4 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Two-Factor Authentication (2FA)</h4>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <?php if ($is_enabled): ?>
             <div class="alert alert-success">
               <h5><i class="fas fa-check-circle"></i> 2FA is ACTIVE</h5>

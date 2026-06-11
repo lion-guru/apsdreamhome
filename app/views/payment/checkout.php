@@ -15,11 +15,11 @@ include __DIR__ . '/../layouts/header.php'; ?>
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h3 class="mb-0">Complete Your Purchase</h3>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-4">
                         <div class="col-12">
                             <h4>Property Details</h4>

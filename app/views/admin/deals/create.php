@@ -20,11 +20,11 @@ $page_title = 'Create Deal - APS Dream Home';
 
     <div class="row">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-handshake me-2"></i>Deal Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/deals/store">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="row">
@@ -99,11 +99,11 @@ $page_title = 'Create Deal - APS Dream Home';
         </div>
 
         <div class="col-md-4">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Pipeline Stages</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="timeline">
                         <div class="mb-3">
                             <span class="badge bg-secondary">Lead</span>
@@ -137,7 +137,7 @@ $page_title = 'Create Deal - APS Dream Home';
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Quick Tips</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-unstyled mb-0 small">
                         <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Select a qualified lead</li>
                         <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Set realistic deal value</li>

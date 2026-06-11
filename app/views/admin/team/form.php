@@ -4,12 +4,12 @@
 <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
 <?php endif; ?>
 
-<div class="card">
+<div class="card aps-cp-card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas <?php echo $isEdit ? 'fa-edit' : 'fa-plus-circle'; ?> me-2"></i><?php echo $isEdit ? 'Edit Team Member' : 'Add Team Member'; ?></h5>
         <a href="<?php echo BASE_URL; ?>/admin/team" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="POST" action="<?php echo BASE_URL; ?>/admin/team/<?php echo $isEdit ? 'update/' . $member['id'] : 'store'; ?>" enctype="multipart/form-data" class="needs-validation">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row g-4">

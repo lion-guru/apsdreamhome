@@ -88,7 +88,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="row g-3 mb-4">
             <div class="col-md-3">
                 <div class="card dashboard-card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1 small">Total Earnings</p>
@@ -103,7 +103,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <div class="col-md-3">
                 <div class="card dashboard-card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1 small">This Month</p>
@@ -118,7 +118,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <div class="col-md-3">
                 <div class="card dashboard-card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1 small">Network Size</p>
@@ -133,7 +133,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <div class="col-md-3">
                 <div class="card dashboard-card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1 small">Direct Referrals</p>
@@ -156,7 +156,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i>Network Overview</h5>
                         <a href="<?php echo $base; ?>/team/genealogy" class="btn btn-sm btn-primary">View Full Tree</a>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($network)): ?>
                             <div class="table-responsive">
                                 <div class="table-responsive"><table class="table table-hover table-responsive">
@@ -199,7 +199,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Recent Earnings</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($commissions)): ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach (array_slice($commissions, 0, 5) as $commission): ?>
@@ -223,7 +223,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-grid gap-2">
                             <a href="<?php echo $base; ?>/register?ref=<?php echo $_SESSION['user_id'] ?? ''; ?>" class="btn btn-outline-primary">
                                 <i class="fas fa-user-plus me-2"></i>Invite Member
@@ -243,7 +243,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-download me-2"></i>Export Data</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-grid gap-2">
                             <a href="<?php echo $base; ?>/associate/export/my-earnings" class="btn btn-outline-dark btn-sm">
                                 <i class="fas fa-file-csv me-2"></i>My Earnings

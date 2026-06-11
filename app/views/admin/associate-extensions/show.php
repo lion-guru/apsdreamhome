@@ -7,8 +7,8 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Basic Info</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Basic Info</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th>Name</th><td><?= htmlspecialchars($associate['name'] ?? '') ?></td></tr>
                         <tr><th>Email</th><td><?= htmlspecialchars($associate['email'] ?? '') ?></td></tr>
@@ -21,8 +21,8 @@
         </div>
         <div class="col-md-6">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-star me-2"></i>Extension Data</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-star me-2"></i>Extension Data</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th>Points</th><td><span class="badge bg-warning text-dark fs-6"><?= (int)($associate['points'] ?? 0) ?></span></td></tr>
                         <tr><th>Badges</th><td><?= htmlspecialchars($associate['badges'] ?? '—') ?></td></tr>
@@ -34,8 +34,8 @@
                 </div>
             </div>
             <div class="card shadow-sm">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Extension</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Extension</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/associate-extensions/update-points/<?= $associate['id'] ?? 0 ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">

@@ -14,7 +14,7 @@ ob_start();
         <div class="card-header aps-cp-card-header">
             <span><i class="fas fa-list me-2"></i>Recent Verification Attempts (Last 100)</span>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($logs)): ?>
                 <div class="text-center text-muted py-5">
                     <i class="fas fa-shield-alt fa-3x mb-3 d-block"></i>

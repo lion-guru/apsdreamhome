@@ -23,8 +23,8 @@
                 </div>
             <?php endif; ?>
 
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>admin/plots/edit/<?= $plot['id'] ?>">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <ul class="nav nav-tabs mb-3" id="plotTabs">
@@ -160,7 +160,7 @@
                                     <div class="card-header bg-warning text-dark">
                                         <i class="fas fa-exclamation-triangle"></i> <strong>Price Override</strong> — Use only when negotiating a special deal price
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body aps-cp-card-body">
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
                                                 <label class="form-label">Negotiated / Deal Price</label>

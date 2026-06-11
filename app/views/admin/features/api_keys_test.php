@@ -23,7 +23,7 @@ ob_start();
     </div>
     <div class="col-md-3">
       <div class="card border-0 shadow-sm bg-info text-white">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <small class="opacity-75">Status</small>
           <h4 class="mb-0 text-capitalize"><?= $test_result['status'] ?? 'unknown' ?></h4>
         </div>
@@ -31,7 +31,7 @@ ob_start();
     </div>
     <div class="col-md-3">
       <div class="card border-0 shadow-sm bg-primary text-white">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <small class="opacity-75">Rate Limit</small>
           <h4 class="mb-0"><?= $test_result['rate_limit'] ?? 0 ?> <small>req/min</small></h4>
         </div>
@@ -39,7 +39,7 @@ ob_start();
     </div>
     <div class="col-md-3">
       <div class="card border-0 shadow-sm bg-secondary text-white">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <small class="opacity-75">Last Used</small>
           <h5 class="mb-0"><?= $test_result['last_used'] === 'Never' ? 'Never' : date('M j, Y', strtotime($test_result['last_used'])) ?></h5>
         </div>
@@ -51,7 +51,7 @@ ob_start();
     <div class="col-md-6">
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-1"></i> Key Details</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <table class="table table-sm mb-0">
             <tr><td class="text-muted">Key Preview</td><td><code><?= htmlspecialchars($test_result['key_preview'] ?? '') ?></code></td></tr>
             <tr><td class="text-muted">Scopes</td><td><?php foreach (($test_result['scopes'] ?? []) as $s): ?><span class="badge bg-light text-dark me-1"><?= htmlspecialchars($s) ?></span> <?php endforeach; ?></td></tr>
@@ -64,7 +64,7 @@ ob_start();
     <div class="col-md-6">
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-code me-1"></i> Usage Example</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <pre class="bg-light p-3 rounded mb-0 small"><code>curl -H "Authorization: Bearer <?= htmlspecialchars($test_result['key_preview'] ?? 'apk_...') ?>:YOUR_SECRET" \
      "<?= BASE_URL ?>/api/v2/leads?per_page=10"</code></pre>
         </div>

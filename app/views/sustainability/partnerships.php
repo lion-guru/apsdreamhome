@@ -17,7 +17,7 @@
     <?php foreach ($ps as $category => $partners): ?>
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-<?= $category === 'environmental_ngos' ? 'tree' : ($category === 'government_agencies' ? 'university' : 'building') ?> me-2 text-success"></i><?= ucfirst(str_replace('_', ' ', $category)) ?></h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row g-4">
                 <?php foreach ($partners as $key => $partner): ?>
                 <div class="col-md-6">

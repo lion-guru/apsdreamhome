@@ -41,7 +41,7 @@ $extraHead = '<link href="https://cdn.datatables.net/1.13.6/css/dataTables.boots
     </form>
 
     <?php if (empty($properties)): ?>
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-body text-center py-5">
             <i class="fas fa-home fa-4x text-muted mb-3"></i>
             <h5 class="text-muted">No properties found</h5>

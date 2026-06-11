@@ -65,7 +65,7 @@ ob_start();
         <div class="card-header bg-white py-3">
             <h5 class="mb-0"><i class="fas fa-envelope me-2"></i>Email Sequence</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($emails)): ?>
                 <p class="text-muted">No emails in this campaign</p>
             <?php else: ?>

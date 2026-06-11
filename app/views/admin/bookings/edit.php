@@ -24,13 +24,13 @@ $active_page = 'bookings';
 <?php endif; ?>
 
 <!-- Edit Booking Form -->
-<div class="card">
-    <div class="card-header">
+<div class="card aps-cp-card">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0">
             <i class="fas fa-edit"></i> Edit Booking Information
         </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="POST" action="/admin/bookings/<?= $booking['id'] ?>/update">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
@@ -192,12 +192,12 @@ $active_page = 'bookings';
 
 <!-- Booking History -->
 <div class="card mt-4">
-    <div class="card-header">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0">
             <i class="fas fa-history"></i> Booking History
         </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>

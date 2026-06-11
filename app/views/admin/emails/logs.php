@@ -12,7 +12,7 @@
 
     <!-- Filters -->
     <div class="card mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
@@ -33,7 +33,7 @@
     </div>
 
     <!-- Logs Table -->
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-body p-0">
             <?php if (!empty($logs)): ?>
                 <div class="table-responsive">

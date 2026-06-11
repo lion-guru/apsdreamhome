@@ -6,7 +6,7 @@
     </div>
     <div class="card border-0 shadow-sm mb-3">
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-building me-2"></i>Property</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <p class="mb-1"><strong><?= htmlspecialchars($property['title'] ?? '-') ?></strong></p>
             <p class="mb-0 text-muted"><?= htmlspecialchars($property['city'] ?? '') ?></p>
         </div>
@@ -15,7 +15,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-door-open me-2"></i>Door Status</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach (($security_data['door_status'] ?? []) as $door => $status): ?>
                         <div class="d-flex justify-content-between mb-2">
                             <span><?= ucfirst(str_replace('_', ' ', $door)) ?></span>
@@ -28,7 +28,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-video me-2"></i>Camera Status</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach (($security_data['camera_status'] ?? []) as $cam => $status): ?>
                         <div class="d-flex justify-content-between mb-2">
                             <span><?= ucfirst(str_replace('_', ' ', $cam)) ?></span>

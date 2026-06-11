@@ -9,13 +9,13 @@ ob_start();
 
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-header bg-primary text-white">
                 <h3 class="mb-0">
                     <i class="fas fa-check-circle me-2"></i>View Consolidation Test
                 </h3>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <h4>Modern Layout Integration Successful!</h4>
                 <p>This page demonstrates that the view consolidation is working correctly.</p>
                 

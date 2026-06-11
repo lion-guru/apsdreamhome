@@ -15,8 +15,8 @@
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/projects/images/upload/<?php echo $project['id'] ?? ''; ?>" enctype="multipart/form-data">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
@@ -38,10 +38,10 @@
             </div>
 
             <div class="card mt-4">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="mb-0">Project Images</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($images)): ?>
                         <div class="row">
                             <?php foreach ($images as $image): ?>

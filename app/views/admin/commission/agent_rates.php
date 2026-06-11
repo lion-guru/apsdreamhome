@@ -6,9 +6,9 @@
 
     <div class="row">
         <div class="col-md-5">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-primary text-white"><i class="fas fa-plus"></i> Add Rate</div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="/admin/commission/agent-rates/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Min Sqft</label><input type="number" name="min_sqft" class="form-control" required></div>
@@ -24,8 +24,8 @@
             </div>
         </div>
         <div class="col-md-7">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-list"></i> Rate Cards</div>
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Rate Cards</div>
                 <div class="card-body p-0">
                     <table class="table table-striped mb-0">
                         <thead><tr><th>#</th><th>Sqft Range</th><th>Per Sqft</th><th>%</th><th>Status</th><th>Action</th></tr></thead>

@@ -42,7 +42,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-address-card me-2"></i>Contact Information</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="mb-2">
                             <i class="fas fa-phone me-2 text-muted"></i>
                             <?php echo htmlspecialchars($user['phone'] ?? 'Not provided'); ?>
@@ -96,7 +96,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-2">
                             <div class="col-md-3">
                                 <a href="<?php echo $base; ?>/admin/users/<?php echo $user['id']; ?>/edit" class="btn btn-primary w-100">

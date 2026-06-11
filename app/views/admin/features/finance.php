@@ -8,10 +8,10 @@ ob_start();
   <h1 class="h3 mb-4"><i class="fas fa-rupee-sign me-2"></i>Finance Management — FY <?= $currentYear ?></h1>
 
   <div class="row mb-3">
-    <div class="col-md-3"><div class="card border-left-primary shadow-sm"><div class="card-body"><h6 class="text-muted">Budget Allocated</h6><h3 class="mb-0">₹<?= number_format($summary['budgets'] ?? 0, 0) ?></h3></div></div></div>
-    <div class="col-md-3"><div class="card border-left-danger shadow-sm"><div class="card-body"><h6 class="text-muted">Spent</h6><h3 class="mb-0">₹<?= number_format($summary['spent'] ?? 0, 0) ?></h3></div></div></div>
-    <div class="col-md-3"><div class="card border-left-success shadow-sm"><div class="card-body"><h6 class="text-muted">Remaining</h6><h3 class="mb-0">₹<?= number_format($summary['remaining'] ?? 0, 0) ?></h3></div></div></div>
-    <div class="col-md-3"><div class="card border-left-info shadow-sm"><div class="card-body"><h6 class="text-muted">Utilization</h6><h3 class="mb-0"><?= $summary['utilization'] ?? 0 ?>%</h3></div></div></div>
+    <div class="col-md-3"><div class="card border-left-primary shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Budget Allocated</h6><h3 class="mb-0">₹<?= number_format($summary['budgets'] ?? 0, 0) ?></h3></div></div></div>
+    <div class="col-md-3"><div class="card border-left-danger shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Spent</h6><h3 class="mb-0">₹<?= number_format($summary['spent'] ?? 0, 0) ?></h3></div></div></div>
+    <div class="col-md-3"><div class="card border-left-success shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Remaining</h6><h3 class="mb-0">₹<?= number_format($summary['remaining'] ?? 0, 0) ?></h3></div></div></div>
+    <div class="col-md-3"><div class="card border-left-info shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Utilization</h6><h3 class="mb-0"><?= $summary['utilization'] ?? 0 ?>%</h3></div></div></div>
   </div>
 
   <form method="POST" action="<?= BASE_URL ?>/api/v2/finance/gst" class="card card-body mb-4">

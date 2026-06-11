@@ -19,7 +19,7 @@
                     <h5 class="mb-0">Invoice Details</h5>
                     <small class="text-muted">Created: <?= htmlspecialchars($invoice['created_at']) ?></small>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-4">
                         <div class="col-sm-6">
                             <h6 class="text-muted">From:</h6>
@@ -80,7 +80,7 @@
         <div class="col-lg-4">
             <?php if (!empty($invoice['payments'])): ?>
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header"><h5 class="mb-0"><i class="fas fa-money-bill me-1"></i>Payments</h5></div>
+                    <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-money-bill me-1"></i>Payments</h5></div>
                     <div class="card-body p-0">
                         <table class="table table-sm mb-0">
                             <thead><tr><th>Date</th><th>Amount</th><th>Method</th></tr></thead>
@@ -99,8 +99,8 @@
             <?php endif; ?>
 
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0">Actions</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0">Actions</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <a href="<?= BASE_URL ?>/admin/invoices/download/<?= $invoice['id'] ?>" class="btn btn-success w-100 mb-2"><i class="fas fa-download me-1"></i>Download Invoice</a>
                     <form method="POST" action="<?= BASE_URL ?>/admin/invoices/delete/<?= $invoice['id'] ?>" onsubmit="return confirm('Cancel this invoice?')">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">

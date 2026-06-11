@@ -5,7 +5,7 @@
         <?php foreach (($use_cases ?? []) as $key => $uc): ?>
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><?= htmlspecialchars($uc['title'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h5>
                         <p class="card-text"><?= htmlspecialchars($uc['description'] ?? '') ?></p>
                         <p class="fw-bold mb-1">Benefits:</p>

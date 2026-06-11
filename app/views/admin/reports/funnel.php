@@ -38,14 +38,14 @@
     
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-white"><h5 class="mb-0">Funnel Visualization</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <canvas id="funnelChart" height="100"></canvas>
         </div>
     </div>
     
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-white"><h5 class="mb-0">Monthly Closed Deals (Last 6 Months)</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <canvas id="monthlyChart" height="80"></canvas>
         </div>
     </div>

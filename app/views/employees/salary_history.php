@@ -28,7 +28,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -45,7 +45,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -62,7 +62,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -79,7 +79,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -99,11 +99,11 @@
     <!-- Salary History Table -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-list me-2"></i>Salary Records</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($salary_history)): ?>
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>No salary records found.
@@ -203,11 +203,11 @@
     <!-- Salary Trend Chart -->
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-chart-line me-2"></i>Salary Trend</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="salaryTrendChart" width="400" height="200"></canvas>
                 </div>
             </div>
@@ -217,21 +217,21 @@
     <!-- Salary Components Breakdown -->
     <div class="row mt-4">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-pie-chart me-2"></i>Salary Components</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="salaryComponentsChart" width="400" height="200"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-info-circle me-2"></i>Salary Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($salary_history)): ?>
                         <?php $latestSalary = $salary_history[0]; ?>
                         <div class="salary-info">

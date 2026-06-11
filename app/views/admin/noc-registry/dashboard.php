@@ -27,7 +27,7 @@ $st = $stats ?? [];
 <div class="row g-3 mb-4">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-warning bg-opacity-10 p-3"><i class="fas fa-clock text-warning"></i></div></div>
                     <div>
@@ -40,7 +40,7 @@ $st = $stats ?? [];
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-success bg-opacity-10 p-3"><i class="fas fa-check text-success"></i></div></div>
                     <div>
@@ -53,7 +53,7 @@ $st = $stats ?? [];
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-primary bg-opacity-10 p-3"><i class="fas fa-landmark text-primary"></i></div></div>
                     <div>
@@ -66,7 +66,7 @@ $st = $stats ?? [];
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-info bg-opacity-10 p-3"><i class="fas fa-check-double text-info"></i></div></div>
                     <div>
@@ -85,7 +85,7 @@ $st = $stats ?? [];
     <div class="card-header bg-white border-bottom">
         <h6 class="mb-0"><i class="fas fa-project-diagram me-2"></i><?= __('admin_registration_pipeline_flow') ?></h6>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="text-center">
                 <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:1.2rem;">1</div>

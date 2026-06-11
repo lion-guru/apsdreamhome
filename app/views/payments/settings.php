@@ -15,7 +15,7 @@
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-globe me-2"></i>General Settings</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3 mb-3">
                             <div class="col-md-4">
                                 <label class="form-label">Currency</label>
@@ -44,20 +44,20 @@
                 </div>
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Razorpay</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3"><label class="form-label">Key ID</label><input type="text" class="form-control" name="razorpay_key" value="<?= htmlspecialchars($config['razorpay_key'] ?? '') ?>" placeholder="rzp_live_xxxxxxxx"></div>
                         <div class="mb-0"><label class="form-label">Key Secret</label><input type="password" class="form-control" name="razorpay_secret" value="<?= htmlspecialchars($config['razorpay_secret'] ?? '') ?>" placeholder="********"></div>
                     </div>
                 </div>
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fab fa-paypal me-2"></i>PayPal</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-0"><label class="form-label">Client ID</label><input type="text" class="form-control" name="paypal_client_id" value="<?= htmlspecialchars($config['paypal_client_id'] ?? '') ?>" placeholder="xxxxxxxxxxxx"></div>
                     </div>
                 </div>
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-credit-card me-2"></i>Stripe</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3"><label class="form-label">Publishable Key</label><input type="text" class="form-control" name="stripe_publishable_key" value="<?= htmlspecialchars($config['stripe_publishable_key'] ?? '') ?>"></div>
                         <div class="mb-0"><label class="form-label">Secret Key</label><input type="password" class="form-control" name="stripe_secret_key" value="<?= htmlspecialchars($config['stripe_secret_key'] ?? '') ?>"></div>
                     </div>
@@ -66,7 +66,7 @@
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Test Mode</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" name="test_mode" id="test_mode" value="1" <?= !empty($config['test_mode']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="test_mode">Enable Test Mode</label>

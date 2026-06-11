@@ -24,7 +24,7 @@ ob_start();
     <div class="row g-3">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="mb-3">Auction Details</h6>
                     <div class="row g-2">
                         <div class="col-md-6">
@@ -75,7 +75,7 @@ ob_start();
                 <div class="card-header bg-white">
                     <h6 class="mb-0">Bid History (<?= count($bids) ?>)</h6>
                 </div>
-                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                <div class="card-body aps-cp-card-body" style="max-height: 500px; overflow-y: auto;">
                     <?php if (empty($bids)): ?>
                         <p class="text-muted text-center small">No bids yet</p>
                     <?php else: ?>

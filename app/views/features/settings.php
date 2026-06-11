@@ -8,7 +8,7 @@
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-white border-bottom"><h5 class="mb-0">General</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Default Feature Status</label>
                             <select name="config[default_status]" class="form-select">
@@ -27,7 +27,7 @@
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-white border-bottom"><h5 class="mb-0">Notifications</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" name="config[notify_on_change]" value="1" <?= ($config['notify_on_change'] ?? 0) ? 'checked' : '' ?>>
                             <label class="form-check-label">Notify on feature status change</label>

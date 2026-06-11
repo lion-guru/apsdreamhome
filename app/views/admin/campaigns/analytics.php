@@ -23,7 +23,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <?php if (!empty($campaign)): ?>
         <!-- Campaign Info -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <h4 class="mb-1"><?php echo htmlspecialchars($campaign['name'] ?? 'Unknown'); ?></h4>
@@ -88,7 +88,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Campaign Details</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <table class="table table-borderless">
                             <tr>
                                 <td class="text-muted">Campaign ID</td>
@@ -123,7 +123,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Performance Overview</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>
                             Analytics data will be populated once the campaign is launched and starts receiving traffic.

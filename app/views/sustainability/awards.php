@@ -20,7 +20,7 @@
         <?php foreach ($received as $award): ?>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 text-center h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <i class="fas fa-trophy fa-4x text-warning mb-3"></i>
                     <h5><?= ($award['award'] ?? '') ?></h5>
                     <p class="small text-muted mb-1"><?= ($award['organization'] ?? '') ?></p>

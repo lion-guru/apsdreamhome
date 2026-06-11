@@ -41,13 +41,13 @@ $extraHead = '<style>
 <!-- Booking Overview -->
 <div class="row mb-4">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
+        <div class="card aps-cp-card">
+            <div class="card-header aps-cp-card-header">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-info-circle"></i> <?= __('admin_booking_information') ?>
                 </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong><?= __('admin_booking_number') ?>:</strong><br>
@@ -100,13 +100,13 @@ $extraHead = '<style>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
+        <div class="card aps-cp-card">
+            <div class="card-header aps-cp-card-header">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-chart-pie"></i> <?= __('admin_financial_summary') ?>
                 </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label fw-bold"><?= __('admin_total') ?></label>
                     <h4 class="text-primary">₹<?= number_format(floatval($booking['total_amount'] ?? 0), 2) ?></h4>
@@ -144,13 +144,13 @@ $extraHead = '<style>
 <!-- Customer & Associate Information -->
 <div class="row mb-4">
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
+        <div class="card aps-cp-card">
+            <div class="card-header aps-cp-card-header">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-user"></i> <?= __('admin_customer_information') ?>
                 </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <p><strong><?= __('admin_name_label') ?>:</strong><br><?= htmlspecialchars($booking['customer_name'] ?? '') ?></p>
                 <p><strong><?= __('admin_email_label') ?>:</strong><br>
                     <a href="mailto:<?= htmlspecialchars($booking['customer_email'] ?? '') ?>">
@@ -170,13 +170,13 @@ $extraHead = '<style>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
+        <div class="card aps-cp-card">
+            <div class="card-header aps-cp-card-header">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-user-tie"></i> <?= __('admin_associate_information') ?>
                 </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if ($booking['associate_name']): ?>
                     <p><strong><?= __('admin_name_label') ?>:</strong><br><?= htmlspecialchars($booking['associate_name'] ?? '') ?></p>
                     <p><strong><?= __('admin_email_label') ?>:</strong><br>
@@ -201,12 +201,12 @@ $extraHead = '<style>
 
 <!-- Payment History -->
 <div class="card mb-4">
-    <div class="card-header">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0">
             <i class="fas fa-money-bill-wave"></i> <?= __('admin_payment_history') ?>
         </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <?php if (empty($payments)): ?>
             <p class="text-muted"><?= __('admin_no_payments_recorded') ?></p>
         <?php else: ?>
@@ -259,13 +259,13 @@ $extraHead = '<style>
 </div>
 
 <!-- Commission History -->
-<div class="card">
-    <div class="card-header">
+<div class="card aps-cp-card">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0">
             <i class="fas fa-percentage"></i> <?= __('admin_commission_history') ?>
         </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <?php if (empty($commissions)): ?>
             <p class="text-muted"><?= __('admin_no_commissions_recorded') ?></p>
         <?php else: ?>

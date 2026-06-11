@@ -5,7 +5,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-building me-2"></i>Property Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Title</th><td><?= htmlspecialchars($property['title'] ?? '-') ?></td></tr>
                         <tr><th>City</th><td><?= htmlspecialchars($property['city'] ?? '-') ?></td></tr>
@@ -16,7 +16,7 @@
             <?php if (!empty($existing_verification)): ?>
                 <div class="card border-0 shadow-sm mt-3">
                     <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-history me-2"></i>Existing Verification</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <span class="badge bg-<?= ($existing_verification['blockchain_status'] ?? '') === 'verified' ? 'success' : 'warning' ?> fs-6"><?= strtoupper($existing_verification['blockchain_status'] ?? 'UNKNOWN') ?></span>
                         <p class="small text-muted mt-2 mb-0">Hash: <?= htmlspecialchars($existing_verification['blockchain_hash'] ?? '-') ?></p>
                     </div>
@@ -26,7 +26,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-link me-2"></i>Initiate Verification</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">

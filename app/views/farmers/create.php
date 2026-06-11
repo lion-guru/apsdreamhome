@@ -6,7 +6,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-user-plus me-2"></i>Register New Farmer</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if ($success): ?>
                     <div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
                     <?php endif; ?>

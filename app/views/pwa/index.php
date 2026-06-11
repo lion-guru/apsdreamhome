@@ -40,7 +40,7 @@
 
     <div class="card border-0 shadow-sm mt-4">
         <div class="card-header bg-white py-3"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>App Info</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive"><table class="table table-sm mb-0 table-responsive">
                 <tr><td class="text-muted" style="width:200px">App Name</td><td><?= (defined('APP_NAME') ? APP_NAME : 'APS Dream Home') ?></td></tr>
                 <tr><td class="text-muted">Version</td><td>1.0.0</td></tr>

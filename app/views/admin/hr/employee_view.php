@@ -29,7 +29,7 @@ $e = $employee ?? [];
             </div>
         </div>
         <div class="card border-0 shadow-sm mt-3">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2"></i>Details</h6>
                 <table class="table table-sm mb-0">
                     <tr><td class="text-muted">Email</td><td><?= htmlspecialchars($e['email'] ?? '-') ?></td></tr>

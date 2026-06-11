@@ -15,7 +15,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">API Configuration</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?php echo $base; ?>/admin/whatsapp/settings">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -65,7 +65,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-paper-plane me-1"></i> Test Message</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?php echo $base; ?>/admin/whatsapp/test">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -95,7 +95,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-1"></i> Status</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center mb-3">
                         <div class="me-3">
                             <?php if ($isConfigured): ?>
@@ -123,7 +123,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-link me-1"></i> Webhook URL</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-2">Set this URL in your Meta App Dashboard &rarr; WhatsApp &rarr; Configuration &rarr; Webhook:</p>
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" value="<?php echo htmlspecialchars($webhookUrl); ?>" readonly onclick="this.select()">

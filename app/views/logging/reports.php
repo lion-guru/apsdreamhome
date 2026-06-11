@@ -6,7 +6,7 @@
     <div class="row g-4 mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
                     <h5>Daily Summary</h5>
                     <p class="text-muted small">Get a daily summary of all log activity</p>
@@ -16,7 +16,7 @@
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
                     <h5>Error Analysis</h5>
                     <p class="text-muted small">Analyze error patterns and frequency</p>
@@ -26,7 +26,7 @@
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
                     <h5>Trend Report</h5>
                     <p class="text-muted small">View log volume trends over time</p>

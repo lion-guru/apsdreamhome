@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0"><?php echo htmlspecialchars($event['title'] ?? 'Event Details'); ?></h5>
                     <div>
@@ -9,7 +9,7 @@
                         <a href="<?php echo BASE_URL; ?>/admin/events/list" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3"><strong>Date:</strong> <?php echo $event['event_date'] ?? '-'; ?></div>
                     <div class="mb-3"><strong>Location:</strong> <?php echo htmlspecialchars($event['location'] ?? '-'); ?></div>
                     <div class="mb-3"><strong>Status:</strong>

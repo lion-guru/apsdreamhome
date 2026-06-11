@@ -45,7 +45,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -65,7 +65,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -87,7 +87,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -112,7 +112,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -135,11 +135,11 @@
     <!-- Activities Timeline -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-stream me-2"></i>Activity Timeline</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($activities)): ?>
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>No activities found.
@@ -218,11 +218,11 @@
     <!-- Activity Types Breakdown -->
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-chart-pie me-2"></i>Activity Types Breakdown</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <?php
                         $activityTypes = [];

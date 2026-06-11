@@ -2,7 +2,7 @@
 <div class="container-fluid py-4">
     <h2 class="mb-4"><i class="fas fa-tasks me-2"></i>Bulk Actions</h2>
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row align-items-center">
                 <div class="col-md-4">
                     <label class="form-label">Action</label>

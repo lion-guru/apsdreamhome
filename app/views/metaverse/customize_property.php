@@ -22,7 +22,7 @@
                     <div class="card-header bg-white border-0">
                         <h5 class="mb-0"><i class="fas fa-palette me-2 text-primary"></i><?= ucfirst($category) ?></h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-2">
                             <?php foreach ($options as $option): ?>
                             <div class="col-md-3">
@@ -42,7 +42,7 @@
                     <div class="card-header bg-white border-0">
                         <h5 class="mb-0"><i class="fas fa-couch me-2 text-primary"></i><?= ucfirst(str_replace('_', ' ', $room)) ?> Furniture</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-2">
                             <?php foreach ($items as $item): ?>
                             <div class="col-md-4">
@@ -62,7 +62,7 @@
                     <div class="card-header bg-white border-0">
                         <h5 class="mb-0"><i class="fas fa-lightbulb me-2 text-primary"></i><?= ucfirst($type) ?> Lighting</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-2">
                             <?php foreach ($options as $option): ?>
                             <div class="col-md-4">
@@ -82,7 +82,7 @@
                     <div class="card-header bg-white border-0">
                         <h5 class="mb-0"><i class="fas fa-paint-brush me-2 text-primary"></i><?= ucfirst($category) ?></h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-2">
                             <?php foreach ($options as $option): ?>
                             <div class="col-md-3">
@@ -106,7 +106,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2 text-primary"></i>Property Info</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5><?= ($virtual_property['name'] ?? 'Property') ?></h5>
                     <p class="text-muted"><?= ($virtual_property['description'] ?? '') ?></p>
                     <hr>

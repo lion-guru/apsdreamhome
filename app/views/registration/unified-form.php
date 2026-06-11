@@ -2,7 +2,7 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-6">
-            <div class="card"><div class="card-body p-4">
+            <div class="card aps-cp-card"><div class="card-body p-4">
                 <h4 class="mb-4"><i class="fas fa-user-plus me-2"></i>Create Account</h4>
                 <form method="post" action="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>register">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">

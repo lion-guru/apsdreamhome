@@ -23,13 +23,13 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center"><h5 class="mb-0"><?= $task['title'] ?></h5> <span class="badge bg-<?= ($task['status'] ?? 'pending') === 'completed' ? 'success' : (($task['status'] ?? 'pending') === 'in_progress' ? 'info' : 'warning') ?>-subtle text-<?= ($task['status'] ?? 'pending') === 'completed' ? 'success' : (($task['status'] ?? 'pending') === 'in_progress' ? 'info' : 'warning') ?> rounded-pill px-3"><?= ucfirst(str_replace('_', ' ', $task['status'] ?? 'Pending')) ?></span></div>
-                <div class="card-body"><p><?= nl2br($task['description'] ?? 'No description') ?></p></div>
+                <div class="card-body aps-cp-card-body"><p><?= nl2br($task['description'] ?? 'No description') ?></p></div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3"><small class="text-muted d-block">Priority</small><span class="badge bg-<?= ($task['priority'] ?? 'medium') === 'high' ? 'danger' : (($task['priority'] ?? 'medium') === 'medium' ? 'warning' : 'info') ?>-subtle text-<?= ($task['priority'] ?? 'medium') === 'high' ? 'danger' : (($task['priority'] ?? 'medium') === 'medium' ? 'warning' : 'info') ?> rounded-pill px-3"><?= ucfirst($task['priority'] ?? 'Medium') ?></span></div>
                     <div class="mb-3"><small class="text-muted d-block">Assigned To</small><strong><?= $task['assignee_name'] ?? 'Unassigned' ?></strong></div>
                     <div class="mb-3"><small class="text-muted d-block">Due Date</small><strong><?= $task['due_date'] ? date('d M Y', strtotime($task['due_date'])) : 'No due date' ?></strong></div>

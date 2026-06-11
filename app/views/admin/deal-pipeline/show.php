@@ -10,8 +10,8 @@
     <div class="row">
         <div class="col-md-8">
             <div class="card mb-4">
-                <div class="card-header"><h5>Deal Information</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5>Deal Information</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <strong>Deal Number:</strong> <?= htmlspecialchars($deal['deal_number'] ?? 'N/A') ?>
@@ -54,9 +54,9 @@
             </div>
 
             <?php if (!empty($deal_history)): ?>
-            <div class="card">
-                <div class="card-header"><h5>Recent Activity</h5></div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><h5>Recent Activity</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-group">
                         <?php foreach ($deal_history as $h): ?>
                         <li class="list-group-item">
@@ -73,8 +73,8 @@
 
         <div class="col-md-4">
             <div class="card mb-3">
-                <div class="card-header"><h5>Customer</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5>Customer</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <p><strong>Name:</strong> <?= htmlspecialchars($deal['customer_name'] ?? 'N/A') ?></p>
                     <p><strong>Email:</strong> <?= htmlspecialchars($deal['customer_email'] ?? 'N/A') ?></p>
                     <p><strong>Phone:</strong> <?= htmlspecialchars($deal['customer_phone'] ?? 'N/A') ?></p>
@@ -83,8 +83,8 @@
 
             <?php if (!empty($deal['property_title'])): ?>
             <div class="card mb-3">
-                <div class="card-header"><h5>Property</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5>Property</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <p><strong>Title:</strong> <?= htmlspecialchars($deal['property_title']) ?></p>
                     <p><strong>Location:</strong> <?= htmlspecialchars($deal['property_location'] ?? '') ?></p>
                     <p><strong>Price:</strong> ₹<?= number_format($deal['property_price'] ?? 0) ?></p>
@@ -93,9 +93,9 @@
             <?php endif; ?>
 
             <?php if ($deal['stage'] !== 'closed_won' && $deal['stage'] !== 'closed_lost'): ?>
-            <div class="card">
-                <div class="card-header"><h5>Actions</h5></div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><h5>Actions</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/deal-pipeline/<?= $deal['id'] ?>/move-stage" class="mb-2">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <label class="form-label">Move to Stage:</label>

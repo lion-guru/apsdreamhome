@@ -27,7 +27,7 @@ ob_start();
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Total Campaigns</p>
                     <h3 class="mb-0"><?= number_format($stats['total_campaigns'] ?? 0) ?></h3>
                     <small class="text-muted"><?= $stats['draft'] ?? 0 ?> drafts, <?= $stats['scheduled'] ?? 0 ?> scheduled</small>
@@ -36,7 +36,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Sent</p>
                     <h3 class="mb-0 text-success"><?= number_format($stats['sent'] ?? 0) ?></h3>
                     <small class="text-muted"><?= number_format($stats['total_sent'] ?? 0) ?> total messages</small>
@@ -45,7 +45,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Avg Open Rate</p>
                     <h3 class="mb-0 text-info"><?= number_format($stats['avg_open_rate'] ?? 0, 1) ?>%</h3>
                     <small class="text-muted"><?= number_format($stats['total_opened'] ?? 0) ?> opens</small>
@@ -54,7 +54,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Avg Click Rate</p>
                     <h3 class="mb-0 text-warning"><?= number_format($stats['avg_click_rate'] ?? 0, 1) ?>%</h3>
                     <small class="text-muted"><?= number_format($stats['total_clicked'] ?? 0) ?> clicks</small>
@@ -67,7 +67,7 @@ ob_start();
         <?php foreach (($stats['by_type'] ?? []) as $bt): ?>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <p class="text-muted small mb-1"><?= ucfirst($bt['type']) ?> Campaigns</p>

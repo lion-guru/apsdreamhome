@@ -44,7 +44,7 @@ $notes = $notes ?? [];
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-user me-2"></i>Lead Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h4 class="mb-3"><?= htmlspecialchars($lead['name'] ?? 'N/A') ?></h4>
                     
                     <div class="mb-3">
@@ -91,7 +91,7 @@ $notes = $notes ?? [];
                 <div class="card-header bg-light">
                     <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
                         <a href="https://wa.me/91<?= preg_replace('/[^0-9]/', '', $lead['phone'] ?? '') ?>" target="_blank" class="btn btn-success">
                             <i class="fab fa-whatsapp me-2"></i>WhatsApp
@@ -114,7 +114,7 @@ $notes = $notes ?? [];
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-history me-2"></i>Activity Timeline</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($activities)): ?>
                         <div class="timeline">
                             <?php foreach ($activities as $activity): ?>
@@ -149,7 +149,7 @@ $notes = $notes ?? [];
                         <i class="fas fa-plus"></i> Add Note
                     </button>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($notes)): ?>
                         <?php foreach ($notes as $note): ?>
                             <div class="mb-3 pb-3 border-bottom">

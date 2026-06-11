@@ -39,7 +39,7 @@ $csrf = $csrf ?? '';
         <div class="col-lg-7">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white"><h5 class="mb-0">1. Upload CSV</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/bulk/property-import/upload" enctype="multipart/form-data" id="upload-form">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                         <div class="upload-dropzone border-2 border-dashed rounded p-5 text-center bg-light" id="dropzone">
@@ -63,7 +63,7 @@ $csrf = $csrf ?? '';
         <div class="col-lg-5">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-info-circle me-1"></i> CSV Format</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-2"><strong>Required columns:</strong></p>
                     <code class="d-block bg-light p-2 rounded small">title, type, listing_type, price</code>
                     <hr>
@@ -88,7 +88,7 @@ $csrf = $csrf ?? '';
                 <h5 class="mb-0">2. Preview &amp; Validate</h5>
                 <span class="badge bg-primary">Total rows: <?= (int)$preview['total_rows'] ?></span>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($preview['errors'])): ?>
                     <div class="alert alert-warning">
                         <strong><i class="fas fa-exclamation-triangle me-1"></i> <?= count($preview['errors']) ?> validation error(s):</strong>
@@ -155,7 +155,7 @@ $csrf = $csrf ?? '';
     <?php if ($result && !empty($result['ok'])): ?>
         <div class="card shadow-sm border-0 mt-4">
             <div class="card-header bg-success text-white"><h5 class="mb-0">3. Import Complete</h5></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
                         <div class="card border-success">
@@ -209,7 +209,7 @@ $csrf = $csrf ?? '';
         </div>
     <?php elseif ($result && empty($result['ok'])): ?>
         <div class="card shadow-sm border-0 mt-4">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="alert alert-danger">
                     <h5><i class="fas fa-times-circle me-1"></i> Import failed</h5>
                     <?= htmlspecialchars($result['error'] ?? 'Unknown error') ?>

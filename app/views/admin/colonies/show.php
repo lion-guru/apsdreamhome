@@ -11,7 +11,7 @@
     <div class="row g-4">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Description</h6></div>
-            <div class="card-body"><?php echo nl2br(htmlspecialchars($colony['description'] ?? 'No description')); ?></div></div>
+            <div class="card-body aps-cp-card-body"><?php echo nl2br(htmlspecialchars($colony['description'] ?? 'No description')); ?></div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Available Plots (<?php echo count($plots); ?>)</h6></div>
             <div class="card-body p-0">
@@ -31,7 +31,7 @@
 
         <div class="col-md-4">
             <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Quick Info</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <table class="table table-sm">
                     <tr><td><strong>Slug</strong></td><td><code><?php echo htmlspecialchars($colony['slug'] ?? ''); ?></code></td></tr>
                     <tr><td><strong>District</strong></td><td><?php echo htmlspecialchars($colony['district_name'] ?? ''); ?></td></tr>
@@ -46,7 +46,7 @@
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Amenities</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php $amenities = array_filter(array_map('trim', explode("\n", $colony['amenities'] ?? ''))); ?>
                 <?php if (empty($amenities)): ?><p class="text-muted mb-0">None listed</p>
                 <?php else: ?><ul class="mb-0"><?php foreach ($amenities as $a): ?><li><?php echo htmlspecialchars($a); ?></li><?php endforeach; ?></ul><?php endif; ?>

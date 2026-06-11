@@ -20,7 +20,7 @@ $active_page = 'properties';
 
 <!-- Filters -->
 <div class="card mb-4">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-3">
             <div class="col-md-3">
                 <select name="site_id" class="form-select">
@@ -63,8 +63,8 @@ $active_page = 'properties';
 </div>
 
 <!-- Properties Table -->
-<div class="card">
-    <div class="card-body">
+<div class="card aps-cp-card">
+    <div class="card-body aps-cp-card-body">
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>

@@ -19,7 +19,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card bg-primary text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Total Records</h6>
                     <h3 class="mb-0"><?= number_format((int)($summary['total_records'] ?? 0)) ?></h3>
                 </div>
@@ -27,15 +27,15 @@
         </div>
         <div class="col-md-3">
             <div class="card bg-success text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Total Amount</h6>
                     <h3 class="mb-0">₹<?= number_format((float)($summary['total_amount'] ?? 0), 2) ?></h3>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <form method="GET" class="row g-2">
                         <div class="col-md-4">
                             <input type="text" name="search" class="form-control form-control-sm" placeholder="Search name/phone/ref..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">

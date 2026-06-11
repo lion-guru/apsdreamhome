@@ -12,7 +12,7 @@
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-calculator me-2"></i>EMI Calculator</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>payments/emi-calculator">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -39,7 +39,7 @@
             <?php if ($result): ?>
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>EMI Breakdown</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3 mb-4">
                         <div class="col-md-4">
                             <div class="bg-primary-subtle p-3 rounded text-center"><small class="text-muted d-block">Monthly EMI</small><h3 class="mb-0 text-primary">₹<?= number_format($result['emi'] ?? 0) ?></h3></div>

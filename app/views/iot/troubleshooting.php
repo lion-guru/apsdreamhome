@@ -4,7 +4,7 @@
     <?php foreach (($troubleshooting_guide ?? []) as $key => $section): ?>
         <div class="card border-0 shadow-sm mb-3">
             <div class="card-header bg-transparent"><h5 class="mb-0"><?= htmlspecialchars($section['title'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h5></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <p class="fw-bold mb-2">Symptoms:</p>
                 <ul class="list-unstyled mb-3">
                     <?php foreach (($section['symptoms'] ?? []) as $s): ?>

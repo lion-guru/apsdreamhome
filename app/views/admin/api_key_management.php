@@ -24,7 +24,7 @@
                 <div class="row mb-4">
                     <div class="col-md-3">
                         <div class="card bg-primary text-white">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h5 class="card-title">Total Keys</h5>
                                 <h2 id="totalKeys">-</h2>
                                 <small>All system keys</small>
@@ -33,7 +33,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="card bg-success text-white">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h5 class="card-title">Active Keys</h5>
                                 <h2 id="activeKeys">-</h2>
                                 <small>Currently active</small>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="card bg-info text-white">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h5 class="card-title">MCP Keys</h5>
                                 <h2 id="mcpKeys">-</h2>
                                 <small>Service keys</small>
@@ -51,7 +51,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="card bg-warning text-white">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h5 class="card-title">User Keys</h5>
                                 <h2 id="userKeys">-</h2>
                                 <small>API access keys</small>
@@ -82,11 +82,11 @@
                 <div class="tab-content" id="keyTabsContent">
                     <!-- MCP Keys Tab -->
                     <div class="tab-pane fade show active" id="mcp-keys" role="tabpanel">
-                        <div class="card">
-                            <div class="card-header">
+                        <div class="card aps-cp-card">
+                            <div class="card-header aps-cp-card-header">
                                 <h5 class="mb-0">MCP/Service Keys</h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <div class="table-responsive">
                                     <div class="table-responsive"><table class="table table-striped table-responsive" id="mcpKeysTable">
                                         <thead>
@@ -112,11 +112,11 @@
                     
                     <!-- User Keys Tab -->
                     <div class="tab-pane fade" id="user-keys" role="tabpanel">
-                        <div class="card">
-                            <div class="card-header">
+                        <div class="card aps-cp-card">
+                            <div class="card-header aps-cp-card-header">
                                 <h5 class="mb-0">User API Keys</h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <div class="table-responsive">
                                     <div class="table-responsive"><table class="table table-striped table-responsive" id="userKeysTable">
                                         <thead>
@@ -142,11 +142,11 @@
                     
                     <!-- Integration Tab -->
                     <div class="tab-pane fade" id="integration" role="tabpanel">
-                        <div class="card">
-                            <div class="card-header">
+                        <div class="card aps-cp-card">
+                            <div class="card-header aps-cp-card-header">
                                 <h5 class="mb-0">System Integration Status</h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <h6>MCP Servers</h6>

@@ -6,7 +6,7 @@
     <?php else: ?>
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-user me-2"></i><?= htmlspecialchars($lead['name']) ?> (Lead #<?= $lead['id'] ?>)</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-3"><small class="text-muted">Phone:</small><br><?= htmlspecialchars($lead['phone'] ?? 'N/A') ?></div>
                     <div class="col-md-3"><small class="text-muted">Email:</small><br><?= htmlspecialchars($lead['email'] ?? 'N/A') ?></div>
@@ -19,7 +19,7 @@
             <div class="col-lg-6 mb-4">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notes (<?= count($notes) ?>)</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (empty($notes)): ?>
                             <p class="text-muted">No notes yet</p>
                         <?php else: ?>
@@ -36,7 +36,7 @@
             <div class="col-lg-6 mb-4">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-history me-2"></i>Activities (<?= count($activities) ?>)</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (empty($activities)): ?>
                             <p class="text-muted">No activities yet</p>
                         <?php else: ?>

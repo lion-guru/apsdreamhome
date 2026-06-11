@@ -13,8 +13,8 @@
         <div class="alert alert-danger alert-dismissible fade show"><?php echo htmlspecialchars($error); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
-    <div class="card">
-        <div class="card-body">
+    <div class="card aps-cp-card">
+        <div class="card-body aps-cp-card-body">
             <?php if (!empty($templates)): ?>
                 <div class="table-responsive">
                     <table class="table table-hover">

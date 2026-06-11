@@ -22,11 +22,11 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
+                <div class="card aps-cp-card">
+                    <div class="card-header aps-cp-card-header">
                         <h4 class="mb-0">AI Analytics</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p>AI dashboard functionality coming soon...</p>
                     </div>
                 </div>

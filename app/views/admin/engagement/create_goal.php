@@ -11,7 +11,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
         <div class="col-lg-8">
             <div class="card shadow">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Goal Details</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= $base ?>/admin/engagement/create-goal">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">

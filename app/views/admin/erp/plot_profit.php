@@ -6,7 +6,7 @@
 <div class="row g-3 mb-4">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <small class="text-muted">Total Sale Value</small>
                 <div class="fs-4 fw-bold text-success">₹<?php echo number_format($totals['sale_price'], 0); ?></div>
             </div>
@@ -14,7 +14,7 @@
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <small class="text-muted">Total Land Cost</small>
                 <div class="fs-4 fw-bold text-danger">₹<?php echo number_format($totals['land_cost'], 0); ?></div>
             </div>
@@ -22,7 +22,7 @@
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <small class="text-muted">Total Dev Cost</small>
                 <div class="fs-4 fw-bold text-warning">₹<?php echo number_format($totals['dev_cost'], 0); ?></div>
             </div>
@@ -30,7 +30,7 @@
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <small class="text-muted">Net Profit</small>
                 <div class="fs-4 fw-bold <?php echo $totals['profit'] >= 0 ? 'text-success' : 'text-danger'; ?>">
                     ₹<?php echo number_format($totals['profit'], 0); ?>
@@ -41,7 +41,7 @@
     </div>
 </div>
 
-<div class="card">
+<div class="card aps-cp-card">
     <div class="table-responsive">
         <table class="table table-hover mb-0 align-middle">
             <thead class="table-light">

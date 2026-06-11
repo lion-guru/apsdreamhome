@@ -53,7 +53,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             <h5 class="mb-0 fw-semibold"><i class="fas fa-search me-2"></i><?= __('search') ?>
                                 <?= __('properties') ?></h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <form action="<?php echo BASE_URL; ?>/properties" method="GET">
                                 <div class="mb-3">
                                     <select name="listing" class="form-select">
@@ -323,7 +323,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             <span
                                 class="badge bg-success position-absolute top-0 end-0 m-2 px-3 py-1"><?= $project['status'] ?></span>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title"><?= $project['title'] ?></h5>
                             <p class="text-muted small mb-2"><i
                                     class="fas fa-map-marker-alt me-1"></i><?= $project['city'] ?></p>
@@ -361,7 +361,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             <span
                                 class="badge bg-success position-absolute top-0 end-0 m-2 px-3 py-1"><?php echo $project['status']; ?></span>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($project['title'] ?? ''); ?></h5>
                             <p class="text-muted small mb-2"><i
                                     class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($project['city']); ?>

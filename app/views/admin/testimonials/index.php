@@ -1,14 +1,14 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Testimonials</h5>
                     <a href="<?php echo BASE_URL; ?>/admin/testimonials/create" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Add New
                     </a>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>

@@ -27,7 +27,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <?php endif; ?>
 
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="POST" action="<?= $base ?>/admin/marketing-campaigns/<?= (int)($campaign['id'] ?? 0) ?>/update">
                 <input type="hidden" name="id" value="<?= (int)($campaign['id'] ?? 0) ?>">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">

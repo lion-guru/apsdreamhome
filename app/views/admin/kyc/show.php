@@ -11,8 +11,8 @@ unset($_SESSION['kyc_verify_results']);
     <div class="row">
         <div class="col-md-6">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>KYC Details</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>KYC Details</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th style="width:140px">ID</th><td>#<?= $r['id'] ?? '' ?></td></tr>
                         <tr><th>Legal Name</th><td><strong><?= htmlspecialchars($r['legal_name'] ?? '—') ?></strong></td></tr>
@@ -38,8 +38,8 @@ unset($_SESSION['kyc_verify_results']);
             </div>
 
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-user me-2"></i>User Info</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-user me-2"></i>User Info</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th style="width:140px">Name</th><td><?= htmlspecialchars($r['user_name'] ?? '') ?></td></tr>
                         <tr><th>Email</th><td><?= htmlspecialchars($r['user_email'] ?? '') ?></td></tr>
@@ -52,13 +52,13 @@ unset($_SESSION['kyc_verify_results']);
 
         <div class="col-md-6">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-file-image me-2"></i>Documents</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-file-image me-2"></i>Documents</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <?php if (!empty($r['pan_document'])): ?>
                             <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header"><small>PAN Card</small></div>
+                                <div class="card aps-cp-card">
+                                    <div class="card-header aps-cp-card-header"><small>PAN Card</small></div>
                                     <a href="<?= BASE_URL . '/' . $r['pan_document'] ?>" target="_blank" class="d-block">
                                         <img src="<?= BASE_URL . '/' . $r['pan_document'] ?>" class="card-img-top" style="max-height:150px; object-fit:cover;" alt="PAN">
                                     </a>
@@ -70,8 +70,8 @@ unset($_SESSION['kyc_verify_results']);
                         <?php endif; ?>
                         <?php if (!empty($r['aadhaar_front_document'])): ?>
                             <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header"><small>Aadhaar Front</small></div>
+                                <div class="card aps-cp-card">
+                                    <div class="card-header aps-cp-card-header"><small>Aadhaar Front</small></div>
                                     <a href="<?= BASE_URL . '/' . $r['aadhaar_front_document'] ?>" target="_blank" class="d-block">
                                         <img src="<?= BASE_URL . '/' . $r['aadhaar_front_document'] ?>" class="card-img-top" style="max-height:150px; object-fit:cover;" alt="Aadhaar Front">
                                     </a>
@@ -83,8 +83,8 @@ unset($_SESSION['kyc_verify_results']);
                         <?php endif; ?>
                         <?php if (!empty($r['aadhaar_back_document'])): ?>
                             <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header"><small>Aadhaar Back</small></div>
+                                <div class="card aps-cp-card">
+                                    <div class="card-header aps-cp-card-header"><small>Aadhaar Back</small></div>
                                     <a href="<?= BASE_URL . '/' . $r['aadhaar_back_document'] ?>" target="_blank" class="d-block">
                                         <img src="<?= BASE_URL . '/' . $r['aadhaar_back_document'] ?>" class="card-img-top" style="max-height:150px; object-fit:cover;" alt="Aadhaar Back">
                                     </a>
@@ -105,7 +105,7 @@ unset($_SESSION['kyc_verify_results']);
             <!-- Verify via API Button -->
             <div class="card shadow-sm mb-4 border-primary">
                 <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="fas fa-robot me-2"></i>API Verification</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/kyc/<?= (int)($r['id'] ?? 0) ?>/verify" class="d-inline">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-shield-alt me-1"></i>Verify PAN + Aadhaar via NSDL/UIDAI</button>
@@ -150,7 +150,7 @@ unset($_SESSION['kyc_verify_results']);
 
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-warning text-dark"><h5 class="mb-0"><i class="fas fa-gavel me-2"></i>Take Action</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex gap-2">
                         <form method="post" action="<?= BASE_URL ?>/admin/kyc/<?= (int)($r['id'] ?? 0) ?>/approve" class="flex-grow-1" onsubmit="return confirm('Approve this KYC request?');">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">

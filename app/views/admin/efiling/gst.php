@@ -55,7 +55,7 @@ ob_start();
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-export me-2 text-primary"></i>Generate GSTR-1</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form method="POST" action="/admin/efiling/gst/gstr1">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="row g-2 mb-3">
@@ -89,7 +89,7 @@ ob_start();
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-invoice me-2 text-warning"></i>Generate GSTR-3B</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form method="POST" action="/admin/efiling/gst/gstr3b">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="row g-2 mb-3">

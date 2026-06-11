@@ -50,7 +50,7 @@
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><?= __('user_settings_privacy_title', null, 'Privacy & Security') ?></h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form action="<?php echo BASE_URL; ?>dashboard/settings/update-security" method="POST">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-4">
@@ -80,7 +80,7 @@
                 <div class="card-header bg-danger text-white py-3">
                     <h5 class="mb-0"><?= __('user_settings_danger_title', null, 'Danger Zone') ?></h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted"><?= __('user_settings_danger_desc', null, 'Once you delete your account, there is no going back. Please be certain.') ?></p>
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
                         <?= __('user_settings_delete_btn', null, 'Delete My Account') ?>

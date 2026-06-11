@@ -7,7 +7,7 @@ $report = $report ?? null;
 </div>
 
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-4">
                 <label class="form-label small">Employee</label>
@@ -26,7 +26,7 @@ $report = $report ?? null;
     <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-2" style="width:60px;height:60px;font-size:1.5rem;">
                         <?= strtoupper(substr($report['name'] ?? '?', 0, 1)) ?>
                     </div>

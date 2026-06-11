@@ -13,7 +13,7 @@
     <div class="row g-3 mb-4">
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
                             <i class="fas fa-envelope text-primary fa-lg"></i>
@@ -28,7 +28,7 @@
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
                             <i class="fas fa-envelope-open text-success fa-lg"></i>
@@ -43,7 +43,7 @@
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
                             <i class="fas fa-sms text-info fa-lg"></i>
@@ -58,7 +58,7 @@
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle bg-danger bg-opacity-10 p-3 me-3">
                             <i class="fas fa-exclamation-triangle text-danger fa-lg"></i>
@@ -75,7 +75,7 @@
 
     <!-- Filters -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/notifications/booking-log" class="row g-2 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label small text-muted">Type</label>

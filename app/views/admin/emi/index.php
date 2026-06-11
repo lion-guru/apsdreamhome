@@ -25,7 +25,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         
         <!-- Search & Filter -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form method="GET" class="row g-3">
                     <div class="col-md-4">
                         <input type="text" name="search" class="form-control" placeholder="Search by booking or customer..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
@@ -49,7 +49,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         
         <!-- EMI Plans Table -->
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($emi_plans)): ?>
                     <div class="table-responsive">
                         <table class="table table-hover">

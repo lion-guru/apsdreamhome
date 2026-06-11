@@ -22,7 +22,7 @@ ob_start();
         <div class="card-header bg-info text-white">
           <h4 class="mb-0"><i class="fas fa-key me-2"></i>Use Backup Recovery Code</h4>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <?php if (empty($has_pending)): ?>
             <div class="alert alert-warning">
               <i class="fas fa-exclamation-triangle me-1"></i>

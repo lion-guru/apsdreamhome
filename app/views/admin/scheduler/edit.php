@@ -12,7 +12,7 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'schedule' => '', 'desc
         <div class="col-lg-8">
             <div class="card shadow">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Task Details</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= $base ?>/admin/scheduler/task/<?= $task['id'] ?>/update">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">

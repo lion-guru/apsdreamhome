@@ -33,7 +33,7 @@ $sections = $sections ?? [];
         ?>
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center mb-3">
                         <div class="rounded-circle bg-<?= $info['color'] ?> bg-opacity-10 p-3 me-3">
                             <i class="fas <?= $info['icon'] ?> text-<?= $info['color'] ?> fa-lg"></i>

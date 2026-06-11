@@ -6,7 +6,7 @@
         <div class="col-md-5">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Contract Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Name</th><td><?= htmlspecialchars($ci['name'] ?? '-') ?></td></tr>
                         <tr><th>Address</th><td style="word-break:break-all"><code><?= htmlspecialchars($ci['address'] ?? '-') ?></code></td></tr>
@@ -18,7 +18,7 @@
         <div class="col-md-7">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-list me-2"></i>Contract Functions</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover table-responsive">
                             <thead><tr><th>Function</th><th>Description</th></tr></thead>

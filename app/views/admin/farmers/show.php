@@ -24,7 +24,7 @@ $isLegacy = $is_legacy ?? false;
         <div class="col-md-4 mb-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-user me-2"></i>Farmer Info</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
                         <tr><td class="text-muted">Name</td><td><strong><?php echo htmlspecialchars($farmer['farmer_name'] ?? ''); ?></strong></td></tr>
                         <tr><td class="text-muted">Mobile</td><td><?php echo htmlspecialchars($farmer['farmer_mobile'] ?? ''); ?></td></tr>
@@ -46,7 +46,7 @@ $isLegacy = $is_legacy ?? false;
         <div class="col-md-4 mb-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa- rupee-sign me-2"></i>Financials</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
                         <tr><td class="text-muted">Total Land Price</td><td><strong>₹<?php echo number_format($farmer['total_land_price'] ?? 0); ?></strong></td></tr>
                         <tr><td class="text-muted">Total Paid</td><td class="text-success"><strong>₹<?php echo number_format($farmer['total_paid_amount'] ?? 0); ?></strong></td></tr>
@@ -64,7 +64,7 @@ $isLegacy = $is_legacy ?? false;
         <div class="col-md-4 mb-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-people-arrows me-2"></i>Management</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
                         <?php if ($farmer['land_manager_name'] ?? ''): ?>
                         <tr><td class="text-muted">Land Manager</td><td><?php echo htmlspecialchars($farmer['land_manager_name']); ?></td></tr>
@@ -180,11 +180,11 @@ $isLegacy = $is_legacy ?? false;
     <?php if (!empty($documents)): ?>
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-file me-2"></i>Documents</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row">
                 <?php foreach ($documents as $d): ?>
                 <div class="col-md-3 mb-3">
-                    <div class="card">
+                    <div class="card aps-cp-card">
                         <div class="card-body text-center">
                             <i class="fas fa-file-pdf text-danger fa-3x mb-2"></i>
                             <p class="mb-1 small"><?php echo htmlspecialchars($d['document_type'] ?? ''); ?></p>

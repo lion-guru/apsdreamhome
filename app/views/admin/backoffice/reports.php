@@ -8,7 +8,7 @@
       <?php foreach ($reports as $r): ?>
         <div class="col-md-4">
           <div class="card aps-cp-card h-100">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
               <h5 class="card-title"><?= htmlspecialchars($r['report_name'] ?? '') ?></h5>
               <p class="text-muted small"><?= __('admin_type_colon') ?> <?= ucfirst($r['report_type'] ?? '') ?> | <?= __('admin_format_label') ?> <?= strtoupper($r['format'] ?? 'html') ?></p>
               <p class="small"><?= __('admin_last_run') ?> <?= $r['last_run_at'] ?? __('admin_never') ?></p>

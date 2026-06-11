@@ -27,7 +27,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card bg-primary text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title mb-0">Pipeline Value</h6>
@@ -40,7 +40,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
         </div>
         <div class="col-md-3">
             <div class="card bg-success text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title mb-0">Won Deals</h6>
@@ -53,7 +53,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
         </div>
         <div class="col-md-3">
             <div class="card bg-info text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title mb-0">Total Revenue</h6>
@@ -66,7 +66,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
         </div>
         <div class="col-md-3">
             <div class="card bg-warning text-dark">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title mb-0">Win Rate</h6>
@@ -89,7 +89,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
         <div class="card-header bg-light">
             <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Stage</label>
@@ -117,7 +117,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
     </div>
 
     <!-- Deals Table -->
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-header bg-light">
             <h5 class="mb-0"><i class="fas fa-list me-2"></i>Deals (<?= count($deals ?? []) ?>)</h5>
         </div>

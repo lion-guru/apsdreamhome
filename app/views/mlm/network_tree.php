@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="mb-3">
                 <label class="form-label"><i class="fas fa-search me-1"></i>Search Member</label>
                 <input type="text" id="treeSearch" class="form-control" placeholder="Type member name or ID..." onkeyup="filterTree(this.value)">

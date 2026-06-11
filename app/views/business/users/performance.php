@@ -9,7 +9,7 @@
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-gradient bg-primary text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="mb-0 opacity-75">Total Sales</h6>
@@ -22,7 +22,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-success text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="mb-0 opacity-75">Conversion Rate</h6>
@@ -35,7 +35,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-info text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="mb-0 opacity-75">Avg Deal Size</h6>
@@ -48,7 +48,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-warning text-dark">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="mb-0 opacity-75">Team Size</h6>
@@ -63,11 +63,11 @@
 
     <div class="row">
         <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="mb-0">Monthly Performance</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div style="min-height:300px;background:#f8f9fa;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#aaa;">
                         <canvas id="performanceChart" style="min-height:300px;"></canvas>
                     </div>
@@ -75,11 +75,11 @@
             </div>
         </div>
         <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="mb-0">Quick Summary</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <small class="text-muted">Best Month</small>
                         <p class="mb-0 fw-bold"><?= htmlspecialchars($metrics['best_month'] ?? '—') ?></p>
@@ -102,7 +102,7 @@
     </div>
 
     <div class="card mt-4">
-        <div class="card-header">
+        <div class="card-header aps-cp-card-header">
             <h5 class="mb-0">Monthly Breakdown</h5>
         </div>
         <div class="card-body p-0">

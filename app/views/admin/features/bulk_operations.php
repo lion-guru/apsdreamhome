@@ -31,7 +31,7 @@ unset($_SESSION['bulk_result']);
     <div class="col-lg-6">
       <div class="card shadow-sm h-100">
         <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="fas fa-upload me-2"></i>Import CSV</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <form method="post" action="<?= BASE_URL ?>/admin/bulk-operations/import" enctype="multipart/form-data">
                               <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="mb-3">
@@ -57,7 +57,7 @@ unset($_SESSION['bulk_result']);
     <div class="col-lg-6">
       <div class="card shadow-sm h-100">
         <div class="card-header bg-success text-white"><h5 class="mb-0"><i class="fas fa-download me-2"></i>Export CSV</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <p class="text-muted">Download table data as CSV. Each table has a "View" link to filter and export.</p>
           <div class="list-group">
             <?php foreach ($tables as $t): ?>
@@ -80,7 +80,7 @@ unset($_SESSION['bulk_result']);
 
   <div class="card shadow-sm">
     <div class="card-header bg-white"><h5 class="mb-0">Allowed Tables Schema</h5></div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
       <p class="text-muted small">For security, only these tables are allowed for bulk operations. Column lists are enforced on import.</p>
       <div class="row">
         <?php foreach ($tables as $t): ?>

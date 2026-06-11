@@ -21,7 +21,7 @@
             </div>
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-battery-three-quarters me-2"></i>Battery Optimization</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach (($md['battery_optimization'] ?? []) as $k => $v): ?>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $k)) ?></span>
@@ -34,7 +34,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-rocket me-2"></i>Mobile Optimization</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach (($md['mobile_optimization'] ?? []) as $k => $v): ?>
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $k)) ?></span>
@@ -45,7 +45,7 @@
             </div>
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-hourglass-half me-2"></i>Latency Reduction</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($md['latency_reduction'] ?? []) as $k => $v): ?>
                             <tr><th class="w-50 text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $k)) ?></th><td><?= htmlspecialchars($v) ?></td></tr>

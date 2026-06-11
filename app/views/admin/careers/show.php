@@ -24,7 +24,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><?= $job['title'] ?></h5></div>
-                <div class="card-body"><p><?= nl2br($job['description'] ?? 'No description') ?></p></div>
+                <div class="card-body aps-cp-card-body"><p><?= nl2br($job['description'] ?? 'No description') ?></p></div>
             </div>
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-users me-2"></i>Applicants</h5></div>
@@ -49,7 +49,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3"><small class="text-muted d-block">Department</small><strong><?= $job['department'] ?? '-' ?></strong></div>
                     <div class="mb-3"><small class="text-muted d-block">Location</small><strong><?= $job['location'] ?? '-' ?></strong></div>
                     <div class="mb-3"><small class="text-muted d-block">Employment Type</small><span class="badge bg-info-subtle text-info rounded-pill px-3"><?= ucfirst(str_replace('_', ' ', $job['employment_type'] ?? 'Full Time')) ?></span></div>

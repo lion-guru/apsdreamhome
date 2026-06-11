@@ -63,7 +63,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                         <span class="badge bg-light text-dark fs-6"><?= ucfirst($ticket['category'] ?? 'general') ?></span>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted mb-3"><?= nl2br(htmlspecialchars($ticket['message'] ?? $ticket['description'] ?? '')) ?></p>
                     <hr>
                     <div class="row">
@@ -96,7 +96,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Conversation (<?= count($replies) ?> messages)</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($replies)): ?>
                         <p class="text-muted text-center py-3">No messages yet.</p>
                     <?php else: ?>
@@ -156,7 +156,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-user me-2"></i>Customer</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6><?= htmlspecialchars($ticket['customer_name'] ?? 'Unknown') ?></h6>
                     <p class="text-muted small mb-1"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($ticket['customer_email'] ?? '') ?></p>
                     <?php if (!empty($ticket['customer_phone'])): ?>
@@ -170,7 +170,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-sync me-2"></i>Update Status</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= $base ?>/admin/support-tickets/<?= (int)$ticket['id'] ?>/status">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
@@ -194,7 +194,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Assign To</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= $base ?>/admin/support-tickets/<?= (int)$ticket['id'] ?>/assign">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
@@ -219,7 +219,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm mb-0">
                         <tr><td class="text-muted">Number</td><td><strong><?= htmlspecialchars($ticket['ticket_number'] ?? '') ?></strong></td></tr>
                         <tr><td class="text-muted">Priority</td><td><span class="badge bg-<?= $priorityBadge ?>"><?= ucfirst($ticket['priority']) ?></span></td></tr>

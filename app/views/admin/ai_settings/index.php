@@ -53,8 +53,8 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body">
+<div class="card aps-cp-card">
+    <div class="card-body aps-cp-card-body">
         <h5 class="card-title mb-3"><i class="fas fa-key me-2"></i>Gemini API Key</h5>
         <div class="alert alert-info">
             <i class="fas fa-info-circle me-2"></i>Configure your Gemini API key in settings to enable AI features.

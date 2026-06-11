@@ -162,14 +162,14 @@ $base = BASE_URL;
 
 <body>
     <div class="login-card">
-        <div class="card-header">
+        <div class="card-header aps-cp-card-header">
             <div class="brand-icon">
                 <i class="fas fa-handshake"></i>
             </div>
             <h1 class="brand-title">APS Dream Home</h1>
             <p class="brand-subtitle">Associate Portal Login</p>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if ($error): ?>
                 <div class="error-alert d-flex align-items-center">
                     <i class="fas fa-exclamation-circle me-2"></i>

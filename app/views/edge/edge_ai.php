@@ -5,7 +5,7 @@
         <?php foreach (($edge_capabilities ?? []) as $key => $cap): ?>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $key)) ?></h5>
                         <span class="badge bg-<?= ($cap['supported'] ?? false) ? 'success' : 'secondary' ?> mb-2"><?= ($cap['supported'] ?? false) ? 'Supported' : 'Unsupported' ?></span>
                         <?php if (!empty($cap['models'])): ?>

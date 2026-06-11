@@ -16,7 +16,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-sliders-h me-2 text-success"></i>Calculate Your Property's Sustainability Score</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form id="sustainabilityForm" onsubmit="event.preventDefault(); calculateScore();">
                         <div class="row g-3">
                             <div class="col-md-6">

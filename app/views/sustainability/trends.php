@@ -18,7 +18,7 @@
         <?php foreach ($emerging as $key => $trend): ?>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <h5><?= ($trend['trend'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h5>
                         <span class="badge bg-<?= (($trend['growth_potential'] ?? '') === 'Very High' || ($trend['growth_potential'] ?? '') === 'High') ? 'success' : 'warning' ?>"><?= ($trend['growth_potential'] ?? '') ?></span>
@@ -36,7 +36,7 @@
 
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-lightbulb me-2 text-warning"></i>Market Insights</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row g-3">
                 <?php foreach ($insights as $key => $val): ?>
                 <div class="col-md-3">

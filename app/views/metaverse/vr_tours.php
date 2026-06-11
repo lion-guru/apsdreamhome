@@ -20,7 +20,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-filter me-2 text-primary"></i>Categories</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="list-group list-group-flush">
                         <a href="#" class="list-group-item list-group-item-action active d-flex justify-content-between">All Tours <span class="badge bg-primary rounded-pill"><?= count($featured_tours) ?></span></a>
                         <?php foreach ($tour_categories as $key => $cat): ?>
@@ -43,7 +43,7 @@
                 <?php foreach ($featured_tours as $tour): ?>
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0 h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex align-items-center mb-3">
                                 <div class="flex-shrink-0">
                                     <img src="<?= BASE_URL ?>/<?= htmlspecialchars($tour['thumbnail'] ?? 'assets/img/no-image.jpg') ?>" alt="" class="rounded" style="width:80px;height:80px;object-fit:cover;" onerror="this.src='<?= BASE_URL ?>/assets/img/no-image.jpg'">

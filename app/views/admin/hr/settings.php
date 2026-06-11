@@ -73,7 +73,7 @@ $page_title = $page_title ?? 'HR Settings';
             <div class="card-header bg-white py-3">
                 <h6 class="mb-0 fw-bold"><i class="fas fa-info-circle me-2 text-secondary"></i>Quick Links</h6>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row g-2">
                     <div class="col-md-3"><a href="<?= BASE_URL ?>/admin/hr/salary-structure" class="btn btn-outline-primary w-100"><i class="fas fa-money-bill-wave me-2"></i>Salary Structures</a></div>
                     <div class="col-md-3"><a href="<?= BASE_URL ?>/admin/hr/bonuses" class="btn btn-outline-success w-100"><i class="fas fa-gift me-2"></i>Bonuses</a></div>

@@ -144,7 +144,7 @@ $groupLabels = [
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <?php foreach ($svcConfigs as $cfg): ?>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold small">

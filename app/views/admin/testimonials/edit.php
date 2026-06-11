@@ -1,11 +1,11 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="card-title mb-0">Edit Testimonial</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form action="<?php echo BASE_URL; ?>/admin/testimonials/<?php echo $testimonial['id']; ?>/update" method="POST">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">

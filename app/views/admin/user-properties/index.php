@@ -55,7 +55,7 @@
 
     <!-- Filters -->
     <div class="card mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" class="row g-3">
                 <div class="col-md-4">
                     <input type="text" name="search" class="form-control" placeholder="Search by name, phone, email..." value="<?php echo htmlspecialchars($search); ?>">
@@ -84,8 +84,8 @@
     </div>
 
     <!-- Properties Table -->
-    <div class="card">
-        <div class="card-body">
+    <div class="card aps-cp-card">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($properties)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-inbox fa-4x text-muted mb-3"></i>

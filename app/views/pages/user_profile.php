@@ -12,7 +12,7 @@ $extraHead = '<style>
                 <div class="card-header bg-white">
                     <h4 class="mb-0"><i class="fas fa-user-cog me-2 text-primary"></i><?= __('user_profile_heading') ?></h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($error)): ?>
                         <div class="alert alert-danger alert-dismissible fade show">
                             <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error); ?>
@@ -78,7 +78,7 @@ $extraHead = '<style>
             </div>
 
             <div class="card mt-4 profile-card">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="mb-3"><i class="fas fa-shield-alt me-2 text-danger"></i><?= __('user_profile_security_heading') ?></h5>
                     <p class="text-muted"><?= __('user_profile_security_desc') ?></p>
                     <a href="<?php echo BASE_URL; ?>/user/logout" class="btn btn-outline-danger">

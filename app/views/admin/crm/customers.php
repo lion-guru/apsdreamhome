@@ -5,7 +5,7 @@
         <a href="<?= BASE_URL ?>/admin/crm/users/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add Customer</a>
     </div>
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($customers)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-users fa-4x text-muted mb-3"></i>

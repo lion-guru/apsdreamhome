@@ -38,7 +38,7 @@
             <div class="row g-3 mb-4">
                 <div class="col-md-3 col-sm-6">
                     <div class="card border-0 shadow-sm bg-gradient-primary text-white">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="text-uppercase small opacity-75">My Searches</div>
@@ -51,7 +51,7 @@
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <div class="card border-0 shadow-sm bg-gradient-success text-white">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="text-uppercase small opacity-75">Public Shared</div>
@@ -64,7 +64,7 @@
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <div class="card border-0 shadow-sm bg-gradient-warning text-white">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="text-uppercase small opacity-75">Favorites</div>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <div class="card border-0 shadow-sm bg-gradient-info text-white">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="text-uppercase small opacity-75">Entity Types</div>
@@ -195,7 +195,7 @@
                         <div class="card-header bg-primary text-white">
                             <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Save New Search</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <form method="POST" action="<?php echo BASE_URL; ?>/admin/saved-searches/store">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="mb-3">
@@ -239,7 +239,7 @@
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-history me-2 text-info"></i>Recent Activity</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <?php if (empty($history)): ?>
                                 <p class="text-muted text-center small mb-0">No recent search activity.</p>
                             <?php else: ?>

@@ -38,7 +38,7 @@ ob_start();
     <div class="row g-3">
         <div class="col-md-9">
             <div class="card border-0 shadow-sm">
-                <div class="card-body" id="messagesContainer" style="height: 60vh; overflow-y: auto; background: #f8f9fa;">
+                <div class="card-body aps-cp-card-body" id="messagesContainer" style="height: 60vh; overflow-y: auto; background: #f8f9fa;">
                     <?php if (empty($messages)): ?>
                         <p class="text-center text-muted py-5">No messages yet</p>
                     <?php else: ?>
@@ -95,7 +95,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Session Info</h6>
                     <p class="small mb-1"><strong>Created:</strong> <?= date('M j, H:i', strtotime($session['created_at'])) ?></p>
                     <p class="small mb-1"><strong>Source:</strong> <?= htmlspecialchars($session['source']) ?></p>

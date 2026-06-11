@@ -19,7 +19,7 @@ $page_description = 'Manually adjust lead score';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Edit Lead Score for <?php echo htmlspecialchars($leadScore['lead_name'] ?? 'Unknown'); ?></h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/customer-lead/lead-scores/update/<?php echo $leadScore['id']; ?>">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="row">

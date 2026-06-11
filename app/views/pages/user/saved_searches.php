@@ -45,7 +45,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon blue me-3"><i class="fas fa-bookmark"></i></div>
                         <div>
@@ -58,7 +58,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon green me-3"><i class="fas fa-bell"></i></div>
                         <div>
@@ -71,7 +71,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon orange me-3"><i class="fas fa-paper-plane"></i></div>
                         <div>
@@ -89,7 +89,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0"><i class="fas fa-list text-primary me-2"></i><?= __('saved_section_my', null, 'My Saved Searches') ?></h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($searches)): ?>
                 <div class="text-center py-5">
                     <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 100px; height: 100px;">

@@ -22,7 +22,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Payout Information</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3"><div class="col-sm-5 text-muted">Payout ID</div><div class="col-sm-7"><strong>#<?= $payout['id'] ?></strong></div></div>
                     <div class="row mb-3"><div class="col-sm-5 text-muted">User</div><div class="col-sm-7"><?= $payout['user_name'] ?? 'User #'.$payout['user_id'] ?></div></div>
                     <div class="row mb-3"><div class="col-sm-5 text-muted">Amount</div><div class="col-sm-7"><strong class="text-success">₹<?= number_format($payout['amount'] ?? 0, 2) ?></strong></div></div>
@@ -36,7 +36,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3"><div class="col-sm-5 text-muted">Payment Method</div><div class="col-sm-7"><?= $payout['payment_method'] ?? 'Bank Transfer' ?></div></div>
                     <div class="row mb-3"><div class="col-sm-5 text-muted">Transaction ID</div><div class="col-sm-7"><?= $payout['transaction_id'] ?? '-' ?></div></div>
                     <div class="row mb-3"><div class="col-sm-5 text-muted">Bank Account</div><div class="col-sm-7"><?= $payout['bank_account'] ?? '-' ?></div></div>

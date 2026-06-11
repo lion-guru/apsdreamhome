@@ -20,7 +20,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-cog me-2 text-warning"></i>Space Configuration</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= $base ?? BASE_URL ?>metaverse/create-space">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-3">
@@ -64,7 +64,7 @@
             <h5 class="mb-3"><i class="fas fa-th-large me-2 text-muted"></i>Available Environments</h5>
             <?php foreach ($space_environments as $key => $env): ?>
             <div class="card shadow-sm border-0 mb-3">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6><?= ($env['name'] ?? $key) ?></h6>
                     <p class="small text-muted mb-2"><?= ($env['description'] ?? '') ?></p>
                     <small class="text-muted"><i class="fas fa-user me-1"></i>Capacity: <?= ($env['capacity'] ?? 20) ?></small>

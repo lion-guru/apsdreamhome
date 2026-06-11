@@ -37,7 +37,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                         <span class="badge bg-<?= $color ?> fs-6"><?= ucfirst(str_replace('_', ' ', $registry['status'])) ?></span>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_booking_label') ?></div>
@@ -82,7 +82,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                 <div class="card-header bg-white border-bottom">
                     <h6 class="mb-0"><i class="fas fa-receipt me-2"></i><?= __('admin_cost_breakdown') ?></h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm mb-0">
                         <tbody>
                             <tr>
@@ -117,7 +117,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                 <div class="card-header bg-white border-bottom">
                     <h6 class="mb-0"><i class="fas fa-sync-alt me-2"></i><?= __('admin_update_status') ?></h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/noc-registry/registries/update-status">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <input type="hidden" name="registry_id" value="<?= $registry['id'] ?>">
@@ -155,7 +155,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                 <div class="card-header bg-white border-bottom">
                     <h6 class="mb-0"><i class="fas fa-calculator me-2"></i><?= __('admin_stamp_duty') ?> (UP)</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-1">
                         <span class="small"><?= __('admin_stamp_duty_colon') ?></span>
                         <span class="fw-bold">₹<?= number_format($stamp_duty_calc['stamp_duty'] ?? 0, 0) ?></span>

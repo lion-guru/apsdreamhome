@@ -18,7 +18,7 @@
         <div class="col-12">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="fas fa-bullseye me-2"></i>2030 Goals</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <?php foreach ($goals as $key => $goal): ?>
                         <div class="col-md-3">
@@ -39,7 +39,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-info text-white"><h5 class="mb-0"><i class="fas fa-microchip me-2"></i>Technology Innovations</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($innovations as $key => $innovation): ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <h6><?= ucfirst(str_replace('_', ' ', $key)) ?></h6>
@@ -53,7 +53,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-success text-white"><h5 class="mb-0"><i class="fas fa-globe me-2"></i>Ecosystem Transformation</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($transform as $key => $item): ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <h6><?= ucfirst(str_replace('_', ' ', $key)) ?></h6>

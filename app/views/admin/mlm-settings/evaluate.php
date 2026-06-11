@@ -14,7 +14,7 @@ $total_count = $total_count ?? 0;
     <div class="row g-4 mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm bg-success text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Promoted</h6>
                     <h3 class="mb-0"><?php echo $promoted_count; ?> / <?php echo $total_count; ?></h3>
                 </div>
@@ -22,7 +22,7 @@ $total_count = $total_count ?? 0;
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm bg-info text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Total Evaluated</h6>
                     <h3 class="mb-0"><?php echo $total_count; ?></h3>
                 </div>
@@ -30,7 +30,7 @@ $total_count = $total_count ?? 0;
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm bg-warning text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>To Re-run</h6>
                     <a href="<?php echo BASE_URL; ?>/admin/mlm-settings/evaluate" class="btn btn-light btn-sm mt-2">Re-evaluate Now</a>
                 </div>

@@ -33,8 +33,8 @@
                 <!-- Basic Info -->
                 <div class="col-md-6">
                     <div class="card mb-4">
-                        <div class="card-header"><h5 class="mb-0">Basic Information</h5></div>
-                        <div class="card-body">
+                        <div class="card-header aps-cp-card-header"><h5 class="mb-0">Basic Information</h5></div>
+                        <div class="card-body aps-cp-card-body">
                             <table class="table table-bordered">
                                 <tr><th style="width:160px">Plot Number</th><td><?= htmlspecialchars($plot['plot_number'] ?? '') ?></td></tr>
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector']) : '' ?></td></tr>
@@ -54,8 +54,8 @@
                 <!-- Dimensions & Area -->
                 <div class="col-md-6">
                     <div class="card mb-4">
-                        <div class="card-header"><h5 class="mb-0">Dimensions & Area</h5></div>
-                        <div class="card-body">
+                        <div class="card-header aps-cp-card-header"><h5 class="mb-0">Dimensions & Area</h5></div>
+                        <div class="card-body aps-cp-card-body">
                             <table class="table table-bordered">
                                 <tr><th style="width:160px">Dimensions</th>
                                     <td>
@@ -88,7 +88,7 @@
                         <span class="badge bg-warning text-dark fs-6">Negotiated Price Active</span>
                     <?php endif; ?>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <div class="text-muted small">Base Price/sqft</div>
@@ -118,8 +118,8 @@
             <!-- Price History -->
             <?php $priceHistory = $priceHistory ?? []; if (!empty($priceHistory)): ?>
             <div class="card mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-history"></i> Price Change History</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-history"></i> Price Change History</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-striped">
                         <thead><tr><th>Date</th><th>Old Price</th><th>New Price</th><th>Change Type</th><th>Reason</th><th>Changed By</th></tr></thead>
                         <tbody>
@@ -142,8 +142,8 @@
             <!-- Features -->
             <?php if (!empty($plot['description']) || ($plot['corner_plot'] ?? false) || ($plot['park_facing'] ?? false)): ?>
             <div class="card mb-4">
-                <div class="card-header"><h5 class="mb-0">Features & Description</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0">Features & Description</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <?php if ($plot['corner_plot'] ?? false): ?>
                             <span class="badge bg-primary me-2 fs-6">Corner Plot</span>
@@ -162,8 +162,8 @@
             <!-- Related Bookings -->
             <?php $bookings = $bookings ?? []; if (!empty($bookings)): ?>
             <div class="card mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-book"></i> Related Bookings</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-book"></i> Related Bookings</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-striped">
                         <thead><tr><th>Booking #</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
                         <tbody>
@@ -185,8 +185,8 @@
             <!-- Status History -->
             <?php $history = $history ?? []; if (!empty($history)): ?>
             <div class="card mb-4">
-                <div class="card-header"><h5 class="mb-0">Status History</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0">Status History</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-striped">
                         <thead><tr><th>Date</th><th>Old Status</th><th>New Status</th><th>Changed By</th><th>Reason</th></tr></thead>
                         <tbody>

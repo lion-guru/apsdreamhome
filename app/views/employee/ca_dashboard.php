@@ -53,7 +53,7 @@
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-file-invoice-dollar me-2"></i>Recent Transactions</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($recentTransactions)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
                             <thead><tr><th>Date</th><th>Description</th><th class="text-end">Amount</th><th>Status</th></tr></thead>
@@ -77,7 +77,7 @@
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Financial Summary</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($financialSummary)): ?>
                         <?php foreach ($financialSummary as $item): ?>
                         <div class="d-flex justify-content-between align-items-center mb-2">

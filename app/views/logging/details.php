@@ -8,7 +8,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Log Entry</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-borderless table-responsive">
                         <tr><td style="width:140px"><strong>Level</strong></td><td><span class="badge bg-<?= ($log['level'] ?? 'info') === 'error' ? 'danger' : (($log['level'] ?? 'info') === 'warning' ? 'warning' : 'info') ?>"><?= htmlspecialchars($log['level'] ?? 'info') ?></span></td></tr>
                         <tr><td><strong>Message</strong></td><td><?= htmlspecialchars($log['message'] ?? '') ?></td></tr>

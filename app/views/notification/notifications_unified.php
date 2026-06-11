@@ -34,7 +34,7 @@
                     $isImportant = !empty($notification['is_important']);
                 ?>
                 <div class="card mb-2 notification-item <?= $isUnread ? 'border-start border-start-4 border-primary' : '' ?> <?= $isImportant ? 'border-warning' : '' ?>" data-status="<?= $isUnread ? 'unread' : 'read' ?>" data-important="<?= $isImportant ? 1 : 0 ?>">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex align-items-start">
                             <div class="me-3">
                                 <div class="avatar-sm bg-<?= match($notification['type'] ?? 'info') { 'success' => 'success', 'warning' => 'warning', 'danger' => 'danger', default => 'primary' } ?> text-white rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;">

@@ -7,8 +7,8 @@
 <div class="row g-3">
     <div class="col-md-6">
         <div class="card shadow-sm h-100">
-            <div class="card-header"><i class="fas fa-user me-2"></i>Lead Information</div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><i class="fas fa-user me-2"></i>Lead Information</div>
+            <div class="card-body aps-cp-card-body">
                 <table class="table table-sm mb-0">
                     <tr><th style="width:120px">Name</th><td><?= htmlspecialchars($call['lead_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
                     <tr><th>Phone</th><td><?= htmlspecialchars($call['phone'] ?: ($call['lead_phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td></tr>
@@ -22,8 +22,8 @@
     </div>
     <div class="col-md-6">
         <div class="card shadow-sm h-100">
-            <div class="card-header"><i class="fas fa-calendar me-2"></i>Schedule Details</div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><i class="fas fa-calendar me-2"></i>Schedule Details</div>
+            <div class="card-body aps-cp-card-body">
                 <table class="table table-sm mb-0">
                     <tr><th style="width:120px">Agent</th><td><i class="fas fa-robot me-1 text-primary"></i><?= htmlspecialchars($call['agent_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
                     <tr><th>Date/Time</th><td><?= date('d M Y', strtotime($call['scheduled_date'] ?? '')) ?> at <?= date('h:i A', strtotime($call['scheduled_time'] ?? '')) ?></td></tr>
@@ -50,8 +50,8 @@
 
 <?php if ($session): ?>
 <div class="card shadow-sm mt-3">
-    <div class="card-header"><i class="fas fa-phone me-2"></i>Call Session #<?= $session['id'] ?? '' ?></div>
-    <div class="card-body">
+    <div class="card-header aps-cp-card-header"><i class="fas fa-phone me-2"></i>Call Session #<?= $session['id'] ?? '' ?></div>
+    <div class="card-body aps-cp-card-body">
         <div class="row mb-3">
             <div class="col-md-3"><strong>Status:</strong> <span class="badge bg-<?= ($session['status'] ?? '') === 'completed' ? 'success' : 'warning' ?>"><?= $session['status'] ?? 'N/A' ?></span></div>
             <div class="col-md-3"><strong>Duration:</strong> <?= gmdate('i:s', (int)($session['duration_seconds'] ?? 0)) ?> min</div>
@@ -76,8 +76,8 @@
 
 <?php if ($extractedLead): ?>
 <div class="card shadow-sm mt-3">
-    <div class="card-header"><i class="fas fa-database me-2"></i>Extracted Lead Data</div>
-    <div class="card-body">
+    <div class="card-header aps-cp-card-header"><i class="fas fa-database me-2"></i>Extracted Lead Data</div>
+    <div class="card-body aps-cp-card-body">
         <table class="table table-sm mb-0">
             <tr><th style="width:150px">Name</th><td><?= htmlspecialchars($extractedLead['extracted_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
             <tr><th>Phone</th><td><?= htmlspecialchars($extractedLead['extracted_phone'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td></tr>
@@ -92,7 +92,7 @@
 <?php endif; ?>
 
 <div class="card shadow-sm mt-3">
-    <div class="card-header"><i class="fas fa-history me-2"></i>Call History for this Lead</div>
+    <div class="card-header aps-cp-card-header"><i class="fas fa-history me-2"></i>Call History for this Lead</div>
     <div class="card-body p-0">
         <?php if (empty($callHistory)): ?>
         <div class="text-center text-muted py-3">No previous call history</div>
@@ -121,8 +121,8 @@
 </div>
 
 <div class="card shadow-sm mt-3">
-    <div class="card-header"><i class="fas fa-clipboard-list me-2"></i>Result Notes</div>
-    <div class="card-body">
+    <div class="card-header aps-cp-card-header"><i class="fas fa-clipboard-list me-2"></i>Result Notes</div>
+    <div class="card-body aps-cp-card-body">
         <p class="mb-0"><?= nl2br(htmlspecialchars($call['result_notes'] ?? 'No notes recorded', ENT_QUOTES, 'UTF-8')) ?></p>
     </div>
 </div>

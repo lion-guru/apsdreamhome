@@ -15,7 +15,7 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'status' => '', 'last_r
         <div class="col-lg-8">
             <div class="card shadow mb-4">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary"><?= htmlspecialchars($task['name'] ?? '') ?></h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-bordered">
                         <tr><th style="width:200px">Task Name</th><td><?= htmlspecialchars($task['name'] ?? '') ?></td></tr>
                         <tr><th>Type</th><td><span class="badge bg-info"><?= htmlspecialchars($task['type'] ?? '') ?></span></td></tr>
@@ -36,7 +36,7 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'status' => '', 'last_r
             </div>
             <div class="card shadow">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Execution Logs</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $logs = $task['logs'] ?? []; ?>
                     <?php if (empty($logs)): ?>
                         <p class="text-muted text-center py-3"><i class="fas fa-history fa-2x d-block mb-2"></i>No execution logs yet.</p>
@@ -65,7 +65,7 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'status' => '', 'last_r
         <div class="col-lg-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Actions</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= $base ?>/admin/scheduler/task/<?= $task['id'] ?>/run" class="mb-2">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button type="submit" class="btn btn-success w-100" onclick="return confirm('Run this task now?')"><i class="fas fa-play me-1"></i>Run Now</button>

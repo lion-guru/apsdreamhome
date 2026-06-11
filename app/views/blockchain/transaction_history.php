@@ -3,7 +3,7 @@
     <h4 class="mb-4"><i class="fas fa-history me-2"></i><?= htmlspecialchars($pageTitle) ?></h4>
     <div class="card border-0 shadow-sm mb-3">
         <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-building me-2"></i>Property</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <p class="mb-1"><strong><?= htmlspecialchars($property['title'] ?? '-') ?></strong></p>
             <p class="mb-0 text-muted"><?= htmlspecialchars($property['city'] ?? '') ?></p>
         </div>

@@ -20,10 +20,10 @@
         <div class="text-center py-5 text-muted"><i class="fas fa-chart-bar fa-4x d-block mb-3"></i><h5>Project not found</h5></div>
     <?php else: ?>
     <div class="row g-4 mb-4">
-        <div class="col-md-3"><div class="card bg-primary text-white border-0 shadow-sm"><div class="card-body"><h6>Total Units</h6><h3 class="mb-0"><?= number_format($project['total_units'] ?? 0) ?></h3></div></div></div>
-        <div class="col-md-3"><div class="card bg-success text-white border-0 shadow-sm"><div class="card-body"><h6>Sold</h6><h3 class="mb-0"><?= number_format(($project['total_units'] ?? 0) - ($project['available_units'] ?? 0)) ?></h3></div></div></div>
-        <div class="col-md-3"><div class="card bg-warning text-white border-0 shadow-sm"><div class="card-body"><h6>Available</h6><h3 class="mb-0"><?= number_format($project['available_units'] ?? 0) ?></h3></div></div></div>
-        <div class="col-md-3"><div class="card bg-info text-white border-0 shadow-sm"><div class="card-body"><h6>Booking Value</h6><h3 class="mb-0">₹<?= number_format($bookingValue ?? 0, 2) ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-primary text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Total Units</h6><h3 class="mb-0"><?= number_format($project['total_units'] ?? 0) ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-success text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Sold</h6><h3 class="mb-0"><?= number_format(($project['total_units'] ?? 0) - ($project['available_units'] ?? 0)) ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-warning text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Available</h6><h3 class="mb-0"><?= number_format($project['available_units'] ?? 0) ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-info text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Booking Value</h6><h3 class="mb-0">₹<?= number_format($bookingValue ?? 0, 2) ?></h3></div></div></div>
     </div>
     <div class="row">
         <div class="col-md-6 mb-4"><div class="card shadow-sm border-0 h-100"><div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Monthly Bookings</h5></div><div class="card-body text-center py-4 text-muted"><i class="fas fa-chart-line fa-4x d-block mb-3"></i>Monthly booking trend chart</div></div></div>

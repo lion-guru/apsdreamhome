@@ -41,10 +41,10 @@ unset($_SESSION['success'], $_SESSION['error']);
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="card mb-4">
-            <div class="card-header">
+            <div class="card-header aps-cp-card-header">
                 <h5 class="card-title"><i class="fas fa-key me-2"></i>Change Password</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form action="<?php echo BASE_URL; ?>/admin/profile/change-password" method="POST">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
@@ -85,11 +85,11 @@ unset($_SESSION['success'], $_SESSION['error']);
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
+        <div class="card aps-cp-card">
+            <div class="card-header aps-cp-card-header">
                 <h5 class="card-title"><i class="fas fa-shield-alt me-2"></i>Security Tips</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <ul class="mb-0">
                     <li class="mb-2">Use a strong password with at least 8 characters</li>
                     <li class="mb-2">Include uppercase, lowercase, numbers, and symbols</li>

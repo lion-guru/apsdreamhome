@@ -14,7 +14,7 @@
     <div class="row g-4 mb-4">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted small text-uppercase fw-bold mb-3">Total Expenses (Monthly)</h6>
                     <h2 class="fw-bold mb-0 text-danger">₹<?php echo number_format(45280, 2); ?></h2>
                     <div class="mt-3">
@@ -25,7 +25,7 @@
         </div>
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted small text-uppercase fw-bold mb-3">Upcoming Payments</h6>
                     <h2 class="fw-bold mb-0 text-warning">₹<?php echo number_format(12500, 2); ?></h2>
                     <div class="mt-3">

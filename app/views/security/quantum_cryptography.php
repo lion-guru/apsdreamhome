@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Current Vulnerable Algorithms</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Algorithm</th><th>Key Size</th><th>Quantum Vulnerable</th><th>Estimated Break Time</th></tr></thead>
@@ -27,7 +27,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-shield text-success me-2"></i>Quantum-Resistant Solutions</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light"><tr><th>Algorithm</th><th>Type</th><th>Security Level</th><th>Status</th></tr></thead>
@@ -49,7 +49,7 @@
         <div class="col-md-7">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-road me-2"></i>Migration Timeline</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($timeline)): ?>
                         <?php foreach ($timeline as $period => $items): ?>
                             <div class="mb-3">
@@ -69,7 +69,7 @@
         <div class="col-md-5">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Implementation Status</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $progress_items = ['algorithms_implemented' => 'Algorithms Implemented', 'systems_migrated' => 'Systems Migrated', 'testing_completed' => 'Testing Completed', 'performance_validated' => 'Performance Validated']; ?>
                     <?php foreach ($progress_items as $key => $label): ?>
                         <?php $val = $impl_status[$key] ?? '0%'; $pct = (int) $val; ?>

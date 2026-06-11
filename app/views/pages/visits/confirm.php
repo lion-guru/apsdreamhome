@@ -15,7 +15,7 @@ $visit = $visit ?? null;
 
                     <?php if ($visit): ?>
                         <div class="card bg-light mb-4">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <small class="text-muted d-block">Visit ID</small>

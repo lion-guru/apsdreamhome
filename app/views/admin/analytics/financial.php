@@ -22,7 +22,7 @@
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><i class="fas fa-percent fa-2x text-info mb-2"></i><h6>Profit Margin</h6><h4 class="text-info mb-0"><?= ($totalRevenue ?? 0) > 0 ? number_format((($totalRevenue - ($totalExpenses ?? 0)) / $totalRevenue) * 100, 1) : 0 ?>%</h4></div></div></div>
     </div>
     <div class="row">
-        <div class="col-md-6 mb-4"><div class="card shadow-sm border-0 h-100"><div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-arrow-up me-2 text-success"></i>Revenue Breakdown</h5></div><div class="card-body"><div class="text-center py-4 text-muted"><i class="fas fa-chart-simple fa-4x d-block mb-3"></i>Revenue chart area</div></div></div></div>
-        <div class="col-md-6 mb-4"><div class="card shadow-sm border-0 h-100"><div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-arrow-down me-2 text-danger"></i>Expense Breakdown</h5></div><div class="card-body"><div class="text-center py-4 text-muted"><i class="fas fa-chart-pie fa-4x d-block mb-3"></i>Expense chart area</div></div></div></div>
+        <div class="col-md-6 mb-4"><div class="card shadow-sm border-0 h-100"><div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-arrow-up me-2 text-success"></i>Revenue Breakdown</h5></div><div class="card-body aps-cp-card-body"><div class="text-center py-4 text-muted"><i class="fas fa-chart-simple fa-4x d-block mb-3"></i>Revenue chart area</div></div></div></div>
+        <div class="col-md-6 mb-4"><div class="card shadow-sm border-0 h-100"><div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-arrow-down me-2 text-danger"></i>Expense Breakdown</h5></div><div class="card-body aps-cp-card-body"><div class="text-center py-4 text-muted"><i class="fas fa-chart-pie fa-4x d-block mb-3"></i>Expense chart area</div></div></div></div>
     </div>
 </div>

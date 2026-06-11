@@ -32,7 +32,7 @@ $ratingBadge = function($rating) {
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
@@ -49,7 +49,7 @@ $ratingBadge = function($rating) {
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-success bg-opacity-10 text-success rounded p-3">
@@ -66,7 +66,7 @@ $ratingBadge = function($rating) {
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-warning bg-opacity-10 text-warning rounded p-3">
@@ -83,7 +83,7 @@ $ratingBadge = function($rating) {
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-success bg-opacity-10 text-success rounded p-3">
@@ -102,7 +102,7 @@ $ratingBadge = function($rating) {
 
     <!-- Filters -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?php echo BASE_URL; ?>/admin/telecaller/performance" class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Telecaller</label>

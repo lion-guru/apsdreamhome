@@ -23,7 +23,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="card-header bg-white">
                 <h5 class="mb-0">Plan Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-3">
                         <p class="text-muted mb-1">Booking</p>
@@ -81,7 +81,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Payment Schedule</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($schedule)): ?>
                             <div class="table-responsive">
                                 <table class="table table-hover table-sm">
@@ -134,7 +134,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-history me-2"></i>Payment History</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($payments)): ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach ($payments as $payment): ?>

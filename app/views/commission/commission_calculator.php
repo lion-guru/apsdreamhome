@@ -85,10 +85,10 @@
         <div class="row">
             <div class="col-lg-8 mx-auto">
                 <div class="calculator-card">
-                    <div class="card-header">
+                    <div class="card-header aps-cp-card-header">
                         <h4>📊 Earnings Parameters</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <form id="commissionCalculator">
                             <div class="row g-4">
                                 <!-- Property Sale Amount -->
@@ -250,10 +250,10 @@
         <div class="row mt-5">
             <div class="col-lg-12">
                 <div class="breakdown-card">
-                    <div class="card-header">
+                    <div class="card-header aps-cp-card-header">
                         <h4>📈 Commission Breakdown</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <div class="breakdown-item">

@@ -17,7 +17,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="col-md-8">
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-header bg-white"><h5 class="mb-0">General Settings</h5></div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="mb-3">
                                 <label class="form-label">Bot Name</label>
                                 <input type="text" name="bot_name" class="form-control" value="<?php echo htmlspecialchars($config['bot_name'] ?? 'APS Assistant'); ?>">
@@ -47,7 +47,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-header bg-white"><h5 class="mb-0">API Configuration</h5></div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="mb-3">
                                 <label class="form-label">Provider</label>
                                 <input type="text" class="form-control" value="<?php echo htmlspecialchars($config['provider'] ?? 'N/A'); ?>" readonly>

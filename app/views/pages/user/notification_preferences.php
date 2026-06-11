@@ -56,7 +56,7 @@ $frequencyOptions = [
     <form method="POST" action="<?= BASE_URL ?>/user/notification-preferences" id="notif-prefs-form">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
 
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <!-- Communication Channels summary -->
             <div class="mb-4">
                 <h5 class="mb-3"><i class="fas fa-broadcast-tower me-2 text-info"></i><?= __('notif_channels_title', null, 'Communication Channels') ?></h5>

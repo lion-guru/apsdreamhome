@@ -172,7 +172,7 @@ if ($project) {
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0"><i class="fas fa-headset me-2"></i>Get In Touch</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="text-primary mb-3">Interested in this project?</h5>
                         <div class="d-grid gap-2">
                             <a href="tel:<?= $phoneRaw ?>" class="btn btn-success btn-lg">
@@ -196,7 +196,7 @@ if ($project) {
                     <div class="card-header bg-dark text-white">
                         <h5 class="mb-0"><i class="fas fa-building me-2"></i>Project Details</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="table-responsive"><table class="table table-borderless table-sm table-responsive">
                             <tr>
                                 <td><strong>Project Name:</strong></td>
@@ -252,7 +252,7 @@ if ($project) {
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Address</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="mb-1"><strong><?php echo htmlspecialchars($project->site_name); ?></strong></p>
                         <p class="mb-1"><?php echo htmlspecialchars($project->location ?? ''); ?></p>
                         <p class="mb-0">
@@ -268,7 +268,7 @@ if ($project) {
                     <div class="card-header bg-success text-white">
                         <h5 class="mb-0"><i class="fas fa-directions me-2"></i>Nearby Places</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row">
                             <div class="col-6 mb-3">
                                 <i class="fas fa-train text-muted me-2"></i>
@@ -303,7 +303,7 @@ if ($project) {
         <!-- Google Map -->
         <div class="row mt-4">
             <div class="col-12">
-                <div class="card">
+                <div class="card aps-cp-card">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0"><i class="fas fa-map-marked me-2"></i>Location on Map</h5>
                     </div>
@@ -347,7 +347,7 @@ if ($project) {
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?php echo $baseUrl; ?>/assets/images/placeholder/property.svg'">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6 class="card-title"><?php echo htmlspecialchars($related->site_name); ?></h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($related->district ?? ''); ?></p>
                             <a href="<?php echo $baseUrl; ?>/projects/<?php echo $relSlug; ?>" class="btn btn-sm btn-primary">View Details</a>
@@ -359,7 +359,7 @@ if ($project) {
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suryoday Colony" style="height: 150px; object-fit: cover;" />
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Suryoday Colony</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <a href="<?php echo $baseUrl; ?>/projects/suryoday-colony" class="btn btn-sm btn-primary">View Details</a>
@@ -369,7 +369,7 @@ if ($project) {
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunath Nagri" style="height: 150px; object-fit: cover;" loading="lazy">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Raghunath Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <a href="<?php echo $baseUrl; ?>/projects/raghunath-nagri" class="btn btn-sm btn-primary">View Details</a>
@@ -379,7 +379,7 @@ if ($project) {
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri" style="height: 150px; object-fit: cover;" />
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Braj Radha Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <a href="<?php echo $baseUrl; ?>/projects/braj-radha-nagri" class="btn btn-sm btn-primary">View Details</a>

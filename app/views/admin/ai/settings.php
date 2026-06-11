@@ -20,7 +20,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-brain me-2"></i>AI Configuration</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($ai_config)): ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach ($ai_config as $config): ?>
@@ -50,7 +50,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-toggle-on me-2"></i>Feature Toggles</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3 form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="leadScoring" checked>
                             <label class="form-check-label" for="leadScoring">AI Lead Scoring</label>

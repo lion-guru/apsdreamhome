@@ -11,8 +11,8 @@
     <div class="row">
         <div class="col-md-8">
             <div class="card mb-4">
-                <div class="card-header"><h5>Allocation Information</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5>Allocation Information</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <strong>Allocation #:</strong> <?= htmlspecialchars($allocation['allocation_number'] ?? 'N/A') ?>
@@ -48,9 +48,9 @@
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header"><h5>Payment History</h5></div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><h5>Payment History</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($payment_history)): ?>
                     <table class="table table-striped">
                         <thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead>
@@ -74,8 +74,8 @@
 
         <div class="col-md-4">
             <div class="card mb-3">
-                <div class="card-header"><h5>Customer</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5>Customer</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <p><strong>Name:</strong> <?= htmlspecialchars($allocation['customer_name'] ?? 'N/A') ?></p>
                     <p><strong>Email:</strong> <?= htmlspecialchars($allocation['customer_email'] ?? 'N/A') ?></p>
                     <p><strong>Phone:</strong> <?= htmlspecialchars($allocation['customer_phone'] ?? 'N/A') ?></p>
@@ -83,8 +83,8 @@
             </div>
 
             <div class="card mb-3">
-                <div class="card-header"><h5>Property</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5>Property</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <p><strong>Title:</strong> <?= htmlspecialchars($allocation['property_title'] ?? 'N/A') ?></p>
                     <p><strong>Plot #:</strong> <?= htmlspecialchars($allocation['plot_number'] ?? 'N/A') ?></p>
                     <p><strong>Area:</strong> <?= number_format($allocation['area_sqft'] ?? 0) ?> sq.ft.</p>
@@ -92,9 +92,9 @@
             </div>
 
             <?php if (($allocation['status'] ?? '') === 'pending'): ?>
-            <div class="card">
-                <div class="card-header"><h5>Actions</h5></div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><h5>Actions</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/confirm" class="btn btn-success w-100 mb-2" onclick="return confirm('Confirm this allocation?')">Confirm Allocation</a>
                     <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/cancel" class="btn btn-danger w-100" onclick="return confirm('Cancel this allocation?')">Cancel Allocation</a>
                 </div>

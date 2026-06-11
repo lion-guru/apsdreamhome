@@ -4,7 +4,7 @@
         <a href="<?= $base ?? BASE_URL ?>/logging/dashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= $base ?? BASE_URL ?>/logging/search" class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Keyword</label>

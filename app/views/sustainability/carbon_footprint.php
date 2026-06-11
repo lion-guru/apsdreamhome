@@ -17,22 +17,22 @@
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body"><h3 class="text-danger mb-0"><?= ($current_footprint['total_carbon_footprint'] ?? 'N/A') ?></h3><small class="text-muted">Total Carbon Footprint</small></div>
+                <div class="card-body aps-cp-card-body"><h3 class="text-danger mb-0"><?= ($current_footprint['total_carbon_footprint'] ?? 'N/A') ?></h3><small class="text-muted">Total Carbon Footprint</small></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body"><h3 class="text-warning mb-0"><?= ($current_footprint['per_user_footprint'] ?? 'N/A') ?></h3><small class="text-muted">Per User</small></div>
+                <div class="card-body aps-cp-card-body"><h3 class="text-warning mb-0"><?= ($current_footprint['per_user_footprint'] ?? 'N/A') ?></h3><small class="text-muted">Per User</small></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body"><h3 class="text-info mb-0"><?= ($current_footprint['data_center_emissions'] ?? 'N/A') ?></h3><small class="text-muted">Data Center</small></div>
+                <div class="card-body aps-cp-card-body"><h3 class="text-info mb-0"><?= ($current_footprint['data_center_emissions'] ?? 'N/A') ?></h3><small class="text-muted">Data Center</small></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body"><h3 class="text-secondary mb-0"><?= ($current_footprint['user_activity_emissions'] ?? 'N/A') ?></h3><small class="text-muted">User Activity</small></div>
+                <div class="card-body aps-cp-card-body"><h3 class="text-secondary mb-0"><?= ($current_footprint['user_activity_emissions'] ?? 'N/A') ?></h3><small class="text-muted">User Activity</small></div>
             </div>
         </div>
     </div>
@@ -41,7 +41,7 @@
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-chart-pie me-2 text-danger"></i>Emission Breakdown</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $breakdown = $current_footprint['breakdown'] ?? []; ?>
                     <?php if (!empty($breakdown)): ?>
                     <div class="table-responsive"><div class="table-responsive"><table class="table table-responsive"><thead class="table-light"><tr><th>Source</th><th>Emissions</th><th>Percentage</th></tr></thead><tbody>
@@ -56,7 +56,7 @@
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-certificate me-2 text-success"></i>Certifications</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($certifications as $cert): ?>
                     <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
                         <div><strong><?= ($cert['certification'] ?? '') ?></strong><br><small class="text-muted">Status: <?= ($cert['status'] ?? '') ?></small></div>
@@ -70,7 +70,7 @@
         <div class="col-lg-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-arrow-down me-2 text-success"></i>Reduction Strategies</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($reduction_strategies as $key => $strategy): ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <h6><?= ucfirst(str_replace('_', ' ', $key)) ?></h6>
@@ -85,7 +85,7 @@
         <div class="col-lg-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-tree me-2 text-success"></i>Offset Programs</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($offset_programs as $key => $program): ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <h6><?= ($program['program'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h6>

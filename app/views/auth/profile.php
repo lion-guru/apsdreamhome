@@ -8,7 +8,7 @@
     <div class="row g-4">
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3"><div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width:100px;height:100px;font-size:2.5rem"><?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?></div></div>
                     <h5><?= htmlspecialchars($user['name'] ?? '-') ?></h5>
                     <p class="text-muted small mb-1"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($user['email'] ?? '-') ?></p>
@@ -21,7 +21,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Profile</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>user/profile">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -59,7 +59,7 @@
             </div>
             <div class="card border-0 shadow-sm mt-4">
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Account Info</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Member Since</th><td><?= htmlspecialchars($user['created_at'] ?? 'N/A') ?></td></tr>
                         <tr><th>Account Status</th><td><span class="badge bg-success"><?= htmlspecialchars(ucfirst($user['status'] ?? 'Active')) ?></span></td></tr>

@@ -96,7 +96,7 @@ $currentKeys = $this->db->query("SELECT * FROM api_keys WHERE is_active = 1")->f
             
             <?php foreach ($providers as $p): if (!$p['free']) continue; ?>
             <div class="card guide-card">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center mb-2">
                         <div class="me-3" style="width:40px;height:40px;background:<?= $p['color'] ?>;border-radius:8px;display:flex;align-items:center;justify-content:center;">
                             <i class="fas <?= $p['icon'] ?> text-white"></i>
@@ -127,7 +127,7 @@ $currentKeys = $this->db->query("SELECT * FROM api_keys WHERE is_active = 1")->f
             
             <?php foreach ($providers as $p): if ($p['free']) continue; ?>
             <div class="card guide-card">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center mb-2">
                         <div class="me-3" style="width:40px;height:40px;background:<?= $p['color'] ?>;border-radius:8px;display:flex;align-items:center;justify-content:center;">
                             <i class="fas <?= $p['icon'] ?> text-white"></i>
@@ -158,7 +158,7 @@ $currentKeys = $this->db->query("SELECT * FROM api_keys WHERE is_active = 1")->f
         <div class="card-header bg-primary text-white">
             <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>How to Add API Key</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row">
                 <div class="col-md-3">
                     <div class="step-card">
@@ -191,7 +191,7 @@ $currentKeys = $this->db->query("SELECT * FROM api_keys WHERE is_active = 1")->f
     <!-- Current Keys -->
     <?php if (count($currentKeys) > 0): ?>
     <div class="card guide-card mt-4">
-        <div class="card-header">
+        <div class="card-header aps-cp-card-header">
             <h5 class="mb-0"><i class="fas fa-list me-2"></i>Current Active Keys</h5>
         </div>
         <div class="card-body p-0">

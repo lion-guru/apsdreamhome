@@ -7,7 +7,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-wrench text-primary me-2"></i>Security Tools</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($tools)): foreach ($tools as $k => $v): ?>
                         <div class="mb-3 p-3 bg-light rounded">
                             <h6 class="fw-bold"><?= ucwords(str_replace('_', ' ', $k)) ?></h6>
@@ -20,7 +20,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-file-lines text-warning me-2"></i>Documentation</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($docs)): foreach ($docs as $k => $v): ?>
                         <div class="mb-3 p-3 bg-light rounded">
                             <h6 class="fw-bold"><?= ucwords(str_replace('_', ' ', $k)) ?></h6>
@@ -33,7 +33,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-graduation-cap text-success me-2"></i>Training Materials</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($training)): foreach ($training as $k => $v): ?>
                         <div class="mb-3 p-3 bg-light rounded">
                             <h6 class="fw-bold"><?= ucwords(str_replace('_', ' ', $k)) ?></h6>

@@ -21,13 +21,13 @@ $active_page = 'bookings';
 <?php endif; ?>
 
 <!-- Booking Form -->
-<div class="card">
-    <div class="card-header">
+<div class="card aps-cp-card">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0">
             <i class="fas fa-plus-circle"></i> Booking Information
         </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form action="<?php echo BASE_URL; ?>/admin/bookings" method="POST">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 

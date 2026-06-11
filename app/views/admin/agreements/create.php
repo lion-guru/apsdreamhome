@@ -15,7 +15,7 @@ $bookings = $bookings ?? [];
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Agreement Details</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form id="agreementForm" method="POST" action="<?= BASE_URL ?>/admin/agreements/store">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
@@ -120,7 +120,7 @@ $bookings = $bookings ?? [];
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Quick Reference</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <h6 class="text-muted">Agreement Types</h6>
                 <ul class="list-unstyled small">
                     <li class="mb-1"><span class="badge bg-primary">Sale Deed</span> Final property transfer document</li>
@@ -141,7 +141,7 @@ $bookings = $bookings ?? [];
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Tips</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <ul class="small mb-0">
                     <li>Link a booking to auto-fill party names and plot details</li>
                     <li>Agreement number is auto-generated (APS/TYPE/YEAR/NNNN)</li>

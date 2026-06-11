@@ -9,21 +9,21 @@ ob_start();
 
   <div class="row mb-3">
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-primary text-white">
-      <div class="card-body"><small class="opacity-75">Total Events (7d)</small><h3 class="mb-0"><?= $stats['total'] ?? 0 ?></h3></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Total Events (7d)</small><h3 class="mb-0"><?= $stats['total'] ?? 0 ?></h3></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-success text-white">
-      <div class="card-body"><small class="opacity-75">Successes</small><h3 class="mb-0"><?= ($stats['total'] ?? 0) - ($stats['failures'] ?? 0) ?></h3></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Successes</small><h3 class="mb-0"><?= ($stats['total'] ?? 0) - ($stats['failures'] ?? 0) ?></h3></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-danger text-white">
-      <div class="card-body"><small class="opacity-75">Failures (7d)</small><h3 class="mb-0"><?= $stats['failures'] ?? 0 ?></h3></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Failures (7d)</small><h3 class="mb-0"><?= $stats['failures'] ?? 0 ?></h3></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-info text-white">
-      <div class="card-body"><small class="opacity-75">Unique Actions</small><h3 class="mb-0"><?= count($stats['by_action'] ?? []) ?></h3></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Unique Actions</small><h3 class="mb-0"><?= count($stats['by_action'] ?? []) ?></h3></div>
     </div></div>
   </div>
 
   <div class="card shadow-sm mb-3">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
       <form method="get" class="row g-2">
         <div class="col-md-4">
           <input type="text" name="action" class="form-control" placeholder="Action (e.g. login, create_lead)" value="<?= htmlspecialchars($filter_action ?? '') ?>">
@@ -46,7 +46,7 @@ ob_start();
     <div class="col-12">
       <div class="card shadow-sm">
         <div class="card-header bg-white"><h5 class="mb-0">Top Actions (7d)</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <?php foreach ($stats['by_action'] as $action => $count): ?>
             <div class="mb-2">
               <div class="d-flex justify-content-between">

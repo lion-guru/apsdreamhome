@@ -4,7 +4,7 @@
         <a href="<?= BASE_URL ?>/admin/payroll" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="card shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/payroll/store">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <div class="row">

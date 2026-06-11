@@ -23,16 +23,16 @@ function statusColor($status) {
 
   <div class="row mb-3">
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-<?= statusColor($db['status'] ?? 'ok') ?> text-white">
-      <div class="card-body"><small class="opacity-75">Database</small><h5 class="mb-0"><?= ucfirst($db['status'] ?? 'unknown') ?></h5><small><?= $db['tables'] ?? 0 ?> tables · <?= $db['size_mb'] ?? 0 ?> MB</small></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Database</small><h5 class="mb-0"><?= ucfirst($db['status'] ?? 'unknown') ?></h5><small><?= $db['tables'] ?? 0 ?> tables · <?= $db['size_mb'] ?? 0 ?> MB</small></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-<?= statusColor($disk['status'] ?? 'ok') ?> text-white">
-      <div class="card-body"><small class="opacity-75">Disk</small><h5 class="mb-0"><?= $disk['used_pct'] ?? 0 ?>% used</h5><small><?= $disk['free_gb'] ?? 0 ?> GB free of <?= $disk['total_gb'] ?? 0 ?> GB</small></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Disk</small><h5 class="mb-0"><?= $disk['used_pct'] ?? 0 ?>% used</h5><small><?= $disk['free_gb'] ?? 0 ?> GB free of <?= $disk['total_gb'] ?? 0 ?> GB</small></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-<?= statusColor($mem['status'] ?? 'ok') ?> text-white">
-      <div class="card-body"><small class="opacity-75">Memory</small><h5 class="mb-0"><?= $mem['used_mb'] ?? 0 ?> MB</h5><small>Peak: <?= $mem['peak_mb'] ?? 0 ?> MB / <?= $mem['limit'] ?? '?' ?></small></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Memory</small><h5 class="mb-0"><?= $mem['used_mb'] ?? 0 ?> MB</h5><small>Peak: <?= $mem['peak_mb'] ?? 0 ?> MB / <?= $mem['limit'] ?? '?' ?></small></div>
     </div></div>
     <div class="col-md-3"><div class="card border-0 shadow-sm bg-<?= statusColor($tables['status'] ?? 'ok') ?> text-white">
-      <div class="card-body"><small class="opacity-75">Core Tables</small><h5 class="mb-0"><?= $tables['ok'] ?? 0 ?>/<?= $tables['checked'] ?? 0 ?></h5><small><?= count($tables['missing'] ?? []) ?> missing</small></div>
+      <div class="card-body aps-cp-card-body"><small class="opacity-75">Core Tables</small><h5 class="mb-0"><?= $tables['ok'] ?? 0 ?>/<?= $tables['checked'] ?? 0 ?></h5><small><?= count($tables['missing'] ?? []) ?> missing</small></div>
     </div></div>
   </div>
 
@@ -40,7 +40,7 @@ function statusColor($status) {
     <div class="col-lg-6 mb-3">
       <div class="card shadow-sm h-100">
         <div class="card-header bg-white"><h5 class="mb-0"><i class="fab fa-php me-2"></i>PHP Environment</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <table class="table table-sm mb-0">
             <tr><th>Version</th><td><code><?= htmlspecialchars($php['version'] ?? '') ?></code></td></tr>
             <tr><th>OS</th><td><?= htmlspecialchars($php['os'] ?? '') ?></td></tr>
@@ -63,7 +63,7 @@ function statusColor($status) {
     <div class="col-lg-6 mb-3">
       <div class="card shadow-sm h-100">
         <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-database me-2"></i>Database</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <table class="table table-sm mb-0">
             <tr><th>Version</th><td><code><?= htmlspecialchars($db['version'] ?? 'unknown') ?></code></td></tr>
             <tr><th>Total Tables</th><td><strong><?= $db['tables'] ?? 0 ?></strong></td></tr>
@@ -78,7 +78,7 @@ function statusColor($status) {
     <div class="col-lg-6 mb-3">
       <div class="card shadow-sm h-100">
         <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-hdd me-2"></i>Storage</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <div class="mb-3">
             <div class="d-flex justify-content-between"><strong>Disk Usage</strong><span><?= $disk['used_gb'] ?? 0 ?> / <?= $disk['total_gb'] ?? 0 ?> GB</span></div>
             <div class="progress mt-1" style="height: 20px;">

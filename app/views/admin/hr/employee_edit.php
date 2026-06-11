@@ -8,7 +8,7 @@ $e = $employee ?? [];
 </div>
 
 <div class="card border-0 shadow-sm">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <?php if (!$e): ?>
             <div class="alert alert-danger">Employee not found</div>
         <?php else: ?>

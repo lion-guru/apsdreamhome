@@ -5,7 +5,7 @@
         <div class="col-md-5">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-building me-2"></i>Property</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="mb-1"><strong><?= htmlspecialchars($property['title'] ?? '-') ?></strong></p>
                     <p class="text-muted"><?= htmlspecialchars($property['city'] ?? '') ?> — ₹<?= number_format($property['price'] ?? 0) ?></p>
                 </div>
@@ -14,7 +14,7 @@
         <div class="col-md-7">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-user-plus me-2"></i>Transfer Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">

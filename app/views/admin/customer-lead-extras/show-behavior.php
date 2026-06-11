@@ -20,7 +20,7 @@ $page_description = 'Detailed view of customer behavior analysis';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Customer Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-3">
                         <img src="<?= BASE_URL ?>/assets/img/default-avatar.png" alt="Avatar" class="img-fluid rounded-circle" />
@@ -47,7 +47,7 @@ $page_description = 'Detailed view of customer behavior analysis';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Behavioral Data</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <p class="text-muted"><?php echo nl2br(htmlspecialchars($behavior['behavioral_data'] ?? 'No data available')); ?></p>
             </div>
         </div>
@@ -57,7 +57,7 @@ $page_description = 'Detailed view of customer behavior analysis';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Identified Patterns</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <p class="text-muted"><?php echo nl2br(htmlspecialchars($behavior['patterns'] ?? 'No patterns identified')); ?></p>
             </div>
         </div>
@@ -67,7 +67,7 @@ $page_description = 'Detailed view of customer behavior analysis';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Customer Segment</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <span class="badge bg-primary">
                     <?php echo htmlspecialchars($behavior['segmentation'] ?? 'Not Segmented'); ?>
                 </span>
@@ -79,7 +79,7 @@ $page_description = 'Detailed view of customer behavior analysis';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Predictions</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <p class="text-muted"><?php echo nl2br(htmlspecialchars($behavior['predictions'] ?? 'No predictions available')); ?></p>
             </div>
         </div>
@@ -89,7 +89,7 @@ $page_description = 'Detailed view of customer behavior analysis';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Key Insights</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <p class="text-muted"><?php echo nl2br(htmlspecialchars($behavior['insights'] ?? 'No insights available')); ?></p>
             </div>
         </div>
@@ -99,7 +99,7 @@ $page_description = 'Detailed view of customer behavior analysis';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Recommendations</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <p class="text-muted"><?php echo nl2br(htmlspecialchars($behavior['recommendations'] ?? 'No recommendations available')); ?></p>
             </div>
         </div>
@@ -109,7 +109,7 @@ $page_description = 'Detailed view of customer behavior analysis';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Analysis Metadata</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Analysis Date:</strong> <?php echo date('M d, Y H:i', strtotime($behavior['analysis_date'])); ?></p>

@@ -40,7 +40,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Profile Information</h5>
                             <a href="<?php echo $base; ?>/users/edit/<?php echo $user['id']; ?>" class="btn btn-sm btn-outline-primary">Edit Profile</a>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <p class="text-muted mb-1">Phone</p>
@@ -71,7 +71,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Recent Activity</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <p class="text-muted">No recent activity to display</p>
                         </div>
                     </div>
@@ -83,7 +83,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-grid gap-2">
                                 <a href="<?php echo $base; ?>/users/change-password/<?php echo $user['id']; ?>" class="btn btn-outline-warning">
                                     <i class="fas fa-key me-2"></i>Change Password
@@ -101,7 +101,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <div class="card-header bg-white">
                                 <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Preferences</h5>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <div class="list-group list-group-flush">
                                     <?php foreach ($preferences as $key => $value): ?>
                                         <div class="list-group-item px-0 d-flex justify-content-between">

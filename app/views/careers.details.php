@@ -8,7 +8,7 @@
     <div class="row g-4">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
                             <h4 class="mb-1"><?= htmlspecialchars($job['title'] ?? $job['position'] ?? 'Job Title') ?></h4>
@@ -31,7 +31,7 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Job Info</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th>Department</th><td><?= htmlspecialchars(ucfirst($job['department'] ?? $job['category'] ?? 'General')) ?></td></tr>
                         <tr><th>Type</th><td><?= htmlspecialchars(ucfirst($job['type'] ?? 'Full Time')) ?></td></tr>
@@ -44,7 +44,7 @@
             </div>
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Apply Now</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($job['application_url'])): ?>
                     <a href="<?= htmlspecialchars($job['application_url']) ?>" target="_blank" class="btn btn-primary w-100"><i class="fas fa-external-link-alt me-1"></i>Apply Externally</a>
                     <?php else: ?>

@@ -6,7 +6,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-sliders me-2"></i>Investment Parameters</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form id="roiForm" onsubmit="event.preventDefault(); calculateROI();">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Security Investment Amount (₹)</label>
@@ -29,7 +29,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Results</h5></div>
-                <div class="card-body" id="roiResults">
+                <div class="card-body aps-cp-card-body" id="roiResults">
                     <div class="text-center text-muted py-5"><i class="fas fa-arrow-left me-2"></i>Set parameters and calculate</div>
                 </div>
             </div>

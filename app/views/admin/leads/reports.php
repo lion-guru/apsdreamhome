@@ -17,7 +17,7 @@ Page Header -->
                         <!-- Key Metrics Cards -->
                         <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card border-start border-primary border-4 shadow h-100 py-2">
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col me-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
@@ -37,7 +37,7 @@ Page Header -->
 
                         <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card border-start border-success border-4 shadow h-100 py-2">
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col me-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
@@ -57,7 +57,7 @@ Page Header -->
 
                         <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card border-start border-info border-4 shadow h-100 py-2">
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col me-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
@@ -77,7 +77,7 @@ Page Header -->
 
                         <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card border-start border-warning border-4 shadow h-100 py-2">
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col me-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
@@ -105,7 +105,7 @@ Page Header -->
                                         <i class="fas fa-chart-pie me-2"></i>Status Distribution
                                     </h6>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="chart-container" style="position: relative; height:300px;">
                                         <canvas id="statusChart"></canvas>
                                     </div>
@@ -120,7 +120,7 @@ Page Header -->
                                         <i class="fas fa-chart-bar me-2"></i>Source Performance
                                     </h6>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="chart-container" style="position: relative; height:300px;">
                                         <canvas id="sourceChart"></canvas>
                                     </div>
@@ -139,7 +139,7 @@ Page Header -->
                                         <i class="fas fa-trophy me-2"></i>Performance Metrics
                                     </h6>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-hover">
                                             <thead class="table-light">
@@ -202,7 +202,7 @@ Page Header -->
                                         <i class="fas fa-bullhorn me-2"></i>Source Performance Report
                                     </h6>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-hover">
                                             <thead class="table-light">
@@ -259,7 +259,7 @@ Page Header -->
                                         <i class="fas fa-exchange-alt me-2"></i>Conversion Funnel Report
                                     </h6>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="row text-center">
                                         <div class="col-md-3 mb-3">
                                             <div class="p-3 bg-light rounded border-bottom-primary">

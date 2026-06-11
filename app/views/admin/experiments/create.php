@@ -21,7 +21,7 @@ $csrf = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-header bg-white"><h5 class="mb-0">Basic Settings</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Experiment Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="name" required pattern="[a-zA-Z0-9_\-]+" maxlength="100"
@@ -49,7 +49,7 @@ $csrf = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                             <i class="fas fa-plus me-1"></i> Add Variant
                         </button>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="alert alert-info small mb-3">
                             <i class="fas fa-info-circle me-1"></i> Need at least 2 variants. Weights are relative — e.g. 50 & 50 = even split, 70 & 30 = 70% / 30%.
                         </div>

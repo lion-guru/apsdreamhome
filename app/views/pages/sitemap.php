@@ -41,7 +41,7 @@
                     <div class="card-header bg-premium text-white py-3">
                         <h5 class="mb-0"><i class="fas fa-compass me-2"></i> Main Pages</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Home</a></li>
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>properties" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Properties</a></li>
@@ -60,7 +60,7 @@
                     <div class="card-header bg-premium text-white py-3">
                         <h5 class="mb-0"><i class="fas fa-concierge-bell me-2"></i> Our Services</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>services" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> All Services</a></li>
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>legal" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Legal Services</a></li>
@@ -78,7 +78,7 @@
                     <div class="card-header bg-premium text-white py-3">
                         <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i> User Portal</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>login" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Login</a></li>
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>register" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Register</a></li>
@@ -96,7 +96,7 @@
                     <div class="card-header bg-dark text-white py-3">
                         <h5 class="mb-0"><i class="fas fa-book me-2"></i> Resources</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>news" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Latest News</a></li>
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>gallery" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Project Gallery</a></li>
@@ -114,7 +114,7 @@
                     <div class="card-header bg-dark text-white py-3">
                         <h5 class="mb-0"><i class="fas fa-gavel me-2"></i> Support & Legal</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>privacy-policy" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Privacy Policy</a></li>
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>legal" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Legal Documentation</a></li>

@@ -171,8 +171,8 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-body">
+                <div class="card aps-cp-card">
+                    <div class="card-body aps-cp-card-body">
                         <h3 class="card-title"><?php echo __('office_locations'); ?></h3>
                         <div class="office-location">
                             <h4><?= __('contact_office_hq', null, 'Head Office - Gorakhpur') ?></h4>

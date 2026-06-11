@@ -17,7 +17,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="row mb-4">
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Total Revenue</p>
@@ -32,7 +32,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Active Users</p>
@@ -47,7 +47,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">New Leads</p>
@@ -62,7 +62,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <p class="text-muted mb-1">Conversion Rate</p>
@@ -84,7 +84,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Revenue Trend (30 Days)</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($charts['revenue'])): ?>
                             <div class="table-responsive">
                                 <table class="table table-sm">
@@ -117,7 +117,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-users me-2"></i>User Growth</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($charts['users'])): ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach ($charts['users'] as $user): ?>
@@ -140,7 +140,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="card-header bg-white">
                 <h5 class="mb-0"><i class="fas fa-building me-2"></i>Top Performing Properties</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($analytics_data['top_properties'])): ?>
                     <div class="table-responsive">
                         <table class="table table-hover">

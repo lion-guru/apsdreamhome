@@ -13,7 +13,7 @@ $points_history = $points_history ?? [];
         <div class="col-lg-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Member Info</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th>Name</th><td><?= htmlspecialchars($member['name'] ?? '') ?></td></tr>
                         <tr><th>Email</th><td><?= htmlspecialchars($member['email'] ?? '') ?></td></tr>
@@ -32,7 +32,7 @@ $points_history = $points_history ?? [];
         <div class="col-lg-8">
             <div class="card shadow mb-4">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Points History</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($points_history)): ?>
                         <p class="text-muted text-center py-3"><i class="fas fa-coins fa-2x d-block mb-2"></i>No points history available.</p>
                     <?php else: ?>
@@ -58,7 +58,7 @@ $points_history = $points_history ?? [];
             </div>
             <div class="card shadow">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-success">Rewards Claimed</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $rewards = $member['rewards_claimed'] ?? $member['redemptions'] ?? []; ?>
                     <?php if (empty($rewards)): ?>
                         <p class="text-muted text-center py-3">No rewards claimed yet.</p>

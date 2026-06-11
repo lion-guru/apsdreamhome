@@ -201,11 +201,11 @@ $team_stats = $team_stats ?? [];
 <!-- Quick Links -->
 <div class="row g-4 mb-4">
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
+        <div class="card aps-cp-card">
+            <div class="card-header aps-cp-card-header">
                 <h5 class="card-title">Quick Actions</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-3">
                         <a href="<?php echo BASE_URL; ?>/admin/leads?action=new" class="btn btn-outline-primary w-100 py-3">
@@ -241,7 +241,7 @@ $team_stats = $team_stats ?? [];
 <div class="row g-4">
     <!-- Recent Activities -->
     <div class="col-lg-6">
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title">Recent Activities</h5>
                 <a href="<?php echo BASE_URL; ?>/admin/logs" class="btn btn-sm btn-link">View All</a>
@@ -278,11 +278,11 @@ $team_stats = $team_stats ?? [];
     
     <!-- Top Performers / Quick Stats -->
     <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
+        <div class="card aps-cp-card">
+            <div class="card-header aps-cp-card-header">
                 <h5 class="card-title">System Overview</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-4">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Database Tables</span>

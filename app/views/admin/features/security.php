@@ -8,10 +8,10 @@ ob_start();
   <h1 class="h3 mb-4"><i class="fas fa-shield-alt me-2"></i>Security Center</h1>
 
   <div class="row">
-    <div class="col-md-3"><div class="card border-left-danger shadow-sm"><div class="card-body"><h6 class="text-muted">Blocked IPs</h6><h2 class="mb-0"><?= count($blocked ?? []) ?></h2></div></div></div>
-    <div class="col-md-3"><div class="card border-left-warning shadow-sm"><div class="card-body"><h6 class="text-muted">Failed Logins (24h)</h6><h2 class="mb-0"><?= count($failed ?? []) ?></h2></div></div></div>
-    <div class="col-md-3"><div class="card border-left-info shadow-sm"><div class="card-body"><h6 class="text-muted">2FA Active</h6><h2 class="mb-0">N/A</h2></div></div></div>
-    <div class="col-md-3"><div class="card border-left-success shadow-sm"><div class="card-body"><h6 class="text-muted">Password Resets (24h)</h6><h2 class="mb-0"><?= count($failed ?? []) ?></h2></div></div></div>
+    <div class="col-md-3"><div class="card border-left-danger shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Blocked IPs</h6><h2 class="mb-0"><?= count($blocked ?? []) ?></h2></div></div></div>
+    <div class="col-md-3"><div class="card border-left-warning shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Failed Logins (24h)</h6><h2 class="mb-0"><?= count($failed ?? []) ?></h2></div></div></div>
+    <div class="col-md-3"><div class="card border-left-info shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">2FA Active</h6><h2 class="mb-0">N/A</h2></div></div></div>
+    <div class="col-md-3"><div class="card border-left-success shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Password Resets (24h)</h6><h2 class="mb-0"><?= count($failed ?? []) ?></h2></div></div></div>
   </div>
 
   <div class="row mt-4">

@@ -55,7 +55,7 @@ $data = $data ?? [];
             <div class="row mb-4">
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Properties Sold</div>
@@ -71,7 +71,7 @@ $data = $data ?? [];
 
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Commission Earned</div>
@@ -87,7 +87,7 @@ $data = $data ?? [];
 
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-info shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Active Clients</div>
@@ -103,7 +103,7 @@ $data = $data ?? [];
 
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Deals</div>
@@ -121,11 +121,11 @@ $data = $data ?? [];
             <!-- Recent Activities -->
             <div class="row">
                 <div class="col-lg-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="card aps-cp-card">
+                        <div class="card-header aps-cp-card-header">
                             <h6 class="m-0 font-weight-bold text-primary">Recent Activities</h6>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <?php if (isset($data['recent_activities']) && !empty($data['recent_activities'])): ?>
                                 <?php foreach ($data['recent_activities'] as $activity): ?>
                                     <div class="d-flex align-items-center mb-3">
@@ -147,11 +147,11 @@ $data = $data ?? [];
                 </div>
 
                 <div class="col-lg-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="card aps-cp-card">
+                        <div class="card-header aps-cp-card-header">
                             <h6 class="m-0 font-weight-bold text-primary">Performance Chart</h6>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <canvas id="performanceChart" width="400" height="200"></canvas>
                         </div>
                     </div>
@@ -161,11 +161,11 @@ $data = $data ?? [];
             <!-- Quick Actions -->
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="card aps-cp-card">
+                        <div class="card-header aps-cp-card-header">
                             <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row">
                                 <div class="col-md-3 mb-3">
                                     <a href="<?= BASE_URL ?>/admin/properties/create" class="btn btn-primary btn-block">

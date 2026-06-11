@@ -3,7 +3,7 @@
     <h4 class="mb-0">Call History</h4>
 </div>
 <div class="card mb-3">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="get" class="row g-2 align-items-end">
             <div class="col-md-3">
                 <label class="form-label">Date From</label>
@@ -38,7 +38,7 @@
         </form>
     </div>
 </div>
-<div class="card">
+<div class="card aps-cp-card">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">

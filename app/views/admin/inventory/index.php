@@ -24,7 +24,7 @@
                         <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($col['colony_name'] ?? 'Unknown'); ?></h6>
                         <span class="badge bg-info"><?php echo $col['total_plots_actual']; ?> plots</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="text-muted small mb-3">
                             <i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($col['location'] ?? 'N/A'); ?>
                             &middot; <i class="fas fa-layer-group ms-2 me-1"></i>Site capacity: <?php echo $col['total_plots'] ?? 'N/A'; ?>

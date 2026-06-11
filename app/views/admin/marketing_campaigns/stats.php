@@ -52,7 +52,7 @@ $byStatus = $stats['by_status'] ?? [];
     <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted">Open Rate</h6>
                     <h3 class="mb-0 text-info"><?= number_format($stats['open_rate'] ?? 0, 1) ?>%</h3>
                 </div>
@@ -60,7 +60,7 @@ $byStatus = $stats['by_status'] ?? [];
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted">Click Rate</h6>
                     <h3 class="mb-0 text-warning"><?= number_format($stats['click_rate'] ?? 0, 1) ?>%</h3>
                 </div>
@@ -68,7 +68,7 @@ $byStatus = $stats['by_status'] ?? [];
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted">Total Recipients</h6>
                     <h3 class="mb-0 text-primary"><?= number_format($stats['total'] ?? 0) ?></h3>
                 </div>

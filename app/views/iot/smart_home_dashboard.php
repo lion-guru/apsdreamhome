@@ -72,7 +72,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-star me-2"></i>Smart Features</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $features = $smart_features ?? []; ?>
                     <?php foreach (['energy_management' => 'Energy Management', 'security_system' => 'Security System', 'climate_control' => 'Climate Control', 'lighting_automation' => 'Lighting Automation', 'appliance_control' => 'Appliance Control', 'water_management' => 'Water Management', 'garden_automation' => 'Garden Automation'] as $key => $label): ?>
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -84,7 +84,7 @@
             </div>
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-building me-2"></i>Property</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="mb-1"><strong><?= htmlspecialchars($property['title'] ?? '-') ?></strong></p>
                     <p class="mb-0 text-muted small"><?= htmlspecialchars($property['city'] ?? '') ?></p>
                 </div>

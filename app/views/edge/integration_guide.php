@@ -5,7 +5,7 @@
         <?php foreach (($integration_steps ?? []) as $phase): ?>
             <div class="col-md-6 col-lg-3">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><i class="fas fa-check-circle text-success me-2"></i><?= htmlspecialchars($phase['title'] ?? '') ?></h5>
                         <ol class="mb-0 small">
                             <?php foreach (($phase['steps'] ?? []) as $step): ?>

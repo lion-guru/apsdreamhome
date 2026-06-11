@@ -21,11 +21,11 @@ $content = $content ?? '';
     <div class="row">
         <!-- Valuation Form -->
         <div class="col-md-8">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Property Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form id="valuation-form">
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -109,7 +109,7 @@ $content = $content ?? '';
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-list me-2"></i>Or Select Existing Property</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row" id="properties-grid">
                         <?php foreach ($properties as $property): ?>
                             <div class="col-md-6 mb-3">
@@ -151,7 +151,7 @@ $content = $content ?? '';
 
         <!-- Recent Valuations -->
         <div class="col-md-4">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Valuations</h5>
                 </div>
@@ -190,7 +190,7 @@ $content = $content ?? '';
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>How It Works</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ol class="list-group list-group-numbered list-group-flush">
                         <li class="list-group-item px-0">Enter property details or select existing property</li>
                         <li class="list-group-item px-0">AI analyzes market trends and comparable properties</li>

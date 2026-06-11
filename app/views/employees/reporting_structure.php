@@ -25,11 +25,11 @@
     <!-- Current Position -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-user me-2"></i>My Position</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="position-info">
@@ -103,11 +103,11 @@
     <!-- Organizational Chart -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-project-diagram me-2"></i>Organizational Chart</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="org-chart">
                         <?php if (!empty($reporting_structure['org_chart'])): ?>
                             <?php echo $this->renderOrgChart($reporting_structure['org_chart']); ?>
@@ -127,11 +127,11 @@
     <?php if (!empty($reporting_structure['manager'])): ?>
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
+                <div class="card aps-cp-card">
+                    <div class="card-header aps-cp-card-header">
                         <h5><i class="fas fa-user-tie me-2"></i>Manager Information</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="manager-details">
@@ -204,16 +204,16 @@
     <?php if (!empty($reporting_structure['subordinates'])): ?>
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
+                <div class="card aps-cp-card">
+                    <div class="card-header aps-cp-card-header">
                         <h5><i class="fas fa-users me-2"></i>My Team Members</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row">
                             <?php foreach ($reporting_structure['subordinates'] as $subordinate): ?>
                                 <div class="col-md-6 col-lg-4 mb-3">
                                     <div class="card team-member-card">
-                                        <div class="card-body">
+                                        <div class="card-body aps-cp-card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="team-member-avatar me-3">
                                                     <i class="fas fa-user fa-2x text-primary"></i>
@@ -279,11 +279,11 @@
     <!-- Department Information -->
     <div class="row">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-building me-2"></i>Department Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($reporting_structure['department'])): ?>
                         <?php $dept = $reporting_structure['department']; ?>
                         <div class="department-info">
@@ -326,11 +326,11 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-chart-bar me-2"></i>Department Performance</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($reporting_structure['department'])): ?>
                         <?php $dept = $reporting_structure['department']; ?>
                         <div class="row">

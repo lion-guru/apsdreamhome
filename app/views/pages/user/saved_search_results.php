@@ -41,7 +41,7 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
     </div>
 
     <?php if (empty($matches)): ?>
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-search fa-4x text-muted mb-3"></i>
                 <h5 class="text-muted"><?= __('saved_res_no_match', null, 'No properties match this search right now') ?></h5>
@@ -64,7 +64,7 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
                                 <?= ucfirst($p['listing_type'] ?? 'Sell') ?>
                             </span>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title"><?= htmlspecialchars($p['name'] ?? '') ?></h5>
                             <p class="text-muted small"><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($p['address'] ?? $p['location'] ?? '') ?></p>
                             <div class="row small text-center border-top border-bottom py-2 mb-3 g-1">

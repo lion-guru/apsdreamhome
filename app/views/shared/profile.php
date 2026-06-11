@@ -43,7 +43,7 @@ $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
   
     <div class="row">
         <div class="col-lg-4 mb-4">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body text-center py-4">
                     <div class="avatar-lg mx-auto mb-3 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 32px;">
                         <?php echo strtoupper(substr(trim($userName), 0, 1)); ?>
@@ -65,11 +65,11 @@ $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
         </div>
   
         <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="card-title mb-0"><i class="fas fa-user me-2"></i>Profile Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form action="<?php echo $profileUrl; ?>" method="POST">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-3">
@@ -101,10 +101,10 @@ $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
   
             <?php if ($securityUrl): ?>
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header aps-cp-card-header">
                         <h5 class="card-title mb-0"><i class="fas fa-shield-alt me-2"></i>Security</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <a href="<?php echo $securityUrl; ?>" class="btn btn-outline-primary">
                             <i class="fas fa-key me-2"></i>Change Password
                         </a>

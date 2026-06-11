@@ -14,7 +14,7 @@
     </div>
 
     <div class="card shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/ads/save-settings">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="mb-3">
@@ -38,8 +38,8 @@
     </div>
 
     <div class="card mt-4">
-        <div class="card-header"><h5 class="mb-0"><i class="fas fa-question-circle me-1"></i>How to Get Your Publisher ID</h5></div>
-        <div class="card-body">
+        <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-question-circle me-1"></i>How to Get Your Publisher ID</h5></div>
+        <div class="card-body aps-cp-card-body">
             <ol class="mb-0">
                 <li>Go to <a href="https://adsense.google.com" target="_blank">Google AdSense</a> and sign in</li>
                 <li>Click on <strong>Settings</strong> in the left sidebar</li>

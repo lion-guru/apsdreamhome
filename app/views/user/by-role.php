@@ -34,7 +34,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
         <!-- Role Filter -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="btn-group" role="group">
                     <a href="<?php echo $base; ?>/users/by-role/admin" class="btn btn-outline-<?php echo $role === 'admin' ? 'danger active' : 'secondary'; ?>">Admin</a>
                     <a href="<?php echo $base; ?>/users/by-role/agent" class="btn btn-outline-<?php echo $role === 'agent' ? 'info active' : 'secondary'; ?>">Agent</a>
@@ -49,7 +49,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="card-header bg-white">
                 <h5 class="mb-0"><?php echo ucfirst($role); ?> List</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($users)): ?>
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover table-responsive">

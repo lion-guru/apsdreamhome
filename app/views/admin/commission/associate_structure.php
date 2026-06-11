@@ -6,9 +6,9 @@
 
     <div class="row">
         <div class="col-md-5">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-success text-white"><i class="fas fa-plus"></i> Add Level</div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="/admin/commission/associate/structure/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Level Number</label><input type="number" name="level_number" class="form-control" required></div>
@@ -25,8 +25,8 @@
             </div>
         </div>
         <div class="col-md-7">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-list"></i> Levels</div>
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Levels</div>
                 <div class="card-body p-0">
                     <table class="table table-striped mb-0">
                         <thead><tr><th>Level</th><th>Name</th><th>%</th><th>Min Value</th><th>Max Value</th><th>Status</th><th>Action</th></tr></thead>

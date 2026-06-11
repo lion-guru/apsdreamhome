@@ -20,32 +20,32 @@ $flash = $flash ?? [];
 
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Generated (session)</div>
                     <div class="h3 mb-0"><?= (int)($stats['generated'] ?? 0) ?></div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Cache hits</div>
                     <div class="h3 mb-0"><?= (int)($stats['cache_hits'] ?? 0) ?></div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Cache misses</div>
                     <div class="h3 mb-0"><?= (int)($stats['cache_misses'] ?? 0) ?></div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Errors</div>
                     <div class="h3 mb-0"><?= (int)($stats['errors'] ?? 0) ?></div>
                 </div>
@@ -54,10 +54,10 @@ $flash = $flash ?? [];
     </div>
 
     <div class="card mb-4">
-        <div class="card-header">
+        <div class="card-header aps-cp-card-header">
             <h2 class="h5 mb-0">Generate PDF on Demand</h2>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form id="pdfGenerateForm" class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label">Type</label>
@@ -79,8 +79,8 @@ $flash = $flash ?? [];
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">
+    <div class="card aps-cp-card">
+        <div class="card-header aps-cp-card-header">
             <h2 class="h5 mb-0">Recent PDFs</h2>
         </div>
         <div class="card-body p-0">

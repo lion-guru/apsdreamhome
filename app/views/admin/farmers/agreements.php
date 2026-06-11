@@ -20,25 +20,25 @@ $terminatedCount = $terminated_count ?? 0;
     <?php endif; ?>
 
     <div class="row mb-4">
-        <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body">
+        <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body aps-cp-card-body">
             <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><div class="bg-primary bg-opacity-10 text-primary rounded p-3"><i class="fas fa-file-contract fa-2x"></i></div></div>
                 <div><h6 class="text-muted mb-1">Total</h6><h3 class="mb-0"><?php echo $totalAgreements; ?></h3></div>
             </div>
         </div></div></div>
-        <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body">
+        <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body aps-cp-card-body">
             <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><div class="bg-success bg-opacity-10 text-success rounded p-3"><i class="fas fa-check-circle fa-2x"></i></div></div>
                 <div><h6 class="text-muted mb-1">Active</h6><h3 class="mb-0"><?php echo $activeCount; ?></h3></div>
             </div>
         </div></div></div>
-        <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body">
+        <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body aps-cp-card-body">
             <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><div class="bg-info bg-opacity-10 text-info rounded p-3"><i class="fas fa-flag-checkered fa-2x"></i></div></div>
                 <div><h6 class="text-muted mb-1">Completed</h6><h3 class="mb-0"><?php echo $completedCount; ?></h3></div>
             </div>
         </div></div></div>
-        <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body">
+        <div class="col-xl-3 col-md-6"><div class="card border-0 shadow-sm"><div class="card-body aps-cp-card-body">
             <div class="d-flex align-items-center">
                 <div class="flex-shrink-0 me-3"><div class="bg-danger bg-opacity-10 text-danger rounded p-3"><i class="fas fa-times-circle fa-2x"></i></div></div>
                 <div><h6 class="text-muted mb-1">Terminated</h6><h3 class="mb-0"><?php echo $terminatedCount; ?></h3></div>

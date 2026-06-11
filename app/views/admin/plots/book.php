@@ -30,7 +30,7 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                 <div class="col-md-5">
                     <div class="card mb-4">
                         <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="fas fa-th"></i> Plot Details</h5></div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <table class="table table-bordered">
                                 <tr><th style="width:140px">Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
                                 <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? 'N/A') ?></td></tr>
@@ -55,7 +55,7 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                 <div class="col-md-7">
                     <div class="card mb-4">
                         <div class="card-header bg-success text-white"><h5 class="mb-0"><i class="fas fa-file-contract"></i> New Booking</h5></div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <form method="POST" action="/admin/plots/<?= $plot['id'] ?? 0 ?>/book">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="row">

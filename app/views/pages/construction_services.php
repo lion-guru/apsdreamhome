@@ -190,7 +190,7 @@
                             <?php else: ?>
                                 <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="height:200px"><i class="fas fa-building fa-4x text-primary opacity-50"></i></div>
                             <?php endif; ?>
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <span class="badge bg-<?= $p['status'] === 'completed' ? 'success' : 'warning' ?> mb-2"><?= $p['status'] ?? 'In Progress' ?></span>
                                 <h5 class="fw-bold"><?= htmlspecialchars($p['name'] ?? 'Project') ?></h5>
                                 <p class="text-muted small mb-0"><?= htmlspecialchars($p['location'] ?? '') ?></p>

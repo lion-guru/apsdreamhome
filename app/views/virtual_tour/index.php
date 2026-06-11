@@ -34,7 +34,7 @@
             <div class="row g-3 mb-4">
                 <div class="col-md-4">
                     <div class="card shadow-sm border-0 text-center">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <i class="fas fa-sync-alt fa-2x text-primary mb-2"></i>
                             <h6>360&deg; View</h6>
                             <small class="text-muted"><?= count($tour_data['panoramas'] ?? []) ?> panoramas</small>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="card shadow-sm border-0 text-center">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <i class="fas fa-th-large fa-2x text-success mb-2"></i>
                             <h6>Floor Plans</h6>
                             <small class="text-muted"><?= count($tour_data['floor_plans'] ?? []) ?> plans</small>
@@ -52,7 +52,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="card shadow-sm border-0 text-center">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <i class="fas fa-crosshairs fa-2x text-warning mb-2"></i>
                             <h6>Hotspots</h6>
                             <small class="text-muted"><?= count($tour_data['hotspots'] ?? []) ?> hotspots</small>
@@ -64,7 +64,7 @@
             <?php if (!empty($tour_data['panoramas'] ?? [])): ?>
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-images me-2 text-primary"></i>Panorama Views</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <?php foreach ($tour_data['panoramas'] as $pano): ?>
                         <div class="col-md-4">
@@ -83,7 +83,7 @@
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-info-circle me-2 text-primary"></i>Property Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5><?= ($property['title'] ?? 'Property') ?></h5>
                     <p class="text-muted small"><?= ($property['city'] ?? '') ?>, <?= ($property['state'] ?? '') ?></p>
                     <hr>
@@ -95,7 +95,7 @@
             <?php if (!empty($tour_data['hotspots'] ?? [])): ?>
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-crosshairs me-2 text-warning"></i>Hotspots</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-group list-group-flush">
                         <?php foreach ($tour_data['hotspots'] as $hs): ?>
                         <li class="list-group-item px-0 d-flex justify-content-between">

@@ -5,7 +5,7 @@
     <a href="<?= BASE_URL ?>/admin/backoffice/payslips" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
   </div>
   <div class="card aps-cp-card">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
       <div class="row mb-4">
         <div class="col-md-6">
           <h5>Employee Details</h5>

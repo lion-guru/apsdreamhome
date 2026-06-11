@@ -17,7 +17,7 @@
     <?php foreach (['implementation_challenges' => 'Implementation Challenges', 'market_challenges' => 'Market Challenges'] as $section => $title): $items = ${$section} ?? []; ?>
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-<?= $section === 'implementation_challenges' ? 'cogs' : 'store' ?> me-2 text-warning"></i><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?></h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row g-4">
                 <?php if (is_array($items)): ?>
                 <?php foreach ($items as $key => $item): if (!is_array($item)) continue; ?>

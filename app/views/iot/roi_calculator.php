@@ -5,7 +5,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Input</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= ($base ?? BASE_URL) ?>iot/roi-calculator">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -28,7 +28,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>About ROI</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p>Calculate the return on investment for your smart home setup.</p>
                     <ul class="mb-0">
                         <li>15% average property value increase</li>

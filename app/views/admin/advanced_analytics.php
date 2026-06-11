@@ -16,7 +16,7 @@
     <div class="row g-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="card-title"><i class="fas fa-chart-simple me-2"></i>Overview</h5>
                     <div class="row g-3 mt-2">
                         <div class="col-md-3">
@@ -110,7 +110,7 @@
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0"><i class="fas fa-user-group me-2"></i>User Engagement</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $engagement = $analyticsData['user_engagement'] ?? []; ?>
                     <div class="d-flex justify-content-between mb-2"><span>Avg Session</span><strong><?= $engagement['avg_session_duration'] ?? 'N/A' ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Pages/Session</span><strong><?= $engagement['pages_per_session'] ?? 'N/A' ?></strong></div>
@@ -124,7 +124,7 @@
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0"><i class="fas fa-building me-2"></i>Property Performance</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $perf = $analyticsData['property_performance'] ?? []; ?>
                     <div class="d-flex justify-content-between mb-2"><span>Avg Days on Market</span><strong><?= $perf['avg_days_on_market'] ?? 'N/A' ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Price Reduction Rate</span><strong><?= $perf['price_reduction_rate'] ?? 'N/A' ?></strong></div>

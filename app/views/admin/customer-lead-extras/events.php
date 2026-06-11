@@ -15,7 +15,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
@@ -32,7 +32,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-info bg-opacity-10 text-info rounded p-3">
@@ -49,7 +49,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-success bg-opacity-10 text-success rounded p-3">
@@ -66,7 +66,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-warning bg-opacity-10 text-warning rounded p-3">
@@ -88,7 +88,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
         <div class="card-header bg-white py-3">
             <h5 class="mb-0">Filter Events</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?php echo BASE_URL; ?>/admin/customer-lead/events">
                 <div class="row g-3">
                     <div class="col-md-4">
@@ -132,7 +132,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
                 <a href="<?php echo BASE_URL; ?>/admin/customer-lead/events" class="btn btn-outline-primary btn-sm">Clear Filters</a>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead>

@@ -7,7 +7,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-lock text-primary me-2"></i>Encryption Performance</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($enc)): foreach ($enc as $k => $v): ?>
                         <div class="mb-3 p-3 bg-light rounded">
                             <h6 class="fw-bold"><?= ucwords(str_replace('_', ' ', $k)) ?></h6>
@@ -21,7 +21,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-bug text-warning me-2"></i>Threat Detection</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($td)): foreach ($td as $k => $v): ?>
                         <div class="mb-3 p-3 bg-light rounded">
                             <h6 class="fw-bold"><?= ucwords(str_replace('_', ' ', $k)) ?></h6>
@@ -35,7 +35,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-fingerprint text-success me-2"></i>Authentication</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($auth)): foreach ($auth as $k => $v): ?>
                         <div class="mb-3 p-3 bg-light rounded">
                             <h6 class="fw-bold"><?= ucwords(str_replace('_', ' ', $k)) ?></h6>

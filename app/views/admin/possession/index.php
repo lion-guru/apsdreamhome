@@ -55,9 +55,9 @@ $defectLabels = [
 <?php if (isset($defect_stats) && !empty($defect_stats)): ?>
 <div class="row mb-4">
     <div class="col-12">
-        <div class="card">
-            <div class="card-header"><h5 class="mb-0"><i class="fas fa-bug"></i> Defect Reports Summary</h5></div>
-            <div class="card-body">
+        <div class="card aps-cp-card">
+            <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-bug"></i> Defect Reports Summary</h5></div>
+            <div class="card-body aps-cp-card-body">
                 <div class="row text-center">
                     <div class="col-3"><span class="badge bg-danger fs-6"><?= intval($defect_stats['open_defects'] ?? 0) ?></span><br><small>Open</small></div>
                     <div class="col-3"><span class="badge bg-warning fs-6"><?= intval($defect_stats['in_progress_defects'] ?? 0) ?></span><br><small>In Progress</small></div>
@@ -71,10 +71,10 @@ $defectLabels = [
 <?php endif; ?>
 
 <div class="card mb-4">
-    <div class="card-header">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0"><i class="fas fa-filter"></i> Filters</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="GET" action="<?= BASE_URL ?>/admin/possession">
             <div class="row">
                 <div class="col-md-4">
@@ -102,11 +102,11 @@ $defectLabels = [
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
+<div class="card aps-cp-card">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0"><i class="fas fa-list"></i> Possession Records</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>

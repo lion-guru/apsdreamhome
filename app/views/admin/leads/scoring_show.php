@@ -34,7 +34,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-chart-simple me-2"></i>Score Breakdown</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3"><div class="col-sm-6 text-muted">Lead ID</div><div class="col-sm-6"><strong>#<?= $score['lead_id'] ?? '-' ?></strong></div></div>
                     <div class="row mb-3"><div class="col-sm-6 text-muted">Budget Score</div><div class="col-sm-6"><?= $score['budget_score'] ?? 0 ?> / 25</div></div>
                     <div class="row mb-3"><div class="col-sm-6 text-muted">Timeline Score</div><div class="col-sm-6"><?= $score['timeline_score'] ?? 0 ?> / 25</div></div>

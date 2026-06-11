@@ -15,7 +15,7 @@ $content = $content ?? '';
   </div>
 
   <div class="card shadow-sm mb-4">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
       <form method="GET" class="row g-2">
         <div class="col-md-3">
           <label class="small text-muted">Property Type</label>
@@ -70,7 +70,7 @@ $content = $content ?? '';
               <i class="fas fa-home fa-4x text-muted"></i>
             <?php endif; ?>
           </div>
-          <div class="card-body">
+          <div class="card-body aps-cp-card-body">
             <h5 class="card-title"><?= htmlspecialchars($p['title'] ?? 'Property') ?></h5>
             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars(($p['district_name'] ?? '') ?: ($p['location'] ?? '')) ?></p>
             <div class="d-flex justify-content-between mb-2">

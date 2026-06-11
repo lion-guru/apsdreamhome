@@ -8,10 +8,10 @@ ob_start();
   <h1 class="h3 mb-4"><i class="fas fa-tools me-2"></i>Property Maintenance</h1>
 
   <div class="row">
-    <div class="col-md-3"><div class="card border-left-primary shadow-sm"><div class="card-body"><h6 class="text-muted">Active</h6><h2 class="mb-0"><?= count(array_filter($maintenance ?? [], fn($m) => ($m['status'] ?? '') === 'scheduled')) ?></h2></div></div></div>
-    <div class="col-md-3"><div class="card border-left-success shadow-sm"><div class="card-body"><h6 class="text-muted">Completed</h6><h2 class="mb-0"><?= count(array_filter($maintenance ?? [], fn($m) => ($m['status'] ?? '') === 'completed')) ?></h2></div></div></div>
-    <div class="col-md-3"><div class="card border-left-warning shadow-sm"><div class="card-body"><h6 class="text-muted">Total Cost</h6><h2 class="mb-0">₹<?= number_format(array_sum(array_column($maintenance ?? [], 'estimated_cost')), 0) ?></h2></div></div></div>
-    <div class="col-md-3"><div class="card border-left-info shadow-sm"><div class="card-body"><h6 class="text-muted">Market Records</h6><h2 class="mb-0"><?= count($marketData ?? []) ?></h2></div></div></div>
+    <div class="col-md-3"><div class="card border-left-primary shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Active</h6><h2 class="mb-0"><?= count(array_filter($maintenance ?? [], fn($m) => ($m['status'] ?? '') === 'scheduled')) ?></h2></div></div></div>
+    <div class="col-md-3"><div class="card border-left-success shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Completed</h6><h2 class="mb-0"><?= count(array_filter($maintenance ?? [], fn($m) => ($m['status'] ?? '') === 'completed')) ?></h2></div></div></div>
+    <div class="col-md-3"><div class="card border-left-warning shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Total Cost</h6><h2 class="mb-0">₹<?= number_format(array_sum(array_column($maintenance ?? [], 'estimated_cost')), 0) ?></h2></div></div></div>
+    <div class="col-md-3"><div class="card border-left-info shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted">Market Records</h6><h2 class="mb-0"><?= count($marketData ?? []) ?></h2></div></div></div>
   </div>
 
   <ul class="nav nav-tabs mb-3 mt-3">

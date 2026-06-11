@@ -21,7 +21,7 @@
                 <div class="card-header bg-<?= $year === '2024' ? 'secondary' : ($year === '2025' ? 'success' : 'primary') ?> text-white">
                     <h4 class="mb-0"><?= htmlspecialchars($year, ENT_QUOTES, 'UTF-8') ?></h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-group list-group-flush">
                         <?php foreach ($milestones as $quarter => $milestone): ?>
                         <li class="list-group-item px-0">

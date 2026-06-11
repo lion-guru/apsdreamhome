@@ -25,7 +25,7 @@ $tiers = $tiers ?? [];
             ?>
             <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card shadow h-100 border-top-<?= $badgeClass === 'dark' ? 'dark' : ($badgeClass === 'primary' ? 'primary' : ($badgeClass === 'warning' ? 'warning' : ($badgeClass === 'secondary' ? 'secondary' : 'light'))) ?> border-3">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="text-center mb-3">
                             <i class="fas fa-crown fa-3x text-<?= $badgeClass === 'warning' ? 'warning' : ($badgeClass === 'light' ? 'muted' : $badgeClass) ?>"></i>
                             <h4 class="mt-2 text-uppercase"><?= htmlspecialchars(ucfirst($tierName)) ?></h4>

@@ -13,7 +13,7 @@ $stats = $stats ?? ['total' => 0, 'avg_satisfaction' => 0, 'avg_response_time' =
 <div class="row mb-4">
     <div class="col-xl-4 col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
@@ -30,7 +30,7 @@ $stats = $stats ?? ['total' => 0, 'avg_satisfaction' => 0, 'avg_response_time' =
     </div>
     <div class="col-xl-4 col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <div class="bg-success bg-opacity-10 text-success rounded p-3">
@@ -47,7 +47,7 @@ $stats = $stats ?? ['total' => 0, 'avg_satisfaction' => 0, 'avg_response_time' =
     </div>
     <div class="col-xl-4 col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <div class="bg-info bg-opacity-10 text-info rounded p-3">

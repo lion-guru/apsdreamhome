@@ -6,9 +6,9 @@
 
     <div class="row">
         <div class="col-md-5">
-            <div class="card">
-                <div class="card-header" style="background:#6f42c1;color:white;"><i class="fas fa-plus"></i> Add Rule</div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header" style="background:#6f42c1;color:white;"><i class="fas fa-plus"></i> Add Rule</div>
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="/admin/commission/telecaller/rules/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Rule Name</label><input type="text" name="rule_name" class="form-control" required></div>
@@ -35,8 +35,8 @@
             </div>
         </div>
         <div class="col-md-7">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-list"></i> Rules</div>
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Rules</div>
                 <div class="card-body p-0">
                     <table class="table table-striped mb-0">
                         <thead><tr><th>Rule</th><th>Type</th><th>Amount</th><th>%</th><th>Min Calls</th><th>Target</th><th>Active</th><th>Action</th></tr></thead>

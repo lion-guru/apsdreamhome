@@ -103,7 +103,7 @@
                         <div class="ratio ratio-16x9">
                             <iframe src="https://www.youtube.com/embed/<?= $video['youtube_id'] ?>" title="<?= $video['title'] ?>" allowfullscreen></iframe>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6 class="fw-bold mb-0 text-center"><?= $video['title'] ?></h6>
                         </div>
                     </div>

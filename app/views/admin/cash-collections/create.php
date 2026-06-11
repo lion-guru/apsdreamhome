@@ -20,7 +20,7 @@ ob_start();
                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-user me-2"></i>Collection Details</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Collector (Field Agent) *</label>
@@ -58,7 +58,7 @@ ob_start();
 
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-link me-2"></i>Link to Booking (Optional)</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Booking</label>
@@ -83,7 +83,7 @@ ob_start();
 
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-camera me-2"></i>Receipt & Notes</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Receipt Photo</label>
                             <input type="file" class="form-control" name="receipt_photo" accept="image/*">
@@ -105,7 +105,7 @@ ob_start();
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Guidelines</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-unstyled mb-0 small">
                         <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Always upload a photo of the physical receipt</li>
                         <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Link to the correct booking if it's an EMI payment</li>

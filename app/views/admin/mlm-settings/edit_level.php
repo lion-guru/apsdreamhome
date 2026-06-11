@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h6 class="mb-0">Basic Info</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Level Name</label>
                         <input name="level_name" class="form-control" value="<?php echo htmlspecialchars($level['level_name'] ?? ''); ?>">
@@ -31,7 +31,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h6 class="mb-0">Commission Percentages</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Direct Commission (%)</label>
                         <input name="direct_commission_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['direct_commission_percentage'] ?? ''; ?>">
@@ -63,7 +63,7 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h6 class="mb-0">Qualification Requirements</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-4">
                             <label class="form-label">Team Size Required</label>

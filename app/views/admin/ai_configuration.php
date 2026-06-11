@@ -8,7 +8,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Configuration</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $cfg = $config ?? []; ?>
                     <div class="mb-3">
                         <label class="form-label">AI Provider</label>

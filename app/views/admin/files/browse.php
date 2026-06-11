@@ -10,7 +10,7 @@ $files = $files ?? [];
     </div>
     <div class="card shadow">
         <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">All Files</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($files)): ?>
                 <p class="text-muted text-center py-4"><i class="fas fa-folder-open fa-2x d-block mb-2"></i>No files found in this category.</p>
             <?php else: ?>

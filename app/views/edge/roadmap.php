@@ -6,7 +6,7 @@
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent"><h5 class="mb-0"><?= htmlspecialchars($year) ?></h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <ul class="list-unstyled mb-0">
                             <?php foreach ($quarters as $q => $item): ?>
                                 <li class="mb-2"><span class="badge bg-primary me-2"><?= strtoupper(htmlspecialchars($q)) ?></span><?= htmlspecialchars($item) ?></li>

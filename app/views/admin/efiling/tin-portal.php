@@ -24,7 +24,7 @@ ob_start();
 <div class="row g-3 mb-4">
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <?php if ($tin_status['connected']): ?>
@@ -44,7 +44,7 @@ ob_start();
     </div>
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <?php if ($tin_status['mode'] === 'test'): ?>
@@ -64,7 +64,7 @@ ob_start();
     </div>
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <div class="rounded-circle bg-secondary bg-opacity-10 p-3"><i class="fas fa-certificate text-secondary"></i></div>
@@ -85,7 +85,7 @@ ob_start();
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-invoice-dollar me-2 text-danger"></i>Submit Form 26Q (Domestic)</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form id="tin26qForm">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <input type="hidden" name="form_type" value="26Q">
@@ -116,7 +116,7 @@ ob_start();
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-invoice me-2 text-warning"></i>Submit Form 27Q (NRI)</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form id="tin27qForm">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <input type="hidden" name="form_type" value="27Q">
@@ -182,7 +182,7 @@ ob_start();
 <!-- Form16A Download -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-download me-2"></i>Form 16A Download</h6></div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form id="form16aDownload" class="row g-2 align-items-end">
             <div class="col-md-6">
                 <label class="form-label small">Token Number</label>

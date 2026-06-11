@@ -39,8 +39,8 @@
 <div class="row">
     <div class="col-md-8">
         <div class="card mb-3">
-            <div class="card-header">Usage Breakdown</div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header">Usage Breakdown</div>
+            <div class="card-body aps-cp-card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
@@ -76,8 +76,8 @@
     </div>
     <div class="col-md-4">
         <div class="card mb-3">
-            <div class="card-header">Usage Chart</div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header">Usage Chart</div>
+            <div class="card-body aps-cp-card-body">
                 <div style="min-height:300px;background:#f8f9fa;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#adb5bd;">
                     <div class="text-center">
                         <i class="fas fa-chart-bar fa-3x mb-2"></i>

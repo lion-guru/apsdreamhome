@@ -8,7 +8,7 @@
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-white border-bottom"><h5 class="mb-0">Log Levels</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Minimum Log Level</label>
                             <select name="config[min_level]" class="form-select">
@@ -40,7 +40,7 @@
             <div class="col-md-6">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-white border-bottom"><h5 class="mb-0">Retention</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Retention Period (days)</label>
                             <input type="number" name="config[retention_days]" class="form-control" value="<?= (int)($config['retention_days'] ?? 30) ?>" min="1" max="365">

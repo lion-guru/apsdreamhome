@@ -6,7 +6,7 @@
     <?php if (isset($edit_structure)): ?>
     <div class="card shadow-sm mb-4 border-warning">
         <div class="card-header bg-warning text-white"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Structure #<?= $edit_structure['id'] ?> - <?= htmlspecialchars($edit_structure['employee_name'] ?? '') ?></h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="post" action="<?= BASE_URL ?>/admin/salary/structures/update/<?= $edit_structure['id'] ?>">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row">

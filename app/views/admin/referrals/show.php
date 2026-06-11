@@ -5,7 +5,7 @@
         <div class="alert alert-danger">Referral not found.</div>
     <?php else: ?>
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-3"><small class="text-muted">Referrer</small><br><strong><?= htmlspecialchars($referral['referrer_name'] ?? 'Unknown') ?></strong></div>
                     <div class="col-md-3"><small class="text-muted">Email</small><br><?= htmlspecialchars($referral['referrer_email'] ?? '') ?></div>

@@ -4,7 +4,7 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body text-center py-5">
                     <i class="fas fa-tools fa-4x text-muted mb-3"></i>
                     <h5 class="text-muted"><?= htmlspecialchars($page_title ?? '') ?></h5>

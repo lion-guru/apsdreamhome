@@ -28,7 +28,7 @@
             </div>
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Details</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-2"><small class="text-muted">City</small><br><?= htmlspecialchars($associate['city'] ?? 'N/A') ?></div>
                     <div class="mb-2"><small class="text-muted">Commission Rate</small><br><?= $associate['commission_rate'] ?? '5.00' ?>%</div>
                     <div class="mb-0"><small class="text-muted">Joined</small><br><?= htmlspecialchars($associate['created_at'] ?? 'N/A') ?></div>
@@ -58,7 +58,7 @@
             </div>
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($recentActivity)): ?>
                         <?php foreach ($recentActivity as $act): ?>
                         <div class="d-flex align-items-center mb-2 pb-2 border-bottom">

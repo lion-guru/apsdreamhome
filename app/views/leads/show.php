@@ -38,7 +38,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card shadow">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <div class="d-flex align-items-center">
@@ -112,12 +112,12 @@
         <div class="col-lg-8">
             <!-- Basic Information -->
             <div class="card shadow mb-4">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-info-circle mr-2"></i>लीड जानकारी
                     </h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="info-item mb-3">
@@ -223,7 +223,7 @@
 
             <!-- Activities & Notes Tabs -->
             <div class="card shadow mb-4">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <ul class="nav nav-tabs card-header-tabs">
                         <li class="nav-item">
                             <a class="nav-link active" href="#activities" data-toggle="tab">
@@ -237,7 +237,7 @@
                         </li>
                     </ul>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="tab-content">
                         <!-- Activities Tab -->
                         <div class="tab-pane fade show active" id="activities">
@@ -315,12 +315,12 @@
         <div class="col-lg-4">
             <!-- Quick Stats -->
             <div class="card shadow mb-4">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-chart-bar mr-2"></i>सांख्यिकी
                     </h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="stats-item mb-3">
                         <div class="d-flex justify-content-between">
                             <span>कुल गतिविधियां</span>
@@ -350,12 +350,12 @@
 
             <!-- Quick Actions -->
             <div class="card shadow mb-4">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-bolt mr-2"></i>त्वरित कार्रवाई
                     </h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
                         <button class="btn btn-primary" onclick="addActivity()">
                             <i class="fas fa-plus mr-2"></i>गतिविधि जोड़ें
@@ -375,12 +375,12 @@
 
             <!-- Lead Timeline -->
             <div class="card shadow mb-4">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-history mr-2"></i>लीड टाइमलाइन
                     </h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="timeline">
                         <div class="timeline-item">
                             <div class="timeline-marker bg-success"></div>

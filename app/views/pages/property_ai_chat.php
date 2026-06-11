@@ -29,7 +29,7 @@ $base = $base ?? BASE_URL;
         <div class="row">
             <div class="col-lg-5 mb-4">
                 <div class="card shadow-sm border-0">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><i class="fas fa-info-circle text-primary me-2"></i>Property Details</h5>
                         <?php if ($property): ?>
                         <div class="mb-3">

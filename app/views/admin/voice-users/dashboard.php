@@ -77,7 +77,7 @@
     </div>
     <div class="col-md-4">
         <div class="card mb-3">
-            <div class="card-header">Quick Actions</div>
+            <div class="card-header aps-cp-card-header">Quick Actions</div>
             <div class="card-body d-grid gap-2">
                 <a href="<?= BASE_URL ?>admin/voice-users/schedule" class="btn btn-outline-primary"><i class="fas fa-calendar-plus"></i> Schedule Calls</a>
                 <a href="<?= BASE_URL ?>admin/voice-users/extracted-leads" class="btn btn-outline-success"><i class="fas fa-users"></i> View Extracted Leads</a>

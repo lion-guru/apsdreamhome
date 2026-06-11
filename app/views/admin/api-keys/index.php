@@ -90,8 +90,8 @@ $extraHead .= '<style>
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">
+    <div class="card aps-cp-card">
+        <div class="card-header aps-cp-card-header">
             <h5 class="mb-0"><i class="fas fa-list me-2"></i>All API Keys</h5>
         </div>
         <div class="card-body p-0">

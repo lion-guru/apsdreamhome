@@ -18,7 +18,7 @@
             <h5 class="mb-0"><i class="fas fa-list me-2 text-primary"></i>Properties with Virtual Tours</h5>
             <span class="badge bg-primary"><?= count($properties) ?> properties</span>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($properties)): ?>
             <div class="text-center py-5">
                 <i class="fas fa-vr-cardboard fa-5x text-muted mb-3"></i>

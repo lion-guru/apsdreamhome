@@ -10,7 +10,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header bg-dark text-white"><i class="fas fa-code"></i> Developer Tools</div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <div class="col-md-4"><a href="<?= BASE_URL ?>admin/dev-tools/logs" class="btn btn-outline-secondary w-100 p-3"><i class="fas fa-list-alt"></i> System Logs</a></div>
                         <div class="col-md-4"><a href="<?= BASE_URL ?>admin/dev-tools/cache" class="btn btn-outline-secondary w-100 p-3"><i class="fas fa-database"></i> Cache Manager</a></div>

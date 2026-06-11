@@ -10,7 +10,7 @@ $redemptions = $redemptions ?? [];
     </div>
     <div class="card shadow">
         <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">All Redemptions</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($redemptions)): ?>
                 <p class="text-muted text-center py-4"><i class="fas fa-ticket-alt fa-2x d-block mb-2"></i>No redemptions recorded yet.</p>
             <?php else: ?>

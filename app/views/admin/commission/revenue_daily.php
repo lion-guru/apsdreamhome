@@ -12,9 +12,9 @@
 
     <div class="row">
         <div class="col-md-5">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-primary text-white"><i class="fas fa-plus"></i> Add Daily Record</div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="/admin/commission/revenue/daily/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Date</label><input type="date" name="stat_date" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
@@ -35,8 +35,8 @@
             </div>
         </div>
         <div class="col-md-7">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-table"></i> Daily Records</div>
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-table"></i> Daily Records</div>
                 <div class="card-body p-0">
                     <table class="table table-striped mb-0">
                         <thead><tr><th>Date</th><th>Agent</th><th>Revenue</th><th>Deals</th><th>Commission</th><th>Action</th></tr></thead>

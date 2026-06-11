@@ -62,7 +62,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
         <!-- Actions -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">User Management</h5>
                     <a href="<?php echo $base; ?>/users/create" class="btn btn-primary">
@@ -77,7 +77,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="card-header bg-white">
                 <h5 class="mb-0">Recent Users</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($users)): ?>
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover table-responsive">

@@ -14,7 +14,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card bg-primary text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5>Total Plots</h5>
                     <h3><?= count($plots ?? []) ?></h3>
                 </div>
@@ -22,7 +22,7 @@
         </div>
         <div class="col-md-3">
             <div class="card bg-success text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5>Available</h5>
                     <h3>0</h3>
                 </div>
@@ -30,7 +30,7 @@
         </div>
         <div class="col-md-3">
             <div class="card bg-warning text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5>Booked</h5>
                     <h3>0</h3>
                 </div>
@@ -38,7 +38,7 @@
         </div>
         <div class="col-md-3">
             <div class="card bg-info text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5>Sold</h5>
                     <h3>0</h3>
                 </div>
@@ -46,7 +46,7 @@
         </div>
     </div>
     
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">All Plots</h5>
             <div class="btn-group">
@@ -55,7 +55,7 @@
                 <button class="btn btn-sm btn-outline-secondary">Sold</button>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($plots)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-th-large fa-3x text-muted mb-3"></i>

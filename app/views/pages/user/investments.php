@@ -35,7 +35,7 @@ try {
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card shadow-sm border-0 bg-primary text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-white-50 small fw-bold text-uppercase mb-2"><?= __('user_inv2_total_plots', null, 'Total Active Plots') ?></h6>
                     <h3 class="mb-0 fw-bold"><?= count($investments) ?></h3>
                 </div>
@@ -47,7 +47,7 @@ try {
         <?php if (empty($investments)): ?>
             <div class="col-12">
                 <div class="card border-0 shadow-sm text-center py-5">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
                         <h5><?= __('user_inv2_empty_title', null, 'No active investments found') ?></h5>
                         <p class="text-muted"><?= __('user_inv2_empty_desc', null, "You haven't purchased any plots yet.") ?></p>

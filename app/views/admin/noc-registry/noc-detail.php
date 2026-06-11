@@ -37,7 +37,7 @@ $eligibility = $eligibility ?? [];
                         <span class="badge bg-<?= $color ?> fs-6"><?= ucfirst($noc['status']) ?></span>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="text-muted small"><?= __('admin_noc_number') ?></div>
@@ -97,7 +97,7 @@ $eligibility = $eligibility ?? [];
                 <div class="card-header bg-white border-bottom">
                     <h6 class="mb-0"><i class="fas fa-check-double me-2"></i><?= __('admin_eligibility_checks') ?></h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($eligibility['checks'])): ?>
                         <?php foreach ($eligibility['checks'] as $check): ?>
                             <div class="d-flex align-items-start mb-2">
@@ -130,7 +130,7 @@ $eligibility = $eligibility ?? [];
                 <div class="card-header bg-white border-bottom">
                     <h6 class="mb-0"><i class="fas fa-cog me-2"></i><?= __('admin_actions_label') ?></h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/noc-registry/nocs/approve" class="mb-2">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <input type="hidden" name="noc_id" value="<?= $noc['id'] ?>">

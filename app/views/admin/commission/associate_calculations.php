@@ -4,7 +4,7 @@
         <a href="/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-body p-0">
             <table class="table table-striped mb-0">
                 <thead><tr><th>#</th><th>Associate</th><th>Property</th><th>Value</th><th>Level</th><th>%</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>

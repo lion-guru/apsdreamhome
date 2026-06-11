@@ -13,7 +13,7 @@
                     <?= ucfirst($stage) ?>
                 </span>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <small class="text-muted d-block">Customer</small>
@@ -61,16 +61,16 @@
     </div>
     <div class="col-md-4">
         <div class="card mb-3">
-            <div class="card-header">Actions</div>
+            <div class="card-header aps-cp-card-header">Actions</div>
             <div class="card-body d-grid gap-2">
                 <button class="btn btn-primary" onclick="alert('Move Stage')"><i class="fas fa-arrow-right"></i> Move Stage</button>
                 <button class="btn btn-success" onclick="alert('Mark as Won')"><i class="fas fa-check-circle"></i> Mark Won</button>
                 <button class="btn btn-danger" onclick="alert('Mark as Lost')"><i class="fas fa-times-circle"></i> Mark Lost</button>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header">Stage Progress</div>
-            <div class="card-body">
+        <div class="card aps-cp-card">
+            <div class="card-header aps-cp-card-header">Stage Progress</div>
+            <div class="card-body aps-cp-card-body">
                 <?php $stages = ['lead', 'qualified', 'proposal', 'negotiating', 'closed_won']; $currentIdx = array_search($stageLower, $stages); ?>
                 <div class="list-group list-group-flush">
                     <?php foreach ($stages as $i => $s): ?>

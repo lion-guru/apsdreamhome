@@ -20,7 +20,7 @@
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-rss me-2 text-info"></i>Activity Feed</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($social_activities)): ?>
                     <p class="text-muted text-center py-3">No recent activity.</p>
                     <?php else: ?>
@@ -55,7 +55,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-smile me-2 text-info"></i>Available Avatars</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <?php foreach ($user_avatars as $key => $avatar): ?>
                         <div class="col-md-3 text-center">
@@ -73,7 +73,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-user-friends me-2 text-success"></i>Active Users (<?= count($active_users) ?>)</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($active_users)): ?>
                     <p class="text-muted text-center py-3">No users online.</p>
                     <?php else: ?>

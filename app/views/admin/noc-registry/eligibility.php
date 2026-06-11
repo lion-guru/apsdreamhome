@@ -23,7 +23,7 @@ $booking_id = $booking_id ?? 0;
     <div class="card-header bg-white border-bottom">
         <h6 class="mb-0"><i class="fas fa-search me-2"></i><?= __('admin_select_booking_to_check') ?></h6>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="GET" action="<?= BASE_URL ?>/admin/noc-registry/eligibility" class="row g-3">
             <div class="col-md-8">
                 <select name="booking_id" class="form-select" required>
@@ -63,7 +63,7 @@ $booking_id = $booking_id ?? 0;
                             <?php endif; ?>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <!-- Booking Info -->
                         <div class="row g-2 mb-3">
                             <div class="col-6">
@@ -128,7 +128,7 @@ $booking_id = $booking_id ?? 0;
                             <?php endif; ?>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="text-muted small mb-3"><?= __('admin_registry_requires_noc') ?></div>
 
                         <!-- Checks -->

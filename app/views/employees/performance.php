@@ -28,7 +28,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -48,7 +48,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -68,7 +68,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -88,7 +88,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -111,21 +111,21 @@
     <!-- Performance Charts -->
     <div class="row mb-4">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-chart-bar me-2"></i>Performance Trend</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="performanceChart" width="400" height="200"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-trophy me-2"></i>Achievements</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($monthly_performance['achievements'] ?? [])): ?>
                         <p class="text-muted">No achievements yet.</p>
                     <?php else: ?>
@@ -155,11 +155,11 @@
     <!-- Detailed Metrics -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-tasks me-2"></i>Task Performance</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-6">
                             <div class="metric-item text-center">
@@ -201,11 +201,11 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-chart-pie me-2"></i>Performance Breakdown</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="performanceBreakdownChart" width="400" height="200"></canvas>
                 </div>
             </div>
@@ -215,11 +215,11 @@
     <!-- Goals and Targets -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-bullseye me-2"></i>Goals & Targets</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <?php foreach (($monthly_performance['goals'] ?? []) as $goal): ?>
                             <div class="col-md-4 mb-3">
@@ -254,11 +254,11 @@
     <!-- Performance History -->
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-history me-2"></i>Performance History</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-striped table-hover table-responsive">
                             <thead class="table-dark">

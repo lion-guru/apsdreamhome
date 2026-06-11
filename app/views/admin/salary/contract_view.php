@@ -10,7 +10,7 @@
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Contract #<?= $contract['id'] ?? '' ?></h5>
                     <span class="badge bg-<?= match($contract['status']??'active') { 'active'=>'success', 'expired'=>'secondary', 'terminated'=>'danger', default=>'secondary' } ?> fs-6"><?= ucfirst($contract['status'] ?? 'active') ?></span>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3">
                         <div class="col-md-6"><strong>Employee:</strong> <?= htmlspecialchars($contract['employee_name'] ?? '') ?></div>
                         <div class="col-md-6"><strong>Email:</strong> <?= htmlspecialchars($contract['employee_email'] ?? '') ?></div>
@@ -40,7 +40,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Actions</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (($contract['status'] ?? '') === 'active'): ?>
                         <form method="post" action="<?= BASE_URL ?>/admin/salary/contracts/terminate/<?= $contract['id'] ?>" onsubmit="return confirm('Terminate this contract permanently?')">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">

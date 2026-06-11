@@ -16,7 +16,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         
         <?php if (!empty($ticket)): ?>
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form id="editTicketForm" action="<?php echo $base; ?>/admin/support_tickets/update/<?php echo $ticket['id']; ?>" method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                     

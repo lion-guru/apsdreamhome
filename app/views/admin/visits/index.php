@@ -18,7 +18,7 @@ ob_start();
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Total Visits</p>
                     <h3><?= number_format($stats['total'] ?? 0) ?></h3>
                     <small class="text-muted"><?= $stats['scheduled'] ?? 0 ?> scheduled, <?= $stats['confirmed'] ?? 0 ?> confirmed</small>
@@ -27,7 +27,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Today</p>
                     <h3 class="text-info"><?= number_format($stats['today'] ?? 0) ?></h3>
                     <small class="text-muted"><?= $stats['this_week'] ?? 0 ?> this week</small>
@@ -36,7 +36,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Completed</p>
                     <h3 class="text-success"><?= number_format($stats['completed'] ?? 0) ?></h3>
                     <small class="text-muted"><?= $stats['cancelled'] ?? 0 ?> cancelled, <?= $stats['no_show'] ?? 0 ?> no-show</small>
@@ -45,7 +45,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Available Slots</p>
                     <h3 class="text-warning"><?= number_format($stats['available_slots'] ?? 0) ?></h3>
                     <small class="text-muted">Next 14 days · Avg rating: <?= number_format($stats['avg_rating'] ?? 0, 1) ?>⭐</small>
@@ -122,7 +122,7 @@ ob_start();
         <div class="card-header bg-white py-3">
             <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Available Time Slots (next 14 days)</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($slots)): ?>
                 <p class="text-muted">No available slots</p>
             <?php else: ?>

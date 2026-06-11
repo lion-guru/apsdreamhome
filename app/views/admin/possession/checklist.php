@@ -82,8 +82,8 @@ $active_page = 'possession';
 
     <div class="col-md-4">
         <div class="card mb-4">
-            <div class="card-header"><h5 class="mb-0"><i class="fas fa-plus-circle"></i> Add Item</h5></div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-plus-circle"></i> Add Item</h5></div>
+            <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?= BASE_URL ?>/admin/possession/checklist/<?= $booking['id'] ?>/add">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-2">
@@ -95,9 +95,9 @@ $active_page = 'possession';
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header"><h5 class="mb-0"><i class="fas fa-lightbulb"></i> Suggested Items</h5></div>
-            <div class="card-body">
+        <div class="card aps-cp-card">
+            <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-lightbulb"></i> Suggested Items</h5></div>
+            <div class="card-body aps-cp-card-body">
                 <ul class="list-unstyled mb-0">
                     <?php $suggested = [
                         'Water connection checked & functional',

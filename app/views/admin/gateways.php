@@ -123,7 +123,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                                 <span class="badge bg-secondary"><?= __('admin_gw_not_configured', null, 'Not configured') ?></span>
                             <?php endif; ?>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <p class="text-muted small mb-2">
                                 <i class="fas fa-info-circle me-1"></i>
                                 <?= htmlspecialchars($card['detail']) ?>
@@ -212,7 +212,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                             <i class="fas fa-info-circle me-1"></i>How to configure
                         </h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="mb-2"><strong>Twilio</strong> — set in <code>.env</code>:</p>
                         <pre class="bg-light p-2 small mb-3">TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TWILIO_AUTH_TOKEN=your_auth_token
@@ -256,7 +256,7 @@ TWILIO_TEST_MODE=true  # skip real API during local dev</pre>
                             <span class="badge bg-secondary">Auto-derived from BASE_URL</span>
                         <?php endif; ?>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="small text-muted mb-2">
                             Paste this URL into your <a href="https://dashboard.razorpay.com/app/webhooks" target="_blank" rel="noopener">Razorpay dashboard</a>
                             (Settings &rarr; Webhooks &rarr; Add new webhook) along with the secret below. Razorpay will POST payment events here.

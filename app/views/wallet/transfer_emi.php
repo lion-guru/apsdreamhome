@@ -147,7 +147,7 @@
             <h4 class="mb-4"><i class="fas fa-paper-plane me-2"></i>Transfer Details</h4>
             
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form id="transferForm">
                         <div class="mb-3">
                             <label class="form-label">Selected EMI</label>
@@ -183,7 +183,7 @@
 
             <!-- Transfer Info -->
             <div class="card border-0 shadow-sm mt-4">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="card-title mb-3"><i class="fas fa-info-circle me-2 text-primary"></i>Transfer Info</h5>
                     <ul class="list-unstyled mb-0">
                         <li class="mb-2">

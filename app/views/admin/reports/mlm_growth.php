@@ -31,7 +31,7 @@ $report = $report ?? [
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6">
             <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
@@ -51,7 +51,7 @@ $report = $report ?? [
 
         <div class="col-xl-3 col-md-6">
             <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
@@ -71,7 +71,7 @@ $report = $report ?? [
 
         <div class="col-xl-3 col-md-6">
             <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
@@ -91,7 +91,7 @@ $report = $report ?? [
 
         <div class="col-xl-3 col-md-6">
             <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
@@ -118,7 +118,7 @@ $report = $report ?? [
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">Network Growth (Last 12 Months)</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="networkGrowthChart" height="300"></canvas>
                 </div>
             </div>
@@ -130,7 +130,7 @@ $report = $report ?? [
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-success">Level Distribution</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="levelDistributionChart" height="300"></canvas>
                 </div>
             </div>
@@ -142,7 +142,7 @@ $report = $report ?? [
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-info">Commission Trends (Last 12 Months)</h6>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <canvas id="commissionTrendsChart" height="100"></canvas>
         </div>
     </div>
@@ -152,7 +152,7 @@ $report = $report ?? [
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-warning">Top 20 Performers (Last 30 Days)</h6>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
@@ -189,7 +189,7 @@ $report = $report ?? [
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-danger">Month-over-Month Comparison</h6>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>

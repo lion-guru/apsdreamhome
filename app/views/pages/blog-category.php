@@ -26,8 +26,8 @@
                     <h2>Latest Posts in <?php echo ucfirst($category ?? 'Category'); ?></h2>
                     <div class="row">
                         <div class="col-md-6 mb-4">
-                            <div class="card">
-                                <div class="card-body">
+                            <div class="card aps-cp-card">
+                                <div class="card-body aps-cp-card-body">
                                     <h5>Blog Post Title 1</h5>
                                     <p class="text-muted">Posted on: <?php echo date('F j, Y'); ?></p>
                                     <p>Excerpt of blog post...</p>
@@ -36,8 +36,8 @@
                             </div>
                         </div>
                         <div class="col-md-6 mb-4">
-                            <div class="card">
-                                <div class="card-body">
+                            <div class="card aps-cp-card">
+                                <div class="card-body aps-cp-card-body">
                                     <h5>Blog Post Title 2</h5>
                                     <p class="text-muted">Posted on: <?php echo date('F j, Y'); ?></p>
                                     <p>Excerpt of blog post...</p>

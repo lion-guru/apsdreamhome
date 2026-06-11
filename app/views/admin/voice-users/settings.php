@@ -7,8 +7,8 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card mb-3">
-                <div class="card-header">Voice Provider Configuration</div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header">Voice Provider Configuration</div>
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Provider</label>
                         <select name="provider" class="form-select">
@@ -34,8 +34,8 @@
         </div>
         <div class="col-md-6">
             <div class="card mb-3">
-                <div class="card-header">Agent Parameters</div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header">Agent Parameters</div>
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Max Call Duration (seconds)</label>
                         <input type="number" name="max_duration" class="form-control" value="<?= $settings['max_duration'] ?? 300 ?>">
@@ -57,8 +57,8 @@
         </div>
         <div class="col-12">
             <div class="card mb-3">
-                <div class="card-header">TTS / STT Settings</div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header">TTS / STT Settings</div>
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-4">
                             <label class="form-label">TTS Engine</label>

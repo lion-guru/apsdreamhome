@@ -31,11 +31,11 @@ $page_title = 'Plot Development Cost Calculator - APS Dream Home';
     <?php unset($_SESSION['error']); endif; ?>
 
     <!-- Colonies List -->
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-header bg-primary text-white">
             <h5 class="mb-0"><i class="fas fa-home me-2"></i>Colonies</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($colonies)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
@@ -99,7 +99,7 @@ $page_title = 'Plot Development Cost Calculator - APS Dream Home';
         <div class="card-header bg-secondary text-white">
             <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Cost Categories</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row">
                 <div class="col-md-3">
                     <div class="d-flex align-items-center mb-2">

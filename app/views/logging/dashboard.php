@@ -5,7 +5,7 @@
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0"><div class="rounded-circle bg-danger bg-opacity-10 p-3"><i class="fas fa-exclamation-triangle fa-2x text-danger"></i></div></div>
                         <div class="ms-3">
@@ -18,7 +18,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0"><div class="rounded-circle bg-warning bg-opacity-10 p-3"><i class="fas fa-exclamation-circle fa-2x text-warning"></i></div></div>
                         <div class="ms-3">
@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0"><div class="rounded-circle bg-info bg-opacity-10 p-3"><i class="fas fa-info-circle fa-2x text-info"></i></div></div>
                         <div class="ms-3">
@@ -44,7 +44,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0"><div class="rounded-circle bg-success bg-opacity-10 p-3"><i class="fas fa-check-circle fa-2x text-success"></i></div></div>
                         <div class="ms-3">

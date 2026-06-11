@@ -13,7 +13,7 @@
     <?php $_SESSION['flash_message'] = ''; $_SESSION['flash_type'] = ''; endif; ?>
 
     <div class="card shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/documents/store" enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row">

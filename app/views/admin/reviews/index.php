@@ -19,7 +19,7 @@ ob_start();
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Total Reviews</p>
                     <h3><?= number_format($stats['total_reviews'] ?? 0) ?></h3>
                     <small class="text-muted"><?= $stats['pending_reviews'] ?? 0 ?> pending</small>
@@ -28,7 +28,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Average Rating</p>
                     <h3>
                         <i class="fas fa-star text-warning"></i>
@@ -40,7 +40,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Approved Reviews</p>
                     <h3 class="text-success"><?= number_format($stats['approved_reviews'] ?? 0) ?></h3>
                     <small class="text-muted"><?= $stats['rejected_reviews'] ?? 0 ?> rejected</small>
@@ -49,7 +49,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Testimonials</p>
                     <h3 class="text-info"><?= number_format($stats['total_testimonials'] ?? 0) ?></h3>
                     <small class="text-muted"><?= $stats['featured_testimonials'] ?? 0 ?> featured</small>

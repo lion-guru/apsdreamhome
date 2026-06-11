@@ -26,7 +26,7 @@ $page_description = 'Financial management and accounting';
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-success bg-opacity-10 text-success rounded p-3">
@@ -43,7 +43,7 @@ $page_description = 'Financial management and accounting';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-danger bg-opacity-10 text-danger rounded p-3">
@@ -60,7 +60,7 @@ $page_description = 'Financial management and accounting';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
@@ -77,7 +77,7 @@ $page_description = 'Financial management and accounting';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-info bg-opacity-10 text-info rounded p-3">
@@ -101,7 +101,7 @@ $page_description = 'Financial management and accounting';
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">Financial Tools</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <div class="col-md-3">
                             <a href="<?php echo BASE_URL; ?>/admin/accounting" class="btn btn-outline-primary w-100 py-3">

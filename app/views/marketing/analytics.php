@@ -52,7 +52,7 @@
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Campaign Performance</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="performanceChart" height="250"></canvas>
                 </div>
             </div>
@@ -60,7 +60,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Traffic Sources</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="sourceChart" height="250"></canvas>
                 </div>
             </div>

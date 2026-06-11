@@ -56,11 +56,11 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">
+    <div class="card aps-cp-card">
+        <div class="card-header aps-cp-card-header">
             <h5 class="card-title mb-0">Daily Summary — <?php echo htmlspecialchars($report_data['date'] ?? date('Y-m-d')); ?></h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <table class="table table-bordered">
                 <thead class="table-light">
                     <tr>

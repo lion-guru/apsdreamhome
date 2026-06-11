@@ -22,7 +22,7 @@ ob_start();
                 <?php if ($auction['image_url']): ?>
                     <img alt="" loading="lazy" src="<?= htmlspecialchars($auction['image_url']) ?>" class="card-img-top" alt="<?= htmlspecialchars($auction['title']) ?>" style="max-height: 400px; object-fit: cover;">
                 <?php endif; ?>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
                             <span class="badge bg-<?= ['live'=>'danger','scheduled'=>'info','ended'=>'secondary','sold'=>'success','cancelled'=>'dark'][$auction['status']] ?? 'secondary' ?>">
@@ -83,7 +83,7 @@ ob_start();
 
                     <?php if ($auction['status'] === 'live' && strtotime($auction['ends_at']) > time()): ?>
                         <div class="card bg-light border-0">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <?php if ($auction['deposit_amount'] && !$has_deposit): ?>
                                     <div class="alert alert-warning">
                                         <i class="fas fa-info-circle me-1"></i>
@@ -118,7 +118,7 @@ ob_start();
                 <div class="card-header bg-white">
                     <h6 class="mb-0">Bid History</h6>
                 </div>
-                <div class="card-body" style="max-height: 500px; overflow-y: auto;" id="bidHistory">
+                <div class="card-body aps-cp-card-body" style="max-height: 500px; overflow-y: auto;" id="bidHistory">
                     <?php if (empty($bids)): ?>
                         <p class="text-muted text-center">No bids yet. Be the first!</p>
                     <?php else: ?>
@@ -143,7 +143,7 @@ ob_start();
             </div>
 
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <button class="btn btn-<?= $is_watching ? 'secondary' : 'outline-primary' ?> w-100" id="watchBtn">
                         <i class="fas fa-eye me-1"></i>
                         <?= $is_watching ? 'Watching' : 'Watch Auction' ?>

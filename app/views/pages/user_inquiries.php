@@ -8,7 +8,7 @@ $extraHead = '<style>
     <h3 class="mb-4"><i class="fas fa-envelope me-2 text-success"></i><?= __('user_inquiries_heading') ?></h3>
 
     <?php if (empty($inquiries)): ?>
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
                 <h5 class="text-muted"><?= __('user_inquiries_empty_title') ?></h5>
@@ -19,8 +19,8 @@ $extraHead = '<style>
             </div>
         </div>
     <?php else: ?>
-        <div class="card">
-            <div class="card-body">
+        <div class="card aps-cp-card">
+            <div class="card-body aps-cp-card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead>

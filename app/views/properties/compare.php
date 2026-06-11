@@ -26,11 +26,11 @@
     <?php if (!empty($sessions)): ?>
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card">
+                <div class="card aps-cp-card">
                     <div class="card-header bg-light">
                         <h5 class="mb-0"><i class="fas fa-history me-2"></i>Saved Comparisons</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="table-responsive">
                             <table class="table table-sm">
                                 <thead>
@@ -69,7 +69,7 @@
     <!-- Property Selection Grid -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-light d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-home me-2"></i>Select Properties</h5>
                     <div class="input-group w-auto">
@@ -78,7 +78,7 @@
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row" id="property-grid">
                         <?php foreach ($properties as $property): ?>
                             <div class="col-md-6 col-lg-4 col-xl-3 mb-4 property-card"
@@ -108,7 +108,7 @@
                                         <?php endif; ?>
                                     </div>
 
-                                    <div class="card-body">
+                                    <div class="card-body aps-cp-card-body">
                                         <h5 class="card-title text-truncate"><?= htmlspecialchars($property['title']) ?></h5>
                                         <p class="text-muted small mb-2">
                                             <i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location']) ?>

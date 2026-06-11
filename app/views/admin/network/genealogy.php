@@ -21,7 +21,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <?php if (!empty($genealogy_data['root'])): ?>
         <!-- Root Info -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <h4 class="mb-1"><?php echo htmlspecialchars($genealogy_data['root']['name'] ?? 'Unknown'); ?></h4>
@@ -86,7 +86,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="card-header bg-white">
                 <h5 class="mb-0"><i class="fas fa-list me-2"></i>Downline Members</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($genealogy_data['downline'])): ?>
                     <div class="table-responsive">
                         <table class="table table-hover">

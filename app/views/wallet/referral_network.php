@@ -229,7 +229,7 @@
 
     <!-- Referral Rewards Info -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <h5 class="card-title mb-3"><i class="fas fa-gift me-2 text-primary"></i>Referral Rewards</h5>
             <div class="row">
                 <div class="col-md-4 mb-3">

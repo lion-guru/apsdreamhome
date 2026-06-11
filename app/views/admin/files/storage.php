@@ -11,7 +11,7 @@ $storage_stats = $storage_stats ?? ['used_space' => 0, 'total_space' => 0, 'file
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-primary text-uppercase mb-1">Used Space</div><div class="h5 mb-0 fw-bold"><?= $storage_stats['used_space_human'] ?? (function($b){ return $b >= 1073741824 ? number_format($b/1073741824,2).' GB' : ($b >= 1048576 ? number_format($b/1048576,2).' MB' : number_format($b).' B'); })(floatval($storage_stats['used_space'] ?? 0)) ?></div></div>
                         <div class="col-auto"><i class="fas fa-hdd fa-2x text-gray-300"></i></div>
@@ -21,7 +21,7 @@ $storage_stats = $storage_stats ?? ['used_space' => 0, 'total_space' => 0, 'file
         </div>
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-success text-uppercase mb-1">Total Space</div><div class="h5 mb-0 fw-bold"><?= $storage_stats['total_space_human'] ?? (function($b){ return $b >= 1073741824 ? number_format($b/1073741824,2).' GB' : number_format($b).' B'; })(floatval($storage_stats['total_space'] ?? 0)) ?></div></div>
                         <div class="col-auto"><i class="fas fa-server fa-2x text-gray-300"></i></div>
@@ -31,7 +31,7 @@ $storage_stats = $storage_stats ?? ['used_space' => 0, 'total_space' => 0, 'file
         </div>
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-info text-uppercase mb-1">File Count</div><div class="h5 mb-0 fw-bold"><?= number_format($storage_stats['file_count'] ?? 0) ?></div></div>
                         <div class="col-auto"><i class="fas fa-files fa-2x text-gray-300"></i></div>
@@ -41,7 +41,7 @@ $storage_stats = $storage_stats ?? ['used_space' => 0, 'total_space' => 0, 'file
         </div>
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-warning text-uppercase mb-1">Used %</div><div class="h5 mb-0 fw-bold"><?= number_format($storage_stats['used_percent'] ?? 0, 1) ?>%</div></div>
                         <div class="col-auto"><i class="fas fa-chart-pie fa-2x text-gray-300"></i></div>
@@ -71,7 +71,7 @@ $storage_stats = $storage_stats ?? ['used_space' => 0, 'total_space' => 0, 'file
         <div class="col-lg-6">
             <div class="card shadow mb-4">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">By Category</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $byCategory = $storage_stats['by_category'] ?? []; ?>
                     <?php if (empty($byCategory)): ?>
                         <p class="text-muted text-center py-3">No category data available.</p>

@@ -29,7 +29,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <h5 class="mb-0"><i class="fas fa-check-circle text-success me-2"></i>RERA Status</h5>
                             <span class="badge bg-<?= ($u['is_rera_approved'] ?? 0) ? 'success' : 'warning' ?> fs-6"><?= ($u['is_rera_approved'] ?? 0) ? 'APPROVED' : 'PENDING' ?></span>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row g-3">
                                 <div class="col-md-6"><strong>RERA Number:</strong><br><?= htmlspecialchars($u['rera_number'] ?? 'N/A') ?></div>
                                 <div class="col-md-6"><strong>Name:</strong><br><?= htmlspecialchars($u['name'] ?? 'N/A') ?></div>

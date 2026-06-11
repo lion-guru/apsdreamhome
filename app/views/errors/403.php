@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="icon"><i class="fas fa-lock"></i></div>
         <h1>403</h1>
         <h2>Access Denied</h2>

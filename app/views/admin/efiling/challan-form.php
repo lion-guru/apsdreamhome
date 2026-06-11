@@ -14,7 +14,7 @@ ob_start();
 <?php endif; ?>
 
 <div class="card border-0 shadow-sm">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="POST" action="/admin/efiling/tds/challans/create">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 

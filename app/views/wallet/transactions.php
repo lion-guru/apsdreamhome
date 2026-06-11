@@ -174,7 +174,7 @@
 
     <!-- Filters -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <h5 class="card-title mb-3"><i class="fas fa-filter me-2"></i>Filter Transactions</h5>
             <div>
                 <span class="fw-bold me-2">Type:</span>

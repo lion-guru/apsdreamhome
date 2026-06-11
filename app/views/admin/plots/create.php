@@ -8,8 +8,8 @@
                 </a>
             </div>
             
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <?php if (isset($_SESSION['error'])): ?>
                         <div class="alert alert-danger">
                             <?= htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>

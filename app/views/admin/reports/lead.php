@@ -52,14 +52,14 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Leads — <?php echo htmlspecialchars($start_date); ?> to <?php echo htmlspecialchars($end_date); ?></h5>
             <a href="<?php echo BASE_URL; ?>/admin/reports/export?type=leads&start_date=<?php echo urlencode($start_date); ?>&end_date=<?php echo urlencode($end_date); ?>" class="btn btn-sm btn-success">
                 <i class="fas fa-download"></i> Export CSV
             </a>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-hover table-bordered">
                     <thead class="table-light">

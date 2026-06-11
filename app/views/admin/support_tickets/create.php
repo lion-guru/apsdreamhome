@@ -14,7 +14,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         </div>
         
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form id="ticketForm" action="<?php echo $base; ?>/admin/support_tickets/store" method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                     

@@ -20,7 +20,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Request Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3">
                         <div class="col-md-3 text-muted">Property</div>
                         <div class="col-md-9"><strong><?= htmlspecialchars($r['property_title'] ?? 'Property #' . $r['property_id']) ?></strong></div>
@@ -73,7 +73,7 @@
             <!-- Update Status -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Status</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/property-features/maintenance/update-status/<?= $r['id'] ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <select name="status" class="form-select mb-3">
@@ -89,7 +89,7 @@
             <!-- Assign To -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-user-cog me-2"></i>Assign To</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/property-features/maintenance/assign/<?= $r['id'] ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <select name="assigned_to" class="form-select mb-3">

@@ -15,7 +15,7 @@ $page_description = 'Manage course enrollments';
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
@@ -32,7 +32,7 @@ $page_description = 'Manage course enrollments';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-success bg-opacity-10 text-success rounded p-3">
@@ -49,7 +49,7 @@ $page_description = 'Manage course enrollments';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-info bg-opacity-10 text-info rounded p-3">
@@ -66,7 +66,7 @@ $page_description = 'Manage course enrollments';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-danger bg-opacity-10 text-danger rounded p-3">

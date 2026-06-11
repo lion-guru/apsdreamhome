@@ -14,7 +14,7 @@ $isAssign = ($mode ?? '') === 'assign';
 
 <?php if ($isAssign): ?>
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/hr/shifts/assign">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <div class="row g-3">
@@ -57,7 +57,7 @@ $isAssign = ($mode ?? '') === 'assign';
     </div>
 <?php else: ?>
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" class="row g-2 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label small">Date</label>

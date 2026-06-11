@@ -63,7 +63,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card recommendation-card h-100 position-relative">
                             <span class="match-score"><?php echo $property['match_score'] ?? 95; ?>% Match</span>
                             <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" style="height: 200px; object-fit: cover;">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h5 class="card-title"><?php echo htmlspecialchars($property['title'] ?? 'Property'); ?></h5>
                                 <p class="text-muted mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($property['location'] ?? 'Location N/A'); ?></p>
                                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -107,7 +107,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="card-header bg-white">
                 <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>How AI Recommendations Work</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-3 text-center">
                         <i class="fas fa-user-circle fa-2x text-primary mb-2"></i>

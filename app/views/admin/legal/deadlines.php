@@ -18,7 +18,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
     <div class="row mb-4">
         <div class="col-xl-4 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
@@ -35,7 +35,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
         </div>
         <div class="col-xl-4 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-danger bg-opacity-10 text-danger rounded p-3">
@@ -52,7 +52,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
         </div>
         <div class="col-xl-4 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-warning bg-opacity-10 text-warning rounded p-3">
@@ -142,7 +142,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add Deadline</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/legal/deadlines/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">

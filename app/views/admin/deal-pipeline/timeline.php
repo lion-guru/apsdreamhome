@@ -4,11 +4,11 @@
         <a href="<?= BASE_URL ?>/admin/deal-pipeline/<?= $deal['id'] ?>" class="btn btn-secondary">Back to Deal</a>
     </div>
 
-    <div class="card">
-        <div class="card-header">
+    <div class="card aps-cp-card">
+        <div class="card-header aps-cp-card-header">
             <h5>Full History</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (!empty($timeline)): ?>
             <ul class="list-group">
                 <?php foreach ($timeline as $entry): ?>

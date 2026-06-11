@@ -72,7 +72,7 @@ $isDelayed = $currentStatus === 'delayed';
 <?php endif; ?>
 
 <div class="card mb-4">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <div class="possession-progress">
             <?php foreach ([
                 'not_due' => ['label' => 'Registered', 'icon' => 'fa-file-signature'],
@@ -93,8 +93,8 @@ $isDelayed = $currentStatus === 'delayed';
 <div class="row">
     <div class="col-md-6">
         <div class="card mb-4">
-            <div class="card-header"><h5 class="mb-0"><i class="fas fa-info-circle"></i> Booking Info</h5></div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle"></i> Booking Info</h5></div>
+            <div class="card-body aps-cp-card-body">
                 <table class="table table-bordered table-sm">
                     <tr><th style="width:140px">Booking #</th><td><strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong></td></tr>
                     <tr><th>Property</th><td><?= htmlspecialchars($booking['property_title'] ?? '') ?> <small class="text-muted">(<?= htmlspecialchars($booking['property_location'] ?? '') ?>)</small></td></tr>
@@ -123,8 +123,8 @@ $isDelayed = $currentStatus === 'delayed';
     <div class="col-md-6">
         <?php if ($currentStep < 2 && !$isDelayed): ?>
         <div class="card mb-4">
-            <div class="card-header"><h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Schedule Handover</h5></div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Schedule Handover</h5></div>
+            <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?= BASE_URL ?>/admin/possession/<?= $booking['id'] ?>/schedule">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-2">
@@ -141,8 +141,8 @@ $isDelayed = $currentStatus === 'delayed';
         <?php endif; ?>
 
         <div class="card mb-4">
-            <div class="card-header"><h5 class="mb-0"><i class="fas fa-check-double"></i> Mark Handed Over</h5></div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-check-double"></i> Mark Handed Over</h5></div>
+            <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?= BASE_URL ?>/admin/possession/<?= $booking['id'] ?>/handover">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="row g-2 mb-2">
@@ -164,8 +164,8 @@ $isDelayed = $currentStatus === 'delayed';
         </div>
 
         <div class="card mb-4">
-            <div class="card-header"><h5 class="mb-0"><i class="fas fa-sticky-note"></i> Handover Notes</h5></div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-sticky-note"></i> Handover Notes</h5></div>
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($booking['handover_notes'])): ?>
                     <pre style="white-space: pre-wrap; font-family: inherit; background: #f8f9fa; padding: 12px; border-radius: 6px; max-height: 200px; overflow-y: auto;"><?= htmlspecialchars($booking['handover_notes']) ?></pre>
                 <?php else: ?>
@@ -183,7 +183,7 @@ $isDelayed = $currentStatus === 'delayed';
                 <h5 class="mb-0"><i class="fas fa-clipboard-check"></i> Handover Checklist</h5>
                 <a href="<?= BASE_URL ?>/admin/possession/checklist/<?= $booking['id'] ?>" class="btn btn-sm btn-outline-primary">Manage</a>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (empty($checklist)): ?>
                     <p class="text-muted">No checklist items yet. <a href="<?= BASE_URL ?>/admin/possession/checklist/<?= $booking['id'] ?>">Add items</a>.</p>
                 <?php else: ?>
@@ -220,7 +220,7 @@ $isDelayed = $currentStatus === 'delayed';
                 <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="collapse" data-bs-target="#reportDefectForm">Report Defect</button>
                 <?php endif; ?>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if ($currentStatus === 'handed_over'): ?>
                 <div class="collapse <?= ($focus_section ?? '') === 'defects' ? 'show' : '' ?>" id="reportDefectForm">
                     <form method="POST" action="<?= BASE_URL ?>/admin/possession/defects/<?= $booking['id'] ?>/report" class="mb-3 p-3 bg-light rounded">

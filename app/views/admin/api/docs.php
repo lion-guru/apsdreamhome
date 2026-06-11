@@ -29,10 +29,10 @@ $endpoints = $endpoints ?? [
     </div>
     <div class="card shadow">
         <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">API Endpoints (<?= count($endpoints) ?>)</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php foreach ($endpoints as $i => $ep): ?>
             <div class="card mb-3 border-<?= $ep['method'] === 'GET' ? 'success' : ($ep['method'] === 'POST' ? 'primary' : ($ep['method'] === 'PUT' ? 'warning' : 'danger')) ?>">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div>
                             <span class="badge bg-<?= $ep['method'] === 'GET' ? 'success' : ($ep['method'] === 'POST' ? 'primary' : ($ep['method'] === 'PUT' ? 'warning' : 'danger')) ?> me-2 p-2"><?= $ep['method'] ?></span>

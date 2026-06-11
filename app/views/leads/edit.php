@@ -34,19 +34,19 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                         </a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="/leads/<?= $lead['id'] ?>/update" id="editLeadForm">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <!-- Basic Information -->
                             <div class="col-md-6">
                                 <div class="card border-left-primary">
-                                    <div class="card-header">
+                                    <div class="card-header aps-cp-card-header">
                                         <h6 class="m-0 font-weight-bold text-primary">
                                             <i class="fas fa-info-circle mr-2"></i>बेसिक जानकारी
                                         </h6>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body aps-cp-card-body">
                                         <div class="form-group mb-3">
                                             <label for="name" class="form-label">
                                                 पूरा नाम <span class="text-danger">*</span>
@@ -100,12 +100,12 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                             <!-- Lead Details -->
                             <div class="col-md-6">
                                 <div class="card border-left-success">
-                                    <div class="card-header">
+                                    <div class="card-header aps-cp-card-header">
                                         <h6 class="m-0 font-weight-bold text-success">
                                             <i class="fas fa-chart-line mr-2"></i>लीड डिटेल्स
                                         </h6>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body aps-cp-card-body">
                                         <div class="form-group mb-3">
                                             <label for="source" class="form-label">
                                                 लीड स्रोत <span class="text-danger">*</span>
@@ -167,12 +167,12 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
 
                                 <!-- Financial & Requirements -->
                                 <div class="card border-left-warning mt-3">
-                                    <div class="card-header">
+                                    <div class="card-header aps-cp-card-header">
                                         <h6 class="m-0 font-weight-bold text-warning">
                                             <i class="fas fa-rupee-sign mr-2"></i>वित्तीय जानकारी
                                         </h6>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body aps-cp-card-body">
                                         <div class="form-group mb-3">
                                             <label for="budget" class="form-label">
                                                 बजट (₹)

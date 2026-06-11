@@ -39,7 +39,7 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title mb-3">Today's Status</h5>
                         <div class="row" id="todayStatus">
                             <div class="col-md-6">
@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                             </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($attendance)): ?>
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>No attendance records found.
@@ -186,11 +186,11 @@
     <!-- Monthly Calendar View (Optional) -->
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-calendar-alt me-2"></i>Monthly View</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div id="attendance-calendar"></div>
                 </div>
             </div>

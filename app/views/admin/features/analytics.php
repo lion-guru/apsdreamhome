@@ -8,12 +8,12 @@ ob_start();
   <h1 class="h3 mb-4"><i class="fas fa-chart-line me-2"></i>Analytics & KPIs</h1>
 
   <div class="row mb-3">
-    <div class="col-md-2"><div class="card border-left-primary shadow-sm"><div class="card-body"><h6 class="text-muted small">Customers</h6><h4 class="mb-0"><?= $comprehensive['customers'] ?? 0 ?></h4></div></div></div>
-    <div class="col-md-2"><div class="card border-left-info shadow-sm"><div class="card-body"><h6 class="text-muted small">Agents</h6><h4 class="mb-0"><?= $comprehensive['agents'] ?? 0 ?></h4></div></div></div>
-    <div class="col-md-2"><div class="card border-left-success shadow-sm"><div class="card-body"><h6 class="text-muted small">Associates</h6><h4 class="mb-0"><?= $comprehensive['associates'] ?? 0 ?></h4></div></div></div>
-    <div class="col-md-2"><div class="card border-left-warning shadow-sm"><div class="card-body"><h6 class="text-muted small">Leads (30d)</h6><h4 class="mb-0"><?= $comprehensive['leads_30d'] ?? 0 ?></h4></div></div></div>
-    <div class="col-md-2"><div class="card border-left-danger shadow-sm"><div class="card-body"><h6 class="text-muted small">Bookings (30d)</h6><h4 class="mb-0"><?= $comprehensive['bookings_30d'] ?? 0 ?></h4></div></div></div>
-    <div class="col-md-2"><div class="card border-left-secondary shadow-sm"><div class="card-body"><h6 class="text-muted small">Revenue (30d)</h6><h4 class="mb-0">₹<?= number_format(($comprehensive['revenue_30d'] ?? 0)/1000, 0) ?>k</h4></div></div></div>
+    <div class="col-md-2"><div class="card border-left-primary shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted small">Customers</h6><h4 class="mb-0"><?= $comprehensive['customers'] ?? 0 ?></h4></div></div></div>
+    <div class="col-md-2"><div class="card border-left-info shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted small">Agents</h6><h4 class="mb-0"><?= $comprehensive['agents'] ?? 0 ?></h4></div></div></div>
+    <div class="col-md-2"><div class="card border-left-success shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted small">Associates</h6><h4 class="mb-0"><?= $comprehensive['associates'] ?? 0 ?></h4></div></div></div>
+    <div class="col-md-2"><div class="card border-left-warning shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted small">Leads (30d)</h6><h4 class="mb-0"><?= $comprehensive['leads_30d'] ?? 0 ?></h4></div></div></div>
+    <div class="col-md-2"><div class="card border-left-danger shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted small">Bookings (30d)</h6><h4 class="mb-0"><?= $comprehensive['bookings_30d'] ?? 0 ?></h4></div></div></div>
+    <div class="col-md-2"><div class="card border-left-secondary shadow-sm"><div class="card-body aps-cp-card-body"><h6 class="text-muted small">Revenue (30d)</h6><h4 class="mb-0">₹<?= number_format(($comprehensive['revenue_30d'] ?? 0)/1000, 0) ?>k</h4></div></div></div>
   </div>
 
   <ul class="nav nav-tabs mb-3">
@@ -73,7 +73,7 @@ ob_start();
         <?php else: foreach ($dashboards as $d): ?>
           <div class="col-md-4 mb-3">
             <div class="card shadow-sm">
-              <div class="card-body">
+              <div class="card-body aps-cp-card-body">
                 <h5><?= htmlspecialchars($d['name'] ?? '') ?></h5>
                 <p class="text-muted small">Updated: <?= htmlspecialchars($d['updated_at'] ?? '') ?></p>
                 <span class="badge bg-<?= ($d['is_public'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($d['is_public'] ?? 0) ? 'Public' : 'Private' ?></span>

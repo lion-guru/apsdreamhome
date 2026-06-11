@@ -23,7 +23,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="card-header bg-white">
                 <h5 class="mb-0"><i class="fas fa-layer-group me-2"></i>Commission Levels</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($commission_levels)): ?>
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -63,7 +63,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Rank Requirements</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($rank_requirements)): ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach ($rank_requirements as $rank): ?>
@@ -94,7 +94,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Payouts</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($payout_history)): ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach ($payout_history as $payout): ?>

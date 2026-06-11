@@ -25,7 +25,7 @@ $palette = $theme['palette'] ?? ['primary' => '#4e73df', 'accent' => '#1cc88a'];
             </div>
             <div class="col-lg-5">
                 <div class="microsite-stats card shadow-lg">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <?php if (!empty($project['status'])): ?>
                             <div class="col-6">

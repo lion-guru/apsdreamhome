@@ -18,7 +18,7 @@
         <?php foreach ($projects as $key => $proj): ?>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <i class="fas fa-<?= $key === 'ai_energy_optimization' ? 'brain' : ($key === 'carbon_capture_technology' ? 'leaf' : 'recycle') ?> fa-3x text-primary"></i>
                         <span class="badge bg-<?= ($proj['status'] ?? '') === 'In Development' ? 'warning' : (($proj['status'] ?? '') === 'Research Phase' ? 'info' : 'success') ?>"><?= ($proj['status'] ?? '') ?></span>

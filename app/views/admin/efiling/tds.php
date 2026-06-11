@@ -16,7 +16,7 @@ ob_start();
 
 <!-- Filters -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-auto">
                 <label class="form-label small">Financial Year</label>
@@ -74,7 +74,7 @@ ob_start();
 <!-- Generate Form 26Q -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-cogs me-2"></i>Generate Form 26Q</h6></div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="POST" action="/admin/efiling/tds/generate" class="row g-2 align-items-end">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="col-auto">

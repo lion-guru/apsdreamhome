@@ -16,7 +16,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Personal Info</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Name</th><td><?= htmlspecialchars($farmer['name'] ?? '-') ?></td></tr>
                         <tr><th>Phone</th><td><?= htmlspecialchars($farmer['phone'] ?? '-') ?></td></tr>
@@ -32,7 +32,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-id-card me-2"></i>KYC & Bank Details</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Aadhar Number</th><td><?= htmlspecialchars($farmer['aadhar_number'] ?? '-') ?></td></tr>
                         <tr><th>PAN Number</th><td><?= htmlspecialchars($farmer['pan_number'] ?? '-') ?></td></tr>
@@ -45,7 +45,7 @@
     </div>
     <div class="card border-0 shadow-sm mt-4">
         <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-map me-2"></i>Land Holdings</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($land_holdings)): ?>
             <p class="text-muted text-center py-3 mb-0">No land holdings recorded yet</p>
             <?php else: ?>

@@ -7,8 +7,8 @@
     <div class="row">
         <div class="col-md-8">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0">Transaction Details</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0">Transaction Details</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-bordered">
                         <tr><th style="width:200px">Transaction Date</th><td><?= htmlspecialchars($sale['transaction_date']) ?></td></tr>
                         <tr><th>Customer Name</th><td><strong><?= htmlspecialchars($sale['customer_name']) ?></strong></td></tr>
@@ -29,8 +29,8 @@
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0">Actions</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0">Actions</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/khatabook-sales/delete/<?= $sale['id'] ?>" onsubmit="return confirm('Delete this record?')">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button class="btn btn-danger w-100 mb-2"><i class="fas fa-trash me-1"></i>Delete Record</button>

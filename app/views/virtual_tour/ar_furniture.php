@@ -30,7 +30,7 @@
 
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-th me-2 text-info"></i>Room Dimensions</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form id="roomForm" onsubmit="event.preventDefault(); submitRoomData();">
                         <div class="row g-3">
                             <div class="col-md-4">

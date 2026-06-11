@@ -52,7 +52,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Call Log</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($callLog)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
                             <thead><tr><th>Customer</th><th>Phone</th><th>Duration</th><th>Status</th><th>Notes</th></tr></thead>
@@ -77,7 +77,7 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-chart-simple me-2"></i>Today's Stats</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($todayStats)): ?>
                         <?php foreach ($todayStats as $key => $val): ?>
                         <div class="d-flex justify-content-between mb-2">

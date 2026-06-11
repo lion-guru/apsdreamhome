@@ -331,7 +331,7 @@ $base = BASE_URL;
             <div class="brand-subtitle">Associate Partner Portal</div>
         </div>
 
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="tagline-box">
                 <p><i class="fas fa-chart-line"></i> Join our associate network and earn commissions by referring users</p>
             </div>

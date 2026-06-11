@@ -19,7 +19,7 @@ ob_start();
                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-user me-2"></i>Session Details</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Collector (Field Agent) *</label>
@@ -44,7 +44,7 @@ ob_start();
 
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>How It Works</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <ul class="mb-0 small">
                             <li class="mb-2">Select the collector and date to reconcile their collections for that day.</li>
                             <li class="mb-2">The system will automatically sum up all <strong>submitted</strong> and <strong>verified</strong> receipts for that collector on that date.</li>
@@ -63,7 +63,7 @@ ob_start();
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light"><h5 class="mb-0"><i class="fas fa-clock me-2"></i>Status Values</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-unstyled mb-0 small">
                         <li class="mb-2"><span class="badge bg-success">Open</span> — Session active, can be closed</li>
                         <li class="mb-2"><span class="badge bg-secondary">Closed</span> — Finalized</li>

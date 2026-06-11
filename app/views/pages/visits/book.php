@@ -69,7 +69,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0"><i class="fas fa-calendar-day me-2"></i>1. Pick a Date</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (empty($slots)): ?>
                             <p class="text-muted">No available slots in the next 14 days</p>
                         <?php else: ?>
@@ -94,7 +94,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0"><i class="fas fa-clock me-2"></i>2. Pick a Time Slot</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-2" id="timeSlots">
                             <?php if (!empty($slots)): ?>
                                 <?php foreach (($byDate[$dates[0]] ?? []) as $slot):
@@ -120,7 +120,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0"><i class="fas fa-user me-2"></i>3. Your Information</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label">Visit Type</label>
@@ -161,7 +161,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                     <div class="card-header bg-primary text-white py-3">
                         <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Booking Summary</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <small class="text-muted d-block">Selected Date</small>
                             <strong id="summaryDate">Please pick a date</strong>

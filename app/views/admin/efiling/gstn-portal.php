@@ -24,7 +24,7 @@ ob_start();
 <div class="row g-3 mb-4">
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <?php if ($tin_status['connected']): ?>
@@ -44,7 +44,7 @@ ob_start();
     </div>
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <?php if ($gstn_status['connected']): ?>
@@ -64,7 +64,7 @@ ob_start();
     </div>
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3">
                         <?php if ($gstn_status['mode'] === 'test'): ?>
@@ -89,7 +89,7 @@ ob_start();
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-export me-2 text-primary"></i>Submit GSTR-1</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form id="gstr1SubmitForm">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <input type="hidden" name="return_type" value="gstr1">
@@ -126,7 +126,7 @@ ob_start();
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-alt me-2 text-success"></i>Submit GSTR-3B</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form id="gstr3bSubmitForm">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <input type="hidden" name="return_type" value="gstr3b">

@@ -40,7 +40,7 @@ $page_title = 'Financial Years Management';
             <?php foreach ($financialYears as $fy): ?>
                 <div class="col-xl-4 col-md-6">
                     <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
                                     <h5 class="mb-1"><?php echo htmlspecialchars($fy['year'] ?? $fy['name'] ?? 'N/A'); ?></h5>

@@ -1,11 +1,11 @@
 <?php $page_title = $page_title ?? "CMS Pages"; $pages = $pages ?? []; ?>
 <div class="container-fluid py-4">
     <div class="row"><div class="col-12">
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i><?= $page_title ?></h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (empty($pages)): ?>
                     <div class="alert alert-info"><i class="fas fa-info-circle me-1"></i>No pages found.</div>
                 <?php else: ?>

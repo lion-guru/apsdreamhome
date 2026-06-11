@@ -7,7 +7,7 @@ $page_title = $page_title ?? 'Attendance';
 </div>
 
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-4">
                 <label class="form-label small">Date</label>

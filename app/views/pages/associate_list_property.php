@@ -35,7 +35,7 @@
             <div class="card-header bg-success text-white">
                 <h5 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Submit Property Details</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form action="/associate/list-property/submit" method="POST" enctype="multipart/form-data">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <!-- Property Purpose -->
@@ -154,7 +154,7 @@
             <div class="card-header bg-warning text-dark">
                 <h6 class="mb-0"><i class="fas fa-star me-2"></i>Associate Benefits</h6>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <ul class="list-unstyled mb-0 small">
                     <li class="mb-2"><i class="fas fa-check text-success me-2"></i>2% Commission on Sale</li>
                     <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Direct Buyer Contact</li>

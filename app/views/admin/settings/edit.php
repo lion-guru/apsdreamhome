@@ -26,7 +26,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-cog me-2"></i>General Settings</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="mb-3">
                                 <label class="form-label">Site Name</label>
                                 <input type="text" class="form-control" name="site_name" value="APS Dream Home">
@@ -53,7 +53,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-paint-brush me-2"></i>Appearance Settings</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="mb-3">
                                 <label class="form-label">Logo URL</label>
                                 <input type="text" class="form-control" name="logo_url" value="/assets/images/logo.png">
@@ -80,7 +80,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i>Social Media Links</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="mb-3">
                                 <label class="form-label">Facebook</label>
                                 <input type="url" class="form-control" name="social_facebook" placeholder="https://facebook.com/...">
@@ -107,7 +107,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-search me-2"></i>SEO Settings</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="mb-3">
                                 <label class="form-label">Site Keywords</label>
                                 <input type="text" class="form-control" name="site_keywords" value="real estate, property, dream home">

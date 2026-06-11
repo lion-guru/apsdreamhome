@@ -11,7 +11,7 @@ $goals = $goals ?? [];
     </div>
     <div class="card shadow">
         <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Goals List</h6></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($goals)): ?>
                 <p class="text-muted text-center py-4"><i class="fas fa-flag fa-2x d-block mb-2"></i>No engagement goals defined yet.</p>
             <?php else: ?>

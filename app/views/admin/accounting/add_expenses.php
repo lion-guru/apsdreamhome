@@ -15,7 +15,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form action="/admin/accounting/expense/store" method="POST" class="needs-validation" novalidate>
                         <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
 

@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Testimonial Details</h5>
                     <div>
@@ -13,7 +13,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <table class="table table-bordered">
@@ -72,10 +72,10 @@
                         </div>
                         <div class="col-md-6">
                             <div class="card h-100">
-                                <div class="card-header">
+                                <div class="card-header aps-cp-card-header">
                                     <h6 class="mb-0">Testimonial Content</h6>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <p class="mb-0"><?php echo nl2br(htmlspecialchars($testimonial['content'])); ?></p>
                                 </div>
                             </div>

@@ -36,7 +36,7 @@ $c = $collection;
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">Collection #<?php echo (int)($c['id'] ?? 0); ?></h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <strong class="text-muted small">Customer</strong>

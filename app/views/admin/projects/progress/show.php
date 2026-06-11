@@ -7,8 +7,8 @@
     <div class="row">
         <div class="col-md-8">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Progress Overview</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Progress Overview</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <h2 class="text-center mb-3"><?= (int)($project['progress_pct'] ?? 0) ?>% Complete</h2>
                     <div class="progress mb-4" style="height:30px;">
                         <div class="progress-bar bg-<?= ($project['progress_pct'] ?? 0) >= 100 ? 'success' : (($project['progress_pct'] ?? 0) >= 50 ? 'info' : 'warning') ?>" style="width:<?= (int)($project['progress_pct'] ?? 0) ?>%"></div>
@@ -21,8 +21,8 @@
                 </div>
             </div>
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Milestones</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Milestones</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($milestones)): ?>
                         <p class="text-muted text-center py-3">No milestones added yet.</p>
                     <?php else: ?>
@@ -40,8 +40,8 @@
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Project Info</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Project Info</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th>District</th><td><?= htmlspecialchars($project['district_name'] ?? '') ?></td></tr>
                         <tr><th>State</th><td><?= htmlspecialchars($project['state_name'] ?? '') ?></td></tr>
@@ -52,8 +52,8 @@
                 </div>
             </div>
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Progress</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Progress</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/projects/progress/update/<?= $project['id'] ?? 0 ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -77,8 +77,8 @@
                 </div>
             </div>
             <div class="card shadow-sm">
-                <div class="card-header"><h5 class="mb-0"><i class="fas fa-users me-2"></i>Team & Budget</h5></div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-users me-2"></i>Team & Budget</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/projects/progress/budget/<?= $project['id'] ?? 0 ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">

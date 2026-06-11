@@ -18,7 +18,7 @@
         <?php foreach ($cs as $key => $study): ?>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5><?= ($study['title'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h5>
                     <div class="mb-3">
                         <small class="text-muted fw-semibold">Challenge:</small>

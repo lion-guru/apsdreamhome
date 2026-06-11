@@ -18,7 +18,7 @@
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
@@ -38,7 +38,7 @@
 
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
@@ -58,7 +58,7 @@
 
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
@@ -78,7 +78,7 @@
 
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
@@ -102,7 +102,7 @@
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Filters</h6>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" class="row">
                 <div class="col-md-3">
                     <select name="category" class="form-control">
@@ -135,7 +135,7 @@
                 Files (<?= $files['total'] ?? 0 ?> total)
             </h6>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead>

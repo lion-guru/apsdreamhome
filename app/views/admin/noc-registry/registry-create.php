@@ -23,7 +23,7 @@ $stamp_duty = $stamp_duty ?? [];
             <div class="card-header bg-white border-bottom">
                 <h6 class="mb-0"><?= __('admin_registry_details') ?></h6>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (empty($eligible_bookings)): ?>
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-triangle me-2"></i>
@@ -86,7 +86,7 @@ $stamp_duty = $stamp_duty ?? [];
             <div class="card-header bg-white border-bottom">
                 <h6 class="mb-0"><i class="fas fa-calculator me-2"></i><?= __('admin_stamp_duty_calculator') ?></h6>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label small fw-semibold"><?= __('admin_property_value') ?> (₹)</label>
                     <input type="number" class="form-control" id="calcValue" placeholder="e.g. 2500000" value="2500000">

@@ -93,7 +93,7 @@ $logs = $logs ?? [];
                         <i class="fas fa-expand"></i> Full View
                     </a>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted text-center py-4">
                         <i class="fas fa-arrow-right me-2"></i>
                         <a href="<?php echo BASE_URL; ?>/admin/api/integration-logs">View full integration logs</a>

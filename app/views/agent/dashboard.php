@@ -28,7 +28,7 @@ $commission_summary = $commission_summary ?? [];
         <!-- Stats Cards -->
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="card-title">Total Leads</h6>
                     <h3 class="text-primary"><?php echo htmlspecialchars($agent_stats['total_leads'] ?? 0); ?></h3>
                 </div>
@@ -36,7 +36,7 @@ $commission_summary = $commission_summary ?? [];
         </div>
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="card-title">Converted Leads</h6>
                     <h3 class="text-success"><?php echo htmlspecialchars($agent_stats['converted_leads'] ?? 0); ?></h3>
                 </div>
@@ -44,7 +44,7 @@ $commission_summary = $commission_summary ?? [];
         </div>
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="card-title">Total Properties</h6>
                     <h3 class="text-info"><?php echo htmlspecialchars($agent_stats['total_properties'] ?? 0); ?></h3>
                 </div>
@@ -52,7 +52,7 @@ $commission_summary = $commission_summary ?? [];
         </div>
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="card-title">Total Commission</h6>
                     <h3 class="text-warning">₹<?php echo htmlspecialchars($agent_stats['total_commission'] ?? 0); ?></h3>
                 </div>
@@ -64,10 +64,10 @@ $commission_summary = $commission_summary ?? [];
         <!-- Recent Leads -->
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="card-title mb-0">Recent Leads</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($recent_leads)): ?>
                         <p class="text-muted">No recent leads found.</p>
                     <?php else: ?>
@@ -88,10 +88,10 @@ $commission_summary = $commission_summary ?? [];
         <!-- Assigned Properties -->
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="card-title mb-0">Assigned Properties</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($assigned_properties)): ?>
                         <p class="text-muted">No properties assigned yet.</p>
                     <?php else: ?>
@@ -114,10 +114,10 @@ $commission_summary = $commission_summary ?? [];
         <!-- Commission Summary -->
         <div class="col-12">
             <div class="card shadow-sm">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="card-title mb-0">Commission Summary</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-4">
                             <h6>Total Commission</h6>

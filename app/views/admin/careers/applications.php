@@ -10,7 +10,7 @@
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Applicants List</h6>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="alert alert-info">
                 This feature is under development. It will display a list of applicants for the selected job.
             </div>

@@ -7,8 +7,8 @@
 <div class="row">
     <div class="col-md-8">
         <div class="card shadow-sm">
-            <div class="card-header"><i class="fas fa-phone-alt me-2"></i>New Call Schedule</div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><i class="fas fa-phone-alt me-2"></i>New Call Schedule</div>
+            <div class="card-body aps-cp-card-body">
                 <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/store">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
@@ -85,7 +85,7 @@
     </div>
     <div class="col-md-4">
         <div class="card shadow-sm mb-3">
-            <div class="card-header"><i class="fas fa-robot me-2"></i>Available Agents</div>
+            <div class="card-header aps-cp-card-header"><i class="fas fa-robot me-2"></i>Available Agents</div>
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
                     <?php foreach ($agents as $a): ?>
@@ -101,8 +101,8 @@
             </div>
         </div>
         <div class="card shadow-sm">
-            <div class="card-header"><i class="fas fa-info-circle me-2"></i>Quick Info</div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><i class="fas fa-info-circle me-2"></i>Quick Info</div>
+            <div class="card-body aps-cp-card-body">
                 <p class="mb-1 small">Calls are auto-assigned to the selected agent.</p>
                 <p class="mb-0 small">The system will attempt up to 3 times if the call is not answered.</p>
             </div>

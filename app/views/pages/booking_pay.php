@@ -6,7 +6,7 @@
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0"><i class="fas fa-credit-card me-2"></i>Pay Token Amount</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if ($flashMessage = $_SESSION['flash_message'] ?? null): ?>
                         <div class="alert alert-<?= $_SESSION['flash_type'] ?? 'info' ?> alert-dismissible fade show">
                             <?= htmlspecialchars($flashMessage) ?>

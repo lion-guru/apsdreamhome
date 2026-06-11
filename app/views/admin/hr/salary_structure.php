@@ -12,7 +12,7 @@ $es = $edit_structure ?? [];
 
 <?php if ($editMode && $es): ?>
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <h6 class="fw-bold mb-3">Editing: <?= htmlspecialchars($es['employee_name'] ?? '') ?></h6>
             <form method="POST" action="<?= BASE_URL ?>/admin/hr/salary-structure/update/<?= $es['id'] ?>">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">

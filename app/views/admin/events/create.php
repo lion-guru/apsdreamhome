@@ -1,9 +1,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header"><h5 class="card-title mb-0">Create Event</h5></div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><h5 class="card-title mb-0">Create Event</h5></div>
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/events/list/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">

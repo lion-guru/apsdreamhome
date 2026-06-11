@@ -44,8 +44,8 @@ function getCampaignStatusColor($status) {
 </div>
 <?php endif; ?>
 
-<div class="card">
-    <div class="card-body">
+<div class="card aps-cp-card">
+    <div class="card-body aps-cp-card-body">
         <?php if (!empty($campaigns)): ?>
             <div class="table-responsive">
                 <table class="table table-hover">

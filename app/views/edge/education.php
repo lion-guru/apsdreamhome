@@ -5,7 +5,7 @@
         <?php foreach (($training_programs ?? []) as $key => $prog): ?>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><?= htmlspecialchars($prog['title'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h5>
                         <span class="badge bg-<?= ($prog['level'] ?? 'Beginner') === 'Advanced' ? 'danger' : (($prog['level'] ?? 'Beginner') === 'Intermediate' ? 'warning' : 'success') ?> mb-2"><?= htmlspecialchars($prog['level'] ?? 'Beginner') ?></span>
                         <p class="small"><strong>Duration:</strong> <?= htmlspecialchars($prog['duration'] ?? '') ?></p>

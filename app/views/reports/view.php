@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <p><?= nl2br(htmlspecialchars($report['description'] ?? '')) ?></p>
             <hr>
             <?php if (empty($data)): ?>

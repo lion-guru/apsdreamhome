@@ -25,7 +25,7 @@ $active_page = 'bookings';
 <div class="row mb-4">
     <div class="col-md-3">
         <div class="card bg-primary text-white">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between">
                     <div>
                         <h4><?= $total ?></h4>
@@ -40,7 +40,7 @@ $active_page = 'bookings';
     </div>
     <div class="col-md-3">
         <div class="card bg-success text-white">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between">
                     <div>
                         <h4><?= count(array_filter($bookings, fn($b) => $b['status'] == 'confirmed')) ?></h4>
@@ -55,7 +55,7 @@ $active_page = 'bookings';
     </div>
     <div class="col-md-3">
         <div class="card bg-warning text-white">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between">
                     <div>
                         <h4><?= count(array_filter($bookings, fn($b) => $b['status'] == 'pending')) ?></h4>
@@ -70,7 +70,7 @@ $active_page = 'bookings';
     </div>
     <div class="col-md-3">
         <div class="card bg-danger text-white">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between">
                     <div>
                         <h4><?= count(array_filter($bookings, fn($b) => $b['status'] == 'cancelled')) ?></h4>
@@ -87,12 +87,12 @@ $active_page = 'bookings';
 
 <!-- Filters -->
 <div class="card mb-4">
-    <div class="card-header">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0">
             <i class="fas fa-filter"></i> <?= __('admin_filters') ?>
         </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="GET" action="<?php echo BASE_URL; ?>/admin/bookings">
             <div class="row">
                 <div class="col-md-3">
@@ -150,13 +150,13 @@ $active_page = 'bookings';
 </div>
 
 <!-- Bookings Table -->
-<div class="card">
-    <div class="card-header">
+<div class="card aps-cp-card">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0">
             <i class="fas fa-list"></i> <?= __('admin_bookings_list') ?>
         </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>

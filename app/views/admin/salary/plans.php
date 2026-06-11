@@ -10,7 +10,7 @@
             <?php foreach ($plans as $p): ?>
             <div class="col-md-4">
                 <div class="card shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <h5 class="card-title"><?= htmlspecialchars($p['name'] ?? '') ?></h5>
                             <span class="badge bg-<?= ($p['is_active'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($p['is_active'] ?? 0) ? 'Active' : 'Inactive' ?></span>

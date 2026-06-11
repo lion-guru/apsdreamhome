@@ -13,7 +13,7 @@
 
     <div class="row">
         <div class="col-lg-4">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body text-center">
                     <div class="avatar-lg mx-auto mb-3">
                         <?php if (!empty($user['photo'])): ?>
@@ -43,7 +43,7 @@
             <div class="row g-3 mb-4">
                 <div class="col-md-3">
                     <div class="card bg-primary text-white text-center">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h3 class="mb-0"><?= number_format($stats['total_downline'] ?? 0) ?></h3>
                             <small>Total Downline</small>
                         </div>
@@ -51,7 +51,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-success text-white text-center">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h3 class="mb-0"><?= number_format($stats['active_downline'] ?? 0) ?></h3>
                             <small>Active Downline</small>
                         </div>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-info text-white text-center">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h3 class="mb-0">₹<?= number_format($stats['total_earnings'] ?? 0) ?></h3>
                             <small>Total Earnings</small>
                         </div>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark text-center">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h3 class="mb-0">₹<?= number_format($stats['pending_commission'] ?? 0) ?></h3>
                             <small>Pending Commission</small>
                         </div>
@@ -75,8 +75,8 @@
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="mb-0">Recent Activity</h5>
                 </div>
                 <div class="card-body p-0">

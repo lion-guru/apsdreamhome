@@ -137,7 +137,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
             <div class="row">
                 <div class="col-md-3">
                     <div class="card bg-primary text-white shadow-sm border-0 mb-4">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6 class="text-uppercase small mb-2"><?= h($mlSupport->translate('Active users')) ?></h6>
                             <h3 class="fw-bold mb-0"><?= h($total_agents ?? 0) ?></h3>
                         </div>
@@ -145,7 +145,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-success text-white shadow-sm border-0 mb-4">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6 class="text-uppercase small mb-2"><?= h($mlSupport->translate('Workflows')) ?></h6>
                             <h3 class="fw-bold mb-0"><?= h($active_workflows ?? 0) ?></h3>
                         </div>
@@ -153,7 +153,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark shadow-sm border-0 mb-4">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6 class="text-uppercase small mb-2"><?= h($mlSupport->translate('Pending Jobs')) ?></h6>
                             <h3 class="fw-bold mb-0"><?= h($pending_jobs ?? 0) ?></h3>
                         </div>
@@ -161,7 +161,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-info text-white shadow-sm border-0 mb-4">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6 class="text-uppercase small mb-2"><?= h($mlSupport->translate('Success Rate')) ?></h6>
                             <h3 class="fw-bold mb-0">98.5%</h3>
                         </div>
@@ -234,7 +234,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                         <div class="card-header bg-white py-3">
                             <h5 class="card-title h6 fw-bold mb-0"><?= h($mlSupport->translate('Performance Analytics')) ?></h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div style="height: 200px;">
                                 <canvas id="aiPerformanceChart"></canvas>
                             </div>

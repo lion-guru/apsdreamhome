@@ -9,7 +9,7 @@
                 <h5 class="mb-0"><i class="fas fa-<?= $i === 1 ? 'microchip' : ($i === 2 ? 'robot' : 'shield-halved') ?> me-2 text-<?= $i === 1 ? 'primary' : ($i === 2 ? 'success' : 'warning') ?>"></i><?= htmlspecialchars($cs['title'] ?? '-') ?></h5>
                 <div><span class="badge bg-info me-1"><?= htmlspecialchars($cs['implementation_time'] ?? '-') ?></span><span class="badge bg-success">ROI: <?= htmlspecialchars($cs['roi_achieved'] ?? '-') ?></span></div>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-4">
                         <h6 class="fw-bold text-secondary"><i class="fas fa-triangle-exclamation me-1"></i>Challenge</h6>

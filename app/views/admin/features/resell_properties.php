@@ -19,7 +19,7 @@ ob_start();
     <?php else: foreach ($properties as $p): ?>
       <div class="col-md-4 mb-3">
         <div class="card shadow-sm h-100">
-          <div class="card-body">
+          <div class="card-body aps-cp-card-body">
             <h5 class="card-title"><?= htmlspecialchars($p['title'] ?? '') ?></h5>
             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars(($p['colony_name'] ?? '') . ', ' . ($p['district_name'] ?? '')) ?></p>
             <div class="d-flex justify-content-between mb-2">

@@ -44,7 +44,7 @@
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0"><i class="fas fa-activity me-2"></i>Activity Analysis</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $activity = $userData['activity_analysis'] ?? []; ?>
                     <div class="d-flex justify-content-between mb-2"><span>Daily Active</span><strong><?= $activity['daily_active_users'] ?? 'N/A' ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Weekly Active</span><strong><?= $activity['weekly_active_users'] ?? 'N/A' ?></strong></div>
@@ -86,7 +86,7 @@
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0"><i class="fas fa-user-clock me-2"></i>Retention Metrics</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $retention = $userData['retention_metrics'] ?? []; ?>
                     <div class="d-flex justify-content-between mb-2"><span>Day 1 Retention</span><strong><?= $retention['day_1_retention'] ?? 'N/A' ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Day 7 Retention</span><strong><?= $retention['day_7_retention'] ?? 'N/A' ?></strong></div>

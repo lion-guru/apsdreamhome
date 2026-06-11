@@ -89,7 +89,7 @@
     </div>
     <div class="col-md-4">
         <div class="card shadow-sm h-100">
-            <div class="card-header"><i class="fas fa-robot me-2"></i>Agent Status</div>
+            <div class="card-header aps-cp-card-header"><i class="fas fa-robot me-2"></i>Agent Status</div>
             <div class="card-body p-0">
                 <?php if (empty($agents)): ?>
                 <div class="text-center text-muted py-4">No agents configured</div>
@@ -112,8 +112,8 @@
 </div>
 
 <div class="card shadow-sm">
-    <div class="card-header"><i class="fas fa-chart-line me-2"></i>Calls Over Time (14 days)</div>
-    <div class="card-body">
+    <div class="card-header aps-cp-card-header"><i class="fas fa-chart-line me-2"></i>Calls Over Time (14 days)</div>
+    <div class="card-body aps-cp-card-body">
         <canvas id="callsChart" height="80"></canvas>
     </div>
 </div>

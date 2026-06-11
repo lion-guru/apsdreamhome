@@ -42,16 +42,16 @@
 <div class="row g-3 mb-4">
     <div class="col-md-8">
         <div class="card shadow-sm">
-            <div class="card-header"><i class="fas fa-chart-bar me-2"></i>Calls Over Time (30 days)</div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><i class="fas fa-chart-bar me-2"></i>Calls Over Time (30 days)</div>
+            <div class="card-body aps-cp-card-body">
                 <canvas id="callsOverTimeChart" height="100"></canvas>
             </div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="card shadow-sm h-100">
-            <div class="card-header"><i class="fas fa-chart-doughnut me-2"></i>Lead Sources by Interest</div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header"><i class="fas fa-chart-doughnut me-2"></i>Lead Sources by Interest</div>
+            <div class="card-body aps-cp-card-body">
                 <canvas id="leadSourceChart" height="180"></canvas>
             </div>
         </div>
@@ -59,7 +59,7 @@
 </div>
 
 <div class="card shadow-sm mb-4">
-    <div class="card-header"><i class="fas fa-robot me-2"></i>Agent Performance</div>
+    <div class="card-header aps-cp-card-header"><i class="fas fa-robot me-2"></i>Agent Performance</div>
     <div class="card-body p-0">
         <?php if (empty($callsByAgent)): ?>
         <div class="text-center text-muted py-4">No call data available</div>

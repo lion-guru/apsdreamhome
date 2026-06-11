@@ -30,7 +30,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                 <div class="col-md-5">
                     <div class="card mb-4">
                         <div class="card-header bg-info text-white"><h5 class="mb-0"><i class="fas fa-th"></i> Plot Information</h5></div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <table class="table table-bordered">
                                 <tr><th style="width:140px">Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
                                 <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? 'N/A') ?></td></tr>
@@ -45,7 +45,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
 
                     <div class="card mb-4">
                         <div class="card-header bg-secondary text-white"><h5 class="mb-0"><i class="fas fa-user"></i> Current Owner</h5></div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <?php if (!empty($plot['customer_id']) && !empty($plot['current_owner_name'])): ?>
                                 <table class="table table-bordered">
                                     <tr><th style="width:140px">Name</th><td><?= htmlspecialchars($plot['current_owner_name'] ?? '') ?></td></tr>
@@ -61,7 +61,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
 
                     <div class="card mb-4">
                         <div class="card-header bg-warning"><h5 class="mb-0"><i class="fas fa-calculator"></i> Transfer Fee</h5></div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <?php
                             $transferFeeRate = 0.02; // 2% of total price
                             $transferFee = floatval($plot['total_price'] ?? 0) * $transferFeeRate;
@@ -80,7 +80,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                 <div class="col-md-7">
                     <div class="card mb-4">
                         <div class="card-header bg-warning"><h5 class="mb-0"><i class="fas fa-file-signature"></i> Transfer Details</h5></div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <form method="POST" action="/admin/plots/<?= $plot['id'] ?? 0 ?>/transfer">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="row">

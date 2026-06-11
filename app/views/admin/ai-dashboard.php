@@ -34,7 +34,7 @@ $content = ob_start();
     <div class="row">
         <div class="col-md-3">
             <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="card-title"><?= $stats['learning_events'] ?></h5>
                     <p class="card-text">Learning Events</p>
                     <small>+<?= $stats['learnings_24h'] ?> in 24h</small>
@@ -43,7 +43,7 @@ $content = ob_start();
         </div>
         <div class="col-md-3">
             <div class="card text-white bg-success mb-3">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="card-title"><?= $stats['intent_patterns'] ?></h5>
                     <p class="card-text">Intent Patterns</p>
                     <small>Multi-language (Hindi/English)</small>
@@ -52,7 +52,7 @@ $content = ob_start();
         </div>
         <div class="col-md-3">
             <div class="card text-white bg-info mb-3">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="card-title"><?= $stats['chat_sessions'] ?></h5>
                     <p class="card-text">Chat Sessions</p>
                     <small>+<?= $stats['chat_sessions_24h'] ?> in 24h</small>
@@ -61,7 +61,7 @@ $content = ob_start();
         </div>
         <div class="col-md-3">
             <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="card-title"><?= $stats['lead_scores'] ?></h5>
                     <p class="card-text">Leads Scored</p>
                     <small>AI-grade quality</small>
@@ -72,27 +72,27 @@ $content = ob_start();
 
     <div class="row mt-4">
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-user-friends"></i> User Profiles</div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-user-friends"></i> User Profiles</div>
+                <div class="card-body aps-cp-card-body">
                     <h2><?= $stats['user_profiles'] ?></h2>
                     <p class="text-muted">Auto-learned from behavior</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-magic"></i> Recommendations</div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-magic"></i> Recommendations</div>
+                <div class="card-body aps-cp-card-body">
                     <h2><?= $stats['recommendations'] ?></h2>
                     <p class="text-muted">Personalized for users</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-chart-line"></i> Price Models</div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-chart-line"></i> Price Models</div>
+                <div class="card-body aps-cp-card-body">
                     <h2><?= $stats['price_models'] ?></h2>
                     <p class="text-muted">ML regression models</p>
                 </div>
@@ -102,9 +102,9 @@ $content = ob_start();
 
     <div class="row mt-4">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-comments"></i> Recent Chat Messages</div>
-                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-comments"></i> Recent Chat Messages</div>
+                <div class="card-body aps-cp-card-body" style="max-height: 400px; overflow-y: auto;">
                     <?php foreach ($recentMessages as $m): ?>
                         <div class="mb-2 p-2 <?= $m['sender'] === 'user' ? 'bg-light' : 'bg-info text-white' ?>" style="border-radius: 8px;">
                             <div><strong><?= $m['sender'] === 'user' ? '👤 User' : '🤖 Bot' ?>:</strong> <?= htmlspecialchars(substr($m['message'], 0, 100)) ?></div>
@@ -119,9 +119,9 @@ $content = ob_start();
         </div>
 
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-chart-bar"></i> Top Detected Intents</div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-chart-bar"></i> Top Detected Intents</div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table">
                         <thead><tr><th>Intent</th><th>Count</th></tr></thead>
                         <tbody>
@@ -140,9 +140,9 @@ $content = ob_start();
 
     <div class="row mt-4">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-fire"></i> Top Scored Leads (AI-Powered)</div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-fire"></i> Top Scored Leads (AI-Powered)</div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table">
                         <thead>
                             <tr>
@@ -176,9 +176,9 @@ $content = ob_start();
 
     <div class="row mt-4">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-tags"></i> Price Prediction Models</div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-tags"></i> Price Prediction Models</div>
+                <div class="card-body aps-cp-card-body">
                     <table class="table">
                         <thead>
                             <tr><th>Type</th><th>District</th><th>R²</th><th>Samples</th><th>Trained At</th></tr>

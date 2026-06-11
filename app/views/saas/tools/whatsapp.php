@@ -17,7 +17,7 @@
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">Message Templates</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="list-group">
                         <?php foreach ($templates as $template): ?>
                         <div class="list-group-item list-group-item-action flex-column align-items-start py-3">
@@ -76,7 +76,7 @@
 
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold mb-3">API Configuration</h6>
                     <div class="mb-3">
                         <label class="form-label small">WhatsApp Business Account ID</label>
@@ -93,7 +93,7 @@
             </div>
 
             <div class="card bg-success text-white border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold mb-2">Did you know?</h6>
                     <p class="small mb-0">Personalized messages have a 40% higher read rate compared to generic broadcasts. Use placeholders like {name} to personalize your messages.</p>
                 </div>

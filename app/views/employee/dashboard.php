@@ -56,7 +56,7 @@
                 <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center">
                     <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Activity</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($recentActivity)): ?>
                         <div class="list-group list-group-flush">
                             <?php foreach ($recentActivity as $activity): ?>
@@ -80,7 +80,7 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-bell me-2"></i>Notifications</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($notifications)): ?>
                         <div class="list-group list-group-flush">
                             <?php foreach ($notifications as $notif): ?>

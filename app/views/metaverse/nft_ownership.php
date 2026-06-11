@@ -50,7 +50,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2 text-primary"></i>Property Info</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5><?= ($property['title'] ?? 'Property') ?></h5>
                     <p class="text-muted"><?= ($property['location'] ?? '') ?></p>
                     <hr>
@@ -63,7 +63,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-exchange-alt me-2 text-primary"></i>Actions</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <button class="btn btn-primary w-100 mb-2" onclick="alert('Transfer initiated')"><i class="fas fa-exchange-alt me-2"></i>Transfer NFT</button>
                     <button class="btn btn-outline-primary w-100 mb-2" onclick="alert('Verification requested')"><i class="fas fa-search me-2"></i>Verify Ownership</button>
                     <button class="btn btn-outline-info w-100" onclick="alert('NFT metadata would be displayed')"><i class="fas fa-download me-2"></i>Download Metadata</button>

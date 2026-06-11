@@ -7,7 +7,7 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Property Info</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($property)): ?>
                         <h6><?= htmlspecialchars($property['name'] ?? '') ?></h6>
                         <p class="text-muted small mb-1"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location'] ?? '') ?></p>
@@ -38,7 +38,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Neighborhood Stats</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <div class="col-md-4"><div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Avg. Property Price</small><strong>₹<?= number_format((int)($neighborhood['avg_price'] ?? 0)) ?></strong></div></div>
                         <div class="col-md-4"><div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Price Trend (YoY)</small><strong class="<?= ((float)($neighborhood['price_trend'] ?? 0) >= 0) ? 'text-success' : 'text-danger' ?>"><?= round((float)($neighborhood['price_trend'] ?? 0), 1) ?>%</strong></div></div>
@@ -48,7 +48,7 @@
             </div>
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0"><i class="fas fa-school me-2"></i>Infrastructure</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <?php $infra = ['schools' => 'Schools', 'hospitals' => 'Hospitals', 'shopping' => 'Shopping Centers', 'transport' => 'Transport Hubs', 'parks' => 'Parks & Recreation']; ?>
                         <?php foreach ($infra as $key => $label): ?>
@@ -64,7 +64,7 @@
             </div>
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Safety & Demographics</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <h6>Crime Index</h6>

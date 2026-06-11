@@ -10,7 +10,7 @@
         <div class="col-lg-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="get" action="<?= BASE_URL ?>careers">
                         <div class="mb-3">
                             <label class="form-label small">Department</label>
@@ -48,7 +48,7 @@
                 <?php foreach ($jobs as $j): ?>
                 <div class="col-md-6">
                     <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="badge bg-primary"><?= htmlspecialchars(ucfirst($j['type'] ?? 'Full Time')) ?></span>
                                 <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($j['location'] ?? 'N/A') ?></small>

@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-id-card me-2"></i>Decentralized Identity</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold text-secondary">DID Implementation</h6>
                     <?php $di = $did['did_implementation'] ?? []; foreach ($di as $k => $v): ?><div class="mb-2"><i class="fas fa-check-circle text-success me-2"></i><strong><?= ucwords(str_replace('_', ' ', $k)) ?>:</strong><small class="text-muted ms-1"><?= htmlspecialchars($v) ?></small></div><?php endforeach; ?>
                     <hr>
@@ -19,7 +19,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-shield me-2"></i>Secure Transactions</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold text-secondary">Transaction Security</h6>
                     <?php $ts = $tx['transaction_security'] ?? []; foreach ($ts as $k => $v): ?><div class="mb-2"><span class="badge bg-success me-2"><?= ucwords(str_replace('_', ' ', $k)) ?></span><small class="text-muted"><?= htmlspecialchars($v) ?></small></div><?php endforeach; ?>
                     <hr>
@@ -33,7 +33,7 @@
         <div class="col-md-7">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Audit Trails</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <h6 class="fw-bold text-secondary">Comprehensive Logging</h6>
@@ -50,7 +50,7 @@
         <div class="col-md-5">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-handshake me-2"></i>Consensus Mechanisms</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($consensus)): foreach ($consensus as $c): ?>
                         <div class="mb-3 p-3 bg-light rounded">
                             <h6 class="fw-bold mb-2"><?= htmlspecialchars($c['mechanism'] ?? '-') ?></h6>

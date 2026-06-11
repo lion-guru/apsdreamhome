@@ -6,7 +6,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-building me-2"></i>Real Estate Sector</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-danger">Challenges</h6>
                     <ul class="small"><?php foreach (($id['real_estate_sector']['current_challenges'] ?? []) as $c): ?><li><?= htmlspecialchars($c) ?></li><?php endforeach; ?></ul>
                     <h6 class="text-success">Solutions</h6>
@@ -19,7 +19,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-microchip me-2"></i>Technology Adoption</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($id['technology_adoption'] ?? []) as $k => $v): ?>
                             <tr><th class="w-50 text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $k)) ?></th><td><?= htmlspecialchars($v) ?></td></tr>
@@ -31,7 +31,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Economic Impact</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($id['economic_impact'] ?? []) as $k => $v): ?>
                             <tr><th class="w-50 text-capitalize"><?= htmlspecialchars(str_replace('_', ' ', $k)) ?></th><td><?= htmlspecialchars($v) ?></td></tr>

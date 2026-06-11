@@ -23,7 +23,7 @@ $activeLoans = $activeLoans ?? 0;
     <div class="row mb-4">
         <div class="col-xl-4 col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-success bg-opacity-10 text-success rounded p-3"><i class="fas fa-tractor fa-2x"></i></div></div>
                         <div class="flex-grow-1"><h6 class="text-muted mb-1">Total Farmers</h6><h3 class="mb-0"><?php echo $totalFarmers; ?></h3></div>
@@ -33,7 +33,7 @@ $activeLoans = $activeLoans ?? 0;
         </div>
         <div class="col-xl-4 col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-primary bg-opacity-10 text-primary rounded p-3"><i class="fas fa-file-signature fa-2x"></i></div></div>
                         <div class="flex-grow-1"><h6 class="text-muted mb-1">Active Agreements</h6><h3 class="mb-0"><?php echo $activeAgreements; ?></h3></div>
@@ -43,7 +43,7 @@ $activeLoans = $activeLoans ?? 0;
         </div>
         <div class="col-xl-4 col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-warning bg-opacity-10 text-warning rounded p-3"><i class="fas fa-hand-holding-usd fa-2x"></i></div></div>
                         <div class="flex-grow-1"><h6 class="text-muted mb-1">Active Loans</h6><h3 class="mb-0"><?php echo $activeLoans; ?></h3></div>

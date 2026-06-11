@@ -9,7 +9,7 @@
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-header bg-white border-bottom"><h5 class="mb-0">General Settings</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Default Campaign Budget (INR)</label>
                             <input type="number" name="default_budget" class="form-control" value="<?= (int)($settings['default_budget'] ?? 50000) ?>">
@@ -30,7 +30,7 @@
                 </div>
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-header bg-white border-bottom"><h5 class="mb-0">Email Marketing</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Sender Name</label>
                             <input type="text" name="email_sender_name" class="form-control" value="<?= htmlspecialchars($settings['email_sender_name'] ?? 'APS Dream Home') ?>">
@@ -47,7 +47,7 @@
                 </div>
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-header bg-white border-bottom"><h5 class="mb-0">Social Media</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3 form-check form-switch">
                             <input type="checkbox" name="auto_post_facebook" class="form-check-input" id="fbAuto" value="1" <?= !empty($settings['auto_post_facebook']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="fbAuto">Auto-post new properties to Facebook</label>
@@ -64,7 +64,7 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Quick Stats</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between px-0"><span>Total Campaigns</span><strong><?= (int)($quickStats['total_campaigns'] ?? 0) ?></strong></li>
                         <li class="list-group-item d-flex justify-content-between px-0"><span>Active Now</span><strong><?= (int)($quickStats['active_campaigns'] ?? 0) ?></strong></li>

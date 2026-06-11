@@ -120,7 +120,7 @@ try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC
     <div class="card-header border-0 bg-transparent">
         <h5 class="card-title"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <div class="row g-3">
             <div class="col-md-3">
                 <a href="<?php echo BASE_URL; ?>/admin/leads/create" class="btn btn-outline-primary w-100 py-3">
@@ -150,7 +150,7 @@ try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC
 <div class="row g-4">
     <!-- Recent Leads -->
     <div class="col-lg-6">
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-header d-flex justify-content-between align-items-center border-0 bg-transparent">
                 <h5 class="card-title"><i class="fas fa-user-clock me-2"></i>Recent Leads</h5>
                 <a href="<?php echo BASE_URL; ?>/admin/leads" class="btn btn-sm btn-primary">View All</a>
@@ -179,11 +179,11 @@ try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC
 
     <!-- System Overview -->
     <div class="col-lg-6">
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-header border-0 bg-transparent">
                 <h5 class="card-title"><i class="fas fa-server me-2"></i>System Overview</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1"><span>Database</span><span class="fw-semibold text-success">Connected</span></div>
                     <div class="progress"><div class="progress-bar bg-success" style="width:100%"></div></div>

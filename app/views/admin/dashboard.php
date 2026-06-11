@@ -173,11 +173,11 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
     <!-- Quick Actions -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="card-title"><i class="fas fa-bolt me-2"></i><?= __('admin_quick_actions', null, 'Quick Actions') ?></h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <div class="col-md-3">
                             <a href="<?php echo BASE_URL; ?>/admin/leads?action=new" class="btn btn-outline-primary w-100 py-3">
@@ -213,7 +213,7 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
     <div class="row g-4">
         <!-- Recent Leads -->
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title"><i class="fas fa-user-clock me-2"></i><?= __('admin_recent_leads', null, 'Recent Leads') ?></h5>
                     <a href="<?php echo BASE_URL; ?>/admin/leads" class="btn btn-sm btn-primary"><?= __('admin_view_all', null, 'View All') ?></a>
@@ -258,11 +258,11 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
 
         <!-- System Overview -->
         <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="card-title"><i class="fas fa-server me-2"></i><?= __('admin_system_overview', null, 'System Overview') ?></h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-1">
                             <span><?= __('admin_database_tables', null, 'Database Tables') ?></span>

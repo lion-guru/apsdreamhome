@@ -23,7 +23,7 @@ $page_description = 'Professional AI Chat Assistant for Real Estate & Developmen
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0"><i class="fas fa-comments me-2"></i>AI Chat Assistant</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div id="chat-container" style="height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
                             <div class="text-center text-muted">
                                 <i class="fas fa-robot fa-3x mb-3"></i>

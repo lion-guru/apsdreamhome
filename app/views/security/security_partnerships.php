@@ -8,7 +8,7 @@
             <h5 class="fw-bold mb-3"><i class="fas fa-building-shield text-primary me-2"></i>Cybersecurity Firms</h5>
             <?php if (!empty($cyber)): foreach ($cyber as $c): ?>
                 <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h6 class="fw-bold"><?= htmlspecialchars($c['partner'] ?? '-') ?></h6>
                         <p class="text-muted small mb-2"><?= htmlspecialchars($c['collaboration'] ?? '-') ?></p>
                         <?php $js = $c['joint_solutions'] ?? []; if (!empty($js)): ?>
@@ -22,7 +22,7 @@
             <h5 class="fw-bold mb-3"><i class="fas fa-flask text-warning me-2"></i>Research Institutions</h5>
             <?php if (!empty($research)): foreach ($research as $r): ?>
                 <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h6 class="fw-bold"><?= htmlspecialchars($r['partner'] ?? '-') ?></h6>
                         <p class="text-muted small mb-2"><?= htmlspecialchars($r['collaboration'] ?? '-') ?></p>
                         <?php $jp = $r['joint_projects'] ?? []; if (!empty($jp)): ?>
@@ -36,7 +36,7 @@
             <h5 class="fw-bold mb-3"><i class="fas fa-landmark text-danger me-2"></i>Government Agencies</h5>
             <?php if (!empty($govt)): foreach ($govt as $g): ?>
                 <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h6 class="fw-bold"><?= htmlspecialchars($g['partner'] ?? '-') ?></h6>
                         <p class="text-muted small mb-2"><?= htmlspecialchars($g['collaboration'] ?? '-') ?></p>
                         <?php $jp = $g['joint_projects'] ?? []; if (!empty($jp)): ?>

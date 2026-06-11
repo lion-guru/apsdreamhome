@@ -20,11 +20,11 @@ $active_page = 'agreements';
 
 <div class="row">
     <div class="col-md-4">
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0"><i class="fas fa-info-circle"></i> Booking Details</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <table class="table table-sm table-borderless">
                     <tr>
                         <th class="text-muted">Customer:</th>
@@ -70,7 +70,7 @@ $active_page = 'agreements';
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0"><i class="fas fa-cog"></i> Actions</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-grid gap-2">
                     <a href="<?= BASE_URL ?>/admin/agreements/generate/<?= $booking['id'] ?>/allotment" class="btn btn-primary" onclick="return confirm('Generate Allotment Letter?')">
                         <i class="fas fa-file-alt"></i> Generate Allotment Letter
@@ -87,7 +87,7 @@ $active_page = 'agreements';
     </div>
 
     <div class="col-md-8">
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">
                     <i class="fas fa-eye"></i> Preview: 

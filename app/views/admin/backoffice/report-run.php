@@ -6,8 +6,8 @@
   </div>
 
   <div class="card aps-cp-card mb-4">
-    <div class="card-header"><strong>Parameters</strong></div>
-    <div class="card-body">
+    <div class="card-header aps-cp-card-header"><strong>Parameters</strong></div>
+    <div class="card-body aps-cp-card-body">
       <form method="post" class="row g-3 align-items-end">
         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
         <?php foreach ($params as $key => $label): ?>
@@ -26,7 +26,7 @@
       <div class="alert alert-danger"><?= htmlspecialchars($result['error']) ?></div>
     <?php else: ?>
       <div class="card aps-cp-card">
-        <div class="card-header"><strong>Results</strong> — <?= $result['row_count'] ?? 0 ?> rows</div>
+        <div class="card-header aps-cp-card-header"><strong>Results</strong> — <?= $result['row_count'] ?? 0 ?> rows</div>
         <div class="table-responsive">
           <?php if (!empty($result['rows'])): ?>
             <table class="table table-hover mb-0">

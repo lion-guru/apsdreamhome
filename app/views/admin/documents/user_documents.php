@@ -6,8 +6,8 @@
     </div>
 
     <div class="card shadow-sm">
-        <div class="card-header"><i class="fas fa-list me-2"></i>All User Documents</div>
-        <div class="card-body">
+        <div class="card-header aps-cp-card-header"><i class="fas fa-list me-2"></i>All User Documents</div>
+        <div class="card-body aps-cp-card-body">
             <?php if (!empty($records)): ?>
                 <div class="table-responsive">
                     <table class="table table-hover">

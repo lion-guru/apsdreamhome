@@ -42,7 +42,7 @@ $contracts = $contracts ?? [];
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-building me-2"></i>Vendor Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <small class="text-muted d-block">Vendor Type</small>
                         <?php
@@ -93,7 +93,7 @@ $contracts = $contracts ?? [];
                 <div class="card-header bg-light">
                     <h6 class="mb-0"><i class="fas fa-address-card me-2"></i>Contact Details</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <small class="text-muted d-block">Contact Person</small>
                         <strong><?= htmlspecialchars($vendor['contact_person'] ?? 'N/A') ?></strong>
@@ -122,7 +122,7 @@ $contracts = $contracts ?? [];
                 <div class="card-header bg-light">
                     <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
                         <?php if (!empty($vendor['phone'])): ?>
                             <a href="tel:<?= htmlspecialchars($vendor['phone']) ?>" class="btn btn-outline-primary">
@@ -149,7 +149,7 @@ $contracts = $contracts ?? [];
                 <div class="card-header bg-light">
                     <h6 class="mb-0"><i class="fas fa-file-invoice me-2"></i>Tax & Compliance</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <small class="text-muted d-block">GST Number</small>
@@ -168,7 +168,7 @@ $contracts = $contracts ?? [];
                 <div class="card-header bg-light">
                     <h6 class="mb-0"><i class="fas fa-university me-2"></i>Bank Details</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <small class="text-muted d-block">Bank Name</small>
@@ -197,7 +197,7 @@ $contracts = $contracts ?? [];
                 <div class="card-header bg-light">
                     <h6 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Contract Period</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <small class="text-muted d-block">Contract Start</small>
@@ -217,7 +217,7 @@ $contracts = $contracts ?? [];
                 <div class="card-header bg-light">
                     <h6 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notes</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="mb-0"><?= nl2br(htmlspecialchars($vendor['notes'])) ?></p>
                 </div>
             </div>
@@ -229,7 +229,7 @@ $contracts = $contracts ?? [];
                     <h6 class="mb-0"><i class="fas fa-file-contract me-2"></i>Recent Contracts / Purchase Orders</h6>
                     <a href="<?= BASE_URL ?>/admin/vendors/contracts/<?= $vendor['id'] ?>" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($contracts)): ?>
                         <p class="text-muted text-center mb-0">No contracts or purchase orders yet</p>
                     <?php else: ?>

@@ -9,7 +9,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card border-start border-primary border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">Total Projects</h6>
                     <h3><?php echo number_format(floatval($construction_stats['total_projects'] ?? 0) ?? 0); ?></h3>
                     <p class="text-success mb-0"><i class="fas fa-check-circle me-1"></i><?php echo number_format(floatval($construction_stats['completed_projects'] ?? 0) ?? 0); ?> Completed</p>
@@ -18,7 +18,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-start border-warning border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">Ongoing Projects</h6>
                     <h3><?php echo number_format(floatval($construction_stats['ongoing_projects'] ?? 0) ?? 0); ?></h3>
                     <p class="text-muted mb-0">In Progress</p>
@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-start border-info border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">Material Cost</h6>
                     <h3>₹<?php echo number_format(floatval($material_stats['total_material_cost'] ?? 0) ?? 0); ?></h3>
                     <p class="text-muted mb-0"><?php echo number_format(floatval($material_stats['total_materials'] ?? 0) ?? 0); ?> Items</p>
@@ -36,7 +36,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-start border-success border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">Workforce</h6>
                     <h3><?php echo number_format(floatval($workforce_stats['active_workers'] ?? 0) ?? 0); ?></h3>
                     <p class="text-muted mb-0">Active Workers</p>
@@ -48,21 +48,21 @@
     <!-- Construction Charts -->
     <div class="row mb-4">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-chart-line me-2"></i>Construction Analytics (30 Days)</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="constructionChart" width="400" height="150"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-users me-2"></i>Workforce Distribution</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="workforceChart" width="400" height="150"></canvas>
                 </div>
             </div>
@@ -72,11 +72,11 @@
     <!-- Material Status -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-boxes me-2"></i>Material Status</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="text-center">
@@ -111,11 +111,11 @@
     <!-- Recent Construction Activities -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-history me-2"></i>Recent Construction Activities</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($activities)): ?>
                         <div class="list-group list-group-flush">
                             <?php foreach ($activities as $activity): ?>

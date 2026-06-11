@@ -107,7 +107,7 @@ $land_holdings = $land_holdings ?? [];
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="mb-0"><i class="fas fa-map-marked-alt text-success me-2"></i>Quick Links</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
                         <a href="<?php echo BASE_URL; ?>/farmer/land-holdings" class="btn btn-outline-success"><i class="fas fa-map me-2"></i>View Land Holdings</a>
                         <a href="<?php echo BASE_URL; ?>/farmer/payments" class="btn btn-outline-primary"><i class="fas fa-credit-card me-2"></i>Payment History</a>
@@ -122,7 +122,7 @@ $land_holdings = $land_holdings ?? [];
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="mb-0"><i class="fas fa-chart-pie text-warning me-2"></i>Acquisition Summary</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php
                     $acquired = count(array_filter($land_holdings, fn($l) => ($l['acquisition_status'] ?? '') === 'acquired'));
                     $pending = count(array_filter($land_holdings, fn($l) => ($l['acquisition_status'] ?? '') === 'pending'));

@@ -46,7 +46,7 @@ $page_heading = $page_heading ?? 'Production Launch Checklist';
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total checks</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800"><?= (int)$totalCount ?></div>
                 </div>
@@ -54,7 +54,7 @@ $page_heading = $page_heading ?? 'Production Launch Checklist';
         </div>
         <div class="col-md-3">
             <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Auto-passing</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800"><?= (int)$passedCount ?></div>
                 </div>
@@ -62,7 +62,7 @@ $page_heading = $page_heading ?? 'Production Launch Checklist';
         </div>
         <div class="col-md-3">
             <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Auto-failing</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800"><?= (int)$failedCount ?></div>
                 </div>
@@ -70,7 +70,7 @@ $page_heading = $page_heading ?? 'Production Launch Checklist';
         </div>
         <div class="col-md-3">
             <div class="card border-left-secondary shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Manual check</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800"><?= (int)$unknownCount ?></div>
                 </div>

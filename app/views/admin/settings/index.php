@@ -30,7 +30,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <?php echo ucfirst($category); ?> Settings
                             </h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="table-responsive">
                                 <table class="table table-sm table-borderless">
                                     <tbody>

@@ -11,7 +11,7 @@ $messageVal = $_POST['message'] ?? '';
                 <div class="card-header bg-primary text-white">
                     <h3 class="text-center font-weight-light my-4"><?php echo __('customer_support'); ?></h3>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($success)): ?>
                         <div class="alert alert-success" role="alert">
                             <i class="fas fa-check-circle me-2"></i>

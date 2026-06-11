@@ -78,7 +78,7 @@ $page_title = $page_title ?? 'HR Dashboard';
             <div class="card-header bg-white py-3">
                 <h6 class="mb-0 fw-bold"><i class="fas fa-link me-2 text-success"></i>Quick Actions</h6>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-grid gap-2">
                     <a href="<?= BASE_URL ?>/admin/hr/users" class="btn btn-outline-primary text-start"><i class="fas fa-list me-2"></i>Manage users</a>
                     <a href="<?= BASE_URL ?>/admin/hr/users/create" class="btn btn-outline-success text-start"><i class="fas fa-plus me-2"></i>Add New Employee</a>

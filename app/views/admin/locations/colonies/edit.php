@@ -9,7 +9,7 @@
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Colony: <?= htmlspecialchars($colony['name'] ?? '') ?></h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($errors)): ?>
                     <div class="alert alert-danger"><?php foreach ($errors as $e): ?><p class="mb-0"><?= htmlspecialchars($e) ?></p><?php endforeach; ?></div>
                     <?php endif; ?>

@@ -76,12 +76,12 @@
                             <i class="fas fa-users mr-2"></i>खोज परिणाम
                         </h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row">
                             <?php foreach ($farmers as $farmer): ?>
                                 <div class="col-lg-6 col-xl-4 mb-4">
                                     <div class="card border-left-primary h-100">
-                                        <div class="card-body">
+                                        <div class="card-body aps-cp-card-body">
                                             <div class="d-flex align-items-center mb-3">
                                                 <div class="farmer-avatar mr-3">
                                                     <?= strtoupper(substr($farmer['name'], 0, 1)) ?>
@@ -160,12 +160,12 @@
         <div class="row">
             <div class="col-12">
                 <div class="card shadow">
-                    <div class="card-header">
+                    <div class="card-header aps-cp-card-header">
                         <h6 class="m-0 font-weight-bold text-primary">
                             <i class="fas fa-lightbulb mr-2"></i>खोज सुझाव
                         </h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row">
                             <div class="col-md-6">
                                 <h6>नाम से खोजें:</h6>

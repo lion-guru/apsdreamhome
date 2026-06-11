@@ -25,7 +25,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="row g-4 mb-4">
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><i class="fas fa-users me-2 text-primary"></i>User Registrations</h5>
                         <p class="text-muted">Monthly user registration trends</p>
                         <div class="mt-3">
@@ -36,7 +36,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><i class="fas fa-eye me-2 text-success"></i>Property Views</h5>
                         <p class="text-muted">Property listing view statistics</p>
                         <div class="mt-3">
@@ -47,7 +47,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><i class="fas fa-rupee-sign me-2 text-info"></i>Revenue</h5>
                         <p class="text-muted">Monthly revenue analytics</p>
                         <div class="mt-3">
@@ -65,7 +65,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Analytics Overview</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row">
                             <div class="col-md-4">
                                 <h6 class="text-center">User Growth</h6>

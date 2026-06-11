@@ -142,7 +142,7 @@ $base = $base ?? BASE_URL;
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-layer-group me-2 text-info"></i>Level Distribution</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php $levels = $team_stats['level_distribution'] ?? []; ?>
                         <?php if (!empty($levels)): ?>
                         <?php foreach ($levels as $level): ?>

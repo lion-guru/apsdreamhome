@@ -22,11 +22,11 @@ $users = $users ?? [];
     </div>
     <?php unset($_SESSION['success']); endif; ?>
 
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-header bg-white py-3">
             <h5 class="mb-0"><i class="fas fa-list me-2"></i>Employee List</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($users)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-user-plus fa-4x text-muted mb-3"></i>

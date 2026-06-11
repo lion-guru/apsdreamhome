@@ -60,7 +60,7 @@
                                 <?= ucfirst(str_replace('_', ' ', $task['status'] ?? 'pending')) ?>
                             </span>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title mb-2">
                                 <?= htmlspecialchars($task['title'] ?? 'Untitled Task') ?>
                             </h5>

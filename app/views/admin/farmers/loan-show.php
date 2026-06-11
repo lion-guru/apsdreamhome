@@ -19,7 +19,7 @@ $loan = $loan ?? [];
         <div class="col-md-6 mb-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Loan Info</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
                         <tr><td class="text-muted">Loan #</td><td><strong><code><?php echo htmlspecialchars($loan['loan_number'] ?? 'N/A'); ?></code></strong></td></tr>
                         <tr><td class="text-muted">Farmer</td><td><strong><?php echo htmlspecialchars($loan['farmer_name'] ?? 'N/A'); ?></strong></td></tr>
@@ -47,7 +47,7 @@ $loan = $loan ?? [];
         <div class="col-md-6 mb-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Financial Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
                         <tr><td class="text-muted">Loan Amount</td><td><strong>₹<?php echo number_format($loan['loan_amount'] ?? 0); ?></strong></td></tr>
                         <tr><td class="text-muted">Interest Rate</td><td><?php echo htmlspecialchars($loan['interest_rate'] ?? '0'); ?>%</td></tr>
@@ -63,7 +63,7 @@ $loan = $loan ?? [];
     <?php if ($loan['collateral_type'] ?? ''): ?>
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Collateral & Guarantor</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row">
                 <div class="col-md-6">
                     <h6>Collateral</h6>
@@ -83,7 +83,7 @@ $loan = $loan ?? [];
     <?php if ($loan['repayment_schedule'] ?? ''): ?>
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Repayment Schedule</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <pre class="mb-0"><?php echo htmlspecialchars($loan['repayment_schedule']); ?></pre>
         </div>
     </div>
@@ -91,7 +91,7 @@ $loan = $loan ?? [];
 
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Status</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="post" action="<?php echo BASE_URL; ?>/admin/farmers/loans/update-status/<?php echo $loan['id'] ?? 0; ?>" class="row g-3">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="col-md-4">

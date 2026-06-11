@@ -49,7 +49,7 @@ $base = BASE_URL;
 <body>
     <div class="container">
         <div class="card mx-auto">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="text-center mb-4">
                     <div class="mb-3">
                         <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width:60px;height:60px;background:linear-gradient(135deg,#667eea,#764ba2)"><i class="fas fa-home text-white fa-lg"></i></div>

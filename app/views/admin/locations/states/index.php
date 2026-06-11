@@ -22,7 +22,7 @@
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card bg-primary text-white">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Total States</h5>
                             <h3><?php echo count($states); ?></h3>
                         </div>
@@ -30,7 +30,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="card bg-info text-white">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Total Districts</h5>
                             <h3><?php echo array_sum(array_column($states, 'district_count')); ?></h3>
                         </div>
@@ -38,7 +38,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="card bg-success text-white">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Total Colonies</h5>
                             <h3>
                                 <?php 
@@ -57,11 +57,11 @@
             </div>
             
             <!-- States Table -->
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="mb-0">States</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>

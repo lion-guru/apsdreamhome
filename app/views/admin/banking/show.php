@@ -35,7 +35,7 @@ $page_title = 'Transaction Details - #' . ($transaction['id'] ?? '');
                         <?php echo strtoupper($transaction['type'] ?? '-'); ?>
                     </span>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <small class="text-muted d-block">Transaction ID</small>
@@ -71,7 +71,7 @@ $page_title = 'Transaction Details - #' . ($transaction['id'] ?? '');
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-university me-2"></i>Banking Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <small class="text-muted d-block">Bank Name</small>
@@ -106,7 +106,7 @@ $page_title = 'Transaction Details - #' . ($transaction['id'] ?? '');
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-balance-scale me-2"></i>Reconciliation</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3 text-center">
                         <span class="badge bg-<?php echo match($transaction['reconciliation_status'] ?? 'pending') {
                             'reconciled' => 'success',

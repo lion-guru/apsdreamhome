@@ -23,7 +23,7 @@ $acquisition = $acquisition ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Acquisition Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3">
                         <div class="col-sm-4 text-muted">Acquisition Number</div>
                         <div class="col-sm-8"><strong><?php echo $acquisition['acquisition_number'] ?? '-'; ?></strong></div>
@@ -104,7 +104,7 @@ $acquisition = $acquisition ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Documents & Remarks</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($acquisition['documents'])): ?>
                     <div class="mb-3">
                         <h6>Documents</h6>
@@ -127,7 +127,7 @@ $acquisition = $acquisition ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-user me-2"></i>Farmer Info</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($acquisition['farmer_id'])): ?>
                     <p class="mb-1"><strong>Farmer ID:</strong> <?php echo $acquisition['farmer_id']; ?></p>
                     <?php else: ?>
@@ -143,7 +143,7 @@ $acquisition = $acquisition ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Status</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?php echo BASE_URL; ?>/admin/land/acquisitions/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="acquisition_id" value="<?php echo $acquisition['id'] ?? 0; ?>">

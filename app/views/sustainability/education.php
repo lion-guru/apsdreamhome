@@ -18,7 +18,7 @@
         <?php foreach ($programs as $key => $prog): ?>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <i class="fas fa-<?= $key === 'employee_training' ? 'users' : ($key === 'customer_education' ? 'user-graduate' : 'industry') ?> fa-3x text-primary mb-3"></i>
                     <h5><?= ($prog['program'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h5>
                     <hr>

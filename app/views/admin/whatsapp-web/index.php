@@ -10,7 +10,7 @@
 
     <div class="row">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body text-center py-5">
                     <iframe src="http://localhost:3001" width="100%" height="600" style="border:none;border-radius:8px" title="WhatsApp Web QR"></iframe>
                 </div>
@@ -19,14 +19,14 @@
         <div class="col-md-4">
             <div class="card mb-3">
                 <div class="card-header bg-white"><h6 class="mb-0 fw-bold">Status</h6></div>
-                <div class="card-body" id="wa-status">
+                <div class="card-body aps-cp-card-body" id="wa-status">
                     <p class="text-muted mb-0">Loading...</p>
                 </div>
             </div>
 
             <div class="card mb-3">
                 <div class="card-header bg-white"><h6 class="mb-0 fw-bold">Quick Actions</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <button class="btn btn-outline-success w-100 mb-2" onclick="checkStatus()">
                         <i class="fas fa-sync me-1"></i> Check Status
                     </button>
@@ -39,9 +39,9 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-white"><h6 class="mb-0 fw-bold">AI Agent Config</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="small text-muted">WhatsApp Web se connected hone ke baad AI Agent automatically:</p>
                     <ul class="small">
                         <li>Property inquiries ka reply karega</li>

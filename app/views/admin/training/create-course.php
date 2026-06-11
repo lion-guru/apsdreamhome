@@ -21,7 +21,7 @@ $page_description = 'Create a new training course';
         <div class="col-xl-8">
             <form action="<?php echo BASE_URL; ?>/admin/training/courses/store" method="POST" class="card border-0 shadow-sm">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Course Title <span class="text-danger">*</span></label>
                         <input type="text" name="course_title" class="form-control" required>

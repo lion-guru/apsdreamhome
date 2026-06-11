@@ -7,7 +7,7 @@
         <?php foreach ($batches ?? [] as $b): ?>
         <div class="col-md-4">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="mb-1"><?= htmlspecialchars($b['payout_batch_id'] ?? '') ?></h6>
                     <div class="d-flex justify-content-between">
                         <span>Total: <strong>₹<?= number_format($b['total_amount'] ?? 0, 2) ?></strong></span>

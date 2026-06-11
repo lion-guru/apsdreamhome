@@ -93,7 +93,7 @@ $day_of_week = $day_of_week ?? date('w');
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-2"><strong><i class="fas fa-chart-pie me-2"></i>Status Today</strong></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($status_breakdown)): ?>
                         <div class="text-center py-4 text-muted">No data</div>
                     <?php else: ?>
@@ -112,7 +112,7 @@ $day_of_week = $day_of_week ?? date('w');
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-2"><strong><i class="fas fa-calendar-week me-2"></i>Upcoming Week</strong></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($upcoming_week)): ?>
                         <div class="text-center py-4 text-muted">No upcoming shifts</div>
                     <?php else: ?>

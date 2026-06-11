@@ -56,7 +56,7 @@ $page_title = $page_title ?? 'Sales Management';
 
     <!-- Filter Form -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/sales" class="row g-3">
                 <div class="col-md-3">
                     <input type="text" name="search" class="form-control" placeholder="Search sale #, property, customer..." value="<?= htmlspecialchars($filters['search']) ?>">

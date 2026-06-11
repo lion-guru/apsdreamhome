@@ -118,7 +118,7 @@ try {
         <!-- Property Quick Info -->
         <div class="col-lg-4">
             <div class="property-quick-info card">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h2 class="property-title mb-3"><?php echo htmlspecialchars($property['title']); ?></h2>
 
                     <div class="property-price mb-4">
@@ -400,7 +400,7 @@ try {
                 <div class="col-md-4 mb-4">
                     <div class="card property-card h-100">
                         <img src="<?= !empty($related['image_path']) ? htmlspecialchars($related['image_path']) : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" class="card-img-top" alt="<?php echo htmlspecialchars($related['title']); ?>" loading="lazy">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($related['title']); ?></h5>
                             <p class="card-text text-muted"><?php echo htmlspecialchars($related['address']); ?></p>
                             <div class="property-features">

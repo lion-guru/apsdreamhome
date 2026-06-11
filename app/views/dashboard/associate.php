@@ -38,7 +38,7 @@ $notifications = $notifications ?? [];
     <div class="row">
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card glass-card bg-primary text-white border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title text-uppercase mb-2 small opacity-75">Team Size</h6>
@@ -58,7 +58,7 @@ $notifications = $notifications ?? [];
         </div>
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card glass-card bg-success text-white border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title text-uppercase mb-2 small opacity-75">Team Revenue</h6>
@@ -78,7 +78,7 @@ $notifications = $notifications ?? [];
         </div>
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card glass-card bg-info text-white border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title text-uppercase mb-2 small opacity-75">Commission Paid</h6>
@@ -93,7 +93,7 @@ $notifications = $notifications ?? [];
         </div>
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card glass-card bg-warning text-white border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title text-uppercase mb-2 small opacity-75">Personal Sales</h6>
@@ -113,7 +113,7 @@ $notifications = $notifications ?? [];
 <?php if (isset($rank_info)): ?>
 <div class="container mb-4">
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="mb-0">Current Rank: <span class="text-primary"><?= $rank_info['rank'] ?></span></h5>
                 <span class="badge bg-light text-primary border"><?= $rank_info['performance'] ?>% Progress</span>
@@ -144,7 +144,7 @@ $notifications = $notifications ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0">Recent Earnings</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($recent_activities)): ?>
                         <div class="table-responsive">
                             <div class="table-responsive"><table class="table table-hover align-middle table-responsive">
@@ -182,11 +182,11 @@ $notifications = $notifications ?? [];
 
         <!-- Notifications -->
         <div class="col-lg-4 mb-4">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="mb-0">Notifications</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($notifications)): ?>
                         <div class="notification-list">
                             <?php foreach ($notifications as $notification): ?>
@@ -217,10 +217,10 @@ $notifications = $notifications ?? [];
 
             <!-- Quick Actions -->
             <div class="card mt-3">
-                <div class="card-header">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="mb-0">Quick Actions</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
                         <button class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add New Property

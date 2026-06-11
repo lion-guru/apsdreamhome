@@ -44,7 +44,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <?php if (!empty($property)): ?>
             <!-- Property Info -->
             <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="mb-3"><?php echo htmlspecialchars($property['title'] ?? 'Property'); ?></h5>
                     <div class="row">
                         <div class="col-md-4">
@@ -101,7 +101,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Market Trends</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <?php if (!empty($market_trends)): ?>
                                 <div class="table-responsive">
                                     <div class="table-responsive"><table class="table table-sm table-responsive">
@@ -144,7 +144,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-header bg-white">
                             <h5 class="mb-0">Actions</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-grid gap-2">
                                 <button class="btn btn-primary" onclick="generatePrediction()">
                                     <i class="fas fa-sync me-2"></i>Refresh Prediction

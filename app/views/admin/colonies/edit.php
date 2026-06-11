@@ -9,7 +9,7 @@ $districts = $districts ?? [];
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Basic Info</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Colony Name *</label>
@@ -50,7 +50,7 @@ $districts = $districts ?? [];
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Content & Media</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Key Highlights (JSON array)</label>
                     <textarea name="key_highlights" class="form-control" rows="3"><?php echo htmlspecialchars($colony['key_highlights'] ?? ''); ?></textarea>
@@ -88,7 +88,7 @@ $districts = $districts ?? [];
 
         <div class="col-md-4">
             <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Pricing & Plots</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-3"><label class="form-label">Total Plots</label><input name="total_plots" type="number" class="form-control" value="<?php echo $colony['total_plots'] ?? 0; ?>"></div>
                 <div class="mb-3"><label class="form-label">Available Plots</label><input name="available_plots" type="number" class="form-control" value="<?php echo $colony['available_plots'] ?? 0; ?>"></div>
                 <div class="mb-3"><label class="form-label">Starting Price (₹)</label><input name="starting_price" type="number" step="0.01" class="form-control" value="<?php echo $colony['starting_price'] ?? 0; ?>"></div>
@@ -96,7 +96,7 @@ $districts = $districts ?? [];
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Contact & SEO</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-3"><label class="form-label">Phone</label><input name="contact_phone" class="form-control" value="<?php echo htmlspecialchars($colony['contact_phone'] ?? ''); ?>"></div>
                 <div class="mb-3"><label class="form-label">Email</label><input name="contact_email" class="form-control" value="<?php echo htmlspecialchars($colony['contact_email'] ?? ''); ?>"></div>
                 <div class="mb-3"><label class="form-label">Meta Title</label><input name="meta_title" class="form-control" value="<?php echo htmlspecialchars($colony['meta_title'] ?? ''); ?>"></div>
@@ -104,7 +104,7 @@ $districts = $districts ?? [];
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Settings</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="form-check mb-2">
                     <input type="checkbox" name="is_active" class="form-check-input" id="is_active" value="1" <?php echo ($colony['is_active'] ?? 0) ? 'checked' : ''; ?>>
                     <label class="form-check-label" for="is_active">Active</label>

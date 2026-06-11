@@ -27,7 +27,7 @@
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card aps-cp-card border-start border-primary border-4">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-muted text-uppercase small">Total Invoices</h6>
@@ -41,7 +41,7 @@
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card aps-cp-card border-start border-success border-4">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-muted text-uppercase small">Paid</h6>
@@ -55,7 +55,7 @@
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card aps-cp-card border-start border-warning border-4">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-muted text-uppercase small">Pending</h6>
@@ -69,7 +69,7 @@
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card aps-cp-card border-start border-danger border-4">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-muted text-uppercase small">Overdue</h6>
@@ -87,7 +87,7 @@
         <div class="card-header aps-cp-card-header">
             <span><i class="fas fa-filter me-2"></i>Filter Invoices</span>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/invoices/manage" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Status</label>

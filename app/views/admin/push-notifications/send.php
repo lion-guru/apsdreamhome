@@ -56,7 +56,7 @@
 
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold mb-3"><i class="fas fa-info-circle text-primary me-1"></i> How it works</h6>
                     <ul class="small text-muted mb-0" style="padding-left: 18px;">
                         <li>Push notifications are sent to all users with an active browser subscription</li>

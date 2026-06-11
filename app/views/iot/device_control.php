@@ -8,7 +8,7 @@
         <div class="col-md-5">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Device Info</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Name</th><td><?= htmlspecialchars($device['device_name'] ?? '-') ?></td></tr>
                         <tr><th>Type</th><td><?= htmlspecialchars($device['device_type_name'] ?? '-') ?></td></tr>

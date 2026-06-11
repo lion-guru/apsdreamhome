@@ -20,7 +20,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0">Payment Information</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row">
                             <div class="col-md-6">
                                 <p class="text-muted mb-1">Transaction ID</p>
@@ -55,7 +55,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0">Payment History</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($history)): ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach ($history as $item): ?>
@@ -79,7 +79,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0">Customer & Booking</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="text-muted mb-1">Customer</p>
                         <h6><?php echo htmlspecialchars($payment['customer_name'] ?? '-'); ?></h6>
                         <p class="text-muted small"><?php echo htmlspecialchars($payment['customer_email'] ?? '-'); ?></p>

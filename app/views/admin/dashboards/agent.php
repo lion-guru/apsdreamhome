@@ -9,7 +9,7 @@
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card border-start border-primary border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">My Commissions</h6>
                     <h3>₹<?php echo number_format(floatval($stats['total_commissions'] ?? 0) ?? 0); ?></h3>
                     <p class="text-success mb-0"><i class="fas fa-wallet me-1"></i>₹<?php echo number_format(floatval($stats['pending_commissions'] ?? 0) ?? 0); ?> Pending</p>
@@ -18,7 +18,7 @@
         </div>
         <div class="col-md-4">
             <div class="card border-start border-info border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">My Network Size</h6>
                     <h3><?php echo $network['total_associates'] ?? 0; ?></h3>
                     <p class="text-muted mb-0"><?php echo $network['active_associates'] ?? 0; ?> Active now</p>
@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-4">
             <div class="card border-start border-success border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">Performance</h6>
                     <h3><?php echo $stats['total_sales'] ?? 0; ?></h3>
                     <p class="text-success mb-0"><i class="fas fa-chart-line me-1"></i>Sales this month</p>
@@ -39,11 +39,11 @@
     <!-- Performance Chart -->
     <div class="row mb-4">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-chart-bar me-2"></i>Sales Performance (Last 7 Days)</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="performanceChart" width="400" height="150"></canvas>
                 </div>
             </div>

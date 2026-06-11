@@ -10,7 +10,7 @@ $active_page = 'menu-permissions';
 <div class="row">
     <div class="col-md-12">
         <div class="card mb-4">
-            <div class="card-header">
+            <div class="card-header aps-cp-card-header">
                 <ul class="nav nav-tabs card-header-tabs" id="permissionsTabs" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="role-permissions-tab" data-bs-toggle="tab" href="#role-permissions" role="tab">Role Permissions</a>
@@ -20,7 +20,7 @@ $active_page = 'menu-permissions';
                     </li>
                 </ul>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="tab-content" id="permissionsTabsContent">
                     <!-- Role Permissions Tab -->
                     <div class="tab-pane fade show active" id="role-permissions" role="tabpanel">
@@ -119,11 +119,11 @@ $active_page = 'menu-permissions';
                         </div>
 
                         <div id="userPermissionsContent" style="display: none;">
-                            <div class="card">
-                                <div class="card-header">
+                            <div class="card aps-cp-card">
+                                <div class="card-header aps-cp-card-header">
                                     <strong>Custom Permissions for: <span id="selectedUserName"></span></strong>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-hover" id="userPermissionsTable">
                                             <thead class="table-dark">

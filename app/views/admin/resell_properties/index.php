@@ -49,8 +49,8 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body">
+<div class="card aps-cp-card">
+    <div class="card-body aps-cp-card-body">
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>

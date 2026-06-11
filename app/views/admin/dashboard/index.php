@@ -19,7 +19,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <p class="text-muted mb-1">Total Properties</p>
@@ -34,7 +34,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <p class="text-muted mb-1">Total Users</p>
@@ -49,7 +49,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <p class="text-muted mb-1">Active Leads</p>
@@ -64,7 +64,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <p class="text-muted mb-1">Bookings</p>
@@ -86,7 +86,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h6 class="mb-0"><i class="fas fa-users me-2 text-primary"></i>User Registrations</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="userChart" height="200"></canvas>
                 </div>
             </div>
@@ -96,7 +96,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h6 class="mb-0"><i class="fas fa-calendar-check me-2 text-success"></i>Monthly Bookings</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="bookingChart" height="200"></canvas>
                 </div>
             </div>
@@ -106,7 +106,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h6 class="mb-0"><i class="fas fa-rupee-sign me-2 text-warning"></i>Revenue (₹)</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="revenueChart" height="200"></canvas>
                 </div>
             </div>
@@ -157,7 +157,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-2">
                         <div class="col-md-2">
                             <a href="<?php echo $base; ?>/admin/properties/create" class="btn btn-outline-primary w-100">
@@ -201,7 +201,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activities</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($recent_activities)): ?>
                         <div class="list-group list-group-flush">
                             <?php foreach ($recent_activities as $activity): ?>
@@ -228,7 +228,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="fas fa-link me-2"></i>Quick Links</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="list-group list-group-flush">
                         <a href="<?php echo $base; ?>/admin/properties" class="list-group-item list-group-item-action">
                             <i class="fas fa-building me-2 text-primary"></i>Properties

@@ -9,7 +9,7 @@
                 <a href="<?= BASE_URL ?>/admin/reports/export/agent-performance" class="btn btn-sm btn-outline-success"><i class="fas fa-download me-1"></i>Export</a>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (!empty($users)): ?>
                 <div class="table-responsive">
                     <table class="table table-hover">

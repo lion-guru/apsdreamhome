@@ -35,14 +35,14 @@ function aboutContent($sc, $key, $fallbackKey) {
                 <div class="row">
                     <?php for ($i = 1; $i <= 3; $i++): ?>
                     <div class="col-md-4 mb-4">
-                        <div class="card">
+                        <div class="card aps-cp-card">
                             <?php $photo = aboutContent($sc, "leader_{$i}_photo", "about_leader_{$i}_name"); ?>
                             <img loading="lazy"
                                  src="<?= BASE_URL ?>/<?= htmlspecialchars(aboutContent($sc, "leader_{$i}_photo", "about_leader_{$i}_name")) ?>"
                                  class="card-img-top img-fluid"
                                  alt="<?= htmlspecialchars(aboutContent($sc, "leader_{$i}_name", "about_leader_{$i}_name")) ?>"
                                  style="height:250px; object-fit:cover;">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h5 class="card-title"><?= htmlspecialchars(aboutContent($sc, "leader_{$i}_name", "about_leader_{$i}_name")) ?></h5>
                                 <p class="text-muted"><?= htmlspecialchars(aboutContent($sc, "leader_{$i}_role", "about_leader_{$i}_role")) ?></p>
                                 <p class="small"><?= htmlspecialchars(aboutContent($sc, "leader_{$i}_exp", "about_leader_{$i}_exp")) ?></p>
@@ -55,7 +55,7 @@ function aboutContent($sc, $key, $fallbackKey) {
             </div>
             <div class="col-lg-4">
                 <div class="card bg-light">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h3 class="card-title"><?= __('about_stats_title') ?></h3>
                         <div class="row text-center">
                             <div class="col-6 mb-3">

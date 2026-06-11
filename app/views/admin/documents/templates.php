@@ -15,8 +15,8 @@
     <div class="row">
         <div class="col-md-5">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><i class="fas fa-plus me-2"></i>Create Template</div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-plus me-2"></i>Create Template</div>
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/documents/templates/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -61,8 +61,8 @@
         </div>
         <div class="col-md-7">
             <div class="card shadow-sm">
-                <div class="card-header"><i class="fas fa-list me-2"></i>All Templates</div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-list me-2"></i>All Templates</div>
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($templates)): ?>
                         <div class="table-responsive">
                             <table class="table table-hover">

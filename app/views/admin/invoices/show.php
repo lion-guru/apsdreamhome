@@ -49,7 +49,7 @@
                     <span><i class="fas fa-file-invoice me-2"></i>Invoice Details</span>
                     <small class="text-muted">Created: <?= date('d M Y H:i', strtotime($invoice['created_at'] ?? 'now')) ?></small>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-4">
                         <div class="col-sm-6">
                             <h6 class="text-muted">From:</h6>
@@ -168,7 +168,7 @@
                 <div class="card-header aps-cp-card-header">
                     <span><i class="fas fa-calculator me-2"></i>Amount Summary</span>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless mb-0">
                         <tr><td>Subtotal</td><td class="text-end">₹<?= number_format($invoice['subtotal'] ?? 0, 2) ?></td></tr>
                         <?php if (($invoice['discount_amount'] ?? 0) > 0): ?>
@@ -193,7 +193,7 @@
                     <div class="card-header aps-cp-card-header">
                         <span><i class="fas fa-sticky-note me-2"></i>Notes & Terms</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($invoice['payment_terms'])): ?>
                             <div class="mb-2"><strong class="text-muted small">Payment Terms:</strong>
                                 <p class="mb-0"><?= nl2br(htmlspecialchars($invoice['payment_terms'])) ?></p>
@@ -212,7 +212,7 @@
                 <div class="card-header aps-cp-card-header">
                     <span><i class="fas fa-info-circle me-2"></i>Invoice Info</span>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <small class="text-muted d-block">Invoice #<?= htmlspecialchars($invoice['invoice_number'] ?? '') ?></small>
                     <small class="text-muted d-block">Created: <?= date('d M Y H:i', strtotime($invoice['created_at'] ?? 'now')) ?></small>
                     <small class="text-muted d-block">Updated: <?= date('d M Y H:i', strtotime($invoice['updated_at'] ?? 'now')) ?></small>

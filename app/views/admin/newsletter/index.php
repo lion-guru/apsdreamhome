@@ -14,7 +14,7 @@ $page_title = $page_title ?? 'Newsletter Subscribers';
     <div class="row">
         <div class="col-12">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($subscribers)): ?>
                         <div class="text-center py-5 text-muted">
                             <i class="fas fa-inbox fa-4x d-block mb-3"></i>

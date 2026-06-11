@@ -17,7 +17,7 @@
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h3 class="text-primary mb-0"><?= number_format($market_stats['total_virtual_properties'] ?? 0) ?></h3>
                     <small class="text-muted">Total Properties</small>
                 </div>
@@ -25,7 +25,7 @@
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h3 class="text-success mb-0"><?= ($market_stats['properties_for_sale'] ?? 0) ?></h3>
                     <small class="text-muted">For Sale</small>
                 </div>
@@ -33,7 +33,7 @@
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h3 class="text-warning mb-0"><?= number_format($market_stats['avg_sale_price'] ?? 0) ?> VRC</h3>
                     <small class="text-muted">Avg Price</small>
                 </div>
@@ -41,7 +41,7 @@
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h3 class="text-info mb-0"><?= number_format($market_stats['monthly_volume'] ?? 0) ?> VRC</h3>
                     <small class="text-muted">Monthly Volume</small>
                 </div>
@@ -61,7 +61,7 @@
         <?php foreach ($virtual_properties as $vp): ?>
         <div class="col-md-6 col-lg-4">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="card-title"><?= ($vp['name'] ?? 'Unnamed') ?></h5>
                     <p class="card-text text-muted small"><?= ($vp['description'] ?? '') ?></p>
                     <div class="d-flex justify-content-between align-items-center mt-3">

@@ -16,7 +16,7 @@
         <div class="card-header bg-white">
             <h4 class="mb-0"><i class="fas fa-bell me-2 text-primary"></i>Notification Preferences</h4>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <p class="text-muted mb-4">Choose how you want to be notified for each type of activity.</p>
 
             <form method="POST" action="<?php echo BASE_URL; ?>/user/notification-settings">

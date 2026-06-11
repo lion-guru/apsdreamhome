@@ -3,8 +3,8 @@
     <h4 class="mb-0">Add MLM Associate</h4>
     <a href="<?= BASE_URL ?>admin/mlm/users" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
 </div>
-<div class="card">
-    <div class="card-body">
+<div class="card aps-cp-card">
+    <div class="card-body aps-cp-card-body">
         <form method="post" action="<?= $_SERVER['REQUEST_URI'] ?>">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row g-3">

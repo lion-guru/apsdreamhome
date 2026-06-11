@@ -17,7 +17,7 @@
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <small class="text-muted d-block">Total Investment</small>
                     <h3 class="text-primary">₹<?= number_format($portfolio['total_investment'] ?? 0) ?></h3>
                 </div>
@@ -25,7 +25,7 @@
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <small class="text-muted d-block">Current Value</small>
                     <h3 class="text-success">₹<?= number_format($portfolio['current_value'] ?? 0) ?></h3>
                 </div>
@@ -33,7 +33,7 @@
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <small class="text-muted d-block">Total Return</small>
                     <h3 class="text-success">+₹<?= number_format($portfolio['total_return'] ?? 0) ?></h3>
                 </div>
@@ -41,7 +41,7 @@
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <small class="text-muted d-block">Return %</small>
                     <h3 class="text-success">+<?= ($portfolio['return_percentage'] ?? 0) ?>%</h3>
                 </div>
@@ -55,7 +55,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-building me-2 text-success"></i>Properties Owned</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $properties = $portfolio['properties_owned'] ?? []; ?>
                     <?php if (empty($properties)): ?>
                     <p class="text-muted text-center py-3">No virtual properties in your portfolio yet.</p>
@@ -87,7 +87,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-chart-bar me-2 text-info"></i>Market Performance</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Index: <?= ($market_performance['market_index'] ?? 'VREI') ?></h6>
                     <h3 class="text-info"><?= ($market_performance['current_value'] ?? '0') ?></h3>
                     <hr>

@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-md-8">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/user/book-site-visit">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -51,7 +51,7 @@
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm bg-light">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6><i class="fas fa-info-circle me-1"></i>Visit Information</h6>
                     <ul class="small text-muted ps-3">
                         <li class="mb-1">Our team will confirm your visit within 24 hours</li>

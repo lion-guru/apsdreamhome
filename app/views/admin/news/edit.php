@@ -10,8 +10,8 @@
 <?php if (empty($news)): ?>
     <div class="alert alert-danger">Article not found.</div>
 <?php else: ?>
-    <div class="card">
-        <div class="card-body">
+    <div class="card aps-cp-card">
+        <div class="card-body aps-cp-card-body">
             <form id="newsForm">
                 <div class="row">
                     <div class="col-md-8">
@@ -33,7 +33,7 @@
 
                     <div class="col-md-4">
                         <div class="card bg-light mb-3">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h6>Publish Settings</h6>
 
                                 <div class="mb-3">
@@ -58,7 +58,7 @@
                         </div>
 
                         <div class="card bg-light mb-3">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h6>Featured Image</h6>
                                 <?php if (!empty($news['image'])): ?>
                                     <div class="mb-2 text-center">

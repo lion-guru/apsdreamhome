@@ -16,16 +16,16 @@
 
     <div class="row g-4 mb-4">
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 text-center"><div class="card-body"><h3 class="text-warning mb-0"><?= ($consumption['total_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Total Consumption</small></div></div>
+            <div class="card shadow-sm border-0 text-center"><div class="card-body aps-cp-card-body"><h3 class="text-warning mb-0"><?= ($consumption['total_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Total Consumption</small></div></div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 text-center"><div class="card-body"><h3 class="text-info mb-0"><?= ($consumption['per_user_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Per User</small></div></div>
+            <div class="card shadow-sm border-0 text-center"><div class="card-body aps-cp-card-body"><h3 class="text-info mb-0"><?= ($consumption['per_user_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Per User</small></div></div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 text-center"><div class="card-body"><h3 class="text-primary mb-0"><?= ($consumption['data_center_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Data Center</small></div></div>
+            <div class="card shadow-sm border-0 text-center"><div class="card-body aps-cp-card-body"><h3 class="text-primary mb-0"><?= ($consumption['data_center_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Data Center</small></div></div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 text-center"><div class="card-body"><h3 class="text-secondary mb-0"><?= ($consumption['office_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Office</small></div></div>
+            <div class="card shadow-sm border-0 text-center"><div class="card-body aps-cp-card-body"><h3 class="text-secondary mb-0"><?= ($consumption['office_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Office</small></div></div>
         </div>
     </div>
 
@@ -33,7 +33,7 @@
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-chart-line me-2 text-success"></i>Efficiency Improvements</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($improvements as $key => $imp): ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <h6><?= ($imp['improvement'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h6>
@@ -51,7 +51,7 @@
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-solar-panel me-2 text-warning"></i>Renewable Energy Sources</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($renewable as $key => $re): ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <h6><?= ucfirst(str_replace('_', ' ', $key)) ?></h6>
@@ -66,7 +66,7 @@
         <div class="col-12">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-list-check me-2 text-info"></i>Recommendations</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-4">
                         <?php foreach (['immediate_actions', 'short_term_goals', 'long_term_strategies'] as $category): $items = $recommendations[$category] ?? []; ?>
                         <div class="col-md-4">

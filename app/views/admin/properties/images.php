@@ -73,7 +73,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 
     <!-- Upload Drop Zone -->
     <div class="card mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="drop-zone" id="dropZone">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <h4>Drag & Drop Images Here</h4>
@@ -91,7 +91,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
         <div class="card-header bg-light">
             <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Traditional Upload</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form action="<?php echo $base; ?>/admin/properties/images/upload" method="POST" enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
@@ -120,12 +120,12 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
     </div>
 
     <!-- Image Gallery -->
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="fas fa-th-large me-2"></i>Image Gallery</h5>
             <span class="badge bg-primary"><?php echo is_array($images) ? count($images) : 0; ?> Images</span>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($images)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-images fa-3x text-muted mb-3"></i>
@@ -429,7 +429,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 
                 <!-- Upload Drop Zone -->
                 <div class="card mb-4">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="drop-zone" id="dropZone">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <h4>Drag & Drop Images Here</h4>
@@ -447,7 +447,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                     <div class="card-header bg-light">
                         <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Traditional Upload</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <form action="<?php echo $base; ?>/admin/properties/images/upload" method="POST" enctype="multipart/form-data">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
@@ -476,12 +476,12 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                 </div>
 
                 <!-- Image Gallery -->
-                <div class="card">
+                <div class="card aps-cp-card">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><i class="fas fa-th-large me-2"></i>Image Gallery</h5>
                         <span class="badge bg-primary"><?php echo is_array($images) ? count($images) : 0; ?> Images</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (empty($images)): ?>
                             <div class="empty-state">
                                 <i class="fas fa-images"></i>

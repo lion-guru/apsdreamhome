@@ -18,7 +18,7 @@ $usp = $highlights['usp'] ?? [];
             <?php if (!empty($amenities)): ?>
             <div class="col-lg-6">
                 <div class="card h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h3 class="h5">Amenities</h3>
                         <ul class="list-unstyled microsite-list">
                             <?php foreach ($amenities as $amenity): ?>
@@ -36,7 +36,7 @@ $usp = $highlights['usp'] ?? [];
             <?php if (!empty($highlightItems)): ?>
             <div class="col-lg-6">
                 <div class="card h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h3 class="h5">Key Highlights</h3>
                         <ul class="list-unstyled microsite-list">
                             <?php foreach ($highlightItems as $item): ?>
@@ -57,7 +57,7 @@ $usp = $highlights['usp'] ?? [];
             <?php if (!empty($usp)): ?>
             <div class="col-lg-8">
                 <div class="card h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h3 class="h5">Why Choose This Project</h3>
                         <div class="row g-3">
                             <?php foreach ($usp as $point): ?>
@@ -77,7 +77,7 @@ $usp = $highlights['usp'] ?? [];
             <?php if (!empty($awards)): ?>
             <div class="col-lg-4">
                 <div class="card h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h3 class="h5">Recognitions</h3>
                         <ul class="list-unstyled microsite-list">
                             <?php foreach ($awards as $award): ?>

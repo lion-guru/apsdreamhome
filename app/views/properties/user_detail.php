@@ -92,7 +92,7 @@
                 <div class="card-header bg-primary text-white py-3">
                     <h5 class="mb-0"><i class="fas fa-envelope me-2"></i>Contact Owner</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($property['name']) || !empty($property['phone'])): ?>
                     <div class="mb-4">
                         <h6 class="fw-bold">Listed by:</h6>
@@ -134,7 +134,7 @@
 
             <!-- Quick Actions -->
             <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold mb-3"><i class="fas fa-tools me-2"></i>Quick Actions</h6>
                     <a href="tel:919277121112" class="btn btn-success w-100 mb-2">
                         <i class="fas fa-phone me-2"></i>Call APS (<?= htmlspecialchars($phoneDisplay) ?>)

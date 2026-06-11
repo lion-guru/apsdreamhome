@@ -46,11 +46,11 @@ $page_title = 'My Achievements - APS Dream Home';
     <div class="row">
         <!-- My Badges -->
         <div class="col-md-8 mb-4">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-certificate me-2"></i>My Badges</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($user_badges)): ?>
                         <div class="text-center py-5">
                             <i class="fas fa-certificate fa-3x text-muted mb-3"></i>
@@ -80,7 +80,7 @@ $page_title = 'My Achievements - APS Dream Home';
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-lock me-2"></i>Badges to Unlock</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <?php
                         $userBadgeIds = array_column($user_badges, 'badge_id');
@@ -128,7 +128,7 @@ $page_title = 'My Achievements - APS Dream Home';
             </div>
 
             <!-- Recent Points -->
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h5>
                 </div>
@@ -156,7 +156,7 @@ $page_title = 'My Achievements - APS Dream Home';
         <div class="card-header bg-light">
             <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>How to Earn Points</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row">
                 <div class="col-md-3 mb-3">
                     <div class="d-flex align-items-center">

@@ -3,7 +3,7 @@
     <h4 class="mb-0">Extracted Leads from Calls</h4>
     <button class="btn btn-success btn-sm" onclick="alert('Convert all verified leads')"><i class="fas fa-check-double"></i> Convert All Verified</button>
 </div>
-<div class="card">
+<div class="card aps-cp-card">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">

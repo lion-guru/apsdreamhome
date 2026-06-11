@@ -59,7 +59,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2 text-primary"></i>Property Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h4><?= ($property['title'] ?? 'Untitled Property') ?></h4>
                     <p class="text-muted"><i class="fas fa-map-marker-alt me-2"></i><?= ($property['location'] ?? $property['city'] ?? 'N/A') ?></p>
                     <hr>
@@ -83,7 +83,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-couch me-2 text-primary"></i>AR Objects</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-group list-group-flush">
                         <?php foreach (($vr_data['ar_objects']['furniture'] ?? []) as $name => $obj): ?>
                         <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
@@ -100,7 +100,7 @@
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0"><i class="fas fa-lightbulb me-2 text-primary"></i>Lighting</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center mb-2">
                         <span class="me-2">Ambient:</span>
                         <span class="badge bg-secondary d-inline-block" style="width:30px;height:30px;background:<?= ($vr_data['lighting']['ambient'] ?? '#ffffff') ?> !important;"></span>

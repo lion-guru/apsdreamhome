@@ -28,7 +28,7 @@ $featuredProperties = [
                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?= htmlspecialchars($property['name']) ?>" style="height:220px;object-fit:cover;">
                         <span class="badge bg-success position-absolute top-0 start-0 m-3">Featured</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><?= htmlspecialchars($property['name']) ?></h5>
                         <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['location']) ?></p>
                         <div class="d-flex gap-3 mb-3">

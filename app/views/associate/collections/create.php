@@ -16,7 +16,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-hand-holding-usd text-success me-2"></i>Record Cash Collection</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?php echo $base; ?>/associate/collections/store" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 

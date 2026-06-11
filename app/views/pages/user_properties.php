@@ -14,7 +14,7 @@ $extraHead = '<style>
     </div>
 
     <?php if (empty($properties)): ?>
-        <div class="card">
+        <div class="card aps-cp-card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-home fa-4x text-muted mb-3"></i>
                 <h5 class="text-muted"><?= __('user_properties_empty_title') ?></h5>
@@ -29,7 +29,7 @@ $extraHead = '<style>
             <?php foreach ($properties as $p): ?>
                 <div class="col-lg-6 mb-4">
                     <div class="card property-card h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
                                     <h5 class="mb-1"><?php echo htmlspecialchars($p['name']); ?></h5>

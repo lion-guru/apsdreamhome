@@ -32,7 +32,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card shadow-sm border-0 mb-4">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="post" class="d-flex align-items-center gap-3">
                         <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
                         <button type="submit" name="action" value="score_leads" class="btn btn-primary">

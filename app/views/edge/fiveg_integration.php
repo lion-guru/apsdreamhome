@@ -61,7 +61,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Performance Metrics</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($fd['performance_metrics'] ?? []) as $k => $v): ?>
                             <tr><th class="w-50"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $k))) ?></th><td><?= htmlspecialchars($v) ?></td></tr>
@@ -71,7 +71,7 @@
             </div>
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-microchip me-2"></i>Application Optimization</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($fd['application_optimization'] ?? []) as $k => $v): ?>
                             <tr><th class="w-50"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $k))) ?></th><td><?= htmlspecialchars($v['improvement'] ?? '-') ?></td></tr>

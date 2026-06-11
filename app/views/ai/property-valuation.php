@@ -7,14 +7,14 @@ include __DIR__ . '/../layouts/base.php';
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h3 class="card-title">
                         <i class="fas fa-robot"></i>
                         AI Property Valuation Engine
                     </h3>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <!-- Valuation Form -->
                     <div class="row mb-4">
                         <div class="col-md-6">
@@ -38,10 +38,10 @@ include __DIR__ . '/../layouts/base.php';
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="card bg-light">
-                                    <div class="card-header">
+                                    <div class="card-header aps-cp-card-header">
                                         <h5>Valuation Summary</h5>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body aps-cp-card-body">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <strong>Base Valuation:</strong>
@@ -84,11 +84,11 @@ include __DIR__ . '/../layouts/base.php';
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header">
+                                <div class="card aps-cp-card">
+                                    <div class="card-header aps-cp-card-header">
                                         <h5>Market Analysis</h5>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body aps-cp-card-body">
                                         <div class="mb-3">
                                             <strong>Market Position:</strong>
                                             <p class="badge" id="market-position">Average</p>
@@ -117,11 +117,11 @@ include __DIR__ . '/../layouts/base.php';
 
                     <!-- Recommendations -->
                     <div id="recommendations" style="display: none;">
-                        <div class="card">
-                            <div class="card-header">
+                        <div class="card aps-cp-card">
+                            <div class="card-header aps-cp-card-header">
                                 <h5><i class="fas fa-lightbulb"></i> AI Recommendations</h5>
                             </div>
-                            <div class="card-body" id="recommendations-list">
+                            <div class="card-body aps-cp-card-body" id="recommendations-list">
                                 <!-- Recommendations will be populated here -->
                             </div>
                         </div>

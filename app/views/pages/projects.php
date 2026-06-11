@@ -43,7 +43,7 @@ $base = $base ?? BASE_URL;
                             </span>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><?= htmlspecialchars($project->name ?? $project['name'] ?? 'Untitled') ?></h5>
                         <p class="card-text small text-muted">
                             <i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($project->location ?? $project['location'] ?? 'N/A') ?>

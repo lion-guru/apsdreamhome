@@ -5,7 +5,7 @@
         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Basic Info</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Colony Name *</label>
@@ -44,7 +44,7 @@
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Content & Media</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Key Highlights (JSON array)</label>
                     <textarea name="key_highlights" class="form-control" rows="3" placeholder='["Prime Location","Bank Loans Available","Park Facing","Corner Plots"]'></textarea>
@@ -82,7 +82,7 @@
 
         <div class="col-md-4">
             <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Pricing & Plots</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Total Plots</label>
                     <input name="total_plots" type="number" class="form-control" value="0">
@@ -102,7 +102,7 @@
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Contact & SEO</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Contact Phone</label>
                     <input name="contact_phone" class="form-control" placeholder="+91 92771 21112">
@@ -122,7 +122,7 @@
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Settings</h6></div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="form-check mb-2">
                     <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked value="1">
                     <label class="form-check-label" for="is_active">Active (visible on website)</label>

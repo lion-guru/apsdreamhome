@@ -43,7 +43,7 @@ $statusColors = [
                         <?php endif; ?>
                     </h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Label</dt>
                         <dd class="col-sm-8"><?= htmlspecialchars($credential['credential_label']) ?></dd>

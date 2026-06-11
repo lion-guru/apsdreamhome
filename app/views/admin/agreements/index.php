@@ -112,7 +112,7 @@ $filters = $filters ?? ['type' => '', 'status' => '', 'search' => '', 'date_from
 </form>
 
 <!-- Agreements Table -->
-<div class="card">
+<div class="card aps-cp-card">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover table-striped mb-0">

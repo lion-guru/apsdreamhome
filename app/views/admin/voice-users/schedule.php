@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-md-8">
         <div class="card mb-3">
-            <div class="card-header">Upcoming Calls</div>
+            <div class="card-header aps-cp-card-header">Upcoming Calls</div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
@@ -45,8 +45,8 @@
     </div>
     <div class="col-md-4">
         <div class="card mb-3">
-            <div class="card-header">Bulk Schedule</div>
-            <div class="card-body">
+            <div class="card-header aps-cp-card-header">Bulk Schedule</div>
+            <div class="card-body aps-cp-card-body">
                 <form method="post" action="<?= BASE_URL ?>admin/voice-users/schedule">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">

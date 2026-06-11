@@ -5,7 +5,7 @@
         <?php foreach (($research_areas ?? []) as $key => $r): ?>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><?= htmlspecialchars($r['title'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h5>
                         <div class="progress mb-2" style="height:20px">
                             <div class="progress-bar bg-<?= ($r['progress'] ?? 0) < 50 ? 'danger' : (($r['progress'] ?? 0) < 75 ? 'warning' : 'success') ?>" style="width:<?= $r['progress'] ?? 0 ?>%"><?= $r['progress'] ?? 0 ?>%</div>

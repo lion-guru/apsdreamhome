@@ -35,7 +35,7 @@ ob_start();
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Total Campaigns</p>
                     <h3><?= number_format($stats['total_campaigns'] ?? 0) ?></h3>
                     <small class="text-muted"><?= $stats['active_campaigns'] ?? 0 ?> active, <?= $stats['draft_campaigns'] ?? 0 ?> draft</small>
@@ -44,7 +44,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Total Enrollments</p>
                     <h3 class="text-info"><?= number_format($stats['total_enrollments'] ?? 0) ?></h3>
                     <small class="text-muted"><?= $stats['active_enrollments'] ?? 0 ?> active</small>
@@ -53,7 +53,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Emails Sent Today</p>
                     <h3 class="text-success"><?= number_format($stats['emails_sent_today'] ?? 0) ?></h3>
                     <small class="text-muted"><?= number_format($stats['emails_sent_week'] ?? 0) ?> this week</small>
@@ -62,7 +62,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Completion Rate</p>
                     <h3 class="text-warning"><?= number_format($stats['avg_completion_rate'] ?? 0, 1) ?>%</h3>
                     <small class="text-muted"><?= $stats['completed_enrollments'] ?? 0 ?> completed</small>

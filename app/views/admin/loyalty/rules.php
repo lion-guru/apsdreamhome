@@ -13,7 +13,7 @@ $rules = $rules ?? [];
             <h6 class="m-0 fw-bold text-primary">Points Award Rules</h6>
             <a href="<?= $base ?>/admin/commission/create_rule" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>New Rule</a>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($rules)): ?>
                 <p class="text-muted text-center py-4"><i class="fas fa-cogs fa-2x d-block mb-2"></i>No loyalty rules configured.</p>
             <?php else: ?>

@@ -17,7 +17,7 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0">Customer Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="text-muted small">Name</label>
@@ -58,7 +58,7 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0">Service Details</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="text-muted small">Service Type</label>
@@ -101,7 +101,7 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0">Update Status</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/services/update-status">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
@@ -130,7 +130,7 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0">Quick Actions</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-grid gap-2">
                     <?php if (!empty($service['phone'])): ?>
                     <a href="tel:<?php echo htmlspecialchars(service['phone'] ?? ''); ?>" class="btn btn-success">
@@ -154,7 +154,7 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0">Timeline</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-2">
                     <label class="text-muted small">Created</label>
                     <div><?php echo date('d M Y, h:i A', strtotime($service['created_at'])); ?></div>

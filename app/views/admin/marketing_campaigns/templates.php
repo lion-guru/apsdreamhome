@@ -37,7 +37,7 @@ ob_start();
                             </div>
                             <span class="text-muted small">Used <?= $t['usage_count'] ?? 0 ?> times</span>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <?php if (!empty($t['subject'])): ?>
                                 <p class="fw-bold mb-2"><?= htmlspecialchars($t['subject']) ?></p>
                             <?php endif; ?>

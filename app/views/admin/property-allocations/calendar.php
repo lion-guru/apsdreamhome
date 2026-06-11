@@ -15,9 +15,9 @@
         <div class="col-md-3"><div class="card bg-secondary text-white p-3"><h5>Blocked</h5><h2><?= count($blocked ?? []) ?></h2></div></div>
     </div>
 
-    <div class="card">
-        <div class="card-header"><h5>All Properties</h5></div>
-        <div class="card-body">
+    <div class="card aps-cp-card">
+        <div class="card-header aps-cp-card-header"><h5>All Properties</h5></div>
+        <div class="card-body aps-cp-card-body">
             <table class="table table-striped">
                 <thead>
                     <tr><th>Plot #</th><th>Title</th><th>Location</th><th>Area (sqft)</th><th>Price</th><th>Status</th></tr>

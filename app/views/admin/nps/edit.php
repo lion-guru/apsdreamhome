@@ -19,7 +19,7 @@ ob_start();
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <input type="hidden" name="id" value="<?= (int)($survey['id'] ?? 0) ?>">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Survey Title <span class="text-danger">*</span></label>

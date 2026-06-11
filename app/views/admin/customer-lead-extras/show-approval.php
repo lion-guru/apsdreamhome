@@ -20,7 +20,7 @@ $page_description = 'Detailed view of lead assignment approval request';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Lead Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-4">
                         <img src="<?= BASE_URL ?>/assets/img/default-avatar.png" alt="Avatar" class="img-fluid rounded-circle" />
@@ -53,7 +53,7 @@ $page_description = 'Detailed view of lead assignment approval request';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Request Details</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Request Type:</strong> 
@@ -108,7 +108,7 @@ $page_description = 'Detailed view of lead assignment approval request';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Current Status</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Status:</strong> 
@@ -177,7 +177,7 @@ $page_description = 'Detailed view of lead assignment approval request';
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0">Request Metadata</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Created At:</strong> <?php echo date('M d, Y H:i', strtotime($approval['created_at'])); ?></p>

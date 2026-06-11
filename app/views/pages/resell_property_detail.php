@@ -21,7 +21,7 @@ $content = $content ?? '';
     <div class="row">
       <div class="col-md-8">
         <div class="card shadow-sm mb-4">
-          <div class="card-body">
+          <div class="card-body aps-cp-card-body">
             <h2 class="mb-2"><?= htmlspecialchars($property['title'] ?? '') ?></h2>
             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars(($property['district_name'] ?? '') ?: ($property['location'] ?? '')) ?></p>
             <div class="d-flex gap-2 mb-3">
@@ -84,7 +84,7 @@ $content = $content ?? '';
 
       <div class="col-md-4">
         <div class="card shadow-sm mb-3">
-          <div class="card-body">
+          <div class="card-body aps-cp-card-body">
             <h5 class="card-title">Contact Owner</h5>
             <p class="mb-2"><i class="fas fa-user me-2"></i><strong><?= htmlspecialchars($property['owner_name'] ?? 'Owner') ?></strong></p>
             <?php if (!empty($property['owner_phone'])): ?>
@@ -101,7 +101,7 @@ $content = $content ?? '';
 
         <?php if (!empty($valuation)): ?>
           <div class="card shadow-sm mb-3 border-success">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
               <h5 class="card-title text-success"><i class="fas fa-chart-line me-1"></i> AI Valuation</h5>
               <p class="text-muted small mb-2">Based on market data</p>
               <h3 class="text-success">₹<?= number_format((float)($valuation['estimated_value'] ?? 0), 0) ?></h3>

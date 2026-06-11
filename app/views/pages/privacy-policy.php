@@ -11,8 +11,8 @@
         <div class="row">
             <div class="col-12">
                 <h1 class="h3 mb-4">Privacy Policy</h1>
-                <div class="card">
-                    <div class="card-body">
+                <div class="card aps-cp-card">
+                    <div class="card-body aps-cp-card-body">
                         <h5>Information We Collect</h5>
                         <p>We collect information you provide directly to us, such as when you create an account, use our services, or contact us.</p>
                         

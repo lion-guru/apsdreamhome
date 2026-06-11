@@ -25,7 +25,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-primary text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Total Vendors</h6>
                     <h3><?= $stats['total'] ?? 0 ?></h3>
                 </div>
@@ -33,7 +33,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-success text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Active</h6>
                     <h3><?= $stats['active'] ?? 0 ?></h3>
                 </div>
@@ -41,7 +41,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-warning text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Inactive</h6>
                     <h3><?= $stats['inactive'] ?? 0 ?></h3>
                 </div>
@@ -49,7 +49,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-danger text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Blacklisted</h6>
                     <h3><?= $stats['blacklisted'] ?? 0 ?></h3>
                 </div>
@@ -58,7 +58,7 @@
     </div>
 
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" class="row g-3 mb-4">
                 <div class="col-md-5">
                     <input type="text" class="form-control" name="search" placeholder="Search by name, contact, email, phone..." value="<?= htmlspecialchars($search ?? '') ?>">

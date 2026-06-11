@@ -5,7 +5,7 @@
     </div>
 
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (!empty($labor_records ?? [])): ?>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">

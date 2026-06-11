@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="card bg-primary text-white">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h5>Total users</h5>
                                 <h3>150</h3>
                             </div>
@@ -22,7 +22,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="card bg-success text-white">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h5>Active users</h5>
                                 <h3>120</h3>
                             </div>
@@ -30,7 +30,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="card bg-warning text-white">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h5>Commission Earned</h5>
                                 <h3>₹45,000</h3>
                             </div>
@@ -38,7 +38,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="card bg-info text-white">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h5>Network Size</h5>
                                 <h3>500</h3>
                             </div>

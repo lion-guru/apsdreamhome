@@ -148,7 +148,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony" />
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Suyoday Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <p class="text-primary fw-bold">Starting &#8377;7.5 Lakhs</p>
@@ -163,7 +163,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri" loading="lazy">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Raghunat Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <p class="text-primary fw-bold">Starting &#8377;8.5 Lakhs</p>
@@ -178,7 +178,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri" />
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Braj Radha Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <p class="text-primary fw-bold">Starting &#8377;6.5 Lakhs</p>
@@ -193,7 +193,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="Budh Bihar Colony" />
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Budh Bihar Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Kushinagar</p>
                             <p class="text-primary fw-bold">Starting &#8377;5.5 Lakhs</p>
@@ -208,7 +208,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="Awadhpuri" />
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Awadhpuri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Lucknow</p>
                             <p class="text-primary fw-bold">Starting &#8377;12 Lakhs</p>
@@ -247,7 +247,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card property-card h-100 shadow-sm">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony" />
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Suyoday Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <p class="text-primary fw-bold">&#8377;7.5 Lakhs</p>
@@ -262,7 +262,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card property-card h-100 shadow-sm">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri" loading="lazy">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Raghunat Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <p class="text-primary fw-bold">&#8377;8.5 Lakhs</p>
@@ -277,7 +277,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card property-card h-100 shadow-sm">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri" />
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Braj Radha Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <p class="text-primary fw-bold">&#8377;6.5 Lakhs</p>

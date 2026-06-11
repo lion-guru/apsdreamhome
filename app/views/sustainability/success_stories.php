@@ -18,7 +18,7 @@
         <?php foreach ($st as $key => $story): ?>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <i class="fas fa-<?= $key === 'carbon_neutral_achievement' ? 'leaf' : ($key === 'green_building_pioneer' ? 'trophy' : 'users') ?> fa-3x text-success mb-3"></i>
                     <h5><?= ($story['title'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h5>
                     <p class="small text-muted"><?= ($story['story'] ?? '') ?></p>

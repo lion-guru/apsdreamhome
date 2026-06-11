@@ -26,7 +26,7 @@
                             <?= htmlspecialchars($b['status']) ?>
                         </span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <table class="table table-bordered mb-0">
                             <tr><th style="width:200px;">Booking ID</th><td>#<?= $b['id'] ?></td></tr>
                             <tr><th>Booking Number</th><td><?= htmlspecialchars($b['booking_number'] ?? 'N/A') ?></td></tr>
@@ -78,7 +78,7 @@
             <div class="col-md-4">
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-white"><h5 class="mb-0">EMI Schedule</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p>Total EMIs: <strong><?= $status['emi_count'] ?? 0 ?></strong></p>
                         <p>Paid EMIs: <strong><?= $status['paid_emis'] ?? 0 ?></strong></p>
                         <div class="progress mb-3" style="height:10px;">
@@ -103,7 +103,7 @@
                 </div>
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-white"><h5 class="mb-0">Record Payment</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <form method="POST" action="<?= BASE_URL ?>/admin/mlm-realestate/bookings/payment">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">

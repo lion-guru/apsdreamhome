@@ -16,16 +16,16 @@
 
     <div class="row g-4 mb-4">
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 text-center"><div class="card-body"><h3 class="text-danger mb-0"><?= ($property_impact['carbon_footprint'] ?? 'N/A') ?></h3><small class="text-muted">Carbon Footprint</small></div></div>
+            <div class="card shadow-sm border-0 text-center"><div class="card-body aps-cp-card-body"><h3 class="text-danger mb-0"><?= ($property_impact['carbon_footprint'] ?? 'N/A') ?></h3><small class="text-muted">Carbon Footprint</small></div></div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 text-center"><div class="card-body"><h3 class="text-warning mb-0"><?= ($property_impact['energy_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Energy Consumption</small></div></div>
+            <div class="card shadow-sm border-0 text-center"><div class="card-body aps-cp-card-body"><h3 class="text-warning mb-0"><?= ($property_impact['energy_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Energy Consumption</small></div></div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 text-center"><div class="card-body"><h3 class="text-info mb-0"><?= ($property_impact['water_usage'] ?? 'N/A') ?></h3><small class="text-muted">Water Usage</small></div></div>
+            <div class="card shadow-sm border-0 text-center"><div class="card-body aps-cp-card-body"><h3 class="text-info mb-0"><?= ($property_impact['water_usage'] ?? 'N/A') ?></h3><small class="text-muted">Water Usage</small></div></div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 text-center"><div class="card-body"><h3 class="text-secondary mb-0"><?= ($property_impact['waste_generation'] ?? 'N/A') ?></h3><small class="text-muted">Waste Generation</small></div></div>
+            <div class="card shadow-sm border-0 text-center"><div class="card-body aps-cp-card-body"><h3 class="text-secondary mb-0"><?= ($property_impact['waste_generation'] ?? 'N/A') ?></h3><small class="text-muted">Waste Generation</small></div></div>
         </div>
     </div>
 
@@ -33,7 +33,7 @@
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-hard-hat me-2 text-warning"></i>Construction Impact</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6>Material Sourcing</h6>
                     <?php $sourcing = $construction_impact['material_sourcing'] ?? []; ?>
                     <div class="d-flex justify-content-between small mb-1"><span>Sustainable Materials</span><strong><?= ($sourcing['sustainable_materials'] ?? 'N/A') ?></strong></div>
@@ -49,7 +49,7 @@
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-chart-bar me-2 text-info"></i>Operational Impact</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $ep = $operational_impact['energy_performance'] ?? []; ?>
                     <h6>Energy Performance</h6>
                     <div class="d-flex justify-content-between small mb-1"><span>Intensity</span><strong><?= ($ep['building_energy_intensity'] ?? 'N/A') ?></strong></div>
@@ -68,7 +68,7 @@
         <div class="col-lg-4">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-shield-alt me-2 text-success"></i>Mitigation Strategies</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($mitigation as $category => $items): ?>
                     <h6 class="text-capitalize mt-3"><?= str_replace('_', ' ', $category) ?></h6>
                     <ul class="list-unstyled"><?php foreach ($items as $item): ?><li class="mb-1 small"><i class="fas fa-check-circle text-success me-1"></i><?= htmlspecialchars($item, ENT_QUOTES, 'UTF-8') ?></li><?php endforeach; ?></ul>

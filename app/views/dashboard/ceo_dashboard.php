@@ -54,7 +54,7 @@ $data = $data ?? [];
             <div class="row mb-4">
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Revenue</div>
@@ -70,7 +70,7 @@ $data = $data ?? [];
 
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Growth Rate</div>
@@ -86,7 +86,7 @@ $data = $data ?? [];
 
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-info shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total users</div>
@@ -102,7 +102,7 @@ $data = $data ?? [];
 
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Active Projects</div>
@@ -124,7 +124,7 @@ $data = $data ?? [];
                         <div class="card-header bg-primary text-white">
                             <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Top Performers</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row g-3">
                                 <?php
                                 $tp = $data['top_performers'] ?? [];
@@ -151,21 +151,21 @@ $data = $data ?? [];
             <!-- Revenue Analytics -->
             <div class="row mb-4">
                 <div class="col-lg-8">
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="card aps-cp-card">
+                        <div class="card-header aps-cp-card-header">
                             <h6 class="m-0 font-weight-bold text-primary">Revenue Analytics</h6>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <canvas id="revenueChart" width="400" height="200"></canvas>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="card aps-cp-card">
+                        <div class="card-header aps-cp-card-header">
                             <h6 class="m-0 font-weight-bold text-primary">Department Performance</h6>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <canvas id="departmentChart" width="400" height="200"></canvas>
                         </div>
                     </div>
@@ -175,11 +175,11 @@ $data = $data ?? [];
             <!-- Key Metrics -->
             <div class="row mb-4">
                 <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="card aps-cp-card">
+                        <div class="card-header aps-cp-card-header">
                             <h6 class="m-0 font-weight-bold text-primary">Key Performance Indicators</h6>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="table-responsive">
                                 <div class="table-responsive"><table class="table table-bordered table-responsive">
                                     <thead>
@@ -223,11 +223,11 @@ $data = $data ?? [];
                 </div>
 
                 <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="card aps-cp-card">
+                        <div class="card-header aps-cp-card-header">
                             <h6 class="m-0 font-weight-bold text-primary">Recent Executive Actions</h6>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <?php if (isset($data['executive_actions']) && !empty($data['executive_actions'])): ?>
                                 <?php foreach ($data['executive_actions'] as $action): ?>
                                     <div class="d-flex align-items-center mb-3">
@@ -255,17 +255,17 @@ $data = $data ?? [];
             <!-- Strategic Initiatives -->
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
+                    <div class="card aps-cp-card">
+                        <div class="card-header aps-cp-card-header">
                             <h6 class="m-0 font-weight-bold text-primary">Strategic Initiatives</h6>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row">
                                 <?php if (isset($data['strategic_initiatives']) && !empty($data['strategic_initiatives'])): ?>
                                     <?php foreach ($data['strategic_initiatives'] as $initiative): ?>
                                         <div class="col-md-4 mb-3">
                                             <div class="card border-left-<?= $initiative['color'] ?? 'primary' ?>">
-                                                <div class="card-body">
+                                                <div class="card-body aps-cp-card-body">
                                                     <h6 class="card-title"><?= $initiative['title'] ?? '' ?></h6>
                                                     <p class="card-text small"><?= $initiative['description'] ?? '' ?></p>
                                                     <div class="progress mb-2">

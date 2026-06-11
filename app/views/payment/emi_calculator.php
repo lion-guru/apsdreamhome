@@ -13,15 +13,15 @@ $content = $content ?? '';
                 </h1>
             </div>
             
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i> Emi calculator - APS Dream Home Payment System
                     </div>
                     <div class="row">
                         <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-body">
+                            <div class="card aps-cp-card">
+                                <div class="card-body aps-cp-card-body">
                                     <h5 class="card-title">EMI Calculator</h5>
                                     <form id="emiCalculatorForm">
                                         <div class="row">
@@ -63,7 +63,7 @@ $content = $content ?? '';
                         </div>
                         <div class="col-md-4">
                             <div class="card bg-light">
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <h5 class="card-title">EMI Details</h5>
                                     <div id="emiResult">
                                         <div class="mb-3">

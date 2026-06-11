@@ -43,10 +43,10 @@ $registryLabels = [
 </div>
 
 <div class="card mb-4">
-    <div class="card-header">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0"><i class="fas fa-filter"></i> Filters</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="GET" action="<?= BASE_URL ?>/admin/registry">
             <div class="row">
                 <div class="col-md-4">
@@ -74,11 +74,11 @@ $registryLabels = [
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
+<div class="card aps-cp-card">
+    <div class="card-header aps-cp-card-header">
         <h5 class="card-title mb-0"><i class="fas fa-list"></i> Registry List</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>

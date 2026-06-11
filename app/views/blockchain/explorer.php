@@ -5,14 +5,14 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-building me-2"></i>Property</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="mb-1"><strong><?= htmlspecialchars($property['title'] ?? '-') ?></strong></p>
                     <p class="mb-0 text-muted"><?= htmlspecialchars($property['city'] ?? '') ?></p>
                 </div>
             </div>
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-link me-2"></i>Verification Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th>Status</th><td><span class="badge bg-<?= ($verification['blockchain_status'] ?? '') === 'verified' ? 'success' : 'warning' ?>"><?= strtoupper($verification['blockchain_status'] ?? 'UNKNOWN') ?></span></td></tr>
                         <tr><th>Blockchain Hash</th><td style="word-break:break-all"><code><?= htmlspecialchars($verification['blockchain_hash'] ?? '-') ?></code></td></tr>

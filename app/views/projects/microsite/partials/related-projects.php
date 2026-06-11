@@ -24,7 +24,7 @@ $items = array_slice($related, 0, 3);
                     <?php if (!empty($item['hero_image'])): ?>
                     <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?php echo h($item['project_name'] ?? 'Related project'); ?>" loading="lazy">
                     <?php endif; ?>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <h3 class="h5 card-title"><?php echo h($item['project_name'] ?? 'Project'); ?></h3>
                         <p class="card-text text-muted mb-3"><?php echo h($item['short_description'] ?? $item['description'] ?? ''); ?></p>
                         <ul class="list-inline microsite-related-meta">

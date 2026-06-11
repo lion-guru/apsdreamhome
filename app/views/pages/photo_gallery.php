@@ -4,7 +4,7 @@
         <div class="row">
             <?php foreach ($images as $image): ?>
                 <div class="col-md-4 col-lg-3 mb-4">
-                    <div class="card">
+                    <div class="card aps-cp-card">
                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?php echo htmlspecialchars($image['caption'] ?? ''); ?>" style="height:200px;object-fit:cover;">
                         <?php if (!empty($image['caption'])): ?>
                             <div class="card-body p-2">

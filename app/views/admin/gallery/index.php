@@ -41,7 +41,7 @@
                     <?php echo ucfirst($image['status'] ?? 'active'); ?>
                 </span>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <span class="badge bg-primary mb-2"><?php echo ucfirst($image['category'] ?? 'general'); ?></span>
                 <p class="card-text small"><?php echo htmlspecialchars($image['caption'] ?? 'No caption'); ?></p>
             </div>

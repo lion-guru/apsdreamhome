@@ -9,7 +9,7 @@
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-gradient-success text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><h6 class="fw-light mb-1">Paid This Month</h6><h3 class="mb-0">₹<?= number_format($total_paid ?? 0, 2) ?></h3></div>
                         <div><i class="fas fa-check-circle fa-3x opacity-50"></i></div>
@@ -19,7 +19,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-gradient-warning text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><h6 class="fw-light mb-1">Pending Payments</h6><h3 class="mb-0"><?= (int)($pending_count ?? 0) ?></h3></div>
                         <div><i class="fas fa-clock fa-3x opacity-50"></i></div>
@@ -29,7 +29,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-gradient-info text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><h6 class="fw-light mb-1">Active users</h6><h3 class="mb-0"><?= (int)($employee_count ?? 0) ?></h3></div>
                         <div><i class="fas fa-users fa-3x opacity-50"></i></div>
@@ -39,7 +39,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-gradient-danger text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><h6 class="fw-light mb-1">Pending Amount</h6><h3 class="mb-0">₹<?= number_format($pending_amount ?? 0, 2) ?></h3></div>
                         <div><i class="fas fa-exclamation-triangle fa-3x opacity-50"></i></div>
@@ -52,7 +52,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Monthly Salary Trend</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="salaryChart" height="250"></canvas>
                 </div>
             </div>
@@ -60,7 +60,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
                         <a href="<?= BASE_URL ?>/admin/salary/structures" class="btn btn-outline-primary"><i class="fas fa-layer-group me-1"></i>Salary Structures</a>
                         <a href="<?= BASE_URL ?>/admin/salary/payments" class="btn btn-outline-success"><i class="fas fa-money-bill-wave me-1"></i>Payments</a>

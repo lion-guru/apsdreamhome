@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">FAQ Details</h5>
                     <div>
@@ -13,7 +13,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-bordered">
                         <tr>
                             <th class="w-25">ID</th>

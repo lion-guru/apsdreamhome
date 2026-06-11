@@ -22,7 +22,7 @@ ob_start();
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Total Collected</p>
                     <h3 class="text-success">₹<?= number_format($stats['total_amount'] ?? 0) ?></h3>
                     <small class="text-muted"><?= number_format($stats['total_submitted'] ?? 0) ?> receipts</small>
@@ -31,7 +31,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Today's Collection</p>
                     <h3 class="text-info">₹<?= number_format($stats['today_amount'] ?? 0) ?></h3>
                     <small class="text-muted"><?= number_format($stats['today_count'] ?? 0) ?> receipts today</small>
@@ -40,7 +40,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Pending Verification</p>
                     <h3 class="text-warning"><?= number_format($stats['pending_count'] ?? 0) ?></h3>
                     <small class="text-muted">₹<?= number_format($stats['pending_amount'] ?? 0) ?> awaiting</small>
@@ -49,7 +49,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="text-muted small mb-1">Active Collectors</p>
                     <h3 class="text-primary"><?= number_format($stats['active_collectors'] ?? 0) ?></h3>
                     <small class="text-muted">Last 7 days</small>
@@ -62,7 +62,7 @@ ob_start();
         <div class="card-header bg-white py-3">
             <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/cash-collections" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Status</label>

@@ -5,7 +5,7 @@
 <div class="row g-3 mb-4">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <h3 class="text-primary"><?= $funnelMetrics['total_leads'] ?? 0 ?></h3>
                 <small class="text-muted">Total Leads</small>
             </div>
@@ -13,7 +13,7 @@
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <h3 class="text-success"><?= $funnelMetrics['qualified'] ?? 0 ?></h3>
                 <small class="text-muted">Qualified</small>
             </div>
@@ -21,7 +21,7 @@
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <h3 class="text-warning"><?= $funnelMetrics['conversion_rate'] ?? 0 ?>%</h3>
                 <small class="text-muted">Conversion Rate</small>
             </div>
@@ -29,7 +29,7 @@
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <h3 class="text-info"><?= $funnelMetrics['avg_days_to_close'] ?? 0 ?></h3>
                 <small class="text-muted">Avg Days to Close</small>
             </div>

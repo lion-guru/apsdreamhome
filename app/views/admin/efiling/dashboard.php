@@ -25,7 +25,7 @@ ob_start();
 <div class="row g-3 mb-4">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-danger bg-opacity-10 p-3"><i class="fas fa-file-invoice-dollar text-danger"></i></div></div>
                     <div>
@@ -38,7 +38,7 @@ ob_start();
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-primary bg-opacity-10 p-3"><i class="fas fa-file-alt text-primary"></i></div></div>
                     <div>
@@ -51,7 +51,7 @@ ob_start();
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-warning bg-opacity-10 p-3"><i class="fas fa-clock text-warning"></i></div></div>
                     <div>
@@ -64,7 +64,7 @@ ob_start();
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-3"><div class="rounded-circle bg-success bg-opacity-10 p-3"><i class="fas fa-check-double text-success"></i></div></div>
                     <div>

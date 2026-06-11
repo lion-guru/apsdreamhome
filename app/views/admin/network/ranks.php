@@ -56,7 +56,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Rank Distribution</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($rank_distribution)): ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach ($rank_distribution as $dist): ?>
@@ -81,7 +81,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-list me-2"></i>Available Ranks</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($ranks)): ?>
                             <div class="table-responsive">
                                 <table class="table table-sm">

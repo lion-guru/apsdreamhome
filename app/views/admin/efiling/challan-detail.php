@@ -11,7 +11,7 @@ ob_start();
 </div>
 
 <div class="card border-0 shadow-sm">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <div class="row g-3">
             <div class="col-md-4">
                 <label class="form-label small text-muted">Challan Number</label>

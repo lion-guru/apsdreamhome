@@ -13,7 +13,7 @@ $properties = $properties ?? [];
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Investment Details</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="/admin/reports/roi-calculator">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -78,7 +78,7 @@ $properties = $properties ?? [];
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-success">Quick Select Property</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <select id="quickProperty" class="form-select" onchange="fillPropertyDetails()">
                         <option value="">-- Select a Property --</option>
                         <?php foreach ($properties as $property): ?>
@@ -103,7 +103,7 @@ $properties = $properties ?? [];
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Monthly EMI</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">₹<?= number_format($calculations['emi'], 2) ?></div>
                         </div>
@@ -111,7 +111,7 @@ $properties = $properties ?? [];
                 </div>
                 <div class="col-md-4">
                     <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Net Rental Yield</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $calculations['net_rental_yield'] ?>%</div>
                         </div>
@@ -119,7 +119,7 @@ $properties = $properties ?? [];
                 </div>
                 <div class="col-md-4">
                     <div class="card border-left-info shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Annualized ROI</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $calculations['roi_annualized'] ?>%</div>
                         </div>
@@ -130,7 +130,7 @@ $properties = $properties ?? [];
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Break-Even (Years)</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $calculations['break_even_years'] ?></div>
                         </div>
@@ -138,7 +138,7 @@ $properties = $properties ?? [];
                 </div>
                 <div class="col-md-4">
                     <div class="card border-left-danger shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Future Value</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">₹<?= number_format($calculations['future_property_value'], 0) ?></div>
                         </div>
@@ -146,7 +146,7 @@ $properties = $properties ?? [];
                 </div>
                 <div class="col-md-4">
                     <div class="card border-left-secondary shadow h-100 py-2">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Total ROI</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $calculations['roi'] ?>%</div>
                         </div>
@@ -159,7 +159,7 @@ $properties = $properties ?? [];
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Detailed Investment Metrics</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tbody>
@@ -194,7 +194,7 @@ $properties = $properties ?? [];
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-info">10-Year Cash Flow Projection</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <table class="table table-sm table-bordered" id="cashFlowTable">
                             <thead>

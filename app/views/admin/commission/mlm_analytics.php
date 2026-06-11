@@ -13,8 +13,8 @@
         <div class="col-md-2"><div class="card bg-dark text-white text-center p-2"><h5>&#8377;<?= number_format((float)($summary['bonus']??0)) ?></h5><small>Bonus</small></div></div>
     </div>
 
-    <div class="card">
-        <div class="card-header"><i class="fas fa-table"></i> Period-wise Analytics</div>
+    <div class="card aps-cp-card">
+        <div class="card-header aps-cp-card-header"><i class="fas fa-table"></i> Period-wise Analytics</div>
         <div class="card-body p-0">
             <table class="table table-striped mb-0">
                 <thead><tr><th>Associate</th><th>Period</th><th>Earned</th><th>Paid</th><th>Pending</th><th>Direct</th><th>Team</th><th>Bonus</th></tr></thead>

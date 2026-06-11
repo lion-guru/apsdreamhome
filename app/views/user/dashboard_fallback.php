@@ -80,11 +80,11 @@ if (!defined('BASE_URL')) {
 
         <div class="row">
             <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-header">
+                <div class="card aps-cp-card">
+                    <div class="card-header aps-cp-card-header">
                         <h5 class="mb-0"><i class="fas fa-search me-2"></i>Quick Search</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <a href="<?php echo BASE_URL; ?>properties" class="btn btn-primary quick-action-btn w-100">
                             <i class="fas fa-home me-2"></i>Browse Properties
                         </a>
@@ -98,11 +98,11 @@ if (!defined('BASE_URL')) {
                 </div>
             </div>
             <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-header">
+                <div class="card aps-cp-card">
+                    <div class="card-header aps-cp-card-header">
                         <h5 class="mb-0"><i class="fas fa-user me-2"></i>My Account</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <a href="<?php echo BASE_URL; ?>dashboard/profile" class="btn btn-outline-primary quick-action-btn w-100">
                             <i class="fas fa-user-edit me-2"></i>Edit Profile
                         </a>

@@ -16,22 +16,22 @@
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center border-start border-success border-4">
-                <div class="card-body"><h3 class="text-success mb-0"><?= ($carbon['total_carbon_footprint'] ?? 'N/A') ?></h3><small class="text-muted">Carbon Footprint</small></div>
+                <div class="card-body aps-cp-card-body"><h3 class="text-success mb-0"><?= ($carbon['total_carbon_footprint'] ?? 'N/A') ?></h3><small class="text-muted">Carbon Footprint</small></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center border-start border-warning border-4">
-                <div class="card-body"><h3 class="text-warning mb-0"><?= ($energy['total_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Energy Consumption</small></div>
+                <div class="card-body aps-cp-card-body"><h3 class="text-warning mb-0"><?= ($energy['total_consumption'] ?? 'N/A') ?></h3><small class="text-muted">Energy Consumption</small></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center border-start border-info border-4">
-                <div class="card-body"><h3 class="text-info mb-0"><?= count($green ?? []) ?></h3><small class="text-muted">Green Technologies</small></div>
+                <div class="card-body aps-cp-card-body"><h3 class="text-info mb-0"><?= count($green ?? []) ?></h3><small class="text-muted">Green Technologies</small></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card shadow-sm border-0 text-center border-start border-primary border-4">
-                <div class="card-body"><h3 class="text-primary mb-0"><?= count($goals ?? []) ?></h3><small class="text-muted">Active Goals</small></div>
+                <div class="card-body aps-cp-card-body"><h3 class="text-primary mb-0"><?= count($goals ?? []) ?></h3><small class="text-muted">Active Goals</small></div>
             </div>
         </div>
     </div>
@@ -40,7 +40,7 @@
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-bullseye me-2 text-primary"></i>Sustainability Goals</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($goals as $key => $goal): if (!is_array($goal)) continue; ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -58,7 +58,7 @@
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-microchip me-2 text-success"></i>Green Technologies</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $adopted = $green['adopted_technologies'] ?? $green; if (is_array($adopted)): foreach ($adopted as $key => $tech): if (!is_array($tech)) continue; ?>
                     <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
                         <div><strong><?= ($tech['technology'] ?? ucfirst(str_replace('_', ' ', $key))) ?></strong><br><small class="text-muted"><?= ($tech['adoption_date'] ?? '') ?></small></div>

@@ -31,7 +31,7 @@ $error = $error ?? null;
 
     <!-- Filter Card -->
     <div class="card shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?php echo BASE_URL; ?>/admin/jobs/applications" class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Filter by Job</label>

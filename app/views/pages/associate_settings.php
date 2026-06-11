@@ -30,7 +30,7 @@
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0"><i class="fas fa-user me-2"></i>Account Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form action="/associate/settings/update" method="POST">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
@@ -60,7 +60,7 @@
             <div class="card-header bg-info text-white">
                 <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Notification Preferences</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form action="/associate/settings/notifications" method="POST">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="form-check form-switch mb-3">
@@ -103,7 +103,7 @@
             <div class="card-header bg-warning text-dark">
                 <h5 class="mb-0"><i class="fas fa-lock me-2"></i>Change Password</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form action="/associate/settings/password" method="POST">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
@@ -132,7 +132,7 @@
             <div class="card-header bg-success text-white">
                 <h5 class="mb-0"><i class="fas fa-headset me-2"></i>Support</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <p class="text-muted">Need help? Contact our support team:</p>
                 <ul class="list-unstyled">
                     <li class="mb-2">

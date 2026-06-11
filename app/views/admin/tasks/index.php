@@ -59,7 +59,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         
         <!-- Tasks List -->
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($tasks)): ?>
                     <div class="table-responsive">
                         <table class="table table-hover">

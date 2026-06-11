@@ -13,9 +13,9 @@
         </div>
     </div>
     <div class="row g-4 mb-4">
-        <div class="col-md-4"><div class="card bg-primary text-white border-0 shadow-sm"><div class="card-body"><h6>Total Allocations</h6><h3 class="mb-0"><?= number_format($totalAllocations ?? 0) ?></h3></div></div></div>
-        <div class="col-md-4"><div class="card bg-warning text-white border-0 shadow-sm"><div class="card-body"><h6>Pending</h6><h3 class="mb-0"><?= number_format($pendingAllocations ?? 0) ?></h3></div></div></div>
-        <div class="col-md-4"><div class="card bg-success text-white border-0 shadow-sm"><div class="card-body"><h6>Completed</h6><h3 class="mb-0"><?= number_format($completedAllocations ?? 0) ?></h3></div></div></div>
+        <div class="col-md-4"><div class="card bg-primary text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Total Allocations</h6><h3 class="mb-0"><?= number_format($totalAllocations ?? 0) ?></h3></div></div></div>
+        <div class="col-md-4"><div class="card bg-warning text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Pending</h6><h3 class="mb-0"><?= number_format($pendingAllocations ?? 0) ?></h3></div></div></div>
+        <div class="col-md-4"><div class="card bg-success text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Completed</h6><h3 class="mb-0"><?= number_format($completedAllocations ?? 0) ?></h3></div></div></div>
     </div>
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-list me-2"></i>Allocation Records</h5></div>

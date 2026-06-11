@@ -15,8 +15,8 @@
     <div class="row">
         <div class="col-md-4">
             <div class="card shadow-sm mb-4">
-                <div class="card-header"><i class="fas fa-plus me-2"></i>Add Document Type</div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-plus me-2"></i>Add Document Type</div>
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/documents/types/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
@@ -49,8 +49,8 @@
         </div>
         <div class="col-md-8">
             <div class="card shadow-sm">
-                <div class="card-header"><i class="fas fa-list me-2"></i>All Document Types</div>
-                <div class="card-body">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-list me-2"></i>All Document Types</div>
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($types)): ?>
                         <div class="table-responsive">
                             <table class="table table-hover">

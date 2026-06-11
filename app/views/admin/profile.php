@@ -32,7 +32,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
         <div class="row">
             <div class="col-lg-4 mb-4">
-                <div class="card">
+                <div class="card aps-cp-card">
                     <div class="card-body text-center py-5">
                         <div class="avatar-lg mx-auto mb-3">
                             <?php echo strtoupper(substr($user['name'] ?? $user['username'] ?? 'U', 0, 1)); ?>
@@ -63,11 +63,11 @@ unset($_SESSION['success'], $_SESSION['error']);
             </div>
 
             <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">
+                <div class="card aps-cp-card">
+                    <div class="card-header aps-cp-card-header">
                         <h5 class="card-title"><i class="fas fa-user me-2"></i>Profile Information</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <form action="<?php echo BASE_URL; ?>/admin/profile" method="POST">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row g-3">
@@ -101,10 +101,10 @@ unset($_SESSION['success'], $_SESSION['error']);
                 </div>
 
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header aps-cp-card-header">
                         <h5 class="card-title"><i class="fas fa-shield-alt me-2"></i>Quick Actions</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <a href="<?php echo BASE_URL; ?>/admin/profile/security" class="btn btn-outline-primary">
                             <i class="fas fa-key me-2"></i> Change Password
                         </a>

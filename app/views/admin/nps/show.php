@@ -29,7 +29,7 @@ ob_start();
     <div class="row g-3">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="mb-3">Survey Details</h6>
                     <p><strong>Question:</strong> <?= htmlspecialchars($survey['question_text']) ?></p>
                     <p><strong>Scale:</strong> <?= htmlspecialchars($survey['scale_min_label']) ?> (0) to <?= htmlspecialchars($survey['scale_max_label']) ?> (10)</p>
@@ -47,7 +47,7 @@ ob_start();
                 <div class="card-header bg-white">
                     <h6 class="mb-0">Response Statistics</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($stats)): ?>
                         <div class="row g-2">
                             <div class="col-md-6">

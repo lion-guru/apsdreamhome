@@ -18,7 +18,7 @@
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card bg-success text-white border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><h6 class="card-title mb-1">Total Income</h6><h3 class="mb-0">₹<?= number_format($totalIncome ?? 0, 2) ?></h3></div>
                         <i class="fas fa-arrow-up fa-2x opacity-50"></i>
@@ -28,7 +28,7 @@
         </div>
         <div class="col-md-3">
             <div class="card bg-danger text-white border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><h6 class="card-title mb-1">Total Expenses</h6><h3 class="mb-0">₹<?= number_format($totalExpenses ?? 0, 2) ?></h3></div>
                         <i class="fas fa-arrow-down fa-2x opacity-50"></i>
@@ -38,7 +38,7 @@
         </div>
         <div class="col-md-3">
             <div class="card bg-primary text-white border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><h6 class="card-title mb-1">Net Balance</h6><h3 class="mb-0">₹<?= number_format(($totalIncome ?? 0) - ($totalExpenses ?? 0), 2) ?></h3></div>
                         <i class="fas fa-wallet fa-2x opacity-50"></i>
@@ -48,7 +48,7 @@
         </div>
         <div class="col-md-3">
             <div class="card bg-info text-white border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><h6 class="card-title mb-1">Transactions</h6><h3 class="mb-0"><?= number_format($transactionCount ?? 0) ?></h3></div>
                         <i class="fas fa-exchange-alt fa-2x opacity-50"></i>

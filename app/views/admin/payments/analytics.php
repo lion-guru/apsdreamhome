@@ -18,7 +18,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Payment Trends (30 Days)</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($analytics_data['trends'])): ?>
                             <div class="table-responsive">
                                 <table class="table table-sm">
@@ -47,7 +47,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment Methods</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($analytics_data['methods'])): ?>
                             <div class="table-responsive">
                                 <table class="table table-sm">
@@ -79,7 +79,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-users me-2"></i>Top users</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($analytics_data['top_customers'])): ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach (array_slice($analytics_data['top_customers'], 0, 5) as $customer): ?>
@@ -100,7 +100,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="card-header bg-white">
                         <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Status Distribution</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($analytics_data['status_distribution'])): ?>
                             <div class="list-group list-group-flush">
                                 <?php foreach ($analytics_data['status_distribution'] as $status): ?>

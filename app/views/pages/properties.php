@@ -317,7 +317,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                 </span>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title"><?= htmlspecialchars($property['name'] ?? '') ?></h5>
                             <p class="text-muted small mb-2">
                                 <i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($property['address'] ?? $property['location'] ?? '') ?>
@@ -367,7 +367,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
             <?php endforeach; ?>
         <?php else: ?>
             <div class="col-12">
-                <div class="card">
+                <div class="card aps-cp-card">
                     <div class="card-body text-center py-5">
                         <i class="fas fa-search fa-4x text-muted mb-3"></i>
                         <h5 class="text-muted"><?= __('no_properties') ?></h5>

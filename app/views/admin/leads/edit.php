@@ -43,7 +43,7 @@ $assignees = $assignees ?? [];
         <div class="card-header bg-light">
             <h5 class="mb-0"><i class="fas fa-user-edit me-2"></i>Lead Information</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="POST" action="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>/update">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row">

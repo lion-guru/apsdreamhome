@@ -37,11 +37,11 @@
     <!-- Leave Records -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-list me-2"></i>Leave Records</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($leaves)): ?>
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>No leave records found.

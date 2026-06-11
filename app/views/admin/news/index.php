@@ -8,7 +8,7 @@
 </div>
 
 <div class="card mb-4">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-3">
             <div class="col-md-4">
                 <input type="text" name="search" class="form-control" placeholder="Search articles..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
@@ -29,8 +29,8 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body">
+<div class="card aps-cp-card">
+    <div class="card-body aps-cp-card-body">
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>

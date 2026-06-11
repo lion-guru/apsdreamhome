@@ -61,7 +61,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
                             <div id="lightboxCounter" class="lightbox-counter"></div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div>
                                 <h3 class="card-title mb-1"><?php echo htmlspecialchars($property['title'] ?? $property['name'] ?? 'Property'); ?></h3>
@@ -165,11 +165,11 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
             </div>
 
             <div class="col-lg-4">
-                <div class="card">
+                <div class="card aps-cp-card">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0"><i class="fas fa-phone me-2"></i>Enquire About This Property</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <form action="/contact" method="POST">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
@@ -209,7 +209,7 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
 
                 <?php if (!empty($related)): ?>
                     <div class="card mt-4">
-                        <div class="card-header">
+                        <div class="card-header aps-cp-card-header">
                             <h6 class="mb-0">Related Properties</h6>
                         </div>
                         <ul class="list-group list-group-flush">
@@ -243,11 +243,11 @@ $images = !empty($property_images) ? $property_images : [['image_path' => 'https
     <!-- Customer Reviews Section -->
     <div class="row mt-5">
         <div class="col-12">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-star me-2"></i>Customer Reviews</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($reviews)): ?>
                         <?php foreach ($reviews as $review): ?>
                             <div class="mb-4 pb-3 border-bottom">

@@ -11,8 +11,8 @@
         <div class="row">
             <div class="col-12">
                 <h1 class="h3 mb-4">AI Assistant</h1>
-                <div class="card">
-                    <div class="card-body">
+                <div class="card aps-cp-card">
+                    <div class="card-body aps-cp-card-body">
                         <div class="chat-container" style="height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;">
                             <div class="message mb-2">
                                 <div class="alert alert-info">

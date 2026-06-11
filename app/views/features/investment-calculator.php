@@ -7,7 +7,7 @@
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Input Parameters</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form id="calcForm">
                         <div class="mb-3">
                             <label class="form-label">Property Price (INR)</label>
@@ -43,7 +43,7 @@
             <?php if (!empty($result)): ?>
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white border-bottom"><h5 class="mb-0">Results</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="bg-light rounded p-3 text-center"><small class="text-muted d-block">Monthly EMI</small><strong class="fs-4">₹<?= number_format((int)($result['emi'] ?? 0)) ?></strong></div>

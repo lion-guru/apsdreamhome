@@ -42,7 +42,7 @@ $tasks = $tasks ?? [];
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body text-center">
                     <h5 class="card-title">Total Tasks</h5>
                     <div class="h2 text-primary"><?= $health['total_tasks'] ?? 0 ?></div>
@@ -51,7 +51,7 @@ $tasks = $tasks ?? [];
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body text-center">
                     <h5 class="card-title">Active Tasks</h5>
                     <div class="h2 text-success"><?= $health['active_tasks'] ?? 0 ?></div>
@@ -60,7 +60,7 @@ $tasks = $tasks ?? [];
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body text-center">
                     <h5 class="card-title">24h Executions</h5>
                     <div class="h2 text-info"><?= $health['executions_24h'] ?? 0 ?></div>
@@ -75,7 +75,7 @@ $tasks = $tasks ?? [];
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Scheduled Tasks</h6>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover" id="tasksTable">
                     <thead>
@@ -158,7 +158,7 @@ $tasks = $tasks ?? [];
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Cron Setup</h6>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <p>Add this to your crontab to run the scheduler:</p>
             <div class="bg-dark text-light p-3 rounded">
                 <code>* * * * * cd /var/www/html/apsdreamhome && php scripts/scheduler.php >> /dev/null 2>&1</code>

@@ -17,7 +17,7 @@ ob_start();
 <!-- Submission Info -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Submission Details</h6></div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <div class="row g-3">
             <div class="col-md-3">
                 <label class="form-label small text-muted">Type</label>
@@ -59,7 +59,7 @@ ob_start();
 <?php if ($submission['portal_reference'] || $submission['arn_number'] || $submission['acknowledgment_number']): ?>
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-check-double me-2"></i>Portal Details</h6></div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <div class="row g-3">
             <?php if ($submission['portal_reference']): ?>
                 <div class="col-md-3">
@@ -94,7 +94,7 @@ ob_start();
 <?php if ($submission['status'] === 'rejected' && $submission['error_message']): ?>
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2 text-danger"></i>Error Details</h6></div>
-    <div class="card-body"><p class="mb-0 text-danger"><?= nl2br(htmlspecialchars($submission['error_message'])) ?></p></div>
+    <div class="card-body aps-cp-card-body"><p class="mb-0 text-danger"><?= nl2br(htmlspecialchars($submission['error_message'])) ?></p></div>
 </div>
 <?php endif; ?>
 
@@ -102,7 +102,7 @@ ob_start();
 <?php if ($submission['portal_response_json']): ?>
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-code me-2"></i>Portal Response</h6></div>
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <pre class="bg-light p-3 rounded small mb-0" style="max-height:300px;overflow:auto"><?= htmlspecialchars($submission['portal_response_json']) ?></pre>
     </div>
 </div>

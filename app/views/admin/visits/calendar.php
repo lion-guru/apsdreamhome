@@ -43,7 +43,7 @@ ob_start();
     </div>
 
     <!-- Calendar Grid -->
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-bordered mb-0">
@@ -113,7 +113,7 @@ ob_start();
 
     <!-- Legend -->
     <div class="card mt-3">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="d-flex flex-wrap gap-3">
                 <span class="badge bg-primary">Scheduled</span>
                 <span class="badge bg-success">Completed</span>

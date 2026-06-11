@@ -41,7 +41,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><?php echo htmlspecialchars($property['title'] ?? 'Property'); ?></h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row">
                                 <div class="col-md-6">
                                     <p class="text-muted mb-1">Location</p>
@@ -112,7 +112,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <div class="card-header bg-white">
                             <h5 class="mb-0"><i class="fas fa-list-check me-2"></i>Valuation Factors</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <?php if (!empty($valuation_data['factors'])): ?>
                                 <ul class="list-group list-group-flush">
                                     <?php foreach ($valuation_data['factors'] as $factor => $impact): ?>

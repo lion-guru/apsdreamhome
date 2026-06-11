@@ -78,7 +78,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card" style="background:#6f42c1;color:white;">
+            <div class="card aps-cp-card" style="background:#6f42c1;color:white;">
                 <div class="card-body text-center">
                     <h6>Telecaller</h6>
                     <h3>&#8377;<?= number_format((float)($stats['tc_comm_stats']['pending'] ?? 0)) ?></h3>
@@ -90,8 +90,8 @@
 
     <div class="row">
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-dollar-sign"></i> Agent Commission Rates</div>
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-dollar-sign"></i> Agent Commission Rates</div>
                 <div class="card-body p-0">
                     <table class="table table-sm mb-0">
                         <thead><tr><th>Range (sqft)</th><th>Per sqft</th><th>Status</th></tr></thead>
@@ -110,8 +110,8 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-layer-group"></i> Associate Structure</div>
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-layer-group"></i> Associate Structure</div>
                 <div class="card-body p-0">
                     <table class="table table-sm mb-0">
                         <thead><tr><th>Level</th><th>Name</th><th>%</th></tr></thead>
@@ -130,8 +130,8 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-phone"></i> Telecaller Rules</div>
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-phone"></i> Telecaller Rules</div>
                 <div class="card-body p-0">
                     <table class="table table-sm mb-0">
                         <thead><tr><th>Rule</th><th>Type</th><th>Amount</th></tr></thead>
@@ -154,9 +154,9 @@
 
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-link"></i> Quick Access</div>
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header"><i class="fas fa-link"></i> Quick Access</div>
+                <div class="card-body aps-cp-card-body">
                     <div class="row text-center">
                         <div class="col-6 col-md-2 mb-2"><a href="/admin/commission/associate/calculations" class="btn btn-outline-primary btn-sm w-100">Associate Calculations</a></div>
                         <div class="col-6 col-md-2 mb-2"><a href="/admin/commission/bonuses" class="btn btn-outline-warning btn-sm w-100">Bonuses</a></div>

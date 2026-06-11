@@ -13,7 +13,7 @@
         <a href="<?= BASE_URL ?>payments/initiate" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Payment</a>
     </div>
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="get" action="<?= BASE_URL ?>payments/history" class="row g-2 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label small">Status</label>

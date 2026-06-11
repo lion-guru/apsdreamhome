@@ -4,8 +4,8 @@
         <h4 class="mb-0"><?php echo htmlspecialchars($page_title); ?></h4>
         <button class="btn btn-primary" onclick="bulkAssign()"><i class="fas fa-users-cog me-1"></i> Bulk Assign</button>
     </div>
-    <div class="card">
-        <div class="card-body">
+    <div class="card aps-cp-card">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>

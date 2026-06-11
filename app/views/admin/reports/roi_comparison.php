@@ -12,7 +12,7 @@ $properties = $properties ?? [];
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-primary text-uppercase mb-1">Total Investment</div><div class="h5 mb-0 fw-bold">₹<?= number_format(floatval($report['total_investment'] ?? 0), 2) ?></div></div>
                         <div class="col-auto"><i class="fas fa-rupee-sign fa-2x text-gray-300"></i></div>
@@ -22,7 +22,7 @@ $properties = $properties ?? [];
         </div>
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-success text-uppercase mb-1">Total Returns</div><div class="h5 mb-0 fw-bold">₹<?= number_format(floatval($report['total_returns'] ?? 0), 2) ?></div></div>
                         <div class="col-auto"><i class="fas fa-chart-line fa-2x text-gray-300"></i></div>
@@ -32,7 +32,7 @@ $properties = $properties ?? [];
         </div>
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-info text-uppercase mb-1">Avg. ROI</div><div class="h5 mb-0 fw-bold"><?= number_format(floatval($report['avg_roi'] ?? 0), 2) ?>%</div></div>
                         <div class="col-auto"><i class="fas fa-percentage fa-2x text-gray-300"></i></div>
@@ -42,7 +42,7 @@ $properties = $properties ?? [];
         </div>
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-warning text-uppercase mb-1">Period</div><div class="h5 mb-0 fw-bold"><?= htmlspecialchars($report['period'] ?? 'N/A') ?></div></div>
                         <div class="col-auto"><i class="fas fa-calendar fa-2x text-gray-300"></i></div>
@@ -55,7 +55,7 @@ $properties = $properties ?? [];
         <div class="col-lg-8">
             <div class="card shadow mb-4">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Property vs Investment Comparison</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($properties)): ?>
                         <p class="text-muted text-center py-4"><i class="fas fa-chart-bar fa-2x d-block mb-2"></i>No property data available for comparison.</p>
                     <?php else: ?>

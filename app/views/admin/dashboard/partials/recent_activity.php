@@ -1,8 +1,8 @@
 <?php if (!empty($recentItems)): ?>
 <div class="row g-4">
     <div class="col-12">
-        <div class="card">
-            <div class="card-body">
+        <div class="card aps-cp-card">
+            <div class="card-body aps-cp-card-body">
                 <h6 class="mb-3"><i class="fas fa-clock me-2"></i>Recent Activity</h6>
                 <div class="list-group list-group-flush">
                     <?php foreach ($recentItems as $item): ?>

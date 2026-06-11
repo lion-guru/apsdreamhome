@@ -17,7 +17,7 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0">Customer Information</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="text-muted small">Name</label>
@@ -54,7 +54,7 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0">Message</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;"><?php echo htmlspecialchars($inquiry['message'] ?? ''); ?></pre>
             </div>
         </div>
@@ -66,7 +66,7 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0">Update Status</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/inquiries/update-status">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="id" value="<?php echo $inquiry['id']; ?>">
@@ -90,7 +90,7 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0">Quick Actions</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="d-grid gap-2">
                     <a href="tel:<?php echo htmlspecialchars($inquiry['phone'] ?? ''); ?>" class="btn btn-success">
                         <i class="fas fa-phone me-2"></i>Call Customer
@@ -110,7 +110,7 @@
             <div class="card-header bg-white">
                 <h5 class="mb-0">Details</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="mb-2">
                     <label class="text-muted small">Created</label>
                     <div><?php echo date('d M Y, h:i A', strtotime($inquiry['created_at'])); ?></div>

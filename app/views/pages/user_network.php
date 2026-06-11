@@ -120,7 +120,7 @@ try {
         <!-- Referral Link -->
         <div class="col-12 mt-4">
             <div class="card border-primary">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5><i class="fas fa-link me-2"></i>Your Referral Link</h5>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" value="<?= BASE_URL ?>/register?ref=<?= htmlspecialchars($user['referral_code'] ?? $userId) ?>" readonly>
@@ -136,11 +136,11 @@ try {
         <div class="row mt-4">
             <!-- Direct Referrals -->
             <div class="col-lg-8">
-                <div class="card">
+                <div class="card aps-cp-card">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0"><i class="fas fa-users me-2"></i>Direct Referrals (<?= count($directReferrals) ?>)</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (empty($directReferrals)): ?>
                             <div class="text-center py-5">
                                 <i class="fas fa-user-friends fa-4x text-muted mb-3"></i>
@@ -195,11 +195,11 @@ try {
 
             <!-- Recent Activity -->
             <div class="col-lg-4">
-                <div class="card">
+                <div class="card aps-cp-card">
                     <div class="card-header bg-secondary text-white">
                         <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (empty($recentActivity)): ?>
                             <p class="text-muted text-center">No activity yet</p>
                         <?php else: ?>
@@ -233,7 +233,7 @@ try {
 
         <!-- Network Tree Visualization -->
         <div class="col-12 mt-4">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i>Network Tree</h5>
                 </div>

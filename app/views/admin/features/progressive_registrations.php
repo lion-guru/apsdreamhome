@@ -10,7 +10,7 @@ ob_start();
   <div class="row mb-4">
     <div class="col-md-4">
       <div class="card border-left-primary shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <h6 class="text-muted">Active Sessions</h6>
           <h2 class="mb-0"><?= count($incomplete ?? []) ?></h2>
         </div>
@@ -18,7 +18,7 @@ ob_start();
     </div>
     <div class="col-md-4">
       <div class="card border-left-warning shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <h6 class="text-muted">Avg Completion Step</h6>
           <h2 class="mb-0">
             <?php
@@ -36,7 +36,7 @@ ob_start();
     </div>
     <div class="col-md-4">
       <div class="card border-left-info shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <h6 class="text-muted">Funnel Stages</h6>
           <h2 class="mb-0"><?= count($stats ?? []) ?></h2>
         </div>

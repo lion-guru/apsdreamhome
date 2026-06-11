@@ -51,7 +51,7 @@ $smtp = $smtp ?? [
                     <div class="card-header bg-white">
                         <h6 class="mb-0"><i class="fas fa-server me-2"></i>SMTP Server</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3 mb-3">
                             <div class="col-md-5">
                                 <label class="form-label">SMTP Host <span class="text-danger">*</span></label>
@@ -91,7 +91,7 @@ $smtp = $smtp ?? [
                     <div class="card-header bg-white">
                         <h6 class="mb-0"><i class="fas fa-envelope-open-text me-2"></i>Default Sender</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">From Email <span class="text-danger">*</span></label>
@@ -112,7 +112,7 @@ $smtp = $smtp ?? [
                     <div class="card-header bg-white">
                         <h6 class="mb-0"><i class="fas fa-check-circle me-2"></i>Actions</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <button type="submit" class="btn btn-primary w-100 mb-3">
                             <i class="fas fa-save me-2"></i>Save Settings
                         </button>
@@ -128,7 +128,7 @@ $smtp = $smtp ?? [
                     <div class="card-header bg-white">
                         <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Common Providers</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <ul class="list-unstyled mb-0 small">
                             <li class="mb-2"><i class="fab fa-google text-danger me-2"></i><strong>Gmail:</strong> smtp.gmail.com:587 (TLS)</li>
                             <li class="mb-2"><i class="fab fa-microsoft text-primary me-2"></i><strong>Outlook/Office365:</strong> smtp.office365.com:587 (TLS)</li>

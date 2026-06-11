@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="icon"><i class="fas fa-exclamation-circle"></i></div>
         <h1>400</h1>
         <h2>Bad Request</h2>

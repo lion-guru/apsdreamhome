@@ -12,10 +12,10 @@
     <?php endif; ?>
 
     <div class="row mb-4">
-        <div class="col-md-3"><div class="card bg-primary text-white"><div class="card-body"><h6>Total Slots</h6><h3><?= $summary['total'] ?? 0 ?></h3></div></div></div>
-        <div class="col-md-3"><div class="card bg-success text-white"><div class="card-body"><h6>Active</h6><h3><?= $summary['active'] ?? 0 ?></h3></div></div></div>
-        <div class="col-md-3"><div class="card bg-info text-white"><div class="card-body"><h6>Total Views</h6><h3><?= number_format($summary['total_views'] ?? 0) ?></h3></div></div></div>
-        <div class="col-md-3"><div class="card bg-warning text-dark"><div class="card-body"><h6>Total Clicks</h6><h3><?= number_format($summary['total_clicks'] ?? 0) ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-primary text-white"><div class="card-body aps-cp-card-body"><h6>Total Slots</h6><h3><?= $summary['total'] ?? 0 ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-success text-white"><div class="card-body aps-cp-card-body"><h6>Active</h6><h3><?= $summary['active'] ?? 0 ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-info text-white"><div class="card-body aps-cp-card-body"><h6>Total Views</h6><h3><?= number_format($summary['total_views'] ?? 0) ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-warning text-dark"><div class="card-body aps-cp-card-body"><h6>Total Clicks</h6><h3><?= number_format($summary['total_clicks'] ?? 0) ?></h3></div></div></div>
     </div>
 
     <div class="card shadow-sm">
@@ -52,8 +52,8 @@
     </div>
 
     <div class="card mt-4">
-        <div class="card-header"><h5 class="mb-0">How to Use Ad Slots</h5></div>
-        <div class="card-body">
+        <div class="card-header aps-cp-card-header"><h5 class="mb-0">How to Use Ad Slots</h5></div>
+        <div class="card-body aps-cp-card-body">
             <p>Use the following PHP code in any view file to display ads:</p>
             <pre class="bg-light p-3 rounded"><code>&lt;?php
 $adManager = new \App\Services\AdManagerService();

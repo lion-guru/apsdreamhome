@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-gem me-2"></i>Core Principles</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $principles = $overview['core_principles'] ?? []; if (!empty($principles)): ?>
                         <?php foreach ($principles as $key => $desc): ?>
                             <div class="mb-3"><h6 class="text-primary"><?= ucwords(str_replace('_', ' ', $key)) ?></h6><p class="text-muted small mb-0"><?= htmlspecialchars($desc) ?></p></div>
@@ -20,7 +20,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-cubes me-2"></i>Architecture Components</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $components = $overview['architecture_components'] ?? []; if (!empty($components)): ?>
                         <?php foreach ($components as $key => $desc): ?>
                             <div class="mb-3"><h6 class="text-success"><?= ucwords(str_replace('_', ' ', $key)) ?></h6><p class="text-muted small mb-0"><?= htmlspecialchars($desc) ?></p></div>
@@ -35,7 +35,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-key me-2"></i>Access Policies</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold text-secondary">Policy Types</h6>
                     <?php $ptypes = $policies['policy_types'] ?? []; if (!empty($ptypes)): ?>
                         <?php foreach ($ptypes as $key => $desc): ?>
@@ -55,7 +55,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-check-double me-2"></i>Continuous Verification</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="fw-bold text-secondary">Verification Methods</h6>
                     <?php $vm = $verification['verification_methods'] ?? []; if (!empty($vm)): ?>
                         <?php foreach ($vm as $key => $desc): ?>
@@ -77,7 +77,7 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent border-bottom"><h5 class="mb-0"><i class="fas fa-list-check me-2"></i>Implementation Progress</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <?php $pkeys = ['planning_completed' => 'Planning', 'infrastructure_deployed' => 'Infrastructure', 'policies_implemented' => 'Policies', 'monitoring_active' => 'Monitoring', 'training_completed' => 'Training']; ?>
                         <?php foreach ($pkeys as $k => $l): ?>

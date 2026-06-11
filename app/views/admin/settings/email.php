@@ -9,7 +9,7 @@
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-server me-2"></i>SMTP Configuration</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">SMTP Host <span class="text-danger">*</span></label>
@@ -42,7 +42,7 @@
                 </div>
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-envelope-open-text me-2"></i>Sender Details</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">From Email <span class="text-danger">*</span></label>
@@ -59,7 +59,7 @@
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Test Email</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="small text-muted">Send a test email to verify your SMTP configuration.</p>
                         <div class="mb-3">
                             <label class="form-label">Send To</label>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Features</h6></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" name="email_notifications" id="email_notifications" value="1" <?= !empty($config['email_notifications']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="email_notifications">Email Notifications</label>

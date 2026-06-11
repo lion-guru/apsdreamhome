@@ -54,8 +54,8 @@ $stats = $stats ?? ['total' => 0, 'under_construction' => 0, 'completed' => 0, '
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body">
+<div class="card aps-cp-card">
+    <div class="card-body aps-cp-card-body">
         <?php if (!empty($projects)): ?>
             <div class="table-responsive">
                 <table class="table table-hover">

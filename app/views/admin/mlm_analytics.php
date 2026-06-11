@@ -16,7 +16,7 @@
     <div class="row g-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="card-title"><i class="fas fa-network-wired me-2"></i>Network Overview</h5>
                     <div class="row g-3 mt-2">
                         <?php $overview = $mlmData['network_overview'] ?? []; ?>
@@ -127,7 +127,7 @@
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0"><i class="fas fa-robot me-2"></i>Chatbot Stats</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $chatbot = $mlmData['chatbot_stats'] ?? []; ?>
                     <div class="d-flex justify-content-between mb-2"><span>Total Conversations</span><strong><?= number_format($chatbot['total_conversations'] ?? ($chatbot['conversations'] ?? 0)) ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Avg Rating</span><strong><?= ($chatbot['avg_rating'] ?? 'N/A') ?></strong></div>

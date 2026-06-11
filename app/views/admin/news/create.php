@@ -7,8 +7,8 @@
     </a>
 </div>
 
-<div class="card">
-    <div class="card-body">
+<div class="card aps-cp-card">
+    <div class="card-body aps-cp-card-body">
         <form id="newsForm">
             <div class="row">
                 <div class="col-md-8">
@@ -30,7 +30,7 @@
 
                 <div class="col-md-4">
                     <div class="card bg-light mb-3">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6>Publish Settings</h6>
 
                             <div class="mb-3">
@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="card bg-light mb-3">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h6>Featured Image</h6>
                             <input type="file" class="form-control" id="image" name="image" accept="image/*">
                             <div id="imagePreview" class="mt-2 text-center"></div>

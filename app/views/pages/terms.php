@@ -12,8 +12,8 @@
         <div class="row">
             <div class="col-12">
                 <h1 class="h3 mb-4">Terms & Conditions</h1>
-                <div class="card">
-                    <div class="card-body">
+                <div class="card aps-cp-card">
+                    <div class="card-body aps-cp-card-body">
                         <h5>Acceptance of Terms</h5>
                         <p>By accessing and using APS Dream Home, you accept and agree to be bound by the terms and provision of this agreement.</p>
                         

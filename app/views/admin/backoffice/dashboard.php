@@ -40,32 +40,32 @@ $stats = $stats ?? [];
   <div class="row g-3">
     <div class="col-md-4">
       <a href="<?= BASE_URL ?>/admin/backoffice/attendance" class="card aps-cp-card text-decoration-none">
-        <div class="card-body"><i class="fas fa-clock me-2"></i><?= __('admin_attendance_label') ?></div>
+        <div class="card-body aps-cp-card-body"><i class="fas fa-clock me-2"></i><?= __('admin_attendance_label') ?></div>
       </a>
     </div>
     <div class="col-md-4">
       <a href="<?= BASE_URL ?>/admin/backoffice/leaves" class="card aps-cp-card text-decoration-none">
-        <div class="card-body"><i class="fas fa-calendar-check me-2"></i><?= __('admin_leave_requests') ?></div>
+        <div class="card-body aps-cp-card-body"><i class="fas fa-calendar-check me-2"></i><?= __('admin_leave_requests') ?></div>
       </a>
     </div>
     <div class="col-md-4">
       <a href="<?= BASE_URL ?>/admin/backoffice/leads" class="card aps-cp-card text-decoration-none">
-        <div class="card-body"><i class="fas fa-funnel-dollar me-2"></i><?= __('admin_lead_pipeline') ?></div>
+        <div class="card-body aps-cp-card-body"><i class="fas fa-funnel-dollar me-2"></i><?= __('admin_lead_pipeline') ?></div>
       </a>
     </div>
     <div class="col-md-4">
       <a href="<?= BASE_URL ?>/admin/backoffice/payslips" class="card aps-cp-card text-decoration-none">
-        <div class="card-body"><i class="fas fa-money-bill-wave me-2"></i><?= __('admin_payslips') ?></div>
+        <div class="card-body aps-cp-card-body"><i class="fas fa-money-bill-wave me-2"></i><?= __('admin_payslips') ?></div>
       </a>
     </div>
     <div class="col-md-4">
       <a href="<?= BASE_URL ?>/admin/backoffice/operations" class="card aps-cp-card text-decoration-none">
-        <div class="card-body"><i class="fas fa-clipboard-list me-2"></i><?= __('admin_operations_log') ?></div>
+        <div class="card-body aps-cp-card-body"><i class="fas fa-clipboard-list me-2"></i><?= __('admin_operations_log') ?></div>
       </a>
     </div>
     <div class="col-md-4">
       <a href="<?= BASE_URL ?>/admin/backoffice/reports" class="card aps-cp-card text-decoration-none">
-        <div class="card-body"><i class="fas fa-chart-bar me-2"></i><?= __('admin_report_center') ?></div>
+        <div class="card-body aps-cp-card-body"><i class="fas fa-chart-bar me-2"></i><?= __('admin_report_center') ?></div>
       </a>
     </div>
   </div>

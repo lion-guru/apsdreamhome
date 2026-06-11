@@ -35,7 +35,7 @@ $ratingBadge = function($rating) {
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Task Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-bordered">
                         <tr>
                             <th style="width: 200px;" class="text-muted">Telecaller</th>
@@ -94,7 +94,7 @@ $ratingBadge = function($rating) {
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Performance at a Glance</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php
                     $callsMade = (int)($task['calls_made'] ?? 0);
                     $target = (int)($task['target_calls'] ?? 1);
@@ -151,7 +151,7 @@ $ratingBadge = function($rating) {
         <div class="card-header bg-white py-3">
             <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notes</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <p class="mb-0"><?php echo nl2br(htmlspecialchars($task['notes'] ?? '')); ?></p>
         </div>
     </div>

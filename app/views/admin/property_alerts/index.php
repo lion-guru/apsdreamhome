@@ -22,7 +22,7 @@ ob_start();
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <p class="text-muted mb-1 small">Total Subscriptions</p>
@@ -37,7 +37,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <p class="text-muted mb-1 small">Active</p>
@@ -52,7 +52,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <p class="text-muted mb-1 small">Daily Alerts</p>
@@ -67,7 +67,7 @@ ob_start();
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <p class="text-muted mb-1 small">Notifications Sent</p>
@@ -85,7 +85,7 @@ ob_start();
     <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="mb-3"><i class="fas fa-bolt text-warning me-2"></i>Instant Alerts</h6>
                     <h4><?= number_format($stats['instant'] ?? 0) ?></h4>
                 </div>
@@ -93,7 +93,7 @@ ob_start();
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="mb-3"><i class="fas fa-calendar-week text-info me-2"></i>Weekly Alerts</h6>
                     <h4><?= number_format($stats['weekly'] ?? 0) ?></h4>
                 </div>
@@ -101,7 +101,7 @@ ob_start();
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="mb-3"><i class="fas fa-chart-pie text-primary me-2"></i>Top Property Types</h6>
                     <?php if (!empty($stats['top_property_types'])): ?>
                         <?php foreach (array_slice($stats['top_property_types'], 0, 3) as $pt): ?>

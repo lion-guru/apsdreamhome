@@ -16,10 +16,10 @@
         </div>
     </div>
     <div class="row g-4 mb-4">
-        <div class="col-md-3"><div class="card bg-primary text-white border-0 shadow-sm"><div class="card-body"><h6>Total Members</h6><h3 class="mb-0"><?= number_format($totalMembers ?? 0) ?></h3></div></div></div>
-        <div class="col-md-3"><div class="card bg-success text-white border-0 shadow-sm"><div class="card-body"><h6>Active Members</h6><h3 class="mb-0"><?= number_format($activeMembers ?? 0) ?></h3></div></div></div>
-        <div class="col-md-3"><div class="card bg-info text-white border-0 shadow-sm"><div class="card-body"><h6>Total Teams</h6><h3 class="mb-0"><?= number_format($totalTeams ?? 0) ?></h3></div></div></div>
-        <div class="col-md-3"><div class="card bg-warning text-white border-0 shadow-sm"><div class="card-body"><h6>Network Growth</h6><h3 class="mb-0">+<?= number_format($newMembers ?? 0) ?></h3><small>This month</small></div></div></div>
+        <div class="col-md-3"><div class="card bg-primary text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Total Members</h6><h3 class="mb-0"><?= number_format($totalMembers ?? 0) ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-success text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Active Members</h6><h3 class="mb-0"><?= number_format($activeMembers ?? 0) ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-info text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Total Teams</h6><h3 class="mb-0"><?= number_format($totalTeams ?? 0) ?></h3></div></div></div>
+        <div class="col-md-3"><div class="card bg-warning text-white border-0 shadow-sm"><div class="card-body aps-cp-card-body"><h6>Network Growth</h6><h3 class="mb-0">+<?= number_format($newMembers ?? 0) ?></h3><small>This month</small></div></div></div>
     </div>
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-list me-2"></i>Network Members</h5></div>

@@ -33,7 +33,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Contact Information</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Phone</div><div class="col-sm-8"><strong><?= $customer['phone'] ?? '-' ?></strong></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Alt. Phone</div><div class="col-sm-8"><?= $customer['alt_phone'] ?? '-' ?></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Email</div><div class="col-sm-8"><?= $customer['email'] ?? '-' ?></div></div>

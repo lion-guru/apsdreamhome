@@ -9,7 +9,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card border-start border-success border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">Total Revenue</h6>
                     <h3>₹<?php echo number_format(floatval($financial_overview['total_revenue'] ?? 0) ?? 0); ?></h3>
                     <p class="text-success mb-0"><i class="fas fa-arrow-up me-1"></i>+₹<?php echo number_format(floatval($financial_overview['pending_revenue'] ?? 0) ?? 0); ?> Pending</p>
@@ -18,7 +18,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-start border-danger border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">Total Expenses</h6>
                     <h3>₹<?php echo number_format(floatval($expense_stats['total_expenses'] ?? 0) ?? 0); ?></h3>
                     <p class="text-muted mb-0">Avg: ₹<?php echo number_format(floatval($expense_stats['avg_expense'] ?? 0) ?? 0); ?></p>
@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-start border-warning border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">Commission Paid</h6>
                     <h3>₹<?php echo number_format(floatval($commission_stats['total_commissions'] ?? 0) ?? 0); ?></h3>
                     <p class="text-muted mb-0">Avg: ₹<?php echo number_format(floatval($commission_stats['avg_commission'] ?? 0) ?? 0); ?></p>
@@ -36,7 +36,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-start border-primary border-4 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="text-muted text-uppercase small">Net Profit</h6>
                     <h3>₹<?php echo number_format(floatval($profit_analysis['net_profit'] ?? 0) ?? 0); ?></h3>
                     <p class="text-success mb-0"><i class="fas fa-chart-line me-1"></i>Profit Margin: <?php echo ($profit_analysis['gross_revenue'] ?? 0) > 0 ? number_format((($profit_analysis['net_profit'] ?? 0) / ($profit_analysis['gross_revenue'] ?? 1)) * 100, 1) : 0; ?>%</p>
@@ -52,7 +52,7 @@
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Top Performers DEBUG: tp=isset</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row g-3">
                         <?php
                         $tp = $top_performers ?? [];
@@ -79,21 +79,21 @@
     <!-- Financial Charts -->
     <div class="row mb-4">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-chart-line me-2"></i>Revenue Analytics (30 Days)</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="revenueChart" width="400" height="150"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-pie-chart me-2"></i>Expense Breakdown</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <canvas id="expenseChart" width="400" height="150"></canvas>
                 </div>
             </div>
@@ -103,11 +103,11 @@
     <!-- Financial Summary -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-balance-scale me-2"></i>Financial Summary</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="text-center">
@@ -142,11 +142,11 @@
     <!-- Recent Financial Activities -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5><i class="fas fa-history me-2"></i>Recent Financial Activities</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($activities)): ?>
                         <div class="list-group list-group-flush">
                             <?php foreach ($activities as $activity): ?>

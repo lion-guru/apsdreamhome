@@ -8,7 +8,7 @@
         <i class="fas fa-exclamation-triangle me-2"></i>
         Localization service is not available. The translation database may not be initialized or required dependencies are missing.
     </div>
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-body text-center py-5">
             <i class="fas fa-language fa-4x text-muted mb-3"></i>
             <p class="text-muted">Localization service unavailable. Supported locales fallback: English (en), Hindi (hi).</p>
@@ -20,7 +20,7 @@
     <?php else: ?>
     <div class="row">
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body text-center">
                     <h5 class="card-title">Current Locale</h5>
                     <h2 class="text-primary"><?= htmlspecialchars($current_locale ?? 'en') ?></h2>
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body text-center">
                     <h5 class="card-title">Supported Locales</h5>
                     <h2 class="text-success"><?= count($supported_locales ?? []) ?></h2>
@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card aps-cp-card">
                 <div class="card-body text-center">
                     <h5 class="card-title">Total Translations</h5>
                     <h2 class="text-info"><?= isset($stats['total_translations']) ? (int)$stats['total_translations'] : 0 ?></h2>
@@ -45,11 +45,11 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">
+    <div class="card aps-cp-card">
+        <div class="card-header aps-cp-card-header">
             <h5 class="card-title mb-0">Supported Locales</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (!empty($supported_locales)): ?>
             <div class="table-responsive">
                 <table class="table table-hover">

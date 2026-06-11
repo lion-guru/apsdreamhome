@@ -21,7 +21,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         
         <!-- Filters -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-3">
                         <select class="form-select">
@@ -43,7 +43,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         
         <!-- Media Grid -->
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($media)): ?>
                     <div class="row g-3">
                         <?php foreach ($media as $item): ?>

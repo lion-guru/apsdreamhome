@@ -3,7 +3,7 @@
     <h4 class="mb-0">MLM Associates</h4>
     <a href="<?= BASE_URL ?>admin/mlm/users/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Associate</a>
 </div>
-<div class="card">
+<div class="card aps-cp-card">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">

@@ -50,8 +50,8 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="card-title mb-0">Conversion Rate</h5>
                 </div>
                 <div class="card-body text-center">
@@ -61,11 +61,11 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
+            <div class="card aps-cp-card">
+                <div class="card-header aps-cp-card-header">
                     <h5 class="card-title mb-0">Monthly Summary</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-bordered mb-0">
                         <thead class="table-light">
                             <tr><th>Metric</th><th>Value</th></tr>
@@ -84,10 +84,10 @@
 
     <?php if (!empty($report_data['top_performers'])): ?>
     <div class="card mt-3">
-        <div class="card-header">
+        <div class="card-header aps-cp-card-header">
             <h5 class="card-title mb-0">Top Performers</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>

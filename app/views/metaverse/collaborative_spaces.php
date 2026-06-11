@@ -29,7 +29,7 @@
         <?php foreach ($spaces as $space): ?>
         <div class="col-md-6 col-lg-4">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <h5 class="card-title mb-0"><?= ($space['name'] ?? 'Unnamed Space') ?></h5>
                         <span class="badge bg-<?= ($space['is_public'] ?? 0) ? 'success' : 'secondary' ?>">

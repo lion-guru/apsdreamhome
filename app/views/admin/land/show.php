@@ -23,7 +23,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= $land['title'] ?></h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Area</div><div class="col-sm-8"><strong><?= number_format($land['area_sqft'] ?? 0) ?> sqft</strong></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Price</div><div class="col-sm-8"><strong class="text-success">₹<?= number_format($land['price'] ?? 0, 2) ?></strong></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Location</div><div class="col-sm-8"><?= $land['location'] ?? '-' ?></div></div>
@@ -37,7 +37,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-user me-2"></i>Owner Info</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="mb-2"><strong><?= $land['owner_name'] ?? 'N/A' ?></strong></p>
                     <p class="mb-1 text-muted"><i class="fas fa-phone me-1"></i><?= $land['owner_phone'] ?? '-' ?></p>
                     <p class="mb-0 text-muted"><i class="fas fa-calendar me-1"></i>Added <?= date('d M Y', strtotime($land['created_at'] ?? 'now')) ?></p>

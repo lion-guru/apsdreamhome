@@ -38,7 +38,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0"><i class="fas fa-bell text-primary me-2"></i><?= __('alerts_subscriptions', null, 'Alert Subscriptions') ?></h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($searches)): ?>
                 <p class="text-muted text-center py-4 mb-0">
                     <?= __('alerts_no_searches', null, "You don't have any saved searches yet.") ?> <a href="<?= BASE_URL ?>/properties"><?= __('alerts_start_searching', null, 'Start searching') ?></a> <?= __('alerts_to_setup', null, 'to set up alerts.') ?>

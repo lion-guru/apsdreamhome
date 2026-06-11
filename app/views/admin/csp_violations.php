@@ -21,7 +21,7 @@ $limit = $limit ?? 50;
     <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Total violations</div>
                     <div class="h2 mb-0"><?= number_format((int)$stats['total']) ?></div>
                 </div>
@@ -29,7 +29,7 @@ $limit = $limit ?? 50;
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Unique directives</div>
                     <div class="h2 mb-0"><?= number_format((int)$stats['directives']) ?></div>
                 </div>
@@ -37,7 +37,7 @@ $limit = $limit ?? 50;
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="text-muted small">Unique source IPs</div>
                     <div class="h2 mb-0"><?= number_format((int)$stats['unique_ips']) ?></div>
                 </div>

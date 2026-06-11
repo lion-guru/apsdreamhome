@@ -15,7 +15,7 @@ $file = $file ?? ['id' => 0, 'original_name' => '', 'file_type' => '', 'size_byt
         <div class="col-lg-8">
             <div class="card shadow mb-4">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary"><?= htmlspecialchars($file['original_name'] ?? '') ?></h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-bordered">
                         <tr><th style="width:180px">File Name</th><td><?= htmlspecialchars($file['original_name'] ?? '') ?></td></tr>
                         <tr><th>Type</th><td><span class="badge bg-info"><?= htmlspecialchars($file['mime_type'] ?? $file['file_type'] ?? '') ?></span></td></tr>
@@ -51,7 +51,7 @@ $file = $file ?? ['id' => 0, 'original_name' => '', 'file_type' => '', 'size_byt
             </div>
             <div class="card shadow">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-danger">Danger Zone</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= $base ?>/admin/files/delete/<?= $file['uuid'] ?? '' ?>" onsubmit="return confirm('Permanently delete this file?')">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button type="submit" class="btn btn-danger w-100"><i class="fas fa-trash me-1"></i>Delete File</button>

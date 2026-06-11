@@ -15,7 +15,7 @@
         <div class="col-lg-3 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="GET">
                         <div class="mb-3">
                             <label class="form-label small">Location</label>
@@ -46,7 +46,7 @@
             <!-- Add Market Data -->
             <div class="card border-0 shadow-sm mt-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add Entry</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/property-features/market-data/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><input type="text" name="location" class="form-control form-control-sm" placeholder="Location *" required></div>

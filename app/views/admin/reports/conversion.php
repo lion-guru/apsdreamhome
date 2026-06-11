@@ -32,14 +32,14 @@
     
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-white"><h5 class="mb-0">Monthly Conversion Trends</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <canvas id="conversionTrendChart" height="100"></canvas>
         </div>
     </div>
     
     <div class="card shadow-sm">
         <div class="card-header bg-white"><h5 class="mb-0">Monthly Breakdown</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (!empty($conversion_data)): ?>
                 <div class="table-responsive">
                     <table class="table table-sm table-hover">

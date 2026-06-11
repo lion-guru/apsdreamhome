@@ -18,7 +18,7 @@ $page_description = 'Create a new custom field for lead tracking';
         <div class="card-header bg-white py-3">
             <h5 class="mb-0">Create New Custom Field</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="POST" action="<?php echo BASE_URL; ?>/admin/customer-lead/custom-fields/store">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row">

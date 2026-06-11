@@ -128,7 +128,7 @@
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0"><i class="fas fa-percentage me-2"></i>Profit & Loss Summary</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php $pl = $profit_loss ?? $finData['profit_loss'] ?? []; ?>
                     <div class="d-flex justify-content-between mb-2"><span>Revenue</span><strong>₹<?= number_format($pl['total_revenue'] ?? 0) ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Expenses</span><strong class="text-danger">-₹<?= number_format($pl['total_expenses'] ?? 0) ?></strong></div>

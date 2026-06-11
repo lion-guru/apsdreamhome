@@ -17,7 +17,7 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
                 <?php if (!empty($news['image'])): ?>
                 <img src="<?= $base ?>/<?= htmlspecialchars($news['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($news['title'] ?? '') ?>" style="max-height:400px;object-fit:cover">
                 <?php endif; ?>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h2 class="card-title"><?= htmlspecialchars($news['title'] ?? '') ?></h2>
                     <div class="mb-3">
                         <?php if (!empty($news['category'])): ?><span class="badge bg-info me-2"><?= htmlspecialchars($news['category']) ?></span><?php endif; ?>
@@ -35,7 +35,7 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
         <div class="col-lg-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Article Details</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th>Title</th><td><?= htmlspecialchars($news['title'] ?? '') ?></td></tr>
                         <tr><th>Author</th><td><?= htmlspecialchars($news['author'] ?? '') ?></td></tr>
@@ -50,7 +50,7 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
             </div>
             <div class="card shadow">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-danger">Actions</h6></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= $base ?>/admin/news/<?= $news['id'] ?? 0 ?>/toggle-status" class="mb-2">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <button type="submit" class="btn btn-<?= ($news['status'] ?? 'draft') === 'published' ? 'warning' : 'success' ?> w-100">

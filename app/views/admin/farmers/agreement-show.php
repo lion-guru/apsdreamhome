@@ -19,7 +19,7 @@ $agreement = $agreement ?? [];
         <div class="col-md-6 mb-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Agreement Info</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
                         <tr><td class="text-muted">Agreement #</td><td><strong><code><?php echo htmlspecialchars($agreement['agreement_number'] ?? 'N/A'); ?></code></strong></td></tr>
                         <tr><td class="text-muted">Farmer</td><td><strong><?php echo htmlspecialchars($agreement['farmer_name'] ?? 'N/A'); ?></strong></td></tr>
@@ -46,7 +46,7 @@ $agreement = $agreement ?? [];
         <div class="col-md-6 mb-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Financial Details</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm table-borderless">
                         <tr><td class="text-muted">Total Amount</td><td><strong>₹<?php echo number_format($agreement['total_amount'] ?? 0); ?></strong></td></tr>
                         <tr><td class="text-muted">Advance Amount</td><td class="text-warning"><strong>₹<?php echo number_format($agreement['advance_amount'] ?? 0); ?></strong></td></tr>
@@ -66,21 +66,21 @@ $agreement = $agreement ?? [];
     <?php if ($agreement['terms_conditions'] ?? ''): ?>
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-gavel me-2"></i>Terms & Conditions</h5></div>
-        <div class="card-body"><?php echo nl2br(htmlspecialchars($agreement['terms_conditions'])); ?></div>
+        <div class="card-body aps-cp-card-body"><?php echo nl2br(htmlspecialchars($agreement['terms_conditions'])); ?></div>
     </div>
     <?php endif; ?>
 
     <?php if ($agreement['remarks'] ?? ''): ?>
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Remarks</h5></div>
-        <div class="card-body"><?php echo nl2br(htmlspecialchars($agreement['remarks'])); ?></div>
+        <div class="card-body aps-cp-card-body"><?php echo nl2br(htmlspecialchars($agreement['remarks'])); ?></div>
     </div>
     <?php endif; ?>
 
     <?php if ($agreement['document_path'] ?? ''): ?>
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-file-pdf me-2"></i>Document</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <a href="<?php echo htmlspecialchars($agreement['document_path']); ?>" class="btn btn-outline-danger" target="_blank"><i class="fas fa-file-pdf me-1"></i>View Document</a>
         </div>
     </div>
@@ -88,7 +88,7 @@ $agreement = $agreement ?? [];
 
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Status</h5></div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form method="post" action="<?php echo BASE_URL; ?>/admin/farmers/agreements/update-status/<?php echo $agreement['id'] ?? 0; ?>" class="row g-3">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="col-md-3">

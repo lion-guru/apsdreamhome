@@ -38,7 +38,7 @@ $page_title = 'Cost Report - APS Dream Home';
         <div class="card-header bg-primary text-white">
             <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Executive Summary</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row">
                 <div class="col-md-3 text-center border-end">
                     <h6 class="text-muted">Total Investment</h6>
@@ -67,7 +67,7 @@ $page_title = 'Cost Report - APS Dream Home';
                 <div class="card-header bg-info text-white">
                     <h5 class="mb-0"><i class="fas fa-pie-chart me-2"></i>Cost Breakdown</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <thead>
                             <tr>
@@ -104,7 +104,7 @@ $page_title = 'Cost Report - APS Dream Home';
                 <div class="card-header bg-success text-white">
                     <h5 class="mb-0"><i class="fas fa-tag me-2"></i>Price Recommendation</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row text-center">
                         <div class="col-6 border-end">
                             <h6 class="text-muted">Min Price/sqft</h6>
@@ -126,11 +126,11 @@ $page_title = 'Cost Report - APS Dream Home';
     </div>
 
     <!-- Per-Plot Cost Analysis -->
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-header bg-warning">
             <h5 class="mb-0"><i class="fas fa-table me-2"></i>Per-Plot Cost Analysis</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($report['plot_analyses'])): ?>
                 <p class="text-muted text-center py-4">No plot data available.</p>
             <?php else: ?>

@@ -10,8 +10,8 @@
   <div class="row g-4">
     <div class="col-md-8">
       <div class="card aps-cp-card mb-4">
-        <div class="card-header"><strong>Lead Information</strong></div>
-        <div class="card-body">
+        <div class="card-header aps-cp-card-header"><strong>Lead Information</strong></div>
+        <div class="card-body aps-cp-card-body">
           <div class="row g-3">
             <div class="col-md-4"><strong>Name:</strong> <?= htmlspecialchars($lead['lead_name'] ?? '') ?></div>
             <div class="col-md-4"><strong>Contact:</strong> <?= htmlspecialchars($lead['contact_name'] ?? '') ?></div>
@@ -31,8 +31,8 @@
       </div>
 
       <div class="card aps-cp-card">
-        <div class="card-header"><strong>Advance Stage</strong></div>
-        <div class="card-body">
+        <div class="card-header aps-cp-card-header"><strong>Advance Stage</strong></div>
+        <div class="card-body aps-cp-card-body">
           <form method="post" action="<?= BASE_URL ?>/admin/backoffice/leads/<?= $lead['id'] ?? '' ?>/advance" class="d-flex gap-2">
             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
             <select name="new_stage" class="form-select" style="max-width:250px">
@@ -48,8 +48,8 @@
 
     <div class="col-md-4">
       <div class="card aps-cp-card mb-4">
-        <div class="card-header"><strong>Add Activity</strong></div>
-        <div class="card-body">
+        <div class="card-header aps-cp-card-header"><strong>Add Activity</strong></div>
+        <div class="card-body aps-cp-card-body">
           <form method="post" action="<?= BASE_URL ?>/admin/backoffice/leads/<?= $lead['id'] ?? '' ?>/activity">
             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
             <div class="mb-2"><select name="activity_type" class="form-select form-select-sm">
@@ -66,8 +66,8 @@
       </div>
 
       <div class="card aps-cp-card">
-        <div class="card-header"><strong>Timeline</strong></div>
-        <div class="card-body" style="max-height:400px;overflow-y:auto">
+        <div class="card-header aps-cp-card-header"><strong>Timeline</strong></div>
+        <div class="card-body aps-cp-card-body" style="max-height:400px;overflow-y:auto">
           <?php if (empty($timeline)): ?>
             <p class="text-muted">No activities yet</p>
           <?php else: ?>

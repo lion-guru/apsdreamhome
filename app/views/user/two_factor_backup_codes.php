@@ -22,7 +22,7 @@ ob_start();
         <div class="card-header bg-warning text-dark">
           <h4 class="mb-0"><i class="fas fa-key me-2"></i>Backup Recovery Codes</h4>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
           <div class="alert alert-warning mb-4">
             <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-1"></i> Save these codes now!</h6>
             <p class="mb-0 small">

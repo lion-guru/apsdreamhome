@@ -400,7 +400,7 @@
             </h4>
             
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <a href="<?php echo BASE_URL; ?>/wallet/withdrawal" class="d-flex align-items-center text-decoration-none text-dark mb-3">
                         <div class="bg-success text-white rounded-circle p-3 me-3">
                             <i class="fas fa-wallet"></i>
@@ -445,7 +445,7 @@
 
             <!-- Wallet Info -->
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h5 class="card-title mb-3"><i class="fas fa-info-circle me-2 text-primary"></i>Wallet Info</h5>
                     <ul class="list-unstyled mb-0">
                         <li class="mb-2">

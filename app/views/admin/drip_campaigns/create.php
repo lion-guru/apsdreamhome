@@ -22,7 +22,7 @@ ob_start();
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Campaign Details</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-8">
                         <label class="form-label">Campaign Name <span class="text-danger">*</span></label>
@@ -61,7 +61,7 @@ ob_start();
                     <i class="fas fa-plus me-1"></i> Add Email
                 </button>
             </div>
-            <div class="card-body" id="emailsContainer">
+            <div class="card-body aps-cp-card-body" id="emailsContainer">
                 <p class="text-muted small mb-3">
                     <i class="fas fa-info-circle"></i> Add emails in order. Each can have its own delay and channel.
                     Available variables: <code>{{name}}</code>, <code>{{email}}</code>, <code>{{property_title}}</code>, <code>{{agent_name}}</code>, <code>{{phone}}</code>

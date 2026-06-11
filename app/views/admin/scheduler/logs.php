@@ -12,7 +12,7 @@ $logs = $logs ?? [];
         <div class="card-header py-3">
             <h6 class="m-0 fw-bold text-primary">Task Execution History</h6>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($logs)): ?>
                 <p class="text-muted text-center py-4"><i class="fas fa-inbox fa-2x d-block mb-2"></i>No execution logs found.</p>
             <?php else: ?>

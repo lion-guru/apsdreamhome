@@ -23,7 +23,7 @@ ob_start();
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-car me-2"></i>Visit Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/visits/store">
                         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                         <div class="row">
@@ -115,7 +115,7 @@ ob_start();
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Quick Tips</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <ul class="list-unstyled mb-0">
                         <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Select the lead from the dropdown</li>
                         <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Choose the property they want to visit</li>

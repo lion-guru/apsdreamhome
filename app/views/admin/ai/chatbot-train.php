@@ -16,7 +16,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white"><h5 class="mb-0">Add Training Data</h5></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <form method="post" action="<?php echo $base; ?>/admin/chatbot/train/store">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="mb-3">
@@ -53,7 +53,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <h5 class="mb-0">Training Data</h5>
                         <span class="badge bg-primary"><?php echo count($training_data); ?> entries</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <?php if (!empty($training_data)): ?>
                         <div class="table-responsive">
                             <table class="table table-hover">

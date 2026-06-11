@@ -18,7 +18,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <?php if (!empty($bookings)): ?>
         <!-- EMI Form -->
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <form id="emiForm" action="<?php echo $base; ?>/admin/emi/store" method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                     

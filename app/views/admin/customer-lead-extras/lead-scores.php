@@ -15,7 +15,7 @@ $page_description = 'Monitor and manage AI-powered lead scores';
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
@@ -32,7 +32,7 @@ $page_description = 'Monitor and manage AI-powered lead scores';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-danger bg-opacity-10 text-danger rounded p-3">
@@ -49,7 +49,7 @@ $page_description = 'Monitor and manage AI-powered lead scores';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-warning bg-opacity-10 text-warning rounded p-3">
@@ -66,7 +66,7 @@ $page_description = 'Monitor and manage AI-powered lead scores';
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-info bg-opacity-10 text-info rounded p-3">
@@ -88,7 +88,7 @@ $page_description = 'Monitor and manage AI-powered lead scores';
         <div class="card-header bg-white py-3">
             <h5 class="mb-0">Score Distribution</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="progress" style="height: 25px;">
                 <div class="progress-bar bg-success" style="width: <?php echo $stats['low_score_count'] > 0 ? round(($stats['low_score_count'] ?? 0) / (($stats['total_analyzed'] ?? 1) ?: 1) * 100) : 0; ?>%">
                     Low (0-59): <?php echo $stats['low_score_count'] ?? 0; ?>
@@ -112,7 +112,7 @@ $page_description = 'Monitor and manage AI-powered lead scores';
                 <a href="<?php echo BASE_URL; ?>/admin/customer-lead/lead-scores" class="btn btn-outline-primary btn-sm">Refresh</a>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead>

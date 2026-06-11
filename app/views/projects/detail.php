@@ -120,10 +120,10 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
             <div class="col-lg-8">
                 <!-- Project Overview -->
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header">
+                    <div class="card-header aps-cp-card-header">
                         <h4><i class="fas fa-info-circle me-2"></i>Project Overview</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="row">
                             <div class="col-md-6">
                                 <h5>Project Details</h5>
@@ -191,10 +191,10 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 
                 <!-- Project Description -->
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header">
+                    <div class="card-header aps-cp-card-header">
                         <h4><i class="fas fa-align-left me-2"></i>Description</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <p class="lead">
                             <?= nl2br(htmlspecialchars($project['description'])) ?>
                         </p>
@@ -204,10 +204,10 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Amenities -->
                 <?php if (!empty($project['amenities'])): ?>
                     <div class="card shadow-sm mb-4">
-                        <div class="card-header">
+                        <div class="card-header aps-cp-card-header">
                             <h4><i class="fas fa-concierge-bell me-2"></i>Amenities & Features</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row">
                                 <?php foreach ($project['amenities'] as $amenity): ?>
                                     <div class="col-md-6 mb-3">
@@ -225,10 +225,10 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Highlights -->
                 <?php if (!empty($project['highlights'])): ?>
                     <div class="card shadow-sm mb-4">
-                        <div class="card-header">
+                        <div class="card-header aps-cp-card-header">
                             <h4><i class="fas fa-star me-2"></i>Project Highlights</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row">
                                 <?php foreach ($project['highlights'] as $highlight): ?>
                                     <div class="col-md-6 mb-3">
@@ -246,10 +246,10 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Gallery -->
                 <?php if (!empty($project['gallery_images'])): ?>
                     <div class="card shadow-sm mb-4">
-                        <div class="card-header">
+                        <div class="card-header aps-cp-card-header">
                             <h4><i class="fas fa-images me-2"></i>Project Gallery</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="row gallery-container">
                                 <?php foreach ($project['gallery_images'] as $index => $image): ?>
                                     <div class="col-md-4 mb-3">
@@ -266,10 +266,10 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Location Map -->
                 <?php if (!empty($project['latitude']) && !empty($project['longitude'])): ?>
                     <div class="card shadow-sm mb-4">
-                        <div class="card-header">
+                        <div class="card-header aps-cp-card-header">
                             <h4><i class="fas fa-map-marked-alt me-2"></i>Location</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="location-info mb-3">
                                 <p><i class="fas fa-map-marker-alt me-2"></i>
                                    <?= htmlspecialchars($project['address']) ?>
@@ -287,7 +287,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Layout Map -->
                 <?php if (!empty($project['layout_map'])): ?>
                     <div class="card shadow-sm mb-4">
-                        <div class="card-header">
+                        <div class="card-header aps-cp-card-header">
                             <h4><i class="fas fa-project-diagram me-2"></i>Project Layout</h4>
                         </div>
                         <div class="card-body text-center">
@@ -301,10 +301,10 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
             <div class="col-lg-4">
                 <!-- Quick Info -->
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header">
+                    <div class="card-header aps-cp-card-header">
                         <h5><i class="fas fa-info-circle me-2"></i>Quick Information</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="info-item mb-3">
                             <strong>Project Status:</strong>
                             <span class="badge bg-<?= $project['project_status'] === 'completed' ? 'success' : 'info' ?> ms-2">
@@ -351,10 +351,10 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 
                 <!-- EMI Calculator -->
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header">
+                    <div class="card-header aps-cp-card-header">
                         <h5><i class="fas fa-calculator me-2"></i>EMI Calculator</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label for="loanAmount" class="form-label">Loan Amount (₹)</label>
                             <input type="number" class="form-control" id="loanAmount" placeholder="Enter loan amount">
@@ -384,7 +384,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                 <!-- Social Links -->
                 <?php if (!empty($project['social_facebook']) || !empty($project['social_instagram']) || !empty($project['social_twitter'])): ?>
                     <div class="card shadow-sm">
-                        <div class="card-header">
+                        <div class="card-header aps-cp-card-header">
                             <h5><i class="fas fa-share-alt me-2"></i>Follow Project</h5>
                         </div>
                         <div class="card-body text-center">

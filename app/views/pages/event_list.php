@@ -5,7 +5,7 @@
             <?php foreach ($events as $event): ?>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100">
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($event['title'] ?? ''); ?></h5>
                             <p class="card-text text-muted">
                                 <i class="fas fa-calendar"></i> <?php echo $event['event_date'] ?? ''; ?><br>

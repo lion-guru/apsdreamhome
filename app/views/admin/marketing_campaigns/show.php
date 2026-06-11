@@ -78,7 +78,7 @@ ob_start();
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-envelope-open-text me-2"></i>Message</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (!empty($campaign['subject'])): ?>
                         <p class="fw-bold"><?= htmlspecialchars($campaign['subject']) ?></p>
                     <?php endif; ?>
@@ -91,7 +91,7 @@ ob_start();
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Recipient Status</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (empty($status_breakdown)): ?>
                         <p class="text-muted mb-0">No recipients yet</p>
                     <?php else: ?>

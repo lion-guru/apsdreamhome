@@ -9,7 +9,7 @@
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-header bg-<?= $year_colors[$yr] ?? 'secondary' ?> text-white"><h5 class="mb-0"><?= htmlspecialchars($yr, ENT_QUOTES, 'UTF-8') ?></h5></div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <?php if (!empty($quarters)): foreach ($quarters as $q => $item): ?>
                                 <div class="mb-3 pb-2 border-bottom">
                                     <span class="badge bg-<?= $year_colors[$yr] ?? 'secondary' ?> mb-1"><?= strtoupper($q) ?></span>

@@ -5,7 +5,7 @@
         <div class="col-md-5">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-building me-2"></i>Property</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="mb-1"><strong><?= htmlspecialchars($property['title'] ?? '-') ?></strong></p>
                     <p class="text-muted"><?= htmlspecialchars($property['city'] ?? '') ?></p>
                 </div>
@@ -14,7 +14,7 @@
         <div class="col-md-7">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-file me-2"></i>Documents</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover table-responsive">
                             <thead><tr><th>Document Type</th><th>Hash</th><th>Status</th></tr></thead>

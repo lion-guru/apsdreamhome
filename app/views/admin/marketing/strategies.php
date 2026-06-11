@@ -23,7 +23,7 @@ $page_description = 'Manage marketing strategies and campaigns';
     <div class="row mb-4">
         <div class="col-xl-4 col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
@@ -40,7 +40,7 @@ $page_description = 'Manage marketing strategies and campaigns';
         </div>
         <div class="col-xl-4 col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-success bg-opacity-10 text-success rounded p-3">
@@ -57,7 +57,7 @@ $page_description = 'Manage marketing strategies and campaigns';
         </div>
         <div class="col-xl-4 col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
                             <div class="bg-secondary bg-opacity-10 text-secondary rounded p-3">
@@ -98,7 +98,7 @@ $page_description = 'Manage marketing strategies and campaigns';
                                 <i class="fas fa-image fa-3x text-muted"></i>
                             </div>
                         <?php endif; ?>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="card-title mb-0"><?= htmlspecialchars($s['title'] ?? '') ?></h5>
                                 <?php if ($s['active'] ?? 0): ?>

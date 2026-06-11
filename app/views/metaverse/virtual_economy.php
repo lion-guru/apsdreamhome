@@ -17,7 +17,7 @@
     <div class="row g-4 mb-4">
         <div class="col-md-4">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <i class="fas fa-money-bill-wave fa-3x text-success mb-3"></i>
                     <h5>Currency</h5>
                     <h3 class="text-success"><?= ($economy_data['virtual_currency'] ?? 'VRC') ?></h3>
@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
                     <h5>Market Cap</h5>
                     <h3 class="text-primary"><?= ($economy_data['market_cap'] ?? '₹0') ?></h3>
@@ -37,7 +37,7 @@
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 text-center">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-center mb-2">
                         <i class="fas fa-coins fa-3x text-warning"></i>
                     </div>
@@ -52,7 +52,7 @@
         <div class="card-header bg-white border-0">
             <h5 class="mb-0"><i class="fas fa-star me-2 text-warning"></i>Top Traded Assets</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover table-responsive">
                     <thead class="table-light">

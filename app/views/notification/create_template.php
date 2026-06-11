@@ -8,8 +8,8 @@
                 </h1>
             </div>
             
-            <div class="card">
-                <div class="card-body">
+            <div class="card aps-cp-card">
+                <div class="card-body aps-cp-card-body">
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i> Create template - Notification Management System
                     </div>
@@ -17,7 +17,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="card bg-primary text-white">
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <h5 class="card-title">Email Sent Today</h5>
                                     <h3>25</h3>
                                     <small>Messages Delivered</small>
@@ -26,7 +26,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="card bg-success text-white">
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <h5 class="card-title">SMS Sent Today</h5>
                                     <h3>18</h3>
                                     <small>Messages Delivered</small>
@@ -35,7 +35,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="card bg-warning text-white">
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <h5 class="card-title">Failed Messages</h5>
                                     <h3>2</h3>
                                     <small>Need Attention</small>
@@ -44,7 +44,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="card bg-info text-white">
-                                <div class="card-body">
+                                <div class="card-body aps-cp-card-body">
                                     <h5 class="card-title">Total Templates</h5>
                                     <h3>6</h3>
                                     <small>Active Templates</small>

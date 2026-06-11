@@ -17,7 +17,7 @@
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><small class="text-muted text-uppercase fw-bold">Total Received</small><h3 class="mb-0 mt-1 text-success">₹<?= number_format($totalReceived) ?></h3></div>
                         <div class="bg-success-subtle p-3 rounded"><i class="fas fa-wallet fa-2x text-success"></i></div>
@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><small class="text-muted text-uppercase fw-bold">Pending</small><h3 class="mb-0 mt-1 text-warning">₹<?= number_format($totalPending) ?></h3></div>
                         <div class="bg-warning-subtle p-3 rounded"><i class="fas fa-clock fa-2x text-warning"></i></div>
@@ -37,7 +37,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><small class="text-muted text-uppercase fw-bold">Refunded</small><h3 class="mb-0 mt-1 text-info">₹<?= number_format($totalRefunded) ?></h3></div>
                         <div class="bg-info-subtle p-3 rounded"><i class="fas fa-undo fa-2x text-info"></i></div>
@@ -47,7 +47,7 @@
         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div><small class="text-muted text-uppercase fw-bold">Transactions</small><h3 class="mb-0 mt-1 text-primary"><?= count($payments) ?></h3></div>
                         <div class="bg-primary-subtle p-3 rounded"><i class="fas fa-exchange-alt fa-2x text-primary"></i></div>

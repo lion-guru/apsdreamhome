@@ -24,7 +24,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
         <!-- Filters -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
                         <input type="text" class="form-control" placeholder="Search users...">
@@ -54,7 +54,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
         <!-- Users Table -->
         <div class="card border-0 shadow-sm">
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($users)): ?>
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover table-responsive">

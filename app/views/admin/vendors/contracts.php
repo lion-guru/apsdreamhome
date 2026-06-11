@@ -24,7 +24,7 @@ $contracts = $contracts ?? [];
     </div>
     <?php else: ?>
     <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>

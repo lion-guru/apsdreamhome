@@ -5,7 +5,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-edit me-2"></i>Calculate ROI</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <form id="edgeRoiForm">
                         <div class="mb-3">
                             <label class="form-label">Initial Investment (₹)</label>
@@ -24,7 +24,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>About Edge ROI</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p>Calculate return on investment for edge computing infrastructure.</p>
                     <ul class="mb-0">
                         <li>40% lower latency vs cloud</li>

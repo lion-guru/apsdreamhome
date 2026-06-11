@@ -22,7 +22,7 @@ ob_start();
         <div class="col-md-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Visit Information</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3"><div class="col-sm-5 text-muted">Visit ID</div><div class="col-sm-7"><strong>#<?= $visit['id'] ?></strong></div></div>
                     <div class="row mb-3"><div class="col-sm-5 text-muted">Customer</div><div class="col-sm-7"><?= $visit['customer_name'] ?? '-' ?></div></div>
                     <div class="row mb-3"><div class="col-sm-5 text-muted">Property/Plot</div><div class="col-sm-7"><?= $visit['property_title'] ?? $visit['plot_number'] ?? '-' ?></div></div>
@@ -36,7 +36,7 @@ ob_start();
         <div class="col-md-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-phone me-2"></i>Contact Info</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3"><small class="text-muted d-block">Customer Phone</small><strong><?= $visit['customer_phone'] ?? '-' ?></strong></div>
                     <div class="mb-3"><small class="text-muted d-block">Customer Email</small><?= $visit['customer_email'] ?? '-' ?></div>
                     <div class="mb-3"><small class="text-muted d-block">Visit Purpose</small><?= $visit['purpose'] ?? 'Site Visit' ?></div>

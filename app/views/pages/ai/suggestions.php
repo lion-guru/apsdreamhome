@@ -48,7 +48,7 @@
 
                     <div id="ai-suggestion-results" class="mt-4 d-none">
                         <div class="card bg-light border-0">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <h4 class="card-title mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>Our Recommendations</h4>
                                 <div id="suggestions-content" class="text-break" style="white-space: pre-wrap;"></div>
                             </div>

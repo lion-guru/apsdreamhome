@@ -8,8 +8,8 @@
     </a>
 </div>
 
-<div class="card">
-    <div class="card-body">
+<div class="card aps-cp-card">
+    <div class="card-body aps-cp-card-body">
         <div class="alert alert-info">
             <i class="fas fa-info-circle me-2"></i>Edit Property - Use form below to update details
         </div>

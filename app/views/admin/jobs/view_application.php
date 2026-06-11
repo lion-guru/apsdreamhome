@@ -42,7 +42,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Application Information</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Applied For</div><div class="col-sm-8"><strong><?= $application['job_title'] ?? '-' ?></strong></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Phone</div><div class="col-sm-8"><?= $application['phone'] ?? '-' ?></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Email</div><div class="col-sm-8"><?= $application['email'] ?? '-' ?></div></div>

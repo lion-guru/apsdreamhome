@@ -24,7 +24,7 @@ $e = $enrollment ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-user me-2"></i>User Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th>Name</th><td><?php echo htmlspecialchars($e['user_name'] ?? '-'); ?></td></tr>
                         <tr><th>Email</th><td><?php echo htmlspecialchars($e['user_email'] ?? '-'); ?></td></tr>
@@ -40,7 +40,7 @@ $e = $enrollment ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-book me-2"></i>Course Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th>Course</th><td><?php echo htmlspecialchars($e['course_title'] ?? '-'); ?></td></tr>
                         <tr><th>Category</th><td><span class="badge bg-info"><?php echo ucfirst($e['course_category'] ?? '-'); ?></span></td></tr>
@@ -58,7 +58,7 @@ $e = $enrollment ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Progress</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Progress: <?php echo (int)($e['progress_percentage'] ?? 0); ?>%</label>
                         <div class="progress" style="height: 20px;">
@@ -94,7 +94,7 @@ $e = $enrollment ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-certificate me-2"></i>Certificate Information</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
                         <tr><th>Certificate Issued</th>
                             <td><?php echo ($e['certificate_issued'] ?? 0) ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>'; ?></td>
@@ -121,7 +121,7 @@ $e = $enrollment ?? [];
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notes</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="mb-0"><?php echo nl2br(htmlspecialchars($e['notes'] ?? 'No notes available.')); ?></p>
                 </div>
             </div>

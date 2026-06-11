@@ -7,7 +7,7 @@ $page_title = $page_title ?? 'Add Employee';
 </div>
 
 <div class="card border-0 shadow-sm">
-    <div class="card-body">
+    <div class="card-body aps-cp-card-body">
         <form method="POST" action="<?= BASE_URL ?>/admin/hr/users/store">
             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
             <div class="row g-3">

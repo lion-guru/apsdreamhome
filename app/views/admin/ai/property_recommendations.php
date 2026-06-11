@@ -20,7 +20,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <?php foreach ($recommendations as $rec): ?>
                     <div class="col-md-4 mb-4">
                         <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body">
+                            <div class="card-body aps-cp-card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h5 class="card-title mb-0"><?php echo htmlspecialchars($rec['title'] ?? 'Property'); ?></h5>
                                     <span class="badge bg-success"><?php echo $rec['match_score'] ?? 0; ?>% Match</span>
@@ -50,7 +50,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="card-header bg-white">
                 <h5 class="mb-0"><i class="fas fa-users me-2"></i>Customer Segments</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <?php if (!empty($customer_segments)): ?>
                     <div class="row">
                         <?php foreach ($customer_segments as $segment): ?>

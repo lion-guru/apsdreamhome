@@ -12,7 +12,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-undo me-2"></i>Refund Request</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if ($payment): ?>
                     <div class="alert alert-info"><strong>Payment:</strong> ₹<?= number_format($payment['amount'] ?? 0) ?> via <?= htmlspecialchars($payment['gateway'] ?? '-') ?> on <?= htmlspecialchars($payment['created_at'] ?? '-') ?></div>
                     <?php endif; ?>

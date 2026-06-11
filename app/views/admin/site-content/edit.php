@@ -45,7 +45,7 @@ $groupLabels = [
                     <?= $groupLabels[$groupName] ?? ucfirst(str_replace('_', ' ', $groupName)) ?>
                 </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body aps-cp-card-body">
                 <div class="row">
                 <?php foreach ($groupItems as $item): ?>
                     <?php
@@ -95,7 +95,7 @@ $groupLabels = [
         <div class="card-header bg-white border-bottom">
             <h5 class="mb-0"><i class="fas fa-plus me-2 text-success"></i> Add New Content Entry</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <form action="<?= BASE_URL ?>/admin/site-content/create" method="POST">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="section" value="<?= htmlspecialchars($section) ?>">

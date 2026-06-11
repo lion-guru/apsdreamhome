@@ -22,7 +22,7 @@
         <?php foreach ($upcoming_events as $event): ?>
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <h5 class="card-title"><?= ($event['title'] ?? 'Untitled Event') ?></h5>
                         <span class="badge bg-success">Upcoming</span>
@@ -48,7 +48,7 @@
         <?php foreach ($past_events as $event): ?>
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100 opacity-75">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <h5 class="card-title"><?= ($event['title'] ?? 'Untitled Event') ?></h5>
                         <span class="badge bg-secondary">Past</span>

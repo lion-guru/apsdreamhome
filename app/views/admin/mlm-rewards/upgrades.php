@@ -12,11 +12,11 @@ $upgrades = $upgrades ?? [];
         </div>
     </div>
 
-    <div class="card">
+    <div class="card aps-cp-card">
         <div class="card-header bg-white py-3">
             <h5 class="mb-0"><i class="fas fa-history me-2"></i>Upgrade History</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <?php if (empty($upgrades)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-arrow-up fa-4x text-muted mb-3"></i>

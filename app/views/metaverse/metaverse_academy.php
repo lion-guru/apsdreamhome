@@ -27,7 +27,7 @@
         <?php foreach ($courses as $key => $course): ?>
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <i class="fas fa-<?= ($key === 'vr_basics') ? 'vr-cardboard' : (($key === 'property_tours') ? 'building' : 'briefcase') ?> fa-3x text-primary"></i>
                         <span class="badge bg-<?= (($course['difficulty'] ?? '') === 'Beginner') ? 'success' : (($course['difficulty'] ?? '') === 'Intermediate' ? 'warning' : 'danger') ?>">

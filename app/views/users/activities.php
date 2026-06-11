@@ -20,7 +20,7 @@ $activities = $activities ?? [];
             <?php foreach ($activities as $a): ?>
                 <div class="card shadow-sm mb-3 ms-4 position-relative">
                     <div class="position-absolute rounded-circle bg-primary" style="width: 12px; height: 12px; left: -28px; top: 18px;"></div>
-                    <div class="card-body">
+                    <div class="card-body aps-cp-card-body">
                         <div class="d-flex justify-content-between">
                             <h6 class="card-title mb-1"><?= htmlspecialchars($a['description'] ?? '') ?></h6>
                             <small class="text-muted"><?= htmlspecialchars($a['timestamp'] ?? '') ?></small>

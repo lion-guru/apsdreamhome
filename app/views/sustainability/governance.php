@@ -18,7 +18,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-file-alt me-2 text-primary"></i>Sustainability Policy</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6><?= ($policy['policy_document'] ?? 'N/A') ?></h6>
                     <div class="d-flex justify-content-between mb-2"><span>Last Updated</span><strong><?= ($policy['last_updated'] ?? '') ?></strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Scope</span><small><?= ($policy['scope'] ?? '') ?></small></div>
@@ -30,7 +30,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-sitemap me-2 text-info"></i>Governance Structure</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php foreach ($structure as $key => $val): ?>
                     <div class="mb-3"><strong class="small d-block text-capitalize"><?= str_replace('_', ' ', $key) ?></strong><small class="text-muted"><?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?></small></div>
                     <?php endforeach; ?>
@@ -41,7 +41,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-white border-0"><h5 class="mb-0"><i class="fas fa-chart-bar me-2 text-warning"></i>Reporting Framework</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <strong class="small d-block">Standards</strong>
                         <ul class="list-unstyled"><?php foreach (($reporting['standards_followed'] ?? []) as $s): ?><li class="small"><i class="fas fa-check text-success me-1"></i><?= htmlspecialchars($s, ENT_QUOTES, 'UTF-8') ?></li><?php endforeach; ?></ul>

@@ -117,7 +117,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white"><h5 class="mb-0">Quick Actions</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
                         <a href="<?= BASE_URL ?>/admin/mlm-realestate/packages" class="btn btn-outline-primary btn-sm"><i class="fas fa-box me-1"></i>Manage Packages</a>
                         <a href="<?= BASE_URL ?>/admin/mlm-realestate/networkers" class="btn btn-outline-info btn-sm"><i class="fas fa-user-tie me-1"></i>Networkers</a>
@@ -130,7 +130,7 @@
             </div>
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white"><h5 class="mb-0">Today's Activity</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <p class="mb-1"><strong>Flushed (Cap):</strong> ₹<?= number_format((float)($daily_cap_flushed ?? 0), 2) ?></p>
                     <p class="mb-0"><strong>Total Bookings:</strong> <?= (int)($stats['total_bookings'] ?? 0) ?></p>
                 </div>

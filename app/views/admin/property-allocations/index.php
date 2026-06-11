@@ -18,7 +18,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card bg-primary text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="card-subtitle mb-2">Total Allocations</h6>
                     <h3 class="card-title mb-0"><?= $stats['total_allocations'] ?? 0 ?></h3>
                     <small class="text-white-75">Total Count</small>
@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-3">
             <div class="card bg-success text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="card-subtitle mb-2">Confirmed</h6>
                     <h3 class="card-title mb-0"><?= $stats['confirmed_allocations'] ?? 0 ?></h3>
                     <small class="text-white-75">₹<?= number_format($stats['confirmed_amount'] ?? 0) ?></small>
@@ -36,7 +36,7 @@
         </div>
         <div class="col-md-3">
             <div class="card bg-warning text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="card-subtitle mb-2">Pending</h6>
                     <h3 class="card-title mb-0"><?= $stats['pending_allocations'] ?? 0 ?></h3>
                     <small class="text-white-75">Awaiting confirmation</small>
@@ -45,7 +45,7 @@
         </div>
         <div class="col-md-3">
             <div class="card bg-info text-white">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <h6 class="card-subtitle mb-2">Available Properties</h6>
                     <h3 class="card-title mb-0"><?= $stats['available_properties'] ?? 0 ?></h3>
                     <small class="text-white-75">Ready for allocation</small>
@@ -72,7 +72,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead class="table-light">

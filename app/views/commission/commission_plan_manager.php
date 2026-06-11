@@ -395,7 +395,7 @@ function deletePlan($plan_id) {
                                 <?php foreach ($plans as $plan): ?>
                                 <div class="col-md-6 mb-4">
                                     <div class="card plan-card h-100">
-                                        <div class="card-body">
+                                        <div class="card-body aps-cp-card-body">
                                             <div class="d-flex justify-content-between align-items-start mb-3">
                                                 <div>
                                                     <h5 class="card-title"><?php echo htmlspecialchars($plan['plan_name']); ?></h5>
@@ -463,8 +463,8 @@ function deletePlan($plan_id) {
                         <!-- Plan Calculator -->
                         <div id="calculator" class="mb-5">
                             <h3 class="mb-4">Plan Calculator</h3>
-                            <div class="card">
-                                <div class="card-body">
+                            <div class="card aps-cp-card">
+                                <div class="card-body aps-cp-card-body">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <h5>Test Commission Calculations</h5>

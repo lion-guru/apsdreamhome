@@ -17,7 +17,7 @@ ob_start();
         <div class="col-md-8">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Collection Information</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-3">
                         <div class="col-sm-4 text-muted">Receipt ID</div>
                         <div class="col-sm-8"><strong>#<?= $collection['id'] ?? '' ?></strong></div>
@@ -83,7 +83,7 @@ ob_start();
         <div class="col-md-4">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Verification</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <?php if (($collection['status'] ?? '') === 'submitted'): ?>
                         <p class="text-muted small">This receipt is pending verification.</p>
                         <div class="d-grid gap-2">
@@ -127,7 +127,7 @@ ob_start();
 
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-clock me-2"></i>Timeline</h5></div>
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="row mb-2">
                         <div class="col-6 text-muted small">Submitted</div>
                         <div class="col-6 small"><?= $collection['created_at'] ? date('d M Y H:i', strtotime($collection['created_at'])) : 'N/A' ?></div>

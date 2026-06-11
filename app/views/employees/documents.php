@@ -21,7 +21,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -43,7 +43,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -65,7 +65,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -87,7 +87,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card card text-white" style="background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h4 class="mb-0">
@@ -128,7 +128,7 @@
                                 <?= ucfirst($document['status'] ?? 'pending') ?>
                             </span>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body aps-cp-card-body">
                             <div class="document-info mb-3">
                                 <p class="mb-2">
                                     <strong>Type:</strong>

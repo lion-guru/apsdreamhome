@@ -74,7 +74,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
         <!-- Driver & Connection -->
         <div class="col-md-6 col-xl-3">
             <div class="card shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h6 class="text-muted text-uppercase small mb-2"><?= __('admin_cache_driver', null, 'Cache Driver') ?></h6>
@@ -94,7 +94,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
 
         <div class="col-md-6 col-xl-3">
             <div class="card shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h6 class="text-muted text-uppercase small mb-2"><?= __('admin_cache_hit_rate', null, 'Hit Rate') ?></h6>
@@ -112,7 +112,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
 
         <div class="col-md-6 col-xl-3">
             <div class="card shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h6 class="text-muted text-uppercase small mb-2"><?= __('admin_cache_redis_keys', null, 'Redis Keys') ?></h6>
@@ -130,7 +130,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
 
         <div class="col-md-6 col-xl-3">
             <div class="card shadow-sm h-100">
-                <div class="card-body">
+                <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <h6 class="text-muted text-uppercase small mb-2"><?= __('admin_cache_file_cache', null, 'File Cache') ?></h6>
@@ -215,7 +215,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
                 </button>
             </form>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row g-3 mb-3">
                 <?php foreach ($hotPathsMeta as $pathKey => $meta):
                     $s = $hotpath['paths'][$pathKey] ?? ['hits' => 0, 'misses' => 0, 'calls' => 0, 'hit_rate' => 0.0];
@@ -316,7 +316,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
         <div class="card-header bg-white">
             <h6 class="mb-0"><i class="fas fa-clock text-secondary me-2"></i>This-Page Statistics</h6>
         </div>
-        <div class="card-body">
+        <div class="card-body aps-cp-card-body">
             <div class="row g-3 small">
                 <div class="col-6 col-md-3"><strong>Redis hits:</strong> <?= (int)($session['redis_hits'] ?? 0) ?></div>
                 <div class="col-6 col-md-3"><strong>Redis misses:</strong> <?= (int)($session['redis_misses'] ?? 0) ?></div>
