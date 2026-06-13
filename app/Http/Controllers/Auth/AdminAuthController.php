@@ -41,7 +41,6 @@ class AdminAuthController extends BaseController
             $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
             $_SESSION['admin_name'] = $admin['name'] ?? 'Admin';
             $_SESSION['admin_username'] = $admin['name'] ?? 'admin';
-            $_SESSION['employee_id'] = $admin['id'];
             $_SESSION['user_id'] = $admin['id'];
             $_SESSION['role'] = $admin['role'] ?? 'admin';
             $_SESSION['user_email'] = $admin['email'] ?? 'apsdreamhome.com';
@@ -116,7 +115,6 @@ class AdminAuthController extends BaseController
             $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
             $_SESSION['admin_name'] = $admin['name'] ?? 'Admin';
             $_SESSION['admin_username'] = $admin['name'] ?? 'admin';
-            $_SESSION['employee_id'] = $admin['id'];
             $_SESSION['user_id'] = $admin['id'];
             $_SESSION['role'] = $admin['role'] ?? 'admin';
             $_SESSION['user_email'] = $admin['email'] ?? 'apsdreamhome.com';
@@ -167,7 +165,6 @@ class AdminAuthController extends BaseController
                 $_SESSION['admin_email'] = $user['email'];
                 $_SESSION['admin_role'] = $user['role'];
                 $_SESSION['admin_name'] = $user['name'];
-                $_SESSION['employee_id'] = $user['id'];
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['role'] = $user['role'];

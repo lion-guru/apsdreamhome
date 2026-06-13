@@ -427,19 +427,6 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                     ['label' => __('my_profile'), 'url' => '/agent/profile', 'icon' => 'fa-user-cog'],
                                 ];
                                 $logoutUrl = '/agent/logout';
-                            } elseif ($isEmployee) {
-                                $userName = $_SESSION['employee_name'] ?? 'Employee';
-                                $userRole = 'Employee';
-                                $userIcon = 'fa-user-tie';
-                                $dashboardUrl = '/employee/dashboard';
-                                $menuItems = [
-                                    ['label' => __('dashboard'), 'url' => '/employee/dashboard', 'icon' => 'fa-tachometer-alt'],
-                                    ['label' => __('my_tasks'), 'url' => '/employee/tasks', 'icon' => 'fa-tasks'],
-                                    ['label' => __('hr_attendance'), 'url' => '/employee/attendance', 'icon' => 'fa-clock'],
-                                    ['label' => __('hr_performance'), 'url' => '/employee/performance-page', 'icon' => 'fa-chart-line'],
-                                    ['label' => __('my_profile'), 'url' => '/employee/profile', 'icon' => 'fa-user-cog'],
-                                ];
-                                $logoutUrl = '/employee/logout';
                             } elseif ($isAdmin) {
                                 $userName = $_SESSION['admin_name'] ?? 'Admin';
                                 $userRole = 'Admin';
@@ -453,6 +440,19 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                     ['label' => __('my_profile'), 'url' => '/admin/profile', 'icon' => 'fa-user-cog'],
                                 ];
                                 $logoutUrl = '/admin/logout';
+                            } elseif ($isEmployee) {
+                                $userName = $_SESSION['employee_name'] ?? 'Employee';
+                                $userRole = 'Employee';
+                                $userIcon = 'fa-user-tie';
+                                $dashboardUrl = '/employee/dashboard';
+                                $menuItems = [
+                                    ['label' => __('dashboard'), 'url' => '/employee/dashboard', 'icon' => 'fa-tachometer-alt'],
+                                    ['label' => __('my_tasks'), 'url' => '/employee/tasks', 'icon' => 'fa-tasks'],
+                                    ['label' => __('hr_attendance'), 'url' => '/employee/attendance', 'icon' => 'fa-clock'],
+                                    ['label' => __('hr_performance'), 'url' => '/employee/performance-page', 'icon' => 'fa-chart-line'],
+                                    ['label' => __('my_profile'), 'url' => '/employee/profile', 'icon' => 'fa-user-cog'],
+                                ];
+                                $logoutUrl = '/employee/logout';
                             } else {
                                 // Customer (default)
                                 $userName = $_SESSION['user_name'] ?? __('my_account');
