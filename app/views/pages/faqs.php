@@ -14,8 +14,8 @@ if (!function_exists('__')) {
                 <p class="lead mb-4"><?= __('faqs_hero_lead') ?></p>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a href="index.php" class="text-white"><?= __('home') ?></a></li>
-                        <li class="breadcrumb-item"><a href="about.php" class="text-white"><?= __('about_us') ?></a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/" class="text-white"><?= __('home') ?></a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/about" class="text-white"><?= __('about_us') ?></a></li>
                         <li class="breadcrumb-item active text-white" aria-current="page"><?= __('faqs') ?></li>
                     </ol>
                 </nav>
@@ -293,7 +293,7 @@ if (!function_exists('__')) {
                 <h3 class="mb-3"><?= __('faqs_cta_title') ?></h3>
                 <p class="lead text-muted mb-4"><?= __('faqs_cta_desc') ?></p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
-                    <a href="contact.php" class="btn btn-primary btn-lg">
+                    <a href="<?= BASE_URL ?>/contact" class="btn btn-primary btn-lg">
                         <i class="fas fa-phone me-2"></i><?= __('contact_us') ?>
                     </a>
                     <a href="tel:<?= $phoneRaw ?>" class="btn btn-outline-primary btn-lg">

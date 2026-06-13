@@ -288,7 +288,7 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
                 </div>
             <?php endif; ?>
 
-            <a href="index.php" class="btn-home">
+            <a href="<?= BASE_URL ?>/" class="btn-home">
                 <i class="fas fa-home"></i> Back to Homepage
             </a>
         </div>

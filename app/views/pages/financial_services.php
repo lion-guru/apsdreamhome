@@ -46,8 +46,8 @@ try {
 <nav class="bg-light border-bottom py-2" aria-label="breadcrumb">
     <div class="container">
         <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item"><a href="services.php">Services</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/">Home</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/services">Services</a></li>
             <li class="breadcrumb-item active" aria-current="page">Financial Services</li>
         </ol>
     </div>
@@ -101,7 +101,7 @@ try {
                     <p class="text-muted mb-4">
                         We're currently expanding our financial services. Please contact us for immediate financial assistance.
                     </p>
-                    <a href="contact.php" class="btn btn-primary">Contact Us</a>
+                    <a href="<?= BASE_URL ?>/contact" class="btn btn-primary">Contact Us</a>
                 </div>
             </div>
         <?php endif; ?>

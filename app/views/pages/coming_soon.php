@@ -366,7 +366,7 @@
         </div>
 
         <!-- Back to Home -->
-        <a href="index.php" class="back-home">
+        <a href="<?= BASE_URL ?>/" class="back-home">
             <i class="fas fa-home me-2"></i>Back to Homepage
         </a>
     </div>

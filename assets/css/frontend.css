@@ -378,7 +378,7 @@ section { position: relative; }
     overflow: hidden;
     background: #fff;
     box-shadow: var(--shadow-sm);
-    transition: var(--transition);
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     position: relative;
 }
 .project-card::before {
@@ -1139,9 +1139,6 @@ main {
 }
 
 /* Premium Project Card Animations */
-.project-card {
-    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
-}
 .project-card.is-hidden {
     opacity: 0;
     transform: scale(0.9) translateY(10px);

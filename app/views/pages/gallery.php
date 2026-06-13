@@ -3,8 +3,8 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
-                <h1 class="display-4 fw-bold mb-3">Photo Gallery</h1>
-                <p class="lead mb-0">Explore our project galleries and property photos</p>
+                <h1 class="display-4 fw-bold mb-3"><?= __('gallery_hero_title') ?></h1>
+                <p class="lead mb-0"><?= __('gallery_hero_subtitle') ?></p>
             </div>
         </div>
     </div>
@@ -28,10 +28,10 @@
         <!-- Filter Buttons -->
         <div class="text-center mb-5">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary active" data-filter="all">All</button>
-                <button type="button" class="btn btn-outline-primary" data-filter="residential">Residential</button>
-                <button type="button" class="btn btn-outline-primary" data-filter="commercial">Commercial</button>
-                <button type="button" class="btn btn-outline-primary" data-filter="projects">Projects</button>
+                <button type="button" class="btn btn-primary active" data-filter="all"><?= __('gallery_filter_all') ?></button>
+                <button type="button" class="btn btn-outline-primary" data-filter="residential"><?= __('gallery_filter_residential') ?></button>
+                <button type="button" class="btn btn-outline-primary" data-filter="commercial"><?= __('gallery_filter_commercial') ?></button>
+                <button type="button" class="btn btn-outline-primary" data-filter="projects"><?= __('gallery_filter_projects') ?></button>
             </div>
         </div>
 
