@@ -3835,6 +3835,9 @@ $router->get('/admin/mlm/clawbacks/{id}',                         'App\\Http\\Co
 $router->post('/admin/mlm/clawbacks/{id}/recover',                'App\\Http\\Controllers\\Admin\\MLMCommissionController@clawbackRecover');
 $router->post('/admin/mlm/clawbacks/process',                     'App\\Http\\Controllers\\Admin\\MLMCommissionController@processClawbacksNow');
 $router->get('/admin/mlm/cron-log',                               'App\\Http\\Controllers\\Admin\\MLMCommissionController@cronLog');
+$router->get('/admin/mlm/payout-simulator',                       'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutSimulator');
+$router->post('/admin/mlm/payout-simulator/simulate',             'App\\Http\\Controllers\\Admin\\MLMCommissionController@payoutSimulateApi');
+$router->get('/admin/mlm/royalty-pool',                           'App\\Http\\Controllers\\Admin\\MLMCommissionController@royaltyPool');
 $router->get('/admin/mlm/api/rank-distribution',                  'App\\Http\\Controllers\\Admin\\MLMCommissionController@apiRankDistribution');
 
 // ============================================================

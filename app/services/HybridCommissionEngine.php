@@ -302,35 +302,43 @@ class HybridCommissionEngine
                 $receiptId
             );
 
-            // ── 6. Sum actuals and enforce hard cap ───────────────
+            // ── 6. Royalty Pool Contribution (2% — outside 20% cap) ──
+            $royaltyResult = $this->contributeToRoyaltyPool($bookingId, $amountReceived);
+
+            // ── 7. Career Rewards check (DB-driven, no writes to cap) ──
+            $careerResult = $this->checkCareerRewards($executingAgentId);
+
+            // ── 8. Sum actuals and enforce hard cap (Tracks A+B+C only) ──
             $totalActual = $trackAResult['distributed'] + $trackBResult['distributed'] + $trackCResult['distributed'];
 
             if ($totalActual > $totalCap) {
                 // Pro-rata clip across tracks
-                $factor     = $totalCap / $totalActual;
+                $factor       = $totalCap / $totalActual;
                 $trackAResult = $this->clipTrack($trackAResult, $factor);
                 $trackBResult = $this->clipTrack($trackBResult, $factor);
                 $trackCResult = $this->clipTrack($trackCResult, $factor);
                 $totalActual  = $totalCap;
             }
 
-            // ── 7. Update agent GBV in mlm_profiles ───────────────
+            // ── 9. Update agent GBV in mlm_profiles ───────────────
             $this->incrementGbv($executingAgentId, $amountReceived);
 
             $this->pdo->commit();
 
             return [
-                'success'           => true,
-                'booking_id'        => $bookingId,
-                'receipt_id'        => $receiptId,
-                'amount_received'   => $amountReceived,
-                'agent_id'          => $executingAgentId,
-                'global_cap'        => $totalCap,
-                'total_distributed' => $totalActual,
-                'track_a'           => $trackAResult,
-                'track_b'           => $trackBResult,
-                'track_c'           => $trackCResult,
-                'ledger_ids'        => array_merge(
+                'success'            => true,
+                'booking_id'         => $bookingId,
+                'receipt_id'         => $receiptId,
+                'amount_received'    => $amountReceived,
+                'agent_id'           => $executingAgentId,
+                'global_cap'         => $totalCap,
+                'total_distributed'  => $totalActual,
+                'track_a'            => $trackAResult,
+                'track_b'            => $trackBResult,
+                'track_c'            => $trackCResult,
+                'royalty_contribution' => $royaltyResult,
+                'career_reward'      => $careerResult,
+                'ledger_ids'         => array_merge(
                     $trackAResult['ledger_ids'] ?? [],
                     $trackBResult['ledger_ids'] ?? [],
                     $trackCResult['ledger_ids'] ?? []
@@ -912,34 +920,466 @@ class HybridCommissionEngine
      * Accepts: 'block_a', 'Block A', 'A', 'BLOCK_A', 'corner_1500', 'Corner 1500',
      *          'corner_1000', 'Corner 1000', 'COMMERCIAL_CORNER', etc.
      */
-    private function normaliseBlockKey(string $key): string
+    /* ================================================================
+       PUBLIC API — ROYALTY POOL (2% Global Site Manager Pool)
+       ================================================================ */
+
+    /**
+     * Royalty pool contribution rate (% of each payment).
+     * Site Manager global pool: 2% of all company sales volume.
+     */
+    private const ROYALTY_POOL_PCT = 2.0;
+
+    /** Minimum monthly GBV for a Site Manager to qualify for royalty pool share. */
+    private const ROYALTY_QUALIFICATION_GBV = 5000000; // ₹50 Lakhs
+
+    /**
+     * Contribute 2% of a payment to the monthly royalty pool.
+     * Called inside processPipelineCommission after Track A/B/C.
+     *
+     * @param int   $bookingId
+     * @param float $amountReceived
+     * @return array{success: bool, contribution: float, pool_total: float}
+     */
+    public function contributeToRoyaltyPool(int $bookingId, float $amountReceived): array
     {
-        $k = strtolower(trim($key));
+        try {
+            $contribution = round($amountReceived * (self::ROYALTY_POOL_PCT / 100), 2);
+            if ($contribution <= 0) {
+                return ['success' => true, 'contribution' => 0, 'pool_total' => 0];
+            }
 
-        // Direct map
-        if (isset(self::PRICING_MATRIX[$k])) {
-            return $k;
+            $monthYear = date('Y-m');
+
+            // Upsert the monthly pool accumulator
+            $stmt = $this->pdo->prepare("
+                INSERT INTO mlm_royalty_pool (month_year, total_pool_amount)
+                VALUES (?, ?)
+                ON DUPLICATE KEY UPDATE total_pool_amount = total_pool_amount + VALUES(total_pool_amount)
+            ");
+            $stmt->execute([$monthYear, $contribution]);
+
+            // Log the individual contribution for audit trail
+            $stmt = $this->pdo->prepare("
+                INSERT INTO mlm_royalty_contributions (month_year, booking_id, payment_amount, contribution_amount)
+                VALUES (?, ?, ?, ?)
+            ");
+            $stmt->execute([$monthYear, $bookingId, $amountReceived, $contribution]);
+
+            // Fetch updated pool total
+            $stmt = $this->pdo->prepare("SELECT total_pool_amount FROM mlm_royalty_pool WHERE month_year = ?");
+            $stmt->execute([$monthYear]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $poolTotal = $row ? (float) $row['total_pool_amount'] : $contribution;
+
+            return [
+                'success'      => true,
+                'contribution' => $contribution,
+                'pool_total'   => $poolTotal,
+            ];
+        } catch (Exception $e) {
+            error_log("[HybridCommissionEngine] contributeToRoyaltyPool FAILED: " . $e->getMessage());
+            return ['success' => false, 'contribution' => 0, 'pool_total' => 0, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Month-end: distribute the royalty pool equally among qualified Site Managers.
+     * A Site Manager qualifies if their monthly GBV >= ₹50 Lakhs.
+     *
+     * @param string $monthYear  Format: YYYY-MM
+     * @return array{success: bool, pool_amount: float, qualified_managers: int, per_share: float, ledger_ids: array}
+     */
+    public function distributeRoyaltyPool(string $monthYear): array
+    {
+        $this->pdo->beginTransaction();
+        try {
+            // Fetch pool total
+            $stmt = $this->pdo->prepare("SELECT * FROM mlm_royalty_pool WHERE month_year = ? FOR UPDATE");
+            $stmt->execute([$monthYear]);
+            $pool = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$pool || (float) $pool['total_pool_amount'] <= 0) {
+                $this->pdo->rollBack();
+                return ['success' => false, 'error' => 'No pool found or pool is empty for ' . $monthYear];
+            }
+
+            if ($pool['distributed_status'] === 'distributed') {
+                $this->pdo->rollBack();
+                return ['success' => false, 'error' => 'Pool already distributed for ' . $monthYear];
+            }
+
+            $poolAmount = (float) $pool['total_pool_amount'];
+
+            // Find qualified Site Managers: monthly GBV >= ₹50L
+            $stmt = $this->pdo->prepare("
+                SELECT
+                    pb.associate_id,
+                    u.id AS user_id,
+                    COALESCE(SUM(COALESCE(pb.agreement_value, pb.total_plot_value, 0)), 0) AS monthly_gbv
+                FROM plot_bookings pb
+                JOIN associates a ON a.id = pb.associate_id
+                JOIN users u ON u.id = a.user_id
+                WHERE YEAR(pb.created_at) = YEAR(CONCAT(?, '-01'))
+                  AND MONTH(pb.created_at) = MONTH(CONCAT(?, '-01'))
+                  AND pb.status NOT IN ('cancelled', 'refunded')
+                GROUP BY pb.associate_id, u.id
+                HAVING monthly_gbv >= ?
+            ");
+            $stmt->execute([$monthYear, $monthYear, self::ROYALTY_QUALIFICATION_GBV]);
+            $qualified = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $managerCount = count($qualified);
+            if ($managerCount === 0) {
+                // No qualified managers — keep pool accumulating
+                $this->pdo->rollBack();
+                return ['success' => false, 'error' => 'No qualified Site Managers for ' . $monthYear . ' (need ≥₹50L GBV each)'];
+            }
+
+            $perShare = round($poolAmount / $managerCount, 2);
+            $ledgerIds = [];
+
+            foreach ($qualified as $mgr) {
+                $stmt = $this->pdo->prepare("
+                    INSERT INTO mlm_commission_ledger
+                        (beneficiary_user_id, source_user_id, commission_type, amount, sale_amount,
+                         commission_percentage, status, notes, created_at)
+                    VALUES (?, ?, 'performance_bonus', ?, ?, 0, 'pending', ?, NOW())
+                ");
+                $note = "Site Manager Royalty Pool — {$monthYear} share (Pool: ₹" . number_format($poolAmount) . " ÷ {$managerCount} managers)";
+                $stmt->execute([$mgr['user_id'], $mgr['user_id'], $perShare, $poolAmount, $note]);
+                $ledgerIds[] = $this->pdo->lastInsertId();
+            }
+
+            // Mark pool as distributed
+            $stmt = $this->pdo->prepare("
+                UPDATE mlm_royalty_pool
+                SET distributed_status = 'distributed',
+                    distributed_at = NOW(),
+                    total_qualified_managers = ?,
+                    per_manager_share = ?
+                WHERE month_year = ?
+            ");
+            $stmt->execute([$managerCount, $perShare, $monthYear]);
+
+            $this->pdo->commit();
+
+            return [
+                'success'             => true,
+                'pool_amount'         => $poolAmount,
+                'qualified_managers'  => $managerCount,
+                'per_share'           => $perShare,
+                'ledger_ids'          => $ledgerIds,
+            ];
+        } catch (Exception $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            error_log("[HybridCommissionEngine] distributeRoyaltyPool FAILED: " . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get current month's royalty pool status.
+     */
+    public function getRoyaltyPoolStatus(?string $monthYear = null): array
+    {
+        $monthYear = $monthYear ?: date('Y-m');
+        $stmt = $this->pdo->prepare("SELECT * FROM mlm_royalty_pool WHERE month_year = ?");
+        $stmt->execute([$monthYear]);
+        $pool = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$pool) {
+            return [
+                'month_year'           => $monthYear,
+                'total_pool_amount'    => 0,
+                'qualified_managers'   => 0,
+                'per_manager_share'    => 0,
+                'distributed_status'   => 'accumulating',
+                'contributions_count'  => 0,
+            ];
         }
 
-        // Strip 'block ' / 'block_' prefix and map to block_x
-        $stripped = preg_replace('/^block\s*/i', '', $k);
-        if (isset(self::PRICING_MATRIX['block_' . $stripped])) {
-            return 'block_' . $stripped;
+        // Count contributions
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) AS cnt, COALESCE(SUM(contribution_amount),0) AS total FROM mlm_royalty_contributions WHERE month_year = ?");
+        $stmt->execute([$monthYear]);
+        $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [
+            'month_year'           => $monthYear,
+            'total_pool_amount'    => (float) $pool['total_pool_amount'],
+            'qualified_managers'   => (int) $pool['total_qualified_managers'],
+            'per_manager_share'    => (float) $pool['per_manager_share'],
+            'distributed_status'   => $pool['distributed_status'],
+            'distributed_at'       => $pool['distributed_at'] ?? null,
+            'contributions_count'  => (int) ($stats['cnt'] ?? 0),
+            'contributions_total'  => (float) ($stats['total'] ?? 0),
+        ];
+    }
+
+    /* ================================================================
+       PUBLIC API — CAREER REWARDS
+       ================================================================ */
+
+    /**
+     * Check if an agent has crossed a new rank threshold and award career reward.
+     *
+     * @param int $agentId  users.id
+     * @return array{success: bool, new_rank: bool, reward: array|null}
+     */
+    public function checkCareerRewards(int $agentId): array
+    {
+        try {
+            $currentRank = $this->resolveRank($agentId);
+            $gbv = $this->getAgentGbv($agentId);
+
+            // Check if reward already awarded for this rank
+            $stmt = $this->pdo->prepare("
+                SELECT id FROM mlm_career_rewards
+                WHERE user_id = ? AND rank_slug = ? AND status != 'cancelled'
+                LIMIT 1
+            ");
+            $stmt->execute([$agentId, $currentRank]);
+            if ($stmt->fetch()) {
+                return ['success' => true, 'new_rank' => false, 'reward' => null, 'message' => 'Reward already awarded for ' . $currentRank];
+            }
+
+            // Load rank details from DB (fallback to hardcoded)
+            $rankSlabs = $this->loadRankSlabsFromDb();
+            $slab = $rankSlabs[$currentRank] ?? null;
+
+            if (!$slab || empty($slab['reward_name'])) {
+                return ['success' => true, 'new_rank' => false, 'reward' => null, 'message' => 'No reward defined for ' . $currentRank];
+            }
+
+            // Award the reward
+            $stmt = $this->pdo->prepare("
+                INSERT INTO mlm_career_rewards (user_id, rank_slug, reward_name, reward_value, gbv_at_award, status, awarded_at)
+                VALUES (?, ?, ?, ?, ?, 'awarded', NOW())
+            ");
+            $stmt->execute([
+                $agentId,
+                $currentRank,
+                $slab['reward_name'],
+                $slab['reward_value'] ?? 0,
+                $gbv,
+            ]);
+
+            return [
+                'success'  => true,
+                'new_rank' => true,
+                'reward'   => [
+                    'rank'         => $currentRank,
+                    'rank_name'    => $slab['rank_name'],
+                    'reward_name'  => $slab['reward_name'],
+                    'reward_value' => $slab['reward_value'],
+                    'gbv'          => $gbv,
+                ],
+            ];
+        } catch (Exception $e) {
+            error_log("[HybridCommissionEngine] checkCareerRewards FAILED: " . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Load rank slabs from the mlm_rank_slabs table.
+     * Falls back to hardcoded RANK_SLABS if the table is empty.
+     */
+    public function loadRankSlabsFromDb(): array
+    {
+        try {
+            $stmt = $this->pdo->query("
+                SELECT rank_slug, rank_name, min_gbv, max_gbv, commission_rate, reward_name, reward_value
+                FROM mlm_rank_slabs
+                WHERE is_active = 1
+                ORDER BY min_gbv ASC
+            ");
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($rows)) {
+                // Fallback to hardcoded constants
+                $slabs = [];
+                foreach (self::RANK_SLABS as $slug => $slab) {
+                    $slabs[$slug] = [
+                        'rank_slug'       => $slug,
+                        'rank_name'       => self::RANK_NAMES[$slug] ?? $slug,
+                        'min_gbv'         => $slab['min_gbv'],
+                        'max_gbv'         => $slab['max_gbv'],
+                        'commission_rate' => $slab['rate'],
+                        'reward_name'     => null,
+                        'reward_value'    => null,
+                    ];
+                }
+                return $slabs;
+            }
+
+            $slabs = [];
+            foreach ($rows as $row) {
+                $slabs[$row['rank_slug']] = $row;
+            }
+            return $slabs;
+        } catch (Exception $e) {
+            // Graceful fallback
+            $slabs = [];
+            foreach (self::RANK_SLABS as $slug => $slab) {
+                $slabs[$slug] = [
+                    'rank_slug'       => $slug,
+                    'rank_name'       => self::RANK_NAMES[$slug] ?? $slug,
+                    'min_gbv'         => $slab['min_gbv'],
+                    'max_gbv'         => $slab['max_gbv'],
+                    'commission_rate' => $slab['rate'],
+                    'reward_name'     => null,
+                    'reward_value'    => null,
+                ];
+            }
+            return $slabs;
+        }
+    }
+
+    /* ================================================================
+       PUBLIC API — PAYOUT SIMULATOR (for Admin Calculator View)
+       ================================================================ */
+
+    /**
+     * Simulate the full commission payout for a given sale amount and seller rank.
+     * Pure computation — no DB writes. Used by the admin calculator view.
+     *
+     * @param float  $saleAmount     The payment/plot sale amount
+     * @param string $sellerRankSlug The seller's current rank slug
+     * @return array Full breakdown of all tracks + royalty + totals
+     */
+    public function simulatePayout(float $saleAmount, string $sellerRankSlug): array
+    {
+        $slabs = $this->loadRankSlabsFromDb();
+        $sellerSlab = $slabs[$sellerRankSlug] ?? null;
+        if (!$sellerSlab) {
+            return ['success' => false, 'error' => 'Unknown rank: ' . $sellerRankSlug];
         }
 
-        // Corner variants
-        if (preg_match('/corner.*1500/i', $k)) {
-            return 'corner_1500';
-        }
-        if (preg_match('/corner.*1000/i', $k)) {
-            return 'corner_1000';
+        $sellerRate = (float) $sellerSlab['commission_rate'];
+        $results = [
+            'success'          => true,
+            'sale_amount'      => $saleAmount,
+            'seller_rank'      => $sellerRankSlug,
+            'seller_rate'      => $sellerRate,
+            'global_cap'       => round($saleAmount * (self::GLOBAL_CAP_PCT / 100), 2),
+            'track_a_budget'   => round($saleAmount * (self::TRACK_A_CAP_PCT / 100), 2),
+            'track_b_budget'   => round($saleAmount * (self::TRACK_B_CAP_PCT / 100), 2),
+            'track_c_budget'   => round($saleAmount * (self::TRACK_C_CAP_PCT / 100), 2),
+            'royalty_contribution' => round($saleAmount * (self::ROYALTY_POOL_PCT / 100), 2),
+            'track_a_entries'  => [],
+            'track_b_entries'  => [],
+            'track_c_entries'  => [],
+            'track_a_total'    => 0,
+            'track_b_total'    => 0,
+            'track_c_total'    => 0,
+            'total_distributed'=> 0,
+        ];
+
+        // ── Track A: Slab Differential ──
+        $distributed = 0.0;
+        $budgetCap = $results['track_a_budget'];
+
+        // Direct agent slice
+        $agentSlice = $saleAmount * ($sellerRate / 100);
+        $alloc = min($agentSlice, max(0.0, $budgetCap - $distributed));
+        if ($alloc > 0.01) {
+            $results['track_a_entries'][] = [
+                'label'    => "Direct Sale ({$sellerSlab['rank_name']}, {$sellerRate}%)",
+                'rate'     => $sellerRate,
+                'amount'   => round($alloc, 2),
+                'type'     => 'direct_sale',
+            ];
+            $distributed += $alloc;
         }
 
-        // Commercial corner alias
-        if (preg_match('/commercial.*corner/i', $k)) {
-            return 'corner_1500';
+        // Build upline chain (simulate 7 levels)
+        $prevRate = $sellerRate;
+        $uplineRates = [];
+        foreach ($slabs as $slug => $slab) {
+            $rate = (float) $slab['commission_rate'];
+            if ($rate > $sellerRate) {
+                $uplineRates[] = ['slug' => $slug, 'name' => $slab['rank_name'], 'rate' => $rate];
+            }
+        }
+        // Sort by rate ascending
+        usort($uplineRates, fn($a, $b) => $a['rate'] <=> $b['rate']);
+
+        $sameRankCount = 0;
+        foreach ($uplineRates as $idx => $upline) {
+            if ($distributed >= $budgetCap) break;
+
+            $remaining = max(0.0, $budgetCap - $distributed);
+
+            if ($upline['rate'] === $prevRate) {
+                // Same-rank breakaway safeguard
+                $sameRankCount++;
+                $overridePct = ($sameRankCount === 1) ? 1.5 : (($sameRankCount === 2) ? 1.0 : 0.0);
+                if ($overridePct > 0) {
+                    $overrideAmt = $saleAmount * ($overridePct / 100);
+                    $alloc = min($overrideAmt, $remaining);
+                    if ($alloc > 0.01) {
+                        $results['track_a_entries'][] = [
+                            'label'    => "Same-Level Override ({$upline['name']}, Gen {$sameRankCount})",
+                            'rate'     => $overridePct,
+                            'amount'   => round($alloc, 2),
+                            'type'     => 'override',
+                        ];
+                        $distributed += $alloc;
+                    }
+                }
+                continue;
+            }
+
+            // Standard differential
+            $differential = $upline['rate'] - $prevRate;
+            if ($differential > 0) {
+                $diffAmt = $saleAmount * ($differential / 100);
+                $alloc = min($diffAmt, $remaining);
+                if ($alloc > 0.01) {
+                    $results['track_a_entries'][] = [
+                        'label'    => "Differential ({$upline['name']} {$upline['rate']}% − {$prevRate}%)",
+                        'rate'     => $differential,
+                        'amount'   => round($alloc, 2),
+                        'type'     => 'differential',
+                    ];
+                    $distributed += $alloc;
+                }
+            }
+            $prevRate = $upline['rate'];
         }
 
-        return $k; // fallback — will return null from getBlockPricing
+        $results['track_a_total'] = round($distributed, 2);
+
+        // ── Track B: Performance Rollup (3%) ──
+        $trackBAmt = round($saleAmount * 0.009, 2); // 0.9% qualifying bonus
+        $results['track_b_entries'][] = [
+            'label' => 'Performance Rollup (3 consecutive months)',
+            'rate'  => 0.9,
+            'amount'=> min($trackBAmt, $results['track_b_budget']),
+        ];
+        $results['track_b_total'] = min($trackBAmt, $results['track_b_budget']);
+
+        // ── Track C: Milestone Escrow (2%) ──
+        $trackCAmt = round($saleAmount * (self::TRACK_C_CAP_PCT / 100), 2);
+        $results['track_c_entries'][] = [
+            'label' => 'Milestone Escrow Credit',
+            'rate'  => self::TRACK_C_CAP_PCT,
+            'amount'=> min($trackCAmt, $results['track_c_budget']),
+        ];
+        $results['track_c_total'] = min($trackCAmt, $results['track_c_budget']);
+
+        // ── Totals ──
+        $results['total_distributed'] = round(
+            $results['track_a_total'] + $results['track_b_total'] + $results['track_c_total'],
+            2
+        );
+        $results['overhead_pct'] = round(($results['total_distributed'] / $saleAmount) * 100, 2);
+        $results['company_retains'] = round($saleAmount - $results['total_distributed'] - $results['royalty_contribution'], 2);
+        $results['company_retains_pct'] = round(($results['company_retains'] / $saleAmount) * 100, 2);
+
+        return $results;
     }
 }

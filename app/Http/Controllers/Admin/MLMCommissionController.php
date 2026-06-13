@@ -21,6 +21,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\MLM\MLMCommissionEngine;
+use App\Services\HybridCommissionEngine;
 use Exception;
 
 class MLMCommissionController extends AdminController
@@ -30,6 +31,9 @@ class MLMCommissionController extends AdminController
 
     /** @var MLMCommissionEngine */
     protected $engine;
+
+    /** @var HybridCommissionEngine */
+    protected $hybridEngine;
 
     public function __construct()
     {
@@ -48,6 +52,13 @@ class MLMCommissionController extends AdminController
             );
         } catch (Exception $e) {
             $this->engine = new MLMCommissionEngine();
+        }
+        try {
+            $this->hybridEngine = new HybridCommissionEngine(
+                $this->db instanceof \PDO ? $this->db : null
+            );
+        } catch (Exception $e) {
+            $this->hybridEngine = null;
         }
     }
 
@@ -572,6 +583,68 @@ class MLMCommissionController extends AdminController
             'data'    => $payload,
             'meta'    => ['total' => array_sum(array_column($payload, 'count'))],
         ]);
+    }
+
+    /* =============================================================
+     *  PAYOUT SIMULATOR (Admin Calculator)
+     * ============================================================= */
+
+    public function payoutSimulator()
+    {
+        $this->requireAdmin();
+
+        $rankSlabs = [];
+        if ($this->hybridEngine) {
+            $rankSlabs = $this->hybridEngine->loadRankSlabsFromDb();
+        }
+
+        $this->data = array_merge($this->data, [
+            'page_title'   => 'MLM Payout Simulator',
+            'page_heading' => 'Commission Payout Calculator',
+            'rank_slabs'   => $rankSlabs,
+        ]);
+
+        $this->render('admin/mlm/payout-simulator');
+    }
+
+    public function payoutSimulateApi()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        $saleAmount = (float)($_POST['sale_amount'] ?? 0);
+        $rankSlug   = $_POST['rank_slug'] ?? 'associate';
+
+        if ($saleAmount <= 0) {
+            echo json_encode(['success' => false, 'error' => 'Sale amount must be positive']);
+            return;
+        }
+
+        if (!$this->hybridEngine) {
+            echo json_encode(['success' => false, 'error' => 'HybridCommissionEngine not available']);
+            return;
+        }
+
+        $result = $this->hybridEngine->simulatePayout($saleAmount, $rankSlug);
+        echo json_encode($result);
+    }
+
+    public function royaltyPool()
+    {
+        $this->requireAdmin();
+
+        $status = [];
+        if ($this->hybridEngine) {
+            $status = $this->hybridEngine->getRoyaltyPoolStatus();
+        }
+
+        $this->data = array_merge($this->data, [
+            'page_title'   => 'Royalty Pool',
+            'page_heading' => 'Site Manager Royalty Pool (2%)',
+            'pool'         => $status,
+        ]);
+
+        $this->render('admin/mlm/royalty-pool');
     }
 
     /* =============================================================
