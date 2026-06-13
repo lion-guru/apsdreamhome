@@ -3,183 +3,187 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Core\Database\Database;
 
 class GalleryController extends AdminController
 {
-    /**
-     * Gallery listing
-     */
     public function index()
     {
+        $category = $_GET['category'] ?? '';
+        $sql = "SELECT * FROM gallery WHERE 1=1";
+        $params = [];
+        if ($category) {
+            $sql .= " AND category = ?";
+            $params[] = $category;
+        }
+        $sql .= " ORDER BY sort_order ASC, created_at DESC";
         try {
-            $images = $this->db->fetchAll("SELECT * FROM gallery_images ORDER BY created_at DESC") ?? [];
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $images = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             $images = [];
         }
 
+        $categories = [];
+        try {
+            $categories = $this->db->fetchAll("SELECT DISTINCT category, COUNT(*) as cnt FROM gallery GROUP BY category ORDER BY category");
+        } catch (\Exception $e) {}
+
         $data = [
             'page_title' => 'Gallery Management',
-            'page_description' => 'Manage photo gallery',
+            'active_page' => 'gallery',
             'images' => $images,
+            'categories' => $categories,
+            'current_category' => $category,
             'success' => $_SESSION['success'] ?? null,
             'error' => $_SESSION['error'] ?? null
         ];
         unset($_SESSION['success'], $_SESSION['error']);
-
         $this->render('admin/gallery/index', $data);
     }
 
-    /**
-     * Create gallery image form
-     */
     public function create()
     {
         $data = [
             'page_title' => 'Add Gallery Image',
-            'page_description' => 'Upload a new image to the gallery'
+            'active_page' => 'gallery',
+            'categories' => ['residential', 'commercial', 'projects', 'team', 'events', 'general']
         ];
-
         $this->render('admin/gallery/create', $data);
     }
 
-    /**
-     * Store gallery image
-     */
     public function store()
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/gallery');
+            return;
+        }
         try {
-            $category = $_POST['category'] ?? 'general';
-            $caption = $_POST['caption'] ?? '';
-            $status = $_POST['status'] ?? 'active';
-
-            // Handle file upload
             $imagePath = '';
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $validation = UploadValidator::validate($_FILES['image'], ['types' => 'images', 'max_size' => 10]);
-                if ($validation['valid']) {
+                $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (in_array($_FILES['image']['type'], $allowed) && $_FILES['image']['size'] <= 10 * 1024 * 1024) {
                     $uploadDir = dirname(__DIR__, 3) . '/assets/images/gallery/';
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
                     }
-
-                    $filename = $validation['sanitized_name'];
-                    $destination = $uploadDir . $filename;
-
-                    if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+                    $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                    $filename = 'gallery_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                    if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $filename)) {
                         $imagePath = 'assets/images/gallery/' . $filename;
                     }
                 }
             }
 
-            $this->db->insert('gallery_images', [
-                'category' => $category,
-                'image_path' => $imagePath,
-                'caption' => $caption,
-                'status' => $status,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
+            $stmt = $this->db->prepare("INSERT INTO gallery (title, category, caption, description, image_path, status, sort_order, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([
+                $_POST['title'] ?? '',
+                $_POST['category'] ?? 'general',
+                $_POST['caption'] ?? '',
+                $_POST['description'] ?? '',
+                $imagePath,
+                $_POST['status'] ?? 'active',
+                (int)($_POST['sort_order'] ?? 0)
             ]);
 
-            $_SESSION['success'] = 'Image added to gallery successfully!';
+            $_SESSION['success'] = 'Image added to gallery!';
             $this->redirect('/admin/gallery');
-
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Error adding image: ' . $e->getMessage();
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/gallery/create');
         }
     }
 
-    /**
-     * Edit gallery image
-     */
     public function edit($id = null)
     {
         try {
-            $image = $this->db->fetch("SELECT * FROM gallery_images WHERE id = ?", [$id]);
+            $stmt = $this->db->prepare("SELECT * FROM gallery WHERE id = ?");
+            $stmt->execute([$id]);
+            $image = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$image) {
                 $_SESSION['error'] = 'Image not found';
                 $this->redirect('/admin/gallery');
+                return;
             }
-
             $data = [
                 'page_title' => 'Edit Gallery Image',
-                'page_description' => 'Update gallery image details',
-                'image' => $image
+                'active_page' => 'gallery',
+                'image' => $image,
+                'categories' => ['residential', 'commercial', 'projects', 'team', 'events', 'general']
             ];
-
             $this->render('admin/gallery/edit', $data);
-
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Error loading image: ' . $e->getMessage();
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/gallery');
         }
     }
 
-    /**
-     * Update gallery image
-     */
     public function update($id = null)
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/gallery');
+            return;
+        }
         try {
             $updateData = [
+                'title' => $_POST['title'] ?? '',
                 'category' => $_POST['category'] ?? 'general',
                 'caption' => $_POST['caption'] ?? '',
+                'description' => $_POST['description'] ?? '',
                 'status' => $_POST['status'] ?? 'active',
+                'sort_order' => (int)($_POST['sort_order'] ?? 0),
                 'updated_at' => date('Y-m-d H:i:s')
             ];
 
-            // Handle file upload
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $validation = UploadValidator::validate($_FILES['image'], ['types' => 'images', 'max_size' => 10]);
-                if ($validation['valid']) {
+                $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (in_array($_FILES['image']['type'], $allowed) && $_FILES['image']['size'] <= 10 * 1024 * 1024) {
                     $uploadDir = dirname(__DIR__, 3) . '/assets/images/gallery/';
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
                     }
-
-                    $filename = $validation['sanitized_name'];
-                    $destination = $uploadDir . $filename;
-
-                    if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+                    $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                    $filename = 'gallery_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                    if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $filename)) {
                         $updateData['image_path'] = 'assets/images/gallery/' . $filename;
                     }
                 }
             }
 
-            $this->db->update('gallery_images', $updateData, ['id' => $id]);
+            $fields = [];
+            $values = [];
+            foreach ($updateData as $k => $v) {
+                $fields[] = "$k = ?";
+                $values[] = $v;
+            }
+            $values[] = $id;
+            $this->db->prepare("UPDATE gallery SET " . implode(', ', $fields) . " WHERE id = ?")->execute($values);
 
-            $_SESSION['success'] = 'Image updated successfully!';
+            $_SESSION['success'] = 'Image updated!';
             $this->redirect('/admin/gallery');
-
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Error updating image: ' . $e->getMessage();
-            $this->redirect('/admin/gallery/' . $id . '/edit');
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
+            $this->redirect("/admin/gallery/$id/edit");
         }
     }
 
-    /**
-     * Delete gallery image
-     */
     public function destroy($id = null)
     {
         try {
-            // Get image path to delete file
-            $image = $this->db->fetch("SELECT image_path FROM gallery_images WHERE id = ?", [$id]);
+            $stmt = $this->db->prepare("SELECT image_path FROM gallery WHERE id = ?");
+            $stmt->execute([$id]);
+            $image = $stmt->fetch(\PDO::FETCH_ASSOC);
             if ($image && !empty($image['image_path'])) {
                 $filePath = dirname(__DIR__, 3) . '/' . $image['image_path'];
                 if (file_exists($filePath)) {
                     unlink($filePath);
                 }
             }
-
-            $this->db->delete('gallery_images', ['id' => $id]);
-
-            $_SESSION['success'] = 'Image deleted successfully!';
+            $this->db->prepare("DELETE FROM gallery WHERE id = ?")->execute([$id]);
+            $_SESSION['success'] = 'Image deleted!';
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Error deleting image: ' . $e->getMessage();
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
-
         $this->redirect('/admin/gallery');
     }
 }

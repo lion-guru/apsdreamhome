@@ -755,10 +755,20 @@ class PageController extends BaseController
             error_log("Careers error: " . $e->getMessage());
         }
 
+        $benefits = [];
+        try {
+            $bStmt = $this->db->prepare("SELECT * FROM career_benefits WHERE is_active = 1 ORDER BY sort_order ASC");
+            $bStmt->execute();
+            $benefits = $bStmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("Career benefits error: " . $e->getMessage());
+        }
+
         $data = [
             'page_title' => 'Careers - APS Dream Home',
             'page_description' => 'Join our team at APS Dream Home',
-            'careers' => $careers
+            'careers' => $careers,
+            'benefits' => $benefits
         ];
         $this->render('pages/careers', $data);
     }
@@ -1522,10 +1532,26 @@ class PageController extends BaseController
     public function gallery()
     {
         [$cmsTitle, $pageContent] = $this->loadPageContent('gallery');
+
+        $galleryImages = [];
+        $galleryCategories = [];
+        try {
+            $stmt = $this->db->query("SELECT * FROM gallery WHERE status = 'active' ORDER BY sort_order ASC, created_at DESC");
+            $galleryImages = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $catStmt = $this->db->query("SELECT DISTINCT category FROM gallery WHERE status = 'active' ORDER BY category");
+            foreach ($catStmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+                $galleryCategories[] = $row['category'];
+            }
+        } catch (\Exception $e) {
+            error_log('Gallery error: ' . $e->getMessage());
+        }
+
         $data = [
             'page_title' => ($cmsTitle ?: 'Gallery') . ' - APS Dream Home',
             'page_description' => 'Photo and video gallery of our projects',
-            'pageContent' => $pageContent
+            'pageContent' => $pageContent,
+            'galleryImages' => $galleryImages,
+            'galleryCategories' => $galleryCategories
         ];
         $this->render('pages/gallery', $data);
     }
@@ -1555,9 +1581,17 @@ class PageController extends BaseController
     // Career Apply
     public function careerApply()
     {
+        $careers = [];
+        try {
+            $stmt = $this->db->prepare("SELECT id, title FROM careers WHERE status = 'open' ORDER BY title");
+            $stmt->execute();
+            $careers = $stmt->fetchAll(\PDO::FETCH_OBJ);
+        } catch (\Exception $e) {}
+
         $data = [
             'page_title' => 'Apply for a Job - APS Dream Home',
-            'page_description' => 'Submit your job application'
+            'page_description' => 'Submit your job application',
+            'careers' => $careers
         ];
         $this->render('pages/career_apply', $data);
     }
@@ -1565,12 +1599,48 @@ class PageController extends BaseController
     // Submit Career Application
     public function submitCareerApplication()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $_SESSION['success'] = 'Your application has been submitted successfully!';
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->careerApply();
+        }
+
+        $careerId = (int)($_POST['career_id'] ?? 0);
+        $fullName = trim($_POST['full_name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $coverLetter = trim($_POST['cover_letter'] ?? '');
+        $experienceYears = (int)($_POST['experience_years'] ?? 0);
+        $currentCompany = trim($_POST['current_company'] ?? '');
+
+        if (empty($fullName) || empty($email) || $careerId <= 0) {
+            $_SESSION['error'] = 'Please fill in all required fields.';
+            return $this->careerApply();
+        }
+
+        try {
+            $resumePath = null;
+            if (isset($_FILES['resume']) && $_FILES['resume']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = dirname(__DIR__, 3) . '/assets/uploads/resumes/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                $ext = pathinfo($_FILES['resume']['name'], PATHINFO_EXTENSION);
+                $filename = 'resume_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                if (move_uploaded_file($_FILES['resume']['tmp_name'], $uploadDir . $filename)) {
+                    $resumePath = 'assets/uploads/resumes/' . $filename;
+                }
+            }
+
+            $stmt = $this->db->prepare("INSERT INTO career_applications (career_id, full_name, email, phone, resume_path, cover_letter, experience_years, current_company, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
+            $stmt->execute([$careerId, $fullName, $email, $phone, $resumePath, $coverLetter, $experienceYears, $currentCompany]);
+
+            $_SESSION['success'] = 'Your application has been submitted successfully! We will review it and get back to you soon.';
             header('Location: ' . BASE_URL . '/careers');
             exit;
+        } catch (\Exception $e) {
+            error_log("Career application error: " . $e->getMessage());
+            $_SESSION['error'] = 'Something went wrong. Please try again.';
+            return $this->careerApply();
         }
-        return $this->careerApply();
     }
 
     // Career Jobs

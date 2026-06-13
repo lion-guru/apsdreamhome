@@ -67,11 +67,11 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                         <?php endif; ?>
 
                         <form action="<?= BASE_URL ?>careers/apply" method="POST" enctype="multipart/form-data">
-                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label fw-semibold"><?= __('testi_lbl_name', null, 'Full Name') ?> *</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <input type="text" class="form-control" id="name" name="full_name" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="email" class="form-label fw-semibold"><?= __('career_apply_email_lbl', null, 'Email Address') ?> *</label>
@@ -81,37 +81,41 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="phone" class="form-label fw-semibold"><?= __('career_apply_phone_lbl', null, 'Phone Number') ?> *</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" required>
+                                    <label for="phone" class="form-label fw-semibold"><?= __('career_apply_phone_lbl', null, 'Phone Number') ?></label>
+                                    <input type="tel" class="form-control" id="phone" name="phone">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="position" class="form-label fw-semibold"><?= __('career_apply_position_lbl', null, 'Position Applied For') ?> *</label>
-                                    <select class="form-select" id="position" name="position" required>
+                                    <select class="form-select" id="position" name="career_id" required>
                                         <option value="">Select Position</option>
-                                        <option value="Sales Executive">Sales Executive</option>
-                                        <option value="Marketing Manager">Marketing Manager</option>
-                                        <option value="Business Development">Business Development</option>
-                                        <option value="Customer Relations">Customer Relations</option>
-                                        <option value="Digital Marketing">Digital Marketing</option>
-                                        <option value="Office Administrator">Office Administrator</option>
-                                        <option value="Other">Other</option>
+                                        <?php if (!empty($careers)): ?>
+                                        <?php foreach ($careers as $job): ?>
+                                        <option value="<?= $job->id ?>"><?= htmlspecialchars($job->title) ?></option>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="experience" class="form-label fw-semibold"><?= __('career_apply_experience_lbl', null, 'Years of Experience') ?></label>
-                                <input type="text" class="form-control" id="experience" name="experience" placeholder="e.g., 2-3 years">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="experience" class="form-label fw-semibold"><?= __('career_apply_experience_lbl', null, 'Years of Experience') ?></label>
+                                    <input type="number" class="form-control" id="experience" name="experience_years" min="0" max="50">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="current_company" class="form-label fw-semibold">Current Company</label>
+                                    <input type="text" class="form-control" id="current_company" name="current_company">
+                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="message" class="form-label fw-semibold"><?= __('career_apply_cover_lbl', null, 'Cover Letter / Message') ?></label>
-                                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Tell us why you're interested in this position..."></textarea>
+                                <textarea class="form-control" id="message" name="cover_letter" rows="5" placeholder="Tell us why you're interested in this position..."></textarea>
                             </div>
 
                             <div class="mb-4">
-                                <label for="resume" class="form-label fw-semibold"><?= __('career_apply_resume_lbl', null, 'Resume/CV') ?> *</label>
-                                <input type="file" class="form-control" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
+                                <label for="resume" class="form-label fw-semibold"><?= __('career_apply_resume_lbl', null, 'Resume/CV') ?></label>
+                                <input type="file" class="form-control" id="resume" name="resume" accept=".pdf,.doc,.docx">
                                 <div class="form-text"><?= __('career_apply_resume_hint', null, 'Accepted formats: PDF, DOC, DOCX (Max size: 5MB)') ?></div>
                             </div>
 

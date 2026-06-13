@@ -1108,6 +1108,11 @@ $router->get('/admin/gallery/{id}/edit', 'App\\Http\\Controllers\\Admin\\Gallery
 $router->post('/admin/gallery/{id}/update', 'App\\Http\\Controllers\\Admin\\GalleryController@update');
 $router->get('/admin/gallery/{id}/destroy', 'App\\Http\\Controllers\\Admin\\GalleryController@destroy');
 
+// Admin About CMS
+$router->get('/admin/about-cms', 'App\\Http\\Controllers\\Admin\\AboutCmsController@index');
+$router->post('/admin/about-cms/update', 'App\\Http\\Controllers\\Admin\\AboutCmsController@update');
+$router->post('/admin/about-cms/upload-photo', 'App\\Http\\Controllers\\Admin\\AboutCmsController@uploadPhoto');
+
 // Admin Settings & System
 $router->get('/admin/settings', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
 $router->post('/admin/settings', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@update');

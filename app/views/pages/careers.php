@@ -54,65 +54,23 @@
         </div>
 
         <div class="row g-4">
+            <?php if (!empty($benefits)): ?>
+            <?php foreach ($benefits as $benefit): ?>
             <div class="col-lg-4">
                 <div class="value-card">
                     <div class="benefit-icon">
-                        <i class="fas fa-rocket"></i>
+                        <i class="fas <?= htmlspecialchars($benefit['icon'] ?? 'fa-star') ?>"></i>
                     </div>
-                    <h5><?= __('careers_b1_title', null, 'Growth Opportunities') ?></h5>
-                    <p class="text-muted"><?= __('careers_b1_desc', null, 'Continuous learning and career advancement opportunities in a growing company') ?></p>
+                    <h5><?= htmlspecialchars($benefit['title']) ?></h5>
+                    <p class="text-muted"><?= htmlspecialchars($benefit['description'] ?? '') ?></p>
                 </div>
             </div>
-
-            <div class="col-lg-4">
-                <div class="value-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h5><?= __('careers_b2_title', null, 'Collaborative Culture') ?></h5>
-                    <p class="text-muted"><?= __('careers_b2_desc', null, 'Work with talented professionals in a supportive and inclusive environment') ?></p>
-                </div>
+            <?php endforeach; ?>
+            <?php else: ?>
+            <div class="col-12 text-center text-muted py-4">
+                <i class="fas fa-info-circle me-2"></i>Benefits information coming soon.
             </div>
-
-            <div class="col-lg-4">
-                <div class="value-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-balance-scale"></i>
-                    </div>
-                    <h5><?= __('careers_b3_title', null, 'Work-Life Balance') ?></h5>
-                    <p class="text-muted"><?= __('careers_b3_desc', null, 'Flexible working hours and policies that support your personal life') ?></p>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="value-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-award"></i>
-                    </div>
-                    <h5><?= __('careers_b4_title', null, 'Competitive Compensation') ?></h5>
-                    <p class="text-muted"><?= __('careers_b4_desc', null, 'Attractive salary packages with performance-based incentives and benefits') ?></p>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="value-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h5><?= __('careers_b5_title', null, 'Employee Wellness') ?></h5>
-                    <p class="text-muted"><?= __('careers_b5_desc', null, 'Comprehensive health benefits and wellness programs for our team members') ?></p>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="value-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-home"></i>
-                    </div>
-                    <h5><?= __('careers_b6_title', null, 'Meaningful Work') ?></h5>
-                    <p class="text-muted"><?= __('careers_b6_desc', null, 'Contribute to building dream homes and communities that matter') ?></p>
-                </div>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 </section>
