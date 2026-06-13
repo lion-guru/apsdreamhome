@@ -662,12 +662,12 @@ class AdminController extends BaseController
     }
 
     /**
-     * WhatsApp Web Manage (redirect to localhost:3001)
+     * WhatsApp Web Manage (redirect to WhatsApp service)
      */
     public function whatsappWebManage()
     {
         $this->requireAdmin();
-        header('Location: http://localhost:3001');
+        header('Location: ' . WHATSAPP_SERVICE_URL);
         exit;
     }
 

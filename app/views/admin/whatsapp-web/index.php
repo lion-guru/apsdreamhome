@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-0"><i class="fab fa-whatsapp text-success me-2"></i> WhatsApp Web</h3>
         <div>
-            <a href="<?= BASE_URL ?>/admin/whatsapp-web/manage" target="_blank" class="btn btn-success">
+            <a href="<?= WHATSAPP_SERVICE_URL ?>" target="_blank" class="btn btn-success">
                 <i class="fas fa-qrcode me-1"></i> Open QR Scanner
             </a>
         </div>
@@ -12,7 +12,7 @@
         <div class="col-md-8">
             <div class="card aps-cp-card">
                 <div class="card-body text-center py-5">
-                    <iframe src="http://localhost:3001" width="100%" height="600" style="border:none;border-radius:8px" title="WhatsApp Web QR"></iframe>
+                    <iframe src="<?= WHATSAPP_SERVICE_URL ?>" width="100%" height="600" style="border:none;border-radius:8px" title="WhatsApp Web QR"></iframe>
                 </div>
             </div>
         </div>
@@ -56,11 +56,13 @@
 </div>
 
 <script>
+const WA_SERVICE_URL = '<?= WHATSAPP_SERVICE_URL ?>';
+
 async function checkStatus() {
     const el = document.getElementById('wa-status');
     el.innerHTML = '<p class="text-muted mb-0">Checking...</p>';
     try {
-        const r = await fetch('http://localhost:3001/api/status');
+        const r = await fetch(WA_SERVICE_URL + '/api/status');
         const d = await r.json();
         if (d.connected) {
             el.innerHTML = `<div class="alert alert-success mb-0">✅ Connected to ${d.number}<br><small>${d.pushname || ''}</small></div>`;
@@ -75,14 +77,14 @@ async function checkStatus() {
 }
 
 async function reconnectWA() {
-    await fetch('http://localhost:3001/api/reconnect', { method: 'POST' });
+    await fetch(WA_SERVICE_URL + '/api/reconnect', { method: 'POST' });
     document.getElementById('wa-status').innerHTML = '<p class="text-muted mb-0">🔄 Reconnecting... QR will appear soon</p>';
     setTimeout(checkStatus, 5000);
 }
 
 async function logoutWA() {
     if (confirm('Logout from WhatsApp Web?')) {
-        await fetch('http://localhost:3001/api/logout', { method: 'POST' });
+        await fetch(WA_SERVICE_URL + '/api/logout', { method: 'POST' });
         document.getElementById('wa-status').innerHTML = '<p class="text-muted mb-0">🚪 Logged out</p>';
     }
 }

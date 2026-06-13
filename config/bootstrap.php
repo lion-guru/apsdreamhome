@@ -40,6 +40,10 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', rtrim("$protocol://$host$script", '/'));
 }
 
+if (!defined('WHATSAPP_SERVICE_URL')) {
+    define('WHATSAPP_SERVICE_URL', getenv('WHATSAPP_SERVICE_URL') ?: 'http://localhost:3001');
+}
+
 // Environment detection
 $environment = getenv('APP_ENV') ?: 'development';
 if (!defined('APP_ENV')) {

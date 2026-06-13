@@ -97,7 +97,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <meta property="og:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:url" content="<?php echo BASE_URL . ($_SERVER['REQUEST_URI'] ?? '/'); ?>">
     <meta property="og:site_name" content="APS Dream Home">
 
     <!-- Twitter -->
@@ -105,9 +104,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <meta name="twitter:title" content="<?php echo $page_title ?? 'APS Dream Home'; ?>">
     <meta name="twitter:description" content="<?php echo $page_description ?? 'Premium Real Estate in Uttar Pradesh'; ?>">
     <meta name="twitter:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="<?php echo BASE_URL . ($_SERVER['REQUEST_URI'] ?? '/'); ?>">
 
     <?php if (isset($seo) && is_array($seo)): ?>
     <!-- SEO Auto-Injected Meta Tags (BaseController::generateSEO) -->

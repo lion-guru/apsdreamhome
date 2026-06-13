@@ -140,7 +140,7 @@ $statusColors = [
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/company-credentials/<?= $cred['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this credential permanently?')">
-                                        <input type="hidden" name="csrf_token" value="">
+                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                             <i class="fas fa-trash"></i>
                                         </button>

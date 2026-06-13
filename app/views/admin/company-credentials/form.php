@@ -24,7 +24,7 @@ $statusOptions = ['active' => 'Active', 'expired' => 'Expired', 'suspended' => '
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4">
                     <form method="POST" action="<?= BASE_URL . $action ?>">
-                        <input type="hidden" name="csrf_token" value="">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
 
                         <div class="row g-3">
                             <div class="col-md-6">

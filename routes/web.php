@@ -726,6 +726,7 @@ $router->get('/agent/collections/create', 'App\\Http\\Controllers\\FieldCollecti
 $router->post('/agent/collections/store', 'App\\Http\\Controllers\\FieldCollectionController@store');
 $router->get('/agent/collections/{id}', 'App\\Http\\Controllers\\FieldCollectionController@show');
 // Associate Auth
+$router->get('/register/associate', function() { header('Location: ' . BASE_URL . '/associate/register'); exit; });
 $router->get('/associate/register', 'Auth\\AssociateAuthController@associateRegister');
 $router->post('/associate/register', 'Auth\\AssociateAuthController@handleAssociateRegister');
 $router->get('/associate/login', 'Auth\\AssociateAuthController@associateLogin');
@@ -1192,15 +1193,7 @@ $router->post('/senior-developer/run-code', 'App\\Http\\Controllers\\AIControlle
 // API ROUTES
 // ============================================================
 
-// Gemini AI API
-$router->post('/api/gemini/chat', 'Api\\GeminiApiController@chat');
-$router->post('/api/gemini/generate', 'Api\\GeminiApiController@generateContent');
-$router->post('/api/gemini/recommendations', 'Api\\GeminiApiController@propertyRecommendations');
-$router->post('/api/gemini/support', 'Api\\GeminiApiController@customerSupport');
-$router->post('/api/gemini/market-analysis', 'Api\\GeminiApiController@marketAnalysis');
-$router->post('/api/gemini/social-media', 'Api\\GeminiApiController@socialMediaContent');
-$router->get('/api/gemini/test', 'Api\\GeminiApiController@testConnection');
-$router->get('/api/gemini/status', 'Api\\GeminiApiController@getStatus');
+// Gemini AI API (canonical routes — also in api.php; web.php removed to avoid duplicates)
 
 // Smart AI Chatbot (RBAC-enabled, Human-like)
 $router->post('/api/ai/chat', 'App\\Http\\Controllers\\SmartAIController@chat');
@@ -3942,7 +3935,6 @@ $router->post('/admin/finance/cash-collections/store',                          
 $router->get('/admin/finance/cash-collections/show/{id}',                          'Admin\\CashCollectionController@show');
 $router->get('/admin/finance/cash-collections/reconciliation',                     'Admin\\CashCollectionController@reconciliations');
 $router->post('/admin/finance/cash-collections/reconcile/{id}',                    'Admin\\CashCollectionController@reconcile');
-$router->get('/admin/finance/reconciliation',                                      'Admin\\CashCollectionController@reconciliations');
 
 // ============================================================
 // NOC & REGISTRY PIPE
@@ -3999,9 +3991,8 @@ $router->post('/api/push/unsubscribe',  'Api\\PushNotificationController@unsubsc
 $router->get('/api/push/vapid-key',     'Api\\PushNotificationController@vapidPublicKey');
 
 // ============================================================
-// API DOCUMENTATION (Admin UI)
+// API DOCUMENTATION (Admin UI) — canonical route at line ~1621
 // ============================================================
-$router->get('/admin/api-docs',          'Admin\\AdminController@apiDocs');
 
 // ============================================================
 // SERVICE CONFIGURATION (Centralized admin settings)

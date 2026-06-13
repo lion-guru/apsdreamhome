@@ -30,6 +30,11 @@ class AgentDashboardController extends BaseController
     {
         $this->requireLogin();
 
+        if (($_SESSION['role'] ?? '') !== 'agent') {
+            $this->redirect('/login');
+            return;
+        }
+
         $userId = $_SESSION['user_id'] ?? 0;
 
         try {
