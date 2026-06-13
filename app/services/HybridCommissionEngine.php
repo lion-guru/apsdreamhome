@@ -265,6 +265,25 @@ class HybridCommissionEngine
                 return ['success' => false, 'error' => 'Amount received must be positive'];
             }
 
+            // ── 0b. Independent Agent bypass — flat commission, no MLM upline ──
+            $assocStmt = $this->pdo->prepare(
+                "SELECT agent_track, brokerage_model, brokerage_rate FROM associates WHERE user_id = ? LIMIT 1"
+            );
+            $assocStmt->execute([$executingAgentId]);
+            $assocRecord = $assocStmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($assocRecord && ($assocRecord['agent_track'] ?? 'mlm') === 'independent') {
+                $result = $this->processIndependentAgentCommission(
+                    $bookingId,
+                    $receiptId,
+                    $amountReceived,
+                    $executingAgentId,
+                    $assocRecord
+                );
+                $this->pdo->commit();
+                return $result;
+            }
+
             // ── 1. Compute global cap envelope ────────────────────
             $totalCap    = $amountReceived * (self::GLOBAL_CAP_PCT / 100);
             $trackABudget = $amountReceived * (self::TRACK_A_CAP_PCT / 100);
@@ -757,6 +776,96 @@ class HybridCommissionEngine
             'milestone_triggered' => $milestoneTriggered,
             'ledger_ids'          => $ledgerIds,
             'entries'             => count($ledgerIds),
+        ];
+    }
+
+    /* ================================================================
+       PRIVATE — INDEPENDENT AGENT COMMISSION
+       ================================================================ */
+
+    /**
+     * Process flat commission for an independent agent.
+     *
+     * Independent agents bypass the entire MLM differential upline walk.
+     * Their commission is calculated from brokerage_model + brokerage_rate:
+     *  - flat_percentage: brokerage_rate% of payment amount
+     *  - flat_rate_sqft:  brokerage_rate × plot area (proportional to cash received)
+     *
+     * Commission is written directly to mlm_commission_ledger with level=0
+     * (no upline chain). Escrow portion (2%) still goes to Track C.
+     *
+     * @return array Same shape as processPipelineCommission for API compat
+     */
+    private function processIndependentAgentCommission(
+        int   $bookingId,
+        int   $receiptId,
+        float $amountReceived,
+        int   $agentUserId,
+        array $assocRecord
+    ): array {
+        $model = $assocRecord['brokerage_model'] ?? 'flat_percentage';
+        $rate  = (float) ($assocRecord['brokerage_rate'] ?? 0);
+
+        // Compute flat commission
+        if ($model === 'flat_rate_sqft' && $rate > 0) {
+            // Get plot area from booking → plot
+            $areaStmt = $this->pdo->prepare("
+                SELECT COALESCE(p.area_sqft, 0) AS area_sqft
+                FROM plot_bookings pb
+                JOIN plots p ON p.id = pb.plot_id
+                WHERE pb.id = ?
+                LIMIT 1
+            ");
+            $areaStmt->execute([$bookingId]);
+            $area = (float) $areaStmt->fetchColumn();
+            $flatCommission = $area * $rate;
+        } else {
+            // flat_percentage or fallback
+            $pct = $rate > 0 ? $rate : 8.0; // default 8% if not configured
+            $flatCommission = $amountReceived * ($pct / 100);
+        }
+
+        // Ensure we don't exceed the payment amount
+        $flatCommission = min($flatCommission, $amountReceived);
+
+        // Write single ledger entry — level 0 (no upline)
+        $ledgerId = $this->writeLedger(
+            $agentUserId,
+            $agentUserId,
+            $amountReceived,
+            $rate,
+            $flatCommission,
+            'independent_agent',
+            0,
+            $bookingId,
+            $receiptId,
+            "Independent agent commission — model: {$model}, rate: {$rate}"
+        );
+
+        // Track C: Escrow portion (2%) still applies to independent agents
+        $escrowAmount = $amountReceived * (self::TRACK_C_CAP_PCT / 100);
+        $this->contributeToRoyaltyPool($bookingId, $amountReceived);
+
+        // Increment agent GBV (for stats, not differential)
+        $this->incrementGbv($agentUserId, $amountReceived);
+
+        return [
+            'success'            => true,
+            'booking_id'         => $bookingId,
+            'receipt_id'         => $receiptId,
+            'amount_received'    => $amountReceived,
+            'agent_id'           => $agentUserId,
+            'agent_track'        => 'independent',
+            'brokerage_model'    => $model,
+            'brokerage_rate'     => $rate,
+            'global_cap'         => 0,
+            'total_distributed'  => round($flatCommission, 2),
+            'track_a'            => ['distributed' => 0, 'entries' => []],
+            'track_b'            => ['distributed' => 0, 'entries' => []],
+            'track_c'            => ['distributed' => round($escrowAmount, 2), 'entries' => [['label' => 'Escrow (independent)', 'amount' => $escrowAmount]]],
+            'royalty_contribution' => ['contributed' => true],
+            'career_reward'      => null,
+            'ledger_ids'         => [$ledgerId],
         ];
     }
 

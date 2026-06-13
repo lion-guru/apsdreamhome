@@ -50,6 +50,32 @@
                         <option value="suspended">Suspended</option>
                     </select>
                 </div>
+
+                <div class="col-12"><hr><h6 class="text-muted"><i class="fas fa-user-tag"></i> Agent Track & Brokerage</h6></div>
+                <div class="col-md-4">
+                    <label class="form-label">Agent Track</label>
+                    <select name="agent_track" id="agentTrack" class="form-select" onchange="toggleBrokerageFields()">
+                        <option value="mlm">MLM (Network Marketing)</option>
+                        <option value="independent">Independent Agent (Flat Commission)</option>
+                    </select>
+                    <small class="text-muted">Independent agents get flat commission, no MLM upline walk.</small>
+                </div>
+                <div class="col-md-4 brokerage-field" style="display:none;">
+                    <label class="form-label">Brokerage Model</label>
+                    <select name="brokerage_model" id="brokerageModel" class="form-select" onchange="toggleBrokerageRate()">
+                        <option value="differential">Differential (MLM Default)</option>
+                        <option value="flat_percentage">Flat Percentage (%)</option>
+                        <option value="flat_rate_sqft">Flat Rate per SqFt (₹)</option>
+                    </select>
+                </div>
+                <div class="col-md-4 brokerage-field" style="display:none;">
+                    <label class="form-label">Brokerage Rate</label>
+                    <div class="input-group">
+                        <input type="number" name="brokerage_rate" id="brokerageRate" class="form-control" step="0.01" min="0" max="100" value="8.00">
+                        <span class="input-group-text" id="brokerageUnit">%</span>
+                    </div>
+                    <small class="text-muted" id="brokerageHint">Percentage of payment amount (e.g. 8 = 8%)</small>
+                </div>
             </div>
             <div class="mt-4">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Create Associate</button>
@@ -64,6 +90,27 @@ function filterSponsors() {
     var select = document.getElementById('sponsorSelect');
     for (var i = 0; i < select.options.length; i++) {
         select.options[i].style.display = select.options[i].text.toLowerCase().includes(input) ? '' : 'none';
+    }
+}
+function toggleBrokerageFields() {
+    var isIndependent = document.getElementById('agentTrack').value === 'independent';
+    document.querySelectorAll('.brokerage-field').forEach(function(el) {
+        el.style.display = isIndependent ? '' : 'none';
+    });
+}
+function toggleBrokerageRate() {
+    var model = document.getElementById('brokerageModel').value;
+    var unit = document.getElementById('brokerageUnit');
+    var hint = document.getElementById('brokerageHint');
+    if (model === 'flat_rate_sqft') {
+        unit.textContent = '₹/sqft';
+        hint.textContent = 'Fixed rupees per square foot of plot area';
+    } else if (model === 'flat_percentage') {
+        unit.textContent = '%';
+        hint.textContent = 'Percentage of payment amount (e.g. 8 = 8%)';
+    } else {
+        unit.textContent = '%';
+        hint.textContent = 'Differential commission — MLM upline hierarchy';
     }
 }
 </script>

@@ -2932,6 +2932,15 @@ class PageController extends BaseController
             'total_stats' => $totalStats,
         ]);
     }
+
+    // Associate & Agent Opportunity Page
+    public function opportunity()
+    {
+        $this->render('pages/opportunity', [
+            'page_title' => 'Earning Opportunity - APS Dream Home',
+            'page_description' => 'Join the APS Dream Home Associate & Agent program to earn unlimited commissions.',
+        ]);
+    }
 }
 
 

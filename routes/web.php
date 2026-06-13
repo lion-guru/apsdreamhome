@@ -91,6 +91,7 @@ $router->get('/contact', 'Front\\PageController@contact');
 $router->post('/contact', 'Front\\PageController@contact');
 $router->get('/services', 'Front\\PageController@services');
 $router->get('/team', 'Front\\PageController@team');
+$router->get('/opportunity', 'Front\\PageController@opportunity');
 $router->get('/our-team', function () {
     header('Location: ' . BASE_URL . '/team', true, 301);
     exit;
