@@ -139,6 +139,19 @@ class PageController extends BaseController
                     error_log("Contact form error: " . $e->getMessage());
                 }
             }
+
+            if (
+                (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ||
+                (isset($_SERVER['HTTP_ACCEPT']) && strpos(strtolower($_SERVER['HTTP_ACCEPT']), 'application/json') !== false)
+            ) {
+                header('Content-Type: application/json');
+                if ($success) {
+                    echo json_encode(['success' => true, 'message' => __('contact_success', null, 'Thank you! Your message has been sent successfully.')]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => $error ?: 'Validation failed. Please check your inputs.']);
+                }
+                exit;
+            }
         }
 
         [$cmsTitle, $pageContent] = $this->loadPageContent('contact');

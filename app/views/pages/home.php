@@ -46,10 +46,10 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-lg-5">
-                    <div class="card border-0">
+                    <div class="card border-0 glass-card-premium">
                         <div class="card-header text-center py-3"
-                            style="background:#f1f5f9; border-bottom: 1px solid #e2e8f0;">
-                            <h5 class="mb-0 fw-semibold"><i class="fas fa-search me-2"></i><?= __('search') ?>
+                            style="background:transparent; border-bottom: 1px solid rgba(0,0,0,0.06);">
+                            <h5 class="mb-0 fw-semibold text-dark"><i class="fas fa-search me-2 text-primary"></i><?= __('search') ?>
                                 <?= __('properties') ?></h5>
                         </div>
                         <div class="card-body aps-cp-card-body">
@@ -239,17 +239,34 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                     </div>
                                 </div>
                                 <div class="col-md-5">
-                                    <div class="result-card bg-dark text-white">
-                                        <p class="text-white-50 mb-1 small text-uppercase"
+                                    <div class="result-card bg-dark text-white" style="background: rgba(15, 23, 42, 0.95) !important; border: 1px solid rgba(255,255,255,0.05); box-shadow: var(--shadow-xl); border-radius: var(--radius-md); padding: 1.75rem;">
+                                        <p class="text-white-50 mb-1 small text-uppercase text-center"
                                             style="letter-spacing:0.08em;"><?= __('home_your_monthly_emi') ?></p>
-                                        <p class="display-4 fw-bold mb-0" id="emiResult" style="color:#818cf8;">₹42,426
-                                        </p>
+                                        <p class="display-5 fw-bold mb-0 text-center" id="emiResult" style="color:#818cf8;">₹42,426</p>
+                                        
+                                        <!-- Animated Donut Chart -->
+                                        <div class="emi-chart-container my-3">
+                                            <svg width="120" height="120" viewBox="0 0 100 100" class="emi-donut-svg">
+                                                <circle class="emi-donut-ring" cx="50" cy="50" r="40" />
+                                                <circle id="emiPrincipalSegment" class="emi-donut-segment-principal" cx="50" cy="50" r="40" />
+                                                <circle id="emiInterestSegment" class="emi-donut-segment-interest" cx="50" cy="50" r="40" />
+                                                <g class="emi-donut-text">
+                                                    <text x="50" y="48" id="chartPrincipalPct" class="emi-donut-val">50%</text>
+                                                    <text x="50" y="58" class="emi-donut-label">Principal</text>
+                                                </g>
+                                            </svg>
+                                        </div>
+
                                         <hr class="border-secondary my-3">
                                         <div class="d-flex justify-content-between">
-                                            <span class="text-white-50"><?= __('home_total_interest') ?></span>
-                                            <span class="fw-bold text-white" id="totalInterest">₹51,82,240</span>
+                                            <span class="text-white-50"><i class="fas fa-circle me-1" style="color: #818cf8;"></i><?= __('home_loan_amount') ?></span>
+                                            <span class="fw-bold text-white" id="totalPrincipalDisp">₹50,00,000</span>
                                         </div>
                                         <div class="d-flex justify-content-between mt-2">
+                                            <span class="text-white-50"><i class="fas fa-circle me-1" style="color: #f59e0b;"></i><?= __('home_total_interest') ?></span>
+                                            <span class="fw-bold text-white" id="totalInterest">₹51,82,240</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-2 pt-2 border-top border-secondary">
                                             <span class="text-white-50"><?= __('home_total_payment') ?></span>
                                             <span class="fw-bold text-white" id="totalPayment">₹1,01,82,240</span>
                                         </div>
@@ -273,17 +290,50 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 
         document.getElementById('loanAmtDisplay').textContent = '₹' + P.toLocaleString('en-IN');
         document.getElementById('rateDisplay').textContent = document.getElementById('interestRate').value + '%';
-        document.getElementById('tenureDisplay').textContent = document.getElementById('loanTenure').value + ' ' + T.years;
+        document.getElementById('tenureDisplay').textContent = document.getElementById('loanTenure').value + ' ' + '<?= __('home_years') ?>';
+
+        let emi = 0;
+        let totalPay = 0;
+        let totalInt = 0;
 
         if (R === 0) {
-            document.getElementById('emiResult').textContent = '₹' + Math.round(P / N).toLocaleString('en-IN');
+            emi = P / N;
+            totalPay = P;
+            totalInt = 0;
         } else {
-            const emi = P * R * Math.pow(1 + R, N) / (Math.pow(1 + R, N) - 1);
-            const totalPay = emi * N;
-            const totalInt = totalPay - P;
-            document.getElementById('emiResult').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
-            document.getElementById('totalInterest').textContent = '₹' + Math.round(totalInt).toLocaleString('en-IN');
-            document.getElementById('totalPayment').textContent = '₹' + Math.round(totalPay).toLocaleString('en-IN');
+            emi = P * R * Math.pow(1 + R, N) / (Math.pow(1 + R, N) - 1);
+            totalPay = emi * N;
+            totalInt = totalPay - P;
+        }
+
+        document.getElementById('emiResult').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
+        document.getElementById('totalInterest').textContent = '₹' + Math.round(totalInt).toLocaleString('en-IN');
+        document.getElementById('totalPayment').textContent = '₹' + Math.round(totalPay).toLocaleString('en-IN');
+        if (document.getElementById('totalPrincipalDisp')) {
+            document.getElementById('totalPrincipalDisp').textContent = '₹' + P.toLocaleString('en-IN');
+        }
+
+        // Calculate donut segments
+        const circumference = 2 * Math.PI * 40; // ~251.327
+        const principalShare = P / totalPay;
+        const interestShare = totalInt / totalPay;
+
+        const principalOffset = 0;
+        const interestOffset = principalShare * circumference;
+
+        const principalSeg = document.getElementById('emiPrincipalSegment');
+        const interestSeg = document.getElementById('emiInterestSegment');
+        const pctLabel = document.getElementById('chartPrincipalPct');
+
+        if (principalSeg && interestSeg && pctLabel) {
+            // Set dasharrays and offsets
+            principalSeg.style.strokeDasharray = `${circumference}`;
+            principalSeg.style.strokeDashoffset = `${principalOffset}`;
+            
+            interestSeg.style.strokeDasharray = `${circumference}`;
+            interestSeg.style.strokeDashoffset = `${circumference - interestOffset}`; // starts where principal ends
+            
+            pctLabel.textContent = Math.round(principalShare * 100) + '%';
         }
     }
     calcEMI();
@@ -292,12 +342,21 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     <!-- Our Projects -->
     <section class="py-5 bg-light" aria-labelledby="projects-title">
         <div class="container">
-            <div class="text-center mb-5">
+            <div class="text-center mb-4">
                 <span class="section-label"><?= __('home_our_portfolio') ?></span>
                 <h2 id="projects-title" class="fw-bold"><?= __('section_our_projects') ?></h2>
                 <p class="section-subtitle"><?= __('projects_subtitle') ?></p>
                 <div class="section-divider"></div>
             </div>
+
+            <!-- Location Filter Tabs -->
+            <div class="filter-tabs-container">
+                <button class="filter-tab-btn active" data-filter="all">All Locations</button>
+                <button class="filter-tab-btn" data-filter="gorakhpur">Gorakhpur</button>
+                <button class="filter-tab-btn" data-filter="lucknow">Lucknow</button>
+                <button class="filter-tab-btn" data-filter="kushinagar">Kushinagar</button>
+            </div>
+
             <div class="row card-stagger">
                 <?php
                 $featured_properties = $featured_properties ?? [];
@@ -312,7 +371,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     ];
                     foreach ($fallbackProjects as $project):
                 ?>
-                <div class="col-lg-3 col-md-6 mb-4">
+                <div class="col-lg-3 col-md-6 mb-4 project-card-item" data-location="<?= strtolower($project['city'] ?? '') ?>">
                     <div class="project-card h-100">
                         <div class="position-relative overflow-hidden">
                             <img loading="lazy"
@@ -351,7 +410,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             $imgPath .= 'placeholder/property.svg';
                         }
                     ?>
-                <div class="col-lg-3 col-md-6 mb-4">
+                <div class="col-lg-3 col-md-6 mb-4 project-card-item" data-location="<?php echo strtolower($project['city'] ?? ''); ?>">
                     <div class="project-card h-100">
                         <div class="position-relative overflow-hidden">
                             <img loading="lazy" src="<?php echo BASE_URL . $imgPath; ?>" class="w-100"
@@ -364,7 +423,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         <div class="card-body aps-cp-card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($project['title'] ?? ''); ?></h5>
                             <p class="text-muted small mb-2"><i
-                                    class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($project['city']); ?>
+                                    class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($project['city'] ?? ''); ?>
                             </p>
                             <p class="price"><?php echo $project['price']; ?></p>
                             <a href="<?php echo BASE_URL; ?>/colony/<?php echo $slug; ?>"
@@ -375,6 +434,46 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 <?php endforeach; ?>
                 <?php endif; ?>
             </div>
+            
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const btns = document.querySelectorAll('.filter-tab-btn');
+                const items = document.querySelectorAll('.project-card-item');
+                btns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        btns.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        const filterVal = this.getAttribute('data-filter');
+                        items.forEach(item => {
+                            const itemLoc = item.getAttribute('data-location') || '';
+                            if (filterVal === 'all' || itemLoc.includes(filterVal)) {
+                                item.style.display = 'block';
+                                const card = item.querySelector('.project-card');
+                                if (card) {
+                                    card.classList.remove('is-hidden');
+                                    card.classList.add('is-visible');
+                                }
+                            } else {
+                                const card = item.querySelector('.project-card');
+                                if (card) {
+                                    card.classList.remove('is-visible');
+                                    card.classList.add('is-hidden');
+                                }
+                                setTimeout(() => {
+                                    if (this.classList.contains('active')) { // only hide if state hasn't changed back
+                                        const curFilter = this.getAttribute('data-filter');
+                                        if (curFilter !== 'all' && !itemLoc.includes(curFilter)) {
+                                            item.style.display = 'none';
+                                        }
+                                    }
+                                }, 300);
+                            }
+                        });
+                    });
+                });
+            });
+            </script>
+
             <div class="text-center mt-4">
                 <a href="<?php echo BASE_URL; ?>/company/projects"
                     class="btn btn-gradient btn-lg"><?= __('nav_all_projects') ?></a>
@@ -760,27 +859,60 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         }
         featuresHtml += '</div>';
 
-        featuresHtml += '<div class="col-md-5"><div class="bg-' + svc.ctaColor +
-            ' bg-opacity-10 rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center">';
-        featuresHtml += '<i class="fas ' + svc.icon + ' fa-3x text-' + svc.ctaColor + ' mb-3"></i>';
-        featuresHtml += '<h5 class="fw-bold">' + svc.ctaHeading + '</h5>';
-        featuresHtml += '<p class="text-muted small">' + (svc.ctaDesc || '') + '</p>';
-        if (svc.ctaBtn) {
-            featuresHtml += '<a href="#" class="btn btn-' + svc.ctaColor + '" onclick="' + svc.ctaAction +
-                ';return false;"><i class="fas fa-calculator me-2"></i>' + svc.ctaBtn + '</a>';
-        }
-        if (svc.phone) {
-            featuresHtml += '<hr class="my-3"><p class="small text-muted mb-1">\uD83D\uDCDE ' + t.call_label + ' ' + svc.phone +
-                '</p>';
-        }
-        if (svc.whatsapp) {
-            featuresHtml += '<p class="small text-muted mb-0">\uD83D\uDCAC <a href="' + svc.whatsapp +
-                '" target="_blank"><?= __("home_whatsapp") ?></a></p>';
-        }
-        featuresHtml += '</div></div></div>';
+        featuresHtml += '<div class="col-md-5"><div class="card border-0 shadow-sm p-4 h-100" style="background: var(--gray-50); border: 1px solid var(--gray-200) !important; border-radius: var(--radius-md);">';
+        featuresHtml += '<h5 class="fw-bold mb-3"><i class="fas fa-paper-plane text-' + svc.ctaColor + ' me-2"></i><?= __("enquire_services", null, "Quick Inquiry") ?></h5>';
+        featuresHtml += '<form id="modalServiceInquiryForm" class="small">';
+        featuresHtml += '<input type="hidden" name="service_type" value="' + service + '">';
+        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("your_name", null, "Name") ?> *</label><input type="text" class="form-control form-control-sm" name="name" required></div>';
+        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("phone", null, "Phone") ?> *</label><input type="tel" class="form-control form-control-sm" name="phone" required></div>';
+        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("email", null, "Email") ?> *</label><input type="email" class="form-control form-control-sm" name="email" required></div>';
+        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("additional_details", null, "Details") ?></label><textarea class="form-control form-control-sm" name="message" rows="2" placeholder="Tell us more..."></textarea></div>';
+        featuresHtml += '<button type="submit" class="btn btn-sm btn-' + svc.ctaColor + ' w-100 mt-1" id="modalSubmitBtn"><i class="fas fa-paper-plane me-1"></i><?= __("submit_inquiry", null, "Submit Inquiry") ?></button>';
+        featuresHtml += '<div id="modalFormResponse" class="alert p-2 mt-2 small d-none"></div>';
+        featuresHtml += '</form></div></div></div>';
 
         body.innerHTML = featuresHtml;
         showBootstrapModal('serviceModal');
+
+        // Dynamic event binding for modal form
+        const modalForm = document.getElementById('modalServiceInquiryForm');
+        if (modalForm) {
+            modalForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const mSubmitBtn = document.getElementById('modalSubmitBtn');
+                const mResponse = document.getElementById('modalFormResponse');
+                
+                mSubmitBtn.disabled = true;
+                mSubmitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span><?= __("services_sending", null, "Sending...") ?>';
+                
+                const formData = new FormData(modalForm);
+                fetch('<?php echo BASE_URL; ?>/service-interest', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(d => {
+                    mResponse.classList.remove('d-none', 'alert-success', 'alert-danger');
+                    mResponse.classList.add(d.success ? 'alert-success' : 'alert-danger');
+                    mResponse.textContent = d.message;
+                    if (d.success) {
+                        modalForm.reset();
+                        if (window.APS && window.APS.showNotification) {
+                            window.APS.showNotification('Inquiry submitted successfully!', 'success');
+                        }
+                    }
+                    mSubmitBtn.disabled = false;
+                    mSubmitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>' + '<?= __("submit_inquiry", null, "Submit Inquiry") ?>';
+                })
+                .catch(err => {
+                    mResponse.classList.remove('d-none', 'alert-success');
+                    mResponse.classList.add('alert-danger');
+                    mResponse.textContent = 'Something went wrong. Please try again.';
+                    mSubmitBtn.disabled = false;
+                    mSubmitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>' + '<?= __("submit_inquiry", null, "Submit Inquiry") ?>';
+                });
+            });
+        }
     }
     </script>
 
@@ -1666,20 +1798,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         }
     };
 
-    function mCalcVal() {
-        var type = document.getElementById('mValType').value;
-        var loc = document.getElementById('mValLoc').value;
-        var area = parseFloat(document.getElementById('mValArea').value) || 0;
-        var bhk = parseInt(document.getElementById('mValBhk').value);
-        var furn = parseFloat(document.getElementById('mValFurn').value);
-        var baseRate = (valRates[loc] || valRates.gorakhpur)[type] || 1500;
-        var bhkFactor = 0.9 + bhk * 0.1;
-        var value = area * baseRate * bhkFactor * furn;
-        document.getElementById('mValResult').textContent = '\u20B9' + Math.round(value).toLocaleString('en-IN');
-        document.getElementById('mValPsf').textContent = '\u20B9' + Math.round(baseRate * bhkFactor * furn)
-            .toLocaleString('en-IN');
-        document.getElementById('mValConf').textContent = loc === 'kushinagar' ? T.medium : T.high;
-        async function mCalcVal() {
+    async function mCalcVal() {
             const type = document.getElementById('mValType').value;
             const loc = document.getElementById('mValLoc').value;
             const area = parseFloat(document.getElementById('mValArea').value) || 0;

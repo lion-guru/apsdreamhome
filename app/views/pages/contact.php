@@ -40,30 +40,41 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="card shadow-lg border-0">
-                    <div class="card-header bg-primary text-white text-center py-3">
-                        <h4 class="mb-0"><i class="fas fa-envelope me-2"></i><?php echo __('send_us_message'); ?></h4>
+                <div class="card shadow-lg border-0 glass-card-premium" style="background: rgba(255, 255, 255, 0.9) !important; color: #333;">
+                    <div class="card-header bg-primary text-white text-center py-3" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important; border-bottom: none;">
+                        <h4 class="mb-0 fw-bold text-white"><i class="fas fa-envelope me-2 text-white"></i><?php echo __('send_us_message'); ?></h4>
                     </div>
                     <div class="card-body p-4">
-                        <form action="<?php echo BASE_URL; ?>/contact" method="POST">
-                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                            <div class="mb-3">
+                        <form action="<?php echo BASE_URL; ?>/contact" method="POST" id="contactForm" data-aps-ajax="true">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                            
+                            <!-- UTM Tracking inputs -->
+                            <input type="hidden" name="utm_source" value="">
+                            <input type="hidden" name="utm_medium" value="">
+                            <input type="hidden" name="utm_campaign" value="">
+                            <input type="hidden" name="utm_term" value="">
+                            <input type="hidden" name="utm_content" value="">
+
+                            <div class="aps-form-field mb-3">
                                 <label for="name" class="form-label fw-bold"><?php echo __('your_name'); ?> *</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="<?php echo __('your_name_placeholder'); ?>" required>
+                                <input type="text" name="name" id="name" class="form-control animate-focus" placeholder="<?php echo __('your_name_placeholder'); ?>" required>
+                                <div class="aps-field-error" role="alert"></div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3 aps-form-field">
                                     <label for="email" class="form-label fw-bold"><?php echo __('email'); ?> *</label>
-                                    <input type="email" name="email" id="email" class="form-control" placeholder="your@email.com" required>
+                                    <input type="email" name="email" id="email" class="form-control animate-focus" placeholder="your@email.com" required>
+                                    <div class="aps-field-error" role="alert"></div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3 aps-form-field">
                                     <label for="phone" class="form-label fw-bold"><?php echo __('phone'); ?> *</label>
-                                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="+91 XXXXXXXXXX" required>
+                                    <input type="tel" name="phone" id="phone" class="form-control animate-focus" placeholder="+91 XXXXXXXXXX" required>
+                                    <div class="aps-field-error" role="alert"></div>
                                 </div>
                             </div>
-                            <div class="mb-3">
+                            <div class="aps-form-field mb-3">
                                 <label for="subject" class="form-label fw-bold"><?php echo __('subject'); ?> *</label>
-                                <select name="subject" id="subject" class="form-select" required>
+                                <select name="subject" id="subject" class="form-select animate-focus" required>
                                     <option value=""><?php echo __('select_subject'); ?></option>
                                     <option value="buy"><?php echo __('subject_buy'); ?></option>
                                     <option value="sell"><?php echo __('subject_sell'); ?></option>
@@ -73,12 +84,14 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                                     <option value="interior"><?php echo __('subject_interior'); ?></option>
                                     <option value="general"><?php echo __('subject_general'); ?></option>
                                 </select>
+                                <div class="aps-field-error" role="alert"></div>
                             </div>
-                            <div class="mb-3">
+                            <div class="aps-form-field mb-3">
                                 <label for="message" class="form-label fw-bold"><?php echo __('message_label'); ?> *</label>
-                                <textarea name="message" id="message" class="form-control" rows="4" placeholder="<?php echo __('message_placeholder_contact'); ?>" required></textarea>
+                                <textarea name="message" id="message" class="form-control animate-focus" rows="4" placeholder="<?php echo __('message_placeholder_contact'); ?>" required></textarea>
+                                <div class="aps-field-error" role="alert"></div>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-hover" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border: none;">
                                 <i class="fas fa-paper-plane me-2"></i><?php echo __('send_message'); ?>
                             </button>
                         </form>
@@ -91,6 +104,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
 
 <script>
 (function() {
+    // Populate UTM parameters
     const params = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
     params.forEach(p => {
         const val = new URLSearchParams(window.location.search).get(p);
@@ -99,6 +113,82 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
             try { sessionStorage.setItem(p, val); } catch(e) {}
         }
     });
+
+    // AJAX Form submission
+    const form = document.getElementById('contactForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Check custom form validation if available
+            if (window.APS && typeof window.APS.validateForm === 'function') {
+                if (!window.APS.validateForm(form)) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const formData = new FormData(form);
+
+            if (window.APS && typeof window.APS.fetch === 'function') {
+                window.APS.fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: formData,
+                    context: submitBtn
+                })
+                .then(function(data) {
+                    if (data && data.success) {
+                        window.APS.toast(data.message || 'Thank you! Your message has been sent successfully.', 'success');
+                        form.reset();
+                        // Reset validation classes
+                        form.querySelectorAll('.aps-form-field').forEach(function(el) {
+                            el.classList.remove('aps-has-success', 'aps-has-error');
+                        });
+                    } else {
+                        window.APS.toast(data.message || 'Validation failed. Please check your inputs.', 'error');
+                    }
+                })
+                .catch(function(err) {
+                    console.error('Contact AJAX submission failed:', err);
+                });
+            } else {
+                // Fallback direct AJAX submit
+                submitBtn.disabled = true;
+                const originalBtnHtml = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Sending...';
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                    if (data.success) {
+                        alert(data.message);
+                        form.reset();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(err => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                    console.error('Contact submit error:', err);
+                    alert('An error occurred. Please try again.');
+                });
+            }
+        });
+    }
 })();
 </script>
 
