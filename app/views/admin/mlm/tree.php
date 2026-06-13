@@ -84,7 +84,7 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:var(--aps-theme-primary,#4f46e5);"><?= $totalDownline ?></div>
+                    <div style="font-size:1.8rem;font-weight:700;color:var(--primary);"><?= $totalDownline ?></div>
                     <div class="text-muted small">Total Downline</div>
                 </div>
             </div>

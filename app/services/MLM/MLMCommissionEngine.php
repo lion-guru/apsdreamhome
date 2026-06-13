@@ -329,6 +329,14 @@ class MLMCommissionEngine
             $upd = $this->db->prepare("UPDATE associates SET level = ? WHERE id = ?");
             $upd->execute([$newRank, $associateId]);
 
+            // Sync mlm_profiles.current_level (GamificationService reads this column)
+            $syncStmt = $this->db->prepare("
+                UPDATE mlm_profiles SET current_level = ?, updated_at = NOW() WHERE user_id = (
+                    SELECT user_id FROM associates WHERE id = ?
+                )
+            ");
+            $syncStmt->execute([$newRank, $associateId]);
+
             $isManual = $promotedBy !== null ? 1 : 0;
             $ins = $this->db->prepare("
                 INSERT INTO mlm_rank_history
@@ -351,8 +359,8 @@ class MLMCommissionEngine
             return true;
         } catch (Exception $e) {
             try { $this->db->rollBack(); } catch (Exception $e2) {
-                error_log("[{$className}] {$methodName}() exception: " . $e2->getMessage());
-}
+                error_log("[MLMCommissionEngine] applyRankPromotion() rollback exception: " . $e2->getMessage());
+            }
             return false;
         }
     }

@@ -5,7 +5,7 @@
  */
 
 // Check if AI is configured
-$api_configured = !empty($this->config['api_key']) ?? false;
+$api_configured = !empty($this->config['api_key']);
 $user_role = $this->getUserRole() ?? 'customer';
 ?>
 

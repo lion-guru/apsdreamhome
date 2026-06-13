@@ -41,7 +41,7 @@
         this.ws.onopen = () => {
           this.isConnected = true;
           this.isAuthenticating = true;
-          error_log("WebSocket connected");
+          console.warn("WebSocket connected");
           
           // Send auth message if we have user info
           if (this.userId) {
@@ -62,18 +62,18 @@
         
         this.ws.onclose = () => {
           this.isConnected = false;
-          error_log("WebSocket disconnected");
+          console.warn("WebSocket disconnected");
           this.stopHeartbeat();
           this.scheduleReconnect();
         };
         
         this.ws.onerror = (error) => {
-          error_log("WebSocket error: ", error);
+          console.warn("WebSocket error: ", error);
           this.isConnected = false;
           this.ws.close();
         };
       } catch (error) {
-        error_log("WebSocket connection error: ", error);
+        console.warn("WebSocket connection error: ", error);
         this.scheduleReconnect();
       }
     },
@@ -83,9 +83,9 @@
         case 'auth':
           if (data.status === 'success') {
             this.isAuthenticating = false;
-            error_log("WebSocket authenticated");
+            console.warn("WebSocket authenticated");
           } else {
-            error_log("WebSocket auth failed: ", data.message);
+            console.warn("WebSocket auth failed: ", data.message);
           }
           break;
           
@@ -105,11 +105,11 @@
           break;
           
         case 'connection':
-          error_log("WebSocket connection established");
+          console.warn("WebSocket connection established");
           break;
           
         case 'error':
-          error_log("WebSocket error: ", data.message);
+          console.warn("WebSocket error: ", data.message);
           break;
       }
     },
@@ -222,7 +222,7 @@
           }
         }
       } catch (e) {
-        error_log("Error loading notifications: ", e);
+        console.warn("Error loading notifications: ", e);
       }
     },
 
@@ -254,7 +254,7 @@
           }));
         }
       } catch (e) {
-        error_log("Error marking notifications as read: ", e);
+        console.warn("Error marking notifications as read: ", e);
       }
     },
 

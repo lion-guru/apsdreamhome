@@ -286,7 +286,7 @@ $dashBookingCount = count($dashBookings);
                                         <i class="fas fa-home"></i>
                                     </div>
                                     <div class="flex-grow-1 min-w-0">
-                                        <h6 class="mb-1 text-truncate"><?= htmlspecialchars($property['property_type'] ?? $property['title'] ?? 'Property') ?></h6>
+                                        <h6 class="mb-1 text-truncate"><?= htmlspecialchars($property['property_type'] ?? $property['title'] ?? __('dash_fallback_property', null, 'Property')) ?></h6>
                                         <p class="text-muted mb-1 small text-truncate"><i class="fas fa-map-marker-alt me-1"></i><?= htmlspecialchars($property['address'] ?? $property['location'] ?? '') ?></p>
                                         <p class="mb-2"><strong>₹<?= number_format($property['price'] ?? 0) ?></strong></p>
                                         <span class="badge bg-<?= ($property['status'] ?? '') === 'approved' || ($property['status'] ?? '') === 'active' ? 'success' : 'warning' ?>">
@@ -329,8 +329,8 @@ $dashBookingCount = count($dashBookings);
                         <tbody>
                             <?php foreach ($inquiries as $inquiry): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($inquiry['subject'] ?? $inquiry['message'] ?? 'Inquiry') ?></td>
-                                    <td><?= htmlspecialchars($inquiry['type'] ?? 'General') ?></td>
+                                    <td><?= htmlspecialchars($inquiry['subject'] ?? $inquiry['message'] ?? __('dash_fallback_inquiry', null, 'Inquiry')) ?></td>
+                                    <td><?= htmlspecialchars($inquiry['type'] ?? __('dash_fallback_general', null, 'General')) ?></td>
                                     <td>
                                         <span class="badge bg-<?= ($inquiry['status'] ?? '') === 'replied' ? 'success' : (($inquiry['status'] ?? '') === 'pending' ? 'warning' : 'info') ?>">
                                             <?= ucfirst($inquiry['status'] ?? 'pending') ?>
@@ -399,14 +399,14 @@ $dashBookingCount = count($dashBookings);
                 <?php if (!empty($referral_link)): ?>
                 <div class="input-group input-group-sm mb-2">
                     <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($referral_link) ?>" readonly>
-                    <button class="btn btn-outline-warning" type="button" onclick="dashCopyRef()" aria-label="Copy referral link">
+                    <button class="btn btn-outline-warning" type="button" onclick="dashCopyRef()" aria-label="<?= __('dash_copy_referral_link', null, 'Copy referral link') ?>">
                         <i class="fas fa-copy"></i>
                     </button>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-3">
-                    <a href="https://wa.me/?text=<?= urlencode('Join APS Dream Home! Use my referral code: ' . $referral_code . ' Register here: ' . $referral_link) ?>" target="_blank" class="aps-cp-icon-btn" style="background: #25d366; color: #fff; border-color: #25d366;" title="Share on WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="sms:?body=<?= urlencode('Use my referral code ' . $referral_code . ' to register at APS Dream Home: ' . $referral_link) ?>" class="aps-cp-icon-btn" style="background: #6c757d; color: #fff; border-color: #6c757d;" title="Share via SMS"><i class="fas fa-sms"></i></a>
-                    <a href="mailto:?subject=<?= urlencode('Join APS Dream Home') ?>&body=<?= urlencode('Use my referral code ' . $referral_code . ' to register: ' . $referral_link) ?>" class="aps-cp-icon-btn" title="Share via Email"><i class="fas fa-envelope"></i></a>
+                    <a href="https://wa.me/?text=<?= urlencode(sprintf(__('dash_share_whatsapp_msg', null, 'Join APS Dream Home! Use my referral code: %s Register here: %s'), $referral_code, $referral_link)) ?>" target="_blank" class="aps-cp-icon-btn" style="background: #25d366; color: #fff; border-color: #25d366;" title="<?= __('dash_share_whatsapp', null, 'Share on WhatsApp') ?>"><i class="fab fa-whatsapp"></i></a>
+                    <a href="sms:?body=<?= urlencode(sprintf(__('dash_share_sms_msg', null, 'Use my referral code %s to register at APS Dream Home: %s'), $referral_code, $referral_link)) ?>" class="aps-cp-icon-btn" style="background: #6c757d; color: #fff; border-color: #6c757d;" title="<?= __('dash_share_sms', null, 'Share via SMS') ?>"><i class="fas fa-sms"></i></a>
+                    <a href="mailto:?subject=<?= urlencode(__('dash_share_email_subject', null, 'Join APS Dream Home')) ?>&body=<?= urlencode(sprintf(__('dash_share_email_body', null, 'Use my referral code %s to register: %s'), $referral_code, $referral_link)) ?>" class="aps-cp-icon-btn" title="<?= __('dash_share_email', null, 'Share via Email') ?>"><i class="fas fa-envelope"></i></a>
                 </div>
                 <?php endif; ?>
             </div>

@@ -17,7 +17,7 @@ $filters = $filters ?? [];
     <!-- Stat Cards -->
     <div class="aps-cp-stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
         <div class="aps-cp-stat-card">
-            <div class="aps-cp-stat-icon" style="background: var(--aps-theme-primary-light); color: var(--aps-theme-primary);">
+            <div class="aps-cp-stat-icon" style="background: var(--primary-light); color: var(--primary);">
                 <i class="fas fa-money-bill-wave"></i>
             </div>
             <div class="aps-cp-stat-info">

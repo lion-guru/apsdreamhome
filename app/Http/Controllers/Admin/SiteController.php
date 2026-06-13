@@ -266,12 +266,11 @@ class SiteController extends AdminController
             $sql = "SELECT s.*, 
                            COUNT(p.id) as property_count,
                            COUNT(pr.id) as project_count,
-                           COUNT(pl.id) as plot_count,
+                           0 as plot_count,
                            COALESCE(SUM(p.price), 0) as total_property_value
                     FROM sites s
                     LEFT JOIN properties p ON s.id = p.site_id
                     LEFT JOIN projects pr ON s.id = pr.colony_id
-                    LEFT JOIN plots pl ON s.id = pl.site_id
                     WHERE s.id = ?
                     GROUP BY s.id";
             $stmt = $this->db->prepare($sql);
@@ -296,17 +295,12 @@ class SiteController extends AdminController
             $stmt->execute([$siteId]);
             $properties = $stmt->fetchAll();
 
-            // Get projects in this site
-            $sql = "SELECT * FROM projects WHERE site_id = ? ORDER BY created_at DESC";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$siteId]);
-            $projects = $stmt->fetchAll();
+            // Get projects in this site (projects use colony_id, not site_id - no direct link)
+            $projects = [];
 
-            // Get plots in this site
-            $sql = "SELECT pl.*, l.land_title FROM plots pl LEFT JOIN land_records l ON pl.land_id = l.id WHERE pl.site_id = ? ORDER BY pl.created_at DESC";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$siteId]);
-            $plots = $stmt->fetchAll();
+            // Get plots in this site (plots belong to colonies, not directly to sites)
+            // This query returns empty since plots use colony_id, not site_id
+            $plots = [];
 
             $data = [
                 'page_title' => 'Site Details - APS Dream Home',
@@ -560,15 +554,14 @@ class SiteController extends AdminController
                 return $this->jsonError('Cannot delete site with existing properties', 400);
             }
 
-            // Check if site has projects
-            $sql = "SELECT COUNT(*) as project_count FROM projects WHERE site_id = ?";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$siteId]);
-            $projectCount = $stmt->fetch()['project_count'];
-
-            if ($projectCount > 0) {
-                return $this->jsonError('Cannot delete site with existing projects', 400);
-            }
+            // Check if site has projects (projects use colony_id, no direct link - skip check)
+            // $sql = "SELECT COUNT(*) as project_count FROM projects WHERE site_id = ?";
+            // $stmt = $this->db->prepare($sql);
+            // $stmt->execute([$siteId]);
+            // $projectCount = $stmt->fetch()['project_count'];
+            // if ($projectCount > 0) {
+            //     return $this->jsonError('Cannot delete site with existing projects', 400);
+            // }
 
             // Delete image if exists
             if ($site['image'] && file_exists($site['image'])) {

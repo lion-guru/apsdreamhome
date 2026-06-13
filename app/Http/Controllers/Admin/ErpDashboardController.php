@@ -50,7 +50,7 @@ class ErpDashboardController extends AdminController
             SELECT p.id, p.plot_number, p.area_sqft, p.total_price as sale_price, p.status,
                    c.name as colony_name,
                    COALESCE(lp.amount, 0) as land_cost,
-                   COALESCE((SELECT SUM(amount) FROM plot_development_costs WHERE colony_id = p.colony_id), 0) as dev_cost
+                   COALESCE((SELECT SUM(amount) FROM colony_development_costs WHERE colony_id = p.colony_id), 0) as dev_cost
             FROM plots p
             LEFT JOIN colonies c ON p.colony_id = c.id
             LEFT JOIN land_purchases lp ON lp.land_holding_id = p.land_holding_id

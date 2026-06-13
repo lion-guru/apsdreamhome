@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -18,19 +18,16 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Consolidated APS CSS Bundles (base styles, before custom admin.css) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
-    <!-- Admin CSS (loads after consolidated so it wins on admin pages) -->
+    <!-- Admin CSS (page-specific overrides) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
+    <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo $extra_css; ?><?php endif; ?>
     <style>
-        /* Only overrides that admin.css doesn't cover — NO duplication */
+        /* Only overrides that admin.css does not cover */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: var(--font); background: var(--body-bg); overflow-x: hidden; }
     </style>
 
-    <!-- CRITICAL: Sidebar functions in HEAD — load before body -->
+    <!-- CRITICAL: Sidebar functions in HEAD - load before body -->
     <script>
         var APS = APS || {};
         APS._sidebar = null;
@@ -164,7 +161,7 @@
     ?>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content" id="aps-main-content">
         <!-- Top Navigation -->
         <nav class="top-nav">
             <div class="nav-left">
@@ -246,7 +243,8 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Admin JS -->
-    <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/admin.js"></script>
+    <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/js/admin.js"></script>
+    <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo $extra_js; ?><?php endif; ?>
     <!-- Frontend enhancements: a11y, forms, toasts, loading -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
 

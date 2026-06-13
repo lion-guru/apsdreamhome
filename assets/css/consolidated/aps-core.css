@@ -964,6 +964,34 @@ footer p.text-light {
 }
 
 /* ============================================
+   GRADIENT UTILITY CLASSES
+   ============================================ */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+.bg-gradient-hero {
+    background: linear-gradient(135deg, rgba(15,23,42,0.92) 0%, rgba(30,41,59,0.88) 50%, rgba(79,70,229,0.85) 100%);
+}
+.bg-gradient-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+.bg-gradient-cta {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
+}
+.bg-gradient-light {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+}
+.bg-gradient-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+.gradient-divider {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ef4444, #f59e0b, transparent);
+    border: none;
+    margin: 20px auto;
+}
+
+/* ============================================
    SECTION SPACING
    ============================================ */
 section { position: relative; }
@@ -1359,7 +1387,11 @@ section { position: relative; }
     font-size: 2rem;
     font-weight: 800;
     line-height: 1.2;
+    color: var(--gray-800);
 }
+.invest-card h5 { color: var(--gray-800); }
+.invest-card p { color: var(--gray-600); }
+.invest-card .badge { color: #fff; }
 
 /* ============================================
    EMI CALCULATOR SECTION
@@ -1430,6 +1462,7 @@ section { position: relative; }
     font-size: 0.9375rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
+    color: var(--gray-800);
 }
 .checklist-item p {
     font-size: 0.8125rem;
@@ -1453,6 +1486,8 @@ section { position: relative; }
     box-shadow: var(--shadow-lg);
     transform: translateY(-4px);
 }
+.testimonial-card p { color: var(--gray-700); }
+.testimonial-card h6 { color: var(--gray-800); }
 
 /* ============================================
    TOOL CARDS
@@ -1480,6 +1515,8 @@ section { position: relative; }
 .tool-card:hover .icon-circle {
     transform: scale(1.1);
 }
+.tool-card h5, .tool-card h6 { color: var(--gray-800); }
+.tool-card p { color: var(--gray-600); }
 
 /* ============================================
    CAREER / JOIN CARDS
@@ -1507,6 +1544,9 @@ section { position: relative; }
 .career-card:hover .icon-circle {
     transform: scale(1.1);
 }
+.career-card h5 { color: var(--gray-800); }
+.career-card p { color: var(--gray-600); }
+.career-card .small { color: var(--gray-600); }
 
 /* ============================================
    INVESTMENT GROWTH CALCULATOR

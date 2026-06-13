@@ -140,7 +140,13 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                         </h2>
                         <div id="faqCollapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body">
-                                You can call us at <?= htmlspecialchars($sc('contact_phone', '+91 92771 21112')) ?><?php if ($sc('contact_phone_2')): ?> / <?= htmlspecialchars($sc('contact_phone_2')) ?><?php endif; ?> or fill out the contact form. Our team will get back to you to arrange a convenient time.
+                                <?php
+                                    $contactPhone = htmlspecialchars($sc('contact_phone', '+91 92771 21112'));
+                                    if ($sc('contact_phone_2')) {
+                                        $contactPhone .= ' / ' . htmlspecialchars($sc('contact_phone_2'));
+                                    }
+                                ?>
+                                <?= sprintf(__('contact_faq2_a_dynamic', null, 'You can call us at %s or fill out the contact form. Our team will get back to you to arrange a convenient time.'), $contactPhone) ?>
                             </div>
                         </div>
                     </div>

@@ -447,53 +447,5 @@ $sectionNames = [
     <?php endif; ?>
 
 </aside>
-
-<script>
-    // Inline JavaScript for sidebar functionality
-    window.toggleSidebarSection = function(sectionId) {
-        const menu = document.getElementById(sectionId);
-        const arrow = document.getElementById('arrow-' + sectionId);
-
-        if (menu && arrow) {
-            const isHidden = menu.style.display === 'none';
-            menu.style.display = isHidden ? 'block' : 'none';
-            arrow.classList.toggle('collapsed', !isHidden);
-        }
-    };
-
-    window.toggleAllSidebarSections = function() {
-        const menus = document.querySelectorAll('.sidebar-menu');
-        const arrows = document.querySelectorAll('.sidebar-sec-arrow');
-        const allArrow = document.getElementById('arrow-expand-all');
-
-        const areAllHidden = Array.from(menus).every(menu => menu.style.display === 'none' || menu.style.display === '');
-
-        menus.forEach(menu => {
-            menu.style.display = areAllHidden ? 'block' : 'none';
-        });
-
-        arrows.forEach(arrow => {
-            if (arrow.id !== 'arrow-expand-all') {
-                arrow.classList.toggle('collapsed', !areAllHidden);
-            }
-        });
-
-        if (allArrow) {
-            allArrow.classList.toggle('collapsed', areAllHidden);
-        }
-    };
-
-    // Auto-expand section with active item on load
-    document.addEventListener('DOMContentLoaded', function() {
-        const activeLink = document.querySelector('.sidebar-link.active');
-        if (activeLink) {
-            const menu = activeLink.closest('.sidebar-menu');
-            if (menu && menu.style.display === 'none') {
-                menu.style.display = 'block';
-                const sectionId = menu.id;
-                const arrow = document.getElementById('arrow-' + sectionId);
-                if (arrow) arrow.classList.remove('collapsed');
-            }
-        }
-    });
-</script>
+<!-- Sidebar toggle/restore handled by APS namespace (layout head) + admin.js (just before </body>).
+     Both persist collapse state to localStorage. Do NOT redefine toggle functions here. -->

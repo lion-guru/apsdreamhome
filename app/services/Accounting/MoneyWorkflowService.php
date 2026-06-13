@@ -1699,7 +1699,7 @@ class MoneyWorkflowService
                  FROM plot_bookings pb
                  LEFT JOIN users u ON u.id = pb.customer_id
                  LEFT JOIN plots p ON p.id = pb.plot_id
-                 LEFT JOIN colonies c ON c.id = pb.colony_id
+                 LEFT JOIN colonies c ON c.id = p.colony_id
                  WHERE pb.id = ?",
                 [$bookingId]
             );
@@ -1759,7 +1759,7 @@ class MoneyWorkflowService
                  FROM plot_bookings pb
                  LEFT JOIN users u ON u.id = pb.customer_id
                  LEFT JOIN plots p ON p.id = pb.plot_id
-                 LEFT JOIN colonies c ON c.id = pb.colony_id
+                 LEFT JOIN colonies c ON c.id = p.colony_id
                  WHERE pb.id = ?",
                 [$bookingId]
             );

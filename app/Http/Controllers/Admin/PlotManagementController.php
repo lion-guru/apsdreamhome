@@ -72,22 +72,28 @@ class PlotManagementController extends AdminController
                 }
             }
 
-            $sql = "INSERT INTO plots (site_id, plot_number, total_area, status, location, price, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            $sql = "INSERT INTO plots (colony_id, plot_number, plot_type, area_sqft, width_ft, length_ft, dimension_label, price_per_sqft, total_price, road_width_ft, status, is_active, created_by, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, NOW())";
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
                 intval($data['colony_id']),
                 CoreFunctionsServiceCustom::validateInput($data['plot_number'], 'string'),
-                floatval($data['total_area'] ?? 0),
+                $data['plot_type'] ?? 'residential',
+                floatval($data['area_sqft'] ?? $data['total_area'] ?? 0),
+                floatval($data['width_ft'] ?? 0),
+                floatval($data['length_ft'] ?? 0),
+                trim($data['dimension_label'] ?? ($data['width_ft'] ?? '0') . 'x' . ($data['length_ft'] ?? '0')),
+                floatval($data['price_per_sqft'] ?? $data['price'] ?? 0),
+                floatval($data['total_price'] ?? 0),
+                floatval($data['road_width_ft'] ?? 30),
                 $data['status'] ?? 'available',
-                CoreFunctionsServiceCustom::validateInput($data['location'] ?? '', 'string'),
-                floatval($data['price'] ?? 0)
+                $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1
             ]);
 
             if ($result) {
                 $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_created', [
                     'plot_number' => $data['plot_number'],
-                    'site_id' => $data['site_id']
+                    'colony_id' => $data['colony_id']
                 ]);
                 $this->setFlash('success', 'Plot created successfully');
                 return $this->redirect('/admin/plots');
@@ -111,32 +117,28 @@ class PlotManagementController extends AdminController
             $page = (int)($_GET['page'] ?? 1);
             $search = trim($_GET['search'] ?? '');
             $status = $_GET['status'] ?? '';
-            $siteId = $siteId ? intval($siteId) : intval($_GET['site_id'] ?? 0);
+            $siteId = $siteId ? intval($siteId) : intval($_GET['colony_id'] ?? $_GET['site_id'] ?? 0);
             $perPage = (int)($_GET['per_page'] ?? 20);
 
             $offset = ($page - 1) * $perPage;
 
             // Build query
             $sql = "SELECT p.*, 
-                           s.site_name,
-                           '' as land_title,
-                           0 as property_count,
-                           0 as developed_area
+                           c.name as colony_name
                     FROM plots p
-                    LEFT JOIN sites s ON p.site_id = s.id
+                    LEFT JOIN colonies c ON p.colony_id = c.id
                     WHERE 1=1";
             $params = [];
 
             // Apply filters
             if ($siteId > 0) {
-                $sql .= " AND p.site_id = ?";
+                $sql .= " AND p.colony_id = ?";
                 $params[] = $siteId;
             }
 
             if (!empty($search)) {
-                $sql .= " AND (p.plot_number LIKE ? OR p.location LIKE ? OR s.site_name LIKE ?)";
+                $sql .= " AND (p.plot_number LIKE ? OR c.name LIKE ?)";
                 $searchParam = '%' . $search . '%';
-                $params[] = $searchParam;
                 $params[] = $searchParam;
                 $params[] = $searchParam;
             }
@@ -150,10 +152,7 @@ class PlotManagementController extends AdminController
 
             // Count total
             $countSql = preg_replace('/SELECT .* FROM/', 'SELECT COUNT(*) as total FROM', $sql, 1);
-            $countSql = str_replace('s.site_name', '1', $countSql);
-            $countSql = str_replace("'' as land_title", '1', $countSql);
-            $countSql = str_replace('0 as property_count', '1', $countSql);
-            $countSql = str_replace('0 as developed_area', '1', $countSql);
+            $countSql = str_replace('c.name as colony_name', '1', $countSql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = ($countStmt->fetch()['total'] ?? 0);
@@ -167,8 +166,8 @@ class PlotManagementController extends AdminController
             $stmt->execute($params);
             $plots = $stmt->fetchAll();
 
-            // Get sites for filter
-            $sites = $this->db->fetchAll("SELECT * FROM sites ORDER BY site_name");
+            // Get colonies for filter
+            $sites = $this->db->fetchAll("SELECT id, name as colony_name FROM colonies ORDER BY name");
 
             $data = [
                 'page_title' => 'Plot Management - APS Dream Home',
@@ -181,7 +180,8 @@ class PlotManagementController extends AdminController
                 'filters' => [
                     'search' => $search,
                     'status' => $status,
-                    'site_id' => $siteId
+                    'site_id' => $siteId,
+                    'colony_id' => $siteId
                 ],
                 'sites' => $sites
             ];
@@ -197,7 +197,7 @@ class PlotManagementController extends AdminController
                 'page' => 1,
                 'per_page' => 20,
                 'total_pages' => 0,
-                'filters' => ['search' => '', 'status' => '', 'site_id' => 0],
+                'filters' => ['search' => '', 'status' => '', 'site_id' => 0, 'colony_id' => 0],
                 'sites' => [],
                 'error' => 'Unable to load plots: ' . $e->getMessage()
             ];
@@ -242,19 +242,19 @@ class PlotManagementController extends AdminController
 
             // Build query for allocation requests
             $sql = "SELECT pa.*, 
-                           p.plot_number, p.total_area, p.status as plot_status,
+                           p.plot_number, p.area_sqft, p.status as plot_status,
                            u.name as requested_by_name, u.email as requested_by_email,
-                           s.site_name
+                           c.name as colony_name
                     FROM plot_allocations pa
                     LEFT JOIN plots p ON pa.plot_id = p.id
                     LEFT JOIN users u ON pa.requested_by = u.id
-                    LEFT JOIN sites s ON p.site_id = s.id
+                    LEFT JOIN colonies c ON p.colony_id = c.id
                     WHERE 1=1";
             $params = [];
 
             // Apply filters
             if (!empty($search)) {
-                $sql .= " AND (p.plot_number LIKE ? OR u.name LIKE ? OR s.site_name LIKE ?)";
+                $sql .= " AND (p.plot_number LIKE ? OR u.name LIKE ? OR c.name LIKE ?)";
                 $searchParam = '%' . $search . '%';
                 $params[] = $searchParam;
                 $params[] = $searchParam;
@@ -269,7 +269,7 @@ class PlotManagementController extends AdminController
             $sql .= " ORDER BY pa.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT pa.*, p.plot_number, p.total_area, p.status as plot_status, u.name as requested_by_name, u.email as requested_by_email, s.site_name", "SELECT COUNT(DISTINCT pa.id) as total", $sql);
+            $countSql = str_replace("SELECT pa.*, p.plot_number, p.area_sqft, p.status as plot_status, u.name as requested_by_name, u.email as requested_by_email, c.name as colony_name", "SELECT COUNT(DISTINCT pa.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = ($countStmt->fetch()['total'] ?? 0);
@@ -403,19 +403,19 @@ class PlotManagementController extends AdminController
 
             // Build query for development tracking
             $sql = "SELECT pd.*, 
-                           p.plot_number, p.total_area, p.status as plot_status,
-                           s.site_name,
+                           p.plot_number, p.area_sqft, p.status as plot_status,
+                           c.name as colony_name,
                            u.name as developer_name
                     FROM plot_development pd
                     LEFT JOIN plots p ON pd.plot_id = p.id
-                    LEFT JOIN sites s ON p.site_id = s.id
+                    LEFT JOIN colonies c ON p.colony_id = c.id
                     LEFT JOIN users u ON pd.developer_id = u.id
                     WHERE 1=1";
             $params = [];
 
             // Apply filters
             if (!empty($search)) {
-                $sql .= " AND (p.plot_number LIKE ? OR s.site_name LIKE ? OR u.name LIKE ?)";
+                $sql .= " AND (p.plot_number LIKE ? OR c.name LIKE ? OR u.name LIKE ?)";
                 $searchParam = '%' . $search . '%';
                 $params[] = $searchParam;
                 $params[] = $searchParam;
@@ -430,7 +430,7 @@ class PlotManagementController extends AdminController
             $sql .= " ORDER BY pd.created_at DESC";
 
             // Count total
-            $countSql = str_replace("SELECT pd.*, p.plot_number, p.total_area, p.status as plot_status, s.site_name, u.name as developer_name", "SELECT COUNT(DISTINCT pd.id) as total", $sql);
+            $countSql = str_replace("SELECT pd.*, p.plot_number, p.area_sqft, p.status as plot_status, c.name as colony_name, u.name as developer_name", "SELECT COUNT(DISTINCT pd.id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = ($countStmt->fetch()['total'] ?? 0);
@@ -545,14 +545,13 @@ class PlotManagementController extends AdminController
             $stats['by_status'] = $this->db->fetchAll($sql) ?: [];
 
             // Total area
-            $sql = "SELECT COALESCE(SUM(total_area), 0) as total FROM plots";
+            $sql = "SELECT COALESCE(SUM(area_sqft), 0) as total FROM plots";
             $result = $this->db->fetchOne($sql);
             $stats['total_area'] = (float)($result['total'] ?? 0);
 
             // Developed area
-            $sql = "SELECT COALESCE(SUM(pr.total_area), 0) as developed
-                    FROM properties pr
-                    JOIN plots p ON pr.plot_id = p.id
+            $sql = "SELECT COALESCE(SUM(p.area_sqft), 0) as developed
+                    FROM plots p
                     WHERE p.status = 'developed'";
             $result = $this->db->fetchOne($sql);
             $stats['developed_area'] = (float)($result['developed'] ?? 0);
@@ -575,13 +574,13 @@ class PlotManagementController extends AdminController
     private function getSiteSummary(): array
     {
         try {
-            $sql = "SELECT s.site_name, 
+            $sql = "SELECT c.name as colony_name, 
                            COUNT(p.id) as plot_count,
-                           COALESCE(SUM(p.total_area), 0) as total_area,
+                           COALESCE(SUM(p.area_sqft), 0) as total_area,
                            COUNT(CASE WHEN p.status = 'developed' THEN 1 END) as developed_plots
-                    FROM sites s
-                    LEFT JOIN plots p ON s.id = p.site_id
-                    GROUP BY s.id, s.site_name
+                    FROM colonies c
+                    LEFT JOIN plots p ON c.id = p.colony_id
+                    GROUP BY c.id, c.name
                     ORDER BY plot_count DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
@@ -675,10 +674,9 @@ class PlotManagementController extends AdminController
     private function getPlotsExport(string $startDate, string $endDate): array
     {
         try {
-            $sql = "SELECT p.*, s.site_name, l.land_title
+            $sql = "SELECT p.*, c.name as colony_name
                     FROM plots p
-                    LEFT JOIN sites s ON p.site_id = s.id
-                    LEFT JOIN land_records l ON p.land_id = l.id
+                    LEFT JOIN colonies c ON p.colony_id = c.id
                     WHERE p.created_at BETWEEN ? AND ?
                     ORDER BY p.created_at DESC";
             $stmt = $this->db->prepare($sql);
@@ -696,11 +694,11 @@ class PlotManagementController extends AdminController
     private function getAllocationsExport(string $startDate, string $endDate): array
     {
         try {
-            $sql = "SELECT pa.*, p.plot_number, u.name as requested_by_name, s.site_name
+            $sql = "SELECT pa.*, p.plot_number, u.name as requested_by_name, c.name as colony_name
                     FROM plot_allocations pa
                     LEFT JOIN plots p ON pa.plot_id = p.id
                     LEFT JOIN users u ON pa.requested_by = u.id
-                    LEFT JOIN sites s ON p.site_id = s.id
+                    LEFT JOIN colonies c ON p.colony_id = c.id
                     WHERE pa.created_at BETWEEN ? AND ?
                     ORDER BY pa.created_at DESC";
             $stmt = $this->db->prepare($sql);
@@ -718,11 +716,11 @@ class PlotManagementController extends AdminController
     private function getDevelopmentExport(string $startDate, string $endDate): array
     {
         try {
-            $sql = "SELECT pd.*, p.plot_number, u.name as developer_name, s.site_name
+            $sql = "SELECT pd.*, p.plot_number, u.name as developer_name, c.name as colony_name
                     FROM plot_development pd
                     LEFT JOIN plots p ON pd.plot_id = p.id
                     LEFT JOIN users u ON pd.developer_id = u.id
-                    LEFT JOIN sites s ON p.site_id = s.id
+                    LEFT JOIN colonies c ON p.colony_id = c.id
                     WHERE pd.created_at BETWEEN ? AND ?
                     ORDER BY pd.created_at DESC";
             $stmt = $this->db->prepare($sql);

@@ -91,7 +91,16 @@ class PlotDevelopmentCostService
     {
         $pricing = $this->calculatePlotPrice($plotId, $marginPercent);
         if (!$pricing) return false;
-        
+
+        // Get old prices before update
+        $oldPlot = $this->db->fetch(
+            "SELECT price_per_sqft, total_price, colony_id FROM plots WHERE id = ?",
+            [$plotId]
+        );
+        $oldPricePerSqft = (float) ($oldPlot['price_per_sqft'] ?? 0);
+        $oldTotalPrice   = (float) ($oldPlot['total_price'] ?? 0);
+        $colonyId        = (int) ($oldPlot['colony_id'] ?? 0);
+
         $this->db->execute(
             "UPDATE plots SET 
                 price_per_sqft = ?,
@@ -100,8 +109,46 @@ class PlotDevelopmentCostService
              WHERE id = ?",
             [$pricing['final_price_per_sqft'], $pricing['final_price'], $plotId]
         );
-        
+
+        // Log price change to price_history
+        $this->logPriceHistory(
+            $plotId,
+            $colonyId,
+            $oldPricePerSqft,
+            $pricing['final_price_per_sqft'],
+            $oldTotalPrice,
+            $pricing['final_price'],
+            'margin_update',
+            "Margin update: {$marginPercent}% margin applied",
+            (int) ($_SESSION['user_id'] ?? 0)
+        );
+
         return $pricing;
+    }
+
+    /**
+     * Log price history
+     */
+    private function logPriceHistory($plotId, $colonyId, $oldPricePerSqft, $newPricePerSqft, $oldTotalPrice, $newTotalPrice, $changeType, $reason, $changedBy)
+    {
+        try {
+            $this->db->insert('price_history', [
+                'plot_id'           => $plotId,
+                'colony_id'         => $colonyId,
+                'old_price'         => $oldTotalPrice,
+                'new_price'         => $newTotalPrice,
+                'old_price_per_sqft'=> $oldPricePerSqft,
+                'new_price_per_sqft'=> $newPricePerSqft,
+                'change_type'       => $changeType,
+                'reason'            => $reason,
+                'changed_by'        => $changedBy,
+                'reference_type'    => 'cost_calculation',
+                'reference_id'      => $colonyId,
+                'created_at'        => date('Y-m-d H:i:s'),
+            ]);
+        } catch (Exception $e) {
+            error_log("Price history insert failed: " . $e->getMessage());
+        }
     }
     
     /**
@@ -128,8 +175,8 @@ class PlotDevelopmentCostService
     {
         $result = $this->db->fetch(
             "SELECT SUM(amount) as total 
-             FROM plot_development_costs 
-             WHERE colony_id = ? AND cost_type = 'development'",
+             FROM colony_development_costs 
+             WHERE colony_id = ? AND cost_type IN ('road','electricity','water','sewerage','drainage','street_light')",
             [$colonyId]
         );
         return floatval($result['total'] ?? 0);
@@ -142,8 +189,8 @@ class PlotDevelopmentCostService
     {
         $result = $this->db->fetch(
             "SELECT SUM(amount) as total 
-             FROM plot_development_costs 
-             WHERE colony_id = ? AND cost_type = 'amenities'",
+             FROM colony_development_costs 
+             WHERE colony_id = ? AND cost_type IN ('landscaping','compound_wall','gate','security')",
             [$colonyId]
         );
         return floatval($result['total'] ?? 0);
@@ -156,8 +203,8 @@ class PlotDevelopmentCostService
     {
         $result = $this->db->fetch(
             "SELECT SUM(amount) as total 
-             FROM plot_development_costs 
-             WHERE colony_id = ? AND cost_type = 'legal'",
+             FROM colony_development_costs 
+             WHERE colony_id = ? AND cost_type IN ('legal','approval_fee')",
             [$colonyId]
         );
         return floatval($result['total'] ?? 0);
@@ -170,8 +217,8 @@ class PlotDevelopmentCostService
     {
         $result = $this->db->fetch(
             "SELECT SUM(amount) as total 
-             FROM plot_development_costs 
-             WHERE colony_id = ? AND cost_type = 'misc'",
+             FROM colony_development_costs 
+             WHERE colony_id = ? AND cost_type IN ('brokerage','marketing','office_setup','staff','other')",
             [$colonyId]
         );
         return floatval($result['total'] ?? 0);
@@ -211,10 +258,10 @@ class PlotDevelopmentCostService
     public function addCost($colonyId, $costType, $description, $amount, $perSqftRate = null, $totalArea = null)
     {
         $this->db->execute(
-            "INSERT INTO plot_development_costs 
-             (colony_id, cost_type, description, amount, per_sqft_rate, total_area_sqft)
-             VALUES (?, ?, ?, ?, ?, ?)",
-            [$colonyId, $costType, $description, $amount, $perSqftRate, $totalArea]
+            "INSERT INTO colony_development_costs 
+             (colony_id, cost_type, work_description, amount, created_at)
+             VALUES (?, ?, ?, ?, NOW())",
+            [$colonyId, $costType, $description, $amount]
         );
         
         return $this->db->lastInsertId();
@@ -227,18 +274,31 @@ class PlotDevelopmentCostService
     {
         $costs = $this->db->fetchAll(
             "SELECT cost_type, SUM(amount) as total_amount, COUNT(*) as entries
-             FROM plot_development_costs
+             FROM colony_development_costs
              WHERE colony_id = ?
              GROUP BY cost_type",
             [$colonyId]
         );
         
         $breakdown = [
-            'land' => 0,
-            'development' => 0,
-            'amenities' => 0,
+            'land_acquisition' => 0,
+            'road' => 0,
+            'electricity' => 0,
+            'water' => 0,
+            'sewerage' => 0,
+            'street_light' => 0,
+            'drainage' => 0,
+            'compound_wall' => 0,
+            'gate' => 0,
+            'security' => 0,
+            'landscaping' => 0,
+            'approval_fee' => 0,
             'legal' => 0,
-            'misc' => 0,
+            'brokerage' => 0,
+            'marketing' => 0,
+            'office_setup' => 0,
+            'staff' => 0,
+            'other' => 0,
             'total' => 0
         ];
         

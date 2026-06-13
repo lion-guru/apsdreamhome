@@ -236,10 +236,31 @@ class CashCollectionController extends AdminController
         } catch (\Throwable $e) { return []; }
     }
 
+    public function reconcile()
+    {
+        $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
+            return;
+        }
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
+        $adminId = $this->getUserId();
+        if ($id && $this->service && $this->service->closeReconciliation($id, $adminId)) {
+            $this->setFlash('success', 'Reconciliation reconciled');
+        } else {
+            $this->setFlash('error', 'Failed to reconcile');
+        }
+        return $this->redirect(BASE_URL . '/admin/cash-collections/reconciliations');
+    }
+
     private function getBookings(): array
     {
         try {
-            $stmt = $this->db->query("SELECT id, booking_number, customer_name FROM plot_bookings WHERE status NOT IN ('cancelled','transferred') ORDER BY created_at DESC LIMIT 100");
+            $stmt = $this->db->query("SELECT pb.id, pb.booking_number, u.name as customer_name
+                FROM plot_bookings pb
+                LEFT JOIN users u ON u.id = pb.customer_id
+                WHERE pb.status NOT IN ('cancelled','transferred')
+                ORDER BY pb.created_at DESC LIMIT 100");
             return $stmt->fetchAll();
         } catch (\Throwable $e) { return []; }
     }

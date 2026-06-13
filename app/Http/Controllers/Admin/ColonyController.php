@@ -72,10 +72,90 @@ class ColonyController extends AdminController
             $this->redirect('/admin/colonies');
             return;
         }
-        $plots = $this->db->fetchAll("SELECT * FROM plots WHERE colony_id = ? ORDER BY plot_number", [$id]);
+
+        // Plot statistics
+        $plotStats = $this->db->fetchOne("
+            SELECT 
+                COUNT(*) as total_plots,
+                SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) as available_plots,
+                SUM(CASE WHEN status = 'booked' THEN 1 ELSE 0 END) as booked_plots,
+                SUM(CASE WHEN status = 'sold' THEN 1 ELSE 0 END) as sold_plots,
+                SUM(CASE WHEN status = 'hold' THEN 1 ELSE 0 END) as hold_plots,
+                SUM(total_price) as total_value,
+                AVG(price_per_sqft) as avg_price_per_sqft,
+                AVG(area_sqft) as avg_area_sqft,
+                SUM(CASE WHEN corner_plot = 1 THEN 1 ELSE 0 END) as corner_plots,
+                SUM(CASE WHEN park_facing = 1 THEN 1 ELSE 0 END) as park_facing_plots,
+                SUM(CASE WHEN road_width_ft >= 40 THEN 1 ELSE 0 END) as wide_road_plots
+            FROM plots WHERE colony_id = ?
+        ", [$id]);
+
+        // Block-wise breakdown
+        $blockStats = $this->db->fetchAll("
+            SELECT 
+                COALESCE(block, 'Unassigned') as block,
+                COUNT(*) as count,
+                SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) as available,
+                SUM(total_price) as block_value,
+                AVG(price_per_sqft) as avg_ppsft
+            FROM plots WHERE colony_id = ?
+            GROUP BY block
+            ORDER BY block
+        ", [$id]);
+
+        // Development costs
+        $devCosts = $this->db->fetchAll("
+            SELECT 
+                cost_type,
+                SUM(amount) as total_amount,
+                COUNT(*) as entries,
+                SUM(CASE WHEN payment_status = 'paid' THEN amount ELSE 0 END) as paid_amount,
+                SUM(CASE WHEN payment_status = 'partial' THEN amount ELSE 0 END) as partial_amount,
+                SUM(CASE WHEN payment_status = 'unpaid' THEN amount ELSE 0 END) as unpaid_amount
+            FROM colony_development_costs
+            WHERE colony_id = ?
+            GROUP BY cost_type
+            ORDER BY cost_type
+        ", [$id]);
+
+        $totalDevCost = 0;
+        $paidDevCost = 0;
+        foreach ($devCosts as &$dc) {
+            $totalDevCost += $dc['total_amount'];
+            $paidDevCost += $dc['paid_amount'];
+        }
+
+        // Current layout
+        $layout = $this->db->fetch("
+            SELECT cl.*, 
+                   COUNT(p.id) as generated_plots
+            FROM colony_layouts cl
+            LEFT JOIN plots p ON p.layout_id = cl.id
+            WHERE cl.colony_id = ? AND cl.is_current = 1
+            GROUP BY cl.id
+        ", [$id]);
+
+        // Plots
+        $plots = $this->db->fetchAll("SELECT * FROM plots WHERE colony_id = ? ORDER BY block, plot_number", [$id]);
+
+        // Price history count
+        $priceHistoryCount = (int) $this->db->fetchColumn("
+            SELECT COUNT(*) FROM price_history ph
+            JOIN plots p ON ph.plot_id = p.id
+            WHERE p.colony_id = ?
+        ", [$id]);
+
         $this->render('admin/colonies/show', [
             'page_title' => $colony['name'] . ' - Admin',
-            'colony' => $colony, 'plots' => $plots,
+            'colony' => $colony,
+            'plots' => $plots,
+            'plot_stats' => $plotStats,
+            'block_stats' => $blockStats,
+            'dev_costs' => $devCosts,
+            'total_dev_cost' => $totalDevCost,
+            'paid_dev_cost' => $paidDevCost,
+            'layout' => $layout,
+            'price_history_count' => $priceHistoryCount,
         ]);
     }
 

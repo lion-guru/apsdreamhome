@@ -20,7 +20,7 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:var(--aps-theme-primary,#4f46e5);"><?= (int)($stats['total_ranks'] ?? 0) ?></div>
+                    <div style="font-size:1.8rem;font-weight:700;color:var(--primary);"><?= (int)($stats['total_ranks'] ?? 0) ?></div>
                     <div class="text-muted small">Total Ranks</div>
                 </div>
             </div>

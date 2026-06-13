@@ -3029,12 +3029,14 @@ section.py-4 {
     padding: 0 15px !important;
 }
 
-/* Card visibility */
-.card {
+/* Card visibility — exclude dark/hero/EMI cards */
+.card:not(.bg-dark):not(.hero .card):not(.emi-section .card):not(.cta-gradient .card) {
     background: #fff !important;
     border: 1px solid #e5e7eb !important;
     border-radius: 12px !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+.card:not(.career-card):not(.invest-card):not(.tool-card):not(.project-card):not(.service-card):not(.bg-dark) {
     overflow: hidden !important;
 }
 
@@ -3042,6 +3044,8 @@ section.py-4 {
 img {
     max-width: 100% !important;
     height: auto !important;
+}
+img:not(.rounded-circle):not([class*="icon"]):not([class*="fa-"]):not(.btn-icon) {
     display: block !important;
 }
 
@@ -3059,14 +3063,26 @@ img {
     color: #1a1a1a !important;
 }
 
-/* Section headings */
-section h2, section h3, section h4 {
+/* Section headings — dark sections keep white text; dark cards inside also excluded */
+section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero) h2,
+section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero) h3,
+section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero) h4 {
     color: #1a1a1a !important;
     font-weight: 700 !important;
 }
+/* Restore white text for headings inside dark cards */
+.bg-dark h2, .bg-dark h3, .bg-dark h4,
+.cta-gradient h2, .cta-gradient h3, .cta-gradient h4,
+.emi-section h2, .emi-section h3, .emi-section h4,
+.hero h2, .hero h3, .hero h4 {
+    color: #fff !important;
+}
 
-section .lead {
+section:not(.bg-dark):not(.cta-gradient):not(.emi-section):not(.hero) .lead {
     color: #666 !important;
+}
+.bg-dark .lead, .cta-gradient .lead, .emi-section .lead, .hero .lead {
+    color: rgba(255,255,255,0.85) !important;
 }
 
 /* Responsive section spacing */
@@ -3090,20 +3106,32 @@ section .lead {
     }
 }
 
-/* Fix text contrast in Why Invest section */
-.section-subtitle {
-    color: #e2e8f0 !important;
-}
-
-/* Ensure section-subtitle is visible on all backgrounds */
-.py-5 .section-subtitle,
-.section-subtitle {
+/* Fix text contrast in Why Invest section — dark section only */
+.bg-dark .section-subtitle,
+.emi-section .section-subtitle,
+.cta-gradient .section-subtitle {
     color: rgba(255, 255, 255, 0.8) !important;
 }
 
+/* Light background sections: dark text — but NOT inside dark/hero/modal contexts */
+section.py-5 .section-subtitle,
+section.bg-light .section-subtitle,
+section.bg-white .section-subtitle {
+    color: #6b7280 !important;
+}
+
 /* Fix MLM Network Benefits card padding */
-.card-body {
+.bg-light .card-body,
+section .card-body {
     padding-right: 20px !important;
+}
+/* Override for specific cards that need full padding */
+.career-card .card-body,
+.invest-card .card-body,
+.tool-card .card-body,
+.service-card .card-body,
+.project-card .card-body {
+    padding-right: 0 !important;
 }
 
 .card .list-group-item {
@@ -3111,17 +3139,46 @@ section .lead {
     margin-right: 0 !important;
 }
 
-/* Fix scrollbar/arrow overlap */
-.card {
-    overflow: hidden !important;
+/* Dark card content — restore white text */
+.bg-dark p, .bg-dark span, .bg-dark label, .bg-dark td, .bg-dark th,
+.cta-gradient p, .cta-gradient span,
+.emi-section p, .emi-section span {
+    color: rgba(255,255,255,0.85) !important;
 }
+.bg-dark .text-white-50 { color: rgba(255,255,255,0.5) !important; }
+.bg-dark .text-success { color: #22c55e !important; }
+.bg-dark .text-warning { color: #eab308 !important; }
+.bg-dark .text-primary { color: #818cf8 !important; }
+.bg-dark h2, .bg-dark h3, .bg-dark h4,
+.cta-gradient h2, .cta-gradient h3, .cta-gradient h4 {
+    color: #fff !important;
+}
+
+/* Service & tool modal text visibility */
+.modal-body { color: #1a1a1a !important; }
+.modal-body h5, .modal-body h6 { color: #1a1a1a !important; }
+.modal-body p { color: #374151 !important; }
+.modal-body li { color: #374151 !important; }
+.modal-body .text-muted { color: #6b7280 !important; }
+.modal-body .bg-opacity-10 h5 { color: #1a1a1a !important; }
+.modal-body .bg-opacity-10 p { color: #6b7280 !important; }
+
+/* Career CTA "Ready to start" text */
+.bg-light > .container > .text-center > .fw-bold { color: #1a1a1a !important; }
 
 /* Generic card improvements */
 .invest-card {
     padding: 20px !important;
 }
 
-.card-title {
+/* Dark titles on light cards — but not dark sections */
+.bg-light .card-title,
+.invest-card .card-title,
+.career-card .card-title,
+.tool-card .card-title,
+.project-card .card-title,
+.service-card .card-title {
     color: #1a1a1a !important;
     font-weight: 600 !important;
 }
+

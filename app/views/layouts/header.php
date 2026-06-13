@@ -210,7 +210,7 @@ if (!empty($allProjects)) {
 
 // Build Plots submenu dynamically from colonies
 $plotsSubmenu = [
-    ['label' => 'Browse Plots', 'url' => '/plots/browse', 'icon' => 'fas fa-search'],
+    ['label' => __('browse_plots'), 'url' => '/plots/browse', 'icon' => 'fas fa-search'],
     ['label' => __('nav_all_plots'), 'url' => '/plots', 'icon' => 'fas fa-th-large']
 ];
 
@@ -257,7 +257,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                         <span class="input-group-text bg-white border-end-0"><i
                                 class="fas fa-search text-muted"></i></span>
                         <input type="search" class="form-control border-start-0" id="quickSearchInput"
-                            placeholder="Search properties, locations..." aria-label="Quick search"
+                            placeholder="<?= __('search_placeholder') ?>" aria-label="Quick search"
                             style="border-left: 0;">
                     </div>
                     <div id="quickSearchResults" class="quick-search-dropdown shadow-lg" style="display: none;"></div>
@@ -294,7 +294,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 'label' => __('plots'),
                                 'icon' => 'fas fa-vector-square',
                                 'submenu' => $plotsSubmenu ?? [
-                                    ['label' => 'Browse Plots', 'url' => '/plots/browse', 'icon' => 'fas fa-search'],
+    ['label' => __('browse_plots'), 'url' => '/plots/browse', 'icon' => 'fas fa-search'],
                                     ['label' => __('nav_all_plots'), 'url' => '/plots', 'icon' => 'fas fa-th-large'],
                                     ['label' => __('nav_by_colony'), 'url' => '#', 'icon' => 'fas fa-map-marker-alt', 'disabled' => true],
                                     ['label' => 'Suryoday Colony', 'url' => '/colony/suryoday-colony/plots', 'icon' => 'fas fa-home', 'badge' => '287'],
@@ -380,10 +380,10 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item <?= ($_SESSION['user_language'] ?? 'en') === 'en' ? 'active' : '' ?>"
-                                        href="<?= BASE_URL ?>/language/set/en"><span class="me-2">ðŸ‡¬ðŸ‡§</span>
+                                        href="<?= BASE_URL ?>/language/set/en"><span class="me-2">English</span>
                                         English</a></li>
                                 <li><a class="dropdown-item <?= ($_SESSION['user_language'] ?? 'en') === 'hi' ? 'active' : '' ?>"
-                                        href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">ðŸ‡®ðŸ‡³</span>
+                                        href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">Hindi</span>
                                         à¤¹à¤¿à¤‚à¤¦à¥€</a></li>
                             </ul>
                         </li>
@@ -405,13 +405,13 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 $dashboardUrl = '/associate/dashboard';
                                 $menuItems = [
                                     ['label' => __('dashboard'), 'url' => '/associate/dashboard', 'icon' => 'fa-tachometer-alt'],
-                                    ['label' => 'Post Property', 'url' => '/associate/list-property', 'icon' => 'fa-plus-circle', 'highlight' => true],
-                                    ['label' => 'My Network', 'url' => '/associate/genealogy', 'icon' => 'fa-sitemap'],
-                                    ['label' => 'My Leads', 'url' => '/associate/leads', 'icon' => 'fa-users'],
-                                    ['label' => 'My Properties', 'url' => '/associate/properties', 'icon' => 'fa-building'],
-                                    ['label' => 'Commissions', 'url' => '/associate/commissions', 'icon' => 'fa-money-bill-wave'],
-                                    ['label' => 'My Profile', 'url' => '/associate/profile', 'icon' => 'fa-user-cog'],
-                                    ['label' => 'Bank Details', 'url' => '/associate/bank-details', 'icon' => 'fa-university'],
+                                    ['label' => __('post_property'), 'url' => '/associate/list-property', 'icon' => 'fa-plus-circle', 'highlight' => true],
+                                    ['label' => __('my_network'), 'url' => '/associate/genealogy', 'icon' => 'fa-sitemap'],
+                                    ['label' => __('my_leads'), 'url' => '/associate/leads', 'icon' => 'fa-users'],
+                                    ['label' => __('my_properties'), 'url' => '/associate/properties', 'icon' => 'fa-building'],
+                                    ['label' => __('commissions'), 'url' => '/associate/commissions', 'icon' => 'fa-money-bill-wave'],
+                                    ['label' => __('my_profile'), 'url' => '/associate/profile', 'icon' => 'fa-user-cog'],
+                                    ['label' => __('bank_details'), 'url' => '/associate/bank-details', 'icon' => 'fa-university'],
                                 ];
                                 $logoutUrl = '/associate/logout';
                             } elseif ($isAgent) {
@@ -421,10 +421,10 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 $dashboardUrl = '/agent/dashboard';
                                 $menuItems = [
                                     ['label' => __('dashboard'), 'url' => '/agent/dashboard', 'icon' => 'fa-tachometer-alt'],
-                                    ['label' => 'My Leads', 'url' => '/agent/leads', 'icon' => 'fa-users'],
-                                    ['label' => 'Properties', 'url' => '/agent/properties', 'icon' => 'fa-building'],
-                                    ['label' => 'Commissions', 'url' => '/agent/commissions', 'icon' => 'fa-money-bill-wave'],
-                                    ['label' => 'My Profile', 'url' => '/agent/profile', 'icon' => 'fa-user-cog'],
+                                    ['label' => __('my_leads'), 'url' => '/agent/leads', 'icon' => 'fa-users'],
+                                    ['label' => __('properties'), 'url' => '/agent/properties', 'icon' => 'fa-building'],
+                                    ['label' => __('commissions'), 'url' => '/agent/commissions', 'icon' => 'fa-money-bill-wave'],
+                                    ['label' => __('my_profile'), 'url' => '/agent/profile', 'icon' => 'fa-user-cog'],
                                 ];
                                 $logoutUrl = '/agent/logout';
                             } elseif ($isEmployee) {
@@ -434,10 +434,10 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 $dashboardUrl = '/employee/dashboard';
                                 $menuItems = [
                                     ['label' => __('dashboard'), 'url' => '/employee/dashboard', 'icon' => 'fa-tachometer-alt'],
-                                    ['label' => 'My Tasks', 'url' => '/employee/tasks', 'icon' => 'fa-tasks'],
-                                    ['label' => 'Attendance', 'url' => '/employee/attendance', 'icon' => 'fa-clock'],
-                                    ['label' => 'Performance', 'url' => '/employee/performance-page', 'icon' => 'fa-chart-line'],
-                                    ['label' => 'My Profile', 'url' => '/employee/profile', 'icon' => 'fa-user-cog'],
+                                    ['label' => __('my_tasks'), 'url' => '/employee/tasks', 'icon' => 'fa-tasks'],
+                                    ['label' => __('hr_attendance'), 'url' => '/employee/attendance', 'icon' => 'fa-clock'],
+                                    ['label' => __('hr_performance'), 'url' => '/employee/performance-page', 'icon' => 'fa-chart-line'],
+                                    ['label' => __('my_profile'), 'url' => '/employee/profile', 'icon' => 'fa-user-cog'],
                                 ];
                                 $logoutUrl = '/employee/logout';
                             } elseif ($isAdmin) {
@@ -447,34 +447,34 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 $dashboardUrl = '/admin/dashboard';
                                 $menuItems = [
                                     ['label' => __('dashboard'), 'url' => '/admin/dashboard', 'icon' => 'fa-tachometer-alt'],
-                                    ['label' => 'Leads', 'url' => '/admin/leads', 'icon' => 'fa-users'],
-                                    ['label' => 'Properties', 'url' => '/admin/properties', 'icon' => 'fa-building'],
-                                    ['label' => 'God Mode', 'url' => '/admin/godmode', 'icon' => 'fa-crown'],
-                                    ['label' => 'My Profile', 'url' => '/admin/profile', 'icon' => 'fa-user-cog'],
+                                    ['label' => __('leads'), 'url' => '/admin/leads', 'icon' => 'fa-users'],
+                                    ['label' => __('properties'), 'url' => '/admin/properties', 'icon' => 'fa-building'],
+                                    ['label' => __('god_mode'), 'url' => '/admin/godmode', 'icon' => 'fa-crown'],
+                                    ['label' => __('my_profile'), 'url' => '/admin/profile', 'icon' => 'fa-user-cog'],
                                 ];
                                 $logoutUrl = '/admin/logout';
                             } else {
                                 // Customer (default)
-                                $userName = $_SESSION['user_name'] ?? 'My Account';
+                                $userName = $_SESSION['user_name'] ?? __('my_account');
                                 $userRole = 'Customer';
                                 $userIcon = 'fa-user';
                                 $dashboardUrl = '/user/dashboard';
                                 $menuItems = [
                                     ['label' => __('dashboard'), 'url' => '/user/dashboard', 'icon' => 'fa-tachometer-alt'],
-                                    ['label' => 'My Bookings', 'url' => '/user/bookings', 'icon' => 'fa-file-contract'],
-                                    ['label' => 'My Favorites', 'url' => '/dashboard/favorites', 'icon' => 'fa-heart'],
-                                    ['label' => 'Post Property', 'url' => '/list-property', 'icon' => 'fa-plus-circle', 'highlight' => true],
-                                    ['label' => 'My Properties', 'url' => '/user/properties', 'icon' => 'fa-building'],
-                                    ['label' => 'My Inquiries', 'url' => '/user/inquiries', 'icon' => 'fa-envelope'],
-                                    ['label' => 'My Profile', 'url' => '/user/profile', 'icon' => 'fa-user-cog'],
-                                    ['label' => 'Bank Details', 'url' => '/user/bank-details', 'icon' => 'fa-university'],
+                                    ['label' => __('my_bookings'), 'url' => '/user/bookings', 'icon' => 'fa-file-contract'],
+                                    ['label' => __('my_favorites'), 'url' => '/dashboard/favorites', 'icon' => 'fa-heart'],
+                                    ['label' => __('post_property'), 'url' => '/list-property', 'icon' => 'fa-plus-circle', 'highlight' => true],
+                                    ['label' => __('my_properties'), 'url' => '/user/properties', 'icon' => 'fa-building'],
+                                    ['label' => __('my_inquiries'), 'url' => '/user/inquiries', 'icon' => 'fa-envelope'],
+                                    ['label' => __('my_profile'), 'url' => '/user/profile', 'icon' => 'fa-user-cog'],
+                                    ['label' => __('bank_details'), 'url' => '/user/bank-details', 'icon' => 'fa-university'],
                                 ];
                                 $logoutUrl = '/user/logout';
                             }
                         ?>
                         <li class="nav-item">
                             <a href="<?php echo BASE_URL; ?>/user/notifications" class="nav-link position-relative"
-                                title="Notifications">
+                                title="<?= __('notifications') ?>">
                                 <i class="fas fa-bell"></i>
                                 <span id="headerNotifBadge"
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
@@ -523,13 +523,13 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/register">
-                                        <i class="fas fa-user me-2"></i>Customer Registration
+                                        <i class="fas fa-user me-2"></i><?= __('customer_registration') ?>
                                     </a></li>
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/associate/register">
-                                        <i class="fas fa-handshake me-2"></i>Associate Registration
+                                        <i class="fas fa-handshake me-2"></i><?= __('associate_registration') ?>
                                     </a></li>
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/agent/register">
-                                        <i class="fas fa-briefcase me-2"></i>Agent Registration
+                                        <i class="fas fa-briefcase me-2"></i><?= __('agent_registration') ?>
                                     </a></li>
                             </ul>
                         </li>
@@ -539,19 +539,19 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/login">
-                                        <i class="fas fa-user me-2"></i>Customer Login
+                                        <i class="fas fa-user me-2"></i><?= __('customer_login') ?>
                                     </a></li>
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/associate/login">
-                                        <i class="fas fa-handshake me-2"></i>Associate Login
+                                        <i class="fas fa-handshake me-2"></i><?= __('associate_login') ?>
                                     </a></li>
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/agent/login">
-                                        <i class="fas fa-briefcase me-2"></i>Agent Login
+                                        <i class="fas fa-briefcase me-2"></i><?= __('agent_login') ?>
                                     </a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/farmer/login">
-                                        <i class="fas fa-seedling me-2 text-success"></i>Farmer Login
+                                        <i class="fas fa-seedling me-2 text-success"></i><?= __('farmer_login') ?>
                                     </a></li>
                             </ul>
                         </li>
@@ -578,7 +578,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                         <li class="nav-item ms-2 btn-admin">
                             <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-admin btn-sm">
                                 <i class="fas fa-user-lock me-1"></i>
-                                <span class="d-none d-lg-inline">Admin</span>
+                                <span class="d-none d-lg-inline"><?= __('admin') ?></span>
                             </a>
                         </li>
                         <?php endif; ?>
@@ -588,16 +588,8 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
         </nav>
     </header>
 
-    <!-- Ad Banner -->
-    <?php
-    try {
-        $adService = new \App\Services\AdManagerService();
-        echo $adService->renderSlot('header_banner');
-        unset($adService);
-    } catch (\Exception $e) {
-        // Ad service unavailable
-    }
-    ?>
+    <!-- Ad Banner (removed — ads handled via popup/modal) -->
+    </header>
 
 
     <style>
@@ -609,6 +601,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     }
 
     .premium-header::after {
+		display: none !important;
         content: '';
         position: absolute;
         bottom: -1px;

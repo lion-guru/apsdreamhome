@@ -31,6 +31,9 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <meta property="og:description" content="<?= htmlspecialchars($sc('seo_description', 'Premium Real Estate in Uttar Pradesh')) ?>">
     <meta property="og:type" content="website">
 
+    <!-- Bootstrap JS (early load for modals) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
     {
@@ -163,6 +166,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
     <!-- Consolidated APS CSS Bundles -->
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
 
@@ -194,8 +198,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     </script>
 
     <!-- Page-specific styles (deferred, non-critical) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-pages.css" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-pages.css" rel="stylesheet"></noscript>
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-pages.css" rel="stylesheet">
 
 
 </head>
@@ -249,9 +252,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         }
     }
     ?>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
     // Lazy load images that are below the fold

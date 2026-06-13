@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Unified Admin Layout with RBAC Sidebar
@@ -30,7 +30,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Only overrides that admin.css doesn't cover — NO duplication */
+        /* Only overrides that admin.css does not cover */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: var(--font); background: var(--body-bg); overflow-x: hidden; }
     </style>
@@ -140,12 +140,13 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
 </head>
 
 <body>
+    <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
     <!-- Sidebar -->
     <?php include __DIR__ . '/rbac_sidebar.php'; ?>
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="APS.closeSidebar()"></div>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content" id="aps-main-content">
         <!-- Top Navigation -->
         <nav class="top-nav">
             <div class="nav-left">

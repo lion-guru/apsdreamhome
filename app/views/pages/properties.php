@@ -88,22 +88,22 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                 <i class="fas fa-list me-1"></i>
                 <strong id="resultsCount"><?= number_format($total ?? 0) ?></strong> <?= __('properties_found') ?>
                 <?php if ($hasActiveFilters): ?>
-                    <span class="badge bg-primary-subtle text-primary ms-2">Filtered</span>
+                    <span class="badge bg-primary-subtle text-primary ms-2"><?= __('filtered') ?></span>
                 <?php endif; ?>
             </p>
         </div>
         <div class="col-md-5 text-md-end mt-2 mt-md-0">
             <div class="btn-group" role="group" aria-label="View toggle">
                 <button type="button" class="btn btn-outline-primary active" id="gridViewBtn" onclick="setView('grid')">
-                    <i class="fas fa-th-large me-1"></i>Grid
+                    <i class="fas fa-th-large me-1"></i><?= __('grid') ?>
                 </button>
-                <button type="button" class="btn btn-outline-primary" id="mapViewBtn" onclick="setView('map')" disabled title="Coming soon">
-                    <i class="fas fa-map-marked-alt me-1"></i>Map <span class="badge bg-secondary ms-1">Soon</span>
+                <button type="button" class="btn btn-outline-primary" id="mapViewBtn" onclick="setView('map')" disabled title="<?= __('coming_soon') ?>">
+                    <i class="fas fa-map-marked-alt me-1"></i><?= __('map') ?> <span class="badge bg-secondary ms-1"><?= __('coming_soon') ?></span>
                 </button>
             </div>
             <?php if (!empty($_SESSION['user_id'])): ?>
                 <button type="button" class="btn btn-success rounded-pill ms-2" onclick="triggerSaveSearch()" id="saveSearchBtnInline" style="<?= $hasActiveFilters ? '' : 'display:none;' ?>">
-                    <i class="fas fa-bookmark me-1"></i>Save Search
+                    <i class="fas fa-bookmark me-1"></i><?= __('save_search') ?>
                 </button>
             <?php endif; ?>
         </div>
@@ -120,7 +120,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     <div class="card mb-4 shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center py-2">
             <h6 class="mb-0 fw-bold">
-                <i class="fas fa-sliders-h text-primary me-2"></i>Advanced Search
+                <i class="fas fa-sliders-h text-primary me-2"></i><?= __('advanced_search') ?>
                 <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="true">
                     <i class="fas fa-chevron-down"></i>
                 </button>
@@ -135,7 +135,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
             <form method="GET" action="<?php echo BASE_URL; ?>/properties" id="propertyFilterForm" class="row g-3">
                 <!-- Text Search -->
                 <div class="col-md-4">
-                    <label for="q" class="form-label small fw-semibold"><i class="fas fa-search"></i> Keyword</label>
+                    <label for="q" class="form-label small fw-semibold"><i class="fas fa-search"></i> <?= __('keyword') ?></label>
                     <input type="text" class="form-control" id="q" name="q" placeholder="Property name, address, description..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
                 </div>
 
@@ -143,14 +143,14 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                 <div class="col-md-2">
                     <label for="type" class="form-label small fw-semibold"><?= __('filter_type') ?></label>
                     <select class="form-select form-select-sm" id="type" name="type">
-                        <option value="">All Types</option>
-                        <option value="plot" <?= ($_GET['type'] ?? '') === 'plot' ? 'selected' : ''; ?>>Plot</option>
-                        <option value="house" <?= ($_GET['type'] ?? '') === 'house' ? 'selected' : ''; ?>>House</option>
-                        <option value="flat" <?= ($_GET['type'] ?? '') === 'flat' ? 'selected' : ''; ?>>Flat/Apartment</option>
-                        <option value="shop" <?= ($_GET['type'] ?? '') === 'shop' ? 'selected' : ''; ?>>Shop</option>
-                        <option value="farmhouse" <?= ($_GET['type'] ?? '') === 'farmhouse' ? 'selected' : ''; ?>>Farmhouse</option>
-                        <option value="villa" <?= ($_GET['type'] ?? '') === 'villa' ? 'selected' : ''; ?>>Villa</option>
-                        <option value="land" <?= ($_GET['type'] ?? '') === 'land' ? 'selected' : ''; ?>>Land</option>
+                        <option value=""><?= __('all') ?></option>
+                        <option value="plot" <?= ($_GET['type'] ?? '') === 'plot' ? 'selected' : ''; ?>><?= __('plot') ?></option>
+                        <option value="house" <?= ($_GET['type'] ?? '') === 'house' ? 'selected' : ''; ?>><?= __('house') ?></option>
+                        <option value="flat" <?= ($_GET['type'] ?? '') === 'flat' ? 'selected' : ''; ?>><?= __('flat') ?></option>
+                        <option value="shop" <?= ($_GET['type'] ?? '') === 'shop' ? 'selected' : ''; ?>><?= __('shop') ?></option>
+                        <option value="farmhouse" <?= ($_GET['type'] ?? '') === 'farmhouse' ? 'selected' : ''; ?>><?= __('farmhouse') ?></option>
+                        <option value="villa" <?= ($_GET['type'] ?? '') === 'villa' ? 'selected' : ''; ?>><?= __('villa') ?></option>
+                        <option value="land" <?= ($_GET['type'] ?? '') === 'land' ? 'selected' : ''; ?>><?= __('land') ?></option>
                     </select>
                 </div>
 
@@ -158,9 +158,9 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                 <div class="col-md-2">
                     <label for="listing" class="form-label small fw-semibold"><?= __('filter_listing') ?></label>
                     <select class="form-select form-select-sm" id="listing" name="listing">
-                        <option value="">Buy & Rent</option>
-                        <option value="sell" <?= ($_GET['listing'] ?? '') === 'sell' ? 'selected' : ''; ?>>For Sale</option>
-                        <option value="rent" <?= ($_GET['listing'] ?? '') === 'rent' ? 'selected' : ''; ?>>For Rent</option>
+                        <option value=""><?= __('buy_and_rent') ?></option>
+                        <option value="sell" <?= ($_GET['listing'] ?? '') === 'sell' ? 'selected' : ''; ?>><?= __('for_sale') ?></option>
+                        <option value="rent" <?= ($_GET['listing'] ?? '') === 'rent' ? 'selected' : ''; ?>><?= __('for_rent') ?></option>
                     </select>
                 </div>
 
@@ -168,7 +168,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                 <div class="col-md-2">
                     <label for="location" class="form-label small fw-semibold"><?= __('filter_location') ?></label>
                     <select class="form-select form-select-sm" id="location" name="location">
-                        <option value="">All Locations</option>
+                        <option value=""><?= __('all') ?></option>
                         <?php foreach (($locations ?? []) as $loc): ?>
                             <option value="<?= htmlspecialchars($loc) ?>" <?= ($_GET['location'] ?? '') === $loc ? 'selected' : ''; ?>>
                                 <?= htmlspecialchars($loc) ?>
@@ -179,35 +179,35 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 
                 <!-- Sort -->
                 <div class="col-md-2">
-                    <label for="sort" class="form-label small fw-semibold">Sort By</label>
+                    <label for="sort" class="form-label small fw-semibold"><?= __('sort_by') ?></label>
                     <select class="form-select form-select-sm" id="sort" name="sort" onchange="document.getElementById('propertyFilterForm').submit()">
-                        <option value="newest" <?= ($_GET['sort'] ?? 'newest') === 'newest' ? 'selected' : ''; ?>><i class="fas fa-clock"></i> Newest First</option>
-                        <option value="oldest" <?= ($_GET['sort'] ?? '') === 'oldest' ? 'selected' : ''; ?>>Oldest First</option>
-                        <option value="relevance" <?= ($_GET['sort'] ?? '') === 'relevance' ? 'selected' : ''; ?>>Relevance</option>
-                        <option value="price_low" <?= ($_GET['sort'] ?? '') === 'price_low' ? 'selected' : ''; ?>>Price: Low to High</option>
-                        <option value="price_high" <?= ($_GET['sort'] ?? '') === 'price_high' ? 'selected' : ''; ?>>Price: High to Low</option>
-                        <option value="area_large" <?= ($_GET['sort'] ?? '') === 'area_large' ? 'selected' : ''; ?>>Area: Largest First</option>
-                        <option value="area_small" <?= ($_GET['sort'] ?? '') === 'area_small' ? 'selected' : ''; ?>>Area: Smallest First</option>
+                        <option value="newest" <?= ($_GET['sort'] ?? 'newest') === 'newest' ? 'selected' : ''; ?>><i class="fas fa-clock"></i> <?= __('newest_first') ?></option>
+                        <option value="oldest" <?= ($_GET['sort'] ?? '') === 'oldest' ? 'selected' : ''; ?>><?= __('oldest_first') ?></option>
+                        <option value="relevance" <?= ($_GET['sort'] ?? '') === 'relevance' ? 'selected' : ''; ?>><?= __('relevance') ?></option>
+                        <option value="price_low" <?= ($_GET['sort'] ?? '') === 'price_low' ? 'selected' : ''; ?>><?= __('price_low_high') ?></option>
+                        <option value="price_high" <?= ($_GET['sort'] ?? '') === 'price_high' ? 'selected' : ''; ?>><?= __('price_high_low') ?></option>
+                        <option value="area_large" <?= ($_GET['sort'] ?? '') === 'area_large' ? 'selected' : ''; ?>><?= __('area_large_first') ?></option>
+                        <option value="area_small" <?= ($_GET['sort'] ?? '') === 'area_small' ? 'selected' : ''; ?>><?= __('area_small_first') ?></option>
                     </select>
                 </div>
 
                 <!-- Advanced fields row -->
                 <div class="col-md-2">
-                    <label for="bedrooms" class="form-label small fw-semibold">Bedrooms (min)</label>
+                    <label for="bedrooms" class="form-label small fw-semibold"><?= __('bedrooms_min') ?></label>
                     <select class="form-select form-select-sm" id="bedrooms" name="bedrooms">
-                        <option value="">Any</option>
-                        <option value="1" <?= ($_GET['bedrooms'] ?? '') === '1' ? 'selected' : ''; ?>>1+ BHK</option>
-                        <option value="2" <?= ($_GET['bedrooms'] ?? '') === '2' ? 'selected' : ''; ?>>2+ BHK</option>
-                        <option value="3" <?= ($_GET['bedrooms'] ?? '') === '3' ? 'selected' : ''; ?>>3+ BHK</option>
-                        <option value="4" <?= ($_GET['bedrooms'] ?? '') === '4' ? 'selected' : ''; ?>>4+ BHK</option>
-                        <option value="5" <?= ($_GET['bedrooms'] ?? '') === '5' ? 'selected' : ''; ?>>5+ BHK</option>
+                        <option value=""><?= __('any') ?></option>
+                        <option value="1" <?= ($_GET['bedrooms'] ?? '') === '1' ? 'selected' : ''; ?>>1+ <?= __('bhk') ?></option>
+                        <option value="2" <?= ($_GET['bedrooms'] ?? '') === '2' ? 'selected' : ''; ?>>2+ <?= __('bhk') ?></option>
+                        <option value="3" <?= ($_GET['bedrooms'] ?? '') === '3' ? 'selected' : ''; ?>>3+ <?= __('bhk') ?></option>
+                        <option value="4" <?= ($_GET['bedrooms'] ?? '') === '4' ? 'selected' : ''; ?>>4+ <?= __('bhk') ?></option>
+                        <option value="5" <?= ($_GET['bedrooms'] ?? '') === '5' ? 'selected' : ''; ?>>5+ <?= __('bhk') ?></option>
                     </select>
                 </div>
 
                 <div class="col-md-2">
-                    <label for="bathrooms" class="form-label small fw-semibold">Bathrooms (min)</label>
+                    <label for="bathrooms" class="form-label small fw-semibold"><?= __('bathrooms_min') ?></label>
                     <select class="form-select form-select-sm" id="bathrooms" name="bathrooms">
-                        <option value="">Any</option>
+                        <option value=""><?= __('any') ?></option>
                         <option value="1" <?= ($_GET['bathrooms'] ?? '') === '1' ? 'selected' : ''; ?>>1+</option>
                         <option value="2" <?= ($_GET['bathrooms'] ?? '') === '2' ? 'selected' : ''; ?>>2+</option>
                         <option value="3" <?= ($_GET['bathrooms'] ?? '') === '3' ? 'selected' : ''; ?>>3+</option>
@@ -216,19 +216,19 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                 </div>
 
                 <div class="col-md-2">
-                    <label for="furnished" class="form-label small fw-semibold">Furnished</label>
+                    <label for="furnished" class="form-label small fw-semibold"><?= __('furnished') ?></label>
                     <select class="form-select form-select-sm" id="furnished" name="furnished">
-                        <option value="">Any</option>
-                        <option value="unfurnished" <?= ($_GET['furnished'] ?? '') === 'unfurnished' ? 'selected' : ''; ?>>Unfurnished</option>
-                        <option value="semi-furnished" <?= ($_GET['furnished'] ?? '') === 'semi-furnished' ? 'selected' : ''; ?>>Semi-Furnished</option>
-                        <option value="fully-furnished" <?= ($_GET['furnished'] ?? '') === 'fully-furnished' ? 'selected' : ''; ?>>Fully-Furnished</option>
+                        <option value=""><?= __('any') ?></option>
+                        <option value="unfurnished" <?= ($_GET['furnished'] ?? '') === 'unfurnished' ? 'selected' : ''; ?>><?= __('unfurnished') ?></option>
+                        <option value="semi-furnished" <?= ($_GET['furnished'] ?? '') === 'semi-furnished' ? 'selected' : ''; ?>><?= __('semi_furnished') ?></option>
+                        <option value="fully-furnished" <?= ($_GET['furnished'] ?? '') === 'fully-furnished' ? 'selected' : ''; ?>><?= __('fully_furnished') ?></option>
                     </select>
                 </div>
 
                 <div class="col-md-2">
-                    <label for="year_built" class="form-label small fw-semibold">Year Built (â‰¥)</label>
+                    <label for="year_built" class="form-label small fw-semibold"><?= __('year_built') ?></label>
                     <select class="form-select form-select-sm" id="year_built" name="year_built">
-                        <option value="">Any</option>
+                        <option value=""><?= __('any') ?></option>
                         <?php for ($y = (int)date('Y'); $y >= 2000; $y--): ?>
                             <option value="<?= $y ?>" <?= ($_GET['year_built'] ?? '') == (string)$y ? 'selected' : ''; ?>><?= $y ?></option>
                         <?php endfor; ?>
@@ -236,12 +236,12 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                 </div>
 
                 <div class="col-md-2">
-                    <label for="area_min" class="form-label small fw-semibold">Min Area (sqft)</label>
+                    <label for="area_min" class="form-label small fw-semibold"><?= __('min_area') ?></label>
                     <input type="number" class="form-control form-control-sm" id="area_min" name="area_min" placeholder="e.g. 500" min="0" value="<?= htmlspecialchars($_GET['area_min'] ?? '') ?>">
                 </div>
 
                 <div class="col-md-2">
-                    <label for="area_max" class="form-label small fw-semibold">Max Area (sqft)</label>
+                    <label for="area_max" class="form-label small fw-semibold"><?= __('max_area') ?></label>
                     <input type="number" class="form-control form-control-sm" id="area_max" name="area_max" placeholder="e.g. 5000" min="0" value="<?= htmlspecialchars($_GET['area_max'] ?? '') ?>">
                 </div>
 
@@ -249,7 +249,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                 <div class="col-md-2">
                     <label for="min_price" class="form-label small fw-semibold"><?= __('min_price') ?> (&#8377;)</label>
                     <select class="form-select form-select-sm" id="min_price" name="min_price">
-                        <option value="">No Min</option>
+                        <option value=""><?= __('no_min') ?></option>
                         <?php foreach ([100000=>'1L', 500000=>'5L', 1000000=>'10L', 2000000=>'20L', 5000000=>'50L', 10000000=>'1Cr', 20000000=>'2Cr'] as $val => $label): ?>
                             <option value="<?= $val ?>" <?= ($_GET['min_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>&#8377;<?= $label ?></option>
                         <?php endforeach; ?>
@@ -259,7 +259,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                 <div class="col-md-2">
                     <label for="max_price" class="form-label small fw-semibold"><?= __('max_price') ?> (&#8377;)</label>
                     <select class="form-select form-select-sm" id="max_price" name="max_price">
-                        <option value="">No Max</option>
+                        <option value=""><?= __('no_max') ?></option>
                         <?php foreach ([500000=>'5L', 1000000=>'10L', 2000000=>'20L', 5000000=>'50L', 10000000=>'1Cr', 20000000=>'2Cr', 50000000=>'5Cr'] as $val => $label): ?>
                             <option value="<?= $val ?>" <?= ($_GET['max_price'] ?? '') == (string)$val ? 'selected' : ''; ?>>&#8377;<?= $label ?></option>
                         <?php endforeach; ?>
@@ -268,14 +268,14 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 
                 <div class="col-12 d-flex gap-2 align-items-center">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search me-1"></i>Search
+                        <i class="fas fa-search me-1"></i><?= __('search') ?>
                     </button>
                     <a href="<?php echo BASE_URL; ?>/properties" class="btn btn-outline-secondary">
-                        <i class="fas fa-times me-1"></i>Clear All
+                        <i class="fas fa-times me-1"></i><?= __('clear_all') ?>
                     </a>
                     <?php if (!empty($_SESSION['user_id']) && $hasActiveFilters): ?>
                         <button type="button" class="btn btn-success ms-auto" onclick="triggerSaveSearch()">
-                            <i class="fas fa-bookmark me-1"></i>Save this search
+                            <i class="fas fa-bookmark me-1"></i><?= __('save_this_search') ?>
                         </button>
                     <?php endif; ?>
                 </div>
@@ -309,7 +309,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                  style="height: 200px; object-fit: cover; cursor: zoom-in;"
                                  onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute top-0 end-0 p-2 d-flex gap-1">
-                                <button class="btn btn-sm btn-light favorite-btn" data-id="<?= $property['id'] ?? '' ?>" title="Add to Favorites" onclick="toggleFavorite(this)">
+                                <button class="btn btn-sm btn-light favorite-btn" data-id="<?= $property['id'] ?? '' ?>" title="<?= __('add_to_favorites') ?>" onclick="toggleFavorite(this)">
                                     <i class="far fa-heart text-danger"></i>
                                 </button>
                                 <span class="badge bg-<?= ($property['listing_type'] ?? 'sell') === 'rent' ? 'info' : 'success'; ?>">
@@ -326,7 +326,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                             <div class="row small text-center border-top border-bottom py-2 mb-3 g-1">
                                 <div class="col">
                                     <i class="fas fa-vector-square text-muted"></i><br>
-                                    <strong><?= number_format((float)($property['area_sqft'] ?? 0)) ?></strong> sq ft
+                                    <strong><?= number_format((float)($property['area_sqft'] ?? 0)) ?></strong> <?= __('sq_ft') ?>
                                 </div>
                                 <div class="col">
                                     <i class="fas fa-home text-muted"></i><br>
@@ -335,7 +335,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                 <?php if (!empty($property['bedrooms'])): ?>
                                 <div class="col">
                                     <i class="fas fa-bed text-muted"></i><br>
-                                    <strong><?= (int)$property['bedrooms'] ?></strong> BHK
+                                    <strong><?= (int)$property['bedrooms'] ?></strong> <?= __('bhk') ?>
                                 </div>
                                 <?php endif; ?>
                                 <?php if (!empty($property['furnished'])): ?>
@@ -349,14 +349,14 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                                 <div>
                                     <span class="text-success fw-bold fs-5">&#8377;<?= number_format((float)($property['price'] ?? 0)) ?></span>
                                     <?php if (($property['listing_type'] ?? 'sell') === 'rent'): ?>
-                                        <span class="text-muted">/month</span>
+                                        <span class="text-muted"><?= __('per_month') ?></span>
                                     <?php endif; ?>
                                 </div>
                                 <div class="d-flex gap-1">
                                     <a href="<?= BASE_URL ?>/contact" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-phone"></i> Enquire
+                                        <i class="fas fa-phone"></i> <?= __('enquire') ?>
                                     </a>
-                                    <button class="btn btn-sm btn-outline-info add-to-compare" data-id="<?= $property['id'] ?? '' ?>" onclick="addToCompare(this)" title="Add to compare">
+                                    <button class="btn btn-sm btn-outline-info add-to-compare" data-id="<?= $property['id'] ?? '' ?>" onclick="addToCompare(this)" title="<?= __('add_to_compare') ?>">
                                         <i class="fas fa-balance-scale"></i>
                                     </button>
                                 </div>
@@ -391,7 +391,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                 <?php if (($page ?? 1) > 1): ?>
                     <li class="page-item">
                         <a class="page-link" href="?<?= http_build_query(array_merge($paginationParams, ['page' => ($page - 1)])) ?>">
-                            <i class="fas fa-chevron-left"></i> Previous
+                            <i class="fas fa-chevron-left"></i> <?= __('previous') ?>
                         </a>
                     </li>
                 <?php endif; ?>
@@ -409,7 +409,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                 <?php if (($page ?? 1) < $totalPages): ?>
                     <li class="page-item">
                         <a class="page-link" href="?<?= http_build_query(array_merge($paginationParams, ['page' => ($page + 1)])) ?>">
-                            Next <i class="fas fa-chevron-right"></i>
+                            <?= __('next') ?> <i class="fas fa-chevron-right"></i>
                         </a>
                     </li>
                 <?php endif; ?>
@@ -439,6 +439,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 </style>
 
 <script>
+const I18N = <?= json_encode(['added' => __('added'), 'failed_to_add' => __('failed_to_add'), 'network_error' => __('network_error'), 'map_coming_soon' => __('map_coming_soon'), 'add_to_favorites' => __('add_to_favorites'), 'remove_from_favorites' => __('remove_from_favorites')]) ?>;
 function toggleFavorite(btn) {
     const id = btn.dataset.id;
     if (!id) return;
@@ -453,10 +454,10 @@ function toggleFavorite(btn) {
         if (d.success) {
             if (isFav) {
                 icon.className = 'far fa-heart text-danger';
-                btn.title = 'Add to Favorites';
+                btn.title = I18N.add_to_favorites;
             } else {
                 icon.className = 'fas fa-heart text-danger';
-                btn.title = 'Remove from Favorites';
+                btn.title = I18N.remove_from_favorites;
             }
         } else if (d.message && d.message.includes('login')) {
             window.location.href = BASE_URL + '/login';
@@ -477,14 +478,14 @@ function addToCompare(btn) {
     .then(r => r.json())
     .then(d => {
         if (d.success) {
-            btn.innerHTML = '<i class="fas fa-check me-1"></i> Added';
+            btn.innerHTML = '<i class="fas fa-check me-1"></i> ' + I18N.added;
             btn.classList.remove('btn-outline-info');
             btn.classList.add('btn-info');
             updateCompareBadge(d.count);
         } else {
-            alert(d.error || 'Failed to add to comparison');
+            alert(d.error || I18N.failed_to_add);
         }
-    }).catch(() => alert('Network error'));
+    }).catch(() => alert(I18N.network_error));
 }
 
 function updateCompareBadge(count) {
@@ -510,7 +511,7 @@ function updateCompareBadge(count) {
 
 function setView(view) {
     if (view === 'map') {
-        showToast('Map view coming soon — use grid view to browse', 'info');
+        showToast(I18N.map_coming_soon, 'info');
         return;
     }
     document.getElementById('gridViewBtn').classList.add('active');

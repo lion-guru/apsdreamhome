@@ -27,11 +27,11 @@ $tabs = [
 }
 .site-settings-wrap .nav-tabs .nav-link:hover { color: #495057; border-bottom-color: #dee2e6; }
 .site-settings-wrap .nav-tabs .nav-link.active {
-    color: var(--aps-theme-primary, #4f46e5); border-bottom-color: var(--aps-theme-primary, #4f46e5);
+    color: var(--primary); border-bottom-color: var(--primary);
     background: transparent; font-weight: 600;
 }
 .site-settings-wrap .settings-group { background: #fff; border-radius: 12px; border: 1px solid #e9ecef; padding: 24px; margin-bottom: 20px; }
-.site-settings-wrap .settings-group h6 { color: var(--aps-theme-primary, #4f46e5); font-weight: 600; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
+.site-settings-wrap .settings-group h6 { color: var(--primary); font-weight: 600; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
 .site-settings-wrap .form-label { font-weight: 500; color: #495057; font-size: 0.9rem; }
 .site-settings-wrap .form-text { font-size: 0.8rem; }
 .site-settings-wrap .img-preview { max-height: 60px; border-radius: 8px; border: 1px solid #dee2e6; padding: 4px; }
@@ -94,8 +94,10 @@ $tabs = [
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Logo</label>
-                            <?php if (!empty($settings['company_logo'])): ?>
+                            <?php if (!empty($settings['company_logo']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['company_logo'], '/'))): ?>
                                 <div class="mb-2"><img src="<?= BASE_URL ?>/<?= sc($settings, 'company_logo') ?>" class="img-preview" alt="Logo"></div>
+                            <?php elseif (!empty($settings['company_logo'])): ?>
+                                <div class="mb-2"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded" style="height:80px;"><small class="text-muted">Logo file missing</small></div></div>
                             <?php endif; ?>
                             <input type="file" name="settings_image[company_logo]" class="form-control" accept="image/*">
                             <input type="hidden" name="settings[company_logo]" value="<?= sc($settings, 'company_logo') ?>">
@@ -135,10 +137,12 @@ $tabs = [
                     <h6><i class="fas fa-image me-2"></i>Brand Assets</h6>
                     <div class="mb-3">
                         <label class="form-label">Favicon</label>
-                        <?php if (!empty($settings['company_favicon'])): ?>
+                        <?php if (!empty($settings['company_favicon']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['company_favicon'], '/'))): ?>
                             <div class="mb-2 text-center">
                                 <img src="<?= BASE_URL ?>/<?= sc($settings, 'company_favicon') ?>" class="img-preview" alt="Favicon" style="max-height:40px;">
                             </div>
+                        <?php elseif (!empty($settings['company_favicon'])): ?>
+                            <div class="mb-2 text-center"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded" style="height:40px;"><small class="text-muted">Favicon missing</small></div></div>
                         <?php endif; ?>
                         <input type="file" name="settings_image[company_favicon]" class="form-control" accept="image/*">
                         <input type="hidden" name="settings[company_favicon]" value="<?= sc($settings, 'company_favicon') ?>">
@@ -295,10 +299,12 @@ $tabs = [
             <div class="col-lg-4">
                 <div class="settings-group">
                     <h6><i class="fas fa-image me-2"></i>OG Image (Social Share)</h6>
-                    <?php if (!empty($settings['seo_og_image'])): ?>
+                    <?php if (!empty($settings['seo_og_image']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['seo_og_image'], '/'))): ?>
                         <div class="mb-2 text-center">
                             <img src="<?= BASE_URL ?>/<?= sc($settings, 'seo_og_image') ?>" class="img-fluid rounded" style="max-height:120px;" alt="OG Image">
                         </div>
+                    <?php elseif (!empty($settings['seo_og_image'])): ?>
+                        <div class="mb-2 text-center"><div class="d-flex align-items-center justify-content-center bg-light border rounded" style="height:120px;"><small class="text-muted">OG Image file missing</small></div></div>
                     <?php endif; ?>
                     <input type="file" name="settings_image[seo_og_image]" class="form-control" accept="image/*">
                     <input type="hidden" name="settings[seo_og_image]" value="<?= sc($settings, 'seo_og_image') ?>">

@@ -9,16 +9,15 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 ?>
 <main id="main-content">
     <!-- Hero Section -->
-    <section class="hero" aria-labelledby="hero-title"
-        style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+    <section class="hero hero-with-bg bg-gradient-hero" aria-labelledby="hero-title" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero/hero-bg.jpg');background-size:cover;background-position:center;background-repeat:no-repeat;">
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-7">
-                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3"
-                        style="background:rgba(79,70,229,0.1); border: 1px solid rgba(79,70,229,0.2);"><?= __('trusted_by') ?>
+                    <span class="badge px-3 py-2 mb-3"
+                        style="background:rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color:#fff;"><?= __('trusted_by') ?>
                         <?= __('home_families_count') ?></span>
-                    <h1 id="hero-title" class="fw-bold" style="color:#1e293b;"><?= __('hero_title') ?></h1>
-                    <p class="lead mb-4" style="color:#475569;"><?= __('hero_subtitle') ?></p>
+                    <h1 id="hero-title" class="fw-bold text-white"><?= __('hero_title') ?></h1>
+                    <p class="lead mb-4" style="color:rgba(255,255,255,0.85);"><?= __('hero_subtitle') ?></p>
                     <div class="d-flex gap-3 flex-wrap">
                         <?php
                         // A/B test: homepage_cta - variant-aware hero CTA copy
@@ -43,7 +42,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             data-color-variant="<?php echo htmlspecialchars((string) $ctaColorVariant, ENT_QUOTES); ?>"
                             id="hero-cta"><?= htmlspecialchars($heroCtaText) ?></a>
                         <a href="<?php echo BASE_URL; ?>/list-property"
-                            class="btn btn-outline-primary btn-lg"><?= __('nav_post_property') ?></a>
+                            class="btn btn-outline-light btn-lg"><?= __('nav_post_property') ?></a>
                     </div>
                 </div>
                 <div class="col-lg-5">
@@ -163,7 +162,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 'awards_won' => '25'
             ];
             ?>
-            <div class="row g-4">
+            <div class="row g-4 stat-animate">
                 <div class="col-6 col-md-3">
                     <div class="stat-item">
                         <div class="stat-number"><?php echo $hero_stats['years_experience']; ?>+</div>
@@ -297,8 +296,9 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 <span class="section-label"><?= __('home_our_portfolio') ?></span>
                 <h2 id="projects-title" class="fw-bold"><?= __('section_our_projects') ?></h2>
                 <p class="section-subtitle"><?= __('projects_subtitle') ?></p>
+                <div class="section-divider"></div>
             </div>
-            <div class="row">
+            <div class="row card-stagger">
                 <?php
                 $featured_properties = $featured_properties ?? [];
                 $hasProjects = !empty($featured_properties);
@@ -389,13 +389,14 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 <span class="section-label"><?= __('home_our_expertise') ?></span>
                 <h2 id="services-title" class="fw-bold"><?= __('our_services') ?></h2>
                 <p class="section-subtitle"><?= __('services_tagline') ?></p>
+                <div class="section-divider"></div>
             </div>
-            <div class="row g-4">
+            <div class="row g-4 card-stagger">
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('loan')">
+                    <div class="card h-100 border-0 shadow-sm service-card icon-green" onclick="openServiceModal('loan')">
                         <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto" style="background: rgba(16,185,129,0.1);">
-                                <i class="fas fa-hand-holding-usd fa-2x" style="color:#10b981;"></i>
+                            <div class="icon-wrapper mx-auto">
+                                <i class="fas fa-hand-holding-usd fa-2x"></i>
                             </div>
                             <h5 class="fw-bold mb-2"><?= __('home_service_home_loan') ?></h5>
                             <p class="text-muted small"><?= __('home_service_home_loan_desc') ?></p>
@@ -405,10 +406,10 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('legal')">
+                    <div class="card h-100 border-0 shadow-sm service-card icon-indigo" onclick="openServiceModal('legal')">
                         <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto" style="background: rgba(99,102,241,0.1);">
-                                <i class="fas fa-gavel fa-2x" style="color:#6366f1;"></i>
+                            <div class="icon-wrapper mx-auto">
+                                <i class="fas fa-gavel fa-2x"></i>
                             </div>
                             <h5 class="fw-bold mb-2"><?= __('home_service_legal') ?></h5>
                             <p class="text-muted small"><?= __('home_service_legal_desc') ?></p>
@@ -418,10 +419,10 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('interior')">
+                    <div class="card h-100 border-0 shadow-sm service-card icon-amber" onclick="openServiceModal('interior')">
                         <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto" style="background: rgba(245,158,11,0.1);">
-                                <i class="fas fa-couch fa-2x" style="color:#f59e0b;"></i>
+                            <div class="icon-wrapper mx-auto">
+                                <i class="fas fa-couch fa-2x"></i>
                             </div>
                             <h5 class="fw-bold mb-2"><?= __('home_service_interior') ?></h5>
                             <p class="text-muted small"><?= __('home_service_interior_desc') ?></p>
@@ -431,10 +432,10 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('registry')">
+                    <div class="card h-100 border-0 shadow-sm service-card icon-red" onclick="openServiceModal('registry')">
                         <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto" style="background: rgba(239,68,68,0.1);">
-                                <i class="fas fa-file-signature fa-2x" style="color:#ef4444;"></i>
+                            <div class="icon-wrapper mx-auto">
+                                <i class="fas fa-file-signature fa-2x"></i>
                             </div>
                             <h5 class="fw-bold mb-2"><?= __('home_service_registry') ?></h5>
                             <p class="text-muted small"><?= __('home_service_registry_desc') ?></p>
@@ -444,10 +445,10 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('rental')">
+                    <div class="card h-100 border-0 shadow-sm service-card icon-purple" onclick="openServiceModal('rental')">
                         <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto" style="background: rgba(139,92,246,0.1);">
-                                <i class="fas fa-file-contract fa-2x" style="color:#8b5cf6;"></i>
+                            <div class="icon-wrapper mx-auto">
+                                <i class="fas fa-file-contract fa-2x"></i>
                             </div>
                             <h5 class="fw-bold mb-2"><?= __('home_service_rental') ?></h5>
                             <p class="text-muted small"><?= __('home_service_rental_desc') ?></p>
@@ -457,10 +458,10 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card" onclick="openServiceModal('tax')">
+                    <div class="card h-100 border-0 shadow-sm service-card icon-cyan" onclick="openServiceModal('tax')">
                         <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto" style="background: rgba(6,182,212,0.1);">
-                                <i class="fas fa-file-invoice-dollar fa-2x" style="color:#06b6d4;"></i>
+                            <div class="icon-wrapper mx-auto">
+                                <i class="fas fa-file-invoice-dollar fa-2x"></i>
                             </div>
                             <h5 class="fw-bold mb-2"><?= __('home_service_tax') ?></h5>
                             <p class="text-muted small"><?= __('home_service_tax_desc') ?></p>
@@ -478,7 +479,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
                 <div class="modal-header border-0 p-4" id="serviceModalHeader"
-                    style="background: linear-gradient(135deg, #10b981, #059669);">
+                    class="bg-gradient-success">
                     <div class="d-flex align-items-center gap-3">
                         <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center"
                             style="width: 50px; height: 50px; background: rgba(255,255,255,0.2);">
@@ -779,7 +780,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         featuresHtml += '</div></div></div>';
 
         body.innerHTML = featuresHtml;
-        new bootstrap.Modal(document.getElementById('serviceModal')).show();
+        showBootstrapModal('serviceModal');
     }
     </script>
 
@@ -919,16 +920,9 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             <!-- Why Invest Details -->
             <div class="row align-items-center mb-5">
                 <div class="col-lg-5 mb-4 mb-lg-0 text-center">
-                    <div style="font-size: 200px; line-height: 1; opacity: 0.15; position: relative;"
-                        class="text-success">
-                        <i class="fas fa-arrow-trend-up"></i>
-                    </div>
-                    <div style="position: relative; margin-top: -180px;">
-                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                            style="width: 120px; height: 120px; animation: pulse-glow 2s infinite;">
-                            <i class="fas fa-landmark fa-3x text-success"></i>
-                        </div>
-                    </div>
+                    <img src="<?php echo BASE_URL; ?>/assets/images/hero/about.jpg"
+                        alt="<?= __('home_why_real_estate_title') ?>"
+                        class="img-fluid rounded-4 shadow-lg" style="max-height:320px;object-fit:cover;width:100%;">
                 </div>
                 <div class="col-lg-7">
                     <div class="row g-3">
@@ -1040,21 +1034,19 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             </div>
                         </div>
                         <div class="col-lg-5 text-center mt-4 mt-lg-0">
-                            <div style="font-size: 100px; line-height: 1; opacity: 0.15;">
-                                <i class="fas fa-chart-simple"></i>
-                            </div>
-                            <div style="position: relative; margin-top: -90px;">
-                                <h3 class="fw-bold text-warning mb-2"><?= __('home_real_estate_wins') ?></h3>
-                                <p class="text-white-50 small mb-0"><i
-                                        class="fas fa-check-circle text-success me-1"></i><?= __('home_highest_returns') ?>
-                                </p>
-                                <p class="text-white-50 small mb-0"><i
-                                        class="fas fa-check-circle text-success me-1"></i><?= __('home_lowest_risk') ?>
-                                </p>
-                                <p class="text-white-50 small mb-0"><i
-                                        class="fas fa-check-circle text-success me-1"></i><?= __('home_dual_benefit') ?>
-                                </p>
-                            </div>
+                            <img src="<?php echo BASE_URL; ?>/assets/images/hero/hero-bg-alt.jpg"
+                                alt="<?= __('home_growth_calculator_title') ?>"
+                                class="img-fluid rounded-4 shadow-lg mb-3" style="max-height:220px;object-fit:cover;width:100%;">
+                            <h3 class="fw-bold text-warning mb-2"><?= __('home_real_estate_wins') ?></h3>
+                            <p class="text-white-50 small mb-0"><i
+                                    class="fas fa-check-circle text-success me-1"></i><?= __('home_highest_returns') ?>
+                            </p>
+                            <p class="text-white-50 small mb-0"><i
+                                    class="fas fa-check-circle text-success me-1"></i><?= __('home_lowest_risk') ?>
+                            </p>
+                            <p class="text-white-50 small mb-0"><i
+                                    class="fas fa-check-circle text-success me-1"></i><?= __('home_dual_benefit') ?>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -1189,7 +1181,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
                 <div class="modal-header border-0 p-4" id="toolModalHeader"
-                    style="background: linear-gradient(135deg, #f1f5f9, #e2e8f0);">
+                    class="bg-gradient-light">
                     <div class="d-flex align-items-center gap-3">
                         <div class="bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center"
                             style="width: 50px; height: 50px; background: rgba(255,255,255,0.2);">
@@ -1394,8 +1386,15 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         subtitle.textContent = cfg.subtitle;
         body.innerHTML = cfg.html;
 
-        var modal = new bootstrap.Modal(document.getElementById('toolModal'));
-        modal.show();
+        showBootstrapModal('toolModal');
+    }
+
+    function showBootstrapModal(id) {
+        if (typeof bootstrap !== 'undefined') {
+            new bootstrap.Modal(document.getElementById(id)).show();
+        } else {
+            setTimeout(function() { showBootstrapModal(id); }, 200);
+        }
     }
 
     // Make function globally accessible
@@ -1733,10 +1732,11 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             <div class="text-center mb-5">
                 <span class="section-label"><?= __('home_testimonials') ?></span>
                 <h2 class="fw-bold"><?= __('testimonials_title') ?></h2>
+                <div class="section-divider"></div>
             </div>
-            <div class="row">
+            <div class="row card-stagger">
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 border-0 shadow-sm p-4">
+                    <div class="testimonial-card">
                         <div class="text-warning mb-3">
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star"></i>
@@ -1746,10 +1746,9 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         </div>
                         <p class="card-text"><?= __('home_testimonial_1') ?></p>
                         <div class="d-flex align-items-center">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
-                                style="width: 50px; height: 50px;">
-                                <i class="fas fa-user"></i>
-                            </div>
+                            <img src="<?php echo BASE_URL; ?>/assets/images/testimonials/testimonial-2.jpg"
+                                alt="<?= __('home_testimonial_1_name') ?>"
+                                class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;">
                             <div>
                                 <h6 class="mb-0"><?= __('home_testimonial_1_name') ?></h6>
                                 <small class="text-muted"><?= __('home_testimonial_1_location') ?></small>
@@ -1758,7 +1757,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 border-0 shadow-sm p-4">
+                    <div class="testimonial-card">
                         <div class="text-warning mb-3">
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star"></i>
@@ -1768,10 +1767,9 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         </div>
                         <p class="card-text"><?= __('home_testimonial_2') ?></p>
                         <div class="d-flex align-items-center">
-                            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
-                                style="width: 50px; height: 50px;">
-                                <i class="fas fa-user"></i>
-                            </div>
+                            <img src="<?php echo BASE_URL; ?>/assets/images/testimonials/testimonial-1.jpg"
+                                alt="<?= __('home_testimonial_2_name') ?>"
+                                class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;">
                             <div>
                                 <h6 class="mb-0"><?= __('home_testimonial_2_name') ?></h6>
                                 <small class="text-muted"><?= __('home_testimonial_2_location') ?></small>
@@ -1780,7 +1778,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 border-0 shadow-sm p-4">
+                    <div class="testimonial-card">
                         <div class="text-warning mb-3">
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star"></i>
@@ -1790,10 +1788,9 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         </div>
                         <p class="card-text"><?= __('home_testimonial_3') ?></p>
                         <div class="d-flex align-items-center">
-                            <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3"
-                                style="width: 50px; height: 50px;">
-                                <i class="fas fa-user"></i>
-                            </div>
+                            <img src="<?php echo BASE_URL; ?>/assets/images/testimonials/testimonial-3.jpg"
+                                alt="<?= __('home_testimonial_3_name') ?>"
+                                class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;">
                             <div>
                                 <h6 class="mb-0"><?= __('home_testimonial_3_name') ?></h6>
                                 <small class="text-muted"><?= __('home_testimonial_3_location') ?></small>
@@ -1813,9 +1810,10 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     style="background:rgba(239,68,68,0.08);color:#dc2626;"><?= __('home_career_opportunity') ?></span>
                 <h2 class="fw-bold"><?= __('home_why_join_title') ?></h2>
                 <p class="section-subtitle"><?= __('home_why_join_subtitle') ?></p>
+                <div class="section-divider gradient-divider"></div>
             </div>
 
-            <div class="row g-4 mb-5">
+            <div class="row g-4 mb-5 card-stagger">
                 <div class="col-lg-4 col-md-6">
                     <div class="career-card">
                         <div class="card-body p-4 text-center">
@@ -1914,51 +1912,37 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="career-card">
-                        <div class="card-body p-4 text-center">
-                            <div class="icon-circle" style="background:rgba(79,70,229,0.08);">
-                                <i class="fas fa-users-between-lines fa-2x" style="color:#4f46e5;"></i>
+                        <div class="card-body p-4">
+                            <div class="text-center mb-3">
+                                <div class="icon-circle mx-auto" style="background:rgba(79,70,229,0.08);">
+                                    <i class="fas fa-crown fa-2x" style="color:#4f46e5;"></i>
+                                </div>
+                                <h5 class="fw-bold mb-1 mt-3"><?= __('home_mlm_benefits') ?></h5>
+                                <p class="text-muted small mb-3"><?= __('home_mlm_benefits_desc') ?></p>
                             </div>
-                            <h5 class="fw-bold mb-2"><?= __('home_mlm_benefits') ?></h5>
-                            <p class="text-muted small"><?= __('home_mlm_benefits_desc') ?></p>
-                            <div class="bg-light rounded-3 p-3 mt-3" style="max-height:160px;overflow-y:auto;">
-                                <div class="small mb-1"><span
-                                        class="text-warning me-1">👑</span><?= __("rank_associate") ?>:
-                                    <strong>5%</strong>
-                                </div>
-                                <div class="small mb-1"><span
-                                        class="text-secondary me-1">👑</span><?= __("rank_bronze") ?>:
-                                    <strong>7%</strong>
-                                </div>
-                                <div class="small mb-1"><span
-                                        class="text-secondary me-1">👑</span><?= __("rank_silver") ?>:
-                                    <strong>10%</strong>
-                                </div>
-                                <div class="small mb-1"><span class="text-warning me-1">👑</span><?= __("rank_gold") ?>:
-                                    <strong>12.5%</strong>
-                                </div>
-                                <div class="small mb-1"><span
-                                        class="text-info me-1">👑</span><?= __("rank_platinum") ?>: <strong>15%</strong>
-                                </div>
-                                <div class="small mb-1"><span
-                                        class="text-primary me-1">👑</span><?= __("rank_diamond") ?>:
-                                    <strong>18%</strong>
-                                </div>
-                                <div class="small mb-1"><span
-                                        class="text-success me-1">👑</span><?= __("rank_executive") ?>:
-                                    <strong>20%</strong>
-                                </div>
-                                <div class="small mb-1"><span
-                                        class="text-success me-1">👑</span><?= __("rank_sr_executive") ?>:
-                                    <strong>22%</strong>
-                                </div>
-                                <div class="small mb-1"><span
-                                        class="text-danger me-1">👑</span><?= __("rank_director") ?>:
-                                    <strong>25%</strong>
-                                </div>
-                                <div class="small"><span
-                                        class="text-danger me-1">👑</span><?= __("rank_global_director") ?>:
-                                    <strong>30%</strong>
-                                </div>
+                            <div class="table-responsive" style="max-height:280px;overflow-y:auto;">
+                                <table class="table table-sm table-borderless mb-0" style="font-size:0.82rem;">
+                                    <thead>
+                                        <tr class="bg-gradient-primary text-white">
+                                            <th class="ps-2 py-2 fw-semibold">Post</th>
+                                            <th class="py-2 fw-semibold">Business</th>
+                                            <th class="py-2 fw-semibold">Associate %</th>
+                                            <th class="pe-2 py-2 fw-semibold text-end">Reward</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="ps-2 fw-semibold">Associate</td><td>₹50K+</td><td class="text-success fw-bold">5%</td><td class="text-end text-muted">—</td></tr>
+                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Bronze</td><td>₹2L+</td><td class="text-success fw-bold">7%</td><td class="text-end text-muted">₹5K/mo</td></tr>
+                                        <tr><td class="ps-2 fw-semibold">Silver</td><td>₹5L+</td><td class="text-success fw-bold">10%</td><td class="text-end text-muted">₹8K/mo</td></tr>
+                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Gold</td><td>₹10L+</td><td class="text-success fw-bold">12.5%</td><td class="text-end text-muted">₹12K/mo</td></tr>
+                                        <tr><td class="ps-2 fw-semibold">Platinum</td><td>₹25L+</td><td class="text-success fw-bold">15%</td><td class="text-end text-muted">₹15K/mo</td></tr>
+                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Diamond</td><td>₹50L+</td><td class="text-success fw-bold">18%</td><td class="text-end text-muted">₹20K/mo</td></tr>
+                                        <tr><td class="ps-2 fw-semibold">Executive</td><td>₹1Cr+</td><td class="text-success fw-bold">20%</td><td class="text-end text-muted">₹25K/mo</td></tr>
+                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Sr. Executive</td><td>₹2Cr+</td><td class="text-success fw-bold">22%</td><td class="text-end text-muted">₹30K/mo</td></tr>
+                                        <tr><td class="ps-2 fw-semibold">Director</td><td>₹5Cr+</td><td class="text-success fw-bold">25%</td><td class="text-end text-muted">₹40K/mo</td></tr>
+                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Global Director</td><td>₹10Cr+</td><td class="text-success fw-bold">30%</td><td class="text-end text-muted">₹50K/mo</td></tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -1991,7 +1975,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             </div>
 
             <div class="text-center">
-                <p class="mb-3 fw-bold"><?= __('home_ready_to_start') ?></p>
+                <p class="mb-3 fw-bold" style="color:#1a1a1a;"><?= __('home_ready_to_start') ?></p>
                 <a href="<?php echo BASE_URL; ?>/associate/register" class="btn btn-danger btn-lg px-5">
                     <i class="fas fa-user-plus me-2"></i><?= __('home_register_associate') ?>
                 </a>
@@ -2003,7 +1987,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     </section>
 
     <!-- CTA -->
-    <section class="py-5 text-white text-center cta-gradient">
+    <section class="py-5 text-white text-center cta-gradient bg-gradient-cta" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero/cta-bg.jpg');background-size:cover;background-position:center;background-repeat:no-repeat;">
         <div class="container">
             <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3"
                 style="background:rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.3);"><?= __('home_get_in_touch') ?></span>

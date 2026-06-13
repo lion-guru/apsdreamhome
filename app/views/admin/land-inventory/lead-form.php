@@ -146,7 +146,7 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
                 </div>
             </div>
         </div>
-        <div class="aps-cp-card-body text-end" style="border-top:1px solid var(--aps-theme-card-border)">
+        <div class="aps-cp-card-body text-end" style="border-top:1px solid var(--card-border)">
             <a href="<?= BASE_URL ?>/admin/land-inventory/leads" class="btn btn-secondary btn-sm">Cancel</a>
             <button type="submit" class="btn btn-primary btn-sm">
                 <i class="fas fa-save me-1"></i><?= $mode === 'edit' ? 'Update Lead' : 'Create Lead' ?>

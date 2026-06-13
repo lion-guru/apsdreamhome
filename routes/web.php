@@ -1844,6 +1844,24 @@ $router->get('/admin/land-inventory/brokers', 'App\\Http\\Controllers\\Admin\\La
 $router->post('/admin/land-inventory/brokers/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@brokerStore');
 
 // ============================================================
+// COLONY DEVELOPMENT PIPELINE
+// ============================================================
+$router->get('/admin/colony-pipeline',                                        'App\\Http\\Controllers\\Admin\\ColonyPipelineController@dashboard');
+$router->get('/admin/colony-pipeline/{id}',                                   'App\\Http\\Controllers\\Admin\\ColonyPipelineController@colonyDetail');
+$router->get('/admin/colony-pipeline/{id}/layout',                            'App\\Http\\Controllers\\Admin\\ColonyPipelineController@layoutForm');
+$router->post('/admin/colony-pipeline/{id}/layout/generate',                  'App\\Http\\Controllers\\Admin\\ColonyPipelineController@generatePlots');
+$router->post('/admin/colony-pipeline/{id}/layout/preview',                   'App\\Http\\Controllers\\Admin\\ColonyPipelineController@previewPlots');
+$router->post('/admin/colony-pipeline/{id}/layout/delete',                    'App\\Http\\Controllers\\Admin\\ColonyPipelineController@deletePlots');
+$router->post('/admin/colony-pipeline/{id}/layout/save',                      'App\\Http\\Controllers\\Admin\\ColonyPipelineController@saveLayout');
+$router->get('/admin/colony-pipeline/{id}/pricing',                           'App\\Http\\Controllers\\Admin\\ColonyPipelineController@pricingDashboard');
+$router->post('/admin/colony-pipeline/{id}/pricing/calculate',                'App\\Http\\Controllers\\Admin\\ColonyPipelineController@calculatePricing');
+$router->post('/admin/colony-pipeline/{id}/pricing/apply',                    'App\\Http\\Controllers\\Admin\\ColonyPipelineController@applyPricing');
+$router->get('/admin/colony-pipeline/{id}/costs',                             'App\\Http\\Controllers\\Admin\\ColonyPipelineController@developmentCosts');
+$router->post('/admin/colony-pipeline/{id}/costs/store',                      'App\\Http\\Controllers\\Admin\\ColonyPipelineController@storeCost');
+$router->get('/admin/colony-pipeline/{id}/plots',                             'App\\Http\\Controllers\\Admin\\ColonyPipelineController@plotList');
+$router->get('/admin/colony-pipeline/{id}/plots/stats',                       'App\\Http\\Controllers\\Admin\\ColonyPipelineController@plotStats');
+
+// ============================================================
 // MODULE 2: CUSTOMER SALES + ALLOTMENT + REGISTRY
 // ============================================================
 $router->get('/admin/sales',                                       'App\\Http\\Controllers\\Admin\\BookingLifecycleController@index');
@@ -3599,6 +3617,9 @@ $router->get('/admin/social-analytics', 'Tech\\SocialMediaController@socialAnaly
 // ============================================================
 // NEWLY ROUTED CONTROLLERS (from unrouted scan)
 // ============================================================
+
+// Quick Test (Admin\QuickTestController)
+$router->get('/admin/quick-test', 'Admin\\QuickTestController@index');
 
 // Property Workflow (Property\PropertyWorkflowController)
 $router->get('/property-workflow', 'Property\\PropertyWorkflowController@index');

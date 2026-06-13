@@ -176,7 +176,7 @@ class SystemLogger
      * @param array $context Additional context
      * @return bool
      */
-    private function log(string $level, string $message, array $context = []): bool
+    public function log(string $level, string $message, array $context = []): bool
     {
         try {
             // Generate unique trace ID

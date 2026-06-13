@@ -27,7 +27,7 @@ class PlotCostController extends AdminController
             SELECT c.*, 
                    COUNT(p.id) as total_plots,
                    SUM(p.area_sqft) as total_area_sqft,
-                   (SELECT SUM(amount) FROM plot_development_costs WHERE colony_id = c.id) as total_cost
+                   (SELECT SUM(amount) FROM colony_development_costs WHERE colony_id = c.id) as total_cost
             FROM colonies c
             LEFT JOIN plots p ON p.colony_id = c.id
             GROUP BY c.id
@@ -67,18 +67,31 @@ class PlotCostController extends AdminController
         // Get cost breakdown
         $costBreakdown = $this->db->fetchAll("
             SELECT cost_type, SUM(amount) as total, COUNT(*) as entries
-            FROM plot_development_costs
+            FROM colony_development_costs
             WHERE colony_id = ?
             GROUP BY cost_type
         ", [$id]);
         
         // Calculate totals
         $costs = [
-            'land' => 0,
-            'development' => 0,
-            'amenities' => 0,
+            'land_acquisition' => 0,
+            'road' => 0,
+            'electricity' => 0,
+            'water' => 0,
+            'sewerage' => 0,
+            'street_light' => 0,
+            'drainage' => 0,
+            'compound_wall' => 0,
+            'gate' => 0,
+            'security' => 0,
+            'landscaping' => 0,
+            'approval_fee' => 0,
             'legal' => 0,
-            'misc' => 0
+            'brokerage' => 0,
+            'marketing' => 0,
+            'office_setup' => 0,
+            'staff' => 0,
+            'other' => 0
         ];
         
         foreach ($costBreakdown as $c) {
@@ -121,10 +134,10 @@ class PlotCostController extends AdminController
         }
         
         $this->db->execute(
-            "INSERT INTO plot_development_costs 
-             (colony_id, cost_type, description, amount, per_sqft_rate, total_area_sqft, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, NOW())",
-            [$colonyId, $costType, $description, $amount, $perSqft, $area]
+            "INSERT INTO colony_development_costs 
+             (colony_id, cost_type, work_description, amount, created_at)
+             VALUES (?, ?, ?, ?, NOW())",
+            [$colonyId, $costType, $description, $amount]
         );
         
         $_SESSION['success'] = 'Cost added successfully!';

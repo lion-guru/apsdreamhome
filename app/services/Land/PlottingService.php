@@ -24,37 +24,6 @@ class PlottingService
         $this->database = Database::getInstance();
         $this->logger = new Logger();
         $this->config = Config::getInstance();
-
-        $this->createPlottingTables();
-    }
-
-    /**
-     * Create all plotting related tables
-     */
-    private function createPlottingTables()
-    {
-        try {
-            // Land acquisitions table
-            $sql = "";
-            $this->database->query($sql);
-
-            // Plots table
-            $sql = "";
-            $this->database->query($sql);
-
-            // Plot bookings table
-            $sql = "";
-            $this->database->query($sql);
-
-            // Plot payments table
-            $sql = "";
-            $this->database->query($sql);
-
-        } catch (\Exception $e) {
-            $this->logger->error('Error creating plotting tables', [
-                'error' => $e->getMessage()
-            ]);
-        }
     }
 
     /**
@@ -63,7 +32,6 @@ class PlottingService
     public function addLandAcquisition(array $data)
     {
         try {
-            // Generate acquisition number
             $acquisitionNumber = $this->generateAcquisitionNumber();
 
             $sql = "INSERT INTO land_acquisitions (
@@ -175,39 +143,42 @@ class PlottingService
     }
 
     /**
-     * Add plot
+     * Add plot — columns match actual `plots` table schema
      */
     public function addPlot(array $data)
     {
         try {
-            // Generate plot number
-            $plotNumber = $this->generatePlotNumber($data['land_acquisition_id']);
+            $plotNumber = $data['plot_number'] ?? $this->generatePlotNumber($data['colony_id']);
 
             $sql = "INSERT INTO plots (
-                plot_number, land_acquisition_id, plot_area, plot_area_unit, plot_type,
-                dimensions_length, dimensions_width, corner_plot, park_facing, road_facing,
-                current_price, base_price, plc_amount, other_charges, total_price,
-                remarks, created_by
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                colony_id, plot_number, block, sector, plot_type,
+                area_sqft, area_sqm, width_ft, length_ft, dimension_label,
+                price_per_sqft, base_price_per_sqft, total_price,
+                facing, corner_plot, park_facing, road_width_ft,
+                status, is_active, created_by
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             $params = [
+                $data['colony_id'],
                 $plotNumber,
-                $data['land_acquisition_id'],
-                $data['plot_area'],
-                $data['plot_area_unit'] ?? 'sqft',
+                $data['block'] ?? null,
+                $data['sector'] ?? null,
                 $data['plot_type'] ?? 'residential',
-                $data['dimensions_length'] ?? null,
-                $data['dimensions_width'] ?? null,
-                $data['corner_plot'] ?? false,
-                $data['park_facing'] ?? false,
-                $data['road_facing'] ?? false,
-                $data['current_price'],
-                $data['base_price'] ?? $data['current_price'],
-                $data['plc_amount'] ?? 0,
-                $data['other_charges'] ?? 0,
-                $data['total_price'] ?? $data['current_price'],
-                $data['remarks'] ?? '',
-                $data['created_by']
+                $data['area_sqft'] ?? 0,
+                $data['area_sqm'] ?? 0,
+                $data['width_ft'] ?? null,
+                $data['length_ft'] ?? null,
+                $data['dimension_label'] ?? null,
+                $data['price_per_sqft'] ?? 0,
+                $data['base_price_per_sqft'] ?? $data['price_per_sqft'] ?? 0,
+                $data['total_price'] ?? 0,
+                $data['facing'] ?? null,
+                $data['corner_plot'] ?? 0,
+                $data['park_facing'] ?? 0,
+                $data['road_width_ft'] ?? 0,
+                $data['status'] ?? 'available',
+                $data['is_active'] ?? 1,
+                $data['created_by'] ?? null
             ];
 
             $this->database->query($sql, $params);
@@ -216,7 +187,8 @@ class PlottingService
             $this->logger->info('Plot added', [
                 'plot_id' => $plotId,
                 'plot_number' => $plotNumber,
-                'plot_area' => $data['plot_area']
+                'colony_id' => $data['colony_id'],
+                'area_sqft' => $data['area_sqft'] ?? 0
             ]);
 
             return [
@@ -239,20 +211,26 @@ class PlottingService
     }
 
     /**
-     * Get plots
+     * Get plots — JOINed with colonies table for colony_name and location
      */
     public function getPlots($filters = [], $limit = 50, $offset = 0)
     {
         try {
-            $sql = "SELECT p.*, la.location as acquisition_location, la.village, la.acquisition_number
+            $sql = "SELECT p.*, c.name as colony_name, d.name as location
                     FROM plots p
-                    JOIN land_acquisitions la ON p.land_acquisition_id = la.id
+                    JOIN colonies c ON p.colony_id = c.id
+                    LEFT JOIN districts d ON c.district_id = d.id
                     WHERE 1=1";
             $params = [];
 
-            if (!empty($filters['plot_status'])) {
+            if (!empty($filters['status'])) {
                 $sql .= " AND p.status = ?";
-                $params[] = $filters['plot_status'];
+                $params[] = $filters['status'];
+            }
+
+            if (!empty($filters['colony_id'])) {
+                $sql .= " AND p.colony_id = ?";
+                $params[] = $filters['colony_id'];
             }
 
             if (!empty($filters['plot_type'])) {
@@ -260,9 +238,9 @@ class PlottingService
                 $params[] = $filters['plot_type'];
             }
 
-            if (!empty($filters['land_acquisition_id'])) {
-                $sql .= " AND p.land_acquisition_id = ?";
-                $params[] = $filters['land_acquisition_id'];
+            if (!empty($filters['block'])) {
+                $sql .= " AND p.block = ?";
+                $params[] = $filters['block'];
             }
 
             if (!empty($filters['corner_plot'])) {
@@ -294,12 +272,11 @@ class PlottingService
     }
 
     /**
-     * Book plot
+     * Book plot — columns match actual `plot_bookings` table schema
      */
     public function bookPlot(array $data)
     {
         try {
-            // Check if plot is available
             $plot = $this->database->selectOne(
                 "SELECT * FROM plots WHERE id = ? AND status = 'available'",
                 [$data['plot_id']]
@@ -312,42 +289,38 @@ class PlottingService
                 ];
             }
 
-            // Generate booking number
             $bookingNumber = $this->generateBookingNumber();
 
             $sql = "INSERT INTO plot_bookings (
-                plot_id, customer_id, associate_id, booking_number, booking_type,
-                booking_amount, total_amount, payment_plan, installment_period, installment_amount,
-                payment_method, transaction_id, booking_date, status, created_by
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                plot_id, customer_id, booking_number, booking_date,
+                total_plot_value, booking_amount, agreement_value,
+                status, channel, associate_id,
+                commission_pct, commission_amount, notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             $params = [
                 $data['plot_id'],
                 $data['customer_id'],
-                $data['associate_id'] ?? null,
                 $bookingNumber,
-                $data['booking_type'] ?? 'direct',
-                $data['booking_amount'],
-                $data['total_amount'],
-                $data['payment_plan'] ?? 'lump_sum',
-                $data['installment_period'] ?? null,
-                $data['installment_amount'] ?? null,
-                $data['payment_method'] ?? '',
-                $data['transaction_id'] ?? '',
-                $data['booking_date'],
-                $data['status'] ?? 'pending',
-                $data['created_by']
+                $data['booking_date'] ?? date('Y-m-d'),
+                $data['total_plot_value'] ?? $plot['total_price'] ?? 0,
+                $data['booking_amount'] ?? 0,
+                $data['agreement_value'] ?? $data['total_plot_value'] ?? $plot['total_price'] ?? 0,
+                $data['status'] ?? 'token_paid',
+                $data['channel'] ?? 'direct',
+                $data['associate_id'] ?? null,
+                $data['commission_pct'] ?? 0,
+                $data['commission_amount'] ?? 0,
+                $data['notes'] ?? null
             ];
 
             $this->database->query($sql, $params);
             $bookingId = $this->database->lastInsertId();
 
-            // Update plot status
             $this->updatePlotStatus($data['plot_id'], 'booked');
 
-            // Calculate commissions if associate is involved
             if (!empty($data['associate_id'])) {
-                $this->calculateCommissions($bookingId, $data['associate_id'], $data['total_amount']);
+                $this->calculateCommissions($bookingId, $data['associate_id'], $data['total_plot_value'] ?? $plot['total_price'] ?? 0);
             }
 
             $this->logger->info('Plot booked', [
@@ -381,14 +354,16 @@ class PlottingService
     public function getPlotBookings($filters = [], $limit = 50, $offset = 0)
     {
         try {
-            $sql = "SELECT pb.*, p.plot_number, p.plot_area, p.plot_type,
+            $sql = "SELECT pb.*, p.plot_number, p.area_sqft, p.plot_type,
+                           c.name as colony_name,
                            u.full_name as customer_name, u.phone as customer_phone,
-                           a.name as associate_name, la.location as plot_location
+                           a.full_name as associate_name
                     FROM plot_bookings pb
                     JOIN plots p ON pb.plot_id = p.id
-                    JOIN land_acquisitions la ON p.land_acquisition_id = la.id
+                    JOIN colonies c ON p.colony_id = c.id
                     LEFT JOIN users u ON pb.customer_id = u.id
-                    LEFT JOIN users a ON pb.associate_id = a.id
+                    LEFT JOIN associates assoc ON pb.associate_id = assoc.id
+                    LEFT JOIN users a ON assoc.user_id = a.id
                     WHERE 1=1";
             $params = [];
 
@@ -405,6 +380,11 @@ class PlottingService
             if (!empty($filters['associate_id'])) {
                 $sql .= " AND pb.associate_id = ?";
                 $params[] = $filters['associate_id'];
+            }
+
+            if (!empty($filters['colony_id'])) {
+                $sql .= " AND p.colony_id = ?";
+                $params[] = $filters['colony_id'];
             }
 
             $sql .= " ORDER BY pb.created_at DESC LIMIT ? OFFSET ?";
@@ -431,49 +411,45 @@ class PlottingService
     }
 
     /**
-     * Add payment to booking
+     * Add payment to booking — records into payment_transactions table
      */
     public function addBookingPayment(array $data)
     {
         try {
-            try {
-                $sql = "INSERT INTO plot_payments (
-                    booking_id, amount, payment_date, payment_method, transaction_id,
-                    installment_number, payment_status, receipt_number, bank_reference, remarks
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
-            }
+            $transactionId = 'TRX-' . date('YmdHis') . '-' . strtoupper(substr(uniqid(), -6));
+
+            $sql = "INSERT INTO payment_transactions (
+                transaction_id, user_id, booking_id, amount,
+                payment_method, payment_status, gateway_transaction_id, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
 
             $params = [
+                $transactionId,
+                $data['user_id'] ?? $data['customer_id'] ?? 0,
                 $data['booking_id'],
                 $data['amount'],
-                $data['payment_date'],
-                $data['payment_method'],
-                $data['transaction_id'] ?? '',
-                $data['installment_number'] ?? null,
+                $data['payment_method'] ?? 'bank_transfer',
                 $data['payment_status'] ?? 'completed',
-                $data['receipt_number'] ?? '',
-                $data['bank_reference'] ?? '',
-                $data['remarks'] ?? ''
+                $data['gateway_transaction_id'] ?? null
             ];
 
             $this->database->query($sql, $params);
             $paymentId = $this->database->lastInsertId();
 
-            // Update booking payment status
             $this->updateBookingPaymentStatus($data['booking_id']);
 
             $this->logger->info('Payment added to booking', [
                 'payment_id' => $paymentId,
                 'booking_id' => $data['booking_id'],
-                'amount' => $data['amount']
+                'amount' => $data['amount'],
+                'transaction_id' => $transactionId
             ]);
 
             return [
                 'success' => true,
-                'message' => 'Payment added successfully',
-                'payment_id' => $paymentId
+                'message' => 'Payment recorded successfully',
+                'payment_id' => $paymentId,
+                'transaction_id' => $transactionId
             ];
         } catch (\Exception $e) {
             $this->logger->error('Failed to add booking payment', [
@@ -489,40 +465,38 @@ class PlottingService
     }
 
     /**
-     * Get plotting statistics
+     * Get plotting statistics — uses correct column names (area_sqft, total_price, etc.)
      */
     public function getPlottingStats()
     {
         try {
             $stats = [];
 
-            // Total land acquired
             $stats['land_acquired'] = $this->database->selectOne(
                 "SELECT COUNT(*) as total_acquisitions, SUM(land_area) as total_area,
                         SUM(acquisition_cost) as total_cost FROM land_acquisitions WHERE status = 'active'"
             );
 
-            // Total plots
             $stats['plots'] = $this->database->selectOne(
                 "SELECT COUNT(*) as total_plots,
                         SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) as available_plots,
+                        SUM(CASE WHEN status = 'booked' THEN 1 ELSE 0 END) as booked_plots,
                         SUM(CASE WHEN status = 'sold' THEN 1 ELSE 0 END) as sold_plots,
-                        SUM(current_price) as total_value FROM plots"
+                        SUM(total_price) as total_value FROM plots WHERE is_active = 1"
             );
 
-            // Total bookings
             $stats['bookings'] = $this->database->selectOne(
                 "SELECT COUNT(*) as total_bookings,
-                        SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed_bookings,
-                        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_bookings,
-                        SUM(total_amount) as total_booking_value FROM plot_bookings"
+                        SUM(CASE WHEN status IN ('token_paid','agreement_signed','emi_active','partially_paid') THEN 1 ELSE 0 END) as active_bookings,
+                        SUM(CASE WHEN status = 'fully_paid' THEN 1 ELSE 0 END) as completed_bookings,
+                        SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled_bookings,
+                        SUM(total_plot_value) as total_booking_value FROM plot_bookings"
             );
 
-            // Monthly sales
             $stats['monthly_sales'] = $this->database->select(
                 "SELECT MONTH(booking_date) as month, YEAR(booking_date) as year,
-                        COUNT(*) as bookings, SUM(total_amount) as value
-                 FROM plot_bookings WHERE status IN ('confirmed', 'completed')
+                        COUNT(*) as bookings, SUM(total_plot_value) as value
+                 FROM plot_bookings WHERE status NOT IN ('cancelled')
                  AND booking_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
                  GROUP BY YEAR(booking_date), MONTH(booking_date)
                  ORDER BY year DESC, month DESC"
@@ -559,12 +533,12 @@ class PlottingService
     /**
      * Generate plot number
      */
-    private function generatePlotNumber($landAcquisitionId)
+    private function generatePlotNumber($colonyId)
     {
         $prefix = 'PLOT';
-        $sequence = $this->getPlotSequenceNumber($landAcquisitionId);
+        $sequence = $this->getPlotSequenceNumber($colonyId);
 
-        return $prefix . str_pad($landAcquisitionId, 4, '0', STR_PAD_LEFT) . '-' . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+        return $prefix . str_pad($colonyId, 4, '0', STR_PAD_LEFT) . '-' . str_pad($sequence, 3, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -586,7 +560,6 @@ class PlottingService
     {
         $table = 'sequences';
 
-        // Create sequences table if not exists
         $this->database->query("
             CREATE TABLE IF NOT EXISTS $table (
                 type VARCHAR(50) PRIMARY KEY,
@@ -595,7 +568,6 @@ class PlottingService
             )
         ");
 
-        // Get and update sequence
         $this->database->query("
             INSERT INTO $table (type, last_number) VALUES (?, 1)
             ON DUPLICATE KEY UPDATE last_number = last_number + 1
@@ -609,11 +581,11 @@ class PlottingService
     /**
      * Get plot sequence number
      */
-    private function getPlotSequenceNumber($landAcquisitionId)
+    private function getPlotSequenceNumber($colonyId)
     {
         $result = $this->database->selectOne(
-            "SELECT COUNT(*) as count FROM plots WHERE land_acquisition_id = ?",
-            [$landAcquisitionId]
+            "SELECT COUNT(*) as count FROM plots WHERE colony_id = ?",
+            [$colonyId]
         );
 
         return ($result['count'] ?? 0) + 1;
@@ -629,32 +601,50 @@ class PlottingService
             [$status, $plotId]
         );
 
-        return $this->database->lastInsertId();
+        return true;
     }
 
     /**
-     * Create a new land project
+     * Create a new land project — SQL built directly, no dead try-catch wrapper
      */
     public function createProject($data)
     {
         try {
             $sql = "INSERT INTO land_projects (
-                project_name, description, location, total_area, 
-                created_by, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+                project_name, description, location, total_area, created_by, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, NOW(), NOW())";
+
+            $this->database->query($sql, [
+                $data['project_name'],
+                $data['description'] ?? '',
+                $data['location'] ?? '',
+                $data['total_area'] ?? 0,
+                $data['created_by']
+            ]);
+
+            $projectId = $this->database->lastInsertId();
+
+            $this->logger->info('Land project created', [
+                'project_id' => $projectId,
+                'project_name' => $data['project_name']
+            ]);
+
+            return [
+                'success' => true,
+                'project_id' => $projectId,
+                'message' => 'Project created successfully'
+            ];
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to create project', [
+                'error' => $e->getMessage(),
+                'data' => $data
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to create project: ' . $e->getMessage()
+            ];
         }
-
-        $this->database->query($sql, [
-            $data['project_name'],
-            $data['description'],
-            $data['location'],
-            $data['total_area'],
-            $data['created_by']
-        ]);
-
-        return $this->database->lastInsertId();
     }
 
     /**
@@ -662,74 +652,31 @@ class PlottingService
      */
     public function subdivideLand($data)
     {
-        $sql = "INSERT INTO plots (
-            land_acquisition_id, plot_number, plot_area, plot_area_unit,
-            location, price_per_unit, total_price, status,
-            created_by, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+        try {
+            $sql = "INSERT INTO plots (
+                colony_id, plot_number, area_sqft, plot_type,
+                price_per_sqft, total_price, status, is_active,
+                created_by, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, 'available', 1, ?, NOW(), NOW())";
 
-        $this->database->query($sql, [
-            $data['land_acquisition_id'],
-            $data['plot_number'],
-            $data['plot_area'],
-            $data['plot_area_unit'],
-            $data['price_per_unit'],
-            $data['total_price'],
-            'available',
-            $data['created_by']
-        ]);
+            $this->database->query($sql, [
+                $data['colony_id'] ?? $data['land_acquisition_id'],
+                $data['plot_number'],
+                $data['area_sqft'] ?? $data['plot_area'] ?? 0,
+                $data['plot_type'] ?? 'residential',
+                $data['price_per_sqft'] ?? $data['price_per_unit'] ?? 0,
+                $data['total_price'],
+                $data['created_by']
+            ]);
 
-        return $this->database->lastInsertId();
-    }
+            return $this->database->lastInsertId();
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to subdivide land', [
+                'error' => $e->getMessage()
+            ]);
 
-    /**
-     * Reserve a plot for customer
-     */
-    public function reservePlot($plotId, $customerId, $reservationData)
-    {
-        $sql = "INSERT INTO plot_reservations (
-            plot_id, customer_id, reservation_date, expiry_date,
-            status, created_by, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
-
-        $this->database->query($sql, [
-            $plotId,
-            $customerId,
-            $reservationData['reservation_date'],
-            $reservationData['expiry_date'],
-            'reserved',
-            $reservationData['created_by']
-        ]);
-
-        // Update plot status to reserved
-        $this->updatePlotStatus($plotId, 'reserved');
-
-        return $this->database->lastInsertId();
-    }
-
-    /**
-     * Sell a plot to customer
-     */
-    public function sellPlot($plotId, $customerId, $saleData)
-    {
-        $sql = "INSERT INTO plot_sales (
-            plot_id, customer_id, sale_date, sale_price,
-            payment_status, created_by, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
-
-        $this->database->query($sql, [
-            $plotId,
-            $customerId,
-            $saleData['sale_date'],
-            $saleData['sale_price'],
-            $saleData['payment_status'],
-            $saleData['created_by']
-        ]);
-
-        // Update plot status to sold
-        $this->updatePlotStatus($plotId, 'sold');
-
-        return $this->database->lastInsertId();
+            return false;
+        }
     }
 
     /**
@@ -739,12 +686,17 @@ class PlottingService
     {
         try {
             $sql = "SELECT * FROM land_projects WHERE id = ?";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
-        $result = $this->database->fetchOne($sql, [$projectId]);
+            $result = $this->database->fetchOne($sql, [$projectId]);
 
-        return $result;
+            return $result;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get project', [
+                'error' => $e->getMessage(),
+                'project_id' => $projectId
+            ]);
+
+            return null;
+        }
     }
 
     /**
@@ -752,13 +704,23 @@ class PlottingService
      */
     public function getPlot($plotId)
     {
-        $sql = "SELECT p.*, la.project_name, la.location 
-                 FROM plots p 
-                 LEFT JOIN land_acquisitions la ON p.land_acquisition_id = la.id 
-                 WHERE p.id = ?";
-        $result = $this->database->fetchOne($sql, [$plotId]);
+        try {
+            $sql = "SELECT p.*, c.name as colony_name, d.name as location
+                     FROM plots p
+                     JOIN colonies c ON p.colony_id = c.id
+                     LEFT JOIN districts d ON c.district_id = d.id
+                     WHERE p.id = ?";
+            $result = $this->database->fetchOne($sql, [$plotId]);
 
-        return $result;
+            return $result;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get plot', [
+                'error' => $e->getMessage(),
+                'plot_id' => $plotId
+            ]);
+
+            return null;
+        }
     }
 
     /**
@@ -766,31 +728,47 @@ class PlottingService
      */
     public function getAvailablePlots($filters = [])
     {
-        $sql = "SELECT p.*, la.project_name, la.location 
-                 FROM plots p 
-                 LEFT JOIN land_acquisitions la ON p.land_acquisition_id = la.id 
-                 WHERE p.status = 'available'";
+        try {
+            $sql = "SELECT p.*, c.name as colony_name, d.name as location
+                     FROM plots p
+                     JOIN colonies c ON p.colony_id = c.id
+                     LEFT JOIN districts d ON c.district_id = d.id
+                     WHERE p.status = 'available' AND p.is_active = 1";
 
-        $params = [];
+            $params = [];
 
-        if (!empty($filters['project_id'])) {
-            $sql .= " AND la.id = ?";
-            $params[] = $filters['project_id'];
+            if (!empty($filters['colony_id'])) {
+                $sql .= " AND p.colony_id = ?";
+                $params[] = $filters['colony_id'];
+            }
+
+            if (!empty($filters['min_area'])) {
+                $sql .= " AND p.area_sqft >= ?";
+                $params[] = $filters['min_area'];
+            }
+
+            if (!empty($filters['max_price'])) {
+                $sql .= " AND p.total_price <= ?";
+                $params[] = $filters['max_price'];
+            }
+
+            if (!empty($filters['block'])) {
+                $sql .= " AND p.block = ?";
+                $params[] = $filters['block'];
+            }
+
+            $sql .= " ORDER BY p.total_price ASC";
+
+            $results = $this->database->fetchAll($sql, $params);
+
+            return $results;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get available plots', [
+                'error' => $e->getMessage()
+            ]);
+
+            return [];
         }
-
-        if (!empty($filters['min_area'])) {
-            $sql .= " AND p.plot_area >= ?";
-            $params[] = $filters['min_area'];
-        }
-
-        if (!empty($filters['max_price'])) {
-            $sql .= " AND p.price_per_unit <= ?";
-            $params[] = $filters['max_price'];
-        }
-
-        $results = $this->database->fetchAll($sql, $params);
-
-        return $results;
     }
 
     /**
@@ -799,11 +777,9 @@ class PlottingService
     private function calculateCommissions($bookingId, $associateId, $totalAmount)
     {
         try {
-            // Fetch booking details to get the buyer (customer)
             $booking = $this->database->selectOne("SELECT * FROM plot_bookings WHERE id = ?", [$bookingId]);
             if (!$booking) return;
 
-            // Use the new DifferentialCommissionCalculator for automated MLM distribution
             $calculator = new \App\Services\DifferentialCommissionCalculator();
             $result = $calculator->calculate($totalAmount, $booking['customer_id'], $booking['plot_id']);
 
@@ -814,7 +790,6 @@ class PlottingService
                     'recipients' => count($result['commissions'])
                 ]);
 
-                // Also record a summary in commission_tracking for plotting-specific reports
                 try {
                     $this->database->query(
                         "INSERT INTO commission_tracking (
@@ -842,39 +817,37 @@ class PlottingService
     }
 
     /**
-     * Update booking payment status
+     * Update booking payment status — queries payment_transactions table
      */
     private function updateBookingPaymentStatus($bookingId)
     {
         try {
-            try {
-                $result = $this->database->selectOne(
-                    "SELECT SUM(amount) as total_paid FROM plot_payments WHERE booking_id = ? AND payment_status = 'completed'",
-                    [$bookingId]
-                );
-            } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
-            }
+            $result = $this->database->selectOne(
+                "SELECT SUM(amount) as total_paid FROM payment_transactions
+                 WHERE booking_id = ? AND payment_status = 'completed'",
+                [$bookingId]
+            );
 
             $totalPaid = $result['total_paid'] ?? 0;
 
             $booking = $this->database->selectOne(
-                "SELECT total_amount FROM plot_bookings WHERE id = ?",
+                "SELECT total_plot_value FROM plot_bookings WHERE id = ?",
                 [$bookingId]
             );
 
-            $totalAmount = $booking['total_amount'] ?? 0;
+            $totalAmount = $booking['total_plot_value'] ?? 0;
 
             $paymentStatus = 'pending';
-            if ($totalPaid >= $totalAmount) {
+            if ($totalPaid >= $totalAmount && $totalAmount > 0) {
                 $paymentStatus = 'completed';
             } elseif ($totalPaid > 0) {
                 $paymentStatus = 'partial';
             }
 
             $this->database->query(
-                "UPDATE plot_bookings SET payment_status = ? WHERE id = ?",
-                [$paymentStatus, $bookingId]
+                "UPDATE plot_bookings SET notes = CONCAT(COALESCE(notes, ''), '\nPayment status updated: $paymentStatus')
+                 WHERE id = ?",
+                [$bookingId]
             );
         } catch (\Exception $e) {
             $this->logger->error('Failed to update booking payment status', [
