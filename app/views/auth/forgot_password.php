@@ -31,7 +31,7 @@ $page_description = __('forgot_password_page_description');
                     <?php if (isset($_SESSION['error'])): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="fas fa-exclamation-triangle me-2"></i>
-                            <?php echo htmlspecialchars($_SESSION['error']);
+                            <?php echo htmlspecialchars($_SESSION['error'] ?? '');
                             unset($_SESSION['error']); ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
@@ -40,7 +40,7 @@ $page_description = __('forgot_password_page_description');
                     <?php if (isset($_SESSION['success'])): ?>
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <i class="fas fa-check-circle me-2"></i>
-                            <?php echo htmlspecialchars($_SESSION['success']);
+                            <?php echo htmlspecialchars($_SESSION['success'] ?? '');
                             unset($_SESSION['success']); ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>

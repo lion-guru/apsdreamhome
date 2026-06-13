@@ -5,13 +5,13 @@ $content = $content ?? '';
 <div class="container py-5">
   <?php if (!empty($_SESSION['flash_success'])): ?>
     <div class="alert alert-success alert-dismissible fade show">
-      <strong><?= htmlspecialchars($_SESSION['flash_success']) ?></strong>
+      <strong><?= htmlspecialchars($_SESSION['flash_success'] ?? '') ?></strong>
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php unset($_SESSION['flash_success']); ?>
   <?php endif; ?>
   <?php if (!empty($_SESSION['flash_error'])): ?>
-    <div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($_SESSION['flash_error']) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($_SESSION['flash_error'] ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php unset($_SESSION['flash_error']); ?>
   <?php endif; ?>
 

@@ -9,7 +9,7 @@
     </div>
 
     <?php if (isset($_SESSION['flash_message'])): ?>
-        <div class="alert alert-<?= $_SESSION['flash_type'] ?? 'info' ?>"><?= htmlspecialchars($_SESSION['flash_message']) ?><?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?></div>
+        <div class="alert alert-<?= $_SESSION['flash_type'] ?? 'info' ?>"><?= htmlspecialchars($_SESSION['flash_message'] ?? '') ?><?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?></div>
     <?php endif; ?>
 
     <div class="row">

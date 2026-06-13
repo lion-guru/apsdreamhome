@@ -1629,7 +1629,7 @@ class MoneyWorkflowService
             );
             $stats['today_total'] = (float)($row['total'] ?? 0);
             $stats['today_count'] = (int)($row['cnt'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getCollectionStats error: ' . $e->getMessage()); }
 
         try {
             $row = $this->db->fetchOne(
@@ -1638,7 +1638,7 @@ class MoneyWorkflowService
             );
             $stats['pending_verification'] = (int)($row['cnt'] ?? 0);
             $stats['pending_amount'] = (float)($row['total'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getCollectionStats error: ' . $e->getMessage()); }
 
         try {
             $monthFrom = date('Y-m-01');
@@ -1650,21 +1650,21 @@ class MoneyWorkflowService
             );
             $stats['month_total'] = (float)($row['total'] ?? 0);
             $stats['month_count'] = (int)($row['cnt'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getCollectionStats error: ' . $e->getMessage()); }
 
         try {
             $row = $this->db->fetchOne(
                 "SELECT COALESCE(SUM(amount), 0) AS total FROM cash_collections WHERE status = 'verified'"
             );
             $stats['verified_total'] = (float)($row['total'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getCollectionStats error: ' . $e->getMessage()); }
 
         try {
             $row = $this->db->fetchOne(
                 "SELECT COALESCE(SUM(amount), 0) AS total FROM cash_collections WHERE status = 'rejected'"
             );
             $stats['rejected_total'] = (float)($row['total'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getCollectionStats error: ' . $e->getMessage()); }
 
         return $stats;
     }
@@ -2402,10 +2402,10 @@ class MoneyWorkflowService
                     $escrowBalance += (float)$r['current_balance'];
                 }
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getDashboardStats error: ' . $e->getMessage()); }
 
         $petty = 0.0;
-        try { $petty = $this->getPettyCashBalance(); } catch (\Throwable $e) {}
+        try { $petty = $this->getPettyCashBalance(); } catch (\Throwable $e) { error_log('MoneyWorkflowService::getDashboardStats error: ' . $e->getMessage()); }
 
         $chequesIssued = 0;
         $chequesPending = 0;
@@ -2419,7 +2419,7 @@ class MoneyWorkflowService
             $chequesIssued = (int)($row['issued'] ?? 0);
             $chequesPending = (int)($row['pending'] ?? 0);
             $chequesBounced = (int)($row['bounced'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getDashboardStats error: ' . $e->getMessage()); }
 
         $monthFrom = date('Y-m-01');
         $monthTo = date('Y-m-t');
@@ -2434,14 +2434,14 @@ class MoneyWorkflowService
             ) ?: [];
             $receipts = (float)($row['r'] ?? 0);
             $payments = (float)($row['p'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getDashboardStats error: ' . $e->getMessage()); }
 
         $tdsThisQtr = 0.0;
         try {
             $row = $this->db->fetchOne("SELECT SUM(tds_amount) s FROM tds_register
                 WHERE quarter = CONCAT('Q', QUARTER(CURDATE())) AND financial_year = CONCAT(YEAR(CURDATE())-1,'-',YEAR(CURDATE()))") ?: [];
             $tdsThisQtr = (float)($row['s'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getDashboardStats error: ' . $e->getMessage()); }
 
         $gstNet = 0.0;
         try {
@@ -2451,13 +2451,13 @@ class MoneyWorkflowService
                 FROM gst_transactions
                 WHERE financial_year = CONCAT(YEAR(CURDATE())-1,'-',YEAR(CURDATE()))") ?: [];
             $gstNet = (float)($row['net'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getDashboardStats error: ' . $e->getMessage()); }
 
         $pendingExpenses = 0;
         try {
             $row = $this->db->fetchOne("SELECT COUNT(*) c FROM expense_approvals WHERE status='pending'") ?: [];
             $pendingExpenses = (int)($row['c'] ?? 0);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('MoneyWorkflowService::getDashboardStats error: ' . $e->getMessage()); }
 
         return [
             'total_bank_balance' => $totalBalance,

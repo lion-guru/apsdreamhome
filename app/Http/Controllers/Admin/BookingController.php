@@ -145,7 +145,7 @@ class BookingController extends AdminController
                         $total_paid += floatval($pmt['amount'] ?? 0);
                     }
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log('BookingController::show error: ' . $e->getMessage()); }
             try {
                 $cStmt = $this->db->prepare("SELECT * FROM commissions WHERE booking_id = ? ORDER BY created_at DESC");
                 $cStmt->execute([$id]);
@@ -153,7 +153,7 @@ class BookingController extends AdminController
                 foreach ($commissions as $cm) {
                     $total_commission += floatval($cm['amount'] ?? 0);
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) { error_log('BookingController::show error: ' . $e->getMessage()); }
 
             return $this->render('admin/bookings/show', [
                 'booking' => $booking,

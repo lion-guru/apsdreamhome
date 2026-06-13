@@ -22,14 +22,14 @@
         <div class="container-fluid">
             <?php if (!empty($_SESSION['flash_success'])): ?>
                 <div class="alert alert-success alert-dismissible fade show">
-                    <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($_SESSION['flash_success']); ?>
+                    <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($_SESSION['flash_success'] ?? ''); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
                 <?php unset($_SESSION['flash_success']); ?>
             <?php endif; ?>
             <?php if (!empty($_SESSION['flash_error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show">
-                    <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($_SESSION['flash_error']); ?>
+                    <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($_SESSION['flash_error'] ?? ''); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
                 <?php unset($_SESSION['flash_error']); ?>

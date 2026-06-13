@@ -23,10 +23,10 @@
 </style>
 
 <?php if (isset($_SESSION['flash_success'])): ?>
-    <div class="flash-message alert alert-success alert-dismissible fade show"><?= htmlspecialchars($_SESSION['flash_success']) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <div class="flash-message alert alert-success alert-dismissible fade show"><?= htmlspecialchars($_SESSION['flash_success'] ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php unset($_SESSION['flash_success']); ?>
 <?php elseif (isset($_SESSION['flash_error'])): ?>
-    <div class="flash-message alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($_SESSION['flash_error']) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <div class="flash-message alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($_SESSION['flash_error'] ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php unset($_SESSION['flash_error']); ?>
 <?php endif; ?>
 

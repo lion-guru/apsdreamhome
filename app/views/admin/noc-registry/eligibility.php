@@ -15,7 +15,7 @@ $booking_id = $booking_id ?? 0;
 </div>
 
 <?php if (!empty($_SESSION['flash_success'])): ?>
-    <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_success']); unset($_SESSION['flash_success']); ?></div>
+    <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['flash_success'] ?? ''); unset($_SESSION['flash_success']); ?></div>
 <?php endif; ?>
 
 <!-- Booking Selector -->

@@ -175,7 +175,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
             <?php if (!empty($_SESSION['success'])): ?>
             <div class="alert alert-success alert-dismissible fade show mb-4">
                 <i class="fas fa-check-circle me-2"></i>
-                <?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
+                <?php echo htmlspecialchars($_SESSION['success'] ?? ''); unset($_SESSION['success']); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             <?php endif; ?>
@@ -183,7 +183,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
             <?php if (!empty($_SESSION['error'])): ?>
             <div class="alert alert-danger alert-dismissible fade show mb-4">
                 <i class="fas fa-exclamation-circle me-2"></i>
-                <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+                <?php echo htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             <?php endif; ?>

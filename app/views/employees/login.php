@@ -35,7 +35,7 @@ require_once __DIR__ . '/../layouts/header.php';
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             <?php
-                            echo htmlspecialchars($_SESSION['error']);
+                            echo htmlspecialchars($_SESSION['error'] ?? '');
                             unset($_SESSION['error']);
                             ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -46,7 +46,7 @@ require_once __DIR__ . '/../layouts/header.php';
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <i class="fas fa-check-circle me-2"></i>
                             <?php
-                            echo htmlspecialchars($_SESSION['success']);
+                            echo htmlspecialchars($_SESSION['success'] ?? '');
                             unset($_SESSION['success']);
                             ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

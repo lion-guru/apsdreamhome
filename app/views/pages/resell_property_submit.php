@@ -15,10 +15,10 @@ $content = $content ?? '';
       <?php else: ?>
 
       <?php if (!empty($_SESSION['success'])): ?>
-        <div class="alert alert-success"><?= htmlspecialchars($_SESSION['success']) ?><?php unset($_SESSION['success']); ?></div>
+        <div class="alert alert-success"><?= htmlspecialchars($_SESSION['success'] ?? '') ?><?php unset($_SESSION['success']); ?></div>
       <?php endif; ?>
       <?php if (!empty($_SESSION['error'])): ?>
-        <div class="alert alert-danger"><?= htmlspecialchars($_SESSION['error']) ?><?php unset($_SESSION['error']); ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($_SESSION['error'] ?? '') ?><?php unset($_SESSION['error']); ?></div>
       <?php endif; ?>
 
       <form method="POST" class="card shadow-sm">

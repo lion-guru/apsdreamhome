@@ -368,7 +368,7 @@ class NewFeaturesApiController extends BaseController
             } elseif ($weekLeads < $prevWeek * 0.8) {
                 $insights[] = ['type' => 'warning', 'title' => 'Lead Decline', 'message' => "Lead volume down " . round((($prevWeek - $weekLeads) / max(1, $prevWeek)) * 100, 1) . "% this week vs last"];
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('NewFeaturesApiController::analyticsInsights error: ' . $e->getMessage()); }
 
         try {
             $st = $this->db->query("SELECT type, COUNT(*) as cnt FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY type ORDER BY cnt DESC LIMIT 1");
@@ -376,7 +376,7 @@ class NewFeaturesApiController extends BaseController
             if ($row) {
                 $insights[] = ['type' => 'info', 'title' => 'Top Property Type', 'message' => "Most inquiries for " . ($row['type'] ?: 'general') . " ({$row['cnt']} leads)"];
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('NewFeaturesApiController::analyticsInsights error: ' . $e->getMessage()); }
 
         try {
             $st = $this->db->query("SELECT id, amount FROM bookings WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) ORDER BY amount DESC LIMIT 1");
@@ -384,7 +384,7 @@ class NewFeaturesApiController extends BaseController
             if ($top) {
                 $insights[] = ['type' => 'primary', 'title' => 'Top Booking', 'message' => "Highest booking this month: ₹" . number_format($top['amount'])];
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('NewFeaturesApiController::analyticsInsights error: ' . $e->getMessage()); }
 
         try {
             $st = $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'customer' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
@@ -392,7 +392,7 @@ class NewFeaturesApiController extends BaseController
             if ($newUsers > 0) {
                 $insights[] = ['type' => 'success', 'title' => 'New Customers', 'message' => "{$newUsers} new customers this week"];
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('NewFeaturesApiController::analyticsInsights error: ' . $e->getMessage()); }
 
         if (empty($insights)) {
             $insights[] = ['type' => 'secondary', 'title' => 'No Insights', 'message' => 'Need more data to generate insights'];

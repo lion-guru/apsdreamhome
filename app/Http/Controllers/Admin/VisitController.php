@@ -53,17 +53,17 @@ class VisitController extends AdminController
             $stmt = $this->db->prepare("SELECT id, name, phone, status FROM leads ORDER BY created_at DESC LIMIT 100");
             $stmt->execute();
             $leads = $stmt->fetchAll();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('VisitController::create error: ' . $e->getMessage()); }
         try {
             $stmt = $this->db->prepare("SELECT id, title, location FROM user_properties WHERE status = 'approved' ORDER BY created_at DESC LIMIT 100");
             $stmt->execute();
             $properties = $stmt->fetchAll();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('VisitController::create error: ' . $e->getMessage()); }
         try {
             $stmt = $this->db->prepare("SELECT id, name FROM users WHERE role IN ('admin','agent','employee') ORDER BY name ASC");
             $stmt->execute();
             $users = $stmt->fetchAll();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('VisitController::create error: ' . $e->getMessage()); }
         return $this->render('admin/visits/create', [
             'page_title' => 'Schedule Site Visit',
             'leads' => $leads,
@@ -96,7 +96,7 @@ class VisitController extends AdminController
                 if ($leadId > 0) {
                     $this->db->prepare("UPDATE leads SET status = 'visit_scheduled' WHERE id = ?")->execute([$leadId]);
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log('VisitController::store error: ' . $e->getMessage()); }
             if ($this->audit) $this->audit->log('visit.create', $this->getUserId(), $this->getUserRole(), 'visit', $result['visit_id'] ?? 0, "Scheduled visit for " . $data['customer_name']);
             $this->setFlash('success', 'Site visit scheduled successfully');
         } else {
@@ -132,7 +132,7 @@ class VisitController extends AdminController
             $stmt = $this->db->prepare("SELECT id, name FROM users WHERE role IN ('admin','agent','employee') ORDER BY name ASC");
             $stmt->execute();
             $users = $stmt->fetchAll();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('VisitController::edit error: ' . $e->getMessage()); }
         return $this->render('admin/visits/edit', [
             'page_title' => 'Edit Visit',
             'visit' => $visit,

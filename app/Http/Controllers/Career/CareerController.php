@@ -40,8 +40,27 @@ class CareerController extends BaseController
      */
     public function index($request = null)
     {
+        $careers = [];
+        $benefits = [];
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM careers WHERE status = 'active' ORDER BY created_at DESC");
+            $careers = $stmt->fetchAll(\PDO::FETCH_OBJ);
+        } catch (\Throwable $e) {
+            error_log('Careers fetch error: ' . $e->getMessage());
+        }
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM career_benefits WHERE is_active = 1 ORDER BY sort_order ASC");
+            $benefits = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('Career benefits fetch error: ' . $e->getMessage());
+        }
+
         $data = [
-            'title' => 'Careers - APS Dream Home',
+            'page_title' => 'Careers - APS Dream Home',
+            'careers' => $careers,
+            'benefits' => $benefits,
             'user' => $this->authService->getCurrentUser(),
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
@@ -49,7 +68,7 @@ class CareerController extends BaseController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->render('careers/index', $data);
+        return $this->render('pages/careers', $data);
     }
 
     /**

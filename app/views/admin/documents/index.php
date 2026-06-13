@@ -10,7 +10,7 @@
 
     <?php if (!empty($_SESSION['flash_message'])): ?>
         <div class="alert alert-<?= htmlspecialchars($_SESSION['flash_type'] ?? 'info') ?> alert-dismissible fade show">
-            <?= htmlspecialchars($_SESSION['flash_message']) ?>
+            <?= htmlspecialchars($_SESSION['flash_message'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php $_SESSION['flash_message'] = ''; $_SESSION['flash_type'] = ''; endif; ?>

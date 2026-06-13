@@ -9,13 +9,13 @@ $extraHead = '<link href="https://cdn.datatables.net/1.13.6/css/dataTables.boots
 <div class="container-fluid py-4">
     <?php if (!empty($_SESSION['flash_success'])): ?>
     <div class="alert alert-success alert-dismissible fade show">
-        <?php echo htmlspecialchars($_SESSION['flash_success']); unset($_SESSION['flash_success']); ?>
+        <?php echo htmlspecialchars($_SESSION['flash_success'] ?? ''); unset($_SESSION['flash_success']); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php endif; ?>
     <?php if (!empty($_SESSION['flash_error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show">
-        <?php echo htmlspecialchars($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?>
+        <?php echo htmlspecialchars($_SESSION['flash_error'] ?? ''); unset($_SESSION['flash_error']); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php endif; ?>
