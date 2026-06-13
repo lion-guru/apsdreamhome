@@ -110,13 +110,24 @@ class ColonyPricingService
             }
 
             $totalCost = $landCost + $totalDev;
-            $basePrice = round($totalCost / $saleableArea, 2);
+            $rawCostPerSqft = $totalCost / $saleableArea;
+
+            // Markup formula: Selling Price = Cost / (1 - Overhead%)
+            // Overhead breakdown: MLM commissions 25% + G&A 5% + Profit 20% = 50%
+            $mlmOverheadPct    = 0.25;  // worst-case 26.4%, capped at 25% for pricing
+            $gaOverheadPct     = 0.05;
+            $profitMarginPct   = 0.20;
+            $totalOverheadPct  = $mlmOverheadPct + $gaOverheadPct + $profitMarginPct;
+            $markupFactor      = 1.0 / (1.0 - $totalOverheadPct);
+            $basePrice         = round($rawCostPerSqft * $markupFactor, 2);
 
             $this->logger->info('Colony pricing calculated', [
                 'colony_id'         => $colonyId,
                 'land_cost'         => $landCost,
                 'total_development' => $totalDev,
                 'saleable_area'     => $saleableArea,
+                'raw_cost_per_sqft' => round($rawCostPerSqft, 2),
+                'markup_factor'     => round($markupFactor, 4),
                 'base_price_per_sqft' => $basePrice,
             ]);
 
@@ -127,6 +138,12 @@ class ColonyPricingService
                 'total_development'      => round($totalDev, 2),
                 'total_cost'             => round($totalCost, 2),
                 'saleable_area'          => round($saleableArea, 2),
+                'raw_cost_per_sqft'      => round($rawCostPerSqft, 2),
+                'markup_factor'          => round($markupFactor, 4),
+                'total_overhead_pct'     => round($totalOverheadPct * 100, 1),
+                'mlm_overhead_pct'       => $mlmOverheadPct * 100,
+                'ga_overhead_pct'        => $gaOverheadPct * 100,
+                'profit_margin_pct'      => $profitMarginPct * 100,
                 'base_price_per_sqft'    => $basePrice,
             ];
         } catch (Exception $e) {

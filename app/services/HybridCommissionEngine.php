@@ -555,14 +555,17 @@ class HybridCommissionEngine
 
         // The agent gets the first slice: their own rank rate × amountReceived
         $agentSlice = $amountReceived * ($agentRate / 100);
-        if ($agentSlice > 0 && $distributed + $agentSlice <= $budgetCap) {
-            $ledgerId = $this->writeLedger(
-                $agentId, $agentId, $amountReceived, $agentRate,
-                $agentSlice, 'direct_sale', 1, $bookingId, $receiptId,
-                'Track A — Direct agent slab commission'
-            );
-            $ledgerIds[]   = $ledgerId;
-            $distributed  += $agentSlice;
+        if ($agentSlice > 0) {
+            $alloc = min($agentSlice, max(0.0, $budgetCap - $distributed));
+            if ($alloc > 0.01) {
+                $ledgerId = $this->writeLedger(
+                    $agentId, $agentId, $amountReceived, $agentRate,
+                    round($alloc, 2), 'direct_sale', 1, $bookingId, $receiptId,
+                    'Track A — Direct agent slab commission'
+                );
+                $ledgerIds[]   = $ledgerId;
+                $distributed  += $alloc;
+            }
         }
 
         // Traverse upline, computing differential gap at each generation
@@ -572,6 +575,13 @@ class HybridCommissionEngine
             $uplineRate = self::RANK_SLABS[$uplineRank]['rate'];
             $userId     = $gen['user_id'];
 
+            // Cap reached — stop
+            if ($distributed >= $budgetCap) {
+                break;
+            }
+
+            $remaining = max(0.0, $budgetCap - $distributed);
+
             // ── BREAKAWAY SAFEGUARD ──
             // If senior's rate equals immediate downline's rate (same rank),
             // apply Leadership Same-Level Override instead of differential.
@@ -579,14 +589,17 @@ class HybridCommissionEngine
                 $overridePct = self::SAME_LEVEL_OVERRIDES[$gen['level']] ?? 0;
                 $overrideAmt = $amountReceived * ($overridePct / 100);
 
-                if ($overrideAmt > 0 && $distributed + $overrideAmt <= $budgetCap) {
-                    $ledgerId = $this->writeLedger(
-                        $userId, $agentId, $amountReceived, $overridePct,
-                        $overrideAmt, 'level_bonus', $gen['level'], $bookingId, $receiptId,
-                        "Track A — Same-level override ({$this->getRankName($uplineRank)}, Gen {$gen['level']})"
-                    );
-                    $ledgerIds[]   = $ledgerId;
-                    $distributed  += $overrideAmt;
+                if ($overrideAmt > 0) {
+                    $alloc = min($overrideAmt, $remaining);
+                    if ($alloc > 0.01) {
+                        $ledgerId = $this->writeLedger(
+                            $userId, $agentId, $amountReceived, $overridePct,
+                            round($alloc, 2), 'level_bonus', $gen['level'], $bookingId, $receiptId,
+                            "Track A — Same-level override ({$this->getRankName($uplineRank)}, Gen {$gen['level']})"
+                        );
+                        $ledgerIds[]   = $ledgerId;
+                        $distributed  += $alloc;
+                    }
                 }
                 // Do NOT update $prevRate — keep it same so Gen 2+ also triggers
                 // the same-level path if they share the same rank.
@@ -597,14 +610,15 @@ class HybridCommissionEngine
             $differential = $uplineRate - $prevRate;
             if ($differential > 0) {
                 $diffAmt = $amountReceived * ($differential / 100);
-                if ($distributed + $diffAmt <= $budgetCap) {
+                $alloc = min($diffAmt, $remaining);
+                if ($alloc > 0.01) {
                     $ledgerId = $this->writeLedger(
                         $userId, $agentId, $amountReceived, $differential,
-                        $diffAmt, 'level_bonus', $gen['level'], $bookingId, $receiptId,
+                        round($alloc, 2), 'level_bonus', $gen['level'], $bookingId, $receiptId,
                         "Track A — Differential ({$this->getRankName($uplineRank)} {$uplineRate}% − {$prevRate}%)"
                     );
                     $ledgerIds[]   = $ledgerId;
-                    $distributed  += $diffAmt;
+                    $distributed  += $alloc;
                 }
             }
 

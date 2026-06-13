@@ -512,7 +512,7 @@ class ColonyPipelineController extends AdminController
             $result = $service->calculateColonyPricing($id);
 
             if ($result['success']) {
-                $this->setFlash('success', 'Pricing calculated. Recommended base: ₹' . number_format($result['recommended_base_ppsf'] ?? 0) . '/sqft');
+                $this->setFlash('success', 'Pricing calculated. Recommended base: ₹' . number_format($result['base_price_per_sqft'] ?? 0) . '/sqft (Cost basis: ₹' . number_format($result['raw_cost_basis'] ?? 0) . ', Markup: ' . round(($result['markup_factor'] ?? 1) * 100) . '%)');
             } else {
                 $this->setFlash('error', $result['message'] ?? 'Pricing calculation failed');
             }
@@ -546,40 +546,21 @@ class ColonyPipelineController extends AdminController
                 $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
             }
 
-            $cornerPremium = floatval($_POST['corner_premium_pct'] ?? 10);
-            $parkFacingPremium = floatval($_POST['park_facing_premium_pct'] ?? 5);
+            $cornerPremium = floatval($_POST['corner_premium_pct'] ?? 10) / 100;
+            $parkFacingPremium = floatval($_POST['park_facing_premium_pct'] ?? 5) / 100;
 
-            $plots = $this->db->fetchAll(
-                "SELECT id, area_sqft, corner_plot, park_facing FROM plots WHERE colony_id = ? AND status = 'available'",
-                [$id]
-            );
+            $pricingService = new \App\Services\Land\ColonyPricingService();
+            $result = $pricingService->applyPricingToColony($id, $basePpsf, [
+                'corner_plot' => $cornerPremium,
+                'park_facing' => $parkFacingPremium
+            ]);
 
-            $updated = 0;
-            foreach ($plots as $plot) {
-                $ppsf = $basePpsf;
-
-                if ($plot['corner_plot']) {
-                    $ppsf += ($basePpsf * $cornerPremium / 100);
-                }
-                if ($plot['park_facing']) {
-                    $ppsf += ($basePpsf * $parkFacingPremium / 100);
-                }
-
-                $totalPrice = round($ppsf * $plot['area_sqft'], 2);
-
-                $this->db->query(
-                    "UPDATE plots SET price_per_sqft = ?, base_price_per_sqft = ?, total_price = ?, updated_at = NOW() WHERE id = ?",
-                    [$ppsf, $basePpsf, $totalPrice, $plot['id']]
-                );
-                $updated++;
+            if ($result['success']) {
+                $this->setFlash('success', $result['plots_updated'] . ' plots priced at ₹' . number_format($basePpsf) . '/sqft base. Total inventory value: ₹' . number_format($result['total_value'] ?? 0, 2));
+            } else {
+                $this->setFlash('error', $result['error'] ?? 'Failed to apply pricing');
             }
 
-            $this->db->query(
-                "UPDATE colonies SET starting_price = ? WHERE id = ?",
-                [$basePpsf, $id]
-            );
-
-            $this->setFlash('success', $updated . ' plots priced at ₹' . number_format($basePpsf) . '/sqft base');
             $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
         } catch (Exception $e) {
             error_log('ColonyPipeline applyPricing error: ' . $e->getMessage());
