@@ -1863,6 +1863,15 @@ $router->get('/admin/colony-pipeline/{id}/plots',                             'A
 $router->get('/admin/colony-pipeline/{id}/plots/stats',                       'App\\Http\\Controllers\\Admin\\ColonyPipelineController@plotStats');
 
 // ============================================================
+// COLONY FEASIBILITY & PRICING ENGINE
+// ============================================================
+$router->get('/admin/colony-feasibility',                                     'App\\Http\\Controllers\\Admin\\ColonyFeasibilityController@index');
+$router->get('/admin/colony-feasibility/{id}',                                'App\\Http\\Controllers\\Admin\\ColonyFeasibilityController@calculator');
+$router->post('/admin/colony-feasibility/{id}/calculate',                     'App\\Http\\Controllers\\Admin\\ColonyFeasibilityController@calculate');
+$router->get('/admin/colony-feasibility/{id}/history',                        'App\\Http\\Controllers\\Admin\\ColonyFeasibilityController@history');
+$router->get('/admin/colony-feasibility/{id}/preview',                        'App\\Http\\Controllers\\Admin\\ColonyFeasibilityController@preview');
+
+// ============================================================
 // MODULE 2: CUSTOMER SALES + ALLOTMENT + REGISTRY
 // ============================================================
 $router->get('/admin/sales',                                       'App\\Http\\Controllers\\Admin\\BookingLifecycleController@index');

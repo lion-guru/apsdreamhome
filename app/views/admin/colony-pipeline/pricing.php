@@ -11,9 +11,14 @@ $priceBands = $price_bands ?? [];
       <h1 class="h3 mb-1">Pricing</h1>
       <span class="text-muted"><?= htmlspecialchars($colony['name'] ?? '') ?></span>
     </div>
-    <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)($colony['id'] ?? 0) ?>" class="btn btn-outline-secondary btn-sm">
-      <i class="fas fa-arrow-left me-1"></i>Back to Colony
-    </a>
+    <div>
+      <a href="<?= BASE_URL ?>/admin/colony-feasibility/<?= (int)($colony['id'] ?? 0) ?>" class="btn btn-outline-primary btn-sm me-2">
+        <i class="fas fa-calculator me-1"></i>Feasibility Calculator
+      </a>
+      <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)($colony['id'] ?? 0) ?>" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i>Back to Colony
+      </a>
+    </div>
   </div>
 
   <div class="row g-3 mb-4">
