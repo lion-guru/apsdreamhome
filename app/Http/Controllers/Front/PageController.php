@@ -1842,9 +1842,24 @@ class PageController extends BaseController
     // User Investments
     public function userInvestments()
     {
+        $this->requireLogin();
+        $userId = $_SESSION['user_id'] ?? $_SESSION['customer_id'] ?? 0;
+
+        $investments = [];
+        try {
+            $stmt = $this->db->prepare("SELECT p.*, s.site_name, s.district as site_location 
+                FROM plots p LEFT JOIN sites s ON p.colony_id = s.id 
+                WHERE p.customer_id = ? AND p.is_active = 1 ORDER BY p.updated_at DESC LIMIT 20");
+            $stmt->execute([$userId]);
+            $investments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log('Investments fetch error: ' . $e->getMessage());
+        }
+
         $data = [
             'page_title' => 'My Investments - APS Dream Home',
-            'page_description' => 'Track your property investments'
+            'page_description' => 'Track your property investments',
+            'investments' => $investments
         ];
         $this->render('pages/user/investments', $data);
     }

@@ -43,8 +43,8 @@ class CMDashboardController extends AdminController
             'page_title' => 'CM Dashboard - APS Dream Home',
             'stats' => $stats,
             'team_performance' => $teamPerformance,
-            'recent_activities' => $recentActivities,
-            'projects_overview' => $projectsOverview
+            'recentActivities' => $recentActivities,
+            'projectsOverview' => $projectsOverview
         ]);
     }
 
@@ -239,5 +239,35 @@ class CMDashboardController extends AdminController
         http_response_code($status);
         echo json_encode($data);
         exit;
+    }
+
+    /**
+     * Get CSS class for activity type
+     */
+    public function getActivityClass($type)
+    {
+        $map = [
+            'call' => 'bg-primary',
+            'meeting' => 'bg-success',
+            'email' => 'bg-info',
+            'visit' => 'bg-warning',
+            'note' => 'bg-secondary',
+        ];
+        return $map[$type] ?? 'bg-secondary';
+    }
+
+    /**
+     * Get CSS class for project status
+     */
+    public function getProjectStatusClass($status)
+    {
+        $map = [
+            'active' => 'badge bg-success',
+            'pending' => 'badge bg-warning',
+            'completed' => 'badge bg-primary',
+            'on_hold' => 'badge bg-secondary',
+            'cancelled' => 'badge bg-danger',
+        ];
+        return $map[$status] ?? 'badge bg-secondary';
     }
 }

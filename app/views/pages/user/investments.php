@@ -4,17 +4,7 @@ $extraHead = '<style>
 .investment-card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
 </style>';
 
-$investments = [];
-try {
-    $stmt = $this->db->prepare("SELECT p.*, s.site_name, s.district as site_location 
-        FROM plots p LEFT JOIN sites s ON p.colony_id = s.id 
-        WHERE p.customer_id = ? AND p.is_active = 1 ORDER BY p.updated_at DESC LIMIT 20");
-    $userId = $_SESSION['user_id'] ?? $_SESSION['customer_id'] ?? 0;
-    $stmt->execute([$userId]);
-    $investments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-} catch (\Exception $e) {
-    error_log('Investments fetch error: ' . $e->getMessage());
-}
+$investments = $investments ?? [];
 ?>
 
 <div class="container py-5">

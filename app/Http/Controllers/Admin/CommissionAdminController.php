@@ -55,6 +55,7 @@ class CommissionAdminController extends AdminController
                 $r = $this->db->fetchAll("SELECT COUNT(*) as c FROM telecaller_commission_rules WHERE is_active=1");
             } catch (\Throwable $e) {
                 // Gracefully handle dropped table ref
+                $r = null;
             }
             $stats['tc_rules_count'] = $r[0]['c'] ?? 0;
 
