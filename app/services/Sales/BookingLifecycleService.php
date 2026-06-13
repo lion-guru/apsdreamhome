@@ -615,6 +615,25 @@ class BookingLifecycleService
             if (!$booking) {
                 return ['success' => false, 'error' => 'Booking not found'];
             }
+
+            if ($cancellationCharge <= 0) {
+                // Auto-calculate based on RERA rules
+                $bookingDate = new \DateTime($booking['booking_date'] ?? $booking['created_at'] ?? 'now');
+                $now = new \DateTime();
+                $interval = $bookingDate->diff($now);
+                $daysElapsed = $interval->days;
+
+                if ($booking['status'] === 'token_paid') {
+                    if ($daysElapsed <= 15) {
+                        $cancellationCharge = (float)$booking['booking_amount'] * 0.10;
+                    } else {
+                        $cancellationCharge = (float)$booking['booking_amount'];
+                    }
+                } else {
+                    $cancellationCharge = (float)$booking['total_plot_value'] * 0.10;
+                }
+            }
+
             $paidSoFar = $this->totalPaid($bookingId);
             $refundAmt = max(0.0, $paidSoFar - $cancellationCharge);
 
@@ -633,6 +652,10 @@ class BookingLifecycleService
             );
             $ins->execute([$bookingId, $refundAmt, $cancellationCharge, $reason]);
             $refundId = (int)$this->db->lastInsertId();
+
+            // Claw back all commissions associated with this booking
+            $this->clawbackBookingCommissions($bookingId);
+
             $this->db->commit();
 
             // Send cancellation notification (email + SMS)
@@ -1060,6 +1083,57 @@ class BookingLifecycleService
             }
         } catch (Exception $e) {
             error_log('[BookingLifecycleService::appendMlmUpline] ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Claw back all commissions associated with a booking when it is cancelled.
+     */
+    public function clawbackBookingCommissions(int $bookingId): void
+    {
+        try {
+            // 1. Mark pending commissions as cancelled in booking_commissions
+            $stmt = $this->db->prepare("
+                UPDATE booking_commissions 
+                SET status = 'cancelled' 
+                WHERE booking_id = ? AND status = 'pending'
+            ");
+            $stmt->execute([$bookingId]);
+
+            // 2. Query all commissions related to this booking that are approved or paid
+            $stmt = $this->db->prepare("
+                SELECT * FROM booking_commissions 
+                WHERE booking_id = ? AND status IN ('approved', 'paid')
+            ");
+            $stmt->execute([$bookingId]);
+            $commissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($commissions as $comm) {
+                $beneficiary = (int)$comm['beneficiary_user_id'];
+                $amount = (float)$comm['amount'];
+
+                if ($amount <= 0) continue;
+
+                // Create a debit entry in mlm_commission_ledger
+                $ledgerStmt = $this->db->prepare("
+                    INSERT INTO mlm_commission_ledger 
+                    (beneficiary_user_id, source_user_id, commission_type, amount, level, sale_amount, commission_percentage, status, notes, created_at)
+                    VALUES (?, ?, 'clawback', ?, ?, 0.00, 0.00, 'approved', ?, NOW())
+                ");
+                $note = "Clawback - Booking #" . $bookingId . " Cancelled";
+                $ledgerStmt->execute([$beneficiary, $comm['source_user_id'], -$amount, $comm['level'], $note]);
+
+                // Deduct from wallet balance (allows negative balance)
+                $walletStmt = $this->db->prepare("
+                    UPDATE user_wallets 
+                    SET balance = balance - ?, 
+                        updated_at = NOW()
+                    WHERE user_id = ? AND user_type = 'associate'
+                ");
+                $walletStmt->execute([$amount, $beneficiary]);
+            }
+        } catch (Exception $e) {
+            error_log('[BookingLifecycleService::clawbackBookingCommissions] Error: ' . $e->getMessage());
         }
     }
 }

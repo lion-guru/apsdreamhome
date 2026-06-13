@@ -6,7 +6,7 @@ if (!function_exists('__')) {
 ?>
 
 <!-- Page Header -->
-<section class="hero-section bg-primary text-white py-5">
+<section class="page-hero">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 mx-auto text-center">

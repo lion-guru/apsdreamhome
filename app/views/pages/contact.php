@@ -23,8 +23,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
 <?php endif; ?>
 
 <!-- Hero Section -->
-<section class="py-5 bg-gradient-primary text-white position-relative overflow-hidden">
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);"></div>
+<section class="page-hero position-relative overflow-hidden" style="padding: 80px 0;">
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">

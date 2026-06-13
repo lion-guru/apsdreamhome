@@ -1,7 +1,8 @@
 <?php
 /**
  * Earning & Career Opportunity Page - APS Dream Home
- * Beautifully designed page to explain payment plans, MLM tracks, salaries, and insurance benefits.
+ * Beautifully designed page explaining the Unified 10-Rank Slab Differential Plan,
+ * monthly salaries, and insurance benefits.
  */
 ?>
 
@@ -181,48 +182,19 @@
             <div class="row g-4">
                 <!-- Left Side: MLM Details & Tracks -->
                 <div class="col-lg-7">
-                    <!-- Fixed Salary Tiers -->
+                    <!-- Differential Payout explanation -->
                     <div class="glass-card p-4 mb-4">
-                        <h4 class="fw-bold text-indigo-700 mb-3"><i class="fas fa-money-check-alt me-2"></i>Fixed Monthly Salary Tiers</h4>
-                        <p class="text-muted small">सेल्स वॉल्यूम टारगेट पूरा करने पर आपको ये मासिक फिक्स्ड सैलरीज मिलती हैं:</p>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0 small">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Salary Tier</th>
-                                        <th>Target Volume</th>
-                                        <th>Monthly Payout</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>Starter</strong></td>
-                                        <td>₹15 Lakhs</td>
-                                        <td class="text-success fw-bold">₹5,000 / month</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Basic</strong></td>
-                                        <td>₹30 Lakhs</td>
-                                        <td class="text-success fw-bold">₹5,000 / month</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Professional</strong></td>
-                                        <td>₹50 Lakhs</td>
-                                        <td class="text-success fw-bold">₹8,000 / month</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Executive</strong></td>
-                                        <td>₹75 Lakhs</td>
-                                        <td class="text-success fw-bold">₹12,000 / month</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Elite</strong></td>
-                                        <td>₹1 Crore</td>
-                                        <td class="text-success fw-bold">₹20,000 / month</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <h4 class="fw-bold text-indigo-700 mb-3"><i class="fas fa-money-check-alt me-2"></i>Slab-Based Differential Commission</h4>
+                        <p class="text-muted small">
+                            आपकी रैंक के अनुसार डायरेक्ट कमीशन **5% से 30%** तक होता है। आपकी टीम की सेल पर आपको आपकी रैंक और आपके डाउनलाइन की रैंक का **अंतर (Slab Difference)** मिलता है।
+                        </p>
+                        <div class="bg-light p-3 rounded-3 mb-2 small">
+                            <strong>उदाहरण (Example):</strong><br>
+                            आप **Global Director (30%)** पर हैं और आपकी टीम के एक **Associate (5%)** ने ₹10 लाख का प्लॉट बेचा:
+                            <ul class="mt-2 mb-0">
+                                <li>उसे सीधे **5% (₹50,000)** डायरेक्ट कमीशन मिलेगा।</li>
+                                <li>आपको स्लैब का अंतर: **25% (30% - 5%) यानी ₹2,50,000** प्राप्त होगा।</li>
+                            </ul>
                         </div>
                     </div>
 
@@ -254,43 +226,22 @@
                         </div>
                     </div>
 
-                    <!-- Commission Overrides Breakdown -->
+                    <!-- Same-Rank Override Details -->
                     <div class="card border-0 shadow-sm p-4 bg-white mb-4">
-                        <h4 class="fw-bold text-indigo-700 mb-3"><i class="fas fa-coins me-2"></i>Multi-Level Commission Split</h4>
-                        <p class="text-muted small">सैलरी के अलावा, हर सेल पर टीम ग्रोथ के अनुसार ये अतिरिक्त प्रतिशत भी वितरित किए जाते हैं:</p>
-                        
-                        <div class="row g-2 text-center small">
-                            <div class="col-4">
-                                <div class="bg-light p-2 rounded">
-                                    <div class="fw-bold text-dark">Direct Business</div>
-                                    <div class="text-primary fw-bold fs-5">10%</div>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="bg-light p-2 rounded">
-                                    <div class="fw-bold text-dark">Junior Business</div>
-                                    <div class="text-primary fw-bold fs-5">5%</div>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="bg-light p-2 rounded">
-                                    <div class="fw-bold text-dark">Team Override</div>
-                                    <div class="text-primary fw-bold fs-5">3%</div>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="bg-light p-2 rounded">
-                                    <div class="fw-bold text-dark">Leadership Bonus</div>
-                                    <div class="text-primary fw-bold fs-5">2%</div>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="bg-light p-2 rounded">
-                                    <div class="fw-bold text-dark">Director Override</div>
-                                    <div class="text-primary fw-bold fs-5">1%</div>
-                                </div>
-                            </div>
-                        </div>
+                        <h4 class="fw-bold text-indigo-700 mb-3"><i class="fas fa-shield-alt me-2"></i>Same-Rank Breakaway Safeguard</h4>
+                        <p class="text-muted small">
+                            यदि कोई डाउनलाइन तरक्की करके आपकी ही रैंक पर आ जाता है, तो आपका डिफरेंशियल 0% हो जाता है। ऐसे में कंपनी आपको सुरक्षा कवच देती है:
+                        </p>
+                        <ul class="list-group list-group-flush mb-0 small">
+                            <li class="list-group-item bg-transparent border-0 px-0 d-flex gap-2">
+                                <i class="fas fa-check-circle text-success mt-1"></i>
+                                <div><strong>Generation 1 Same-Rank Override: 1.5%</strong> (इमीडिएट डाउनलाइन टीम वॉल्यूम पर)</div>
+                            </li>
+                            <li class="list-group-item bg-transparent border-0 px-0 d-flex gap-2">
+                                <i class="fas fa-check-circle text-success mt-1"></i>
+                                <div><strong>Generation 2 Same-Rank Override: 1.0%</strong> (उनके नीचे वाले टीम वॉल्यूम पर)</div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
@@ -305,7 +256,7 @@
                                 <strong>1. Associate</strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">5.0% Rate</span>
                             </div>
-                            <span class="small text-muted">Business: ₹50K+ | Reward: —</span>
+                            <span class="small text-muted">Business: ₹50K+ | Reward: Starter Path</span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">

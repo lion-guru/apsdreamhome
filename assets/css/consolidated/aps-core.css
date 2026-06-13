@@ -51,8 +51,8 @@ a:hover {
 
 /* Buttons */
 .btn-primary {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+    background-color: #4f46e5;
+    border-color: #4f46e5;
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -74,7 +74,7 @@ a:hover {
 }
 
 .top-bar .social-links a:hover {
-    color: #0d6efd;
+    color: #4f46e5;
 }
 
 .header {
@@ -97,7 +97,7 @@ a:hover {
 
 .navbar .nav-link:hover,
 .navbar .nav-link.active {
-    color: #0d6efd;
+    color: #4f46e5;
 }
 
 .navbar .nav-link:after {
@@ -107,7 +107,7 @@ a:hover {
     height: 2px;
     bottom: 0;
     left: 1rem;
-    background-color: #0d6efd;
+    background-color: #4f46e5;
     transition: width 0.3s ease;
 }
 
@@ -134,7 +134,7 @@ a:hover {
 
 .dropdown-item:hover {
     background-color: rgba(13, 110, 253, 0.1);
-    color: #0d6efd;
+    color: #4f46e5;
 }
 
 /* Mobile Menu - only for non-premium navbars */
@@ -178,7 +178,7 @@ a:hover {
     bottom: 0;
     width: 40px;
     height: 2px;
-    background-color: #0d6efd;
+    background-color: #4f46e5;
 }
 
 .footer-links li {
@@ -204,7 +204,7 @@ a:hover {
 }
 
 .contact-info i {
-    color: #0d6efd;
+    color: #4f46e5;
     margin-right: 1rem;
     margin-top: 0.25rem;
     width: 20px;
@@ -229,7 +229,7 @@ a:hover {
 }
 
 .social-links a:hover {
-    background: #0d6efd;
+    background: #4f46e5;
     transform: translateY(-3px);
 }
 
@@ -257,7 +257,7 @@ a:hover {
     right: 30px;
     width: 44px;
     height: 44px;
-    background: #0d6efd;
+    background: #4f46e5;
     color: #fff;
     border-radius: 50%;
     display: flex;
@@ -318,7 +318,7 @@ a:hover {
 /* Sidebar Styles for Authenticated Users */
 .sidebar {
     min-height: 100vh;
-    background: linear-gradient(180deg, #0d6efd 0%, #6c757d 100%);
+    background: linear-gradient(180deg, #4f46e5 0%, #7c3aed 100%);
     color: white;
     position: fixed;
     top: 0;
@@ -396,7 +396,7 @@ a:hover {
 
 .top-navbar .navbar-toggler {
     border: none;
-    color: #0d6efd;
+    color: #4f46e5;
 }
 
 /* Responsive for Sidebar */
@@ -437,7 +437,7 @@ a:hover {
 }
 
 .card-header {
-    background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
     color: white;
     border-radius: 10px 10px 0 0 !important;
     border-bottom: none;
@@ -445,7 +445,7 @@ a:hover {
 
 /* Stats Cards */
 .stats-card {
-    background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
     color: white;
     border-radius: 10px;
     padding: 1.5rem;
@@ -467,7 +467,7 @@ a:hover {
 }
 
 .form-control:focus {
-    border-color: #0d6efd;
+    border-color: #4f46e5;
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 
@@ -1895,7 +1895,7 @@ textarea:focus-visible,
 .aps-toast-icon { font-size: 1.25rem; line-height: 1; flex-shrink: 0; }
 .aps-toast-body { flex: 1; }
 .aps-toast-title { font-weight: 600; margin: 0 0 0.25rem; font-size: 0.95rem; }
-.aps-toast-message { margin: 0; font-size: 0.875rem; color: #6c757d; }
+.aps-toast-message { margin: 0; font-size: 0.875rem; color: #64748b; }
 .aps-toast-close {
     background: none;
     border: 0;
@@ -1912,7 +1912,7 @@ textarea:focus-visible,
 .aps-empty-state {
     text-align: center;
     padding: 3rem 1.5rem;
-    color: #6c757d;
+    color: #64748b;
 }
 .aps-empty-state-icon {
     font-size: 3.5rem;
@@ -2091,7 +2091,7 @@ textarea:focus-visible {
     transform: translate(-50%, -50%) scale(1);
 }
 .aps-confirm-title { margin: 0 0 0.5rem; font-size: 1.125rem; font-weight: 600; }
-.aps-confirm-message { margin: 0 0 1.5rem; color: #6c757d; }
+.aps-confirm-message { margin: 0 0 1.5rem; color: #64748b; }
 .aps-confirm-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
 
 /* Spinner overlay for full-page loading */

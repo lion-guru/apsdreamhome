@@ -11,7 +11,7 @@ function aboutContent($sc, $key, $fallbackKey) {
 }
 ?>
 
-<section class="py-5 bg-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="page-hero">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-12">

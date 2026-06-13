@@ -128,7 +128,7 @@ class HybridCommissionEngine
        ================================================================ */
 
     /** Total cap on payment value that may be distributed as commission. */
-    private const GLOBAL_CAP_PCT    = 20;
+    private const GLOBAL_CAP_PCT    = 15;
 
     /** Track A: Slab differential — 15% of payment value. */
     private const TRACK_A_CAP_PCT   = 15;
@@ -141,7 +141,7 @@ class HybridCommissionEngine
 
     /** Leadership same-level override rates (Breakaway Safeguard). */
     private const SAME_LEVEL_OVERRIDES = [
-        1 => 1.5,   // Immediate upline — 1.5%
+        1 => 2.0,   // Immediate upline — 2.0%
         2 => 1.0,   // Second identical rank upline — 1.0%
     ];
 
@@ -294,6 +294,90 @@ class HybridCommissionEngine
             $booking  = $this->fetchBooking($bookingId);
             $agentGbv = $this->getAgentGbv($executingAgentId);
 
+            // ── 2.5 Resolve telecaller (if any) and compute incentives ──
+            $telecaller = $this->resolveTelecallerForBooking($booking ?: []);
+            $telecallerIncentive = 0.0;
+            $telecallerLedgerIds = [];
+
+            if ($telecaller) {
+                $tcUserId = (int)$telecaller['user_id'];
+                $plotArea = 0.0;
+                $bookingValue = 0.0;
+                if ($booking) {
+                    $bookingValue = (float)($booking['agreement_value'] ?? $booking['total_plot_value'] ?? 0.0);
+                    if (!empty($booking['plot_id'])) {
+                        $pStmt = $this->pdo->prepare("SELECT area_sqft FROM plots WHERE id = ? LIMIT 1");
+                        $pStmt->execute([$booking['plot_id']]);
+                        $plotArea = (float)$pStmt->fetchColumn();
+                    }
+                }
+
+                if ($bookingValue <= 0) {
+                    $bookingValue = 1.0;
+                }
+
+                if ($receiptId === 0) {
+                    // Token payment -> flat incentive
+                    $flatRate = (float)($telecaller['telecaller_incentive_rate'] > 0 ? $telecaller['telecaller_incentive_rate'] : 1000.00);
+                    $telecallerIncentive = min($flatRate, $amountReceived);
+                    $note = "Telecaller Token Conversion Incentive (Flat ₹" . number_format($flatRate) . ")";
+                    $rateUsed = 0.0;
+                } else {
+                    // Subsequent payment -> proportional sqft incentive
+                    $sqftRate = (float)($telecaller['telecaller_sqft_rate'] > 0 ? $telecaller['telecaller_sqft_rate'] : 10.00);
+                    $totalSqftIncentive = $plotArea * $sqftRate;
+                    $proportion = $amountReceived / $bookingValue;
+                    $telecallerIncentive = min($totalSqftIncentive * $proportion, $amountReceived);
+                    $note = "Telecaller SqFt Incentive (₹" . $sqftRate . "/sqft proportional, total ₹" . number_format($totalSqftIncentive) . ")";
+                    $rateUsed = $sqftRate;
+                }
+
+                if ($telecallerIncentive > 0.01) {
+                    $ledgerId = $this->writeLedger(
+                        $tcUserId, $tcUserId, $amountReceived, $rateUsed,
+                        round($telecallerIncentive, 2), 'direct_sale', 0, $bookingId, $receiptId,
+                        $note
+                    );
+                    $telecallerLedgerIds[] = $ledgerId;
+                }
+
+                // Walk telecaller parent hierarchy up to 2 generations to award Team Lead overrides
+                $currentParentId = !empty($telecaller['telecaller_parent_id']) ? (int)$telecaller['telecaller_parent_id'] : null;
+                $levelRates = [1 => 2.0, 2 => 1.0];
+                for ($lvl = 1; $lvl <= 2; $lvl++) {
+                    if (!$currentParentId) {
+                        break;
+                    }
+
+                    $pStmt = $this->pdo->prepare("
+                        SELECT a.user_id, a.telecaller_parent_id 
+                        FROM associates a 
+                        WHERE a.user_id = ? LIMIT 1
+                    ");
+                    $pStmt->execute([$currentParentId]);
+                    $parentRecord = $pStmt->fetch(PDO::FETCH_ASSOC);
+
+                    if (!$parentRecord) {
+                        break;
+                    }
+
+                    $parentPct = $levelRates[$lvl];
+                    $parentAmt = $amountReceived * ($parentPct / 100);
+
+                    if ($parentAmt > 0.01) {
+                        $ledgerId = $this->writeLedger(
+                            $currentParentId, $tcUserId, $amountReceived, $parentPct,
+                            round($parentAmt, 2), 'level_bonus', $lvl, $bookingId, $receiptId,
+                            "Telecaller Team Lead Override (Level {$lvl}, {$parentPct}%)"
+                        );
+                        $telecallerLedgerIds[] = $ledgerId;
+                        $telecallerIncentive += $parentAmt;
+                    }
+
+                    $currentParentId = !empty($parentRecord['telecaller_parent_id']) ? (int)$parentRecord['telecaller_parent_id'] : null;
+                }
+            }
+
             // ── 3. PATH A — Slab Differential (15% budget) ────────
             $trackAResult = $this->computeTrackA(
                 $executingAgentId,
@@ -327,8 +411,8 @@ class HybridCommissionEngine
             // ── 7. Career Rewards check (DB-driven, no writes to cap) ──
             $careerResult = $this->checkCareerRewards($executingAgentId);
 
-            // ── 8. Sum actuals and enforce hard cap (Tracks A+B+C only) ──
-            $totalActual = $trackAResult['distributed'] + $trackBResult['distributed'] + $trackCResult['distributed'];
+            // ── 8. Sum actuals and enforce hard cap (Tracks A+B+C + Telecaller) ──
+            $totalActual = $trackAResult['distributed'] + $trackBResult['distributed'] + $trackCResult['distributed'] + $telecallerIncentive;
 
             if ($totalActual > $totalCap) {
                 // Pro-rata clip across tracks
@@ -336,7 +420,29 @@ class HybridCommissionEngine
                 $trackAResult = $this->clipTrack($trackAResult, $factor);
                 $trackBResult = $this->clipTrack($trackBResult, $factor);
                 $trackCResult = $this->clipTrack($trackCResult, $factor);
+                if ($telecaller) {
+                    $telecallerIncentive = round($telecallerIncentive * $factor, 2);
+                }
                 $totalActual  = $totalCap;
+
+                // Update ledger entries in the database to reflect the clipped amount
+                $allLedgerIds = array_merge(
+                    $trackAResult['ledger_ids'] ?? [],
+                    $trackBResult['ledger_ids'] ?? [],
+                    $trackCResult['ledger_ids'] ?? [],
+                    $telecallerLedgerIds
+                );
+
+                if (!empty($allLedgerIds)) {
+                    $updateStmt = $this->pdo->prepare("
+                        UPDATE mlm_commission_ledger 
+                        SET amount = ROUND(amount * ?, 2)
+                        WHERE id = ?
+                    ");
+                    foreach ($allLedgerIds as $lId) {
+                        $updateStmt->execute([$factor, $lId]);
+                    }
+                }
             }
 
             // ── 9. Update agent GBV in mlm_profiles ───────────────
@@ -355,12 +461,19 @@ class HybridCommissionEngine
                 'track_a'            => $trackAResult,
                 'track_b'            => $trackBResult,
                 'track_c'            => $trackCResult,
+                'telecaller'         => $telecaller ? [
+                    'user_id'     => $telecaller['user_id'],
+                    'name'        => $telecaller['name'],
+                    'incentive'   => round($telecallerIncentive, 2),
+                    'ledger_ids'  => $telecallerLedgerIds,
+                ] : null,
                 'royalty_contribution' => $royaltyResult,
                 'career_reward'      => $careerResult,
                 'ledger_ids'         => array_merge(
                     $trackAResult['ledger_ids'] ?? [],
                     $trackBResult['ledger_ids'] ?? [],
-                    $trackCResult['ledger_ids'] ?? []
+                    $trackCResult['ledger_ids'] ?? [],
+                    $telecallerLedgerIds
                 ),
             ];
 
@@ -613,19 +726,29 @@ class HybridCommissionEngine
             // If senior's rate equals immediate downline's rate (same rank),
             // apply Leadership Same-Level Override instead of differential.
             if ($uplineRate === $prevRate) {
-                $overridePct = self::SAME_LEVEL_OVERRIDES[$gen['level']] ?? 0;
-                $overrideAmt = $amountReceived * ($overridePct / 100);
+                // Fetch booking details for date
+                $booking = $this->fetchBooking($bookingId);
+                $bookingMonth = date('Y-m');
+                if ($booking && !empty($booking['created_at'])) {
+                    $bookingMonth = date('Y-m', strtotime($booking['created_at']));
+                }
 
-                if ($overrideAmt > 0) {
-                    $alloc = min($overrideAmt, $remaining);
-                    if ($alloc > 0.01) {
-                        $ledgerId = $this->writeLedger(
-                            $userId, $agentId, $amountReceived, $overridePct,
-                            round($alloc, 2), 'level_bonus', $gen['level'], $bookingId, $receiptId,
-                            "Track A — Same-level override ({$this->getRankName($uplineRank)}, Gen {$gen['level']})"
-                        );
-                        $ledgerIds[]   = $ledgerId;
-                        $distributed  += $alloc;
+                // Verify upline meets ₹50,000 monthly side-volume requirement
+                if ($this->verifyUplineSideVolume($userId, $bookingMonth)) {
+                    $overridePct = self::SAME_LEVEL_OVERRIDES[$gen['level']] ?? 0;
+                    $overrideAmt = $amountReceived * ($overridePct / 100);
+
+                    if ($overrideAmt > 0) {
+                        $alloc = min($overrideAmt, $remaining);
+                        if ($alloc > 0.01) {
+                            $ledgerId = $this->writeLedger(
+                                $userId, $agentId, $amountReceived, $overridePct,
+                                round($alloc, 2), 'level_bonus', $gen['level'], $bookingId, $receiptId,
+                                "Track A — Same-level override ({$this->getRankName($uplineRank)}, Gen {$gen['level']})"
+                            );
+                            $ledgerIds[]   = $ledgerId;
+                            $distributed  += $alloc;
+                        }
                     }
                 }
                 // Do NOT update $prevRate — keep it same so Gen 2+ also triggers
@@ -1425,7 +1548,7 @@ class HybridCommissionEngine
             if ($upline['rate'] === $prevRate) {
                 // Same-rank breakaway safeguard
                 $sameRankCount++;
-                $overridePct = ($sameRankCount === 1) ? 1.5 : (($sameRankCount === 2) ? 1.0 : 0.0);
+                $overridePct = ($sameRankCount === 1) ? 2.0 : (($sameRankCount === 2) ? 1.0 : 0.0);
                 if ($overridePct > 0) {
                     $overrideAmt = $saleAmount * ($overridePct / 100);
                     $alloc = min($overrideAmt, $remaining);
@@ -1490,5 +1613,177 @@ class HybridCommissionEngine
         $results['company_retains_pct'] = round(($results['company_retains'] / $saleAmount) * 100, 2);
 
         return $results;
+    }
+
+    /**
+     * Resolve the telecaller associated with a booking.
+     * Checks if the booking customer's phone or email matches a lead assigned to a telecaller.
+     */
+    private function resolveTelecallerForBooking(array $booking): ?array
+    {
+        $phone = '';
+        $email = '';
+
+        if (!empty($booking['customer_phone'])) {
+            $phone = $booking['customer_phone'];
+        }
+        if (!empty($booking['customer_email'])) {
+            $email = $booking['customer_email'];
+        }
+
+        if ((empty($phone) || empty($email)) && !empty($booking['customer_id'])) {
+            $custStmt = $this->pdo->prepare("SELECT phone, email FROM users WHERE id = ? LIMIT 1");
+            $custStmt->execute([$booking['customer_id']]);
+            $cust = $custStmt->fetch(PDO::FETCH_ASSOC);
+            if ($cust) {
+                if (empty($phone)) $phone = $cust['phone'] ?? '';
+                if (empty($email)) $email = $cust['email'] ?? '';
+            }
+        }
+
+        if ((empty($phone) || empty($email)) && !empty($booking['user_id'])) {
+            $custStmt = $this->pdo->prepare("SELECT phone, email FROM users WHERE id = ? LIMIT 1");
+            $custStmt->execute([$booking['user_id']]);
+            $cust = $custStmt->fetch(PDO::FETCH_ASSOC);
+            if ($cust) {
+                if (empty($phone)) $phone = $cust['phone'] ?? '';
+                if (empty($email)) $email = $cust['email'] ?? '';
+            }
+        }
+
+        if (empty($phone) && empty($email)) {
+            return null;
+        }
+
+        $leadStmt = $this->pdo->prepare("
+            SELECT l.assigned_to 
+            FROM leads l
+            JOIN users u ON u.id = l.assigned_to
+            WHERE u.role = 'telecaller'
+              AND (
+                (l.phone != '' AND l.phone = ?) OR 
+                (l.email != '' AND l.email = ?)
+              )
+            LIMIT 1
+        ");
+        $leadStmt->execute([$phone, $email]);
+        $telecallerUserId = $leadStmt->fetchColumn();
+
+        if (!$telecallerUserId) {
+            return null;
+        }
+
+        $tcStmt = $this->pdo->prepare("
+            SELECT a.*, u.name, u.email 
+            FROM associates a
+            JOIN users u ON u.id = a.user_id
+            WHERE a.user_id = ? LIMIT 1
+        ");
+        $tcStmt->execute([$telecallerUserId]);
+        $telecaller = $tcStmt->fetch(PDO::FETCH_ASSOC);
+
+        return $telecaller ?: null;
+    }
+
+    /**
+     * Verify if an upline sponsor qualifies for a same-rank override by generating
+     * at least ₹50,000 in monthly side volume (personal sales + monthly leg volumes excluding largest leg)
+     * during the month of the booking.
+     */
+    private function verifyUplineSideVolume(int $uplineUserId, string $month): bool
+    {
+        $assocStmt = $this->pdo->prepare("SELECT id FROM associates WHERE user_id = ? LIMIT 1");
+        $assocStmt->execute([$uplineUserId]);
+        $assocRow = $assocStmt->fetch(PDO::FETCH_ASSOC);
+        $associateId = $assocRow ? (int)$assocRow['id'] : $uplineUserId;
+
+        $personalSalesStmt = $this->pdo->prepare("
+            SELECT COALESCE(SUM(COALESCE(pb.agreement_value, pb.total_plot_value, 0)), 0) AS personal_sales
+            FROM plot_bookings pb
+            WHERE pb.associate_id = ?
+              AND DATE_FORMAT(pb.created_at, '%Y-%m') = ?
+              AND pb.status NOT IN ('cancelled', 'refunded')
+        ");
+        $personalSalesStmt->execute([$associateId, $month]);
+        $personalSales = (float)$personalSalesStmt->fetchColumn();
+
+        $directChildrenStmt = $this->pdo->prepare("
+            SELECT associate_id AS user_id
+            FROM mlm_network_tree
+            WHERE parent_id = ?
+        ");
+        $directChildrenStmt->execute([$uplineUserId]);
+        $directChildren = $directChildrenStmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $legVolumes = [];
+        foreach ($directChildren as $childUserId) {
+            $descendents = $this->getDownlineUserIds($childUserId);
+            $descendents[] = $childUserId;
+
+            $inClause = implode(',', array_fill(0, count($descendents), '?'));
+            $assocIdsStmt = $this->pdo->prepare("
+                SELECT id FROM associates WHERE user_id IN ($inClause)
+            ");
+            $assocIdsStmt->execute($descendents);
+            $assocIds = $assocIdsStmt->fetchAll(PDO::FETCH_COLUMN);
+
+            if (empty($assocIds)) {
+                $legVolumes[] = 0.0;
+                continue;
+            }
+
+            $inAssocClause = implode(',', array_fill(0, count($assocIds), '?'));
+            $legVolStmt = $this->pdo->prepare("
+                SELECT COALESCE(SUM(COALESCE(pb.agreement_value, pb.total_plot_value, 0)), 0) AS volume
+                FROM plot_bookings pb
+                WHERE pb.associate_id IN ($inAssocClause)
+                  AND DATE_FORMAT(pb.created_at, '%Y-%m') = ?
+                  AND pb.status NOT IN ('cancelled', 'refunded')
+            ");
+            $params = array_merge($assocIds, [$month]);
+            $legVolStmt->execute($params);
+            $legVolumes[] = (float)$legVolStmt->fetchColumn();
+        }
+
+        if (empty($legVolumes)) {
+            $sideVolume = $personalSales;
+        } else {
+            rsort($legVolumes);
+            array_shift($legVolumes);
+            $sideVolume = $personalSales + array_sum($legVolumes);
+        }
+
+        return $sideVolume >= 50000.0;
+    }
+
+    /**
+     * Recursively fetch all downline user IDs under a user.
+     */
+    private function getDownlineUserIds(int $userId): array
+    {
+        $downline = [];
+        $toProcess = [$userId];
+
+        while (!empty($toProcess)) {
+            $currentBatch = implode(',', array_fill(0, count($toProcess), '?'));
+            $stmt = $this->pdo->prepare("
+                SELECT associate_id
+                FROM mlm_network_tree
+                WHERE parent_id IN ($currentBatch)
+            ");
+            $stmt->execute($toProcess);
+            $children = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            $toProcess = [];
+            foreach ($children as $cId) {
+                $cId = (int)$cId;
+                if (!in_array($cId, $downline) && $cId !== $userId) {
+                    $downline[] = $cId;
+                    $toProcess[] = $cId;
+                }
+            }
+        }
+
+        return $downline;
     }
 }

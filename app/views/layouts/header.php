@@ -288,6 +288,8 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                     ['label' => __('nav_residential'), 'url' => '/properties?type=residential', 'icon' => 'fas fa-home'],
                                     ['label' => __('nav_commercial'), 'url' => '/properties?type=commercial', 'icon' => 'fas fa-building'],
                                     ['label' => __('nav_plot_land'), 'url' => '/properties?type=plot', 'icon' => 'fas fa-vector-square'],
+                                    ['label' => __('featured_properties'), 'url' => '/featured-properties', 'icon' => 'fas fa-star'],
+                                    ['label' => __('live_auctions'), 'url' => '/auctions', 'icon' => 'fas fa-gavel'],
                                 ]
                             ],
                             [
@@ -317,6 +319,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                     ['label' => __('nav_home_loan'), 'url' => '/financial-services', 'icon' => 'fas fa-hand-holding-usd'],
                                     ['label' => __('nav_legal_services'), 'url' => '/legal/services', 'icon' => 'fas fa-gavel'],
                                     ['label' => __('interior_design'), 'url' => '/interior-design', 'icon' => 'fas fa-couch'],
+                                    ['label' => __('service_construction'), 'url' => '/construction-services', 'icon' => 'fas fa-hard-hat'],
                                     ['label' => __('nav_resell_property'), 'url' => '/resell', 'icon' => 'fas fa-handshake'],
                                     ['label' => __('nav_documents'), 'url' => '/documents', 'icon' => 'fas fa-folder-open'],
                                 ]
@@ -327,6 +330,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                 'submenu' => [
                                     ['label' => __('about_us'), 'url' => '/about', 'icon' => 'fas fa-info-circle'],
                                     ['label' => __('nav_our_team'), 'url' => '/team', 'icon' => 'fas fa-users'],
+                                    ['label' => __('nav_gallery'), 'url' => '/gallery', 'icon' => 'fas fa-images'],
                                     ['label' => __('nav_careers'), 'url' => '/careers', 'icon' => 'fas fa-briefcase'],
                                     ['label' => __('nav_testimonials'), 'url' => '/testimonials', 'icon' => 'fas fa-comment-alt'],
                                     ['label' => __('nav_blog'), 'url' => '/blog', 'icon' => 'fas fa-blog'],

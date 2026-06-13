@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="page-hero">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">

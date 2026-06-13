@@ -1209,20 +1209,6 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     calcGrowth();
     </script>
 
-    <style>
-    @keyframes pulse-glow {
-
-        0%,
-        100% {
-            box-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
-        }
-
-        50% {
-            box-shadow: 0 0 40px rgba(40, 167, 69, 0.6);
-        }
-    }
-    </style>
-
     <!-- Useful Free Tools -->
     <section class="py-5 bg-white">
         <div class="container">
@@ -1333,39 +1319,6 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             </div>
         </div>
     </div>
-
-    <style>
-    .tool-card {
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .tool-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
-    }
-
-    .tool-card:hover .rounded-circle {
-        transform: scale(1.1);
-        transition: transform 0.3s;
-    }
-
-    .modal-content {
-        animation: modalSlideUp 0.3s ease;
-    }
-
-    @keyframes modalSlideUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    </style>
 
     <script>
     var T = {

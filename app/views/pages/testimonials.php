@@ -1,35 +1,11 @@
 <!-- Hero Section -->
-<section class="testimonial-hero text-center" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
+<section class="page-hero" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
     <div class="container">
         <h1 class="display-4 fw-bold"><?= __('testi_hero_title', null, 'Client Testimonials') ?></h1>
         <p class="lead mb-0"><?= __('testi_hero_subtitle', null, 'What our clients say about us') ?></p>
     </div>
 </section>
 
-<style>
-    .star-rating {
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: flex-end;
-    }
-
-    .star-rating input {
-        display: none;
-    }
-
-    .star-rating label {
-        cursor: pointer;
-        font-size: 1.5rem;
-        color: #ddd;
-        margin: 0 2px;
-    }
-
-    .star-rating input:checked~label,
-    .star-rating label:hover,
-    .star-rating label:hover~label {
-        color: #ffc107;
-    }
-</style>
 <?php if (isset($breadcrumbs)): ?>
     <?php foreach ($breadcrumbs as $crumb): ?>
         <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>

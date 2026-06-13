@@ -51,15 +51,18 @@
                     </select>
                 </div>
 
-                <div class="col-12"><hr><h6 class="text-muted"><i class="fas fa-user-tag"></i> Agent Track & Brokerage</h6></div>
+                <div class="col-12"><hr><h6 class="text-muted"><i class="fas fa-user-tag"></i> Agent Track, Brokerage & Telecaller Settings</h6></div>
                 <div class="col-md-4">
                     <label class="form-label">Agent Track</label>
                     <select name="agent_track" id="agentTrack" class="form-select" onchange="toggleBrokerageFields()">
                         <option value="mlm">MLM (Network Marketing)</option>
                         <option value="independent">Independent Agent (Flat Commission)</option>
+                        <option value="telecaller">Telecaller / Freelancer (Incentives & Overrides)</option>
                     </select>
-                    <small class="text-muted">Independent agents get flat commission, no MLM upline walk.</small>
+                    <small class="text-muted">Independent agents get flat deals; Telecallers get salary + flat incentives.</small>
                 </div>
+                
+                <!-- Independent Broker fields -->
                 <div class="col-md-4 brokerage-field" style="display:none;">
                     <label class="form-label">Brokerage Model</label>
                     <select name="brokerage_model" id="brokerageModel" class="form-select" onchange="toggleBrokerageRate()">
@@ -75,6 +78,29 @@
                         <span class="input-group-text" id="brokerageUnit">%</span>
                     </div>
                     <small class="text-muted" id="brokerageHint">Percentage of payment amount (e.g. 8 = 8%)</small>
+                </div>
+
+                <!-- Telecaller/Freelancer fields -->
+                <div class="col-md-4 telecaller-field" style="display:none;">
+                    <label class="form-label">Telecaller Team Lead / Parent</label>
+                    <select name="telecaller_parent_id" class="form-select">
+                        <option value="">No Team Lead (Top level)</option>
+                        <?php if (!empty($telecallers)): foreach ($telecallers as $tc): ?>
+                            <option value="<?= $tc['id'] ?>"><?= htmlspecialchars($tc['name'] . ' (' . $tc['email'] . ')') ?></option>
+                        <?php endforeach; endif; ?>
+                    </select>
+                </div>
+                <div class="col-md-4 telecaller-field" style="display:none;">
+                    <label class="form-label">Monthly Fixed Salary Target (₹)</label>
+                    <input type="number" name="telecaller_salary" class="form-control" step="0.01" placeholder="e.g. 6000.00" value="0.00">
+                </div>
+                <div class="col-md-4 telecaller-field" style="display:none;">
+                    <label class="form-label">Flat Lead Conversion Incentive (₹)</label>
+                    <input type="number" name="telecaller_incentive_rate" class="form-control" step="0.01" placeholder="e.g. 1000.00" value="0.00">
+                </div>
+                <div class="col-md-4 telecaller-field" style="display:none;">
+                    <label class="form-label">Rate per SqFt (₹)</label>
+                    <input type="number" name="telecaller_sqft_rate" class="form-control" step="0.01" placeholder="e.g. 10.00" value="0.00">
                 </div>
             </div>
             <div class="mt-4">
@@ -93,9 +119,15 @@ function filterSponsors() {
     }
 }
 function toggleBrokerageFields() {
-    var isIndependent = document.getElementById('agentTrack').value === 'independent';
+    var track = document.getElementById('agentTrack').value;
+    var isIndependent = track === 'independent';
+    var isTelecaller = track === 'telecaller';
+    
     document.querySelectorAll('.brokerage-field').forEach(function(el) {
         el.style.display = isIndependent ? '' : 'none';
+    });
+    document.querySelectorAll('.telecaller-field').forEach(function(el) {
+        el.style.display = isTelecaller ? '' : 'none';
     });
 }
 function toggleBrokerageRate() {

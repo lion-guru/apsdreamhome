@@ -20,7 +20,142 @@ class MLMController extends AdminController
     public function createAssociate() 
     {
         $this->data['page_title'] = 'Create Associate';
-        return $this->render('admin/mlm/users/create');
+        
+        $db = \App\Core\Database\Database::getInstance()->getPdo();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->validateCsrfOrFail();
+            
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $password = $_POST['password'] ?? '';
+            $sponsorId = !empty($_POST['sponsor_id']) ? (int)$_POST['sponsor_id'] : null;
+            $level = $_POST['level'] ?? 'Associate';
+            $status = $_POST['status'] ?? 'active';
+            
+            $agentTrack = $_POST['agent_track'] ?? 'mlm';
+            $brokerageModel = $_POST['brokerage_model'] ?? 'differential';
+            $brokerageRate = !empty($_POST['brokerage_rate']) ? (float)$_POST['brokerage_rate'] : 0.00;
+            
+            // Telecaller fields
+            $telecallerSalary = !empty($_POST['telecaller_salary']) ? (float)$_POST['telecaller_salary'] : 0.00;
+            $telecallerIncentiveRate = !empty($_POST['telecaller_incentive_rate']) ? (float)$_POST['telecaller_incentive_rate'] : 0.00;
+            $telecallerSqftRate = !empty($_POST['telecaller_sqft_rate']) ? (float)$_POST['telecaller_sqft_rate'] : 0.00;
+            $telecallerParentId = !empty($_POST['telecaller_parent_id']) ? (int)$_POST['telecaller_parent_id'] : null;
+            
+            if (empty($name) || empty($email) || empty($password)) {
+                $this->setFlash('error', 'Name, email and password are required');
+                return $this->render('admin/mlm/users/create');
+            }
+            
+            try {
+                $db->beginTransaction();
+                
+                // 1. Check if email already exists
+                $check = $db->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
+                $check->execute([$email]);
+                if ($check->fetch()) {
+                    throw new \Exception("Email already exists");
+                }
+                
+                // 2. Hash password
+                $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+                
+                // 3. Insert into users
+                $role = ($agentTrack === 'telecaller') ? 'telecaller' : 'associate';
+                $onboardingTrack = ($agentTrack === 'telecaller') ? 'telecaller' : (($agentTrack === 'independent') ? 'free_consultant' : 'networker');
+                
+                $stmt = $db->prepare("
+                    INSERT INTO users (name, email, phone, password, role, onboarding_track, status, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                ");
+                $stmt->execute([$name, $email, $phone, $hashedPassword, $role, $onboardingTrack, $status]);
+                $userId = (int)$db->lastInsertId();
+                
+                // 4. Insert into associates
+                $stmt = $db->prepare("
+                    INSERT INTO associates 
+                        (user_id, status, agent_track, brokerage_model, brokerage_rate, 
+                         telecaller_salary, telecaller_incentive_rate, telecaller_sqft_rate, telecaller_parent_id, 
+                         created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                ");
+                $stmt->execute([
+                    $userId, $status, $agentTrack, $brokerageModel, $brokerageRate,
+                    $telecallerSalary, $telecallerIncentiveRate, $telecallerSqftRate, $telecallerParentId
+                ]);
+                
+                // 5. Insert into user_wallets
+                $stmt = $db->prepare("
+                    INSERT INTO user_wallets (user_id, user_type, balance, total_credited, is_active) 
+                    VALUES (?, 'associate', 0, 0, 1)
+                ");
+                $stmt->execute([$userId]);
+                
+                // 6. Insert into mlm_profiles
+                $refCode = 'APS' . str_pad($userId, 4, '0', STR_PAD_LEFT);
+                $stmt = $db->prepare("
+                    INSERT INTO mlm_profiles 
+                        (user_id, referral_code, sponsor_user_id, user_type, current_level, 
+                         lifetime_sales, total_team_size, direct_referrals, total_commission, pending_commission, 
+                         status, created_at) 
+                    VALUES (?, ?, ?, ?, ?, 0, 0, 0, 0, 0, 'active', NOW())
+                ");
+                $stmt->execute([
+                    $userId, $refCode, $sponsorId ?: 1, $role, $level
+                ]);
+                
+                // 7. Insert into mlm_network_tree
+                $parentId = $sponsorId ?: 1;
+                $stmtP = $db->prepare("SELECT level FROM mlm_network_tree WHERE associate_id = ? LIMIT 1");
+                $stmtP->execute([$parentId]);
+                $parentRow = $stmtP->fetch(\PDO::FETCH_ASSOC);
+                $levelNumber = $parentRow ? ($parentRow['level'] + 1) : 1;
+                
+                $treeCols = $db->query("SHOW COLUMNS FROM mlm_network_tree")->fetchAll(\PDO::FETCH_COLUMN, 0);
+                if (in_array('sponsor_id', $treeCols)) {
+                    $stmtTree = $db->prepare("
+                        INSERT INTO mlm_network_tree (associate_id, sponsor_id, parent_id, level, position) 
+                        VALUES (?, ?, ?, ?, 'left')
+                    ");
+                    $stmtTree->execute([$userId, $parentId, $parentId, $levelNumber]);
+                } else {
+                    $stmtTree = $db->prepare("
+                        INSERT INTO mlm_network_tree (associate_id, parent_id, level) 
+                        VALUES (?, ?, ?)
+                    ");
+                    $stmtTree->execute([$userId, $parentId, $levelNumber]);
+                }
+                
+                // Update parent's direct referrals count
+                if ($sponsorId) {
+                    $db->prepare("UPDATE mlm_profiles SET direct_referrals = direct_referrals + 1 WHERE user_id = ?")
+                       ->execute([$sponsorId]);
+                }
+                
+                $db->commit();
+                $this->setFlash('success', 'MLM Associate / Agent created successfully');
+                return $this->redirect('/admin/mlm/users');
+                
+            } catch (\Exception $e) {
+                if ($db->inTransaction()) {
+                    $db->rollBack();
+                }
+                $this->setFlash('error', 'Error creating associate: ' . $e->getMessage());
+            }
+        }
+        
+        // Fetch sponsors for selection
+        try {
+            $this->data['sponsors'] = $db->query("SELECT id, name, email FROM users WHERE role IN ('associate', 'admin', 'telecaller') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $this->data['telecallers'] = $db->query("SELECT id, name, email FROM users WHERE role = 'telecaller' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $this->data['sponsors'] = [];
+            $this->data['telecallers'] = [];
+        }
+        
+        return $this->render('admin/mlm/users/create', $this->data);
     }
     
     public function commission() 
