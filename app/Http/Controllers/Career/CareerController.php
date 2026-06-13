@@ -49,7 +49,7 @@ class CareerController extends BaseController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('careers/index', $data);
+        return $this->render('careers/index', $data);
     }
 
     /**
@@ -70,7 +70,7 @@ class CareerController extends BaseController
 
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
 
-        return $this->viewRenderer->render('careers/apply', $data);
+        return $this->render('careers/apply', $data);
     }
 
     /**
@@ -117,7 +117,7 @@ class CareerController extends BaseController
 
         unset($_SESSION['success']);
 
-        return $this->viewRenderer->render('careers/thank-you', $data);
+        return $this->render('careers/thank-you', $data);
     }
 
     /**
