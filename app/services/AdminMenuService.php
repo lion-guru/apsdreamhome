@@ -70,12 +70,13 @@ class AdminMenuService
      */
     private function getMenuItemsByRole(string $role): array
     {
+        // Use INNER JOIN: only show items where the role has an explicit can_view=1 permission.
+        // This prevents unpermitted items from leaking through via LEFT JOIN NULL.
         $query = "
             SELECT mi.*, rp.can_view, rp.can_create, rp.can_edit, rp.can_delete
             FROM admin_menu_items mi
-            LEFT JOIN admin_role_menu_permissions rp ON mi.id = rp.menu_item_id AND rp.role = ?
-            WHERE mi.is_active = 1 
-            AND (rp.can_view = 1 OR rp.role IS NULL)
+            INNER JOIN admin_role_menu_permissions rp ON mi.id = rp.menu_item_id AND rp.role = ?
+            WHERE mi.is_active = 1 AND rp.can_view = 1
             ORDER BY mi.order_index ASC
         ";
         $cacheKey = 'admin_sidebar_role_' . md5($role);

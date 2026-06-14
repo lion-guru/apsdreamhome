@@ -154,7 +154,7 @@ class AdminAuthController extends BaseController
             // Check database
             $db = Database::getInstance();
 
-            $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('super_admin','admin','manager','agent') LIMIT 1", [$email, $email]);
+            $user = $db->fetchOne("SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('super_admin','admin','manager','associate','agent','employee','telecaller') LIMIT 1", [$email, $email]);
             if ($user && password_verify($password, $user['password'])) {
                 // Prevent session fixation: rotate session ID on successful login
                 session_regenerate_id(true);

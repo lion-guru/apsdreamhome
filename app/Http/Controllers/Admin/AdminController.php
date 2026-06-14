@@ -41,8 +41,9 @@ class AdminController extends BaseController
             @session_start();
         }
 
-        // Check if admin is logged in - use direct session check
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? '', ['admin', 'super_admin'])) {
+        // Check if admin is logged in — allow any role with RBAC menu permissions
+        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller'];
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', $allowedRoles)) {
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
@@ -563,7 +564,8 @@ class AdminController extends BaseController
         }
 
         // Check if admin is logged in
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? '', ['admin', 'super_admin'])) {
+        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller'];
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', $allowedRoles)) {
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
@@ -592,7 +594,8 @@ class AdminController extends BaseController
         }
 
         // Check if admin is logged in
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? '', ['admin', 'super_admin'])) {
+        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller'];
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', $allowedRoles)) {
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
@@ -622,7 +625,9 @@ class AdminController extends BaseController
      */
     public function requireAdmin()
     {
-        if (!$this->isLoggedIn() || !in_array($_SESSION['role'] ?? '', ['admin', 'super_admin'])) {
+        // Allow any role with RBAC menu permissions — sidebar handles item-level filtering
+        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller'];
+        if (!$this->isLoggedIn() || !in_array($_SESSION['role'] ?? $_SESSION['admin_role'] ?? '', $allowedRoles)) {
             $this->setFlash('error', 'Admin access required');
             $this->redirect('/admin/login');
         }
