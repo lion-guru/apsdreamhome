@@ -1,4 +1,4 @@
-<?php $layout = "admin/layouts/unified"; $active_page = "index"; ?>
+<?php $layout = "admin/layouts/admin"; $active_page = "index"; ?>
 <?php
 $page_title = 'Property Management';
 $active_page = 'properties';

@@ -90,7 +90,7 @@ class RoleBasedDashboardController extends AdminController
 
         $data = compact('role', 'userName', 'stats', 'recentItems');
         $data['page_title'] = $pageTitle;
-        $this->render('admin/dashboard/unified', $data);
+        $this->render('admin/dashboard/role_dashboard', $data);
     }
 
     /**

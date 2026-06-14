@@ -210,7 +210,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
     if (!$isAdminPage) {
         if ($isPremiumPage) {
-            include __DIR__ . '/active/header_new.php';
+            include __DIR__ . '/active/header.php';
         } else {
             include __DIR__ . '/header.php';
         }
@@ -242,7 +242,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         // Tell footer.php NOT to close the document — base.php handles it
         $GLOBALS['_layout_handles_close'] = true;
         if ($isPremiumPage) {
-            include __DIR__ . '/active/footer_new.php';
+            include __DIR__ . '/active/footer.php';
         } else {
             include __DIR__ . '/footer.php';
         }

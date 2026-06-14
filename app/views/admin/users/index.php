@@ -1,4 +1,4 @@
-<?php $layout = "admin/layouts/unified"; $active_page = "index"; ?>
+<?php $layout = "admin/layouts/admin"; $active_page = "index"; ?>
 <!-- Users Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>

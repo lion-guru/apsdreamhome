@@ -1786,4 +1786,54 @@ class HybridCommissionEngine
 
         return $downline;
     }
+
+    /* ================================================================
+       SECTION 10 — POLICY GUARD DELEGATION
+       ================================================================ */
+
+    /**
+     * Check if an agent qualifies for a rank promotion under sustainability rules.
+     *
+     * Delegates to MlmPolicyGuard which enforces:
+     *  - 50% Max Leg Rule (no single leg >50% of adjusted GBV)
+     *  - Minimum PBV (10% of target rank GBV from personal sales)
+     *  - Active monthly maintenance (consecutive months with ≥₹50K GBV)
+     *
+     * @param int    $agentId         users.id
+     * @param string $targetRankSlug  Target rank slug (e.g. 'sr_associate', 'bdm')
+     * @return array{eligible: bool, adjusted_gbv: float, personal_sales: float, reason: string, warnings: string[]}
+     */
+    public function checkPromotionEligibility(int $agentId, string $targetRankSlug): array
+    {
+        try {
+            $guard = new MlmPolicyGuard($this->pdo);
+            return $guard->checkPromotionEligibility($agentId, $targetRankSlug);
+        } catch (Exception $e) {
+            error_log("PolicyGuard delegation failed: " . $e->getMessage());
+            return [
+                'eligible'      => false,
+                'adjusted_gbv'  => 0,
+                'personal_sales'=> 0,
+                'reason'        => 'Policy guard unavailable: ' . $e->getMessage(),
+                'warnings'      => [],
+            ];
+        }
+    }
+
+    /**
+     * Check consecutive monthly maintenance for an agent.
+     *
+     * @param int $agentId users.id
+     * @return array{consecutive_months: int, qualifying_months: int, total_volume: float}
+     */
+    public function checkMonthlyMaintenance(int $agentId): array
+    {
+        try {
+            $guard = new MlmPolicyGuard($this->pdo);
+            return $guard->checkMonthlyMaintenance($agentId);
+        } catch (Exception $e) {
+            error_log("PolicyGuard maintenance check failed: " . $e->getMessage());
+            return ['consecutive_months' => 0, 'qualifying_months' => 0, 'total_volume' => 0.0];
+        }
+    }
 }

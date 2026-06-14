@@ -7,7 +7,6 @@ use App\Models\Booking;
 use App\Models\Customer;
 use App\Models\Property;
 use App\Core\Database;
-use App\Services\CoreFunctionsServiceCustom;
 use App\Services\RequestService;
 use App\Services\LoggingService;
 use Exception;

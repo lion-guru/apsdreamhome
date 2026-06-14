@@ -164,6 +164,49 @@ class PortalMenuService
 
     private function employeeItems(): array
     {
+        // DB-driven: read from admin_menu_items filtered by employee sub-role RBAC
+        if ($this->pdo && $this->userId) {
+            $subRole = $this->resolveEmployeeSubRole();
+            if ($subRole) {
+                try {
+                    $stmt = $this->pdo->prepare("
+                        SELECT mi.name, mi.url, mi.icon, mi.order_index
+                        FROM admin_menu_items mi
+                        INNER JOIN admin_role_menu_permissions rp ON rp.menu_item_id = mi.id
+                        WHERE mi.section = 'employee'
+                          AND mi.is_active = 1
+                          AND rp.role = ?
+                          AND rp.can_view = 1
+                        ORDER BY mi.order_index ASC
+                    ");
+                    $stmt->execute([$subRole]);
+                    $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                    
+                    if (!empty($rows)) {
+                        $items = [];
+                        foreach ($rows as $row) {
+                            $section = 'Work';
+                            $key = strtolower(str_replace(' ', '_', $row['name']));
+                            
+                            // Dynamic badges for specific items
+                            $badge = null;
+                            if ($row['name'] === 'My Tasks') {
+                                $badge = $this->countTable('agent_tasks', 'assigned_to');
+                            } elseif ($row['name'] === 'Leaves') {
+                                $badge = $this->countTable('employee_leave_requests', 'employee_id', 'status', 'pending');
+                            }
+                            
+                            $items[] = $this->item($key, $section, $row['name'], $row['url'], $row['icon'], $badge);
+                        }
+                        return $items;
+                    }
+                } catch (\Throwable $e) {
+                    // Fall through to hardcoded fallback
+                }
+            }
+        }
+        
+        // Hardcoded fallback (when DB is unavailable or sub-role not found)
         return [
             $this->item('dashboard', 'Main', 'Dashboard', '/employee/dashboard', 'fas fa-tachometer-alt'),
             $this->item('tasks', 'Work', 'My Tasks', '/employee/tasks', 'fas fa-tasks', $this->countTable('agent_tasks', 'assigned_to')),
@@ -173,6 +216,31 @@ class PortalMenuService
             $this->item('performance', 'Earnings', 'Performance', '/employee/performance', 'fas fa-chart-line'),
             $this->item('profile', 'Work', 'My Profile', '/employee/profile', 'fas fa-user'),
         ];
+    }
+
+    /**
+     * Resolve employee sub-role from designation + department.
+     * Queries employees table → employee_designation_roles → returns sub_role string.
+     */
+    private function resolveEmployeeSubRole(): ?string
+    {
+        if (!$this->pdo || !$this->userId) return null;
+        
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT edr.sub_role
+                FROM employees e
+                INNER JOIN employee_designation_roles edr 
+                    ON edr.designation = e.designation AND (edr.department = e.department OR edr.department IS NULL)
+                WHERE e.user_id = ?
+                LIMIT 1
+            ");
+            $stmt->execute([$this->userId]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ? $row['sub_role'] : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     private function adminItems(): array
@@ -314,6 +382,7 @@ class PortalMenuService
         $pdo = null;
         $userId = null;
         $role = $_SESSION['role'] ?? 'guest';
+        $root = dirname(__DIR__, 2);
 
         if (isset($_SESSION['user_id'])) $userId = (int)$_SESSION['user_id'];
         elseif (isset($_SESSION['admin_id'])) $userId = (int)$_SESSION['admin_id'];
@@ -323,15 +392,17 @@ class PortalMenuService
 
         // Get PDO via the project's global config
         try {
-            $configFile = __DIR__ . '/../../config/database.php';
-            if (file_exists($configFile)) {
-                require_once $configFile;
-                if (isset($pdo) && $pdo instanceof \PDO) {
-                    // already set
-                } elseif (function_exists('db')) {
-                    $pdo = db();
-                } elseif (isset($GLOBALS['pdo']) && $GLOBALS['pdo'] instanceof \PDO) {
-                    $pdo = $GLOBALS['pdo'];
+            if (!$pdo) {
+                $configFile = $root . '/config/database.php';
+                if (file_exists($configFile)) {
+                    $config = require $configFile;
+                    if (isset($config['host']) && isset($config['port'])) {
+                        $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4";
+                        $pdo = new \PDO($dsn, $config['username'], $config['password'], [
+                            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                        ]);
+                    }
                 }
             }
         } catch (\Throwable $e) {

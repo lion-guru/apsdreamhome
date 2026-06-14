@@ -338,7 +338,7 @@ class CommissionAdminController extends AdminController
                 "SELECT * FROM mlm_commission_ledger_legacy ORDER BY created_at DESC LIMIT 100"
             );
             $this->data['page_title'] = 'MLM Commission Ledger (Legacy Audit)';
-            return $this->render('admin/commission/mlm_ledger_legacy', $this->data);
+            return $this->render('admin/commission/commission_audit_log', $this->data);
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');

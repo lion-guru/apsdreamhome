@@ -81,14 +81,68 @@ class EmployeeController extends BaseController
         }
 
         $employeeId = $_SESSION['employee_id'];
-        $dashboardData = $this->getEmployeeDashboardData($employeeId);
 
+        // Redirect to role-specific dashboard based on designation
+        $dashboardRoute = $this->resolveDashboardRoute($employeeId);
+        if ($dashboardRoute) {
+            $this->redirect($dashboardRoute);
+            return;
+        }
+
+        // Fallback to generic employee dashboard
+        $dashboardData = $this->getEmployeeDashboardData($employeeId);
         $gamify = $this->safeGamify('forEmployee', (int)$employeeId);
 
-        // Include dashboard view
         $dashboardView = __DIR__ . '/../../../views/employees/dashboard.php';
         if (file_exists($dashboardView)) { require_once $dashboardView; }
         else { echo "<h2>Employee Dashboard</h2><p>Welcome, employee #$employeeId</p>"; }
+    }
+
+    /**
+     * Resolve the role-specific dashboard route for an employee based on designation
+     */
+    private function resolveDashboardRoute(int $employeeId): ?string
+    {
+        try {
+            $emp = $this->db->fetchOne(
+                "SELECT e.designation, e.department
+                 FROM employees e WHERE e.user_id = ? LIMIT 1",
+                [$employeeId]
+            );
+            if (!$emp || empty($emp['designation'])) {
+                return null;
+            }
+
+            $mapping = $this->db->fetchOne(
+                "SELECT dashboard_view FROM employee_designation_roles
+                 WHERE designation = ? AND (department = ? OR department IS NULL)
+                 LIMIT 1",
+                [$emp['designation'], $emp['department']]
+            );
+
+            if (!$mapping || empty($mapping['dashboard_view'])) {
+                return null;
+            }
+
+            // Map view path to route
+            $viewRoutes = [
+                'employee/hr_dashboard'               => '/employee/hr-dashboard',
+                'employee/land_manager_dashboard'      => '/employee/land-dashboard',
+                'employee/legal_dashboard'             => '/employee/legal-dashboard',
+                'employee/telecalling_dashboard'       => '/employee/telecalling-dashboard',
+                'employee/ca_dashboard'                => '/employee/ca-dashboard',
+                'employee/finance_dashboard'           => '/employee/finance-dashboard',
+                'employee/marketing_dashboard'         => '/employee/marketing-dashboard',
+                'employee/it_dashboard'                => '/employee/it-dashboard',
+                'employee/ops_dashboard'               => '/employee/ops-dashboard',
+                'employee/sales_dashboard'             => '/employee/sales-dashboard',
+            ];
+
+            return $viewRoutes[$mapping['dashboard_view']] ?? null;
+        } catch (\Exception $e) {
+            error_log('Dashboard resolve error: ' . $e->getMessage());
+            return null;
+        }
     }
 
     private function safeGamify(string $method, int ...$args): array

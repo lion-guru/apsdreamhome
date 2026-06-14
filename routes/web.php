@@ -868,6 +868,11 @@ $router->get('/employee/telecalling/followups', 'Employee\\TelecallingController
 $router->post('/employee/telecalling/complete-followup', 'Employee\\TelecallingController@completeFollowUp');
 
 $router->get('/employee/dashboard-overview', 'Employee\\EmployeeDashboardController@dashboard');
+$router->get('/employee/marketing-dashboard', 'Employee\\EmployeeDashboardController@marketingDashboard');
+$router->get('/employee/finance-dashboard', 'Employee\\EmployeeDashboardController@financeDashboard');
+$router->get('/employee/it-dashboard', 'Employee\\EmployeeDashboardController@itDashboard');
+$router->get('/employee/ops-dashboard', 'Employee\\EmployeeDashboardController@opsDashboard');
+$router->get('/employee/sales-dashboard', 'Employee\\EmployeeDashboardController@salesDashboard');
 $router->post('/employee/dashboard/update-task-status', 'Employee\\EmployeeDashboardController@updateTaskStatus');
 
 // MLM/Team
@@ -2650,7 +2655,7 @@ $router->get('/admin/ai/dashboard', function() {
     $GLOBALS['_admin_content'] = $content;
     $GLOBALS['_admin_extra_js'] = '';
     $GLOBALS['_admin_extra_css'] = '';
-    require $root . '/app/views/admin/layouts/unified.php';
+    require $root . '/app/views/admin/layouts/admin.php';
     exit;
 });
 $router->post('/api/ai/score-lead/{id}', 'Front\\AIBotController@scoreLead');
@@ -3648,9 +3653,7 @@ $router->get('/admin/social-analytics', 'Tech\\SocialMediaController@socialAnaly
 // ============================================================
 // NEWLY ROUTED CONTROLLERS (from unrouted scan)
 // ============================================================
-
-// Quick Test (Admin\QuickTestController)
-$router->get('/admin/quick-test', 'Admin\\QuickTestController@index');
+
 
 // Property Workflow (Property\PropertyWorkflowController)
 $router->get('/property-workflow', 'Property\\PropertyWorkflowController@index');

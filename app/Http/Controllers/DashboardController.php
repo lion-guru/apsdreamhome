@@ -402,7 +402,6 @@ class DashboardController extends BaseController
 
             // Get performance and commission data
             $perfCalculator = new \App\Services\PerformanceRankCalculator();
-            $commCalculator = new \App\Services\DifferentialCommissionCalculator();
 
             $perfData = $perfCalculator->calculateRank($userId);
 

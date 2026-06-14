@@ -38,12 +38,12 @@ class NotificationController extends AdminController
     
     public function emailLogs() 
     {
-        $this->render('notification/notifications_unified', ['page_title' => 'Email Logs']);
+        $this->render('notification/notification_center', ['page_title' => 'Email Logs']);
     }
     
     public function smsLogs() 
     {
-        $this->render('notification/notifications_unified', ['page_title' => 'SMS Logs']);
+        $this->render('notification/notification_center', ['page_title' => 'SMS Logs']);
     }
     
     public function settings() 

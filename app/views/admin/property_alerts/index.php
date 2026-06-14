@@ -284,4 +284,4 @@ function testMatch(id) {
 
 <?php
 $content = ob_get_clean();
-include APP_PATH . '/views/admin/layouts/unified.php';
+include APP_PATH . '/views/admin/layouts/admin.php';

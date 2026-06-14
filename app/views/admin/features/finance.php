@@ -130,4 +130,4 @@ ob_start();
 </div>
 <?php
 $content = ob_get_clean();
-require_once APP_PATH . '/views/admin/layouts/unified.php';
+require_once APP_PATH . '/views/admin/layouts/admin.php';

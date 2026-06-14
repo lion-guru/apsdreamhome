@@ -85,7 +85,7 @@ class RegistrationController extends BaseController
             'Puducherry'
         ];
 
-        return $this->render('registration/unified-form', compact('referralCode', 'referrerInfo', 'indianStates'));
+        return $this->render('registration/register_form', compact('referralCode', 'referrerInfo', 'indianStates'));
     }
 
     /**

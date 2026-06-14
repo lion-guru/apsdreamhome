@@ -50,7 +50,7 @@ class FieldCollectionController extends BaseController
             return 'layouts/associate';
         }
         if ($role === 'agent') {
-            return 'agent/layouts/unified';
+            return 'agent/layouts/agent';
         }
         return 'layouts/main';
     }
