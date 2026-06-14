@@ -47,7 +47,6 @@ $expectedCounts = [
     'manager'     => 121,
     'associate'   => 42,
     'agent'       => 28,
-    'employee'    => 20,
     'telecaller'  => 16,
     'customer'    => 6,
 ];
@@ -71,6 +70,9 @@ foreach ($expectedCounts as $role => $expected) {
         "got $actual, expected ~$expected"
     );
 }
+
+// Employee role now resolves via designation sub-role (no direct 'employee' role in permissions)
+// Each employee sees different items based on their department/designation — tested in section 10
 
 // 3. Test super_admin sees all
 echo "\n[3] Super Admin Full Access\n";
@@ -124,6 +126,52 @@ foreach (['manager', 'employee', 'telecaller'] as $role) {
         if (!empty($item['can_view'])) $withCanView++;
     }
     test("Role '$role' items have can_view flag", $withCanView === count($items), "$withCanView/" . count($items));
+}
+
+// 9. Employee Sub-Role System
+echo "\n[9] Employee Sub-Role System\n";
+$subRoleTableExists = $db->fetchOne("SHOW TABLES LIKE 'employee_designation_roles'");
+test("employee_designation_roles table exists", !empty($subRoleTableExists));
+
+$designMappings = $db->fetchOne("SELECT COUNT(*) as c FROM employee_designation_roles")['c'] ?? 0;
+test("Designation mappings seeded", $designMappings >= 30, "$designMappings mappings");
+
+$empPerms = $db->fetchOne("SELECT COUNT(*) as c FROM admin_role_menu_permissions WHERE role LIKE 'employee_%'")['c'] ?? 0;
+test("Employee sub-role permissions exist", $empPerms >= 200, "$empPerms permissions");
+
+// Test specific employee designations → sub-role resolution
+foreach ([
+    [8, 'employee_marketing_executive', 'Officer/Marketing'],
+    [10, 'employee_it_executive', 'Executive/IT'],
+    [11, 'employee_hr_executive', 'Executive/HR'],
+    [12, 'employee_operations_manager', 'Manager/Operations'],
+    [68, 'employee_sales_executive', 'Analyst/Sales'],
+] as list($userId, $expectedSubRole, $label)) {
+    $emp = $db->fetchOne("SELECT e.designation, e.department FROM employees e WHERE e.user_id = $userId");
+    if ($emp) {
+        $mapping = $db->fetchOne(
+            "SELECT sub_role FROM employee_designation_roles WHERE designation = ? AND (department = ? OR department IS NULL) LIMIT 1",
+            [$emp['designation'], $emp['department']]
+        );
+        $actual = $mapping['sub_role'] ?? 'employee_general';
+        test("$label -> $expectedSubRole", $actual === $expectedSubRole, "got $actual");
+    }
+}
+
+// Test sub-role menu counts
+echo "\n[10] Employee Sub-Role Menu Counts\n";
+$empRoles = [
+    'employee_hr_executive' => 14,
+    'employee_it_executive' => 26,
+    'employee_marketing_executive' => 23,
+    'employee_operations_manager' => 52,
+    'employee_sales_executive' => 38,
+    'employee_general' => 6,
+];
+foreach ($empRoles as $empRole => $expectedMin) {
+    $items = $svc->getMenuItems($empRole);
+    $actual = count($items);
+    test("Sub-role '$empRole' has >= $expectedMin items", $actual >= $expectedMin, "got $actual");
 }
 
 // Cleanup session

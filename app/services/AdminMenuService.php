@@ -38,6 +38,14 @@ class AdminMenuService
             return $this->getAllMenuItems();
         }
 
+        // Employee role: resolve designation → sub-role for granular access
+        if ($role === 'employee') {
+            $subRole = $this->resolveEmployeeSubRole($userId);
+            if ($subRole) {
+                $role = $subRole;
+            }
+        }
+
         // Get menu items based on role permissions
         if ($role) {
             $menuItems = $this->getMenuItemsByRole($role);
@@ -52,6 +60,55 @@ class AdminMenuService
         }
 
         return $this->buildMenuTree($menuItems);
+    }
+
+    /**
+     * Get the resolved employee sub-role for the given user.
+     * Returns null if not an employee.
+     */
+    public function getEmployeeSubRole(?int $userId = null): ?string
+    {
+        $userId = $userId ?? $this->currentUserId;
+        if ($this->currentRole !== 'employee') return null;
+        return $this->resolveEmployeeSubRole($userId);
+    }
+
+    /**
+     * Get the dashboard view path for the current employee.
+     */
+    public function getEmployeeDashboardView(?int $userId = null): string
+    {
+        $userId = $userId ?? $this->currentUserId;
+        if ($this->currentRole !== 'employee') {
+            return 'admin/dashboard';
+        }
+
+        $cacheKey = 'employee_dashboard_view_' . $userId;
+        return Cache::remember($cacheKey, function () use ($userId) {
+            try {
+                $emp = $this->db->fetchOne(
+                    "SELECT e.designation, e.department
+                     FROM employees e WHERE e.user_id = ? LIMIT 1",
+                    [$userId]
+                );
+                if (!$emp || empty($emp['designation'])) {
+                    return 'employee/dashboard';
+                }
+
+                $mapping = $this->db->fetchOne(
+                    "SELECT dashboard_view FROM employee_designation_roles
+                     WHERE designation = ? AND (department = ? OR department IS NULL)
+                     LIMIT 1",
+                    [$emp['designation'], $emp['department']]
+                );
+
+                return ($mapping && !empty($mapping['dashboard_view']))
+                    ? $mapping['dashboard_view']
+                    : 'employee/dashboard';
+            } catch (\Exception $e) {
+                return 'employee/dashboard';
+            }
+        }, 3600);
     }
 
     /**
@@ -86,8 +143,65 @@ class AdminMenuService
     }
 
     /**
-     * Apply custom user permissions (override role permissions)
+     * Resolve employee designation → sub-role for granular menu filtering.
+     * Looks up employees table by user_id, then employee_designation_roles table.
+     * Falls back to 'employee_general' if no mapping found.
      */
+    private function resolveEmployeeSubRole(?int $userId): ?string
+    {
+        if (!$userId) return 'employee_general';
+
+        $cacheKey = 'employee_sub_role_' . $userId;
+        return Cache::remember($cacheKey, function () use ($userId) {
+            try {
+                // Look up employee designation + department
+                $emp = $this->db->fetchOne(
+                    "SELECT e.designation, e.department
+                     FROM employees e
+                     WHERE e.user_id = ?
+                     LIMIT 1",
+                    [$userId]
+                );
+
+                if (!$emp || empty($emp['designation'])) {
+                    return 'employee_general';
+                }
+
+                // Try exact match: designation + department
+                $mapping = $this->db->fetchOne(
+                    "SELECT sub_role FROM employee_designation_roles
+                     WHERE designation = ? AND department = ?
+                     LIMIT 1",
+                    [$emp['designation'], $emp['department']]
+                );
+
+                if ($mapping) {
+                    return $mapping['sub_role'];
+                }
+
+                // Try designation-only match (department = NULL = wildcard)
+                $mapping = $this->db->fetchOne(
+                    "SELECT sub_role FROM employee_designation_roles
+                     WHERE designation = ? AND department IS NULL
+                     LIMIT 1",
+                    [$emp['designation']]
+                );
+
+                if ($mapping) {
+                    return $mapping['sub_role'];
+                }
+
+                // Default fallback
+                return 'employee_general';
+
+            } catch (\Exception $e) {
+                error_log('AdminMenuService::resolveEmployeeSubRole error: ' . $e->getMessage());
+                return 'employee_general';
+            }
+        }, 3600);
+    }
+
+    /**
     private function applyCustomUserPermissions(array $menuItems, int $userId): array
     {
         $customPermissions = $this->getCustomUserPermissions($userId);
