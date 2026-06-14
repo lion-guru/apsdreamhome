@@ -7,6 +7,7 @@ class MLMController extends AdminController
 {
     public function index() 
     {
+        $this->requireAdmin();
         $this->data['page_title'] = 'MLM Dashboard';
         return $this->render('admin/mlm/dashboard');
     }

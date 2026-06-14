@@ -202,6 +202,8 @@ class AdminMenuService
     }
 
     /**
+     * Apply custom user permissions to menu items
+     */
     private function applyCustomUserPermissions(array $menuItems, int $userId): array
     {
         $customPermissions = $this->getCustomUserPermissions($userId);
@@ -418,7 +420,7 @@ class AdminMenuService
     {
         // Clear legacy key names (kept for backward compat with the file cache)
         Cache::delete('admin_sidebar_all');
-        $roles = ['super_admin', 'admin', 'manager', 'employee', 'associate', 'agent', 'customer'];
+        $roles = ['super_admin', 'admin', 'manager', 'telecaller', 'employee', 'associate', 'agent', 'customer'];
         foreach ($roles as $role) {
             Cache::delete('admin_sidebar_role_' . md5($role));
         }

@@ -21,11 +21,25 @@ class AdminAuthController extends BaseController
         if (isset($_GET['test_login']) && (APP_ENV === 'development' || APP_ENV === 'testing')) {
             $db = Database::getInstance();
             $admin = null;
+            $loginMode = $_GET['test_login'];
 
-            if ($_GET['test_login'] == '2') {
+            // test_login=1 → admin/manager, test_login=2 → super_admin
+            if ($loginMode == '2') {
                 $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin') ORDER BY id LIMIT 1");
-            } elseif ($_GET['test_login'] == '1') {
+            } elseif ($loginMode == '1') {
                 $admin = $db->fetchOne("SELECT * FROM users WHERE (name = 'testadmin' OR email = 'testadmin@example.com') AND role IN ('super_admin','admin','manager') LIMIT 1");
+            }
+            // test_login=3 → telecaller, =4 → employee, =5 → associate, =6 → agent, =7 → customer
+            elseif ($loginMode == '3') {
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'telecaller' ORDER BY id LIMIT 1");
+            } elseif ($loginMode == '4') {
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'employee' ORDER BY id LIMIT 1");
+            } elseif ($loginMode == '5') {
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'associate' ORDER BY id LIMIT 1");
+            } elseif ($loginMode == '6') {
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'agent' ORDER BY id LIMIT 1");
+            } elseif ($loginMode == '7') {
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role = 'customer' ORDER BY id LIMIT 1");
             }
 
             if (!$admin) {
@@ -37,16 +51,30 @@ class AdminAuthController extends BaseController
 
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['admin_user_id'] = $admin['id'];
-            $_SESSION['admin_email'] = $admin['email'] ?? 'admin@apsdreamhome.com';
+            $_SESSION['admin_email'] = $admin['email'] ?? '';
             $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
             $_SESSION['admin_name'] = $admin['name'] ?? 'Admin';
             $_SESSION['admin_username'] = $admin['name'] ?? 'admin';
             $_SESSION['user_id'] = $admin['id'];
             $_SESSION['role'] = $admin['role'] ?? 'admin';
-            $_SESSION['user_email'] = $admin['email'] ?? 'apsdreamhome.com';
+            $_SESSION['user_email'] = $admin['email'] ?? '';
             $_SESSION['user_name'] = $admin['name'] ?? 'Admin';
             $_SESSION['user_phone'] = $admin['phone'] ?? '';
             $_SESSION['logged_in'] = true;
+
+            // For employee/telecaller: also set employee_id session key
+            if (in_array($admin['role'], ['employee', 'telecaller'])) {
+                try {
+                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?", [$admin['id']]);
+                    if ($emp) {
+                        $_SESSION['employee_id'] = $emp['id'];
+                    }
+                } catch (\Exception $e) {
+                    // employees table may not exist; set user_id as fallback
+                    $_SESSION['employee_id'] = $admin['id'];
+                }
+            }
+
             header('Location: ' . BASE_URL . '/admin/dashboard');
             exit;
         }

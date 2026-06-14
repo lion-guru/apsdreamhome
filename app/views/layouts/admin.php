@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -178,7 +178,7 @@
 
             <div class="nav-right">
                 <!-- Notifications (Leads) -->
-                <button class="nav-icon" onclick="toggleNotifications()" title="New Leads Today">
+                <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
                     <i class="fas fa-bell"></i>
                     <span class="badge"><?php echo $newLeadsCount; ?></span>
                 </button>

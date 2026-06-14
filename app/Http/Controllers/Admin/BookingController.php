@@ -16,6 +16,7 @@ class BookingController extends AdminController
 
     public function index()
     {
+        $this->requireAdmin();
         try {
             $page = max(1, intval($_GET['page'] ?? 1));
             $perPage = 20;
