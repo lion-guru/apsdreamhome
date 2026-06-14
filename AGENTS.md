@@ -1,4 +1,29 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-13)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-14)
+
+---
+
+## ⚠️ CRITICAL RULE: File Deletion (NEVER delete without this)
+
+**Full details:** `DELETION_RULE.md`
+
+### 7-Step Pre-Deletion Checklist (MANDATORY)
+1. **What does it do?** — Read entire file, write 1-line purpose
+2. **Is functionality reimplemented?** — Search for SAME features, not same filename
+3. **Is it referenced anywhere?** — Routes, controllers, views, services, sidebar, DB menu
+4. **Can it be reached via URL?** — Any route/controller/render maps to it
+5. **Does it have DB data?** — Tables it reads/writes — check row counts
+6. **What breaks if deleted?** — Trace all downstream effects
+7. **Make the call** — ALL 6 pass = safe. ANY fail = DO NOT DELETE
+
+### Safe Deletion
+- Cache files, temp scripts, `_archive/` contents, test artifacts, IDE config = YES
+- View/controller/service/config/helper files = MUST complete all 7 steps first
+
+### When in doubt
+- **MOVE to `_archive/`** — not DELETE. Recoverable vs irreversible.
+
+### Lesson learned
+- `commission_plan_manager.php` (769 lines) was deleted as "orphaned dead" — had real CRUD for `mlm_commission_plans` table (5 rows). Had to rebuild entirely as MVC (CommissionPlanController + 4 views + 11 routes + mlm_plan_levels table). **Cost: 1 full session.**
 
 ---
 

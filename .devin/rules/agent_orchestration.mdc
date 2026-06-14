@@ -70,5 +70,5 @@ All agents have access to:
 - Always run `php -l` before committing PHP changes
 - Always verify route accessibility after adding routes
 - Use `BASE_URL` constant for all redirects
-- Never delete files without 3-step orphan check
+- NEVER delete files without 7-step checklist (see DELETION_RULE.md) — includes purpose check, functionality reimplementation check, route/controller/view/service/sidebar/DB reference check, URL reachability, DB data check, downstream impact analysis
 - Update AGENTS.md on significant progress
