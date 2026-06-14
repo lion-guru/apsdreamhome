@@ -621,15 +621,85 @@ class AdminController extends BaseController
     }
 
     /**
-     * Require admin authentication
+     * Require admin authentication.
+     * Also enforces per-route RBAC: non-admin roles are checked against admin_role_menu_permissions
+     * using the current request URI matched to admin_menu_items.url.
+     * super_admin and admin always pass. Unknown URLs (not in menu table) pass by default.
      */
     public function requireAdmin()
     {
         // Allow any role with RBAC menu permissions — sidebar handles item-level filtering
         $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller'];
-        if (!$this->isLoggedIn() || !in_array($_SESSION['role'] ?? $_SESSION['admin_role'] ?? '', $allowedRoles)) {
+        $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? '';
+        if (!$this->isLoggedIn() || !in_array($role, $allowedRoles)) {
             $this->setFlash('error', 'Admin access required');
             $this->redirect('/admin/login');
+            return;
+        }
+
+        // Per-route RBAC: check current URL against admin_role_menu_permissions
+        // super_admin and admin always pass; others are checked
+        if (!in_array($role, ['super_admin', 'admin'])) {
+            $url = $this->getCurrentMenuUrl();
+            if ($url !== null && !$this->checkMenuPermission($url, $role)) {
+                $this->setFlash('error', 'You do not have permission to access this page.');
+                $this->redirect('/admin/dashboard');
+            }
+        }
+    }
+
+    /**
+     * Extract the current request path (relative to BASE_URL) for RBAC matching.
+     * Strips query string and leading/trailing slashes.
+     *
+     * @return string|null Normalized path (e.g. '/admin/finance/cash-book'), or null if not parseable
+     */
+    private function getCurrentMenuUrl(): ?string
+    {
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+        // Strip query string
+        $path = parse_url($uri, PHP_URL_PATH) ?: '/';
+        // Strip BASE_URL prefix if present
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
+        if ($baseUrl && strpos($path, $baseUrl) === 0) {
+            $path = substr($path, strlen($baseUrl));
+        }
+        // Normalize: ensure starts with /, strip trailing slash (except root)
+        $path = '/' . ltrim($path, '/');
+        if ($path !== '/') {
+            $path = rtrim($path, '/');
+        }
+        return $path;
+    }
+
+    /**
+     * Check if a role has permission for a specific menu URL.
+     * super_admin and admin always return true.
+     *
+     * @param string $url  The menu item URL to check (e.g. '/admin/finance/cash-book')
+     * @param string $role The user role to check (optional; reads from session if empty)
+     * @return bool True if permitted, false otherwise
+     */
+    public function checkMenuPermission(string $url, string $role = ''): bool
+    {
+        if (empty($role)) {
+            $role = $_SESSION['role'] ?? '';
+        }
+        if (in_array($role, ['super_admin', 'admin'])) {
+            return true;
+        }
+        try {
+            $db = $this->db ?? \App\Core\Database::getInstance()->getPdo();
+            $stmt = $db->prepare(
+                "SELECT COUNT(*) FROM admin_role_menu_permissions rp
+                 JOIN admin_menu_items mi ON mi.id = rp.menu_item_id
+                 WHERE rp.role = ? AND mi.url = ? AND mi.is_active = 1"
+            );
+            $stmt->execute([$role, $url]);
+            return (int)$stmt->fetchColumn() > 0;
+        } catch (\Exception $e) {
+            error_log('checkMenuPermission error: ' . $e->getMessage());
+            return false;
         }
     }
 
