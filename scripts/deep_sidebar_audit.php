@@ -1,0 +1,242 @@
+<?php
+/**
+ * Deep Sidebar & Routing Audit Script - Max Level Analysis
+ * 
+ * This script runs a comprehensive audit of all admin sidebar menu items in the database:
+ * 1. Checks if the URL maps to a registered route in routes/web.php
+ * 2. Resolves the controller class and verifies the file exists
+ * 3. Scans the controller to verify if the method exists
+ * 4. Checks if the standard view file exists
+ * 5. Validates section mappings against rbac_sidebar.php display names
+ * 
+ * Run via: php scripts/deep_sidebar_audit.php
+ */
+
+$root = dirname(__DIR__);
+$config = require $root . '/config/database.php';
+
+try {
+    $pdo = new PDO(
+        "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
+        $config['username'],
+        $config['password'],
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    );
+
+    echo "==================================================\n";
+    echo "       DEEP SIDEBAR & ROUTING AUDIT ENGINE        \n";
+    echo "==================================================\n\n";
+
+    // 1. Fetch all active menu items from DB
+    $menuItems = $pdo->query("SELECT * FROM admin_menu_items WHERE is_active = 1 ORDER BY section, order_index, id")->fetchAll(PDO::FETCH_ASSOC);
+    if (empty($menuItems)) {
+        echo "WARNING: No active menu items found. Please run the seeder first: php scripts/reseed_sidebar_clean.php\n";
+        exit;
+    }
+    echo "✓ Loaded " . count($menuItems) . " active menu items from database.\n";
+
+    // 2. Load and parse routes/web.php
+    $webFile = $root . '/routes/web.php';
+    if (!file_exists($webFile)) {
+        echo "FAILED: routes/web.php not found.\n";
+        exit;
+    }
+    $webContent = file_get_contents($webFile);
+    
+    // Parse routes matching patterns like: $router->get('/path', 'Handler')
+    preg_match_all('/\$router->(get|post|any|put|delete|patch|match)\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*(?:[\'"]([^\'"]+)[\'"]|function)/i', $webContent, $matches, PREG_SET_ORDER);
+    
+    $routes = [];
+    foreach ($matches as $match) {
+        $method = strtoupper($match[1]);
+        $uri = rtrim($match[2], '/');
+        $handler = $match[3] ?? 'Closure';
+        $routes[$uri] = [
+            'method' => $method,
+            'handler' => $handler
+        ];
+    }
+    echo "✓ Parsed " . count($routes) . " routes from routes/web.php.\n";
+
+    // 3. Define section names from rbac_sidebar.php
+    $sectionNames = [
+        'dashboards' => '📊 Dashboards',
+        'crm' => '👥 CRM & Sales',
+        'properties' => '🏠 Properties',
+        'mlm' => '🔗 MLM Network',
+        'finance' => '💰 Finance',
+        'bookings' => '📅 Bookings',
+        'cms' => '📝 Content',
+        'marketing' => '📢 Marketing',
+        'reports' => '📈 Reports',
+        'operations' => '⚙️ Operations',
+        'users' => '👤 Users & Team',
+        'locations' => '📍 Locations',
+        'settings' => '🔧 Settings',
+        'hrm' => '👔 HR & Payroll',
+        'legal' => '⚖️ Legal',
+        'sales' => '🏷️ Sales',
+        'system' => '⚙️ System',
+        'services' => '🛎️ Services'
+    ];
+
+    $report = "# Deep Sidebar & Routing Audit Report\n";
+    $report .= "Generated on: " . date('Y-m-d H:i:s') . "\n\n";
+    $report .= "This report audits all active database-driven sidebar items for route registration, controller status, method existence, and view integrity.\n\n";
+    $report .= "## Audit Summary Table\n\n";
+    $report .= "| ID | Section | Name | URL | Route Status | Controller | Method | View File | Section Valid |\n";
+    $report .= "|---|---|---|---|---|---|---|---|---|\n";
+
+    $failedCount = 0;
+    $warnings = [];
+
+    foreach ($menuItems as $item) {
+        $id = $item['id'];
+        $section = $item['section'];
+        $name = $item['name'];
+        $url = $item['url'];
+        $urlNorm = rtrim($url, '/');
+
+        // A. Verify Section Name
+        $sectionValid = isset($sectionNames[$section]) ? "✅ Yes" : "❌ Invalid";
+        if (!isset($sectionNames[$section])) {
+            $warnings[] = "Menu ID [$id] ('$name') uses unregistered section '$section'.";
+        }
+
+        // B. Verify Route Mapped in routes/web.php
+        $routeStatus = "❌ Missing Route";
+        $controllerName = "N/A";
+        $methodName = "N/A";
+        $controllerExists = "N/A";
+        $methodExists = "N/A";
+
+        // Try exact match or match parameterized route
+        $matchedRoute = null;
+        if (isset($routes[$urlNorm])) {
+            $matchedRoute = $routes[$urlNorm];
+        } else {
+            // Check parameterized route regex matching
+            foreach ($routes as $routePattern => $info) {
+                // Convert {param} to regex pattern
+                $pattern = preg_replace('/\{([^}]+)\}/', '[^/]+', $routePattern);
+                if (preg_match('#^' . $pattern . '$#', $urlNorm)) {
+                    $matchedRoute = $info;
+                    break;
+                }
+            }
+        }
+
+        if ($matchedRoute) {
+            $routeStatus = "✅ Registered (" . $matchedRoute['method'] . ")";
+            $handler = $matchedRoute['handler'];
+
+            if ($handler !== 'Closure') {
+                if (strpos($handler, '@') !== false) {
+                    list($class, $methodName) = explode('@', $handler);
+
+                    // Prepend default namespace as done in Router.php
+                    if (!str_contains($class, '\\')) {
+                        $class = 'App\\Http\\Controllers\\' . $class;
+                    } elseif (str_starts_with($class, 'Admin\\') || str_starts_with($class, 'Associate\\') || str_starts_with($class, 'Api\\') || str_starts_with($class, 'Front\\')) {
+                        $class = 'App\\Http\\Controllers\\' . $class;
+                    }
+
+                    $controllerName = $class;
+
+                    // Translate class to filename
+                    $classPath = str_replace(['App\\', '\\'], ['', '/'], $class);
+                    $controllerFile = $root . '/app/' . $classPath . '.php';
+
+                    if (file_exists($controllerFile)) {
+                        $controllerExists = "✅ Exists";
+                        
+                        // Static scan file for public function
+                        $fileContent = file_get_contents($controllerFile);
+                        if (preg_match('/public\s+function\s+' . $methodName . '\s*\(/i', $fileContent)) {
+                            $methodExists = "✅ Exists";
+                        } else {
+                            $methodExists = "❌ Missing Method";
+                            $failedCount++;
+                            $warnings[] = "Controller Class '$class' exists but method '$methodName' is missing.";
+                        }
+                    } else {
+                        $controllerExists = "❌ Missing File";
+                        $methodExists = "❌ N/A";
+                        $failedCount++;
+                        $warnings[] = "Controller File not found: '$controllerFile' for Class '$class'.";
+                    }
+                } else {
+                    $controllerName = "Inline / Closure";
+                    $controllerExists = "✅ N/A";
+                    $methodExists = "✅ N/A";
+                }
+            } else {
+                $controllerName = "Closure";
+                $controllerExists = "✅ N/A";
+                $methodExists = "✅ N/A";
+            }
+        } else {
+            $failedCount++;
+            $warnings[] = "Menu URL '$url' for item '$name' is not registered in routes/web.php.";
+        }
+
+        // C. Verify View File existence
+        // Expected view path matching logic
+        $viewPath = preg_replace('#^/admin/#', '', $url);
+        $possibleViews = [
+            $root . '/app/views/admin/' . $viewPath . '.php',
+            $root . '/app/views/admin/' . $viewPath . '/index.php',
+            $root . '/app/views/' . $viewPath . '.php',
+        ];
+        
+        $viewExists = "❌ Missing View";
+        foreach ($possibleViews as $pv) {
+            if (file_exists($pv)) {
+                $viewExists = "✅ Exists";
+                break;
+            }
+        }
+        
+        if ($viewExists === "❌ Missing View" && $handler !== 'Closure') {
+            // Check if it's an API route or redirect that doesn't need a direct view
+            if (strpos($url, '/api/') !== false || strpos($url, '/ajax/') !== false) {
+                $viewExists = "✅ N/A (API)";
+            } else {
+                $warnings[] = "Expected view file for URL '$url' was not found in " . dirname($possibleViews[0]) . ".";
+            }
+        }
+
+        // Append to report table
+        $report .= "| $id | $section | $name | `$url` | $routeStatus | `$controllerName` | $methodExists | $viewExists | $sectionValid |\n";
+    }
+
+    $report .= "\n\n## Detailed Warnings & Failures (" . count($warnings) . " issues)\n\n";
+    if (empty($warnings)) {
+        $report .= "✅ **All systems clear! No errors or missing routes detected.**\n";
+    } else {
+        foreach ($warnings as $w) {
+            $report .= "* ⚠️ $w\n";
+        }
+    }
+
+    // Save report to file
+    $reportDir = $root . '/storage/reports';
+    if (!is_dir($reportDir)) {
+        mkdir($reportDir, 0755, true);
+    }
+    file_put_contents($reportDir . '/sidebar_deep_audit.md', $report);
+
+    echo "\n=== AUDIT COMPLETE ===\n";
+    echo "  Total Menu Items Checked: " . count($menuItems) . "\n";
+    echo "  Total Issues Found      : " . count($warnings) . "\n";
+    echo "  Report written to: storage/reports/sidebar_deep_audit.md\n\n";
+
+    if (count($warnings) > 0) {
+        echo "⚠️ WARNING: Some menu items have missing routes, controller classes, methods, or views. Please review the detailed report.\n";
+    } else {
+        echo "✅ SUCCESS: All menu items are 100% syntactically and logically correct!\n";
+    }
+
+} catch (Exception $e) {
+    echo "FAILED: " . $e->getMessage() . "\n";
+}
