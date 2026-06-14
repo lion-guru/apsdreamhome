@@ -261,6 +261,95 @@ $dashBookingCount = count($dashBookings);
         </div>
         <?php endif; ?>
 
+        <?php if (!empty($paymentSummary) && (($paymentSummary['total_overdue'] ?? 0) > 0 || ($paymentSummary['total_accrued_penalties'] ?? 0) > 0)): ?>
+        <div class="aps-cp-card mb-4" style="border-left: 4px solid #ef4444;">
+            <div class="aps-cp-card-header" style="background: #fef2f2;">
+                <h5><i class="fas fa-exclamation-triangle text-danger"></i> Payment Alerts</h5>
+                <span class="badge bg-danger"><?= ($paymentSummary['total_overdue'] ?? 0) ?> overdue</span>
+            </div>
+            <div class="aps-cp-card-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-4">
+                        <div class="aps-cp-stat aps-cp-stat--red" style="border-radius:10px;">
+                            <div class="aps-cp-stat-body">
+                                <div class="aps-cp-stat-value" style="font-size:1.2rem;">₹<?= number_format($paymentSummary['total_overdue_amount'] ?? 0) ?></div>
+                                <div class="aps-cp-stat-label">Overdue Amount</div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php if (($paymentSummary['total_accrued_penalties'] ?? 0) > 0): ?>
+                    <div class="col-sm-4">
+                        <div class="aps-cp-stat" style="border-left-color:#f59e0b; border-radius:10px;">
+                            <div class="aps-cp-stat-body">
+                                <div class="aps-cp-stat-value" style="font-size:1.2rem; color:#f59e0b;">₹<?= number_format($paymentSummary['total_accrued_penalties'] ?? 0) ?></div>
+                                <div class="aps-cp-stat-label">Accrued Penalties (18% p.a.)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (($paymentSummary['worst_overdue_days'] ?? 0) > 0): ?>
+                    <div class="col-sm-4">
+                        <div class="aps-cp-stat" style="border-left-color:#dc2626; border-radius:10px;">
+                            <div class="aps-cp-stat-body">
+                                <div class="aps-cp-stat-value" style="font-size:1.2rem; color:#dc2626;"><?= (int)($paymentSummary['worst_overdue_days'] ?? 0) ?> days</div>
+                                <div class="aps-cp-stat-label">Longest Overdue</div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
+                <?php if (!empty($paymentSummary['overdue_installments'])): ?>
+                <div class="table-responsive">
+                    <table class="aps-cp-table aps-cp-table--compact">
+                        <thead>
+                            <tr>
+                                <th>Booking</th>
+                                <th>Plot</th>
+                                <th>Installment</th>
+                                <th>Due Date</th>
+                                <th class="text-end">Amount</th>
+                                <th class="text-end">Penalty</th>
+                                <th>Days</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($paymentSummary['overdue_installments'] as $inst): ?>
+                            <tr>
+                                <td><small><?= htmlspecialchars($inst['booking_number'] ?? '') ?></small></td>
+                                <td><small><?= htmlspecialchars($inst['plot_number'] ?? '') ?></small></td>
+                                <td>#<?= (int)($inst['installment_no'] ?? 0) ?></td>
+                                <td><?= date('d M Y', strtotime($inst['due_date'] ?? 'now')) ?></td>
+                                <td class="text-end">₹<?= number_format((float)($inst['amount'] ?? 0)) ?></td>
+                                <td class="text-end text-danger">₹<?= number_format((float)($inst['accrued_penalty'] ?? 0)) ?></td>
+                                <td><span class="badge bg-danger"><?= (int)($inst['days_overdue'] ?? 0) ?>d</span></td>
+                                <td>
+                                    <a href="<?= BASE_URL ?>/user/installments/<?= (int)($inst['id'] ?? 0) ?>/pay" class="btn btn-sm btn-success">
+                                        <i class="fas fa-credit-card me-1"></i>Pay
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($paymentSummary['nach_mandate'])): ?>
+                <div class="d-flex align-items-center gap-2 mt-3 p-2" style="background: #f0fdf4; border-radius: 8px;">
+                    <i class="fas fa-university text-success"></i>
+                    <span class="text-success fw-semibold">NACH Auto-Debit Active</span>
+                    <span class="text-muted ms-auto">
+                        Next debit: <?= date('d M Y', strtotime($paymentSummary['nach_mandate']['next_debit_date'] ?? 'now')) ?>
+                        &mdash; ₹<?= number_format((float)($paymentSummary['nach_mandate']['mandate_amount'] ?? 0)) ?>/mo
+                    </span>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <div class="aps-cp-card mb-4">
             <div class="aps-cp-card-header">
                 <h5><i class="fas fa-building text-primary"></i> <?= __('dash_section_my_properties', null, 'My Properties') ?></h5>

@@ -175,6 +175,15 @@ class UserController extends BaseController
             error_log("UserController.php: " . $e->getMessage());
         }
 
+        // ── Payment summary: penalties + NACH + upcoming installments ──
+        $paymentSummary = null;
+        try {
+            $bls = new BookingLifecycleService();
+            $paymentSummary = $bls->getCustomerPaymentSummary((int)$user['id']);
+        } catch (\Throwable $e) {
+            error_log("UserController::dashboard - paymentSummary: " . $e->getMessage());
+        }
+
         $data = [
             'page_title' => 'My Dashboard - APS Dream Home',
             'page_description' => 'Manage your properties and inquiries',
@@ -203,6 +212,7 @@ class UserController extends BaseController
             'twoFactorEnabled' => $twoFactorEnabled,
             'savedCount' => $savedCount,
             'kycStatus' => $kycStatus ?? 'not_started',
+            'paymentSummary' => $paymentSummary,
         ];
 
         $this->layout = 'layouts/customer';

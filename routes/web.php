@@ -331,6 +331,17 @@ $router->get('/user/bookings/{id}/esign',          'Front\\BookingController@esi
 $router->post('/user/bookings/{id}/esign/initiate', 'Front\\BookingController@initiateEsign');
 $router->post('/webhook/esign',                    'Front\\BookingController@esignWebhook');
 
+// ── Plot Lock (30-min reservation) ────────────────────────────
+$router->post('/plots/{id}/lock',   'Front\\BookingController@lockPlot');
+$router->post('/plots/{id}/unlock', 'Front\\BookingController@unlockPlot');
+
+// ── KYC Verification (pre-booking) ────────────────────────────
+$router->post('/plots/{id}/verify-kyc', 'Front\\BookingController@verifyKyc');
+
+// ── NACH Mandate Registration ─────────────────────────────────
+$router->get('/user/bookings/{id}/nach',              'Front\\BookingController@nachMandate');
+$router->post('/user/bookings/{id}/nach/register',    'Front\\BookingController@registerNachMandate');
+
 $router->get('/plot/{id}', 'Front\\PlotController@show');
 $router->get('/plot/{id}/book', 'Front\\PlotController@bookPlot');
 $router->post('/plot/book', 'Front\\PlotController@storeBooking');

@@ -446,4 +446,243 @@ class BookingController extends BaseController
             echo json_encode(['success' => false, 'error' => 'Internal error']);
         }
     }
+
+    /* ────────────────────────────────────────────────────────────── */
+    /*  PLOT LOCK (30-min reservation)                                */
+    /* ────────────────────────────────────────────────────────────── */
+
+    /**
+     * AJAX: Lock a plot for 30 minutes while customer fills booking form.
+     * POST /plots/{id}/lock
+     * Returns JSON: { success, lock_id, expires_at }
+     */
+    public function lockPlot($id)
+    {
+        $this->requireLogin();
+        $user = $this->getUser();
+        $id = intval($id);
+
+        $token = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Invalid CSRF token'], 403);
+        }
+
+        $plot = $this->db->fetchRow("SELECT * FROM plots WHERE id = ? AND status = 'available' AND is_active = 1", [$id]);
+        if (!$plot) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Plot is no longer available.'], 404);
+        }
+
+        // Expire old locks for this user
+        try {
+            $this->db->execute(
+                "DELETE FROM plot_locks WHERE user_id = ? AND plot_id = ? AND expires_at > NOW()",
+                [$user['id'], $id]
+            );
+        } catch (\Throwable $e) {
+            // table may not exist
+        }
+
+        // Release expired locks on this plot
+        try {
+            $this->db->execute("DELETE FROM plot_locks WHERE plot_id = ? AND expires_at <= NOW()", [$id]);
+        } catch (\Throwable $e) {
+            // table may not exist
+        }
+
+        // Check if another user holds an active lock
+        try {
+            $existingLock = $this->db->fetchRow(
+                "SELECT * FROM plot_locks WHERE plot_id = ? AND expires_at > NOW() AND user_id != ?",
+                [$id, $user['id']]
+            );
+            if ($existingLock) {
+                $remaining = round((strtotime($existingLock['expires_at']) - time()) / 60);
+                return $this->jsonResponse([
+                    'success' => false,
+                    'error'   => "This plot is currently locked by another customer. Please try again in {$remaining} minutes.",
+                ], 409);
+            }
+        } catch (\Throwable $e) {
+            // table may not exist, proceed
+        }
+
+        $expiresAt = date('Y-m-d H:i:s', time() + 1800); // 30 minutes
+
+        try {
+            $this->db->execute(
+                "INSERT INTO plot_locks (plot_id, user_id, locked_at, expires_at, status) VALUES (?, ?, NOW(), ?, 'active')",
+                [$id, $user['id'], $expiresAt]
+            );
+            $lockId = $this->db->lastInsertId();
+        } catch (\Throwable $e) {
+            // If table doesn't exist, skip locking — just proceed
+            error_log('[BookingController::lockPlot] plot_locks table missing: ' . $e->getMessage());
+            return $this->jsonResponse([
+                'success'  => true,
+                'lock_id'  => 0,
+                'expires_at' => $expiresAt,
+                'message'  => 'Proceeding without reservation lock.',
+            ]);
+        }
+
+        return $this->jsonResponse([
+            'success'    => true,
+            'lock_id'    => (int)$lockId,
+            'expires_at' => $expiresAt,
+        ]);
+    }
+
+    /**
+     * AJAX: Release a plot lock (on page close or navigation).
+     * POST /plots/{id}/unlock
+     */
+    public function unlockPlot($id)
+    {
+        $this->requireLogin();
+        $user = $this->getUser();
+        $id = intval($id);
+
+        try {
+            $this->db->execute(
+                "UPDATE plot_locks SET status = 'released' WHERE plot_id = ? AND user_id = ? AND status = 'active'",
+                [$id, $user['id']]
+            );
+        } catch (\Throwable $e) {
+            // graceful
+        }
+
+        return $this->jsonResponse(['success' => true]);
+    }
+
+    /* ────────────────────────────────────────────────────────────── */
+    /*  NACH MANDATE REGISTRATION                                     */
+    /* ────────────────────────────────────────────────────────────── */
+
+    /**
+     * Show NACH mandate registration form.
+     * GET /user/bookings/{id}/nach
+     */
+    public function nachMandate($id)
+    {
+        $this->requireLogin();
+        $user = $this->getUser();
+        $id = intval($id);
+
+        $booking = $this->db->fetchRow("
+            SELECT pb.*, p.plot_number, p.block, c.name AS colony_name
+            FROM plot_bookings pb
+            LEFT JOIN plots p ON pb.plot_id = p.id
+            LEFT JOIN colonies c ON p.colony_id = c.id
+            WHERE pb.id = ? AND pb.customer_id = ?
+        ", [$id, $user['id']]);
+
+        if (!$booking) {
+            $this->setFlash('error', 'Booking not found.');
+            return $this->redirect('/user/dashboard');
+        }
+
+        $mandate = null;
+        try {
+            $bls = new BookingLifecycleService();
+            $mandate = $bls->getNachMandate($id);
+        } catch (\Throwable $e) {
+            // graceful
+        }
+
+        $this->layout = 'layouts/customer';
+        $this->render('pages/booking/nach-mandate', [
+            'page_title' => 'NACH Mandate - APS Dream Home',
+            'booking'    => $booking,
+            'mandate'    => $mandate,
+            'user'       => $user,
+        ]);
+    }
+
+    /**
+     * POST: Register NACH mandate for a booking.
+     * POST /user/bookings/{id}/nach/register
+     */
+    public function registerNachMandate($id)
+    {
+        $this->requireLogin();
+        $user = $this->getUser();
+        $id = intval($id);
+
+        $token = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            $this->setFlash('error', 'Invalid security token.');
+            return $this->redirect('/user/bookings/' . $id . '/nach');
+        }
+
+        $bankName     = trim($_POST['bank_name'] ?? '');
+        $accountNo    = trim($_POST['account_number'] ?? '');
+        $ifscCode     = trim($_POST['ifsc_code'] ?? '');
+        $accountHolder = trim($_POST['account_holder_name'] ?? '');
+        $mandateType  = $_POST['mandate_type'] ?? 'emandate';
+        $amount       = floatval($_POST['mandate_amount'] ?? 0);
+
+        if (empty($bankName) || empty($accountNo) || empty($ifscCode) || $amount <= 0) {
+            $this->setFlash('error', 'Please fill all required fields.');
+            return $this->redirect('/user/bookings/' . $id . '/nach');
+        }
+
+        try {
+            $bls = new BookingLifecycleService();
+            $result = $bls->registerNachMandate($id, [
+                'bank_name'        => $bankName,
+                'account_number'   => $accountNo,
+                'ifsc_code'        => $ifscCode,
+                'account_holder'   => $accountHolder,
+                'mandate_type'     => $mandateType,
+                'mandate_amount'   => $amount,
+                'frequency'        => 'monthly',
+            ]);
+
+            if ($result['success']) {
+                $this->setFlash('success', 'NACH mandate registered successfully. You will receive confirmation from your bank within 2-3 business days.');
+                return $this->redirect('/user/bookings/' . $id . '/nach');
+            } else {
+                $this->setFlash('error', $result['error'] ?? 'Failed to register mandate.');
+                return $this->redirect('/user/bookings/' . $id . '/nach');
+            }
+        } catch (\Throwable $e) {
+            error_log('[BookingController::registerNachMandate] ' . $e->getMessage());
+            $this->setFlash('error', 'Something went wrong. Please try again.');
+            return $this->redirect('/user/bookings/' . $id . '/nach');
+        }
+    }
+
+    /**
+     * AJAX: Verify KYC before booking submission.
+     * POST /plots/{id}/verify-kyc
+     */
+    public function verifyKyc($id)
+    {
+        $this->requireLogin();
+        $user = $this->getUser();
+
+        try {
+            $stmt = $this->db->prepare("SELECT status FROM kyc_requests WHERE user_id = ? ORDER BY id DESC LIMIT 1");
+            $stmt->execute([$user['id']]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $status = $row['status'] ?? 'not_started';
+
+            $isVerified = in_array($status, ['approved', 'verified'], true);
+            return $this->jsonResponse([
+                'success'   => true,
+                'verified'  => $isVerified,
+                'status'    => $status,
+                'message'   => $isVerified
+                    ? 'KYC verified.'
+                    : 'KYC not yet verified. Please complete KYC to proceed with booking.',
+            ]);
+        } catch (\Throwable $e) {
+            return $this->jsonResponse([
+                'success'  => true,
+                'verified' => false,
+                'status'   => 'unknown',
+                'message'  => 'KYC status could not be determined.',
+            ]);
+        }
+    }
 }
