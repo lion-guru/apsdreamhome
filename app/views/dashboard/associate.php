@@ -203,8 +203,8 @@ $notifications = $notifications ?? [];
                                         <?php endif; ?>
                                     </div>
                                     <div class="notification-content flex-grow-1">
-                                        <div class="small"><?= htmlspecialchars($notification['message']) ?></div>
-                                        <small class="text-muted"><?= htmlspecialchars($notification['time']) ?></small>
+                                        <div class="small"><?= htmlspecialchars($notification['message'] ?? '') ?></div>
+                                        <small class="text-muted"><?= htmlspecialchars($notification['time'] ?? '') ?></small>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

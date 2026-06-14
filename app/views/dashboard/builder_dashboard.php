@@ -128,12 +128,12 @@ $stats = [
                         $result = [];
                         foreach ($result as $row): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($row['project_name']); ?></td>
-                                <td><?php echo htmlspecialchars($row['status']); ?></td>
-                                <td><?php echo htmlspecialchars($row['description']); ?></td>
-                                <td><?php echo htmlspecialchars($row['start_date']); ?></td>
-                                <td><?php echo htmlspecialchars($row['end_date']); ?></td>
-                                <td><?php echo htmlspecialchars($row['budget']); ?></td>
+                                <td><?php echo htmlspecialchars($row['project_name'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($row['status'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($row['description'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($row['start_date'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($row['end_date'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($row['budget'] ?? ''); ?></td>
                                 <td>
                                     <a href="edit_project.php?id=<?php echo $row['bid']; ?>" class="btn btn-sm btn-info">Edit</a>
                                     <a href="delete_project.php?id=<?php echo $row['bid']; ?>" class="btn btn-sm btn-danger">Delete</a>

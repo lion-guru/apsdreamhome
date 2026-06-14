@@ -23,7 +23,7 @@
 
   <?php if ($result): ?>
     <?php if (isset($result['error'])): ?>
-      <div class="alert alert-danger"><?= htmlspecialchars($result['error']) ?></div>
+      <div class="alert alert-danger"><?= htmlspecialchars($result['error'] ?? '') ?></div>
     <?php else: ?>
       <div class="card aps-cp-card">
         <div class="card-header aps-cp-card-header"><strong>Results</strong> — <?= $result['row_count'] ?? 0 ?> rows</div>

@@ -157,9 +157,9 @@ $gamify = $gamify ?? [];
                         <tbody>
                             <?php foreach ($recent_leads as $lead): ?>
                                 <tr>
-                                    <td><strong><?php echo htmlspecialchars($lead['name']); ?></strong></td>
-                                    <td><?php echo htmlspecialchars($lead['phone']); ?></td>
-                                    <td><?php echo htmlspecialchars($lead['type']); ?></td>
+                                    <td><strong><?php echo htmlspecialchars($lead['name'] ?? ''); ?></strong></td>
+                                    <td><?php echo htmlspecialchars($lead['phone'] ?? ''); ?></td>
+                                    <td><?php echo htmlspecialchars($lead['type'] ?? ''); ?></td>
                                     <td>
                                         <span class="badge bg-<?php echo $lead['status'] === 'hot' ? 'danger' : ($lead['status'] === 'warm' ? 'warning' : 'secondary'); ?>">
                                             <?php echo ucfirst($lead['status']); ?>

@@ -57,7 +57,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <small class="text-muted">
                         Generated: <?= htmlspecialchars((string)($letter['generated_date'] ?? '')) ?>
                         <?php if (!empty($letter['sent_at'])): ?>
-                            &middot; Sent: <?= htmlspecialchars((string)$letter['sent_at']) ?>
+                            &middot; Sent: <?= htmlspecialchars($letter['sent_at'] ?? '') ?>
                         <?php else: ?>
                             &middot; <em>Draft — not sent</em>
                         <?php endif; ?>

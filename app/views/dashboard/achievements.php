@@ -63,8 +63,8 @@ $page_title = 'My Achievements - APS Dream Home';
                                 <div class="card border-<?= $badge['color'] ?> h-100">
                                     <div class="card-body text-center">
                                         <i class="fas fa-<?= $badge['icon'] ?> fa-2x text-<?= $badge['color'] ?> mb-2"></i>
-                                        <h6 class="mb-1"><?= htmlspecialchars($badge['name']) ?></h6>
-                                        <small class="text-muted"><?= htmlspecialchars($badge['description']) ?></small>
+                                        <h6 class="mb-1"><?= htmlspecialchars($badge['name'] ?? '') ?></h6>
+                                        <small class="text-muted"><?= htmlspecialchars($badge['description'] ?? '') ?></small>
                                         <br><small class="text-muted">Awarded <?= date('M d, Y', strtotime($badge['awarded_at'])) ?></small>
                                     </div>
                                 </div>
@@ -91,8 +91,8 @@ $page_title = 'My Achievements - APS Dream Home';
                             <div class="card bg-light h-100 opacity-75">
                                 <div class="card-body text-center">
                                     <i class="fas fa-<?= $badge['icon'] ?> fa-2x text-muted mb-2"></i>
-                                    <h6 class="mb-1 text-muted"><?= htmlspecialchars($badge['name']) ?></h6>
-                                    <small class="text-muted"><?= htmlspecialchars($badge['description']) ?></small>
+                                    <h6 class="mb-1 text-muted"><?= htmlspecialchars($badge['name'] ?? '') ?></h6>
+                                    <small class="text-muted"><?= htmlspecialchars($badge['description'] ?? '') ?></small>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +116,7 @@ $page_title = 'My Achievements - APS Dream Home';
                             <div class="d-flex align-items-center">
                                 <span class="badge bg-<?= $index < 3 ? 'warning' : 'secondary' ?> me-2">#<?= $index + 1 ?></span>
                                 <div>
-                                    <h6 class="mb-0"><?= htmlspecialchars($user['name']) ?></h6>
+                                    <h6 class="mb-0"><?= htmlspecialchars($user['name'] ?? '') ?></h6>
                                     <small class="text-muted"><?= $user['badge_count'] ?> badges</small>
                                 </div>
                             </div>

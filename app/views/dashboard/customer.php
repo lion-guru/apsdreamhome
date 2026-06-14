@@ -80,9 +80,9 @@ $page_description = $page_description ?? 'Your personalized real estate dashboar
         <div class="dashboard-header animate-fade-in">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1 class="fw-bold mb-2">Hello, <?php echo htmlspecialchars($user['name']); ?>!</h1>
+                    <h1 class="fw-bold mb-2">Hello, <?php echo htmlspecialchars($user['name'] ?? ''); ?>!</h1>
                     <p class="mb-0 opacity-75">
-                        <i class="fas fa-id-badge me-2"></i><?php echo htmlspecialchars($user['customer_id']); ?> 
+                        <i class="fas fa-id-badge me-2"></i><?php echo htmlspecialchars($user['customer_id'] ?? ''); ?> 
                         <span class="mx-2">|</span> 
                         <i class="fas fa-calendar-alt me-2"></i>Member since <?php echo date('M Y', strtotime($user['join_date'])); ?>
                     </p>
@@ -147,11 +147,11 @@ $page_description = $page_description ?? 'Your personalized real estate dashboar
                                     </div>
                                     <div class="flex-grow-1">
                                         <p class="mb-0 fw-medium">
-                                            <?php echo htmlspecialchars($activity['property']); ?>
+                                            <?php echo htmlspecialchars($activity['property'] ?? ''); ?>
                                         </p>
-                                        <small class="text-muted"><?php echo htmlspecialchars($activity['type'] === 'favorite' ? 'Added to favorites' : ($activity['type'] === 'inquiry' ? 'Sent an inquiry' : 'Viewed recently')); ?></small>
+                                        <small class="text-muted"><?php echo htmlspecialchars(($activity['type'] ?? '') === 'favorite' ? 'Added to favorites' : (($activity['type'] ?? '') === 'inquiry' ? 'Sent an inquiry' : 'Viewed recently')); ?></small>
                                     </div>
-                                    <small class="text-muted"><?php echo htmlspecialchars($activity['date']); ?></small>
+                                    <small class="text-muted"><?php echo htmlspecialchars($activity['date'] ?? ''); ?></small>
                                 </div>
                             <?php endforeach; ?>
                         <?php else: ?>
@@ -170,11 +170,11 @@ $page_description = $page_description ?? 'Your personalized real estate dashboar
                     <?php if (!empty($favorite_properties)): ?>
                         <?php foreach ($favorite_properties as $property): ?>
                             <div class="d-flex align-items-center p-3 mb-3 bg-white bg-opacity-50 rounded-4 border">
-                                <img src="<?php echo htmlspecialchars($property['image'] ?? ''); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" class="rounded-3 me-3" style="width:60px;height:60px;object-fit:cover" loading="lazy">
+                                <img src="<?php echo htmlspecialchars($property['image'] ?? ''); ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="rounded-3 me-3" style="width:60px;height:60px;object-fit:cover" loading="lazy">
                                 <div class="flex-grow-1 overflow-hidden">
-                                    <h6 class="mb-1 text-truncate fw-bold"><?php echo htmlspecialchars($property['title']); ?></h6>
-                                    <p class="text-muted small mb-0 text-truncate"><?php echo htmlspecialchars($property['location']); ?></p>
-                                    <p class="text-primary fw-bold small mb-0"><?php echo htmlspecialchars($property['price']); ?></p>
+                                    <h6 class="mb-1 text-truncate fw-bold"><?php echo htmlspecialchars($property['title'] ?? ''); ?></h6>
+                                    <p class="text-muted small mb-0 text-truncate"><?php echo htmlspecialchars($property['location'] ?? ''); ?></p>
+                                    <p class="text-primary fw-bold small mb-0"><?php echo htmlspecialchars($property['price'] ?? ''); ?></p>
                                 </div>
                                 <a href="/property/<?php echo $property['id']; ?>" class="btn btn-sm btn-light rounded-circle shadow-sm ms-2"><i class="fas fa-arrow-right"></i></a>
                             </div>
@@ -198,12 +198,12 @@ $page_description = $page_description ?? 'Your personalized real estate dashboar
                     <div class="col-md-3">
                         <div class="glass-card p-0 overflow-hidden">
                             <div class="position-relative">
-                                <img src="<?php echo htmlspecialchars($property['image'] ?? ''); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" class="w-100" style="height:200px;object-fit:cover" loading="lazy">
-                                <span class="badge bg-white text-dark position-absolute top-0 end-0 m-3 shadow-sm rounded-pill py-2 px-3 fw-bold"><?php echo htmlspecialchars($property['price']); ?></span>
+                                <img src="<?php echo htmlspecialchars($property['image'] ?? ''); ?>" alt="<?php echo htmlspecialchars($property['title'] ?? ''); ?>" class="w-100" style="height:200px;object-fit:cover" loading="lazy">
+                                <span class="badge bg-white text-dark position-absolute top-0 end-0 m-3 shadow-sm rounded-pill py-2 px-3 fw-bold"><?php echo htmlspecialchars($property['price'] ?? ''); ?></span>
                             </div>
                             <div class="p-4">
-                                <h6 class="fw-bold mb-1"><?php echo htmlspecialchars($property['title']); ?></h6>
-                                <p class="text-muted small mb-3"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($property['location']); ?></p>
+                                <h6 class="fw-bold mb-1"><?php echo htmlspecialchars($property['title'] ?? ''); ?></h6>
+                                <p class="text-muted small mb-3"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($property['location'] ?? ''); ?></p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <button class="btn btn-sm btn-outline-danger border-0 rounded-circle"><i class="far fa-heart"></i></button>
                                     <a href="/property/<?php echo $property['id']; ?>" class="btn btn-primary btn-sm rounded-pill px-3 fw-medium">View Details</a>

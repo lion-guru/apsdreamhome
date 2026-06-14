@@ -21,7 +21,7 @@ unset($_SESSION['bulk_result']);
       </div>
     <?php else: ?>
       <div class="alert alert-danger alert-dismissible fade show">
-        <strong>Import failed:</strong> <?= htmlspecialchars($result['error']) ?>
+        <strong>Import failed:</strong> <?= htmlspecialchars($result['error'] ?? '') ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     <?php endif; ?>

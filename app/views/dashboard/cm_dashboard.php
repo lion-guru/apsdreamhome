@@ -121,8 +121,8 @@ $admin_role = $_SESSION['admin_role'] ?? 'cm';
                                                 <?= strtoupper(substr($member['name'], 0, 2)) ?>
                                             </div>
                                             <div>
-                                                <div class="member-name"><?= htmlspecialchars($member['name']) ?></div>
-                                                <small class="text-white-50"><?= htmlspecialchars($member['email']) ?></small>
+                                                <div class="member-name"><?= htmlspecialchars($member['name'] ?? '') ?></div>
+                                                <small class="text-white-50"><?= htmlspecialchars($member['email'] ?? '') ?></small>
                                             </div>
                                         </div>
                                     </td>
@@ -203,7 +203,7 @@ $admin_role = $_SESSION['admin_role'] ?? 'cm';
                         <div class="activity-item">
                             <div class="activity-dot <?= $this->getActivityClass($activity['activity_type']) ?>"></div>
                             <div class="activity-content">
-                                <div class="activity-text"><?= htmlspecialchars($activity['description']) ?></div>
+                                <div class="activity-text"><?= htmlspecialchars($activity['description'] ?? '') ?></div>
                                 <small class="text-white-50"><?= date('M j, Y H:i', strtotime($activity['created_at'])) ?></small>
                             </div>
                         </div>

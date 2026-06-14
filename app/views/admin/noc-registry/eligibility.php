@@ -68,15 +68,15 @@ $booking_id = $booking_id ?? 0;
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <div class="text-muted small"><?= __('admin_booking_label') ?></div>
-                                <div class="fw-semibold small"><?= htmlspecialchars($result['booking']['booking_number']) ?></div>
+                                <div class="fw-semibold small"><?= htmlspecialchars($result['booking']['booking_number'] ?? '') ?></div>
                             </div>
                             <div class="col-6">
                                 <div class="text-muted small"><?= __('admin_customer_label') ?></div>
-                                <div class="fw-semibold small"><?= htmlspecialchars($result['booking']['customer_name']) ?></div>
+                                <div class="fw-semibold small"><?= htmlspecialchars($result['booking']['customer_name'] ?? '') ?></div>
                             </div>
                             <div class="col-6">
                                 <div class="text-muted small"><?= __('admin_plot_label') ?></div>
-                                <div class="fw-semibold small"><?= htmlspecialchars($result['booking']['plot_no']) ?></div>
+                                <div class="fw-semibold small"><?= htmlspecialchars($result['booking']['plot_no'] ?? '') ?></div>
                             </div>
                             <div class="col-6">
                                 <div class="text-muted small"><?= __('admin_status_label') ?></div>
