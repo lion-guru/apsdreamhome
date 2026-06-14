@@ -34,11 +34,11 @@ class EngagementController extends AdminController
             // Get engagement metrics
             $sql = "SELECT 
                         COUNT(*) as total_users,
-                        COUNT(CASE WHEN last_login >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as active_users,
-                        COUNT(CASE WHEN last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as monthly_active,
+                        COUNT(CASE WHEN last_login_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as active_users,
+                        COUNT(CASE WHEN last_login_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as monthly_active,
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users,
                         COUNT(CASE WHEN role = 'associate' THEN 1 END) as total_associates,
-                        COUNT(CASE WHEN role = 'associate' AND last_login >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as active_associates
+                        COUNT(CASE WHEN role = 'associate' AND last_login_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as active_associates
                     FROM users";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
@@ -47,9 +47,9 @@ class EngagementController extends AdminController
             // Get sales metrics
             $sql = "SELECT 
                         COUNT(*) as total_sales,
-                        COALESCE(SUM(amount), 0) as total_revenue,
+                        COALESCE(SUM(sale_amount), 0) as total_revenue,
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as sales_this_month,
-                        COALESCE(SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN amount END), 0) as revenue_this_month
+                        COALESCE(SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN sale_amount END), 0) as revenue_this_month
                     FROM sales";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
@@ -70,7 +70,7 @@ class EngagementController extends AdminController
             $sql = "SELECT 
                         COUNT(*) as total_network_connections,
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_connections,
-                        AVG(CASE WHEN parent_id IS NOT NULL THEN 1 ELSE 0 END) * 100 as network_participation_rate
+                        AVG(CASE WHEN referred_by IS NOT NULL THEN 1 ELSE 0 END) * 100 as network_participation_rate
                     FROM users";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
@@ -301,8 +301,8 @@ class EngagementController extends AdminController
             // User engagement metrics
             $sql = "SELECT 
                         COUNT(*) as total_users,
-                        COUNT(CASE WHEN last_login >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as active_users,
-                        COUNT(CASE WHEN last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as monthly_active,
+                        COUNT(CASE WHEN last_login_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as active_users,
+                        COUNT(CASE WHEN last_login_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as monthly_active,
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users
                     FROM users";
             $stmt = $this->db->query($sql);
@@ -312,9 +312,9 @@ class EngagementController extends AdminController
             // Sales performance metrics
             $sql = "SELECT 
                         COUNT(*) as total_sales,
-                        COALESCE(SUM(amount), 0) as total_revenue,
+                        COALESCE(SUM(sale_amount), 0) as total_revenue,
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as sales_this_month,
-                        COALESCE(SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN amount END), 0) as revenue_this_month
+                        COALESCE(SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN sale_amount END), 0) as revenue_this_month
                     FROM sales";
             $stmt = $this->db->query($sql);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -324,7 +324,7 @@ class EngagementController extends AdminController
             $sql = "SELECT 
                         COUNT(*) as total_network,
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_connections,
-                        AVG(CASE WHEN parent_id IS NOT NULL THEN 1 ELSE 0 END) * 100 as participation_rate
+                        AVG(CASE WHEN referred_by IS NOT NULL THEN 1 ELSE 0 END) * 100 as participation_rate
                     FROM users";
             $stmt = $this->db->query($sql);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
