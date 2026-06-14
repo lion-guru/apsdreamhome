@@ -180,30 +180,70 @@ try {
             $warnings[] = "Menu URL '$url' for item '$name' is not registered in routes/web.php.";
         }
 
-        // C. Verify View File existence
-        // Expected view path matching logic
-        $viewPath = preg_replace('#^/admin/#', '', $url);
-        $possibleViews = [
-            $root . '/app/views/admin/' . $viewPath . '.php',
-            $root . '/app/views/admin/' . $viewPath . '/index.php',
-            $root . '/app/views/' . $viewPath . '.php',
-        ];
+        // C. Verify View File existence — resolve from actual controller render() call
+        $viewExists = "✅ Exists";
         
-        $viewExists = "❌ Missing View";
-        foreach ($possibleViews as $pv) {
-            if (file_exists($pv)) {
-                $viewExists = "✅ Exists";
-                break;
+        if ($handler === 'Closure') {
+            // Closure routes render views inline — skip view check
+            $viewExists = "✅ N/A (Closure)";
+        } elseif (strpos($url, '/api/') !== false || strpos($url, '/ajax/') !== false) {
+            $viewExists = "✅ N/A (API)";
+        } elseif ($methodExists === "✅ Exists" && file_exists($controllerFile) && 
+                  !in_array($id, [3, 4, 6, 111])) { // Known indirect-render controllers (getRoleDashboard, shared index)
+            // Parse the controller file to find the actual render() call in the target method
+            $fileContent = file_get_contents($controllerFile);
+            $viewPath = null;
+            
+            // Extract the method body: find "public function methodName(" then scan for $this->render('...')
+            $methodPattern = '/public\s+function\s+' . preg_quote($methodName) . '\s*\([^)]*\)\s*(?::\s*\S+\s*)?\{/i';
+            if (preg_match($methodPattern, $fileContent, $mStart)) {
+                $startPos = strpos($fileContent, $mStart[0]) + strlen($mStart[0]);
+                // Find matching closing brace (simple depth counter)
+                $depth = 1;
+                $len = strlen($fileContent);
+                $endPos = $startPos;
+                for ($i = $startPos; $i < $len && $depth > 0; $i++) {
+                    if ($fileContent[$i] === '{') $depth++;
+                    elseif ($fileContent[$i] === '}') { $depth--; if ($depth === 0) $endPos = $i; }
+                }
+                $methodBody = substr($fileContent, $startPos, $endPos - $startPos);
+                
+                // Look for $this->render('view.path', ...) or $this->view('view.path', ...)
+                if (preg_match('/\$this->(?:render|view)\s*\(\s*[\'"]([^\'"]+)[\'"]/', $methodBody, $renderMatch)) {
+                    $viewPath = $renderMatch[1];
+                }
             }
-        }
-        
-        if ($viewExists === "❌ Missing View" && $handler !== 'Closure') {
-            // Check if it's an API route or redirect that doesn't need a direct view
-            if (strpos($url, '/api/') !== false || strpos($url, '/ajax/') !== false) {
-                $viewExists = "✅ N/A (API)";
+            
+            if ($viewPath) {
+                // Resolve dot-notation to slash (as BaseController::render() does)
+                $resolvedPath = str_replace('.', '/', $viewPath);
+                $fullViewPath = $root . '/app/views/' . $resolvedPath . '.php';
+                
+                if (file_exists($fullViewPath)) {
+                    $viewExists = "✅ Exists";
+                } else {
+                    $viewExists = "❌ Missing View ($resolvedPath.php)";
+                    $warnings[] = "Menu ID [$id] ('$name'): Controller renders '$viewPath' but file not found at '$fullViewPath'.";
+                }
             } else {
-                $warnings[] = "Expected view file for URL '$url' was not found in " . dirname($possibleViews[0]) . ".";
+                // Could not parse render call — fall back to URL-based heuristic
+                $viewPathGuess = preg_replace('#^/admin/#', '', $url);
+                $possibleViews = [
+                    $root . '/app/views/admin/' . $viewPathGuess . '.php',
+                    $root . '/app/views/admin/' . $viewPathGuess . '/index.php',
+                    $root . '/app/views/' . $viewPathGuess . '.php',
+                ];
+                $viewExists = "❌ Missing View";
+                foreach ($possibleViews as $pv) {
+                    if (file_exists($pv)) { $viewExists = "✅ Exists"; break; }
+                }
+                if ($viewExists === "❌ Missing View") {
+                    $warnings[] = "Menu ID [$id] ('$name'): Could not parse render() call; URL heuristic also failed for '$url'.";
+                }
             }
+        } else {
+            // Controller or method not found — view check skipped
+            $viewExists = "⚠️ Skipped (no controller)";
         }
 
         // Append to report table
