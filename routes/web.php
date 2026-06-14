@@ -1195,15 +1195,7 @@ $router->get('/api/lead-stats', 'App\\Http\\Controllers\\AIController@leadStats'
 $router->get('/admin/ai-config', 'App\\Http\\Controllers\\AIController@configuration');
 $router->post('/admin/test-ai-api', 'App\\Http\\Controllers\\AIController@testAPI');
 
-$router->get('/senior-developer', 'App\\Http\\Controllers\\AIController@seniorDeveloper');
-$router->get('/senior-developer/status', 'App\\Http\\Controllers\\AIController@seniorDeveloperStatus');
-$router->post('/senior-developer/execute', 'App\\Http\\Controllers\\AIController@seniorDeveloperExecute');
-$router->get('/senior-developer/logs', 'App\\Http\\Controllers\\AIController@seniorDeveloperLogs');
-$router->get('/senior-developer/monitor', 'App\\Http\\Controllers\\AIController@seniorDeveloperMonitor');
-$router->get('/senior-developer/dashboard', 'App\\Http\\Controllers\\AIController@seniorDeveloperDashboard');
-$router->get('/senior-developer/unified', 'App\\Http\\Controllers\\AIController@seniorDeveloperUnified');
-$router->post('/senior-developer/save-code', 'App\\Http\\Controllers\\AIController@saveCode');
-$router->post('/senior-developer/run-code', 'App\\Http\\Controllers\\AIController@runCode');
+// senior-developer routes removed — 7 dead stubs + saveCode/runCode archived
 
 // ============================================================
 // API ROUTES
