@@ -153,17 +153,19 @@ class AdminMenuPermissionController extends AdminController
         $userId = (int)($_GET['user_id'] ?? 0);
         
         $db = \App\Core\Database\Database::getInstance();
+        $query = "
+            SELECT ump.*, mi.name as menu_name, mi.url as menu_url
+            FROM admin_user_menu_permissions ump
+            JOIN admin_menu_items mi ON ump.menu_item_id = mi.id
+            WHERE ump.user_id = ?
+        ";
         try {
-            $query = "
-                SELECT ump.*, mi.name as menu_name, mi.url as menu_url
-                FROM admin_user_menu_permissions ump
-                JOIN admin_menu_items mi ON ump.menu_item_id = mi.id
-                WHERE ump.user_id = ?
-            ";
+            $permissions = $db->fetchAll($query, [$userId]);
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
+            error_log("AdminMenuPermissionController::getUserPermissions error: " . $e->getMessage());
+            $permissions = [];
         }
-        $permissions = $db->fetchAll($query, [$userId]);
 
         echo json_encode(['success' => true, 'permissions' => $permissions]);
         exit;
