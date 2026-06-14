@@ -70,7 +70,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     
     <!-- CSRF Token -->
     <?php if (isset($_SESSION['csrf_token'])): ?>
-    <meta name="csrf-token" content="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES); ?>">
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES); ?>">
     <?php endif; ?>
     
     <!-- User ID for WebSocket auth -->
@@ -273,7 +273,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <script>
         window.NOTIFY_USER = {
             id: <?php echo isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : (isset($_SESSION['admin_id']) ? (int)$_SESSION['admin_id'] : 'null'); ?>,
-            role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? htmlspecialchars($_SESSION['role'], ENT_QUOTES) : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>'
+            role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? htmlspecialchars($_SESSION['role'] ?? '', ENT_QUOTES) : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>'
         };
     </script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-system.js"></script>

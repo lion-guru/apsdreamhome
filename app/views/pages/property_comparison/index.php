@@ -31,7 +31,7 @@ $view_count = $view_count ?? 0;
 <div class="container py-4">
     <?php if (!empty($_SESSION['comparison_error'])): ?>
         <div class="alert alert-warning alert-dismissible fade show">
-            <i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars($_SESSION['comparison_error']) ?>
+            <i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars($_SESSION['comparison_error'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <?php unset($_SESSION['comparison_error']); ?>
