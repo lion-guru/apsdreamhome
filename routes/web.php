@@ -3115,6 +3115,18 @@ $router->post('/admin/commission/payout', 'App\\Http\\Controllers\\Admin\\Commis
 $router->post('/admin/commission/action', 'App\\Http\\Controllers\\Admin\\CommissionController@processApproval');
 $router->post('/admin/commissions/processPayout', 'App\\Http\\Controllers\\Admin\\CommissionController@processPayout');
 
+// Commission Plans (CRUD + calculator)
+$router->get('/admin/commission-plans',                        'App\\Http\\Controllers\\Admin\\CommissionPlanController@index');
+$router->get('/admin/commission-plans/create',                 'App\\Http\\Controllers\\Admin\\CommissionPlanController@create');
+$router->post('/admin/commission-plans/store',                 'App\\Http\\Controllers\\Admin\\CommissionPlanController@store');
+$router->get('/admin/commission-plans/edit/{id}',              'App\\Http\\Controllers\\Admin\\CommissionPlanController@edit');
+$router->post('/admin/commission-plans/update/{id}',           'App\\Http\\Controllers\\Admin\\CommissionPlanController@update');
+$router->post('/admin/commission-plans/activate/{id}',         'App\\Http\\Controllers\\Admin\\CommissionPlanController@activate');
+$router->post('/admin/commission-plans/deactivate/{id}',       'App\\Http\\Controllers\\Admin\\CommissionPlanController@deactivate');
+$router->post('/admin/commission-plans/delete/{id}',           'App\\Http\\Controllers\\Admin\\CommissionPlanController@delete');
+$router->get('/admin/commission-plans/calculator',             'App\\Http\\Controllers\\Admin\\CommissionPlanController@calculator');
+$router->get('/admin/commission-plans/ajax-levels',            'App\\Http\\Controllers\\Admin\\CommissionPlanController@getLevels');
+
 // MLM section (redirect stubs to MlmRewardsController)
 $router->get('/admin/mlm/rank-criteria', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@rankCriteria');
 $router->get('/admin/mlm/upgrades', 'App\\Http\\Controllers\\Admin\\MlmRewardsController@upgrades');
