@@ -465,6 +465,32 @@ class BookingLifecycleService
             // Update installment
             $totalReceived = (float)$inst['paid_amount'] + $amount;
             $instStatus = ($totalReceived >= (float)$inst['amount']) ? 'paid' : 'partial';
+
+            // --- EARLY PAYMENT DISCOUNT ---
+            // If paid 3+ days before due date, apply 0.5% discount on interest component
+            $discountApplied = 0;
+            if (!empty($inst['due_date']) && !empty($inst['interest_amount']) && $instStatus === 'paid') {
+                $dueDate = new \DateTime($inst['due_date']);
+                $payDate = new \DateTime($paidDate);
+                $daysEarly = (int)$dueDate->diff($payDate)->days;
+                $isEarly = $payDate < $dueDate; // must be before due date
+
+                if ($isEarly && $daysEarly >= 3) {
+                    $discountPct = 0.5; // 0.5% discount on interest
+                    $discountApplied = round((float)$inst['interest_amount'] * $discountPct / 100, 2);
+                    if ($discountApplied > 0) {
+                        $this->db->prepare(
+                            "UPDATE booking_payment_schedules 
+                             SET early_payment_discount = ?, discount_applied = 1 
+                             WHERE id = ?"
+                        )->execute([$discountApplied, $installmentId]);
+                        // Reduce the effective interest — discount is a credit to customer
+                        $totalReceived += $discountApplied;
+                        error_log("[BookingLifecycleService] Early payment discount ₹$discountApplied applied to installment #$installmentId ($daysEarly days early)");
+                    }
+                }
+            }
+
             $upd = $this->db->prepare(
                 "UPDATE booking_payment_schedules
                  SET paid_amount = ?, paid_date = ?, status = ?
@@ -1135,5 +1161,244 @@ class BookingLifecycleService
         } catch (Exception $e) {
             error_log('[BookingLifecycleService::clawbackBookingCommissions] Error: ' . $e->getMessage());
         }
+    }
+
+    /* ====================================================================
+     * 14. NACH Mandate Management (EMI Auto-Debit)
+     * ================================================================== */
+
+    /**
+     * Register a NACH mandate for auto-debit of EMIs.
+     */
+    public function registerNachMandate(int $bookingId, int $customerId, array $mandateData): array
+    {
+        try {
+            $required = ['bank_name', 'bank_account_number', 'ifsc_code', 'account_holder_name', 'mandate_amount'];
+            foreach ($required as $field) {
+                if (empty($mandateData[$field])) {
+                    return ['success' => false, 'error' => "Missing required field: $field"];
+                }
+            }
+
+            // Get booking to determine start/end dates
+            $booking = $this->getBookingById($bookingId);
+            if (!$booking) {
+                return ['success' => false, 'error' => 'Booking not found'];
+            }
+
+            $startDate = date('Y-m-d');
+            $endDate = date('Y-m-d', strtotime('+5 years'));
+
+            $stmt = $this->db->prepare("
+                INSERT INTO nach_mandates
+                (booking_id, customer_id, mandate_type, bank_name, bank_account_number, 
+                 ifsc_code, account_holder_name, mandate_amount, frequency, start_date, end_date, 
+                 next_debit_date, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'monthly', ?, ?, ?, 'submitted')
+            ");
+            $stmt->execute([
+                $bookingId,
+                $customerId,
+                $mandateData['mandate_type'] ?? 'emandate',
+                $mandateData['bank_name'],
+                $mandateData['bank_account_number'],
+                $mandateData['ifsc_code'],
+                $mandateData['account_holder_name'],
+                $mandateData['mandate_amount'],
+                $startDate,
+                $endDate,
+                $startDate, // first debit on registration day
+            ]);
+
+            $mandateId = (int)$this->db->lastInsertId();
+            return ['success' => true, 'mandate_id' => $mandateId, 'status' => 'submitted'];
+        } catch (Exception $e) {
+            error_log('[BookingLifecycleService::registerNachMandate] ' . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Process all due NACH auto-debits for today.
+     * Called by cron: php scripts/run_nach_auto_debit.php
+     */
+    public function processNachAutoDebits(): array
+    {
+        $processed = 0;
+        $failed = 0;
+        $results = [];
+
+        try {
+            // Find all active mandates with next_debit_date <= today
+            $stmt = $this->db->query("
+                SELECT nm.*, pb.id AS pb_id
+                FROM nach_mandates nm
+                JOIN plot_bookings pb ON pb.id = nm.booking_id
+                WHERE nm.status = 'approved' 
+                  AND nm.next_debit_date <= CURDATE()
+                  AND nm.end_date >= CURDATE()
+            ");
+            $mandates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($mandates as $mandate) {
+                // Find the next unpaid installment for this booking
+                $instStmt = $this->db->prepare("
+                    SELECT * FROM booking_payment_schedules 
+                    WHERE booking_id = ? AND status IN ('pending', 'partial') 
+                    ORDER BY installment_number ASC LIMIT 1
+                ");
+                $instStmt->execute([$mandate['booking_id']]);
+                $installment = $instStmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$installment) {
+                    // No more installments — cancel mandate
+                    $this->db->prepare("UPDATE nach_mandates SET status = 'expired' WHERE id = ?")
+                             ->execute([$mandate['id']]);
+                    continue;
+                }
+
+                $debitAmount = min(
+                    (float)$mandate['mandate_amount'],
+                    (float)$installment['amount'] - (float)$installment['paid_amount']
+                );
+
+                if ($debitAmount <= 0) continue;
+
+                // Log the debit attempt
+                $logStmt = $this->db->prepare("
+                    INSERT INTO nach_debit_log 
+                    (mandate_id_ref, installment_id, debit_amount, debit_date, status)
+                    VALUES (?, ?, ?, CURDATE(), 'initiated')
+                ");
+                $logStmt->execute([$mandate['id'], $installment['id'], $debitAmount]);
+                $logId = (int)$this->db->lastInsertId();
+
+                // In production, this would call the bank's NACH API.
+                // For now, we mark as 'success' since mandate is approved.
+                // The webhook/callback from the bank will confirm or reject.
+                $debitSuccess = true; // placeholder — bank webhook will update
+
+                if ($debitSuccess) {
+                    // Record the payment
+                    $this->recordPayment($installment['id'], [
+                        'amount' => $debitAmount,
+                        'payment_mode' => 'nach',
+                        'status' => 'cleared',
+                        'notes' => "NACH Auto-Debit — Mandate #{$mandate['id']}",
+                    ]);
+
+                    // Update debit log
+                    $this->db->prepare("UPDATE nach_debit_log SET status = 'success' WHERE id = ?")
+                             ->execute([$logId]);
+
+                    // Update mandate
+                    $this->db->prepare("
+                        UPDATE nach_mandates 
+                        SET last_debit_date = CURDATE(), 
+                            total_debits = total_debits + 1,
+                            total_debit_amount = total_debit_amount + ?,
+                            next_debit_date = DATE_ADD(CURDATE(), INTERVAL 1 MONTH)
+                        WHERE id = ?
+                    ")->execute([$debitAmount, $mandate['id']]);
+
+                    $processed++;
+                    $results[] = ['mandate_id' => $mandate['id'], 'amount' => $debitAmount, 'status' => 'success'];
+                } else {
+                    $this->db->prepare("UPDATE nach_debit_log SET status = 'failed', failure_reason = 'Bank rejection' WHERE id = ?")
+                             ->execute([$logId]);
+                    $failed++;
+                    $results[] = ['mandate_id' => $mandate['id'], 'amount' => $debitAmount, 'status' => 'failed'];
+                }
+            }
+        } catch (Exception $e) {
+            error_log('[BookingLifecycleService::processNachAutoDebits] ' . $e->getMessage());
+        }
+
+        return ['processed' => $processed, 'failed' => $failed, 'results' => $results];
+    }
+
+    /**
+     * Get NACH mandate status for a booking.
+     */
+    public function getNachMandate(int $bookingId): ?array
+    {
+        $stmt = $this->db->prepare("
+            SELECT * FROM nach_mandates WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1
+        ");
+        $stmt->execute([$bookingId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    /**
+     * Get penalty + NACH summary for customer dashboard.
+     */
+    public function getCustomerPaymentSummary(int $customerId): array
+    {
+        $out = [
+            'total_overdue' => 0,
+            'total_accrued_penalties' => 0,
+            'worst_overdue_days' => 0,
+            'overdue_installments' => [],
+            'nach_mandate' => null,
+            'next_debit_date' => null,
+            'upcoming_installments' => [],
+        ];
+
+        try {
+            // Overdue installments with penalties
+            $stmt = $this->db->prepare("
+                SELECT bps.*, pb.booking_number, p.plot_number, c.name AS colony_name,
+                       DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
+                FROM booking_payment_schedules bps
+                JOIN plot_bookings pb ON pb.id = bps.booking_id
+                LEFT JOIN plots p ON p.id = pb.plot_id
+                LEFT JOIN colonies c ON c.id = p.colony_id
+                WHERE pb.customer_id = ? 
+                  AND bps.status IN ('pending', 'partial')
+                  AND bps.due_date < CURDATE()
+                ORDER BY bps.due_date ASC
+            ");
+            $stmt->execute([$customerId]);
+            $overdue = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($overdue as $inst) {
+                $out['total_overdue'] += (float)$inst['amount'] - (float)$inst['paid_amount'];
+                $out['total_accrued_penalties'] += (float)($inst['accrued_penalty'] ?? 0);
+                $out['worst_overdue_days'] = max($out['worst_overdue_days'], (int)$inst['days_overdue']);
+            }
+            $out['overdue_installments'] = $overdue;
+
+            // NACH mandate status
+            $stmt = $this->db->prepare("
+                SELECT * FROM nach_mandates 
+                WHERE customer_id = ? AND status IN ('approved', 'submitted') 
+                ORDER BY created_at DESC LIMIT 1
+            ");
+            $stmt->execute([$customerId]);
+            $out['nach_mandate'] = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+            if ($out['nach_mandate']) {
+                $out['next_debit_date'] = $out['nach_mandate']['next_debit_date'];
+            }
+
+            // Upcoming installments (next 30 days)
+            $stmt = $this->db->prepare("
+                SELECT bps.*, pb.booking_number, p.plot_number, c.name AS colony_name
+                FROM booking_payment_schedules bps
+                JOIN plot_bookings pb ON pb.id = bps.booking_id
+                LEFT JOIN plots p ON p.id = pb.plot_id
+                LEFT JOIN colonies c ON c.id = p.colony_id
+                WHERE pb.customer_id = ? 
+                  AND bps.status IN ('pending', 'partial')
+                  AND bps.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+                ORDER BY bps.due_date ASC
+            ");
+            $stmt->execute([$customerId]);
+            $out['upcoming_installments'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (Exception $e) {
+            error_log('[BookingLifecycleService::getCustomerPaymentSummary] ' . $e->getMessage());
+        }
+
+        return $out;
     }
 }

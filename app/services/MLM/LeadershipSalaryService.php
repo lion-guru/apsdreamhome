@@ -14,6 +14,10 @@ class LeadershipSalaryService
     const TARGET_2_DAYS = 100;
     const TARGET_2_PAYOUT = 5000.00;
     const TARGET_2_DURATION = 12;
+
+    /** Monthly sales volume required to qualify for salary payout */
+    const MONTHLY_TARGET_STARTER = 1500000.00;   // ₹15L
+    const MONTHLY_TARGET_PRO = 5000000.00;        // ₹50L
     
     public function __construct()
     {
@@ -119,6 +123,21 @@ class LeadershipSalaryService
             $stmt = $this->db->prepare("SELECT COUNT(*) as paid FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND commission_type = 'performance_bonus' AND DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') AND notes LIKE 'Leadership Salary%'");
             $stmt->execute([$userId]);
             if ($stmt->fetch(\PDO::FETCH_ASSOC)['paid'] > 0) continue;
+
+            // --- MONTHLY QUALIFICATION CHECK ---
+            // Salary is performance-linked: must hit minimum monthly sales volume
+            $monthlyVolume = $this->getMonthlySalesVolume($userId);
+            $minTarget = self::MONTHLY_TARGET_STARTER;
+            if ($monthlyVolume < $minTarget) {
+                // Withhold salary — target not met
+                $this->db->prepare(
+                    "INSERT INTO mlm_commission_ledger 
+                     (beneficiary_user_id, source_user_id, commission_type, amount, level, status, notes, created_at)
+                     VALUES (?, 0, 'salary_withheld', 0, 0, 'withheld', ?, NOW())"
+                )->execute([$userId, "Leadership Salary WITHHELD — Monthly volume ₹" . number_format($monthlyVolume) . " < target ₹" . number_format($minTarget)]);
+                error_log("LeadershipSalary: WITHHELD user #$userId — monthly volume ₹$monthlyVolume < target ₹$minTarget");
+                continue;
+            }
             
             try {
                 $this->db->beginTransaction();
@@ -163,6 +182,24 @@ class LeadershipSalaryService
         $stmt = $this->db->prepare("SELECT COALESCE(SUM(total_amount), 0) as total FROM bookings WHERE associate_id = ? AND status IN ('confirmed', 'completed')");
         $stmt->execute([$userId]);
         return (float)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
+    }
+
+    /**
+     * Get the associate's total sales volume in the current calendar month.
+     * Uses mlm_commission_ledger for direct_sale entries (authoritative source).
+     */
+    private function getMonthlySalesVolume(int $userId): float
+    {
+        $stmt = $this->db->prepare("
+            SELECT COALESCE(SUM(sale_amount), 0) as volume 
+            FROM mlm_commission_ledger 
+            WHERE beneficiary_user_id = ? 
+              AND commission_type = 'direct_sale' 
+              AND status = 'approved'
+              AND DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+        ");
+        $stmt->execute([$userId]);
+        return (float)$stmt->fetch(\PDO::FETCH_ASSOC)['volume'];
     }
     
     private function datesOverlap(string $start1, string $end1, ?string $start2, ?string $end2): bool
