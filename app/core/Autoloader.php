@@ -201,7 +201,9 @@ if (defined('APP_ROOT')) {
 
     // Register legacy managers for backward compatibility
     $autoloader->addClassMap('Cache', \APP_ROOT . '/app/Core/Cache.php');
+    $autoloader->addClassMap('App\Core\Cache', \APP_ROOT . '/app/Core/Cache.php');
     $autoloader->addClassMap('RedisCache', \APP_ROOT . '/app/Core/RedisCache.php');
+    $autoloader->addClassMap('App\Core\RedisCache', \APP_ROOT . '/app/Core/RedisCache.php');
     $autoloader->addClassMap('UserManager', \APP_ROOT . '/includes/managers.php');
     $autoloader->addClassMap('PropertyManager', \APP_ROOT . '/includes/managers.php');
     $autoloader->addClassMap('ContactManager', \APP_ROOT . '/includes/managers.php');
@@ -217,7 +219,9 @@ if (defined('APP_ROOT')) {
 
 // Register legacy managers for backward compatibility
 $autoloader->addClassMap('Cache', \APP_ROOT . '/app/Core/Cache.php');
+$autoloader->addClassMap('App\Core\Cache', \APP_ROOT . '/app/Core/Cache.php');
 $autoloader->addClassMap('RedisCache', \APP_ROOT . '/app/Core/RedisCache.php');
+$autoloader->addClassMap('App\Core\RedisCache', \APP_ROOT . '/app/Core/RedisCache.php');
 $autoloader->addClassMap('UserManager', \APP_ROOT . '/includes/managers.php');
 $autoloader->addClassMap('PropertyManager', \APP_ROOT . '/includes/managers.php');
 $autoloader->addClassMap('ContactManager', \APP_ROOT . '/includes/managers.php');

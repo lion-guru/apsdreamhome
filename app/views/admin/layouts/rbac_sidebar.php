@@ -46,6 +46,7 @@ $sectionNames = [
     'hrm' => '👔 HR & Payroll',
     'legal' => '⚖️ Legal',
     'sales' => '🏷️ Sales',
+    'services' => '🛎️ Services',
     'system' => '⚙️ System'
 ];
 ?>

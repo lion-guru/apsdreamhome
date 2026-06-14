@@ -1708,7 +1708,7 @@ class HybridCommissionEngine
         $personalSales = (float)$personalSalesStmt->fetchColumn();
 
         $directChildrenStmt = $this->pdo->prepare("
-            SELECT associate_id AS user_id
+            SELECT DISTINCT associate_id AS user_id
             FROM mlm_network_tree
             WHERE parent_id = ?
         ");
@@ -1767,7 +1767,7 @@ class HybridCommissionEngine
         while (!empty($toProcess)) {
             $currentBatch = implode(',', array_fill(0, count($toProcess), '?'));
             $stmt = $this->pdo->prepare("
-                SELECT associate_id
+                SELECT DISTINCT associate_id
                 FROM mlm_network_tree
                 WHERE parent_id IN ($currentBatch)
             ");

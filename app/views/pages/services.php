@@ -316,6 +316,7 @@
                             <?php echo __('enquire_services'); ?>
                         </h3>
                         <form id="serviceInterestForm">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                             <input type="hidden" name="utm_source" value="<?= htmlspecialchars($_GET['utm_source'] ?? $_SESSION['utm_source'] ?? '') ?>">
                             <input type="hidden" name="utm_medium" value="<?= htmlspecialchars($_GET['utm_medium'] ?? $_SESSION['utm_medium'] ?? '') ?>">
                             <input type="hidden" name="utm_campaign" value="<?= htmlspecialchars($_GET['utm_campaign'] ?? $_SESSION['utm_campaign'] ?? '') ?>">

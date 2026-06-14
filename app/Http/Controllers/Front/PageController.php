@@ -79,12 +79,22 @@ class PageController extends BaseController
             error_log("Home projects error: " . $e->getMessage());
         }
 
+        // Get rank slabs for MLM benefits table
+        $rank_slabs = [];
+        try {
+            $stmt = $this->db->query("SELECT rank_name, min_gbv, commission_rate, reward_name, reward_value FROM mlm_rank_slabs WHERE is_active = 1 ORDER BY min_gbv ASC");
+            $rank_slabs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("Home rank_slabs error: " . $e->getMessage());
+        }
+
         $data = [
             'page_title' => 'APS Dream Home - Premium Real Estate in UP',
             'page_description' => 'Discover premium residential and commercial properties in Gorakhpur, Lucknow, and across Uttar Pradesh',
             'hero_stats' => $hero_stats,
             'featured_properties' => $featured_properties,
             'all_projects' => $all_projects,
+            'rank_slabs' => $rank_slabs,
         ];
 
         $this->render('pages/home', $data);
@@ -187,10 +197,10 @@ class PageController extends BaseController
             $this->db->query("SELECT 1 FROM service_interests LIMIT 1");
 
             $stmt = $this->db->prepare("
-                INSERT INTO service_interests (service_type, property_id, status, notes, created_at) 
-                VALUES (?, ?, 'new', ?, NOW())
+                INSERT INTO service_interests (service_type, customer_name, customer_phone, customer_email, status, notes, created_at) 
+                VALUES (?, ?, ?, ?, 'pending', ?, NOW())
             ");
-            $stmt->execute([$serviceType, $propertyId, $message]);
+            $stmt->execute([$serviceType, $name, $phone, $email, $message]);
             $serviceId = $this->db->lastInsertId();
 
             // Create lead

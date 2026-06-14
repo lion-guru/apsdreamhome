@@ -2003,16 +2003,24 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td class="ps-2 fw-semibold">Associate</td><td>₹50K+</td><td class="text-success fw-bold">5%</td><td class="text-end text-muted">—</td></tr>
-                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Bronze</td><td>₹2L+</td><td class="text-success fw-bold">7%</td><td class="text-end text-muted">₹5K/mo</td></tr>
-                                        <tr><td class="ps-2 fw-semibold">Silver</td><td>₹5L+</td><td class="text-success fw-bold">10%</td><td class="text-end text-muted">₹8K/mo</td></tr>
-                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Gold</td><td>₹10L+</td><td class="text-success fw-bold">12.5%</td><td class="text-end text-muted">₹12K/mo</td></tr>
-                                        <tr><td class="ps-2 fw-semibold">Platinum</td><td>₹25L+</td><td class="text-success fw-bold">15%</td><td class="text-end text-muted">₹15K/mo</td></tr>
-                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Diamond</td><td>₹50L+</td><td class="text-success fw-bold">18%</td><td class="text-end text-muted">₹20K/mo</td></tr>
-                                        <tr><td class="ps-2 fw-semibold">Executive</td><td>₹1Cr+</td><td class="text-success fw-bold">20%</td><td class="text-end text-muted">₹25K/mo</td></tr>
-                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Sr. Executive</td><td>₹2Cr+</td><td class="text-success fw-bold">22%</td><td class="text-end text-muted">₹30K/mo</td></tr>
-                                        <tr><td class="ps-2 fw-semibold">Director</td><td>₹5Cr+</td><td class="text-success fw-bold">25%</td><td class="text-end text-muted">₹40K/mo</td></tr>
-                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Global Director</td><td>₹10Cr+</td><td class="text-success fw-bold">30%</td><td class="text-end text-muted">₹50K/mo</td></tr>
+                                        <?php if (!empty($rank_slabs)): ?>
+                                        <?php foreach ($rank_slabs as $slab): ?>
+                                        <tr>
+                                            <td class="ps-2 fw-semibold"><?= htmlspecialchars($slab['rank_name']) ?></td>
+                                            <td>₹<?= number_format($slab['min_gbv'] / 100000) ?>L+</td>
+                                            <td class="text-success fw-bold"><?= number_format($slab['commission_rate'], 1) ?>%</td>
+                                            <td class="text-end text-muted"><?= htmlspecialchars($slab['reward_name'] ?? '—') ?> (₹<?= number_format($slab['reward_value'] ?? 0) ?>)</td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                        <?php else: ?>
+                                        <tr><td class="ps-2 fw-semibold">Associate</td><td>₹0+</td><td class="text-success fw-bold">5%</td><td class="text-end text-muted">Mobile Phone</td></tr>
+                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Sr. Associate</td><td>₹10L+</td><td class="text-success fw-bold">7%</td><td class="text-end text-muted">Tablet</td></tr>
+                                        <tr><td class="ps-2 fw-semibold">BDM</td><td>₹35L+</td><td class="text-success fw-bold">10%</td><td class="text-end text-muted">Laptop</td></tr>
+                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Sr. BDM</td><td>₹70L+</td><td class="text-success fw-bold">12%</td><td class="text-end text-muted">Tour Package</td></tr>
+                                        <tr><td class="ps-2 fw-semibold">Vice President</td><td>₹1.5Cr+</td><td class="text-success fw-bold">15%</td><td class="text-end text-muted">Pulsar Bike</td></tr>
+                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">President</td><td>₹3Cr+</td><td class="text-success fw-bold">18%</td><td class="text-end text-muted">Bullet Bike</td></tr>
+                                        <tr><td class="ps-2 fw-semibold">Site Manager</td><td>₹5Cr+</td><td class="text-success fw-bold">20%</td><td class="text-end text-muted">Hatchback Car</td></tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
