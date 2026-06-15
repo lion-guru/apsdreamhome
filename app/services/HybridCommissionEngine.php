@@ -201,6 +201,48 @@ class HybridCommissionEngine
     }
 
     /**
+     * Normalise a block key string into its canonical matrix key.
+     * Accepts: 'block_a', 'Block A', 'A', 'BLOCK_A', 'Corner 1500',
+     *          'corner_1500', 'COMMERCIAL_CORNER', 'corner_1000', 'Corner 1000', 'b', etc.
+     */
+    private function normaliseBlockKey(string $input): string
+    {
+        $s = strtolower(trim($input));
+
+        // Direct match
+        if (isset(self::PRICING_MATRIX[$s])) {
+            return $s;
+        }
+
+        // 'block_a', 'block_b', 'block_c' — strip 'block_' prefix variant
+        // single letter: 'a','b','c'
+        if (preg_match('/^block[_ ]?([abc])$/', $s, $m)) {
+            return 'block_' . $m[1];
+        }
+        if (preg_match('/^([abc])$/', $s, $m)) {
+            return 'block_' . $m[1];
+        }
+
+        // corner_1500 aliases
+        if (in_array($s, ['corner_1500', 'corner 1500', 'commercial_corner', 'corner1500'], true)) {
+            return 'corner_1500';
+        }
+
+        // corner_1000 aliases
+        if (in_array($s, ['corner_1000', 'corner 1000', 'corner1000'], true)) {
+            return 'corner_1000';
+        }
+
+        // 'block a' → block_a, 'block b' → block_b, etc.
+        if (preg_match('/^block ([abc])$/', $s, $m)) {
+            return 'block_' . $m[1];
+        }
+
+        return $s; // Let caller handle null
+    }
+
+
+    /**
      * Compute the total plot value for a given block key and optional area override.
      */
     public function calculatePlotValue(string $blockKey, ?float $areaOverride = null): array
@@ -1717,6 +1759,8 @@ class HybridCommissionEngine
 
         $legVolumes = [];
         foreach ($directChildren as $childUserId) {
+            if ($childUserId === null) continue; // skip null associate_id rows
+            $childUserId = (int)$childUserId;
             $descendents = $this->getDownlineUserIds($childUserId);
             $descendents[] = $childUserId;
 

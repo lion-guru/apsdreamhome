@@ -23,7 +23,7 @@
 
 $BASE = 'http://localhost/apsdreamhome';
 $EMAIL = 'customer1@apsdreamhome.com';
-$PASS  = 'Test1234';
+$PASS  = 'Aps@2026';
 
 $jar = sys_get_temp_dir() . '/2fa_test_' . uniqid() . '.cookie';
 $ch  = null;

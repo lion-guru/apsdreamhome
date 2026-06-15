@@ -14,7 +14,7 @@
 
 $BASE_URL = getenv('MOBILE_API_BASE_URL') ?: 'http://localhost/apsdreamhome';
 $EMAIL    = getenv('MOBILE_TEST_EMAIL') ?: 'customer1@apsdreamhome.com';
-$PASSWORD = getenv('MOBILE_TEST_PASSWORD') ?: 'Test1234';
+$PASSWORD = getenv('MOBILE_TEST_PASSWORD') ?: 'Aps@2026';
 
 $pass = 0;
 $fail = 0;

@@ -209,13 +209,21 @@ class NotificationSystem {
      * Create notification UI
      */
     createNotificationUI() {
+        if (document.getElementById('notification-bell-root')) return;
+
+        const placeholder = document.getElementById('notification-bell-placeholder') || document.querySelector('.nav-icon[onclick="toggleNotifications()"]');
+        const isAdmin = window.location.pathname.includes('/admin') || !!placeholder;
+        const btnClass = isAdmin ? 'nav-icon' : 'btn btn-link position-relative';
+        const badgeClass = isAdmin ? 'badge' : 'notification-badge';
+
         // Create notification bell
         const notificationBell = document.createElement('div');
+        notificationBell.id = 'notification-bell-root';
         notificationBell.className = 'notification-bell';
         notificationBell.innerHTML = `
-            <button class="btn btn-link position-relative" onclick="notificationSystem.toggleNotificationDropdown()">
+            <button class="${btnClass}" id="notificationBellBtn" type="button" aria-label="Notifications" onclick="notificationSystem.toggleNotificationDropdown()">
                 <i class="fas fa-bell"></i>
-                <span class="notification-badge" id="notificationBadge">${this.unreadCount}</span>
+                <span class="${badgeClass}" id="notificationBadge">${this.unreadCount}</span>
             </button>
             <div class="notification-dropdown" id="notificationDropdown">
                 <div class="notification-header">
@@ -231,10 +239,14 @@ class NotificationSystem {
             </div>
         `;
 
-        // Add to header
-        const header = document.querySelector('.navbar-nav') || document.querySelector('header');
-        if (header) {
-            header.appendChild(notificationBell);
+        if (placeholder) {
+            placeholder.parentNode.replaceChild(notificationBell, placeholder);
+        } else {
+            // Add to header
+            const header = document.querySelector('.navbar-nav') || document.querySelector('header');
+            if (header) {
+                header.appendChild(notificationBell);
+            }
         }
 
         // Load notifications into dropdown

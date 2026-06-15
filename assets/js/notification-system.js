@@ -421,13 +421,18 @@ class NotificationSystem {
   createNotificationUI() {
     if (document.getElementById('notification-bell-root')) return;
 
+    const placeholder = document.getElementById('notification-bell-placeholder') || document.querySelector('.nav-icon[onclick="toggleNotifications()"]');
+    const isAdmin = window.location.pathname.includes('/admin') || !!placeholder;
+    const btnClass = isAdmin ? 'nav-icon' : 'btn btn-link position-relative';
+    const badgeClass = isAdmin ? 'badge' : 'notification-badge';
+
     const root = document.createElement('div');
     root.id = 'notification-bell-root';
     root.className = 'notification-bell';
     root.innerHTML = `
-      <button class="btn btn-link position-relative" id="notificationBellBtn" type="button" aria-label="Notifications">
+      <button class="${btnClass}" id="notificationBellBtn" type="button" aria-label="Notifications">
         <i class="fas fa-bell"></i>
-        <span class="notification-badge" id="notificationBadge">${this.unreadCount}</span>
+        <span class="${badgeClass}" id="notificationBadge">${this.unreadCount}</span>
       </button>
       <div class="notification-dropdown" id="notificationDropdown">
         <div class="notification-header">
@@ -441,11 +446,18 @@ class NotificationSystem {
       </div>
     `;
 
-    const header = document.querySelector('.navbar-nav') || document.querySelector('header');
-    if (header) {
-      header.appendChild(root);
+    if (placeholder) {
+      placeholder.parentNode.replaceChild(root, placeholder);
     } else {
-      document.body.appendChild(root);
+      const header = document.querySelector('.navbar-nav') || document.querySelector('header');
+      if (header) {
+        header.appendChild(root);
+      } else {
+        // Only append to body if we are not on an admin/dashboard page
+        if (!isAdmin) {
+          document.body.appendChild(root);
+        }
+      }
     }
 
     const bellBtn = document.getElementById('notificationBellBtn');

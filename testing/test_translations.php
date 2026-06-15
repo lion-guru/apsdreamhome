@@ -101,6 +101,8 @@ $allowedIdentical = [
     'upi_id', 'phone_ph', 'email_ph', 'name_ph', 'password_ph',
     'british_english', 'american_english', 'english_lang', 'hindi_lang',
     'admin_hash_label',
+    // BHK is a universally accepted abbreviation in Hindi too ("Bedroom Hall Kitchen")
+    'bhk', 'home_bhk_1', 'home_bhk_2', 'home_bhk_3', 'home_bhk_4',
 ];
 $identicalFound = [];
 foreach ($enFlat as $k => $v) {
