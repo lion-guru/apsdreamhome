@@ -477,12 +477,6 @@ class Admin extends Model
             return false;
         }
 
-        // Check for legacy SHA1 passwords
-        if (strlen($hash) === 40 && ctype_xdigit($hash)) {
-            return sha1($password) === $hash;
-        }
-
-        // Check for modern password hashes
         return password_verify($password, $hash);
     }
 

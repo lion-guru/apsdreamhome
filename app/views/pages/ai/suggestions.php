@@ -3,15 +3,15 @@
         <div class="col-md-8 mx-auto">
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
-                    <h2 class="text-center mb-4"><i class="fas fa-magic text-primary me-2"></i>AI Property Suggestions</h2>
-                    <p class="text-muted text-center mb-4">Let our AI help you find the perfect property based on your preferences.</p>
+                    <h2 class="text-center mb-4"><i class="fas fa-magic text-primary me-2"></i><?= __('aisug_heading', [], 'AI Property Suggestions') ?></h2>
+                    <p class="text-muted text-center mb-4"><?= __('aisug_subtitle', [], 'Let our AI help you find the perfect property based on your preferences.') ?></p>
                     
                     <form id="ai-suggestion-form" class="mb-4">
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <label for="property_type" class="form-label">Property Type</label>
+                                <label for="property_type" class="form-label"><?= __('aisug_label_type', [], 'Property Type') ?></label>
                                 <select id="property_type" name="property_type" class="form-select" required>
-                                    <option value="">Select Property Type</option>
+                                    <option value=""><?= __('aisug_select_type', [], 'Select Property Type') ?></option>
                                     <?php foreach ($property_types as $type): ?>
                                         <option value="<?= h($type['type_name']) ?>"><?= h($type['type_name']) ?></option>
                                     <?php endforeach; ?>
@@ -19,19 +19,19 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="budget" class="form-label">Budget (₹)</label>
-                                <input type="number" id="budget" name="budget" class="form-control" placeholder="e.g. 5000000" required>
+                                <label for="budget" class="form-label"><?= __('aisug_label_budget', [], 'Budget (₹)') ?></label>
+                                <input type="number" id="budget" name="budget" class="form-control" placeholder="<?= __('aisug_placeholder_budget', [], 'e.g. 5000000') ?>" required>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="location" class="form-label">Location</label>
-                                <input type="text" id="location" name="location" class="form-control" placeholder="e.g. Lucknow, UP" required>
+                                <label for="location" class="form-label"><?= __('aisug_label_location', [], 'Location') ?></label>
+                                <input type="text" id="location" name="location" class="form-control" placeholder="<?= __('aisug_placeholder_location', [], 'e.g. Lucknow, UP') ?>" required>
                             </div>
 
                             <div class="col-md-12">
                                 <button type="submit" id="generate-btn" class="btn btn-primary w-100 py-2">
                                     <span class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
-                                    <i class="fas fa-search me-2"></i>Generate AI Suggestions
+                                    <i class="fas fa-search me-2"></i><?= __('aisug_generate', [], 'Generate AI Suggestions') ?>
                                 </button>
                             </div>
                         </div>
@@ -41,7 +41,7 @@
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
-                        <p class="mt-2 text-primary fw-bold">Analyzing market data and generating suggestions...</p>
+                        <p class="mt-2 text-primary fw-bold"><?= __('aisug_loading', [], 'Analyzing market data and generating suggestions...') ?></p>
                     </div>
 
                     <div id="ai-error-container" class="alert alert-danger d-none"></div>
@@ -49,7 +49,7 @@
                     <div id="ai-suggestion-results" class="mt-4 d-none">
                         <div class="card bg-light border-0">
                             <div class="card-body aps-cp-card-body">
-                                <h4 class="card-title mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>Our Recommendations</h4>
+                                <h4 class="card-title mb-3"><i class="fas fa-lightbulb text-warning me-2"></i><?= __('aisug_recommendations', [], 'Our Recommendations') ?></h4>
                                 <div id="suggestions-content" class="text-break" style="white-space: pre-wrap;"></div>
                             </div>
                         </div>
@@ -104,12 +104,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Scroll to results
                 resultsContainer.scrollIntoView({ behavior: 'smooth' });
             } else {
-                errorContainer.textContent = data.error || 'Failed to generate suggestions. Please try again.';
+                errorContainer.textContent = data.error || '<?= __('aisug_error_generate', [], 'Failed to generate suggestions. Please try again.') ?>';
                 errorContainer.classList.remove('d-none');
             }
         } catch (error) {
             console.error('Error:', error);
-            errorContainer.textContent = 'An error occurred. Please check your connection and try again.';
+            errorContainer.textContent = '<?= __('aisug_error_connection', [], 'An error occurred. Please check your connection and try again.') ?>';
             errorContainer.classList.remove('d-none');
         } finally {
             loadingIndicator.classList.add('d-none');

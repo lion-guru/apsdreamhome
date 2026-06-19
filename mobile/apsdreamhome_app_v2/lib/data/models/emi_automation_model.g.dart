@@ -68,7 +68,7 @@ Map<String, dynamic> _$$EMIAutomationConfigImplToJson(
 
 _$WhatsAppConfigImpl _$$WhatsAppConfigImplFromJson(Map<String, dynamic> json) =>
     _$WhatsAppConfigImpl(
-      isEnabled: json['isEnabled'] as bool,
+      isEnabled: json['isEnabled'] as bool? ?? false,
       businessAccountId: json['businessAccountId'] as String?,
       phoneNumberId: json['phoneNumberId'] as String?,
       accessToken: json['accessToken'] as String?,
@@ -112,7 +112,7 @@ Map<String, dynamic> _$$WhatsAppConfigImplToJson(
 _$VoiceCallConfigImpl _$$VoiceCallConfigImplFromJson(
   Map<String, dynamic> json,
 ) => _$VoiceCallConfigImpl(
-  isEnabled: json['isEnabled'] as bool,
+  isEnabled: json['isEnabled'] as bool? ?? false,
   provider: json['provider'] as String?,
   apiKey: json['apiKey'] as String?,
   apiSecret: json['apiSecret'] as String?,
@@ -157,7 +157,7 @@ Map<String, dynamic> _$$VoiceCallConfigImplToJson(
 
 _$SMSConfigImpl _$$SMSConfigImplFromJson(Map<String, dynamic> json) =>
     _$SMSConfigImpl(
-      isEnabled: json['isEnabled'] as bool,
+      isEnabled: json['isEnabled'] as bool? ?? false,
       provider: json['provider'] as String?,
       apiKey: json['apiKey'] as String?,
       senderId: json['senderId'] as String?,
@@ -193,7 +193,7 @@ Map<String, dynamic> _$$SMSConfigImplToJson(_$SMSConfigImpl instance) =>
 
 _$EmailConfigImpl _$$EmailConfigImplFromJson(Map<String, dynamic> json) =>
     _$EmailConfigImpl(
-      isEnabled: json['isEnabled'] as bool,
+      isEnabled: json['isEnabled'] as bool? ?? false,
       provider: json['provider'] as String?,
       apiKey: json['apiKey'] as String?,
       fromEmail: json['fromEmail'] as String?,
@@ -317,17 +317,17 @@ Map<String, dynamic> _$$AIConfigImplToJson(_$AIConfigImpl instance) =>
 
 _$AutomationRuleImpl _$$AutomationRuleImplFromJson(Map<String, dynamic> json) =>
     _$AutomationRuleImpl(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      type: json['type'] as String,
-      trigger: json['trigger'] as String,
-      triggerValue: (json['triggerValue'] as num).toInt(),
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      type: json['type'] as String? ?? '',
+      trigger: json['trigger'] as String? ?? '',
+      triggerValue: (json['triggerValue'] as num?)?.toInt() ?? 0,
       actions:
           (json['actions'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      scheduleTime: json['scheduleTime'] as String,
+      scheduleTime: json['scheduleTime'] as String? ?? '09:00',
       scheduleDays: json['scheduleDays'] as String?,
       priority: (json['priority'] as num?)?.toInt() ?? 1,
       conditionAmount: json['conditionAmount'] as String?,
@@ -365,15 +365,15 @@ Map<String, dynamic> _$$AutomationRuleImplToJson(
 _$AutomationExecutionImpl _$$AutomationExecutionImplFromJson(
   Map<String, dynamic> json,
 ) => _$AutomationExecutionImpl(
-  id: json['id'] as String,
-  ruleId: json['ruleId'] as String,
-  ruleName: json['ruleName'] as String,
-  customerId: json['customerId'] as String,
-  bookingId: json['bookingId'] as String,
-  emiId: json['emiId'] as String,
-  channel: json['channel'] as String,
-  action: json['action'] as String,
-  status: json['status'] as String,
+  id: json['id'] as String? ?? '',
+  ruleId: json['ruleId'] as String? ?? '',
+  ruleName: json['ruleName'] as String? ?? '',
+  customerId: json['customerId'] as String? ?? '',
+  bookingId: json['bookingId'] as String? ?? '',
+  emiId: json['emiId'] as String? ?? '',
+  channel: json['channel'] as String? ?? '',
+  action: json['action'] as String? ?? '',
+  status: json['status'] as String? ?? '',
   messageContent: json['messageContent'] as String?,
   templateUsed: json['templateUsed'] as String?,
   metadata: json['metadata'] as Map<String, dynamic>?,
@@ -423,17 +423,17 @@ Map<String, dynamic> _$$AutomationExecutionImplToJson(
 _$CustomerCommunicationLogImpl _$$CustomerCommunicationLogImplFromJson(
   Map<String, dynamic> json,
 ) => _$CustomerCommunicationLogImpl(
-  id: json['id'] as String,
-  customerId: json['customerId'] as String,
-  bookingId: json['bookingId'] as String,
-  channel: json['channel'] as String,
-  direction: json['direction'] as String,
-  type: json['type'] as String,
+  id: json['id'] as String? ?? '',
+  customerId: json['customerId'] as String? ?? '',
+  bookingId: json['bookingId'] as String? ?? '',
+  channel: json['channel'] as String? ?? '',
+  direction: json['direction'] as String? ?? '',
+  type: json['type'] as String? ?? '',
   message: json['message'] as String?,
   attachmentUrl: json['attachmentUrl'] as String?,
   callRecordingUrl: json['callRecordingUrl'] as String?,
   callDurationSeconds: (json['callDurationSeconds'] as num?)?.toInt(),
-  status: json['status'] as String,
+  status: json['status'] as String? ?? '',
   sentAt: json['sentAt'] == null
       ? null
       : DateTime.parse(json['sentAt'] as String),

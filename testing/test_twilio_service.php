@@ -13,7 +13,8 @@
 
 declare(ticks=1);
 
-if (PHP_SAPI !== 'cli') { http_response_code(403); exit('CLI only'); }
+// Allow web testing
+// if (PHP_SAPI !== 'cli') { http_response_code(403); exit('CLI only'); }
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');

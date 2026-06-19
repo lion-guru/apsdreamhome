@@ -1,7 +1,5 @@
 <?php
-
-// TODO: Add proper error handling with try-catch blocks
-
+require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -202,12 +200,12 @@
             <i class="fas fa-hard-hat"></i>
         </div>
         
-        <h1 class="construction-title">Under Construction</h1>
-        <p class="construction-subtitle">We're building something amazing for you!</p>
+        <h1 class="construction-title"><?php echo __('uc_title', [], 'Under Construction'); ?></h1>
+        <p class="construction-subtitle"><?php echo __('uc_subtitle', [], "We're building something amazing for you!"); ?></p>
         
         <div class="progress-container">
             <div class="progress-bar">
-                <span>75% Complete</span>
+                <span><?php echo __('uc_complete', [], '75% Complete'); ?></span>
             </div>
         </div>
         
@@ -216,37 +214,37 @@
                 <div class="feature-icon">
                     <i class="fas fa-home"></i>
                 </div>
-                <h4>Modern Design</h4>
-                <p>Beautiful and intuitive interface</p>
+                <h4><?php echo __('uc_modern_design', [], 'Modern Design'); ?></h4>
+                <p><?php echo __('uc_modern_design_desc', [], 'Beautiful and intuitive interface'); ?></p>
             </div>
             
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-mobile-alt"></i>
                 </div>
-                <h4>Mobile Friendly</h4>
-                <p>Perfect on all devices</p>
+                <h4><?php echo __('uc_mobile_friendly', [], 'Mobile Friendly'); ?></h4>
+                <p><?php echo __('uc_mobile_friendly_desc', [], 'Perfect on all devices'); ?></p>
             </div>
             
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-rocket"></i>
                 </div>
-                <h4>Lightning Fast</h4>
-                <p>Optimized performance</p>
+                <h4><?php echo __('uc_lightning_fast', [], 'Lightning Fast'); ?></h4>
+                <p><?php echo __('uc_lightning_fast_desc', [], 'Optimized performance'); ?></p>
             </div>
             
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-shield-alt"></i>
                 </div>
-                <h4>Secure</h4>
-                <p>Your data is protected</p>
+                <h4><?php echo __('uc_secure', [], 'Secure'); ?></h4>
+                <p><?php echo __('uc_secure_desc', [], 'Your data is protected'); ?></p>
             </div>
         </div>
         
         <div class="contact-info">
-            <h3>Get Notified When We Launch!</h3>
+            <h3><?php echo __('uc_notify_title', [], 'Get Notified When We Launch!'); ?></h3>
             <div class="contact-item">
                 <i class="fas fa-envelope"></i>
                 <span>info@apsdreamhome.com</span>
@@ -257,7 +255,7 @@
             </div>
             <div class="contact-item">
                 <i class="fas fa-map-marker-alt"></i>
-                <span>Gorakhpur, Uttar Pradesh</span>
+                <span><?php echo __('uc_location', [], 'Gorakhpur, Uttar Pradesh'); ?></span>
             </div>
         </div>
     </div>

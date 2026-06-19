@@ -125,6 +125,9 @@ class SyncService {
       case AppConstants.commissionsTable:
         await _uploadCommission(action, data);
         break;
+      case 'bookings':
+        await _uploadBooking(action, data);
+        break;
       default:
         throw UnknownFailure('Unknown entity type: $entityType');
     }
@@ -161,6 +164,15 @@ class SyncService {
       String action, Map<String, dynamic> data) async {
     // Commissions are typically read-only from mobile
     throw const UnknownFailure('Commissions cannot be modified from mobile');
+  }
+
+  Future<void> _uploadBooking(String action, Map<String, dynamic> data) async {
+    if (action == 'create') {
+      await _apiService.post('/sync', data: {
+        'type': 'booking',
+        'data': data,
+      });
+    }
   }
 
   Future<void> _downloadLatestData() async {

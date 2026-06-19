@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/models/colony_model.dart';
+import '../../data/models/geo_location.dart';
 import '../../data/models/lead_model_extended.dart';
 import '../../data/models/plot_model.dart';
 import '../../data/models/property_listing_model.dart';
@@ -245,7 +245,7 @@ class DemoDataGenerator {
         city: 'Gorakhpur',
         locality: 'Civil Lines',
         address: 'Near Central School, Civil Lines',
-        location: const GeoPoint(26.7606, 83.3732),
+        location: const GeoLocation(latitude: 26.7606, longitude: 83.3732),
         landmark: 'Central School',
         areaSqft: 1200.0,
         expectedPrice: 1440000.0,

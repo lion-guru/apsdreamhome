@@ -96,7 +96,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.3),
+            color: Colors.blue.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -119,7 +119,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text(
@@ -317,7 +317,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: (iconColor ?? Colors.blue).withOpacity(0.1),
+                      color: (iconColor ?? Colors.blue).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -401,7 +401,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -4),
           ),

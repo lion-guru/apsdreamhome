@@ -735,28 +735,28 @@ class __$$PropertyListingImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PropertyListingImpl extends _PropertyListing {
   const _$PropertyListingImpl({
-    required this.id,
-    required this.title,
-    required this.description,
+    this.id = '',
+    this.title = '',
+    this.description = '',
     required this.propertyType,
     required this.purpose,
-    required this.ownerId,
-    required this.ownerName,
-    required this.ownerPhone,
-    required this.ownerEmail,
+    this.ownerId = '',
+    this.ownerName = '',
+    this.ownerPhone = '',
+    this.ownerEmail = '',
     required this.ownerType,
-    required this.state,
-    required this.district,
-    required this.city,
-    required this.locality,
-    required this.address,
+    this.state = '',
+    this.district = '',
+    this.city = '',
+    this.locality = '',
+    this.address = '',
     required this.location,
-    required this.landmark,
-    required this.areaSqft,
+    this.landmark = '',
+    this.areaSqft = 0.0,
     this.areaUnit,
-    required this.expectedPrice,
+    this.expectedPrice = 0.0,
     this.negotiable,
-    required this.priceType,
+    this.priceType = 'Fixed',
     final List<String> images = const [],
     final List<String> videos = const [],
     final List<String> documents = const [],
@@ -795,10 +795,13 @@ class _$PropertyListingImpl extends _PropertyListing {
       _$$PropertyListingImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String title;
   @override
+  @JsonKey()
   final String description;
   @override
   final PropertyType propertyType;
@@ -808,42 +811,55 @@ class _$PropertyListingImpl extends _PropertyListing {
   // Sell, Rent, Lease
   // Owner Details
   @override
+  @JsonKey()
   final String ownerId;
   @override
+  @JsonKey()
   final String ownerName;
   @override
+  @JsonKey()
   final String ownerPhone;
   @override
+  @JsonKey()
   final String ownerEmail;
   @override
   final OwnerType ownerType;
   // Customer, Associate, Agent, Employee
   // Location
   @override
+  @JsonKey()
   final String state;
   @override
+  @JsonKey()
   final String district;
   @override
+  @JsonKey()
   final String city;
   @override
+  @JsonKey()
   final String locality;
   @override
+  @JsonKey()
   final String address;
   @override
   final GeoLocation location;
   @override
+  @JsonKey()
   final String landmark;
   // Property Details
   @override
+  @JsonKey()
   final double areaSqft;
   @override
   final String? areaUnit;
   // sqft, acre, guntha
   @override
+  @JsonKey()
   final double expectedPrice;
   @override
   final PriceNegotiable? negotiable;
   @override
+  @JsonKey()
   final String priceType;
   // Fixed, Negotiable, Best Offer
   // Features
@@ -1144,28 +1160,28 @@ class _$PropertyListingImpl extends _PropertyListing {
 
 abstract class _PropertyListing extends PropertyListing {
   const factory _PropertyListing({
-    required final String id,
-    required final String title,
-    required final String description,
+    final String id,
+    final String title,
+    final String description,
     required final PropertyType propertyType,
     required final ListingPurpose purpose,
-    required final String ownerId,
-    required final String ownerName,
-    required final String ownerPhone,
-    required final String ownerEmail,
+    final String ownerId,
+    final String ownerName,
+    final String ownerPhone,
+    final String ownerEmail,
     required final OwnerType ownerType,
-    required final String state,
-    required final String district,
-    required final String city,
-    required final String locality,
-    required final String address,
+    final String state,
+    final String district,
+    final String city,
+    final String locality,
+    final String address,
     required final GeoLocation location,
-    required final String landmark,
-    required final double areaSqft,
+    final String landmark,
+    final double areaSqft,
     final String? areaUnit,
-    required final double expectedPrice,
+    final double expectedPrice,
     final PriceNegotiable? negotiable,
-    required final String priceType,
+    final String priceType,
     final List<String> images,
     final List<String> videos,
     final List<String> documents,
@@ -1554,10 +1570,10 @@ class __$$PropertyInquiryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PropertyInquiryImpl implements _PropertyInquiry {
   const _$PropertyInquiryImpl({
-    required this.id,
-    required this.buyerId,
-    required this.buyerName,
-    required this.buyerPhone,
+    this.id = '',
+    this.buyerId = '',
+    this.buyerName = '',
+    this.buyerPhone = '',
     this.buyerEmail,
     required this.type,
     this.message,
@@ -1572,12 +1588,16 @@ class _$PropertyInquiryImpl implements _PropertyInquiry {
       _$$PropertyInquiryImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String buyerId;
   @override
+  @JsonKey()
   final String buyerName;
   @override
+  @JsonKey()
   final String buyerPhone;
   @override
   final String? buyerEmail;
@@ -1666,10 +1686,10 @@ class _$PropertyInquiryImpl implements _PropertyInquiry {
 
 abstract class _PropertyInquiry implements PropertyInquiry {
   const factory _PropertyInquiry({
-    required final String id,
-    required final String buyerId,
-    required final String buyerName,
-    required final String buyerPhone,
+    final String id,
+    final String buyerId,
+    final String buyerName,
+    final String buyerPhone,
     final String? buyerEmail,
     required final InquiryType type,
     final String? message,

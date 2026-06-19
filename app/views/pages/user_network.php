@@ -65,9 +65,9 @@ try {
         <!-- Header -->
         <div class="col-12 mb-4">
             <div class="d-flex justify-content-between align-items-center">
-                <h2><i class="fas fa-sitemap me-2 text-primary"></i>My Network</h2>
+                <h2><i class="fas fa-sitemap me-2 text-primary"></i><?php echo __('network_title', [], 'My Network'); ?></h2>
                 <a href="/user/dashboard" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    <i class="fas fa-arrow-left me-2"></i><?php echo __('network_back_dashboard', [], 'Back to Dashboard'); ?>
                 </a>
             </div>
         </div>
@@ -76,9 +76,9 @@ try {
         <!-- MLM Not Enabled -->
         <div class="col-12">
             <div class="alert alert-info">
-                <h5><i class="fas fa-info-circle me-2"></i>MLM Program Not Enabled</h5>
-                <p>Contact support to enable MLM features for your account and start earning from referrals!</p>
-                <a href="/contact" class="btn btn-primary">Contact Support</a>
+                <h5><i class="fas fa-info-circle me-2"></i><?php echo __('network_mlm_not_enabled', [], 'MLM Program Not Enabled'); ?></h5>
+                <p><?php echo __('network_mlm_not_enabled_desc', [], 'Contact support to enable MLM features for your account and start earning from referrals!'); ?></p>
+                <a href="/contact" class="btn btn-primary"><?php echo __('network_contact_support', [], 'Contact Support'); ?></a>
             </div>
         </div>
         <?php else: ?>
@@ -88,7 +88,7 @@ try {
             <div class="card bg-primary text-white">
                 <div class="card-body text-center">
                     <h3 class="mb-0"><?= $stats['direct_referrals'] ?></h3>
-                    <small>Direct Referrals</small>
+                    <small><?php echo __('network_direct_referrals', [], 'Direct Referrals'); ?></small>
                 </div>
             </div>
         </div>
@@ -96,7 +96,7 @@ try {
             <div class="card bg-success text-white">
                 <div class="card-body text-center">
                     <h3 class="mb-0"><?= $stats['total_downline'] ?></h3>
-                    <small>Total Team Size</small>
+                    <small><?php echo __('network_total_team', [], 'Total Team Size'); ?></small>
                 </div>
             </div>
         </div>
@@ -104,7 +104,7 @@ try {
             <div class="card bg-warning text-dark">
                 <div class="card-body text-center">
                     <h3 class="mb-0"><?= number_format($stats['total_points'] ?? 0) ?></h3>
-                    <small>Total Points</small>
+                    <small><?php echo __('network_total_points', [], 'Total Points'); ?></small>
                 </div>
             </div>
         </div>
@@ -112,7 +112,7 @@ try {
             <div class="card bg-info text-white">
                 <div class="card-body text-center">
                     <h3 class="mb-0">₹<?= number_format($stats['total_earnings'] ?? 0) ?></h3>
-                    <small>Total Earnings</small>
+                    <small><?php echo __('network_total_earnings', [], 'Total Earnings'); ?></small>
                 </div>
             </div>
         </div>
@@ -121,14 +121,14 @@ try {
         <div class="col-12 mt-4">
             <div class="card border-primary">
                 <div class="card-body aps-cp-card-body">
-                    <h5><i class="fas fa-link me-2"></i>Your Referral Link</h5>
+                    <h5><i class="fas fa-link me-2"></i><?php echo __('network_referral_link', [], 'Your Referral Link'); ?></h5>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" value="<?= BASE_URL ?>/register?ref=<?= htmlspecialchars($user['referral_code'] ?? $userId) ?>" readonly>
                         <button class="btn btn-primary" onclick="copyReferralLink()">
-                            <i class="fas fa-copy"></i> Copy
+                            <i class="fas fa-copy"></i> <?php echo __('network_copy', [], 'Copy'); ?>
                         </button>
                     </div>
-                    <small class="text-muted">Share this link with friends - They'll get 10% extra discount, you'll earn commission!</small>
+                    <small class="text-muted"><?php echo __('network_share_desc', [], 'Share this link with friends - They\'ll get 10% extra discount, you\'ll earn commission!'); ?></small>
                 </div>
             </div>
         </div>
@@ -138,24 +138,24 @@ try {
             <div class="col-lg-8">
                 <div class="card aps-cp-card">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Direct Referrals (<?= count($directReferrals) ?>)</h5>
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i><?php echo __('network_direct_referrals_count', [], 'Direct Referrals'); ?> (<?= count($directReferrals) ?>)</h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <?php if (empty($directReferrals)): ?>
                             <div class="text-center py-5">
                                 <i class="fas fa-user-friends fa-4x text-muted mb-3"></i>
-                                <p class="text-muted">No referrals yet. Share your referral link to grow your network!</p>
+                                <p class="text-muted"><?php echo __('network_no_referrals', [], 'No referrals yet. Share your referral link to grow your network!'); ?></p>
                             </div>
                         <?php else: ?>
                             <div class="table-responsive">
                                 <div class="table-responsive"><table class="table table-hover table-responsive">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Contact</th>
-                                            <th>Type</th>
-                                            <th>Team</th>
-                                            <th>Joined</th>
+                                            <th><?php echo __('network_th_name', [], 'Name'); ?></th>
+                                            <th><?php echo __('network_th_contact', [], 'Contact'); ?></th>
+                                            <th><?php echo __('network_th_type', [], 'Type'); ?></th>
+                                            <th><?php echo __('network_th_team', [], 'Team'); ?></th>
+                                            <th><?php echo __('network_th_joined', [], 'Joined'); ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -175,7 +175,7 @@ try {
                                             </td>
                                             <td>
                                                 <?php if ($ref['downline_count'] > 0): ?>
-                                                    <span class="badge bg-info"><?= $ref['downline_count'] ?> members</span>
+                                                    <span class="badge bg-info"><?= $ref['downline_count'] ?> <?php echo __('network_members', [], 'members'); ?></span>
                                                 <?php else: ?>
                                                     <span class="text-muted">-</span>
                                                 <?php endif; ?>
@@ -197,11 +197,11 @@ try {
             <div class="col-lg-4">
                 <div class="card aps-cp-card">
                     <div class="card-header bg-secondary text-white">
-                        <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h5>
+                        <h5 class="mb-0"><i class="fas fa-history me-2"></i><?php echo __('network_recent_activity', [], 'Recent Activity'); ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <?php if (empty($recentActivity)): ?>
-                            <p class="text-muted text-center">No activity yet</p>
+                            <p class="text-muted text-center"><?php echo __('network_no_activity', [], 'No activity yet'); ?></p>
                         <?php else: ?>
                             <ul class="list-group list-group-flush">
                                 <?php foreach ($recentActivity as $activity): ?>
@@ -235,7 +235,7 @@ try {
         <div class="col-12 mt-4">
             <div class="card aps-cp-card">
                 <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i>Network Tree</h5>
+                    <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i><?php echo __('network_tree', [], 'Network Tree'); ?></h5>
                 </div>
                 <div class="card-body text-center" style="min-height: 400px; overflow-x: auto;">
                     <!-- Simple Tree Visualization -->
@@ -266,7 +266,7 @@ try {
                         </div>
                         <?php else: ?>
                         <div class="mt-4">
-                            <p class="text-muted">Your team will appear here when you have referrals</p>
+                            <p class="text-muted"><?php echo __('network_team_empty', [], 'Your team will appear here when you have referrals'); ?></p>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -288,7 +288,7 @@ function copyReferralLink() {
     // Show feedback
     const btn = document.querySelector('button[onclick="copyReferralLink()"]');
     const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    btn.innerHTML = '<i class="fas fa-check"></i> ' + '<?php echo addslashes(__('network_copied', [], 'Copied!')); ?>';
     btn.classList.add('btn-success');
     
     setTimeout(() => {

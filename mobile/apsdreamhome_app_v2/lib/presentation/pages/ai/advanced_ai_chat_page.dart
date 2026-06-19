@@ -231,7 +231,7 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFF4285F4).withOpacity(0.1),
+              color: const Color(0xFF4285F4).withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -308,7 +308,7 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -329,7 +329,7 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
                   _formatTime(message['timestamp'] as String?),
                   style: TextStyle(
                     color: isUser
-                        ? Colors.white.withOpacity(0.7)
+                        ? Colors.white.withValues(alpha: 0.7)
                         : Colors.grey.shade500,
                     fontSize: 10,
                   ),
@@ -349,7 +349,7 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),

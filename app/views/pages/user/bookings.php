@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'My Bookings';
+$page_title = $page_title ?? __('user_bookings_title', 'My Bookings');
 $current_page = 'bookings';
 $bookings = $bookings ?? [];
 $user = $user ?? [];
@@ -14,26 +14,26 @@ $statusColors = [
     'registration_done' => 'success',
 ];
 $statusLabels = [
-    'token_paid' => 'Token Paid',
-    'agreement_signed' => 'Agreement Signed',
-    'emi_active' => 'EMI Active',
-    'partially_paid' => 'Partially Paid',
-    'fully_paid' => 'Fully Paid',
-    'cancelled' => 'Cancelled',
-    'transferred' => 'Transferred',
-    'registration_done' => 'Registered',
+    'token_paid' => __('user_bookings_status_token_paid', 'Token Paid'),
+    'agreement_signed' => __('user_bookings_status_agreement_signed', 'Agreement Signed'),
+    'emi_active' => __('user_bookings_status_emi_active', 'EMI Active'),
+    'partially_paid' => __('user_bookings_status_partially_paid', 'Partially Paid'),
+    'fully_paid' => __('user_bookings_status_fully_paid', 'Fully Paid'),
+    'cancelled' => __('user_bookings_status_cancelled', 'Cancelled'),
+    'transferred' => __('user_bookings_status_transferred', 'Transferred'),
+    'registration_done' => __('user_bookings_status_registered', 'Registered'),
 ];
 ?>
 
 <div class="aps-cp-hero">
     <div class="row align-items-center">
         <div class="col-md-8">
-            <h2><i class="fas fa-file-invoice-dollar me-2"></i>My Bookings</h2>
-            <p>Track your plot bookings, payment schedules, and download demand letters.</p>
+            <h2><i class="fas fa-file-invoice-dollar me-2"></i><?= __('user_bookings_title', 'My Bookings') ?></h2>
+            <p><?= __('user_bookings_subtitle', 'Track your plot bookings, payment schedules, and download demand letters.') ?></p>
         </div>
         <div class="col-md-4 mt-3 mt-md-0 text-md-end">
             <a href="<?= BASE_URL ?>/user/bookings/new" class="btn btn-light">
-                <i class="fas fa-plus me-2"></i>Book a Plot
+                <i class="fas fa-plus me-2"></i><?= __('user_book_a_plot', 'Book a Plot') ?>
             </a>
         </div>
     </div>
@@ -44,10 +44,10 @@ $statusLabels = [
         <div class="aps-cp-card-body">
             <div class="aps-cp-empty">
                 <div class="aps-cp-empty-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-                <h5>No bookings yet</h5>
-                <p>You haven't made any plot bookings. Browse our colonies and book your dream plot.</p>
+                <h5><?= __('user_bookings_empty_heading', 'No bookings yet') ?></h5>
+                <p><?= __('user_bookings_empty_desc', 'You haven\'t made any plot bookings. Browse our colonies and book your dream plot.') ?></p>
                 <a href="<?= BASE_URL ?>/properties" class="btn btn-primary">
-                    <i class="fas fa-search me-2"></i>Browse Properties
+                    <i class="fas fa-search me-2"></i><?= __('user_bookings_browse_properties', 'Browse Properties') ?>
                 </a>
             </div>
         </div>
@@ -73,7 +73,7 @@ $statusLabels = [
                 <div class="aps-cp-stat-icon"><i class="fas fa-file-contract"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-value"><?= $totalBookings ?></div>
-                    <div class="aps-cp-stat-label">Total Bookings</div>
+                    <div class="aps-cp-stat-label"><?= __('user_bookings_stat_total', 'Total Bookings') ?></div>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@ $statusLabels = [
                 <div class="aps-cp-stat-icon"><i class="fas fa-calendar-check"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-value"><?= $activeEmis ?></div>
-                    <div class="aps-cp-stat-label">Active EMIs</div>
+                    <div class="aps-cp-stat-label"><?= __('user_bookings_stat_active_emis', 'Active EMIs') ?></div>
                 </div>
             </div>
         </div>
@@ -91,7 +91,7 @@ $statusLabels = [
                 <div class="aps-cp-stat-icon"><i class="fas fa-check-circle"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-value">₹<?= number_format($totalPaid) ?></div>
-                    <div class="aps-cp-stat-label">Total Paid</div>
+                    <div class="aps-cp-stat-label"><?= __('user_bookings_stat_total_paid', 'Total Paid') ?></div>
                 </div>
             </div>
         </div>
@@ -100,7 +100,7 @@ $statusLabels = [
                 <div class="aps-cp-stat-icon"><i class="fas fa-hourglass-half"></i></div>
                 <div class="aps-cp-stat-body">
                     <div class="aps-cp-stat-value">₹<?= number_format($totalPending > 0 ? $totalPending : 0) ?></div>
-                    <div class="aps-cp-stat-label">Pending Amount</div>
+                    <div class="aps-cp-stat-label"><?= __('user_bookings_stat_pending', 'Pending Amount') ?></div>
                 </div>
             </div>
         </div>
@@ -108,22 +108,22 @@ $statusLabels = [
 
     <div class="aps-cp-card">
         <div class="aps-cp-card-header">
-            <h5><i class="fas fa-list"></i> All Bookings (<?= $totalBookings ?>)</h5>
+            <h5><i class="fas fa-list"></i> <?= __('user_bookings_all_bookings', 'All Bookings') ?> (<?= $totalBookings ?>)</h5>
         </div>
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive">
                 <table class="aps-cp-table">
                     <thead>
                         <tr>
-                            <th>Booking #</th>
-                            <th>Plot</th>
-                            <th>Colony</th>
-                            <th>Status</th>
-                            <th>Booking Date</th>
-                            <th>Total Value</th>
-                            <th>Paid</th>
-                            <th>Pending</th>
-                            <th class="text-end">Action</th>
+                            <th><?= __('user_bookings_col_booking', 'Booking #') ?></th>
+                            <th><?= __('user_bookings_col_plot', 'Plot') ?></th>
+                            <th><?= __('user_bookings_col_colony', 'Colony') ?></th>
+                            <th><?= __('user_bookings_col_status', 'Status') ?></th>
+                            <th><?= __('user_bookings_col_date', 'Booking Date') ?></th>
+                            <th><?= __('user_bookings_col_total', 'Total Value') ?></th>
+                            <th><?= __('user_bookings_col_paid', 'Paid') ?></th>
+                            <th><?= __('user_bookings_col_pending', 'Pending') ?></th>
+                            <th class="text-end"><?= __('user_bookings_col_action', 'Action') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -140,14 +140,14 @@ $statusLabels = [
                             <td>
                                 <?= htmlspecialchars($b['plot_number'] ?? 'N/A') ?>
                                 <?php if (!empty($b['block'])): ?>
-                                    <br><small class="text-muted">Block <?= htmlspecialchars($b['block']) ?></small>
+                                    <br><small class="text-muted"><?= __('user_bookings_block_prefix', 'Block') ?> <?= htmlspecialchars($b['block']) ?></small>
                                 <?php endif; ?>
                             </td>
                             <td><?= htmlspecialchars($b['colony_name'] ?? 'N/A') ?></td>
                             <td>
                                 <span class="badge bg-<?= $colorClass ?>"><?= $statusLabel ?></span>
                                 <?php if ((int)($b['overdue_count'] ?? 0) > 0): ?>
-                                    <br><small class="text-danger"><?= $b['overdue_count'] ?> overdue</small>
+                                    <br><small class="text-danger"><?= $b['overdue_count'] ?> <?= __('user_bookings_overdue', 'overdue') ?></small>
                                 <?php endif; ?>
                             </td>
                             <td><?= date('d M Y', strtotime($b['booking_date'] ?? $b['created_at'] ?? 'now')) ?></td>
@@ -162,11 +162,11 @@ $statusLabels = [
                                 <?php if ($pending > 0): ?>
                                     <span class="text-danger fw-semibold">₹<?= number_format($pending) ?></span>
                                 <?php else: ?>
-                                    <span class="text-success"><i class="fas fa-check-circle"></i> Settled</span>
+                                    <span class="text-success"><i class="fas fa-check-circle"></i> <?= __('user_bookings_settled', 'Settled') ?></span>
                                 <?php endif; ?>
                             </td>
                             <td class="text-end">
-                                <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$b['id'] ?>" class="aps-cp-icon-btn" title="View Details" onclick="event.stopPropagation()">
+                                <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$b['id'] ?>" class="aps-cp-icon-btn" title="<?= __('user_bookings_view_details', 'View Details') ?>" onclick="event.stopPropagation()">
                                     <i class="fas fa-eye"></i>
                                 </a>
                             </td>

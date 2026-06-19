@@ -85,14 +85,9 @@ function csrf_token() {
     return CSRFProtection::generateToken();
 }
 
-// Additional security headers
+// Security headers — CSP handled centrally by BaseController::setSecurityHeaders()
 header('X-Frame-Options: SAMEORIGIN');
 header('X-XSS-Protection: 1; mode=block');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('Permissions-Policy: geolocation=(self), camera=(), microphone=()');
-header('Content-Security-Policy: default-src \'self\'; 
-    script-src \'self\' https://cdn.jsdelivr.net https://unpkg.com; 
-    style-src \'self\' https://cdn.jsdelivr.net; 
-    img-src \'self\' data: https:; 
-    connect-src \'self\'');

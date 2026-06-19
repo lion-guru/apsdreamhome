@@ -18,9 +18,9 @@ void main() async {
   // Initialize logging
   AppLogger.setup();
 
-  // Demo mode disabled - using real API Auth
-  AuthService.setDemoMode(false);
-  AppLogger.info('Demo mode disabled - using PHP API Auth');
+  // Demo mode enabled for testing
+  AuthService.setDemoMode(true);
+  AppLogger.info('Demo mode enabled for testing');
 
   try {
     // Initialize services
@@ -28,8 +28,16 @@ void main() async {
     final dbHelper = DatabaseHelper();
     await apiService.initialize();
 
-    // Run app with Riverpod and repository overrides
+    // Auto-demo-login if no stored user (first launch in demo mode)
     const secureStorage = FlutterSecureStorage();
+    final existingToken = await secureStorage.read(key: 'auth_token');
+    if (existingToken == null || existingToken.isEmpty) {
+      AppLogger.info('Demo mode: no stored user, auto-logging in as customer');
+      final authRepo = AuthRepository(apiService, dbHelper, secureStorage);
+      await authRepo.demoLogin('customer');
+    }
+
+    // Run app with Riverpod and repository overrides
     runApp(
       ProviderScope(
         overrides: [

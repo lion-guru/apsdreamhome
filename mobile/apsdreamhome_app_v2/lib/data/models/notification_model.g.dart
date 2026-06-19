@@ -9,11 +9,11 @@ part of 'notification_model.dart';
 _$NotificationModelImpl _$$NotificationModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$NotificationModelImpl(
-  id: json['id'] as String,
-  userId: json['userId'] as String,
-  type: json['type'] as String,
-  title: json['title'] as String,
-  body: json['body'] as String,
+  id: json['id'] as String? ?? '',
+  userId: json['userId'] as String? ?? '',
+  type: json['type'] as String? ?? '',
+  title: json['title'] as String? ?? '',
+  body: json['body'] as String? ?? '',
   imageUrl: json['imageUrl'] as String?,
   actionType: json['actionType'] as String?,
   actionData: json['actionData'] as String?,

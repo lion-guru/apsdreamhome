@@ -1,6 +1,6 @@
 <?php
-$page_title = $page_title ?? 'Visit Confirmed';
-$page_heading = $page_heading ?? 'Visit Confirmed';
+$page_title = $page_title ?? __('visit_confirmed_title', [], 'Visit Confirmed');
+$page_heading = $page_heading ?? __('visit_confirmed_subtitle', [], 'Visit Confirmed');
 $content = $content ?? '';
 $visit = $visit ?? null;
 ?>
@@ -10,27 +10,27 @@ $visit = $visit ?? null;
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-5 text-center">
                     <div class="display-1 text-success mb-3"><i class="fas fa-check-circle"></i></div>
-                    <h1 class="mb-3">Visit Booked Successfully!</h1>
-                    <p class="lead text-muted mb-4">Your site visit is confirmed. We'll contact you shortly to verify the details.</p>
+                    <h1 class="mb-3"><?= __('visit_confirmed_heading', [], 'Visit Booked Successfully!') ?></h1>
+                    <p class="lead text-muted mb-4"><?= __('visit_confirmed_desc', [], 'Your site visit is confirmed. We\'ll contact you shortly to verify the details.') ?></p>
 
                     <?php if ($visit): ?>
                         <div class="card bg-light mb-4">
                             <div class="card-body aps-cp-card-body">
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <small class="text-muted d-block">Visit ID</small>
+                                        <small class="text-muted d-block"><?= __('visit_confirmed_id', [], 'Visit ID') ?></small>
                                         <strong>#<?= $visit['id'] ?></strong>
                                     </div>
                                     <div class="col-md-6">
-                                        <small class="text-muted d-block">Property</small>
+                                        <small class="text-muted d-block"><?= __('visit_confirmed_property', [], 'Property') ?></small>
                                         <strong><?= htmlspecialchars($visit['property_title'] ?? 'Property') ?></strong>
                                     </div>
                                     <div class="col-md-6">
-                                        <small class="text-muted d-block">Date & Time</small>
+                                        <small class="text-muted d-block"><?= __('visit_confirmed_datetime', [], 'Date & Time') ?></small>
                                         <strong><?= date('D, M j Y', strtotime($visit['visit_date'])) ?> at <?= date('h:i A', strtotime($visit['visit_time'])) ?></strong>
                                     </div>
                                     <div class="col-md-6">
-                                        <small class="text-muted d-block">Type</small>
+                                        <small class="text-muted d-block"><?= __('visit_confirmed_type', [], 'Type') ?></small>
                                         <strong><?= ucfirst(str_replace('_', ' ', $visit['visit_type'])) ?></strong>
                                     </div>
                                 </div>
@@ -39,8 +39,8 @@ $visit = $visit ?? null;
                     <?php endif; ?>
 
                     <div class="d-flex gap-3 justify-content-center flex-wrap">
-                        <a href="<?= BASE_URL ?>/visit/my-visits" class="btn btn-primary"><i class="fas fa-list me-1"></i> My Visits</a>
-                        <a href="<?= BASE_URL ?>/properties" class="btn btn-outline-primary"><i class="fas fa-search me-1"></i> Browse More</a>
+                        <a href="<?= BASE_URL ?>/visit/my-visits" class="btn btn-primary"><i class="fas fa-list me-1"></i> <?= __('visit_confirmed_my_visits', [], 'My Visits') ?></a>
+                        <a href="<?= BASE_URL ?>/properties" class="btn btn-outline-primary"><i class="fas fa-search me-1"></i> <?= __('visit_confirmed_browse_more', [], 'Browse More') ?></a>
                     </div>
                 </div>
             </div>

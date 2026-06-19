@@ -8,6 +8,7 @@ import '../../../data/services/colony_service.dart';
 import '../../../data/models/colony_model.dart';
 import '../../widgets/app_widgets.dart';
 import '../../widgets/ai/floating_ai_button.dart';
+import '../../widgets/glass_card.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -19,9 +20,10 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       floatingActionButton: const FloatingAIButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
+      body: GradientBackground(
+        child: SafeArea(
+          child: CustomScrollView(
+            slivers: [
             // App Bar
             SliverToBoxAdapter(
               child: _buildAppBar(context),
@@ -97,7 +99,8 @@ class HomePage extends ConsumerWidget {
             const SliverToBoxAdapter(
               child: SizedBox(height: 32),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );

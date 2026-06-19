@@ -388,7 +388,7 @@ class NocRegistryService
     public function getBooking(int $id): ?array
     {
         $pdo = $this->getPdo();
-        $stmt = $pdo->prepare("SELECT pb.*, p.plot_no, p.colony_id, c.name as colony_name, u.name as customer_name, u.email as customer_email, u.phone as customer_phone
+        $stmt = $pdo->prepare("SELECT pb.*, p.plot_number as plot_no, p.colony_id, c.name as colony_name, u.name as customer_name, u.email as customer_email, u.phone as customer_phone
             FROM plot_bookings pb
             JOIN plots p ON pb.plot_id = p.id
             JOIN colonies c ON p.colony_id = c.id
@@ -402,7 +402,7 @@ class NocRegistryService
     public function getNoc(int $id): ?array
     {
         $pdo = $this->getPdo();
-        $stmt = $pdo->prepare("SELECT n.*, pb.booking_number, p.plot_no, c.name as colony_name, u.name as customer_name
+        $stmt = $pdo->prepare("SELECT n.*, pb.booking_number, p.plot_number as plot_no, c.name as colony_name, u.name as customer_name
             FROM noc_requests n
             JOIN plot_bookings pb ON n.booking_id = pb.id
             JOIN plots p ON n.plot_id = p.id
@@ -417,7 +417,7 @@ class NocRegistryService
     public function getRegistry(int $id): ?array
     {
         $pdo = $this->getPdo();
-        $stmt = $pdo->prepare("SELECT r.*, pb.booking_number, p.plot_no, c.name as colony_name, u.name as customer_name
+        $stmt = $pdo->prepare("SELECT r.*, pb.booking_number, p.plot_number as plot_no, c.name as colony_name, u.name as customer_name
             FROM registries r
             JOIN plot_bookings pb ON r.booking_id = pb.id
             JOIN plots p ON r.plot_id = p.id
@@ -482,7 +482,7 @@ class NocRegistryService
     public function listEligibleBookings(): array
     {
         $pdo = $this->getPdo();
-        $stmt = $pdo->query("SELECT pb.id, pb.booking_number, pb.status, pb.total_plot_value, p.plot_no, c.name as colony_name, u.name as customer_name
+        $stmt = $pdo->query("SELECT pb.id, pb.booking_number, pb.status, pb.total_plot_value, p.plot_number as plot_no, c.name as colony_name, u.name as customer_name
             FROM plot_bookings pb
             JOIN plots p ON pb.plot_id = p.id
             JOIN colonies c ON p.colony_id = c.id

@@ -1,6 +1,6 @@
 <?php
-$page_title = $page_title ?? 'Customer Testimonials';
-$page_heading = $page_heading ?? 'Testimonials';
+$page_title = $page_title ?? __('testi_page_title', [], 'Customer Testimonials');
+$page_heading = $page_heading ?? __('testi_page_heading', [], 'Testimonials');
 $content = $content ?? '';
 $testimonials = $testimonials ?? [];
 $featured = $featured ?? [];
@@ -17,8 +17,8 @@ $stats = $stats ?? [];
 
 <section class="testimonial-hero">
     <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-quote-left me-2"></i>Customer Testimonials</h1>
-        <p class="lead mb-0 opacity-90">Real stories from real customers who found their dream homes with us</p>
+        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-quote-left me-2"></i><?= __('testi_hero_heading', [], 'Customer Testimonials') ?></h1>
+        <p class="lead mb-0 opacity-90"><?= __('testi_hero_subtitle', [], 'Real stories from real customers who found their dream homes with us') ?></p>
         <?php if (($stats['avg_rating'] ?? 0) > 0): ?>
             <div class="mt-4">
                 <div class="testimonial-rating fs-3">
@@ -26,7 +26,7 @@ $stats = $stats ?? [];
                         <i class="fas fa-star<?= $i <= round($stats['avg_rating']) ? '' : '-half-alt' ?>"></i>
                     <?php endfor; ?>
                 </div>
-                <p class="mt-2 mb-0"><strong><?= number_format($stats['avg_rating'], 1) ?></strong> average rating from <strong><?= $stats['approved_reviews'] ?? 0 ?></strong> reviews</p>
+                <p class="mt-2 mb-0"><strong><?= number_format($stats['avg_rating'], 1) ?></strong> <?= __('testi_avg_rating', [], 'average rating from') ?> <strong><?= $stats['approved_reviews'] ?? 0 ?></strong> <?= __('testi_reviews', [], 'reviews') ?></p>
             </div>
         <?php endif; ?>
     </div>
@@ -34,9 +34,9 @@ $stats = $stats ?? [];
 
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Featured Stories</h2>
+        <h2 class="mb-0"><?= __('testi_featured_stories', [], 'Featured Stories') ?></h2>
         <a href="<?= BASE_URL ?>/testimonials/submit" class="btn btn-primary">
-            <i class="fas fa-pen me-1"></i> Share Your Story
+            <i class="fas fa-pen me-1"></i> <?= __('testi_share_your_story', [], 'Share Your Story') ?>
         </a>
     </div>
 
@@ -77,13 +77,13 @@ $stats = $stats ?? [];
         </div>
     <?php endif; ?>
 
-    <h3 class="mb-4">All Customer Stories</h3>
+    <h3 class="mb-4"><?= __('testi_all_stories', [], 'All Customer Stories') ?></h3>
     <?php if (empty($testimonials)): ?>
         <div class="text-center py-5">
             <div class="display-1 text-muted mb-3"><i class="fas fa-quote-right"></i></div>
-            <h4 class="text-muted">No testimonials yet</h4>
-            <p class="text-muted">Be the first to share your experience!</p>
-            <a href="<?= BASE_URL ?>/testimonials/submit" class="btn btn-primary">Share Your Story</a>
+            <h4 class="text-muted"><?= __('testi_no_testimonials', [], 'No testimonials yet') ?></h4>
+            <p class="text-muted"><?= __('testi_be_first', [], 'Be the first to share your experience!') ?></p>
+            <a href="<?= BASE_URL ?>/testimonials/submit" class="btn btn-primary"><?= __('testi_share_your_story', [], 'Share Your Story') ?></a>
         </div>
     <?php else: ?>
         <div class="row g-4">
@@ -115,7 +115,7 @@ $stats = $stats ?? [];
                         </div>
                         <?php if (!empty($t['is_featured'])): ?>
                             <span class="position-absolute top-0 end-0 badge bg-warning text-dark m-3">
-                                <i class="fas fa-star"></i> Featured
+                                <i class="fas fa-star"></i> <?= __('testi_featured', [], 'Featured') ?>
                             </span>
                         <?php endif; ?>
                     </div>
@@ -127,10 +127,10 @@ $stats = $stats ?? [];
     <div class="text-center py-5 mt-4">
         <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
             <div class="card-body p-5">
-                <h2 class="fw-bold mb-3">Bought a property from us?</h2>
-                <p class="lead mb-4 opacity-90">Share your experience and help other customers make the right decision</p>
+                <h2 class="fw-bold mb-3"><?= __('testi_cta_heading', [], 'Bought a property from us?') ?></h2>
+                <p class="lead mb-4 opacity-90"><?= __('testi_cta_subtitle', [], 'Share your experience and help other customers make the right decision') ?></p>
                 <a href="<?= BASE_URL ?>/testimonials/submit" class="btn btn-light btn-lg">
-                    <i class="fas fa-pen-fancy me-2"></i> Write a Testimonial
+                    <i class="fas fa-pen-fancy me-2"></i> <?= __('testi_write', [], 'Write a Testimonial') ?>
                 </a>
             </div>
         </div>

@@ -7,8 +7,8 @@
 <!-- Hero Section -->
 <section class="py-5 text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
     <div class="container text-center py-5">
-        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-tag me-3"></i>Sell Your Property</h1>
-        <p class="lead">Get the best price for your property with our trusted platform</p>
+        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-tag me-3"></i><?= __('sell_hero_title') ?></h1>
+        <p class="lead"><?= __('sell_hero_desc') ?></p>
     </div>
 </section>
 
@@ -20,32 +20,32 @@
                 <div class="card shadow-lg border-0">
                     <div class="card-body p-5">
                         <i class="fas fa-home fa-4x text-success mb-4"></i>
-                        <h3>Post Your Property for FREE!</h3>
-                        <p class="text-muted mb-4">List your property and connect with thousands of potential buyers across Uttar Pradesh.</p>
+                        <h3><?= __('sell_post_free_title') ?></h3>
+                        <p class="text-muted mb-4"><?= __('sell_post_free_desc') ?></p>
                         
                         <div class="row g-4 mb-4">
                             <div class="col-md-4">
                                 <div class="p-3 bg-light rounded">
                                     <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
-                                    <p class="mb-0 small fw-bold">100% FREE</p>
+                                    <p class="mb-0 small fw-bold"><?= __('sell_free_label') ?></p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="p-3 bg-light rounded">
                                     <i class="fas fa-clock text-primary fa-2x mb-2"></i>
-                                    <p class="mb-0 small fw-bold">Quick Listing</p>
+                                    <p class="mb-0 small fw-bold"><?= __('sell_quick_listing') ?></p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="p-3 bg-light rounded">
                                     <i class="fas fa-users text-warning fa-2x mb-2"></i>
-                                    <p class="mb-0 small fw-bold">More Buyers</p>
+                                    <p class="mb-0 small fw-bold"><?= __('sell_more_buyers') ?></p>
                                 </div>
                             </div>
                         </div>
 
                         <a href="<?php echo BASE_URL; ?>/list-property" class="btn btn-success btn-lg px-5">
-                            <i class="fas fa-plus-circle me-2"></i>Post Your Property
+                            <i class="fas fa-plus-circle me-2"></i><?= __('sell_post_btn') ?>
                         </a>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
 <!-- How It Works -->
 <section class="py-5 bg-light">
     <div class="container">
-        <h3 class="text-center mb-4">How It Works</h3>
+        <h3 class="text-center mb-4"><?= __('sell_how_it_works') ?></h3>
         <div class="row text-center">
             <div class="col-md-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm">
@@ -65,8 +65,8 @@
                         <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                             <span class="h4 mb-0">1</span>
                         </div>
-                        <h5>Fill Form</h5>
-                        <p class="text-muted">Submit your property details online</p>
+                        <h5><?= __('sell_step1_title') ?></h5>
+                        <p class="text-muted"><?= __('sell_step1_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -76,8 +76,8 @@
                         <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                             <span class="h4 mb-0">2</span>
                         </div>
-                        <h5>We Verify</h5>
-                        <p class="text-muted">Our team contacts you for verification</p>
+                        <h5><?= __('sell_step2_title') ?></h5>
+                        <p class="text-muted"><?= __('sell_step2_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -87,8 +87,8 @@
                         <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                             <span class="h4 mb-0">3</span>
                         </div>
-                        <h5>Get Connected</h5>
-                        <p class="text-muted">Buyers will contact you directly</p>
+                        <h5><?= __('sell_step3_title') ?></h5>
+                        <p class="text-muted"><?= __('sell_step3_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -99,14 +99,14 @@
 <!-- CTA -->
 <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
     <div class="container">
-        <h3>Need Help?</h3>
-        <p class="mb-4">Contact us directly for assistance</p>
+        <h3><?= __('sell_need_help') ?></h3>
+        <p class="mb-4"><?= __('sell_contact_us') ?></p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="tel:<?= $phoneRaw ?>" class="btn btn-light btn-lg">
-                <i class="fas fa-phone me-2"></i>Call Now
+                <i class="fas fa-phone me-2"></i><?= __('sell_call_now') ?>
             </a>
-            <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I want to sell my property" target="_blank" class="btn btn-outline-light btn-lg">
-                <i class="fab fa-whatsapp me-2"></i>WhatsApp
+            <a href="https://wa.me/<?= $phoneRaw ?>?text=<?= urlencode(__('sell_whatsapp_msg')) ?>" target="_blank" class="btn btn-outline-light btn-lg">
+                <i class="fab fa-whatsapp me-2"></i><?= __('sell_whatsapp') ?>
             </a>
         </div>
     </div>

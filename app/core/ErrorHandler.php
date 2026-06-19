@@ -25,33 +25,17 @@ class ErrorHandler
         $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? 'CLI';
         error_log("HTTP {$code} Error: " . $requestUri . " - IP: " . $remoteAddr . ($message ? " - Message: {$message}" : ""));
         
-        // Add detailed debug logging
-        error_log("ErrorHandler::render() - Starting error rendering for code: {$code}");
-        error_log("ErrorHandler::render() - Message: " . ($message ?? 'null'));
-        error_log("ErrorHandler::render() - Data: " . json_encode($data));
-        
         // Determine the error page path
         $errorView = __DIR__ . '/../../app/views/errors/' . $code . '.php';
-        error_log("ErrorHandler::render() - Error view path: {$errorView}");
         
         // If specific error page doesn't exist, use a generic one
         if (!file_exists($errorView)) {
-            error_log("ErrorHandler::render() - Error view file not found, using generic renderer");
             self::renderGeneric($code, $message, $data);
             return;
         }
         
-        error_log("ErrorHandler::render() - Error view file exists, including: {$errorView}");
-        
         // Include the error page
-        try {
-            require $errorView;
-            error_log("ErrorHandler::render() - Error view included successfully");
-        } catch (\Exception $e) {
-            error_log("ErrorHandler::render() - Exception while including error view: " . $e->getMessage());
-            error_log("ErrorHandler::render() - Exception file: " . $e->getFile() . " line: " . $e->getLine());
-            throw $e;
-        }
+        require $errorView;
     }
     
     /**
@@ -63,8 +47,6 @@ class ErrorHandler
      */
     protected static function renderGeneric($code, $message = null, $data = [])
     {
-        error_log("ErrorHandler::renderGeneric() - Starting generic error rendering for code: {$code}");
-        
         // Set default title and message based on code
         $titles = [
             400 => 'Bad Request',
@@ -91,9 +73,6 @@ class ErrorHandler
         
         // Set the page title
         $pageTitle = $code . ' - ' . $title;
-        
-        error_log("ErrorHandler::renderGeneric() - Page title: {$pageTitle}");
-        error_log("ErrorHandler::renderGeneric() - Message: {$message}");
         
         // Capture the content for the layout
         ob_start();
@@ -127,20 +106,10 @@ class ErrorHandler
         <?php
         $content = ob_get_clean();
         
-        error_log("ErrorHandler::renderGeneric() - Content captured, length: " . strlen($content));
-        
         // Include the modern layout
         $layoutPath = __DIR__ . '/../../resources/views/layouts/modern.php';
-        error_log("ErrorHandler::renderGeneric() - Layout path: {$layoutPath}");
-        error_log("ErrorHandler::renderGeneric() - Layout exists: " . (file_exists($layoutPath) ? 'yes' : 'no'));
-        
-        try {
+        if (file_exists($layoutPath)) {
             require $layoutPath;
-            error_log("ErrorHandler::renderGeneric() - Layout included successfully");
-        } catch (\Exception $e) {
-            error_log("ErrorHandler::renderGeneric() - Exception while including layout: " . $e->getMessage());
-            error_log("ErrorHandler::renderGeneric() - Exception file: " . $e->getFile() . " line: " . $e->getLine());
-            throw $e;
         }
     }
     

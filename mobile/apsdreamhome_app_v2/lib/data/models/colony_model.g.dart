@@ -8,11 +8,11 @@ part of 'colony_model.dart';
 
 _$ColonyModelImpl _$$ColonyModelImplFromJson(Map<String, dynamic> json) =>
     _$ColonyModelImpl(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      location: json['location'] as String,
-      district: json['district'] as String,
-      state: json['state'] as String,
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      location: json['location'] as String? ?? '',
+      district: json['district'] as String? ?? '',
+      state: json['state'] as String? ?? '',
       description: json['description'] as String?,
       images: (json['images'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -21,12 +21,12 @@ _$ColonyModelImpl _$$ColonyModelImplFromJson(Map<String, dynamic> json) =>
       videoUrl: json['videoUrl'] as String?,
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
-      totalPlots: (json['totalPlots'] as num).toInt(),
-      availablePlots: (json['availablePlots'] as num).toInt(),
-      holdPlots: (json['holdPlots'] as num).toInt(),
-      bookedPlots: (json['bookedPlots'] as num).toInt(),
-      soldPlots: (json['soldPlots'] as num).toInt(),
-      pricePerSqft: (json['pricePerSqft'] as num).toDouble(),
+      totalPlots: (json['totalPlots'] as num?)?.toInt() ?? 0,
+      availablePlots: (json['availablePlots'] as num?)?.toInt() ?? 0,
+      holdPlots: (json['holdPlots'] as num?)?.toInt() ?? 0,
+      bookedPlots: (json['bookedPlots'] as num?)?.toInt() ?? 0,
+      soldPlots: (json['soldPlots'] as num?)?.toInt() ?? 0,
+      pricePerSqft: (json['pricePerSqft'] as num?)?.toDouble() ?? 0.0,
       tokenAmount: (json['tokenAmount'] as num?)?.toDouble(),
       bookingPercentage: (json['bookingPercentage'] as num?)?.toDouble(),
       blockWisePricing: (json['blockWisePricing'] as Map<String, dynamic>?)
@@ -34,7 +34,7 @@ _$ColonyModelImpl _$$ColonyModelImplFromJson(Map<String, dynamic> json) =>
       amenities: (json['amenities'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      status: json['status'] as String,
+      status: json['status'] as String? ?? 'upcoming',
       launchDate: json['launchDate'] == null
           ? null
           : DateTime.parse(json['launchDate'] as String),

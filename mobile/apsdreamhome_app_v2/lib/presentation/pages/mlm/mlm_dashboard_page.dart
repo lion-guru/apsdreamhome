@@ -9,6 +9,7 @@ import '../../../data/models/user_model.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/connectivity_provider.dart';
 import '../../providers/commission_provider.dart';
+import '../../../data/repositories/mlm_repository.dart' hide commissionsProvider;
 import '../../widgets/common_widgets.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/payout_request_dialog.dart';
@@ -22,6 +23,7 @@ class MLMDashboardPage extends ConsumerWidget {
     final user = ref.watch(authProvider);
     final commissionsAsync = ref.watch(commissionsProvider);
     final connectivity = ref.watch(connectivityProvider);
+    final mlmSummaryAsync = ref.watch(mlmSummaryProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -144,11 +146,11 @@ class MLMDashboardPage extends ConsumerWidget {
 
               OutlinedButton.icon(
                 onPressed: () {
-                  const pendingAmount = 0.0; // Temporarily hardcoded
+                  final pendingAmount = mlmSummaryAsync.value?.currentBalance ?? 0.0;
                   showDialog(
                     context: context,
                     builder: (context) =>
-                        const PayoutRequestDialog(maxAmount: pendingAmount),
+                        PayoutRequestDialog(maxAmount: pendingAmount),
                   );
                 },
                 icon: const Icon(Icons.request_quote),

@@ -1,8 +1,8 @@
 <!-- Hero Section -->
 <section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container text-center py-5">
-        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-search me-3"></i>Buy Property</h1>
-        <p class="lead">Find your dream property from our verified listings</p>
+        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-search me-3"></i><?= __('buy_hero_title') ?></h1>
+        <p class="lead"><?= __('buy_hero_desc') ?></p>
     </div>
 </section>
 
@@ -13,40 +13,40 @@
             <div class="col-lg-10">
                 <div class="card shadow-lg border-0">
                     <div class="card-body p-4">
-                        <h4 class="mb-4 text-center">Search Properties</h4>
+                        <h4 class="mb-4 text-center"><?= __('buy_search_title') ?></h4>
                         <form action="<?php echo BASE_URL; ?>/properties" method="GET">
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <select name="type" class="form-select">
-                                        <option value="">Property Type</option>
-                                        <option value="residential">Residential Plot</option>
-                                        <option value="house">House/Villa</option>
-                                        <option value="flat">Flat/Apartment</option>
-                                        <option value="commercial">Commercial</option>
+                                        <option value=""><?= __('buy_type_placeholder') ?></option>
+                                        <option value="residential"><?= __('buy_type_residential') ?></option>
+                                        <option value="house"><?= __('buy_type_house') ?></option>
+                                        <option value="flat"><?= __('buy_type_flat') ?></option>
+                                        <option value="commercial"><?= __('buy_type_commercial') ?></option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <select name="location" class="form-select">
-                                        <option value="">Select Location</option>
-                                        <option value="Gorakhpur">Gorakhpur</option>
-                                        <option value="Lucknow">Lucknow</option>
-                                        <option value="Kushinagar">Kushinagar</option>
-                                        <option value="Varanasi">Varanasi</option>
+                                        <option value=""><?= __('buy_location_placeholder') ?></option>
+                                        <option value="Gorakhpur"><?= __('location_gorakhpur') ?></option>
+                                        <option value="Lucknow"><?= __('location_lucknow') ?></option>
+                                        <option value="Kushinagar"><?= __('location_kushinagar') ?></option>
+                                        <option value="Varanasi"><?= __('location_varanasi') ?></option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <select name="budget" class="form-select">
-                                        <option value="">Budget Range</option>
-                                        <option value="under_5l">Under ₹5 Lakhs</option>
-                                        <option value="5_10l">₹5 - 10 Lakhs</option>
-                                        <option value="10_20l">₹10 - 20 Lakhs</option>
-                                        <option value="20_50l">₹20 - 50 Lakhs</option>
-                                        <option value="above_50l">Above ₹50 Lakhs</option>
+                                        <option value=""><?= __('buy_budget_placeholder') ?></option>
+                                        <option value="under_5l"><?= __('buy_budget_under_5l') ?></option>
+                                        <option value="5_10l"><?= __('buy_budget_5_10l') ?></option>
+                                        <option value="10_20l"><?= __('buy_budget_10_20l') ?></option>
+                                        <option value="20_50l"><?= __('buy_budget_20_50l') ?></option>
+                                        <option value="above_50l"><?= __('buy_budget_above_50l') ?></option>
                                     </select>
                                 </div>
                                 <div class="col-12 text-center mt-4">
                                     <button type="submit" class="btn btn-primary btn-lg px-5">
-                                        <i class="fas fa-search me-2"></i>Search Properties
+                                        <i class="fas fa-search me-2"></i><?= __('buy_search_btn') ?>
                                     </button>
                                 </div>
                             </div>
@@ -61,7 +61,7 @@
 <!-- Featured Listings -->
 <section class="py-5 bg-light">
     <div class="container">
-        <h3 class="text-center mb-4">Featured Properties for Sale</h3>
+        <h3 class="text-center mb-4"><?= __('buy_featured_title') ?></h3>
         <div class="row">
             <?php if (!empty($featured_properties)): ?>
                 <?php foreach (array_slice($featured_properties, 0, 3) as $project): 
@@ -74,14 +74,14 @@
                             <h5><?php echo htmlspecialchars($project['title']); ?></h5>
                             <p class="text-muted"><?php echo htmlspecialchars($project['location']); ?></p>
                             <p class="h5 text-primary"><?php echo $project['price']; ?></p>
-                            <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-outline-primary mt-2">View Details</a>
+                            <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-outline-primary mt-2"><?= __('buy_view_details') ?></a>
                         </div>
                     </div>
                 </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12 text-center">
-                    <p class="text-muted">No properties available at the moment. <a href="<?php echo BASE_URL; ?>/list-property">Post your property</a> for free!</p>
+                    <p class="text-muted"><?= __('buy_no_properties') ?> <a href="<?php echo BASE_URL; ?>/list-property"><?= __('buy_post_your_property') ?></a> <?= __('buy_post_free') ?></p>
                 </div>
             <?php endif; ?>
         </div>
@@ -91,8 +91,8 @@
 <!-- CTA -->
 <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container">
-        <h3>Want to sell your property?</h3>
-        <p class="mb-4">List your property with us and reach thousands of buyers</p>
-        <a href="<?php echo BASE_URL; ?>/sell" class="btn btn-warning btn-lg">Post Your Property</a>
+        <h3><?= __('buy_sell_cta_title') ?></h3>
+        <p class="mb-4"><?= __('buy_sell_cta_desc') ?></p>
+        <a href="<?php echo BASE_URL; ?>/sell" class="btn btn-warning btn-lg"><?= __('buy_sell_cta_btn') ?></a>
     </div>
 </section>

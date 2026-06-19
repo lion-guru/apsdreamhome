@@ -29,8 +29,8 @@ if (empty($grouped_projects) && !empty($projects)) {
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-4 fw-bold mb-4"><i class="fas fa-building me-3"></i>Our Projects</h1>
-                <p class="lead mb-0">Explore our completed and ongoing projects across Uttar Pradesh</p>
+                <h1 class="display-4 fw-bold mb-4"><i class="fas fa-building me-3"></i><?= __('cproj_heading', [], 'Our Projects') ?></h1>
+                <p class="lead mb-0"><?= __('cproj_subtitle', [], 'Explore our completed and ongoing projects across Uttar Pradesh') ?></p>
             </div>
         </div>
     </div>
@@ -58,7 +58,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                         <!-- District Header -->
                         <h4 class="text-secondary mb-3 ms-4">
                             <i class="fas fa-building me-2"></i><?php echo htmlspecialchars($district); ?>
-                            <span class="badge bg-secondary ms-2"><?php echo count($districtProjects); ?> Projects</span>
+                            <span class="badge bg-secondary ms-2"><?php echo count($districtProjects); ?> <?= __('cproj_projects', [], 'Projects') ?></span>
                         </h4>
                         
                         <div class="row ms-4">
@@ -111,7 +111,7 @@ if (empty($grouped_projects) && !empty($projects)) {
                                             <?php endif; ?>
                                             <div class="d-flex gap-2 mt-3">
                                                 <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-primary btn-sm flex-grow-1">
-                                                    <i class="fas fa-eye me-1"></i>View Details
+                                                    <i class="fas fa-eye me-1"></i><?= __('cproj_view_details', [], 'View Details') ?>
                                                 </a>
                                                 <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm">
                                                     <i class="fab fa-whatsapp"></i>
@@ -129,10 +129,10 @@ if (empty($grouped_projects) && !empty($projects)) {
             <!-- Fallback message -->
             <div class="text-center py-5">
                 <i class="fas fa-building fa-4x text-muted mb-4"></i>
-                <h3 class="text-muted">No Projects Available</h3>
-                <p class="text-muted">Check back soon for our upcoming projects!</p>
+                <h3 class="text-muted"><?= __('cproj_empty_title', [], 'No Projects Available') ?></h3>
+                <p class="text-muted"><?= __('cproj_empty_desc', [], 'Check back soon for our upcoming projects!') ?></p>
                 <a href="<?php echo BASE_URL; ?>/" class="btn btn-primary">
-                    <i class="fas fa-home me-2"></i>Go to Homepage
+                    <i class="fas fa-home me-2"></i><?= __('cproj_homepage', [], 'Go to Homepage') ?>
                 </a>
             </div>
         <?php endif; ?>

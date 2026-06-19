@@ -1,6 +1,6 @@
 <?php
-$page_title = $page_title ?? 'Auction';
-$page_heading = $page_heading ?? 'Auction';
+$page_title = $page_title ?? __('auction_detail_title', [], 'Auction');
+$page_heading = $page_heading ?? __('auction_detail_heading', [], 'Auction');
 $content = $content ?? '';
 $auction = $auction ?? [];
 $bids = $bids ?? [];
@@ -11,7 +11,7 @@ ob_start();
 <div class="container py-4">
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/auctions">Auctions</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/auctions"><?= __('auction_breadcrumb', [], 'Auctions') ?></a></li>
             <li class="breadcrumb-item active"><?= htmlspecialchars($auction['title']) ?></li>
         </ol>
     </nav>
@@ -31,7 +31,7 @@ ob_start();
                             <h2 class="mt-2"><?= htmlspecialchars($auction['title']) ?></h2>
                         </div>
                         <div class="text-end">
-                            <small class="text-muted d-block">Time Left</small>
+                            <small class="text-muted d-block"><?= __('auction_time_left', [], 'Time Left') ?></small>
                             <h3 class="text-danger" data-countdown="<?= date('c', strtotime($auction['ends_at'])) ?>">
                                 <i class="fas fa-clock"></i> <span class="cd-text">—</span>
                             </h3>
@@ -42,7 +42,7 @@ ob_start();
 
                     <?php if ($auction['property_title']): ?>
                         <div class="bg-light p-3 rounded mb-3">
-                            <h6 class="mb-2">Property Details</h6>
+                            <h6 class="mb-2"><?= __('auction_property_details', [], 'Property Details') ?></h6>
                             <p class="mb-1"><i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($auction['property_address']) ?>, <?= htmlspecialchars($auction['property_city']) ?></p>
                             <?php if ($auction['area_sqft']): ?>
                                 <p class="mb-0"><i class="fas fa-ruler-combined me-1"></i> <?= number_format($auction['area_sqft']) ?> sq ft</p>
@@ -52,31 +52,31 @@ ob_start();
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-4">
-                            <small class="text-muted d-block">Starting Price</small>
+                            <small class="text-muted d-block"><?= __('auction_starting_price', [], 'Starting Price') ?></small>
                             <strong>₹<?= number_format($auction['start_price']) ?></strong>
                         </div>
                         <div class="col-md-4">
-                            <small class="text-muted d-block">Current Bid</small>
+                            <small class="text-muted d-block"><?= __('auction_current_bid', [], 'Current Bid') ?></small>
                             <strong class="text-success">₹<?= number_format($auction['current_bid'] ?? $auction['start_price']) ?></strong>
                         </div>
                         <div class="col-md-4">
-                            <small class="text-muted d-block">Bid Increment</small>
+                            <small class="text-muted d-block"><?= __('auction_bid_increment', [], 'Bid Increment') ?></small>
                             <strong>₹<?= number_format($auction['bid_increment']) ?></strong>
                         </div>
                         <?php if ($auction['buy_now_price']): ?>
                             <div class="col-md-4">
-                                <small class="text-muted d-block">Buy Now</small>
+                                <small class="text-muted d-block"><?= __('auction_buy_now', [], 'Buy Now') ?></small>
                                 <strong class="text-primary">₹<?= number_format($auction['buy_now_price']) ?></strong>
                             </div>
                         <?php endif; ?>
                         <?php if ($auction['reserve_price']): ?>
                             <div class="col-md-4">
-                                <small class="text-muted d-block">Reserve</small>
+                                <small class="text-muted d-block"><?= __('auction_reserve', [], 'Reserve') ?></small>
                                 <strong>₹<?= number_format($auction['reserve_price']) ?></strong>
                             </div>
                         <?php endif; ?>
                         <div class="col-md-4">
-                            <small class="text-muted d-block">Total Bids</small>
+                            <small class="text-muted d-block"><?= __('auction_total_bids', [], 'Total Bids') ?></small>
                             <strong><?= $auction['bid_count'] ?></strong>
                         </div>
                     </div>
@@ -87,26 +87,26 @@ ob_start();
                                 <?php if ($auction['deposit_amount'] && !$has_deposit): ?>
                                     <div class="alert alert-warning">
                                         <i class="fas fa-info-circle me-1"></i>
-                                        A deposit of <strong>₹<?= number_format($auction['deposit_amount']) ?></strong> is required to bid.
-                                        <button class="btn btn-sm btn-warning ms-2" id="depositBtn">Pay Deposit</button>
+                                        A deposit of <strong>₹<?= number_format($auction['deposit_amount']) ?></strong> <?= __('auction_deposit_required', [], 'is required to bid.') ?>
+                                         <button class="btn btn-sm btn-warning ms-2" id="depositBtn"><?= __('auction_pay_deposit', [], 'Pay Deposit') ?></button>
                                     </div>
                                 <?php endif; ?>
 
                                 <?php if (!$auction['deposit_amount'] || $has_deposit): ?>
-                                    <h6 class="mb-2">Place Your Bid</h6>
+                                    <h6 class="mb-2"><?= __('auction_place_bid', [], 'Place Your Bid') ?></h6>
                                     <form id="bidForm" class="d-flex gap-2">
                                         <input type="hidden" name="auction_id" value="<?= $auction['id'] ?>">
                                         <input type="number" name="amount" id="bidAmount" class="form-control" step="0.01" min="<?= ($auction['current_bid'] ?? $auction['start_price']) + $auction['bid_increment'] ?>" placeholder="Enter bid amount" required>
-                                        <button type="submit" class="btn btn-primary"><i class="fas fa-gavel me-1"></i> Bid</button>
+                                         <button type="submit" class="btn btn-primary"><i class="fas fa-gavel me-1"></i> <?= __('auction_bid_btn', [], 'Bid') ?></button>
                                     </form>
-                                    <small class="text-muted">Minimum bid: ₹<?= number_format(($auction['current_bid'] ?? $auction['start_price']) + $auction['bid_increment']) ?></small>
+                                    <small class="text-muted"><?= __('auction_minimum_bid', [], 'Minimum bid:') ?> ₹<?= number_format(($auction['current_bid'] ?? $auction['start_price']) + $auction['bid_increment']) ?></small>
                                 <?php endif; ?>
                             </div>
                         </div>
                     <?php else: ?>
                         <div class="alert alert-secondary">
                             <i class="fas fa-info-circle me-1"></i>
-                            This auction is <?= strtolower($auction['status']) ?>. Bidding is closed.
+                            This auction is <?= strtolower($auction['status']) ?>. <?= __('auction_bidding_closed', [], 'Bidding is closed.') ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -116,11 +116,11 @@ ob_start();
         <div class="col-md-4">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white">
-                    <h6 class="mb-0">Bid History</h6>
+                    <h6 class="mb-0"><?= __('auction_bid_history', [], 'Bid History') ?></h6>
                 </div>
                 <div class="card-body aps-cp-card-body" style="max-height: 500px; overflow-y: auto;" id="bidHistory">
                     <?php if (empty($bids)): ?>
-                        <p class="text-muted text-center">No bids yet. Be the first!</p>
+                        <p class="text-muted text-center"><?= __('auction_no_bids', [], 'No bids yet. Be the first!') ?></p>
                     <?php else: ?>
                         <?php foreach ($bids as $b): ?>
                             <div class="d-flex justify-content-between border-bottom py-2">
@@ -131,9 +131,9 @@ ob_start();
                                 <div class="text-end">
                                     <strong>₹<?= number_format($b['bid_amount']) ?></strong>
                                     <?php if ($b['status'] === 'winning'): ?>
-                                        <br><span class="badge bg-success">Winning</span>
+                                        <br><span class="badge bg-success"><?= __('auction_winning', [], 'Winning') ?></span>
                                     <?php elseif ($b['status'] === 'outbid'): ?>
-                                        <br><span class="badge bg-secondary">Outbid</span>
+                                        <br><span class="badge bg-secondary"><?= __('auction_outbid', [], 'Outbid') ?></span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@ ob_start();
                 <div class="card-body aps-cp-card-body">
                     <button class="btn btn-<?= $is_watching ? 'secondary' : 'outline-primary' ?> w-100" id="watchBtn">
                         <i class="fas fa-eye me-1"></i>
-                        <?= $is_watching ? 'Watching' : 'Watch Auction' ?>
+                        <?= $is_watching ? __('auction_watching', [], 'Watching') : __('auction_watch', [], 'Watch Auction') ?>
                     </button>
                 </div>
             </div>

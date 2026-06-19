@@ -311,18 +311,18 @@
     <div class="container team-hero-content py-5">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1>Meet Our Expert Team</h1>
-                <p class="hero-subtitle">Passionate professionals dedicated to making your real estate journey seamless, transparent, and successful.</p>
+                <h1><?php echo __('team_hero_title', [], 'Meet Our Expert Team'); ?></h1>
+                <p class="hero-subtitle"><?php echo __('team_hero_subtitle', [], 'Passionate professionals dedicated to making your real estate journey seamless, transparent, and successful.'); ?></p>
                 <?php if (!empty($pageContent)): ?>
                 <div class="cms-banner"><?php echo $pageContent; ?></div>
                 <?php endif; ?>
             </div>
             <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
                 <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-light btn-lg px-4 me-2 rounded-pill">
-                    <i class="fas fa-handshake me-2"></i>Work With Us
+                    <i class="fas fa-handshake me-2"></i><?php echo __('team_work_with_us', [], 'Work With Us'); ?>
                 </a>
                 <a href="<?php echo BASE_URL; ?>/careers" class="btn btn-outline-light btn-lg px-4 rounded-pill mt-2 mt-md-0">
-                    <i class="fas fa-briefcase me-2"></i>Join Our Team
+                    <i class="fas fa-briefcase me-2"></i><?php echo __('team_join_our_team', [], 'Join Our Team'); ?>
                 </a>
             </div>
         </div>
@@ -335,25 +335,25 @@
             <div class="col-6 col-md-3">
                 <div class="stat-card">
                     <div class="stat-number">50+</div>
-                    <div class="stat-label">Team Members</div>
+                    <div class="stat-label"><?php echo __('team_stat_members', [], 'Team Members'); ?></div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="stat-card">
                     <div class="stat-number">75+</div>
-                    <div class="stat-label">Years Combined Exp</div>
+                    <div class="stat-label"><?php echo __('team_stat_experience', [], 'Years Combined Exp'); ?></div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="stat-card">
                     <div class="stat-number">2500+</div>
-                    <div class="stat-label">Properties Sold</div>
+                    <div class="stat-label"><?php echo __('team_stat_properties_sold', [], 'Properties Sold'); ?></div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="stat-card">
                     <div class="stat-number">98%</div>
-                    <div class="stat-label">Client Satisfaction</div>
+                    <div class="stat-label"><?php echo __('team_stat_satisfaction', [], 'Client Satisfaction'); ?></div>
                 </div>
             </div>
         </div>
@@ -363,13 +363,13 @@
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold mb-2" style="color:#1f2937;">Our Leadership & Team</h2>
-            <p class="text-muted" style="max-width:600px;margin:0 auto;">Dedicated professionals working together to deliver exceptional real estate solutions.</p>
+            <h2 class="fw-bold mb-2" style="color:#1f2937;"><?php echo __('team_leadership_title', [], 'Our Leadership & Team'); ?></h2>
+            <p class="text-muted" style="max-width:600px;margin:0 auto;"><?php echo __('team_leadership_subtitle', [], 'Dedicated professionals working together to deliver exceptional real estate solutions.'); ?></p>
         </div>
 
         <?php if (!empty($team_members)): ?>
         <div class="filter-bar">
-            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn active" data-filter="all"><?php echo __('filter_all', [], 'All'); ?></button>
             <?php foreach (array_keys($expertise_groups) as $cat): ?>
             <button class="filter-btn" data-filter="<?php echo htmlspecialchars(strtolower(preg_replace('/[^a-zA-Z0-9]/', '-', $cat))); ?>"><?php echo htmlspecialchars($cat); ?></button>
             <?php endforeach; ?>
@@ -423,7 +423,7 @@
         <?php else: ?>
         <div class="text-center py-5">
             <i class="fas fa-users" style="font-size:3rem;color:#d1d5db;margin-bottom:1rem;"></i>
-            <p class="text-muted">Team members are currently being updated. Please check back soon.</p>
+            <p class="text-muted"><?php echo __('team_members_updating', [], 'Team members are currently being updated. Please check back soon.'); ?></p>
         </div>
         <?php endif; ?>
     </div>
@@ -432,36 +432,36 @@
 <section class="values-section">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color:#1f2937;">Our Core Values</h2>
-            <p class="text-muted" style="max-width:550px;margin:0 auto;">The principles that guide every decision we make and every relationship we build.</p>
+            <h2 class="fw-bold" style="color:#1f2937;"><?php echo __('team_values_title', [], 'Our Core Values'); ?></h2>
+            <p class="text-muted" style="max-width:550px;margin:0 auto;"><?php echo __('team_values_subtitle', [], 'The principles that guide every decision we make and every relationship we build.'); ?></p>
         </div>
         <div class="row g-4">
             <div class="col-md-6 col-lg-3">
                 <div class="value-card">
                     <div class="icon"><i class="fas fa-shield-alt"></i></div>
-                    <h4>Integrity</h4>
-                    <p>We uphold the highest standards of honesty and transparency in every transaction.</p>
+                    <h4><?php echo __('team_value_integrity', [], 'Integrity'); ?></h4>
+                    <p><?php echo __('team_value_integrity_desc', [], 'We uphold the highest standards of honesty and transparency in every transaction.'); ?></p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="value-card">
                     <div class="icon"><i class="fas fa-hand-holding-heart"></i></div>
-                    <h4>Client Focus</h4>
-                    <p>Your dreams and needs come first. We listen, understand, and deliver solutions that matter.</p>
+                    <h4><?php echo __('team_value_client_focus', [], 'Client Focus'); ?></h4>
+                    <p><?php echo __('team_value_client_focus_desc', [], 'Your dreams and needs come first. We listen, understand, and deliver solutions that matter.'); ?></p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="value-card">
                     <div class="icon"><i class="fas fa-trophy"></i></div>
-                    <h4>Excellence</h4>
-                    <p>We strive for excellence in everything we do, setting benchmarks in the real estate industry.</p>
+                    <h4><?php echo __('team_value_excellence', [], 'Excellence'); ?></h4>
+                    <p><?php echo __('team_value_excellence_desc', [], 'We strive for excellence in everything we do, setting benchmarks in the real estate industry.'); ?></p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="value-card">
                     <div class="icon"><i class="fas fa-lightbulb"></i></div>
-                    <h4>Innovation</h4>
-                    <p>Embracing technology and innovative approaches to provide modern real estate solutions.</p>
+                    <h4><?php echo __('team_value_innovation', [], 'Innovation'); ?></h4>
+                    <p><?php echo __('team_value_innovation_desc', [], 'Embracing technology and innovative approaches to provide modern real estate solutions.'); ?></p>
                 </div>
             </div>
         </div>
@@ -470,14 +470,14 @@
 
 <section class="cta-section">
     <div class="container">
-        <h2>Ready to Work with Our Expert Team?</h2>
-        <p>Let us help you find the perfect property. Schedule a consultation with our experts today.</p>
+        <h2><?php echo __('team_cta_title', [], 'Ready to Work with Our Expert Team?'); ?></h2>
+        <p><?php echo __('team_cta_subtitle', [], 'Let us help you find the perfect property. Schedule a consultation with our experts today.'); ?></p>
         <div>
             <a href="<?php echo BASE_URL; ?>/contact" class="btn-cta me-2 mb-2">
-                <i class="fas fa-calendar-check me-2"></i>Get in Touch
+                <i class="fas fa-calendar-check me-2"></i><?php echo __('team_get_in_touch', [], 'Get in Touch'); ?>
             </a>
             <a href="tel:<?= $phoneRaw ?>" class="btn-cta mb-2" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);">
-                <i class="fas fa-phone-alt me-2"></i>Call Now
+                <i class="fas fa-phone-alt me-2"></i><?php echo __('team_call_now', [], 'Call Now'); ?>
             </a>
         </div>
     </div>

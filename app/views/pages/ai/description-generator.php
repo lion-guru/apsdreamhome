@@ -3,17 +3,17 @@
         <div class="col-lg-10">
             <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-header bg-primary text-white p-4">
-                    <h2 class="mb-0"><i class="fas fa-magic me-2"></i> Property Description Generator</h2>
-                    <p class="mb-0 text-white-50 mt-1">Generate compelling descriptions for your property with the help of AI.</p>
+                    <h2 class="mb-0"><i class="fas fa-magic me-2"></i> <?= __('aigen_heading', [], 'Property Description Generator') ?></h2>
+                    <p class="mb-0 text-white-50 mt-1"><?= __('aigen_subtitle', [], 'Generate compelling descriptions for your property with the help of AI.') ?></p>
                 </div>
                 
                 <div class="card-body p-4 p-lg-5">
                     <form id="propertyForm">
                         <div class="row g-4">
                             <div class="col-md-4">
-                                <label for="propertyType" class="form-label fw-bold">Property Type</label>
+                                <label for="propertyType" class="form-label fw-bold"><?= __('aigen_label_type', [], 'Property Type') ?></label>
                                 <select id="propertyType" class="form-select py-2" required>
-                                    <option value="">Select</option>
+                                    <option value=""><?= __('aigen_select', [], 'Select') ?></option>
                                     <?php foreach ($property_types as $type): ?>
                                         <option value="<?= h($type['type_name']); ?>">
                                             <?= h($type['type_name']); ?>
@@ -22,35 +22,35 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label for="location" class="form-label fw-bold">Location</label>
-                                <input type="text" id="location" class="form-control py-2" required placeholder="e.g. Gorakhpur, UP">
+                                <label for="location" class="form-label fw-bold"><?= __('aigen_label_location', [], 'Location') ?></label>
+                                <input type="text" id="location" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_location', [], 'e.g. Gorakhpur, UP') ?>">
                             </div>
                             <div class="col-md-4">
-                                <label for="price" class="form-label fw-bold">Price (₹)</label>
-                                <input type="number" id="price" class="form-control py-2" required placeholder="e.g. 5000000">
+                                <label for="price" class="form-label fw-bold"><?= __('aigen_label_price', [], 'Price (₹)') ?></label>
+                                <input type="number" id="price" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_price', [], 'e.g. 5000000') ?>">
                             </div>
                             
                             <div class="col-md-4">
-                                <label for="bedrooms" class="form-label fw-bold">Bedrooms</label>
-                                <input type="number" id="bedrooms" class="form-control py-2" placeholder="e.g. 3">
+                                <label for="bedrooms" class="form-label fw-bold"><?= __('aigen_label_bedrooms', [], 'Bedrooms') ?></label>
+                                <input type="number" id="bedrooms" class="form-control py-2" placeholder="<?= __('aigen_placeholder_bedrooms', [], 'e.g. 3') ?>">
                             </div>
                             <div class="col-md-4">
-                                <label for="bathrooms" class="form-label fw-bold">Bathrooms</label>
-                                <input type="number" id="bathrooms" class="form-control py-2" placeholder="e.g. 2">
+                                <label for="bathrooms" class="form-label fw-bold"><?= __('aigen_label_bathrooms', [], 'Bathrooms') ?></label>
+                                <input type="number" id="bathrooms" class="form-control py-2" placeholder="<?= __('aigen_placeholder_bathrooms', [], 'e.g. 2') ?>">
                             </div>
                             <div class="col-md-4">
-                                <label for="area" class="form-label fw-bold">Area (sq ft)</label>
-                                <input type="number" id="area" class="form-control py-2" required placeholder="e.g. 1200">
+                                <label for="area" class="form-label fw-bold"><?= __('aigen_label_area', [], 'Area (sq ft)') ?></label>
+                                <input type="number" id="area" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_area', [], 'e.g. 1200') ?>">
                             </div>
                             
                             <div class="col-12">
-                                <label for="additionalFeatures" class="form-label fw-bold">Additional Features</label>
-                                <textarea id="additionalFeatures" class="form-control py-2" rows="4" placeholder="Enter additional features like parking, garden, security, etc..."></textarea>
+                                <label for="additionalFeatures" class="form-label fw-bold"><?= __('aigen_label_features', [], 'Additional Features') ?></label>
+                                <textarea id="additionalFeatures" class="form-control py-2" rows="4" placeholder="<?= __('aigen_placeholder_features', [], 'Enter additional features like parking, garden, security, etc...') ?>"></textarea>
                             </div>
                             
                             <div class="col-12 text-center mt-4">
                                 <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill">
-                                    <i class="fas fa-magic me-2"></i> Generate Description
+                                    <i class="fas fa-magic me-2"></i> <?= __('aigen_generate', [], 'Generate Description') ?>
                                 </button>
                             </div>
                         </div>
@@ -58,16 +58,16 @@
 
                     <div class="loading text-center py-4 mt-4 border-top" id="loading" style="display: none;">
                         <div class="spinner-border text-primary mb-2" role="status"></div>
-                        <p class="text-muted">AI is generating the description, please wait...</p>
+                        <p class="text-muted"><?= __('aigen_loading', [], 'AI is generating the description, please wait...') ?></p>
                     </div>
                     
                     <div id="resultContainer" class="mt-5 pt-4 border-top" style="display: none;">
-                        <h4 class="fw-bold mb-3">Generated Description:</h4>
+                        <h4 class="fw-bold mb-3"><?= __('aigen_result_heading', [], 'Generated Description:') ?></h4>
                         <div id="generatedDescription" class="p-4 bg-light rounded-4 border position-relative" style="white-space: pre-wrap; font-size: 1.1rem; line-height: 1.6;">
                         </div>
                         <div class="mt-3 text-end">
                             <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="copyToClipboard()">
-                                <i class="fas fa-copy me-1"></i> Copy to Clipboard
+                                <i class="fas fa-copy me-1"></i> <?= __('aigen_copy', [], 'Copy to Clipboard') ?>
                             </button>
                         </div>
                     </div>
@@ -113,7 +113,7 @@ document.getElementById('propertyForm').addEventListener('submit', async (e) => 
             descriptionDiv.textContent = data.description;
             resultContainer.style.display = 'block';
         } else {
-            alert(`Error: ${data.error || 'Failed to generate description'}`);
+            alert(`Error: ${data.error || '<?= __('aigen_error_generate', [], 'Failed to generate description') ?>'}`);
         }
     } catch (error) {
         alert(`Error: ${error.message}`);
@@ -125,7 +125,7 @@ document.getElementById('propertyForm').addEventListener('submit', async (e) => 
 function copyToClipboard() {
     const text = document.getElementById('generatedDescription').textContent;
     navigator.clipboard.writeText(text).then(() => {
-        alert('Description copied to clipboard!');
+        alert('<?= __('aigen_copied', [], 'Description copied to clipboard!') ?>');
     });
 }
 </script>

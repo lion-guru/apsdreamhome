@@ -21,28 +21,28 @@ http_response_code($error_code);
 // Define error messages
 $error_messages = [
     400 => [
-        'title' => 'Bad Request',
-        'message' => 'The server cannot process the request due to a client error.'
+        'title' => __('error_400_title'),
+        'message' => __('error_400_message')
     ],
     401 => [
-        'title' => 'Unauthorized',
-        'message' => 'Authentication is required to access this page.'
+        'title' => __('error_401_title'),
+        'message' => __('error_401_message')
     ],
     403 => [
-        'title' => 'Access Denied',
-        'message' => 'You do not have permission to access this page.'
+        'title' => __('error_403_title'),
+        'message' => __('error_403_message')
     ],
     404 => [
-        'title' => 'Page Not Found',
-        'message' => 'The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.'
+        'title' => __('error_404_title'),
+        'message' => __('error_404_message')
     ],
     500 => [
-        'title' => 'Internal Server Error',
-        'message' => 'The server encountered an internal error. Please try again later.'
+        'title' => __('error_500_title'),
+        'message' => __('error_500_message')
     ],
     503 => [
-        'title' => 'Service Unavailable',
-        'message' => 'The server is currently unavailable. Please try again later.'
+        'title' => __('error_503_title'),
+        'message' => __('error_503_message')
     ]
 ];
 
@@ -249,27 +249,27 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
 
             <?php if ($is_internal && $error_details && ($is_development || (function_exists('isAdmin') && isAdmin()))): ?>
             <div class="alert alert-warning mt-4">
-                <h5 class="alert-heading"><i class="fas fa-bug me-2"></i>Technical Details</h5>
+                <h5 class="alert-heading"><i class="fas fa-bug me-2"></i><?= __('error_technical_details') ?></h5>
                 <hr>
                 <div class="technical-details">
                     <dl class="row">
-                        <dt class="col-sm-3">Error Type:</dt>
-                        <dd class="col-sm-9"><?php echo h($error_details['type'] ?? 'Unknown'); ?></dd>
+                        <dt class="col-sm-3"><?= __('error_type') ?>:</dt>
+                        <dd class="col-sm-9"><?php echo h($error_details['type'] ?? __('error_unknown')); ?></dd>
 
-                        <dt class="col-sm-3">Message:</dt>
-                        <dd class="col-sm-9"><?php echo h($error_details['message'] ?? 'No message available'); ?></dd>
+                        <dt class="col-sm-3"><?= __('common_message') ?>:</dt>
+                        <dd class="col-sm-9"><?php echo h($error_details['message'] ?? __('error_no_message')); ?></dd>
 
-                        <dt class="col-sm-3">File:</dt>
-                        <dd class="col-sm-9"><?php echo h($error_details['file'] ?? 'Unknown'); ?></dd>
+                        <dt class="col-sm-3"><?= __('error_file') ?>:</dt>
+                        <dd class="col-sm-9"><?php echo h($error_details['file'] ?? __('error_unknown')); ?></dd>
 
-                        <dt class="col-sm-3">Line:</dt>
-                        <dd class="col-sm-9"><?php echo h($error_details['line'] ?? 'Unknown'); ?></dd>
+                        <dt class="col-sm-3"><?= __('error_line') ?>:</dt>
+                        <dd class="col-sm-9"><?php echo h($error_details['line'] ?? __('error_unknown')); ?></dd>
 
-                        <dt class="col-sm-3">Time:</dt>
+                        <dt class="col-sm-3"><?= __('error_time') ?>:</dt>
                         <dd class="col-sm-9"><?php echo h($error_details['time'] ?? date('Y-m-d H:i:s')); ?></dd>
 
                         <?php if (isset($error_details['trace'])): ?>
-                        <dt class="col-sm-3">Stack Trace:</dt>
+                        <dt class="col-sm-3"><?= __('error_stack_trace') ?>:</dt>
                         <dd class="col-sm-9">
                             <pre class="bg-light p-3 small" style="max-height: 200px; overflow-y: auto;"><?php echo h($error_details['trace']); ?></pre>
                         </dd>
@@ -282,14 +282,14 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
             <?php if ($error_code === 404): ?>
                 <div class="error-search">
                     <form action="/search" method="get">
-                        <input type="text" name="q" placeholder="Search our website..." aria-label="Search">
-                        <button type="submit"><i class="fas fa-search"></i> Search</button>
+                        <input type="text" name="q" placeholder="<?= __('error_search_placeholder') ?>" aria-label="Search">
+                        <button type="submit"><i class="fas fa-search"></i> <?= __('common_search') ?></button>
                     </form>
                 </div>
             <?php endif; ?>
 
             <a href="<?= BASE_URL ?>/" class="btn-home">
-                <i class="fas fa-home"></i> Back to Homepage
+                <i class="fas fa-home"></i> <?= __('error_back_to_home') ?>
             </a>
         </div>
     </div>

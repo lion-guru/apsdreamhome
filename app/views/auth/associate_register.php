@@ -327,13 +327,13 @@ $base = BASE_URL;
             <div class="brand-icon">
                 <i class="fas fa-handshake"></i>
             </div>
-            <div class="brand-name">APS Dream Home</div>
-            <div class="brand-subtitle">Associate Partner Portal</div>
+            <div class="brand-name"><?php echo __('auth_aps_dream_home', 'APS Dream Home'); ?></div>
+            <div class="brand-subtitle"><?php echo __('auth_associate_portal', 'Associate Partner Portal'); ?></div>
         </div>
 
         <div class="card-body aps-cp-card-body">
             <div class="tagline-box">
-                <p><i class="fas fa-chart-line"></i> Join our associate network and earn commissions by referring users</p>
+                <p><i class="fas fa-chart-line"></i> <?php echo __('auth_associate_tagline', 'Join our associate network and earn commissions by referring users'); ?></p>
             </div>
 
             <?php if (!empty($errors)): ?>
@@ -350,54 +350,54 @@ $base = BASE_URL;
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
 
                 <div class="mb-3">
-                    <label for="full_name" class="form-label">Full Name <span class="required">*</span></label>
+                    <label for="full_name" class="form-label"><?php echo __('auth_full_name', 'Full Name'); ?> <span class="required">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Enter your full name" value="<?php echo htmlspecialchars($old['full_name'] ?? ''); ?>" required>
+                        <input type="text" class="form-control" id="full_name" name="full_name" placeholder="<?php echo __('auth_enter_full_name', 'Enter your full name'); ?>" value="<?php echo htmlspecialchars($old['full_name'] ?? ''); ?>" required>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                    <label for="email" class="form-label"><?php echo __('auth_email_address', 'Email Address'); ?> <span class="required">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="<?php echo __('auth_email_ph', 'you@example.com'); ?>" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
+                    <label for="phone" class="form-label"><?php echo __('auth_phone_number', 'Phone Number'); ?> <span class="required">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="10-digit mobile number" maxlength="10" pattern="[0-9]{10}" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" required>
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="<?php echo __('auth_10digit_phone', '10-digit mobile number'); ?>" maxlength="10" pattern="[0-9]{10}" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" required>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-sm-6 mb-3">
-                        <label for="password" class="form-label">Password <span class="required">*</span></label>
+                        <label for="password" class="form-label"><?php echo __('auth_password', 'Password'); ?> <span class="required">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Create password" required>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="<?php echo __('auth_create_password', 'Create password'); ?>" required>
                         </div>
                     </div>
                     <div class="col-sm-6 mb-3">
-                        <label for="confirm_password" class="form-label">Confirm Password <span class="required">*</span></label>
+                        <label for="confirm_password" class="form-label">Confirm <?php echo __('auth_password', 'Password'); ?> <span class="required">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="<?php echo __('auth_reenter_password', 'Re-enter password'); ?>" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="sponsor_code" class="form-label">Sponsor / Referral Code <span class="optional-label">(optional if you have a referrer link)</span></label>
+                    <label for="sponsor_code" class="form-label"><?php echo __('auth_sponsor_referral_code', 'Sponsor / Referral Code'); ?> <span class="optional-label"><?php echo __('auth_referral_optional', '(optional if you have a referrer link)'); ?></span></label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-users"></i></span>
-                        <input type="text" class="form-control" id="sponsor_code" name="sponsor_code" placeholder="Enter sponsor code or use referral link" value="<?php echo htmlspecialchars($old['sponsor_code'] ?? $_GET['ref'] ?? ''); ?>">
+                        <input type="text" class="form-control" id="sponsor_code" name="sponsor_code" placeholder="<?php echo __('auth_sponsor_ph', 'Enter sponsor code or use referral link'); ?>" value="<?php echo htmlspecialchars($old['sponsor_code'] ?? $_GET['ref'] ?? ''); ?>">
                     </div>
                     <div class="referral-note">
-                        <i class="fas fa-info-circle"></i> If you were referred by an associate, enter their sponsor code here.
+                        <i class="fas fa-info-circle"></i> <?php echo __('auth_referral_info', 'If you were referred by an associate, enter their sponsor code here.'); ?>
                     </div>
                 </div>
 
@@ -407,17 +407,17 @@ $base = BASE_URL;
             </form>
 
             <div class="divider">
-                <span>Already registered?</span>
+                <span><?php echo __('auth_already_registered', 'Already registered?'); ?></span>
             </div>
 
             <p class="login-link">
-                <i class="fas fa-sign-in-alt me-1"></i> <a href="<?php echo $base; ?>/associate/login">Sign in to your Associate Account</a>
+                <i class="fas fa-sign-in-alt me-1"></i> <a href="<?php echo $base; ?>/associate/login"><?php echo __('auth_sign_in_associate', 'Sign in to your Associate Account'); ?></a>
             </p>
         </div>
 
         <div class="card-footer-area">
             <small>&copy; <?php echo date('Y'); ?> APS Dream Home. All rights reserved.<br>
-                <a href="<?php echo $base; ?>">Back to Main Site</a></small>
+                <a href="<?php echo $base; ?>"><?php echo __('auth_back_to_main', 'Back to Main Site'); ?></a></small>
         </div>
     </div>
 
@@ -431,7 +431,7 @@ $base = BASE_URL;
             var phone = document.getElementById('phone').value;
             if (phone.length !== 10) {
                 e.preventDefault();
-                alert('Please enter a valid 10-digit phone number.');
+                alert('<?php echo __('auth_valid_phone', 'Please enter a valid 10-digit phone number.'); ?>');
                 document.getElementById('phone').focus();
                 return false;
             }
@@ -440,7 +440,7 @@ $base = BASE_URL;
             var cpw = document.getElementById('confirm_password').value;
             if (pw !== cpw) {
                 e.preventDefault();
-                alert('Passwords do not match.');
+                alert('<?php echo __('auth_passwords_dont_match', 'Passwords do not match.'); ?>');
                 document.getElementById('confirm_password').focus();
                 return false;
             }

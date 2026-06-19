@@ -1,110 +1,96 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);min-height:100vh;">
+<section class="py-5" style="background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);">
     <div class="container">
-        <div class="text-center mb-5">
-            <h1 class="text-white fw-bold display-5"><i class="fas fa-coins me-2"></i>Capital Gains Calculator</h1>
-            <p class="text-white-50 fs-5">Property bechne par LTCG / STCG tax calculate karein CII indexation ke saath</p>
+        <div class="text-center mb-4">
+            <h1 class="text-white fw-bold"><i class="fas fa-chart-line me-2"></i><?php echo __('tool_capital_gains_title', [], 'Capital Gains Tax Calculator'); ?></h1>
+            <p class="text-white-50"><?php echo __('tool_capital_gains_subtitle', [], 'Property bechne par kitna tax lagega jaanein'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card border-0 shadow-lg" style="border-radius:20px;background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);">
-                    <div class="card-body p-5">
-                        <div class="mb-4">
-                            <label class="text-white fw-semibold mb-2">Purchase Price (₹)</label>
-                            <input type="range" id="purchasePriceC" class="form-range" min="500000" max="10000000" step="50000" value="2000000" oninput="syncCapital()">
-                            <div class="d-flex justify-content-between"><span class="text-white-50">₹5L</span><span class="text-white fw-bold" id="purchasePriceCLabel">₹20,00,000</span><span class="text-white-50">₹1Cr</span></div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="text-white fw-semibold mb-2">Selling Price (₹)</label>
-                            <input type="range" id="sellPriceC" class="form-range" min="1000000" max="20000000" step="50000" value="5000000" oninput="syncCapital()">
-                            <div class="d-flex justify-content-between"><span class="text-white-50">₹10L</span><span class="text-white fw-bold" id="sellPriceCLabel">₹50,00,000</span><span class="text-white-50">₹2Cr</span></div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="text-white fw-semibold mb-2">Purchase Year (CII Index)</label>
-                            <select id="purchaseYearC" class="form-select bg-dark text-white border-secondary" onchange="syncCapital()">
-                                <optgroup label="Old Rates">
-                                    <option value="100">2001-02 (CII: 100)</option>
-                                    <option value="105">2002-03 (105)</option>
-                                    <option value="109">2003-04 (109)</option>
-                                    <option value="113">2004-05 (113)</option>
-                                    <option value="117">2005-06 (117)</option>
-                                    <option value="122">2006-07 (122)</option>
-                                    <option value="129">2007-08 (129)</option>
-                                    <option value="137">2008-09 (137)</option>
-                                    <option value="148">2009-10 (148)</option>
-                                    <option value="167">2010-11 (167)</option>
-                                    <option value="184">2011-12 (184)</option>
-                                    <option value="200">2012-13 (200)</option>
-                                    <option value="220">2013-14 (220)</option>
-                                    <option value="240">2014-15 (240)</option>
-                                    <option value="254">2015-16 (254)</option>
-                                    <option value="264">2016-17 (264)</option>
-                                    <option value="272">2017-18 (272)</option>
-                                    <option value="280">2018-19 (280)</option>
-                                    <option value="289">2019-20 (289)</option>
-                                    <option value="301">2020-21 (301)</option>
-                                    <option value="317">2021-22 (317)</option>
-                                    <option value="331">2022-23 (331)</option>
-                                    <option value="348" selected>2023-24 (348)</option>
-                                    <option value="363">2024-25 (363)</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label class="text-white fw-semibold mb-2">Holding Period</label>
-                            <select id="holdingPeriodC" class="form-select bg-dark text-white border-secondary" onchange="syncCapital()">
-                                <option value="ltcg">Long Term (&gt;24 months)</option>
-                                <option value="stcg">Short Term (&lt;=24 months)</option>
-                            </select>
-                        </div>
-                        <div class="row g-4 mt-4">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4">
+                        <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <div class="p-4 rounded-4 text-center" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);">
-                                    <h5 class="text-warning"><i class="fas fa-file-invoice me-2"></i>Indexed Cost</h5>
-                                    <h3 class="text-white fw-bold" id="indexedCostC">₹0</h3>
-                                    <small class="text-white-50">After CII adjustment</small>
-                                </div>
+                                <label class="form-label fw-bold"><?php echo __('purchase_price_rs', [], 'Purchase Price (₹)'); ?></label>
+                                <input type="number" class="form-control" id="purchasePrice" value="3000000" oninput="calcCG()">
                             </div>
                             <div class="col-md-6">
-                                <div class="p-4 rounded-4 text-center" style="background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);">
-                                    <h5 class="text-danger"><i class="fas fa-coins me-2"></i>Capital Gain</h5>
-                                    <h3 class="text-white fw-bold" id="gainAmountC">₹0</h3>
-                                    <small class="text-white-50">Taxable Gain</small>
+                                <label class="form-label fw-bold"><?php echo __('sale_price_rs', [], 'Sale Price (₹)'); ?></label>
+                                <input type="number" class="form-control" id="salePrice" value="5000000" oninput="calcCG()">
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold"><?php echo __('holding_period', [], 'Holding Period'); ?></label>
+                                <select class="form-select" id="holdPeriod" onchange="calcCG()">
+                                    <option value="short"><?php echo __('short_term', [], 'Short Term (≤ 2 years)'); ?></option>
+                                    <option value="long" selected><?php echo __('long_term', [], 'Long Term (> 2 years)'); ?></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold"><?php echo __('improvement_cost_rs', [], 'Improvement Cost (₹)'); ?></label>
+                                <input type="number" class="form-control" id="improveCost" value="200000" oninput="calcCG()">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold"><?php echo __('indexation', [], 'Indexation Benefit?'); ?></label>
+                                <select class="form-select" id="indexation" onchange="calcCG()">
+                                    <option value="yes"><?php echo __('yes', [], 'Yes'); ?></option>
+                                    <option value="no"><?php echo __('no', [], 'No'); ?></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3 text-center">
+                            <div class="col-md-4">
+                                <div class="bg-light rounded-3 p-3">
+                                    <small class="text-muted d-block"><?php echo __('taxable_gain', [], 'Taxable Gain'); ?></small>
+                                    <h4 class="text-danger mb-0" id="taxableGain">₹18,00,000</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="bg-light rounded-3 p-3">
+                                    <small class="text-muted d-block"><?php echo __('tax_rate', [], 'Tax Rate'); ?></small>
+                                    <h4 class="text-warning mb-0" id="taxRate">20%</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="bg-danger text-white rounded-3 p-3">
+                                    <small class="d-block"><?php echo __('capital_gains_tax', [], 'Capital Gains Tax'); ?></small>
+                                    <h4 class="mb-0" id="cgTax">₹3,60,000</h4>
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-4 p-4 rounded-4 text-center" style="background:rgba(50,255,50,0.1);border:1px solid rgba(50,255,50,0.3);">
-                            <h4 class="text-success">Tax Payable: <span id="taxPayableC">₹0</span></h4>
-                        </div>
+                        <p class="text-muted small mt-3 mb-0"><i class="fas fa-info-circle me-1"></i><?php echo __('capital_gains_disclaimer', [], 'Short-term capital gains are taxed at applicable income tax slab rate. Long-term capital gains with indexation are taxed at 20% with indexation benefit. Without indexation (new regime), the rate is 12.5% as per Budget 2024. Consult a CA for exact tax computation.'); ?></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<?php include __DIR__ . '/../partials/related_tools.php'; ?>
 <script>
-function num(n){return n.toLocaleString('en-IN')}
-function syncCapital(){
-    let pp=parseFloat(document.getElementById('purchasePriceC').value)||2000000;
-    let sp=parseFloat(document.getElementById('sellPriceC').value)||5000000;
-    let ci=parseFloat(document.getElementById('purchaseYearC').value)||348;
-    let hp=document.getElementById('holdingPeriodC').value;
-    document.getElementById('purchasePriceCLabel').textContent='₹'+num(pp);
-    document.getElementById('sellPriceCLabel').textContent='₹'+num(sp);
-    let currentCII=363;
-    let indexedCost=pp*(currentCII/ci);
-    let gain=Math.max(0,sp-indexedCost);
-    let taxRate=hp==='ltcg'?0.20:0.30;
-    if(hp==='ltcg'&&gain>100000) taxRate=0.20;
-    else if(hp==='stcg') taxRate=0.30;
-    else taxRate=0;
-    let tax=gain*taxRate;
-    if(gain>0){
-        if(hp==='ltcg'&&gain<=100000) tax=0;
+function calcCG() {
+    const purchase = parseFloat(document.getElementById('purchasePrice').value) || 0;
+    const sale = parseFloat(document.getElementById('salePrice').value) || 0;
+    const period = document.getElementById('holdPeriod').value;
+    const improve = parseFloat(document.getElementById('improveCost').value) || 0;
+    const indexation = document.getElementById('indexation').value;
+    const indexedPurchase = purchase + improve;
+    const gain = sale - indexedPurchase;
+    let taxRate, tax;
+    if (period === 'short') {
+        taxRate = '30% (Slab)';
+        tax = Math.max(0, gain) * 0.3;
+    } else {
+        if (indexation === 'yes') {
+            taxRate = '20% (with Indexation)';
+            tax = Math.max(0, gain) * 0.2;
+        } else {
+            taxRate = '12.5% (without Indexation)';
+            tax = Math.max(0, gain) * 0.125;
+        }
     }
-    document.getElementById('indexedCostC').textContent='₹'+num(Math.round(indexedCost));
-    document.getElementById('gainAmountC').textContent='₹'+num(Math.round(gain));
-    document.getElementById('taxPayableC').textContent='₹'+num(Math.round(tax));
+    document.getElementById('taxableGain').textContent = '\u20B9' + Math.max(0, gain).toLocaleString('en-IN');
+    document.getElementById('taxRate').textContent = taxRate;
+    document.getElementById('cgTax').textContent = '\u20B9' + Math.round(tax).toLocaleString('en-IN');
 }
-syncCapital();
+calcCG();
 </script>
+<?php include __DIR__ . '/../partials/related_tools.php'; ?>

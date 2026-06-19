@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/theme/app_theme.dart';
+
+
+final pendingPayoutsProvider = FutureProvider.autoDispose<List<dynamic>>((ref) async {
+  final apiService = ApiService();
+  final response = await apiService.get('payouts/pending');
+  return (response['data'] as List<dynamic>?) ?? [];
+});
 
 /// Auto Payout Dashboard Page
 /// Admin view for reviewing pending commissions and triggering bulk payouts.
@@ -13,33 +22,47 @@ class AutoPayoutPage extends ConsumerStatefulWidget {
 class _AutoPayoutPageState extends ConsumerState<AutoPayoutPage> {
   bool _isProcessing = false;
   bool _payoutDone = false;
-
-  // Simulated pending payout data
-  final List<Map<String, dynamic>> _pendingPayouts = [
-    {'name': 'Rahul Sharma', 'rank': 'BDM', 'amount': 24500.0, 'count': 3},
-    {'name': 'Priya Singh', 'rank': 'Sr. Associate', 'amount': 18200.0, 'count': 2},
-    {'name': 'Amit Kumar', 'rank': 'Vice President', 'amount': 52000.0, 'count': 5},
-    {'name': 'Sunita Verma', 'rank': 'Associate', 'amount': 9800.0, 'count': 1},
-    {'name': 'Deepak Gupta', 'rank': 'Sr. BDM', 'amount': 35600.0, 'count': 4},
-  ];
-
-  double get _totalAmount =>
-      _pendingPayouts.fold(0, (sum, p) => sum + (p['amount'] as double));
+  double _lastProcessedAmount = 0.0;
+  int _lastProcessedAgents = 0;
 
   @override
   Widget build(BuildContext context) {
+    final pendingPayoutsAsync = ref.watch(pendingPayoutsProvider);
+
     return Scaffold(
       backgroundColor: const Color(0xFF0A1628),
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A1628),
         title: const Text('Auto Payout Center', style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => ref.invalidate(pendingPayoutsProvider),
+          ),
+        ],
       ),
-      body: _payoutDone ? _buildSuccessView() : _buildPayoutView(),
+      body: _payoutDone 
+          ? _buildSuccessView() 
+          : pendingPayoutsAsync.when(
+              data: (payouts) => _buildPayoutView(payouts),
+              loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.accentColor)),
+              error: (err, stack) => Center(
+                child: Text(
+                  'Error loading pending payouts: $err',
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
+              ),
+            ),
     );
   }
 
-  Widget _buildPayoutView() {
+  Widget _buildPayoutView(List<dynamic> payouts) {
+    final double totalAmount = payouts.fold(0.0, (sum, p) {
+      final val = p['total_pending'];
+      return sum + (val is num ? val.toDouble() : double.tryParse(val.toString()) ?? 0.0);
+    });
+
     return Column(
       children: [
         // Summary Banner
@@ -64,11 +87,11 @@ class _AutoPayoutPageState extends ConsumerState<AutoPayoutPage> {
                     const Text('Total Pending Payout', style: TextStyle(color: Colors.white70, fontSize: 13)),
                     const SizedBox(height: 4),
                     Text(
-                      '₹${_formatAmount(_totalAmount)}',
+                      '₹${_formatAmount(totalAmount)}',
                       style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '${_pendingPayouts.length} agents eligible',
+                      '${payouts.length} agents eligible',
                       style: const TextStyle(color: Colors.white60, fontSize: 13),
                     ),
                   ],
@@ -81,48 +104,63 @@ class _AutoPayoutPageState extends ConsumerState<AutoPayoutPage> {
 
         // Agent List
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: _pendingPayouts.length,
-            itemBuilder: (context, index) {
-              final payout = _pendingPayouts[index];
-              return _buildAgentPayoutCard(payout);
-            },
-          ),
+          child: payouts.isEmpty
+              ? const Center(
+                  child: Text(
+                    'No pending payouts found',
+                    style: TextStyle(color: Colors.white60, fontSize: 16),
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: payouts.length,
+                  itemBuilder: (context, index) {
+                    final payout = payouts[index] as Map<String, dynamic>;
+                    return _buildAgentPayoutCard(payout);
+                  },
+                ),
         ),
 
         // Process Button
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          child: _isProcessing
-              ? const Column(
-                  children: [
-                    CircularProgressIndicator(color: Colors.green),
-                    SizedBox(height: 12),
-                    Text('Processing payouts...', style: TextStyle(color: Colors.white70)),
-                  ],
-                )
-              : ElevatedButton.icon(
-                  onPressed: _processPayouts,
-                  icon: const Icon(Icons.send_rounded, size: 24),
-                  label: const Text('Process All Payouts Now', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade700,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    minimumSize: const Size(double.infinity, 56),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    shadowColor: Colors.green.withValues(alpha: 0.4),
-                    elevation: 8,
+        if (payouts.isNotEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            child: _isProcessing
+                ? const Column(
+                    children: [
+                      CircularProgressIndicator(color: Colors.green),
+                      SizedBox(height: 12),
+                      Text('Processing payouts...', style: TextStyle(color: Colors.white70)),
+                    ],
+                  )
+                : ElevatedButton.icon(
+                    onPressed: () => _processPayouts(totalAmount, payouts.length),
+                    icon: const Icon(Icons.send_rounded, size: 24),
+                    label: const Text('Process All Payouts Now', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade700,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      minimumSize: const Size(double.infinity, 56),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      shadowColor: Colors.green.withValues(alpha: 0.4),
+                      elevation: 8,
+                    ),
                   ),
-                ),
-        ),
+          ),
       ],
     );
   }
 
   Widget _buildAgentPayoutCard(Map<String, dynamic> payout) {
+    final amount = payout['total_pending'] is num 
+        ? (payout['total_pending'] as num).toDouble() 
+        : double.tryParse(payout['total_pending'].toString()) ?? 0.0;
+    final name = (payout['name'] as String?) ?? 'Unknown';
+    final email = (payout['email'] as String?) ?? '';
+    final count = payout['pending_count'] ?? 0;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -136,7 +174,7 @@ class _AutoPayoutPageState extends ConsumerState<AutoPayoutPage> {
           CircleAvatar(
             backgroundColor: Colors.blueAccent.withValues(alpha: 0.2),
             child: Text(
-              (payout['name'] as String).substring(0, 1),
+              name.isNotEmpty ? name.substring(0, 1) : 'U',
               style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold),
             ),
           ),
@@ -145,17 +183,17 @@ class _AutoPayoutPageState extends ConsumerState<AutoPayoutPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(payout['name'] as String,
+                Text(name,
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                Text(payout['rank'] as String,
+                Text(email,
                     style: const TextStyle(color: Colors.blueAccent, fontSize: 12)),
-                Text('${payout['count']} commission(s)',
+                Text('$count commission(s)',
                     style: const TextStyle(color: Colors.white38, fontSize: 11)),
               ],
             ),
           ),
           Text(
-            '₹${_formatAmount(payout['amount'] as double)}',
+            '₹${_formatAmount(amount)}',
             style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ],
@@ -185,13 +223,18 @@ class _AutoPayoutPageState extends ConsumerState<AutoPayoutPage> {
             ),
             const SizedBox(height: 12),
             Text(
-              '₹${_formatAmount(_totalAmount)} distributed to ${_pendingPayouts.length} agents.',
+              '₹${_formatAmount(_lastProcessedAmount)} distributed to $_lastProcessedAgents agents.',
               style: const TextStyle(color: Colors.white60, fontSize: 16),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                setState(() {
+                  _payoutDone = false;
+                });
+                ref.invalidate(pendingPayoutsProvider);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green.shade700,
                 foregroundColor: Colors.white,
@@ -206,15 +249,32 @@ class _AutoPayoutPageState extends ConsumerState<AutoPayoutPage> {
     );
   }
 
-  Future<void> _processPayouts() async {
+  Future<void> _processPayouts(double totalAmount, int totalAgents) async {
     setState(() => _isProcessing = true);
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-    // TODO: Call ApiService.processPayouts()
-    setState(() {
-      _isProcessing = false;
-      _payoutDone = true;
-    });
+    
+    try {
+      final apiService = ApiService();
+      final response = await apiService.post('payouts/process');
+      if (response['success'] == true) {
+        setState(() {
+          _lastProcessedAmount = totalAmount;
+          _lastProcessedAgents = totalAgents;
+          _payoutDone = true;
+        });
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to process payouts: ${response['message'] ?? 'Unknown error'}')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } finally {
+      setState(() => _isProcessing = false);
+    }
   }
 
   String _formatAmount(double amount) {

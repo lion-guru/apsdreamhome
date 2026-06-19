@@ -252,7 +252,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                                 <circle id="emiInterestSegment" class="emi-donut-segment-interest" cx="50" cy="50" r="40" />
                                                 <g class="emi-donut-text">
                                                     <text x="50" y="48" id="chartPrincipalPct" class="emi-donut-val">50%</text>
-                                                    <text x="50" y="58" class="emi-donut-label">Principal</text>
+                                                     <text x="50" y="58" class="emi-donut-label"><?= __('home_principal', null, 'Principal') ?></text>
                                                 </g>
                                             </svg>
                                         </div>
@@ -351,10 +351,10 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 
             <!-- Location Filter Tabs -->
             <div class="filter-tabs-container">
-                <button class="filter-tab-btn active" data-filter="all">All Locations</button>
-                <button class="filter-tab-btn" data-filter="gorakhpur">Gorakhpur</button>
-                <button class="filter-tab-btn" data-filter="lucknow">Lucknow</button>
-                <button class="filter-tab-btn" data-filter="kushinagar">Kushinagar</button>
+                <button class="filter-tab-btn active" data-filter="all"><?= __('all_locations') ?></button>
+                <button class="filter-tab-btn" data-filter="gorakhpur"><?= __('loc_gorakhpur') ?></button>
+                <button class="filter-tab-btn" data-filter="lucknow"><?= __('loc_lucknow') ?></button>
+                <button class="filter-tab-btn" data-filter="kushinagar"><?= __('loc_kushinagar') ?></button>
             </div>
 
             <div class="row card-stagger">
@@ -907,7 +907,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 .catch(err => {
                     mResponse.classList.remove('d-none', 'alert-success');
                     mResponse.classList.add('alert-danger');
-                    mResponse.textContent = 'Something went wrong. Please try again.';
+                    mResponse.textContent = '<?= __('something_went_wrong') ?>';
                     mSubmitBtn.disabled = false;
                     mSubmitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>' + '<?= __("submit_inquiry", null, "Submit Inquiry") ?>';
                 });

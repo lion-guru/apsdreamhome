@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
 
 $page_title = $page_title ?? '';
 // Start session if not started
@@ -21,8 +21,8 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
                         <div class="reset-icon">
                             <i class="fas fa-key"></i>
                         </div>
-                        <h2 class="reset-title">Reset Password</h2>
-                        <p class="reset-subtitle">Enter your new password below</p>
+                        <h2 class="reset-title"><?php echo __('auth_reset_password', 'Reset Password'); ?></h2>
+                        <p class="reset-subtitle"><?php echo __('auth_enter_new_password', 'Enter your new password below'); ?></p>
                     </div>
 
                     <?php if (isset($_SESSION['error'])): ?>
@@ -49,54 +49,54 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
 
                         <div class="mb-4">
                             <label for="password" class="form-label">
-                                <i class="fas fa-lock me-2"></i>New Password
+                                <i class="fas fa-lock me-2"></i><?php echo __('auth_new_password', 'New Password'); ?>
                             </label>
                             <div class="input-group">
                                 <input type="password" class="form-control form-control-lg" id="password" name="password" required
-                                    placeholder="Enter your new password" minlength="6">
+                                    placeholder="<?php echo __('auth_enter_new_password_ph', 'Enter your new password'); ?>" minlength="6">
                                 <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
                                     <i class="fas fa-eye" id="password-toggle"></i>
                                 </button>
                             </div>
                             <div class="form-text">
                                 <i class="fas fa-info-circle me-1"></i>
-                                At least 6 characters with letters, numbers, and symbols
+                                <?php echo __('auth_password_rules', 'At least 6 characters with letters, numbers, and symbols'); ?>
                             </div>
                         </div>
 
                         <div class="mb-4">
                             <label for="confirm_password" class="form-label">
-                                <i class="fas fa-lock me-2"></i>Confirm Password
+                                <i class="fas fa-lock me-2"></i><?php echo __('auth_confirm_password', 'Confirm Password'); ?>
                             </label>
                             <div class="input-group">
                                 <input type="password" class="form-control form-control-lg" id="confirm_password" name="confirm_password" required
-                                    placeholder="Confirm your new password">
+                                    placeholder="<?php echo __('auth_confirm_password_ph', 'Confirm your new password'); ?>">
                                 <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password')">
                                     <i class="fas fa-eye" id="confirm_password-toggle"></i>
                                 </button>
                             </div>
                             <div class="invalid-feedback" id="password-match-error">
                                 <i class="fas fa-exclamation-circle me-1"></i>
-                                Passwords do not match
+                                <?php echo __('auth_passwords_no_match', 'Passwords do not match'); ?>
                             </div>
                         </div>
 
                         <div class="password-strength mb-4">
-                            <label class="form-label">Password Strength</label>
+                            <label class="form-label"><?php echo __('auth_password_strength', 'Password Strength'); ?></label>
                             <div class="strength-meter">
                                 <div class="strength-bar" id="strength-bar"></div>
                             </div>
-                            <small class="strength-text" id="strength-text">Enter a password</small>
+                            <small class="strength-text" id="strength-text"><?php echo __('auth_enter_password_strength', 'Enter a password'); ?></small>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-key me-2"></i>
-                                Reset Password
+                                <?php echo __('auth_reset_password_btn', 'Reset Password'); ?>
                             </button>
                             <a href="<?= BASE_URL ?>/auth/login" class="btn btn-outline-secondary btn-lg">
                                 <i class="fas fa-arrow-left me-2"></i>
-                                Back to Login
+                                <?php echo __('auth_back_to_login', 'Back to Login'); ?>
                             </a>
                         </div>
                     </form>
@@ -104,16 +104,16 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
                     <div class="reset-footer">
                         <div class="security-info">
                             <i class="fas fa-shield-alt me-2"></i>
-                            <span>Your password is encrypted and secure</span>
+                            <span><?php echo __('auth_password_encrypted', 'Your password is encrypted and secure'); ?></span>
                         </div>
                         <div class="help-links">
                             <a href="<?= BASE_URL ?>/contact" class="help-link">
                                 <i class="fas fa-headset me-1"></i>
-                                Need Help?
+                                <?php echo __('auth_need_help', 'Need Help?'); ?>
                             </a>
                             <a href="<?= BASE_URL ?>/auth/forgot-password" class="help-link">
                                 <i class="fas fa-question-circle me-1"></i>
-                                Request Another Reset
+                                <?php echo __('auth_request_another_reset', 'Request Another Reset'); ?>
                             </a>
                         </div>
                     </div>
@@ -336,7 +336,7 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
     // Password strength checker
     function checkPasswordStrength(password) {
         let strength = 0;
-        let strengthText = 'Enter a password';
+        let strengthText = '<?php echo __('auth_enter_password_strength', 'Enter a password'); ?>';
         let strengthClass = '';
 
         if (password.length >= 6) strength += 25;

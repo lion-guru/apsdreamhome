@@ -37,32 +37,32 @@ $orderId = 'ORD_' . strtoupper(bin2hex(random_bytes(5)));
 <div class="checkout-shell">
     <div class="checkout-card">
         <div class="checkout-header">
-            <h1><i class="fas fa-lock"></i> Secure Checkout</h1>
+            <h1><i class="fas fa-lock"></i> <?php echo __('checkout_secure_title', [], 'Secure Checkout'); ?></h1>
             <p>Booking #<?= $bookingId ?> &middot; <?= $customerName ?></p>
         </div>
         <div class="checkout-body">
             <?php if (!empty($razorpay['is_test'])): ?>
                 <div class="test-banner">
-                    <strong><i class="fas fa-flask"></i> Test mode:</strong>
-                    No real money will be charged. Use Razorpay test cards
+                    <strong><i class="fas fa-flask"></i> <?php echo __('checkout_test_mode', [], 'Test mode:'); ?></strong>
+                    <?php echo __('checkout_test_mode_desc', [], 'No real money will be charged. Use Razorpay test cards'); ?>
                     (<code>4111 1111 1111 1111</code>, any future expiry, any CVV).
                 </div>
             <?php endif; ?>
 
             <div class="summary-row">
-                <span class="summary-label">Booking Number</span>
+                <span class="summary-label"><?php echo __('checkout_booking_number', [], 'Booking Number'); ?></span>
                 <span class="summary-value"><?= htmlspecialchars($booking['booking_number'] ?? ('BOK-' . $bookingId), ENT_QUOTES, 'UTF-8') ?></span>
             </div>
             <div class="summary-row">
-                <span class="summary-label">Description</span>
-                <span class="summary-value">Plot/Property booking payment</span>
+                <span class="summary-label"><?php echo __('checkout_description', [], 'Description'); ?></span>
+                <span class="summary-value"><?php echo __('checkout_description_value', [], 'Plot/Property booking payment'); ?></span>
             </div>
             <div class="summary-row">
-                <span class="summary-label">Currency</span>
+                <span class="summary-label"><?php echo __('checkout_currency', [], 'Currency'); ?></span>
                 <span class="summary-value">INR (&inr;)</span>
             </div>
             <div class="summary-row">
-                <span class="summary-label">Amount Payable</span>
+                <span class="summary-label"><?php echo __('checkout_amount_payable', [], 'Amount Payable'); ?></span>
                 <span class="summary-value">&inr; <?= $displayAmount ?></span>
             </div>
 
@@ -71,9 +71,9 @@ $orderId = 'ORD_' . strtoupper(bin2hex(random_bytes(5)));
             </button>
 
             <div class="security-row">
-                <i class="fas fa-lock"></i> 256-bit SSL Encrypted &middot;
-                <i class="fas fa-shield-alt"></i> PCI-DSS Compliant &middot;
-                <i class="fas fa-check-circle"></i> Verified by Razorpay
+                <i class="fas fa-lock"></i> <?php echo __('checkout_ssl', [], '256-bit SSL Encrypted'); ?> &middot;
+                <i class="fas fa-shield-alt"></i> <?php echo __('checkout_pci', [], 'PCI-DSS Compliant'); ?> &middot;
+                <i class="fas fa-check-circle"></i> <?php echo __('checkout_verified', [], 'Verified by Razorpay'); ?>
             </div>
         </div>
     </div>

@@ -4,6 +4,18 @@
  * Simulates a logged-in customer and POSTs a save.
  */
 
+// Load .env
+$envFile = dirname(__DIR__) . '/.env';
+if (file_exists($envFile)) {
+    foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        if (!preg_match('/^([A-Z_][A-Z0-9_]*)\s*=\s*(.*)$/i', $line, $m)) continue;
+        $key = $m[1]; $val = trim($m[2], " \t\"'");
+        $_ENV[$key] = $val;
+        putenv("$key=$val");
+    }
+}
+
 $cookieJar = tempnam(sys_get_temp_dir(), 'cookies');
 $base = 'http://localhost/apsdreamhome';
 
@@ -34,7 +46,7 @@ function http($method, $url, $cookieJar, $postData = null) {
 echo "=== 1. Login as customer1@apsdreamhome.com ===\n";
 $login = http('POST', "$base/login", $cookieJar, [
     'identity' => 'customer1@apsdreamhome.com',
-    'password' => 'Test1234',
+    'password' => 'Aps@2026',
 ]);
 echo "  Status: {$login['code']}\n";
 echo "  Body: " . substr($login['body'], 0, 300) . "\n";
@@ -75,7 +87,8 @@ echo "  Status: {$ac['code']}\n";
 echo "  Body: " . $ac['body'] . "\n";
 
 echo "\n=== 5. POST /user/saved-searches/cron-alerts (CRON endpoint) ===\n";
-$cron = http('GET', "$base/user/saved-searches/cron-alerts?key=dev-cron-key", $cookieJar);
+$cronSecret = $_ENV['CRON_SECRET'] ?? getenv('CRON_SECRET') ?: 'dev-cron-key';
+$cron = http('GET', "$base/user/saved-searches/cron-alerts?key=" . urlencode($cronSecret), $cookieJar);
 echo "  Status: {$cron['code']}\n";
 echo "  Body: " . substr($cron['body'], 0, 500) . "\n";
 

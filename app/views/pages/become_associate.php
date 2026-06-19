@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Become Associate - APS Dream Home</title>
+    <title><?= __('assoc_page_title') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>
@@ -195,10 +195,10 @@
     <!-- Hero Section -->
     <div class="hero">
         <div class="container">
-            <h1><i class="fas fa-users me-3"></i>Become an Associate</h1>
-            <p>Join APS Dream Home and start earning today! Build your network, earn commissions, and grow your income.</p>
+            <h1><i class="fas fa-users me-3"></i><?= __('assoc_hero_title') ?></h1>
+            <p><?= __('assoc_hero_desc') ?></p>
             <a href="#referral-code" class="btn btn-light btn-lg px-5 py-3 fw-bold rounded-pill">
-                <i class="fas fa-arrow-down me-2"></i>Get Your Referral Code
+                <i class="fas fa-arrow-down me-2"></i><?= __('assoc_get_code') ?>
             </a>
         </div>
     </div>
@@ -206,24 +206,24 @@
     <!-- Referral Code Section -->
     <div class="container" id="referral-code">
         <div class="referral-code-box">
-            <h3 class="text-center mb-4"><i class="fas fa-ticket-alt me-2 text-primary"></i><?php echo $isLoggedIn ? 'Your Personal Referral Code' : 'Company Referral Code'; ?></h3>
+            <h3 class="text-center mb-4"><i class="fas fa-ticket-alt me-2 text-primary"></i><?php echo $isLoggedIn ? __('assoc_your_referral') : __('assoc_company_referral'); ?></h3>
             <p class="text-center text-muted mb-4">
                 <?php if ($isLoggedIn): ?>
-                    Share this code with your network to earn referral rewards!
+                    <?= __('assoc_share_code') ?>
                 <?php else: ?>
-                    Use this code to join as Associate/Agent. No referral needed!
+                    <?= __('assoc_use_code') ?>
                 <?php endif; ?>
             </p>
             <div class="referral-code-display"><?php echo htmlspecialchars($isLoggedIn && $loggedInReferralCode ? $loggedInReferralCode : $referral_code); ?></div>
             <button class="copy-btn" onclick="copyReferralCode()">
-                <i class="fas fa-copy me-2"></i>Copy Referral Code
+                <i class="fas fa-copy me-2"></i><?= __('assoc_copy_code') ?>
             </button>
             <div class="text-center mt-4">
                 <div class="qr-code">
                     <div style="width: 150px; height: 150px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-qrcode fa-4x text-muted"></i>
                     </div>
-                    <small class="text-muted d-block mt-2">Scan to join instantly</small>
+                    <small class="text-muted d-block mt-2"><?= __('assoc_scan_join') ?></small>
                 </div>
             </div>
         </div>
@@ -232,15 +232,15 @@
     <!-- Benefits Section -->
     <div class="benefits">
         <div class="container">
-            <h2 class="text-center mb-5"><i class="fas fa-star me-2 text-primary"></i>Why Join as Associate?</h2>
+            <h2 class="text-center mb-5"><i class="fas fa-star me-2 text-primary"></i><?= __('assoc_why_title') ?></h2>
             <div class="row">
                 <div class="col-lg-4 col-md-6">
                     <div class="benefit-card">
                         <div class="benefit-icon">
                             <i class="fas fa-rupee-sign"></i>
                         </div>
-                        <h4>Earn Commissions</h4>
-                        <p>Earn up to 5% commission on every property sale you refer</p>
+                        <h4><?= __('assoc_benefit_commission') ?></h4>
+                        <p><?= __('assoc_benefit_commission_desc') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
@@ -248,8 +248,8 @@
                         <div class="benefit-icon">
                             <i class="fas fa-network-wired"></i>
                         </div>
-                        <h4>Build Network</h4>
-                        <p>Create your team and earn from their referrals too</p>
+                        <h4><?= __('assoc_benefit_network') ?></h4>
+                        <p><?= __('assoc_benefit_network_desc') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
@@ -257,8 +257,8 @@
                         <div class="benefit-icon">
                             <i class="fas fa-wallet"></i>
                         </div>
-                        <h4>Wallet System</h4>
-                        <p>Track earnings in your wallet and transfer to EMI</p>
+                        <h4><?= __('assoc_benefit_wallet') ?></h4>
+                        <p><?= __('assoc_benefit_wallet_desc') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
@@ -266,8 +266,8 @@
                         <div class="benefit-icon">
                             <i class="fas fa-headset"></i>
                         </div>
-                        <h4>Full Support</h4>
-                        <p>Get training and support from our experienced team</p>
+                        <h4><?= __('assoc_benefit_support') ?></h4>
+                        <p><?= __('assoc_benefit_support_desc') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
@@ -275,8 +275,8 @@
                         <div class="benefit-icon">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <h4>Growth Tracking</h4>
-                        <p>Monitor your performance with detailed analytics</p>
+                        <h4><?= __('assoc_benefit_growth') ?></h4>
+                        <p><?= __('assoc_benefit_growth_desc') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
@@ -284,8 +284,8 @@
                         <div class="benefit-icon">
                             <i class="fas fa-gift"></i>
                         </div>
-                        <h4>Referral Rewards</h4>
-                        <p>Earn ₹200 for every associate you refer</p>
+                        <h4><?= __('assoc_benefit_referral') ?></h4>
+                        <p><?= __('assoc_benefit_referral_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -295,29 +295,29 @@
     <!-- Earnings Section -->
     <div class="earnings-section">
         <div class="container">
-            <h2 class="mb-5"><i class="fas fa-money-bill-wave me-2"></i>Potential Earnings</h2>
+            <h2 class="mb-5"><i class="fas fa-money-bill-wave me-2"></i><?= __('assoc_earnings_title') ?></h2>
             <div class="row">
                 <div class="col-lg-4 col-md-6">
                     <div class="earning-card">
                         <div class="earning-amount">₹200</div>
-                        <p>Per Associate Referral</p>
+                        <p><?= __('assoc_per_associate') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="earning-card">
                         <div class="earning-amount">₹250</div>
-                        <p>Per Agent Referral</p>
+                        <p><?= __('assoc_per_agent') ?></p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="earning-card">
                         <div class="earning-amount">₹100</div>
-                        <p>Per Customer Referral</p>
+                        <p><?= __('assoc_per_customer') ?></p>
                     </div>
                 </div>
             </div>
             <div class="mt-4">
-                <p class="fs-4">Plus <strong>5% commission</strong> on every property sale!</p>
+                <p class="fs-4"><?= sprintf(__('assoc_plus_commission'), '5%') ?></p>
             </div>
         </div>
     </div>
@@ -325,14 +325,14 @@
     <!-- CTA Section -->
     <div class="cta-section">
         <div class="container">
-            <h2 class="mb-4">Ready to Start Earning?</h2>
-            <p class="text-muted mb-5">Join now<?php echo $isLoggedIn ? ' and start referring' : ' with company referral code'; ?> and start your journey</p>
+            <h2 class="mb-4"><?= __('assoc_cta_title') ?></h2>
+            <p class="text-muted mb-5"><?php echo $isLoggedIn ? __('assoc_cta_logged_in') : __('assoc_cta_not_logged'); ?></p>
             <a href="<?php echo BASE_URL; ?>/associate/register?ref=<?php echo urlencode($referral_code); ?>" class="btn-join">
-                <i class="fas fa-user-plus me-2"></i>Join as Associate
+                <i class="fas fa-user-plus me-2"></i><?= __('assoc_join_associate') ?>
             </a>
             <div class="mt-4">
                 <a href="<?php echo BASE_URL; ?>/agent/register?ref=<?php echo urlencode($referral_code); ?>" class="btn btn-outline-primary btn-lg px-4 py-3 rounded-pill">
-                    <i class="fas fa-briefcase me-2"></i>Join as Agent
+                    <i class="fas fa-briefcase me-2"></i><?= __('assoc_join_agent') ?>
                 </a>
             </div>
         </div>
@@ -341,7 +341,7 @@
     <!-- Footer -->
     <div class="bg-dark text-white py-4 text-center">
         <div class="container">
-            <p class="mb-0">© 2025 APS Dream Home. All rights reserved.</p>
+            <p class="mb-0">&copy; <?= date('Y') ?> APS Dream Home. <?= __('footer_all_rights') ?></p>
         </div>
     </div>
 
@@ -350,7 +350,7 @@
             const displayEl = document.querySelector('.referral-code-display');
             const referralCode = displayEl ? displayEl.textContent.trim() : '<?php echo addslashes($referral_code); ?>';
             navigator.clipboard.writeText(referralCode).then(() => {
-                alert('Referral code copied to clipboard!');
+                alert('<?= __('assoc_code_copied') ?>');
             }).catch(err => {
                 console.error('Failed to copy: ', err);
             });

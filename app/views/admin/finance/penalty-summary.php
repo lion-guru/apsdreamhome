@@ -1,4 +1,72 @@
 <?php $page_title = $page_title ?? 'EMI Penalties'; $page_heading = $page_heading ?? 'EMI Penalty Engine'; $summary = $summary ?? []; ?>
+<style>
+.badge-risk-grace {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+.badge-risk-mild {
+    background-color: #fef9c3;
+    color: #854d0e;
+    border: 1px solid #fef08a;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+.badge-risk-moderate {
+    background-color: #ffedd5;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+.badge-risk-high {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.badge-risk-high.pulse-danger::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background-color: #dc2626;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse-red-dot 1.5s infinite;
+}
+
+@keyframes pulse-red-dot {
+    0% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+    }
+    70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 4px rgba(220, 38, 38, 0);
+    }
+    100% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+    }
+}
+</style>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>EMI Penalty Engine</h2>
@@ -89,11 +157,12 @@
                         <td class="text-center">
                             <?php
                             $days = (int)$item['days_overdue'];
-                            $cls = 'bg-danger';
-                            if ($days <= 15) $cls = 'bg-warning text-dark';
-                            elseif ($days <= 30) $cls = 'bg-orange';
+                            $cls = 'badge-risk-high pulse-danger';
+                            if ($days <= 5) $cls = 'badge-risk-grace';
+                            elseif ($days <= 15) $cls = 'badge-risk-mild';
+                            elseif ($days <= 30) $cls = 'badge-risk-moderate';
                             ?>
-                            <span class="badge <?= $cls ?>"><?= $days ?> days</span>
+                            <span class="<?= $cls ?>"><?= $days ?> days</span>
                         </td>
                         <td class="text-end">₹<?= number_format((float)$item['amount'], 2) ?></td>
                         <td class="text-end fw-bold text-warning">₹<?= number_format((float)$item['accrued_penalty'], 2) ?></td>

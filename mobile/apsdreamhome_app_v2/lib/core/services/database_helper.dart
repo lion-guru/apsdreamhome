@@ -397,9 +397,20 @@ class DatabaseHelper {
 
   Future<void> saveUser(Map<String, dynamic> user) async {
     final db = await database;
+    // Map UserModel fields to SQLite columns
+    final mapped = <String, dynamic>{
+      'server_id': int.tryParse(user['userId']?.toString() ?? '') ?? user['id'],
+      'name': user['name'],
+      'email': user['email'],
+      'phone': user['phone'],
+      'role': user['rank'] ?? user['role'],
+      'profile_image': user['avatar'] ?? user['profile_image'],
+      'is_active': 1,
+      'last_sync': DateTime.now().toIso8601String(),
+    };
     await db.insert(
       'users',
-      user,
+      mapped,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -410,7 +421,20 @@ class DatabaseHelper {
       'users',
       limit: 1,
     );
-    return results.isNotEmpty ? results.first : null;
+    if (results.isEmpty) return null;
+    final row = results.first;
+    // Map SQLite columns back to UserModel keys
+    return {
+      'userId': row['server_id']?.toString() ?? '',
+      'name': row['name'] ?? '',
+      'email': row['email'] ?? '',
+      'phone': row['phone'],
+      'rank': row['role'] ?? 'Customer',
+      'target': 0.0,
+      'avatar': row['profile_image'],
+      'createdAt': row['last_sync'] ?? DateTime.now().toIso8601String(),
+      'updatedAt': row['last_sync'] ?? DateTime.now().toIso8601String(),
+    };
   }
 
   Future<void> clearUserData() async {

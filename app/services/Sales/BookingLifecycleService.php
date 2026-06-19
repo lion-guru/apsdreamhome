@@ -524,6 +524,34 @@ class BookingLifecycleService
                 error_log("[BookingLifecycleService::recordPayment] notification failed: " . $e->getMessage());
             }
 
+            // Broadcast payment event via WebSocket + Push
+            try {
+                $customerId = $this->getBookingCustomerId((int)$inst['booking_id']);
+                $payload = [
+                    'event'         => 'payment_received',
+                    'booking_id'    => (int)$inst['booking_id'],
+                    'installment_id'=> $installmentId,
+                    'receipt_id'    => $receiptId,
+                    'receipt_number'=> $receiptNumber,
+                    'amount'        => $amount,
+                    'payment_mode'  => $mode,
+                    'status'        => $instStatus,
+                    'paid_date'     => $paidDate,
+                    'created_at'    => date('Y-m-d H:i:s'),
+                ];
+                if ($customerId) {
+                    \App\Services\WebSocketBroadcaster::broadcastToUser($customerId, $payload);
+                    \App\Services\Communication\PushNotificationService::sendToUser(
+                        $customerId,
+                        'Payment Received',
+                        '₹' . number_format($amount) . ' received for installment #' . $installmentId,
+                        $payload
+                    );
+                }
+            } catch (\Throwable $e) {
+                error_log("[BookingLifecycleService::recordPayment] broadcast failed: " . $e->getMessage());
+            }
+
             return [
                 'success'        => true,
                 'receipt_id'     => $receiptId,
@@ -995,6 +1023,21 @@ class BookingLifecycleService
     private function generateLetterNumber(): string
     {
         return 'APS-DL-' . str_pad((string)random_int(1, 9999), 4, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Get the customer (user) ID for a booking.
+     */
+    private function getBookingCustomerId(int $bookingId): ?int
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT customer_id FROM plot_bookings WHERE id = ?");
+            $stmt->execute([$bookingId]);
+            $id = $stmt->fetchColumn();
+            return $id ? (int)$id : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     private function totalPaid(int $bookingId): float

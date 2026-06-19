@@ -185,7 +185,7 @@ $totalAreaSqft = (float)($total_area_sqft ?? 0);
       <?php if ($existingPlots > 0): ?>
       <div class="card aps-cp-card border-danger">
         <div class="card-body aps-cp-card-body text-center">
-          <form method="post" action="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)($colony['id'] ?? 0) ?>/layout/delete-plots"
+          <form method="post" action="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)($colony['id'] ?? 0) ?>/layout/delete"
                 onsubmit="return confirm('Are you sure you want to delete ALL <?= number_format($existingPlots) ?> plots? This cannot be undone.');">
             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
             <i class="fas fa-trash-alt fa-2x text-danger mb-2"></i>
@@ -232,12 +232,57 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.success && data.plots && data.plots.length > 0) {
-          var html = '<div class="alert alert-success"><strong>' + data.plots.length + ' plots</strong> will be generated.</div>';
-          html += '<div class="table-responsive"><table class="table table-sm table-hover"><thead><tr><th>#</th><th>Plot No</th><th>Block</th><th>Area (sqft)</th><th>Type</th><th>Front (ft)</th><th>Depth (ft)</th></tr></thead><tbody>';
+          var parkPct = document.querySelector('input[name="park_area_pct"]').value || '7';
+          var roadW = document.querySelector('input[name="road_width"]').value || '30';
+          
+          var html = '<div class="alert alert-success d-flex align-items-center justify-content-between mb-4">' +
+              '<span><i class="fas fa-check-circle me-2"></i><strong>' + data.plots.length + ' plots</strong> will be generated.</span>' +
+              '</div>';
+          
+          // Spatial Map Grid
+          html += '<h6 class="mb-3 fw-bold text-secondary"><i class="fas fa-map-marked-alt me-1"></i>Spatial Layout Map</h6>';
+          html += '<div style="display:flex;flex-wrap:wrap;gap:8px;padding:16px;background:#f8fafc;border-radius:14px;border:1px solid #e2e8f0;margin-bottom:24px;">';
+          
+          // Parks Indicator
+          html += '<div style="flex:1 1 100%;background:#dcfce7;border:1px solid #86efac;color:#166534;padding:12px;border-radius:10px;text-align:center;font-weight:700;font-size:0.85rem;margin-bottom:4px;"><i class="fas fa-tree me-2"></i>Dedicated Park Area (' + parkPct + '%)</div>';
+          
+          // Road Indicator
+          html += '<div style="flex:1 1 100%;background:#e2e8f0;border:1px solid #cbd5e1;color:#475569;padding:8px;border-radius:10px;text-align:center;font-weight:700;font-size:0.8rem;margin-bottom:8px;"><i class="fas fa-road me-2"></i>Main Internal Road (' + roadW + ' ft wide)</div>';
+
+          // Plots List Grid items
           data.plots.forEach(function(p, i) {
-            html += '<tr><td>' + (i+1) + '</td><td>' + p.plot_no + '</td><td>' + p.block_name + '</td><td>' + p.area_sqft + '</td><td>' + p.plot_type + '</td><td>' + p.front + '</td><td>' + p.depth + '</td></tr>';
+            var isCorner = p.plot_type && p.plot_type.toLowerCase().indexOf('corner') !== -1;
+            var isPark = p.plot_type && p.plot_type.toLowerCase().indexOf('park') !== -1;
+            
+            var bg = '#dbeafe'; 
+            var border = '#bfdbfe';
+            var color = '#1e3a8a';
+            var icon = '<i class="fas fa-home me-1"></i>';
+            
+            if (isCorner) {
+              bg = '#fef3c7'; border = '#fcd34d'; color = '#78350f';
+              icon = '<i class="fas fa-angle-double-up me-1"></i>';
+            } else if (isPark) {
+              bg = '#dcfce7'; border = '#86efac'; color = '#166534';
+              icon = '<i class="fas fa-tree me-1"></i>';
+            }
+            
+            html += '<div style="flex:0 0 calc(12.5% - 8px);background:' + bg + ';border:1px solid ' + border + ';color:' + color + ';padding:10px;border-radius:10px;text-align:center;font-size:0.75rem;min-height:75px;display:flex;flex-direction:column;justify-content:center;transition:all 0.15s ease;" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
+                '<div style="font-weight:700;margin-bottom:2px;">' + icon + p.plot_no + '</div>' +
+                '<div class="text-muted" style="font-size:0.62rem;font-weight:500;">' + p.area_sqft + ' sqft</div>' +
+                '<div style="font-size:0.55rem;opacity:0.8;margin-top:2px;">' + p.front + '×' + p.depth + ' ft</div>' +
+                '</div>';
+          });
+          html += '</div>';
+
+          // Grid Table details
+          html += '<h6 class="mb-3 fw-bold text-secondary"><i class="fas fa-list-ul me-1"></i>Plots Inventory Details</h6>';
+          html += '<div class="table-responsive"><table class="table table-sm table-hover align-middle"><thead><tr><th>#</th><th>Plot No</th><th>Block</th><th>Area (sqft)</th><th>Type</th><th>Front (ft)</th><th>Depth (ft)</th></tr></thead><tbody>';
+          data.plots.forEach(function(p, i) {
+            html += '<tr><td>' + (i+1) + '</td><td><strong>' + p.plot_no + '</strong></td><td>' + p.block_name + '</td><td>' + p.area_sqft + '</td><td>' + p.plot_type + '</td><td>' + p.front + '</td><td>' + p.depth + '</td></tr>';
           });
           html += '</tbody></table></div>';
+          
           previewContent.innerHTML = html;
         } else {
           previewContent.innerHTML = '<div class="alert alert-danger">Preview generation failed: ' + (data.error || 'Unknown error') + '</div>';

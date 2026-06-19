@@ -10,7 +10,7 @@
     <!-- Chat Button -->
     <button id="chatbot-toggle" class="chatbot-toggle" onclick="toggleChatbot()">
         <i class="fas fa-robot"></i>
-        <span class="chatbot-label">Ask AI</span>
+        <span class="chatbot-label">__('component_ask_ai', 'Ask AI')</span>
     </button>
     
     <!-- Chat Window -->
@@ -19,10 +19,10 @@
         <div class="chatbot-header">
             <div class="chatbot-title">
                 <i class="fas fa-robot"></i>
-                <span>APS AI Assistant</span>
+                <span>__('component_aps_ai_assistant', 'APS AI Assistant')</span>
             </div>
             <div class="chatbot-actions">
-                <button onclick="clearChat()" title="Clear chat">
+                <button onclick="clearChat()" title="htmlspecialchars(__('component_clear_chat_lower', 'Clear chat'))">
                     <i class="fas fa-trash-alt"></i>
                 </button>
                 <button onclick="toggleChatbot()" title="Close">
@@ -71,7 +71,7 @@
         
         <!-- Language Toggle -->
         <div class="chatbot-footer">
-            <span class="powered-by">Powered by Gemini AI</span>
+            <span class="powered-by">__('component_powered_by_gemini', 'Powered by Gemini AI')</span>
             <button onclick="toggleLanguage()" class="lang-btn" id="lang-toggle">
                 🇬🇧 English
             </button>

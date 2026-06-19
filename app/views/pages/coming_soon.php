@@ -1,4 +1,6 @@
-<?php // placeholder ?>
+<?php
+require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -270,35 +272,34 @@
         </div>
 
         <!-- Main Title -->
-        <h1 class="coming-soon-title">Coming Soon</h1>
-        <h2 class="coming-soon-subtitle">Exciting New Features Are On The Way!</h2>
+        <h1 class="coming-soon-title"><?php echo __('coming_soon_title', [], 'Coming Soon'); ?></h1>
+        <h2 class="coming-soon-subtitle"><?php echo __('coming_soon_subtitle', [], 'Exciting New Features Are On The Way!'); ?></h2>
         <p class="coming-soon-description">
-            We're working on something amazing that will revolutionize your real estate experience.
-            Stay tuned for our upcoming launch!
+            <?php echo __('coming_soon_desc', [], "We're working on something amazing that will revolutionize your real estate experience.\nStay tuned for our upcoming launch!"); ?>
         </p>
 
         <!-- Launch Date -->
         <div class="launch-date">
-            <h3><i class="fas fa-calendar-alt me-2"></i>Expected Launch Date</h3>
+            <h3><i class="fas fa-calendar-alt me-2"></i><?php echo __('coming_soon_launch_date', [], 'Expected Launch Date'); ?></h3>
             <p class="h4 mb-3">December 31, 2024</p>
 
             <!-- Countdown Timer -->
             <div class="countdown" id="countdown">
                 <div class="countdown-item">
                     <span class="countdown-number" id="days">00</span>
-                    <span class="countdown-label">Days</span>
+                    <span class="countdown-label"><?php echo __('coming_soon_days', [], 'Days'); ?></span>
                 </div>
                 <div class="countdown-item">
                     <span class="countdown-number" id="hours">00</span>
-                    <span class="countdown-label">Hours</span>
+                    <span class="countdown-label"><?php echo __('coming_soon_hours', [], 'Hours'); ?></span>
                 </div>
                 <div class="countdown-item">
                     <span class="countdown-number" id="minutes">00</span>
-                    <span class="countdown-label">Minutes</span>
+                    <span class="countdown-label"><?php echo __('coming_soon_minutes', [], 'Minutes'); ?></span>
                 </div>
                 <div class="countdown-item">
                     <span class="countdown-number" id="seconds">00</span>
-                    <span class="countdown-label">Seconds</span>
+                    <span class="countdown-label"><?php echo __('coming_soon_seconds', [], 'Seconds'); ?></span>
                 </div>
             </div>
         </div>
@@ -309,56 +310,56 @@
                 <div class="feature-icon">
                     <i class="fas fa-search"></i>
                 </div>
-                <div class="feature-title">Advanced Property Search</div>
-                <div class="feature-description">Find your dream home with our intelligent search system featuring filters, maps, and AI-powered recommendations.</div>
+                <div class="feature-title"><?php echo __('coming_soon_feature_search_title', [], 'Advanced Property Search'); ?></div>
+                <div class="feature-description"><?php echo __('coming_soon_feature_search_desc', [], 'Find your dream home with our intelligent search system featuring filters, maps, and AI-powered recommendations.'); ?></div>
             </div>
 
             <div class="feature-item">
                 <div class="feature-icon">
                     <i class="fas fa-mobile-alt"></i>
                 </div>
-                <div class="feature-title">Mobile Application</div>
-                <div class="feature-description">Native iOS and Android apps for searching properties on-the-go with offline capabilities and push notifications.</div>
+                <div class="feature-title"><?php echo __('coming_soon_feature_mobile_title', [], 'Mobile Application'); ?></div>
+                <div class="feature-description"><?php echo __('coming_soon_feature_mobile_desc', [], 'Native iOS and Android apps for searching properties on-the-go with offline capabilities and push notifications.'); ?></div>
             </div>
 
             <div class="feature-item">
                 <div class="feature-icon">
                     <i class="fas fa-camera"></i>
                 </div>
-                <div class="feature-title">Virtual Reality Tours</div>
-                <div class="feature-description">Experience properties through immersive 360° virtual tours and high-quality video walkthroughs.</div>
+                <div class="feature-title"><?php echo __('coming_soon_feature_vr_title', [], 'Virtual Reality Tours'); ?></div>
+                <div class="feature-description"><?php echo __('coming_soon_feature_vr_desc', [], 'Experience properties through immersive 360° virtual tours and high-quality video walkthroughs.'); ?></div>
             </div>
 
             <div class="feature-item">
                 <div class="feature-icon">
                     <i class="fas fa-robot"></i>
                 </div>
-                <div class="feature-title">AI-Powered Assistant</div>
-                <div class="feature-description">Get instant answers to your real estate questions with our intelligent chatbot and recommendation engine.</div>
+                <div class="feature-title"><?php echo __('coming_soon_feature_ai_title', [], 'AI-Powered Assistant'); ?></div>
+                <div class="feature-description"><?php echo __('coming_soon_feature_ai_desc', [], 'Get instant answers to your real estate questions with our intelligent chatbot and recommendation engine.'); ?></div>
             </div>
         </div>
 
         <!-- Email Notification Signup -->
         <div class="notification-signup">
-            <h4><i class="fas fa-bell me-2"></i>Get Notified When We Launch</h4>
-            <p class="mb-4">Be the first to know when our new features go live!</p>
+            <h4><i class="fas fa-bell me-2"></i><?php echo __('coming_soon_notify_title', [], 'Get Notified When We Launch'); ?></h4>
+            <p class="mb-4"><?php echo __('coming_soon_notify_desc', [], 'Be the first to know when our new features go live!'); ?></p>
 
             <form class="notification-form" id="notificationForm">
                 <div class="mb-3">
-                    <input type="text" class="form-control" id="notifyName" placeholder="Your Name" required>
+                    <input type="text" class="form-control" id="notifyName" placeholder="<?php echo __('coming_soon_name_ph', [], 'Your Name'); ?>" required>
                 </div>
                 <div class="mb-3">
-                    <input type="email" class="form-control" id="notifyEmail" placeholder="Your Email Address" required>
+                    <input type="email" class="form-control" id="notifyEmail" placeholder="<?php echo __('coming_soon_email_ph', [], 'Your Email Address'); ?>" required>
                 </div>
                 <button type="submit" class="btn-notify">
-                    <i class="fas fa-paper-plane me-2"></i>Notify Me
+                    <i class="fas fa-paper-plane me-2"></i><?php echo __('coming_soon_notify_btn', [], 'Notify Me'); ?>
                 </button>
             </form>
         </div>
 
         <!-- Social Links -->
         <div class="social-links">
-            <p class="mb-3">Follow us for updates:</p>
+            <p class="mb-3"><?php echo __('coming_soon_follow_us', [], 'Follow us for updates:'); ?></p>
             <a href="https://facebook.com/apsdreamhomes" target="_blank"><i class="fab fa-facebook-f"></i></a>
             <a href="https://twitter.com/apsdreamhomes" target="_blank"><i class="fab fa-twitter"></i></a>
             <a href="https://instagram.com/apsdreamhomes" target="_blank"><i class="fab fa-instagram"></i></a>
@@ -367,7 +368,7 @@
 
         <!-- Back to Home -->
         <a href="<?= BASE_URL ?>/" class="back-home">
-            <i class="fas fa-home me-2"></i>Back to Homepage
+            <i class="fas fa-home me-2"></i><?php echo __('coming_soon_back_home', [], 'Back to Homepage'); ?>
         </a>
     </div>
 

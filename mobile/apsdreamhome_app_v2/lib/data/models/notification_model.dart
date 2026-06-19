@@ -7,11 +7,11 @@ part 'notification_model.g.dart';
 @freezed
 class NotificationModel with _$NotificationModel {
   const factory NotificationModel({
-    required String id,
-    required String userId,
-    required String type, // booking, commission, payout, lead, general, promotional
-    required String title,
-    required String body,
+    @Default('') String id,
+    @Default('') String userId,
+    @Default('') String type, // booking, commission, payout, lead, general, promotional
+    @Default('') String title,
+    @Default('') String body,
     String? imageUrl,
     
     // Action

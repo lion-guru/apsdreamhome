@@ -1,6 +1,6 @@
 <?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
 <?php
-$msg = $error_message ?? 'Something went wrong while processing your payment. Please try again or contact support.';
+$msg = $error_message ?? __('payment_failed_default_message', [], 'Something went wrong while processing your payment. Please try again or contact support.');
 $orderId = $order_id ?? '';
 ?>
 <style>
@@ -24,26 +24,26 @@ $orderId = $order_id ?? '';
 <div class="fail-shell">
     <div class="fail-icon"><i class="fas fa-times"></i></div>
     <div class="fail-card">
-        <h1>Payment Failed</h1>
+        <h1><?php echo __('payment_failed_title', [], 'Payment Failed'); ?></h1>
         <p class="error-msg"><?= htmlspecialchars($msg, ENT_QUOTES, 'UTF-8') ?></p>
 
         <?php if ($orderId): ?>
-            <p class="order-ref">Reference: <code><?= htmlspecialchars($orderId, ENT_QUOTES, 'UTF-8') ?></code></p>
+            <p class="order-ref"><?php echo __('payment_failed_reference', [], 'Reference:'); ?> <code><?= htmlspecialchars($orderId, ENT_QUOTES, 'UTF-8') ?></code></p>
         <?php endif; ?>
 
         <div class="support-box">
-            <h3><i class="fas fa-headset"></i> Need Help?</h3>
+            <h3><i class="fas fa-headset"></i> <?php echo __('payment_failed_need_help', [], 'Need Help?'); ?></h3>
             <p><i class="fas fa-phone"></i> <?= htmlspecialchars($phoneDisplay) ?></p>
             <p><i class="fas fa-envelope"></i> support@apsdreamhome.com</p>
-            <p><i class="fas fa-clock"></i> Mon-Sat, 9:00 AM - 7:00 PM IST</p>
+            <p><i class="fas fa-clock"></i> <?php echo __('payment_failed_hours', [], 'Mon-Sat, 9:00 AM - 7:00 PM IST'); ?></p>
         </div>
 
         <div class="action-row">
             <a href="/user/bookings" class="btn-primary">
-                <i class="fas fa-redo"></i> Try Again
+                <i class="fas fa-redo"></i> <?php echo __('payment_failed_try_again', [], 'Try Again'); ?>
             </a>
             <a href="/" class="btn-secondary">
-                <i class="fas fa-home"></i> Back to Home
+                <i class="fas fa-home"></i> <?php echo __('payment_failed_back_home', [], 'Back to Home'); ?>
             </a>
         </div>
     </div>

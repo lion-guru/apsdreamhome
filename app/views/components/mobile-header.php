@@ -22,8 +22,8 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
         </button>
 
         <a href="<?php echo BASE_URL; ?>" class="flex items-center space-x-2 mx-auto">
-            <img src="<?= BASE_URL ?>/assets/images/logo.png" class="img-fluid" alt="APS Dream Home" style="height: 32px;" onerror="this.style.display='none'">
-            <span class="text-lg font-bold text-primary">APS Dream Home</span>
+            <img src="<?= BASE_URL ?>/assets/images/logo.png" class="img-fluid" alt="htmlspecialchars(__('aps_dream_home', 'APS Dream Home'))" style="height: 32px;" onerror="this.style.display='none'">
+            <span class="text-lg font-bold text-primary">__('aps_dream_home', 'APS Dream Home')</span>
         </a>
 
         <div class="d-flex align-items-center gap-2">
@@ -68,7 +68,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                     </ul>
                 </div>
             <?php else: ?>
-                <a href="<?php echo BASE_URL; ?>login" class="btn btn-outline-primary btn-sm">Login</a>
+                <a href="<?php echo BASE_URL; ?>login" class="btn btn-outline-primary btn-sm">__('component_login', 'Login')</a>
             <?php endif; ?>
         </div>
     </div>
@@ -89,30 +89,30 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                 <div class="col-lg-6">
                     <nav class="navbar navbar-expand-lg navbar-light p-0">
                         <div class="navbar-nav mx-auto">
-                            <a href="<?php echo BASE_URL; ?>" class="nav-link px-3 <?php echo (basename($_SERVER['PHP_SELF']) === 'index.php') ? 'active' : ''; ?>">Home</a>
+                            <a href="<?php echo BASE_URL; ?>" class="nav-link px-3 <?php echo (basename($_SERVER['PHP_SELF']) === 'index.php') ? 'active' : ''; ?>">__('component_home', 'Home')</a>
 
                             <?php if ($isAuthenticated): ?>
                                 <?php if ($userRole === 'associate'): ?>
                                     <a href="<?php echo BASE_URL; ?>associate/dashboard" class="nav-link px-3">Dashboard</a>
                                     <a href="<?php echo BASE_URL; ?>associate/team" class="nav-link px-3">Team</a>
-                                    <a href="<?php echo BASE_URL; ?>associate/commissions" class="nav-link px-3">Commissions</a>
+                                    <a href="<?php echo BASE_URL; ?>associate/commissions" class="nav-link px-3">__('component_commissions', 'Commissions')</a>
                                 <?php elseif ($userRole === 'agent'): ?>
                                     <a href="<?php echo BASE_URL; ?>agent/dashboard" class="nav-link px-3">Dashboard</a>
-                                    <a href="<?php echo BASE_URL; ?>properties" class="nav-link px-3">Properties</a>
-                                    <a href="<?php echo BASE_URL; ?>agent/leads" class="nav-link px-3">Leads</a>
+                                    <a href="<?php echo BASE_URL; ?>properties" class="nav-link px-3">__('component_properties', 'Properties')</a>
+                                    <a href="<?php echo BASE_URL; ?>agent/leads" class="nav-link px-3">__('component_leads', 'Leads')</a>
                                 <?php elseif ($userRole === 'customer'): ?>
                                     <a href="<?php echo BASE_URL; ?>customer/dashboard" class="nav-link px-3">Dashboard</a>
-                                    <a href="<?php echo BASE_URL; ?>customer/properties" class="nav-link px-3">Properties</a>
-                                    <a href="<?php echo BASE_URL; ?>customer/inquiries" class="nav-link px-3">My Inquiries</a>
+                                    <a href="<?php echo BASE_URL; ?>customer/properties" class="nav-link px-3">__('component_properties', 'Properties')</a>
+                                    <a href="<?php echo BASE_URL; ?>customer/inquiries" class="nav-link px-3">__('component_my_inquiries', 'My Inquiries')</a>
                                 <?php elseif ($userRole === 'employee'): ?>
                                     <a href="<?php echo BASE_URL; ?>employee/dashboard" class="nav-link px-3">Dashboard</a>
-                                    <a href="<?php echo BASE_URL; ?>employee/tasks" class="nav-link px-3">Tasks</a>
-                                    <a href="<?php echo BASE_URL; ?>employee/attendance" class="nav-link px-3">Attendance</a>
+                                    <a href="<?php echo BASE_URL; ?>employee/tasks" class="nav-link px-3">__('component_tasks', 'Tasks')</a>
+                                    <a href="<?php echo BASE_URL; ?>employee/attendance" class="nav-link px-3">__('component_attendance', 'Attendance')</a>
                                 <?php endif; ?>
                             <?php else: ?>
-                                <a href="<?php echo BASE_URL; ?>properties" class="nav-link px-3">Properties</a>
-                                <a href="#about" class="nav-link px-3">About</a>
-                                <a href="#contact" class="nav-link px-3">Contact</a>
+                                <a href="<?php echo BASE_URL; ?>properties" class="nav-link px-3">__('component_properties', 'Properties')</a>
+                                <a href="#about" class="nav-link px-3">__('component_about', 'About')</a>
+                                <a href="#contact" class="nav-link px-3">__('component_contact', 'Contact')</a>
                             <?php endif; ?>
                         </div>
                     </nav>
@@ -192,8 +192,8 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                         </div>
                     <?php else: ?>
                         <div class="d-flex gap-2 justify-content-end">
-                            <a href="<?php echo BASE_URL; ?>login" class="btn btn-outline-primary">Login</a>
-                            <a href="<?php echo BASE_URL; ?>register" class="btn btn-primary">Register</a>
+                            <a href="<?php echo BASE_URL; ?>login" class="btn btn-outline-primary">__('component_login', 'Login')</a>
+                            <a href="<?php echo BASE_URL; ?>register" class="btn btn-primary">__('component_register_btn', 'Register')</a>
                         </div>
                     <?php endif; ?>
                 </div>

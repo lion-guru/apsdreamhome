@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Agreement Details';
+$page_title = $page_title ?? __('user_agreement_detail_page_title', null, 'Agreement Details');
 $current_page = 'agreements';
 $agreement = $agreement ?? [];
 $user = $user ?? [];
@@ -16,21 +16,21 @@ $statusColors = [
     'expired' => 'dark',
 ];
 $statusLabels = [
-    'draft' => 'Draft',
-    'pending_signature' => 'Pending Signature',
-    'signed' => 'Signed',
-    'registered' => 'Registered',
-    'cancelled' => 'Cancelled',
-    'expired' => 'Expired',
+    'draft' => __('user_agreement_detail_status_draft', null, 'Draft'),
+    'pending_signature' => __('user_agreement_detail_status_pending', null, 'Pending Signature'),
+    'signed' => __('user_agreement_detail_status_signed', null, 'Signed'),
+    'registered' => __('user_agreement_detail_status_registered', null, 'Registered'),
+    'cancelled' => __('user_agreement_detail_status_cancelled', null, 'Cancelled'),
+    'expired' => __('user_agreement_detail_status_expired', null, 'Expired'),
 ];
 $typeLabels = [
-    'sale_deed' => 'Sale Deed',
-    'allotment' => 'Allotment Letter',
-    'mortgage' => 'Mortgage',
-    'lease' => 'Lease Agreement',
-    'nda' => 'NDA',
-    'joint_venture' => 'Joint Venture',
-    'other' => 'Other',
+    'sale_deed' => __('user_agreement_detail_type_sale_deed', null, 'Sale Deed'),
+    'allotment' => __('user_agreement_detail_type_allotment', null, 'Allotment Letter'),
+    'mortgage' => __('user_agreement_detail_type_mortgage', null, 'Mortgage'),
+    'lease' => __('user_agreement_detail_type_lease', null, 'Lease Agreement'),
+    'nda' => __('user_agreement_detail_type_nda', null, 'NDA'),
+    'joint_venture' => __('user_agreement_detail_type_joint_venture', null, 'Joint Venture'),
+    'other' => __('user_agreement_detail_type_other', null, 'Other'),
 ];
 
 $status = $agreement['status'] ?? 'draft';
@@ -55,12 +55,12 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
 <div class="aps-cp-hero">
     <div class="row align-items-center">
         <div class="col-md-8">
-            <h2><i class="fas fa-file-signature me-2"></i>Agreement Details</h2>
+            <h2><i class="fas fa-file-signature me-2"></i><?= __('user_agreement_detail_heading', null, 'Agreement Details') ?></h2>
             <p><?= $type ?> — <?= $agrNumber ?></p>
         </div>
         <div class="col-md-4 mt-3 mt-md-0 text-md-end">
             <a href="<?= BASE_URL ?>/user/agreements" class="btn btn-light">
-                <i class="fas fa-arrow-left me-2"></i>Back to Agreements
+                <i class="fas fa-arrow-left me-2"></i><?= __('user_agreement_detail_back', null, 'Back to Agreements') ?>
             </a>
         </div>
     </div>
@@ -74,11 +74,11 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
                     <i class="fas fa-pen-fancy"></i>
                 </div>
                 <div class="flex-grow-1">
-                    <h5 class="mb-1" style="color:#92400e;">Action Required: Sign Your Agreement</h5>
-                    <p class="mb-0" style="color:#92400e;">Please review the agreement terms below and sign to proceed with your booking.</p>
+                    <h5 class="mb-1" style="color:#92400e;"><?= __('user_agreement_detail_action_required', null, 'Action Required: Sign Your Agreement') ?></h5>
+                    <p class="mb-0" style="color:#92400e;"><?= __('user_agreement_detail_review_sign', null, 'Please review the agreement terms below and sign to proceed with your booking.') ?></p>
                 </div>
                 <button onclick="openSignModal()" class="btn btn-success btn-lg">
-                    <i class="fas fa-pen me-2"></i>Sign Agreement
+                    <i class="fas fa-pen me-2"></i><?= __('user_agreement_detail_sign_btn', null, 'Sign Agreement') ?>
                 </button>
             </div>
         </div>
@@ -91,11 +91,11 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="flex-grow-1">
-                    <h5 class="mb-1" style="color:#065f46;">Agreement Signed Successfully</h5>
-                    <p class="mb-0" style="color:#065f46;">Signed on <?= $signedAt ?><?= !empty($agreement['signed_ip']) ? ' from IP: ' . htmlspecialchars($agreement['signed_ip']) : '' ?></p>
+                    <h5 class="mb-1" style="color:#065f46;"><?= __('user_agreement_detail_signed_success', null, 'Agreement Signed Successfully') ?></h5>
+                    <p class="mb-0" style="color:#065f46;"><?= __('user_agreement_detail_signed_on', null, 'Signed on') ?> <?= $signedAt ?><?= !empty($agreement['signed_ip']) ? ' ' . __('user_agreement_detail_signed_from_ip', null, 'from IP:') . ' ' . htmlspecialchars($agreement['signed_ip']) : '' ?></p>
                 </div>
                 <a href="<?= BASE_URL ?>/user/agreements/<?= $agreement['id'] ?>/preview" class="btn btn-outline-success" target="_blank">
-                    <i class="fas fa-print me-2"></i>Print / Download
+                    <i class="fas fa-print me-2"></i><?= __('user_agreement_detail_print_download', null, 'Print / Download') ?>
                 </a>
             </div>
         </div>
@@ -106,44 +106,44 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
     <div class="col-lg-8">
         <div class="aps-cp-card">
             <div class="aps-cp-card-header">
-                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Agreement Information</h5>
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= __('user_agreement_detail_info_heading', null, 'Agreement Information') ?></h5>
                 <span class="aps-cp-badge aps-cp-badge-<?= $color ?>"><?= $label ?></span>
             </div>
             <div class="aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Agreement Number</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_number', null, 'Agreement Number') ?></label>
                             <div class="fw-semibold"><?= $agrNumber ?></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Agreement Type</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_type_label', null, 'Agreement Type') ?></label>
                             <div class="fw-semibold"><?= $type ?></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Booking Reference</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_booking_ref', null, 'Booking Reference') ?></label>
                             <div class="fw-semibold"><?= $bookingNo ?></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Agreement Date</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_date', null, 'Agreement Date') ?></label>
                             <div class="fw-semibold"><?= $agrDate ?></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Agreement Value</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_value', null, 'Agreement Value') ?></label>
                             <div class="fw-semibold" style="font-size:1.1em;color:#4f46e5;">&#8377;<?= $totalValue ?></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Buyer Name</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_buyer_name', null, 'Buyer Name') ?></label>
                             <div class="fw-semibold"><?= $customerName ?></div>
                         </div>
                     </div>
@@ -153,43 +153,43 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
 
         <div class="aps-cp-card">
             <div class="aps-cp-card-header">
-                <h5 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i>Property Details</h5>
+                <h5 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i><?= __('user_agreement_detail_property_heading', null, 'Property Details') ?></h5>
             </div>
             <div class="aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Colony / Project</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_colony', null, 'Colony / Project') ?></label>
                             <div class="fw-semibold"><?= $colonyName ?></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">District</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_district', null, 'District') ?></label>
                             <div class="fw-semibold"><?= $district ?>, Uttar Pradesh</div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Plot Number</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_plot_number', null, 'Plot Number') ?></label>
                             <div class="fw-semibold"><?= $plotNo ?><?= $block ? ' (' . $block . ')' : '' ?></div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Area</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_area', null, 'Area') ?></label>
                             <div class="fw-semibold"><?= $area ?> sq ft</div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Dimensions</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_dimensions', null, 'Dimensions') ?></label>
                             <div class="fw-semibold"><?= $dimLabel ?></div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Facing</label>
+                            <label class="form-label text-muted small"><?= __('user_agreement_detail_facing', null, 'Facing') ?></label>
                             <div class="fw-semibold"><?= $facing ?></div>
                         </div>
                     </div>
@@ -199,16 +199,16 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
 
         <div class="aps-cp-card">
             <div class="aps-cp-card-header">
-                <h5 class="mb-0"><i class="fas fa-gavel me-2"></i>Key Terms (Summary)</h5>
+                <h5 class="mb-0"><i class="fas fa-gavel me-2"></i><?= __('user_agreement_detail_terms_heading', null, 'Key Terms (Summary)') ?></h5>
             </div>
             <div class="aps-cp-card-body">
                 <ul class="list-unstyled mb-0">
-                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Payment schedule as per booking agreement</li>
-                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>18% p.a. interest on overdue installments</li>
-                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Possession within 24 months from agreement date</li>
-                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Stamp duty and registration charges borne by buyer</li>
-                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Dispute resolution: Gorakhpur jurisdiction</li>
-                    <li class="mb-0"><i class="fas fa-check text-success me-2"></i>RERA registered project</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_payment', null, 'Payment schedule as per booking agreement') ?></li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_interest', null, '18% p.a. interest on overdue installments') ?></li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_possession', null, 'Possession within 24 months from agreement date') ?></li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_stamp', null, 'Stamp duty and registration charges borne by buyer') ?></li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_dispute', null, 'Dispute resolution: Gorakhpur jurisdiction') ?></li>
+                    <li class="mb-0"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_rera', null, 'RERA registered project') ?></li>
                 </ul>
             </div>
         </div>
@@ -217,24 +217,24 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
     <div class="col-lg-4">
         <div class="aps-cp-card">
             <div class="aps-cp-card-header">
-                <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Actions</h5>
+                <h5 class="mb-0"><i class="fas fa-cogs me-2"></i><?= __('user_agreement_detail_actions_heading', null, 'Actions') ?></h5>
             </div>
             <div class="aps-cp-card-body">
                 <?php if ($status === 'pending_signature'): ?>
                     <button onclick="openSignModal()" class="btn btn-success w-100 mb-3">
-                        <i class="fas fa-pen me-2"></i>Sign Agreement
+                        <i class="fas fa-pen me-2"></i><?= __('user_agreement_detail_sign_btn', null, 'Sign Agreement') ?>
                     </button>
                     <a href="<?= BASE_URL ?>/user/agreements/<?= $agreement['id'] ?>/preview" class="btn btn-outline-primary w-100 mb-3" target="_blank">
-                        <i class="fas fa-eye me-2"></i>Preview Full Agreement
+                        <i class="fas fa-eye me-2"></i><?= __('user_agreement_detail_preview', null, 'Preview Full Agreement') ?>
                     </a>
                 <?php elseif ($status === 'signed' || $status === 'registered'): ?>
                     <a href="<?= BASE_URL ?>/user/agreements/<?= $agreement['id'] ?>/preview" class="btn btn-primary w-100 mb-3" target="_blank">
-                        <i class="fas fa-print me-2"></i>Print / Download PDF
+                        <i class="fas fa-print me-2"></i><?= __('user_agreement_detail_print_pdf', null, 'Print / Download PDF') ?>
                     </a>
                 <?php endif; ?>
                 
                 <a href="<?= BASE_URL ?>/user/bookings/<?= $agreement['booking_id'] ?? '' ?>" class="btn btn-outline-secondary w-100">
-                    <i class="fas fa-arrow-right me-2"></i>View Booking
+                    <i class="fas fa-arrow-right me-2"></i><?= __('user_agreement_detail_view_booking', null, 'View Booking') ?>
                 </a>
             </div>
         </div>
@@ -242,11 +242,11 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
         <?php if (!empty($agreement['document_url'])): ?>
         <div class="aps-cp-card">
             <div class="aps-cp-card-header">
-                <h5 class="mb-0"><i class="fas fa-file-pdf me-2"></i>Attached Document</h5>
+                <h5 class="mb-0"><i class="fas fa-file-pdf me-2"></i><?= __('user_agreement_detail_attached_doc', null, 'Attached Document') ?></h5>
             </div>
             <div class="aps-cp-card-body">
                 <a href="<?= BASE_URL ?>/<?= htmlspecialchars($agreement['document_url']) ?>" class="btn btn-outline-danger w-100" target="_blank">
-                    <i class="fas fa-download me-2"></i>Download Agreement PDF
+                    <i class="fas fa-download me-2"></i><?= __('user_agreement_detail_download_pdf', null, 'Download Agreement PDF') ?>
                 </a>
             </div>
         </div>
@@ -254,10 +254,10 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
 
         <div class="aps-cp-card">
             <div class="aps-cp-card-header">
-                <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Need Help?</h5>
+                <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i><?= __('user_agreement_detail_need_help', null, 'Need Help?') ?></h5>
             </div>
             <div class="aps-cp-card-body">
-                <p class="small text-muted mb-3">Have questions about this agreement? Contact our legal team.</p>
+                <p class="small text-muted mb-3"><?= __('user_agreement_detail_help_desc', null, 'Have questions about this agreement? Contact our legal team.') ?></p>
                 <a href="tel:<?= $phoneRaw ?>" class="btn btn-outline-primary w-100 mb-2">
                     <i class="fas fa-phone me-2"></i><?= htmlspecialchars($phoneDisplay) ?>
                 </a>
@@ -274,32 +274,32 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius:16px;overflow:hidden;">
             <div class="modal-header" style="background:#4f46e5;color:#fff;border:none;">
-                <h5 class="modal-title"><i class="fas fa-pen-fancy me-2"></i>Sign Agreement</h5>
+                <h5 class="modal-title"><i class="fas fa-pen-fancy me-2"></i><?= __('user_agreement_detail_sign_heading', null, 'Sign Agreement') ?></h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
                 <div class="alert alert-info mb-3">
-                    <i class="fas fa-info-circle me-2"></i>By clicking "I Agree" below, you acknowledge that you have read and agree to all terms and conditions of this <?= $type ?>.
+                    <i class="fas fa-info-circle me-2"></i><?= __('user_agreement_detail_sign_disclaimer', null, 'By clicking "I Agree" below, you acknowledge that you have read and agree to all terms and conditions of this') ?> <?= $type ?>.
                 </div>
                 <div class="form-check mb-3">
                     <input class="form-check-input" type="checkbox" id="agreeCheck" style="width:20px;height:20px;">
                     <label class="form-check-label fw-semibold" for="agreeCheck" style="font-size:15px;">
-                        I have read, understood, and agree to all the terms and conditions of this agreement.
+                        <?= __('user_agreement_detail_i_agree', null, 'I have read, understood, and agree to all the terms and conditions of this agreement.') ?>
                     </label>
                 </div>
                 <div class="text-muted small" style="line-height:1.6;">
-                    <p class="mb-1"><i class="fas fa-fingerprint me-2"></i>Digital signature will be recorded with:</p>
+                    <p class="mb-1"><i class="fas fa-fingerprint me-2"></i><?= __('user_agreement_detail_digital_sig_note', null, 'Digital signature will be recorded with:') ?></p>
                     <ul class="mb-0 ps-4">
-                        <li>Timestamp (date and time)</li>
-                        <li>IP address</li>
-                        <li>User identification</li>
+                        <li><?= __('user_agreement_detail_sig_timestamp', null, 'Timestamp (date and time)') ?></li>
+                        <li><?= __('user_agreement_detail_sig_ip', null, 'IP address') ?></li>
+                        <li><?= __('user_agreement_detail_sig_user', null, 'User identification') ?></li>
                     </ul>
                 </div>
             </div>
             <div class="modal-footer border-top-0">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('user_agreement_detail_cancel', null, 'Cancel') ?></button>
                 <button type="button" class="btn btn-success" id="signBtn" onclick="signAgreement()" disabled>
-                    <i class="fas fa-pen me-2"></i>I Agree — Sign Now
+                    <i class="fas fa-pen me-2"></i><?= __('user_agreement_detail_i_agree_sign', null, 'I Agree — Sign Now') ?>
                 </button>
             </div>
         </div>
@@ -307,6 +307,13 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
 </div>
 
 <script>
+var AGR_STRINGS = {
+    signing: <?= json_encode(__('user_agreement_detail_signing', null, 'Signing...')) ?>,
+    signFailed: <?= json_encode(__('user_agreement_detail_sign_failed', null, 'Signing failed. Please try again.')) ?>,
+    networkError: <?= json_encode(__('user_agreement_detail_network_error', null, 'Network error. Please try again.')) ?>,
+    iAgreeSign: <?= json_encode(__('user_agreement_detail_i_agree_sign', null, 'I Agree — Sign Now')) ?>
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     var check = document.getElementById('agreeCheck');
     var btn = document.getElementById('signBtn');
@@ -325,7 +332,7 @@ function openSignModal() {
 function signAgreement() {
     var btn = document.getElementById('signBtn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>' + AGR_STRINGS.signing;
 
     var fd = new FormData();
     var meta = document.querySelector('meta[name="csrf-token"]');
@@ -342,15 +349,15 @@ function signAgreement() {
         if (data.success && data.redirect) {
             window.location.href = data.redirect;
         } else {
-            alert(data.error || 'Signing failed. Please try again.');
+            alert(data.error || AGR_STRINGS.signFailed);
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-pen me-2"></i>I Agree — Sign Now';
+            btn.innerHTML = '<i class="fas fa-pen me-2"></i>' + AGR_STRINGS.iAgreeSign;
         }
     })
     .catch(function(err) {
-        alert('Network error. Please try again.');
+        alert(AGR_STRINGS.networkError);
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-pen me-2"></i>I Agree — Sign Now';
+        btn.innerHTML = '<i class="fas fa-pen me-2"></i>' + AGR_STRINGS.iAgreeSign;
     });
 }
 </script>

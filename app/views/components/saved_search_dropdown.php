@@ -20,14 +20,14 @@ $isLoggedIn = $isLoggedIn ?? false;
     <div class="card-body py-2">
         <div class="d-flex align-items-center gap-2 flex-wrap">
             <span class="text-muted small fw-semibold">
-                <i class="fas fa-bookmark text-primary me-1"></i>My Saved:
+                <i class="fas fa-bookmark text-primary me-1"></i>__('component_my_saved', 'My Saved:')
             </span>
             <?php if (empty($savedSearches)): ?>
-                <span class="text-muted small">No saved searches. Apply some filters and click "Save Search".</span>
+                <span class="text-muted small">__('component_no_saved_searches', 'No saved searches. Apply some filters and click "Save Search".')</span>
             <?php else: ?>
                 <div class="dropdown d-inline-block">
                     <button class="btn btn-sm btn-outline-primary dropdown-toggle rounded-pill" type="button" id="savedSearchesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        Choose saved search
+                        __('component_choose_saved_search', 'Choose saved search')
                     </button>
                     <ul class="dropdown-menu shadow" aria-labelledby="savedSearchesDropdown" style="max-height: 350px; overflow-y: auto;">
                         <?php foreach ($savedSearches as $s):
@@ -40,7 +40,7 @@ $isLoggedIn = $isLoggedIn ?? false;
                                     <i class="fas fa-search text-muted"></i>
                                     <span class="flex-grow-1"><?= htmlspecialchars($s['name'] ?? 'Untitled') ?></span>
                                     <?php if ($alertsOn): ?>
-                                        <i class="fas fa-bell text-success" title="Email alerts enabled"></i>
+                                        <i class="fas fa-bell text-success" title="htmlspecialchars(__('component_email_alerts_enabled', 'Email alerts enabled'))"></i>
                                     <?php endif; ?>
                                 </a>
                             </li>
@@ -48,20 +48,20 @@ $isLoggedIn = $isLoggedIn ?? false;
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item text-primary" href="<?= BASE_URL ?>/user/saved-searches">
-                                <i class="fas fa-cog me-1"></i>Manage all saved searches
+                                <i class="fas fa-cog me-1"></i>__('component_manage_all_saved_searches', 'Manage all saved searches')
                             </a>
                         </li>
                     </ul>
                 </div>
 
                 <a href="<?= BASE_URL ?>/user/saved-searches" class="btn btn-sm btn-link text-decoration-none">
-                    <i class="fas fa-list me-1"></i>View all
+                    <i class="fas fa-list me-1"></i>__('component_view_all', 'View all')
                 </a>
             <?php endif; ?>
 
             <!-- Save current search button (only shows when filters are applied) -->
             <button type="button" class="btn btn-sm btn-success rounded-pill ms-auto" id="saveSearchBtnGlobal" onclick="triggerSaveSearch()" style="display: none;">
-                <i class="fas fa-bookmark me-1"></i>Save this search
+                <i class="fas fa-bookmark me-1"></i>__('component_save_this_search_btn', 'Save this search')
             </button>
         </div>
     </div>

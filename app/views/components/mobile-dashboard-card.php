@@ -8,9 +8,9 @@
 $card_class = $card_class ?? '';
 $icon = $icon ?? null;
 $action = $action ?? null;
-$title = $title ?? 'Card Title';
+$title = $title ?? __('component_card_title', 'Card Title');
 $action_url = $action_url ?? '#';
-$action_text = $action_text ?? 'View';
+$action_text = $action_text ?? __('component_view', 'View');
 ?>
 
 <div class="dashboard-card <?php echo htmlspecialchars($card_class); ?>">

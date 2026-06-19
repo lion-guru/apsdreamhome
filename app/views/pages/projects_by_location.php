@@ -10,8 +10,8 @@ $locationName = ucfirst($location);
 <!-- Hero Section -->
 <section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container text-center py-5">
-        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-map-marker-alt me-3"></i><?php echo $locationName; ?> Projects</h1>
-        <p class="lead">Explore our premium projects in <?php echo $locationName; ?></p>
+        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-map-marker-alt me-3"></i><?php echo $locationName; ?> <?= __('projects_location_hero') ?></h1>
+        <p class="lead"><?= __('projects_location_explore') ?> <?php echo $locationName; ?></p>
     </div>
 </section>
 
@@ -43,7 +43,7 @@ $locationName = ucfirst($location);
                             <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100 img-fluid" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="object-fit: cover;" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute top-0 start-0 m-2">
                                 <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'primary'; ?>">
-                                    <?php echo $project->status === 'active' ? 'Available' : 'Completed'; ?>
+                                    <?php echo $project->status === 'active' ? __('colony_available') : __('projects_completed'); ?>
                                 </span>
                             </div>
                         </div>
@@ -63,7 +63,7 @@ $locationName = ucfirst($location);
                             <?php endif; ?>
                             <div class="d-flex gap-2 mt-3">
                                 <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-primary btn-sm flex-grow-1">
-                                    <i class="fas fa-eye me-1"></i>View Details
+                                    <i class="fas fa-eye me-1"></i><?= __('featured_view_details') ?>
                                 </a>
                                 <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-sm">
                                     <i class="fab fa-whatsapp"></i>
@@ -77,9 +77,9 @@ $locationName = ucfirst($location);
         <?php else: ?>
             <div class="text-center py-5">
                 <i class="fas fa-building fa-4x text-muted mb-4"></i>
-                <h3 class="text-muted">No Projects in <?php echo $locationName; ?></h3>
-                <p class="text-muted">We're expanding to more locations. Contact us for updates!</p>
-                <a href="<?php echo BASE_URL; ?>/company/projects" class="btn btn-primary">View All Projects</a>
+                <h3 class="text-muted"><?= __('projects_location_empty') ?> <?php echo $locationName; ?></h3>
+                <p class="text-muted"><?= __('projects_location_empty_desc') ?></p>
+                <a href="<?php echo BASE_URL; ?>/company/projects" class="btn btn-primary"><?= __('projects_location_view_all') ?></a>
             </div>
         <?php endif; ?>
     </div>
@@ -88,7 +88,7 @@ $locationName = ucfirst($location);
 <!-- Other Locations -->
 <section class="py-5 bg-light">
     <div class="container">
-        <h4 class="mb-4 text-center">Explore Other Locations</h4>
+        <h4 class="mb-4 text-center"><?= __('projects_other_locations') ?></h4>
         <div class="row justify-content-center">
             <div class="col-auto">
                 <div class="d-flex gap-2 flex-wrap justify-content-center">
@@ -96,7 +96,7 @@ $locationName = ucfirst($location);
                     <a href="<?php echo BASE_URL; ?>/projects/lucknow" class="btn btn-outline-primary <?php echo $location === 'lucknow' ? 'active' : ''; ?>">Lucknow</a>
                     <a href="<?php echo BASE_URL; ?>/projects/kushinagar" class="btn btn-outline-primary <?php echo $location === 'kushinagar' ? 'active' : ''; ?>">Kushinagar</a>
                     <a href="<?php echo BASE_URL; ?>/projects/varanasi" class="btn btn-outline-primary <?php echo $location === 'varanasi' ? 'active' : ''; ?>">Varanasi</a>
-                    <a href="<?php echo BASE_URL; ?>/company/projects" class="btn btn-primary">All Projects</a>
+                    <a href="<?php echo BASE_URL; ?>/company/projects" class="btn btn-primary"><?= __('projects_view_all') ?></a>
                 </div>
             </div>
         </div>
@@ -106,14 +106,14 @@ $locationName = ucfirst($location);
 <!-- CTA -->
 <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container">
-        <h3>Interested in <?php echo $locationName; ?> Properties?</h3>
-        <p class="mb-4">Contact us for site visits and expert guidance</p>
+        <h3><?= __('projects_location_interested') ?> <?php echo $locationName; ?> <?= __('projects_location_properties') ?></h3>
+        <p class="mb-4"><?= __('projects_location_cta_desc') ?></p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg">
-                <i class="fas fa-phone me-2"></i>Call Now
+                <i class="fas fa-phone me-2"></i><?= __('project_call_now') ?>
             </a>
             <a href="https://wa.me/919277121112" target="_blank" class="btn btn-success btn-lg">
-                <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                <i class="fab fa-whatsapp me-2"></i><?= __('contact_whatsapp') ?>
             </a>
         </div>
     </div>

@@ -7,12 +7,12 @@ part 'gamification_model.g.dart';
 @freezed
 class GamificationModel with _$GamificationModel {
   const factory GamificationModel({
-    required String userId,
-    required int totalPoints,
-    required int availablePoints,
-    required int redeemedPoints,
-    required int currentLevel,
-    required String currentRank,
+    @Default('') String userId,
+    @Default(0) int totalPoints,
+    @Default(0) int availablePoints,
+    @Default(0) int redeemedPoints,
+    @Default(0) int currentLevel,
+    @Default('') String currentRank,
     
     // Progress
     int? pointsToNextLevel,
@@ -46,11 +46,11 @@ class GamificationModel with _$GamificationModel {
 @freezed
 class PointsTransaction with _$PointsTransaction {
   const factory PointsTransaction({
-    required String id,
-    required String userId,
-    required int points,
-    required String type, // earned, redeemed, adjusted
-    required String activityType,
+    @Default('') String id,
+    @Default('') String userId,
+    @Default(0) int points,
+    @Default('') String type, // earned, redeemed, adjusted
+    @Default('') String activityType,
     String? description,
     String? metadata,
     int? balanceBefore,
@@ -65,13 +65,13 @@ class PointsTransaction with _$PointsTransaction {
 @freezed
 class Achievement with _$Achievement {
   const factory Achievement({
-    required String id,
-    required String name,
-    required String description,
-    required String icon,
-    required int pointsReward,
-    required String category, // sales, recruitment, activity, training
-    required String condition,
+    @Default('') String id,
+    @Default('') String name,
+    @Default('') String description,
+    @Default('') String icon,
+    @Default(0) int pointsReward,
+    @Default('') String category, // sales, recruitment, activity, training
+    @Default('') String condition,
     int? targetValue,
     int? currentValue,
     double? progressPercentage,
@@ -87,12 +87,12 @@ class Achievement with _$Achievement {
 @freezed
 class Badge with _$Badge {
   const factory Badge({
-    required String id,
-    required String name,
-    required String description,
-    required String icon,
-    required String rarity, // bronze, silver, gold, platinum, diamond
-    required String category,
+    @Default('') String id,
+    @Default('') String name,
+    @Default('') String description,
+    @Default('') String icon,
+    @Default('') String rarity, // bronze, silver, gold, platinum, diamond
+    @Default('') String category,
     DateTime? earnedAt,
     DateTime? createdAt,
   }) = _Badge;
@@ -104,12 +104,12 @@ class Badge with _$Badge {
 @freezed
 class Reward with _$Reward {
   const factory Reward({
-    required String id,
-    required String name,
-    required String description,
-    required String imageUrl,
-    required int pointsCost,
-    required int stockQuantity,
+    @Default('') String id,
+    @Default('') String name,
+    @Default('') String description,
+    @Default('') String imageUrl,
+    @Default(0) int pointsCost,
+    @Default(0) int stockQuantity,
     String? category, // merchandise, vouchers, cash, experience
     String? termsAndConditions,
     bool? isActive,
@@ -125,12 +125,12 @@ class Reward with _$Reward {
 @freezed
 class RewardRedemption with _$RewardRedemption {
   const factory RewardRedemption({
-    required String id,
-    required String userId,
-    required String rewardId,
-    required String rewardName,
-    required int pointsSpent,
-    required String status, // pending, processing, shipped, delivered, cancelled
+    @Default('') String id,
+    @Default('') String userId,
+    @Default('') String rewardId,
+    @Default('') String rewardName,
+    @Default(0) int pointsSpent,
+    @Default('') String status, // pending, processing, shipped, delivered, cancelled
     String? deliveryAddress,
     String? trackingNumber,
     DateTime? requestedAt,
@@ -148,14 +148,14 @@ class RewardRedemption with _$RewardRedemption {
 @freezed
 class LeaderboardEntry with _$LeaderboardEntry {
   const factory LeaderboardEntry({
-    required String userId,
-    required String userName,
-    required String userPhoto,
-    required int rank,
-    required int totalPoints,
-    required int level,
-    required int salesCount,
-    required int recruitsCount,
+    @Default('') String userId,
+    @Default('') String userName,
+    @Default('') String userPhoto,
+    @Default(0) int rank,
+    @Default(0) int totalPoints,
+    @Default(0) int level,
+    @Default(0) int salesCount,
+    @Default(0) int recruitsCount,
     bool? isCurrentUser,
   }) = _LeaderboardEntry;
 

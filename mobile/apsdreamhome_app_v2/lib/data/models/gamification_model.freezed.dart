@@ -345,12 +345,12 @@ class __$$GamificationModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$GamificationModelImpl implements _GamificationModel {
   const _$GamificationModelImpl({
-    required this.userId,
-    required this.totalPoints,
-    required this.availablePoints,
-    required this.redeemedPoints,
-    required this.currentLevel,
-    required this.currentRank,
+    this.userId = '',
+    this.totalPoints = 0,
+    this.availablePoints = 0,
+    this.redeemedPoints = 0,
+    this.currentLevel = 0,
+    this.currentRank = '',
     this.pointsToNextLevel,
     this.levelProgressPercentage,
     this.currentStreak,
@@ -371,16 +371,22 @@ class _$GamificationModelImpl implements _GamificationModel {
       _$$GamificationModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String userId;
   @override
+  @JsonKey()
   final int totalPoints;
   @override
+  @JsonKey()
   final int availablePoints;
   @override
+  @JsonKey()
   final int redeemedPoints;
   @override
+  @JsonKey()
   final int currentLevel;
   @override
+  @JsonKey()
   final String currentRank;
   // Progress
   @override
@@ -536,12 +542,12 @@ class _$GamificationModelImpl implements _GamificationModel {
 
 abstract class _GamificationModel implements GamificationModel {
   const factory _GamificationModel({
-    required final String userId,
-    required final int totalPoints,
-    required final int availablePoints,
-    required final int redeemedPoints,
-    required final int currentLevel,
-    required final String currentRank,
+    final String userId,
+    final int totalPoints,
+    final int availablePoints,
+    final int redeemedPoints,
+    final int currentLevel,
+    final String currentRank,
     final int? pointsToNextLevel,
     final double? levelProgressPercentage,
     final int? currentStreak,
@@ -826,11 +832,11 @@ class __$$PointsTransactionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PointsTransactionImpl implements _PointsTransaction {
   const _$PointsTransactionImpl({
-    required this.id,
-    required this.userId,
-    required this.points,
-    required this.type,
-    required this.activityType,
+    this.id = '',
+    this.userId = '',
+    this.points = 0,
+    this.type = '',
+    this.activityType = '',
     this.description,
     this.metadata,
     this.balanceBefore,
@@ -842,15 +848,20 @@ class _$PointsTransactionImpl implements _PointsTransaction {
       _$$PointsTransactionImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String userId;
   @override
+  @JsonKey()
   final int points;
   @override
+  @JsonKey()
   final String type;
   // earned, redeemed, adjusted
   @override
+  @JsonKey()
   final String activityType;
   @override
   final String? description;
@@ -926,11 +937,11 @@ class _$PointsTransactionImpl implements _PointsTransaction {
 
 abstract class _PointsTransaction implements PointsTransaction {
   const factory _PointsTransaction({
-    required final String id,
-    required final String userId,
-    required final int points,
-    required final String type,
-    required final String activityType,
+    final String id,
+    final String userId,
+    final int points,
+    final String type,
+    final String activityType,
     final String? description,
     final String? metadata,
     final int? balanceBefore,
@@ -1231,13 +1242,13 @@ class __$$AchievementImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AchievementImpl implements _Achievement {
   const _$AchievementImpl({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.icon,
-    required this.pointsReward,
-    required this.category,
-    required this.condition,
+    this.id = '',
+    this.name = '',
+    this.description = '',
+    this.icon = '',
+    this.pointsReward = 0,
+    this.category = '',
+    this.condition = '',
     this.targetValue,
     this.currentValue,
     this.progressPercentage,
@@ -1250,19 +1261,26 @@ class _$AchievementImpl implements _Achievement {
       _$$AchievementImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String description;
   @override
+  @JsonKey()
   final String icon;
   @override
+  @JsonKey()
   final int pointsReward;
   @override
+  @JsonKey()
   final String category;
   // sales, recruitment, activity, training
   @override
+  @JsonKey()
   final String condition;
   @override
   final int? targetValue;
@@ -1347,13 +1365,13 @@ class _$AchievementImpl implements _Achievement {
 
 abstract class _Achievement implements Achievement {
   const factory _Achievement({
-    required final String id,
-    required final String name,
-    required final String description,
-    required final String icon,
-    required final int pointsReward,
-    required final String category,
-    required final String condition,
+    final String id,
+    final String name,
+    final String description,
+    final String icon,
+    final int pointsReward,
+    final String category,
+    final String condition,
     final int? targetValue,
     final int? currentValue,
     final double? progressPercentage,
@@ -1592,12 +1610,12 @@ class __$$BadgeImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$BadgeImpl implements _Badge {
   const _$BadgeImpl({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.icon,
-    required this.rarity,
-    required this.category,
+    this.id = '',
+    this.name = '',
+    this.description = '',
+    this.icon = '',
+    this.rarity = '',
+    this.category = '',
     this.earnedAt,
     this.createdAt,
   });
@@ -1606,17 +1624,23 @@ class _$BadgeImpl implements _Badge {
       _$$BadgeImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String description;
   @override
+  @JsonKey()
   final String icon;
   @override
+  @JsonKey()
   final String rarity;
   // bronze, silver, gold, platinum, diamond
   @override
+  @JsonKey()
   final String category;
   @override
   final DateTime? earnedAt;
@@ -1677,12 +1701,12 @@ class _$BadgeImpl implements _Badge {
 
 abstract class _Badge implements Badge {
   const factory _Badge({
-    required final String id,
-    required final String name,
-    required final String description,
-    required final String icon,
-    required final String rarity,
-    required final String category,
+    final String id,
+    final String name,
+    final String description,
+    final String icon,
+    final String rarity,
+    final String category,
     final DateTime? earnedAt,
     final DateTime? createdAt,
   }) = _$BadgeImpl;
@@ -1958,12 +1982,12 @@ class __$$RewardImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$RewardImpl implements _Reward {
   const _$RewardImpl({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.imageUrl,
-    required this.pointsCost,
-    required this.stockQuantity,
+    this.id = '',
+    this.name = '',
+    this.description = '',
+    this.imageUrl = '',
+    this.pointsCost = 0,
+    this.stockQuantity = 0,
     this.category,
     this.termsAndConditions,
     this.isActive,
@@ -1976,16 +2000,22 @@ class _$RewardImpl implements _Reward {
       _$$RewardImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String description;
   @override
+  @JsonKey()
   final String imageUrl;
   @override
+  @JsonKey()
   final int pointsCost;
   @override
+  @JsonKey()
   final int stockQuantity;
   @override
   final String? category;
@@ -2069,12 +2099,12 @@ class _$RewardImpl implements _Reward {
 
 abstract class _Reward implements Reward {
   const factory _Reward({
-    required final String id,
-    required final String name,
-    required final String description,
-    required final String imageUrl,
-    required final int pointsCost,
-    required final int stockQuantity,
+    final String id,
+    final String name,
+    final String description,
+    final String imageUrl,
+    final int pointsCost,
+    final int stockQuantity,
     final String? category,
     final String? termsAndConditions,
     final bool? isActive,
@@ -2379,12 +2409,12 @@ class __$$RewardRedemptionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$RewardRedemptionImpl implements _RewardRedemption {
   const _$RewardRedemptionImpl({
-    required this.id,
-    required this.userId,
-    required this.rewardId,
-    required this.rewardName,
-    required this.pointsSpent,
-    required this.status,
+    this.id = '',
+    this.userId = '',
+    this.rewardId = '',
+    this.rewardName = '',
+    this.pointsSpent = 0,
+    this.status = '',
     this.deliveryAddress,
     this.trackingNumber,
     this.requestedAt,
@@ -2398,16 +2428,22 @@ class _$RewardRedemptionImpl implements _RewardRedemption {
       _$$RewardRedemptionImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String userId;
   @override
+  @JsonKey()
   final String rewardId;
   @override
+  @JsonKey()
   final String rewardName;
   @override
+  @JsonKey()
   final int pointsSpent;
   @override
+  @JsonKey()
   final String status;
   // pending, processing, shipped, delivered, cancelled
   @override
@@ -2497,12 +2533,12 @@ class _$RewardRedemptionImpl implements _RewardRedemption {
 
 abstract class _RewardRedemption implements RewardRedemption {
   const factory _RewardRedemption({
-    required final String id,
-    required final String userId,
-    required final String rewardId,
-    required final String rewardName,
-    required final int pointsSpent,
-    required final String status,
+    final String id,
+    final String userId,
+    final String rewardId,
+    final String rewardName,
+    final int pointsSpent,
+    final String status,
     final String? deliveryAddress,
     final String? trackingNumber,
     final DateTime? requestedAt,
@@ -2758,14 +2794,14 @@ class __$$LeaderboardEntryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LeaderboardEntryImpl implements _LeaderboardEntry {
   const _$LeaderboardEntryImpl({
-    required this.userId,
-    required this.userName,
-    required this.userPhoto,
-    required this.rank,
-    required this.totalPoints,
-    required this.level,
-    required this.salesCount,
-    required this.recruitsCount,
+    this.userId = '',
+    this.userName = '',
+    this.userPhoto = '',
+    this.rank = 0,
+    this.totalPoints = 0,
+    this.level = 0,
+    this.salesCount = 0,
+    this.recruitsCount = 0,
     this.isCurrentUser,
   });
 
@@ -2773,20 +2809,28 @@ class _$LeaderboardEntryImpl implements _LeaderboardEntry {
       _$$LeaderboardEntryImplFromJson(json);
 
   @override
+  @JsonKey()
   final String userId;
   @override
+  @JsonKey()
   final String userName;
   @override
+  @JsonKey()
   final String userPhoto;
   @override
+  @JsonKey()
   final int rank;
   @override
+  @JsonKey()
   final int totalPoints;
   @override
+  @JsonKey()
   final int level;
   @override
+  @JsonKey()
   final int salesCount;
   @override
+  @JsonKey()
   final int recruitsCount;
   @override
   final bool? isCurrentUser;
@@ -2852,14 +2896,14 @@ class _$LeaderboardEntryImpl implements _LeaderboardEntry {
 
 abstract class _LeaderboardEntry implements LeaderboardEntry {
   const factory _LeaderboardEntry({
-    required final String userId,
-    required final String userName,
-    required final String userPhoto,
-    required final int rank,
-    required final int totalPoints,
-    required final int level,
-    required final int salesCount,
-    required final int recruitsCount,
+    final String userId,
+    final String userName,
+    final String userPhoto,
+    final int rank,
+    final int totalPoints,
+    final int level,
+    final int salesCount,
+    final int recruitsCount,
     final bool? isCurrentUser,
   }) = _$LeaderboardEntryImpl;
 

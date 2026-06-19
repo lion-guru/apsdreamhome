@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../../core/services/api_service.dart';
 
 /// GPS Site Visit Tracking Page
 /// This page activates when an agent starts a site visit.
@@ -87,7 +88,27 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
 
+    int? activeVisitId = _visitId;
+    if (activeVisitId == null) {
+      try {
+        final apiService = ApiService();
+        final response = await apiService.startSiteVisit(
+          userId: '', // Server extracts agent from bearer auth token
+          leadId: '', // General site visit (not bound to specific lead)
+          propertyId: '', // General site visit (not bound to specific property)
+          destLat: widget.destLat ?? 0.0,
+          destLng: widget.destLng ?? 0.0,
+        );
+        if (response['success'] == true) {
+          activeVisitId = int.tryParse(response['visit_id']?.toString() ?? '');
+        }
+      } catch (e) {
+        print('Failed to start site visit on server: $e');
+      }
+    }
+
     setState(() {
+      _visitId = activeVisitId;
       _currentPosition = position;
       _trackingActive = true;
       _isLoading = false;
@@ -117,16 +138,35 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
       });
     }
 
-    // TODO: Call apiService.updateSiteVisitLocation(_visitId!, lat, lng)
+    if (_visitId != null) {
+      try {
+        await ApiService().updateSiteVisitLocation(
+          visitId: _visitId!,
+          lat: position.latitude,
+          lng: position.longitude,
+        );
+      } catch (e) {
+        print('Failed to send GPS update to server: $e');
+      }
+    }
   }
 
   Future<void> _stopTracking() async {
     _locationTimer?.cancel();
+    
+    if (_visitId != null) {
+      try {
+        await ApiService().completeSiteVisit(visitId: _visitId!);
+      } catch (e) {
+        print('Failed to complete site visit on server: $e');
+      }
+    }
+
     setState(() {
       _trackingActive = false;
       _statusMessage = '🏁 Visit completed';
     });
-    // TODO: Call apiService to mark visit complete
+    
     if (mounted) {
       Navigator.pop(context, true);
     }

@@ -26,7 +26,6 @@ class CFODashboardController extends AdminController
      */
     public function index()
     {
-        error_log("CFO index() REACHED, admin_id=" . ($_SESSION['admin_id'] ?? 'none') . ", admin_role=" . ($_SESSION['admin_role'] ?? 'none'));
         try {
             // Get financial overview (booking_payments has no status column)
             try {

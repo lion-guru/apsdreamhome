@@ -2,7 +2,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="display-5 fw-bold"><?php echo $page_title ?? 'Blog'; ?></h1>
-            <p class="text-muted">Stay updated with the latest real estate insights and tips</p>
+            <p class="text-muted"><?= __('blog_subtitle') ?></p>
         </div>
     </div>
     <?php if (!empty($posts)): ?>
@@ -26,7 +26,7 @@
                                 <i class="far fa-calendar-alt me-1"></i><?php echo date('M d, Y', strtotime($post['created_at'] ?? 'now')); ?>
                             </p>
                             <p class="card-text flex-grow-1"><?php echo htmlspecialchars(!empty($post['excerpt']) ? $post['excerpt'] : substr($post['content'] ?? '', 0, 200) . '...'); ?></p>
-                            <a href="<?php echo BASE_URL; ?>/blog/<?php echo urlencode($post['slug'] ?? $post['id']); ?>" class="btn btn-outline-primary">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                            <a href="<?php echo BASE_URL; ?>/blog/<?php echo urlencode($post['slug'] ?? $post['id']); ?>" class="btn btn-outline-primary"><?= __('blog_read_more') ?> <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
                 </div>
@@ -35,8 +35,8 @@
     <?php else: ?>
         <div class="text-center py-5">
             <i class="fas fa-newspaper fa-4x text-muted mb-3"></i>
-            <h4>No Blog Articles Yet</h4>
-            <p class="text-muted">Check back soon for updates and insights.</p>
+            <h4><?= __('blog_no_articles') ?></h4>
+            <p class="text-muted"><?= __('blog_check_back_soon') ?></p>
         </div>
     <?php endif; ?>
 </div>

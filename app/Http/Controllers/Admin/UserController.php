@@ -99,12 +99,8 @@ class UserController extends AdminController
                 ]
             ];
 
-            error_log("UserController::index BEFORE render - users=" . count($users) . " total=$total");
-            $renderResult = $this->render('admin/users/index', $data);
-            error_log("UserController::index AFTER render - result type: " . gettype($renderResult));
-            return $renderResult;
+            return $this->render('admin/users/index', $data);
         } catch (Exception $e) {
-            error_log("UserController::index EXCEPTION: " . $e->getMessage() . " at " . $e->getFile() . ":" . $e->getLine());
             $this->loggingService->error("User Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load users');
             return $this->redirect('admin/dashboard');

@@ -172,7 +172,7 @@ class _MainScreenState extends State<MainScreen> {
   bool _hasError = false;
   int _selectedIndex = 0;
 
-  static const String baseUrl = 'https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome';
+  static const String baseUrl = 'http://10.0.2.2/apsdreamhome';
 
   final List<_NavItem> _navItems = [
     _NavItem(Icons.home_rounded, 'Home', '/'),

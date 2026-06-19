@@ -1296,7 +1296,7 @@ class MoneyWorkflowService
 
         try {
             $rows = $this->db->fetchAll(
-                "SELECT bps.*, pb.plot_id, pb.booking_number,
+                "SELECT bps.*, pb.plot_id, pb.booking_number, pb.booking_date,
                         DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
                  FROM booking_payment_schedules bps
                  LEFT JOIN plot_bookings pb ON pb.id = bps.booking_id
@@ -1304,12 +1304,61 @@ class MoneyWorkflowService
                    AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)"
             ) ?: [];
 
+            $advanceCache = [];
+
             foreach ($rows as $row) {
+                $bookingId = (int)$row['booking_id'];
+
+                // 1. Advance Payment Check
+                if (!isset($advanceCache[$bookingId])) {
+                    $totalPaid = (float)$this->db->fetchOne(
+                        "SELECT COALESCE(SUM(paid_amount), 0) AS total FROM booking_payment_schedules WHERE booking_id = ?",
+                        [$bookingId]
+                    )['total'];
+
+                    $totalScheduled = (float)$this->db->fetchOne(
+                        "SELECT COALESCE(SUM(amount), 0) AS total FROM booking_payment_schedules WHERE booking_id = ? AND due_date <= CURDATE()",
+                        [$bookingId]
+                    )['total'];
+
+                    $advanceCache[$bookingId] = ($totalPaid >= $totalScheduled);
+                }
+
+                if ($advanceCache[$bookingId]) {
+                    // Skip completely: customer has paid in advance
+                    continue;
+                }
+
+                // 2. 3-Year Interest Free Check
+                $bookingDate = $row['booking_date'] ?? null;
+                $isInterestFree = false;
+                if ($bookingDate) {
+                    $bDate = new \DateTime($bookingDate);
+                    $dDate = new \DateTime($row['due_date']);
+                    $threeYearsLimit = (clone $bDate)->modify('+3 years');
+                    if ($dDate <= $threeYearsLimit) {
+                        $isInterestFree = true;
+                    }
+                }
+
+                // 3. Lose Interest-Free status if 3 consecutive bounces
+                if ($isInterestFree) {
+                    if ($this->hasThreeConsecutiveOverdueEMIs($bookingId)) {
+                        $isInterestFree = false;
+                    }
+                }
+
                 $daysOverdue  = (int)$row['days_overdue'];
                 $installmentAmt = (float)$row['amount'];
-                $penaltyRate  = 0.18;
-                $dailyRate    = $penaltyRate / 365;
-                $newPenalty   = round($installmentAmt * $dailyRate * $daysOverdue, 2);
+
+                if ($isInterestFree) {
+                    $newPenalty = 0.0;
+                } else {
+                    $penaltyRate  = 0.18;
+                    $dailyRate    = $penaltyRate / 365;
+                    $newPenalty   = round($installmentAmt * $dailyRate * $daysOverdue, 2);
+                }
+
                 $prevAccrued  = (float)($row['accrued_penalty'] ?? 0);
                 $totalAccrued = $prevAccrued + $newPenalty;
 
@@ -1319,17 +1368,38 @@ class MoneyWorkflowService
                     [$totalAccrued, $row['id']]
                 );
 
-                // Log to penalty_audit
-                $this->db->insert('penalty_audit', [
-                    'installment_id' => $row['id'],
-                    'booking_id'     => $row['booking_id'],
-                    'days_overdue'   => $daysOverdue,
-                    'penalty_amount' => $newPenalty,
-                    'total_accrued'  => $totalAccrued,
-                ]);
+                if ($newPenalty > 0.0) {
+                    // Log to penalty_audit
+                    $this->db->insert('penalty_audit', [
+                        'installment_id' => $row['id'],
+                        'booking_id'     => $row['booking_id'],
+                        'days_overdue'   => $daysOverdue,
+                        'penalty_amount' => $newPenalty,
+                        'total_accrued'  => $totalAccrued,
+                    ]);
 
-                $result['penalties_applied']++;
-                $result['total_penalty'] += $newPenalty;
+                    $result['penalties_applied']++;
+                    $result['total_penalty'] += $newPenalty;
+
+                    // Notify customer of penalty
+                    try {
+                        $userId = $this->db->fetchOne(
+                            "SELECT pb.user_id FROM plot_bookings pb WHERE pb.id = ?",
+                            [$row['booking_id']]
+                        );
+                        if (!empty($userId['user_id'])) {
+                            $notifSvc = new \App\Services\Communication\NotificationService();
+                            $notifSvc->sendNotification((int)$userId['user_id'], 'in_app',
+                                'EMI Penalty Applied',
+                                'Installment #' . $row['installment_no'] . ' is ' . $daysOverdue . ' days overdue. Penalty of ₹' . number_format($newPenalty, 2) . ' applied (total: ₹' . number_format($totalAccrued, 2) . ').',
+                                ['event_type' => 'payment', 'booking_id' => $row['booking_id'], 'action_url' => '/booking/confirmation/' . $row['booking_id']]
+                            );
+                        }
+                    } catch (\Throwable $e) {
+                        error_log('applyDailyPenalties notification failed: ' . $e->getMessage());
+                    }
+                }
+
                 $result['installments'][] = [
                     'id'             => $row['id'],
                     'booking_id'     => $row['booking_id'],
@@ -1341,24 +1411,6 @@ class MoneyWorkflowService
                     'new_penalty'    => $newPenalty,
                     'total_accrued'  => $totalAccrued,
                 ];
-
-                // Notify customer of penalty
-                try {
-                    $userId = $this->db->fetchOne(
-                        "SELECT pb.user_id FROM plot_bookings pb WHERE pb.id = ?",
-                        [$row['booking_id']]
-                    );
-                    if (!empty($userId['user_id'])) {
-                        $notifSvc = new \App\Services\Communication\NotificationService();
-                        $notifSvc->sendNotification((int)$userId['user_id'], 'in_app',
-                            'EMI Penalty Applied',
-                            'Installment #' . $row['installment_no'] . ' is ' . $daysOverdue . ' days overdue. Penalty of ₹' . number_format($newPenalty, 2) . ' applied (total: ₹' . number_format($totalAccrued, 2) . ').',
-                            ['event_type' => 'payment', 'booking_id' => $row['booking_id'], 'action_url' => '/booking/confirmation/' . $row['booking_id']]
-                        );
-                    }
-                } catch (\Throwable $e) {
-                    error_log('applyDailyPenalties notification failed: ' . $e->getMessage());
-                }
             }
         } catch (\Throwable $e) {
             error_log('applyDailyPenalties error: ' . $e->getMessage());
@@ -1381,7 +1433,7 @@ class MoneyWorkflowService
 
         try {
             $rows = $this->db->fetchAll(
-                "SELECT bps.*, pb.plot_id, pb.booking_number,
+                "SELECT bps.*, pb.plot_id, pb.booking_number, pb.booking_date,
                         p.plot_number,
                         u.name AS customer_name,
                         DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
@@ -1394,7 +1446,31 @@ class MoneyWorkflowService
                  ORDER BY bps.due_date ASC"
             ) ?: [];
 
+            $advanceCache = [];
+
             foreach ($rows as $row) {
+                $bookingId = (int)$row['booking_id'];
+
+                // Advance Payment Check
+                if (!isset($advanceCache[$bookingId])) {
+                    $totalPaid = (float)$this->db->fetchOne(
+                        "SELECT COALESCE(SUM(paid_amount), 0) AS total FROM booking_payment_schedules WHERE booking_id = ?",
+                        [$bookingId]
+                    )['total'];
+
+                    $totalScheduled = (float)$this->db->fetchOne(
+                        "SELECT COALESCE(SUM(amount), 0) AS total FROM booking_payment_schedules WHERE booking_id = ? AND due_date <= CURDATE()",
+                        [$bookingId]
+                    )['total'];
+
+                    $advanceCache[$bookingId] = ($totalPaid >= $totalScheduled);
+                }
+
+                if ($advanceCache[$bookingId]) {
+                    // Skip completely: customer has paid in advance
+                    continue;
+                }
+
                 $days = (int)$row['days_overdue'];
                 $summary['total_overdue_count']++;
                 $summary['total_overdue_amount']   += (float)$row['amount'];
@@ -1420,6 +1496,32 @@ class MoneyWorkflowService
         }
 
         return $summary;
+    }
+
+    private function hasThreeConsecutiveOverdueEMIs(int $bookingId): bool
+    {
+        $installments = $this->db->fetchAll(
+            "SELECT status, due_date FROM booking_payment_schedules 
+             WHERE booking_id = ? 
+             ORDER BY installment_no ASC",
+            [$bookingId]
+        ) ?: [];
+
+        $consecutive = 0;
+        $today = date('Y-m-d');
+        foreach ($installments as $inst) {
+            $isUnpaid = ($inst['status'] !== 'paid');
+            $isPastDue = ($inst['due_date'] < $today);
+            if ($isUnpaid && $isPastDue) {
+                $consecutive++;
+                if ($consecutive >= 3) {
+                    return true;
+                }
+            } else {
+                $consecutive = 0;
+            }
+        }
+        return false;
     }
 
     // ============================================================
@@ -1465,6 +1567,20 @@ class MoneyWorkflowService
             'notes'           => $data['notes'] ?? null,
             'status'          => 'submitted',
         ]);
+
+        // If linked to a booking installment, update the EMI schedule paid_amount
+        if (!empty($data['booking_id']) && !empty($data['installment_id'])) {
+            try {
+                $this->db->execute(
+                    "UPDATE booking_payment_schedules
+                     SET paid_amount = paid_amount + ?, payment_date = ?, payment_method = ?
+                     WHERE id = ? AND paid_amount < emi_amount",
+                    [$amount, $collectionDate, $data['payment_method'] ?? 'cash', (int)$data['installment_id']]
+                );
+            } catch (\Throwable $e) {
+                error_log("[CashCollection] Failed to update installment: " . $e->getMessage());
+            }
+        }
 
         return ['success' => true, 'id' => $id, 'collection_number' => $collectionNumber];
     }

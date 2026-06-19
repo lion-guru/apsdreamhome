@@ -922,7 +922,7 @@ class __$$WhatsAppConfigImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$WhatsAppConfigImpl implements _WhatsAppConfig {
   const _$WhatsAppConfigImpl({
-    required this.isEnabled,
+    this.isEnabled = false,
     this.businessAccountId,
     this.phoneNumberId,
     this.accessToken,
@@ -944,6 +944,7 @@ class _$WhatsAppConfigImpl implements _WhatsAppConfig {
       _$$WhatsAppConfigImplFromJson(json);
 
   @override
+  @JsonKey()
   final bool isEnabled;
   @override
   final String? businessAccountId;
@@ -1078,7 +1079,7 @@ class _$WhatsAppConfigImpl implements _WhatsAppConfig {
 
 abstract class _WhatsAppConfig implements WhatsAppConfig {
   const factory _WhatsAppConfig({
-    required final bool isEnabled,
+    final bool isEnabled,
     final String? businessAccountId,
     final String? phoneNumberId,
     final String? accessToken,
@@ -1448,7 +1449,7 @@ class __$$VoiceCallConfigImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$VoiceCallConfigImpl implements _VoiceCallConfig {
   const _$VoiceCallConfigImpl({
-    required this.isEnabled,
+    this.isEnabled = false,
     this.provider,
     this.apiKey,
     this.apiSecret,
@@ -1470,6 +1471,7 @@ class _$VoiceCallConfigImpl implements _VoiceCallConfig {
       _$$VoiceCallConfigImplFromJson(json);
 
   @override
+  @JsonKey()
   final bool isEnabled;
   @override
   final String? provider;
@@ -1610,7 +1612,7 @@ class _$VoiceCallConfigImpl implements _VoiceCallConfig {
 
 abstract class _VoiceCallConfig implements VoiceCallConfig {
   const factory _VoiceCallConfig({
-    required final bool isEnabled,
+    final bool isEnabled,
     final String? provider,
     final String? apiKey,
     final String? apiSecret,
@@ -1923,7 +1925,7 @@ class __$$SMSConfigImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SMSConfigImpl implements _SMSConfig {
   const _$SMSConfigImpl({
-    required this.isEnabled,
+    this.isEnabled = false,
     this.provider,
     this.apiKey,
     this.senderId,
@@ -1941,6 +1943,7 @@ class _$SMSConfigImpl implements _SMSConfig {
       _$$SMSConfigImplFromJson(json);
 
   @override
+  @JsonKey()
   final bool isEnabled;
   @override
   final String? provider;
@@ -2048,7 +2051,7 @@ class _$SMSConfigImpl implements _SMSConfig {
 
 abstract class _SMSConfig implements SMSConfig {
   const factory _SMSConfig({
-    required final bool isEnabled,
+    final bool isEnabled,
     final String? provider,
     final String? apiKey,
     final String? senderId,
@@ -2388,7 +2391,7 @@ class __$$EmailConfigImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$EmailConfigImpl implements _EmailConfig {
   const _$EmailConfigImpl({
-    required this.isEnabled,
+    this.isEnabled = false,
     this.provider,
     this.apiKey,
     this.fromEmail,
@@ -2409,6 +2412,7 @@ class _$EmailConfigImpl implements _EmailConfig {
       _$$EmailConfigImplFromJson(json);
 
   @override
+  @JsonKey()
   final bool isEnabled;
   @override
   final String? provider;
@@ -2534,7 +2538,7 @@ class _$EmailConfigImpl implements _EmailConfig {
 
 abstract class _EmailConfig implements EmailConfig {
   const factory _EmailConfig({
-    required final bool isEnabled,
+    final bool isEnabled,
     final String? provider,
     final String? apiKey,
     final String? fromEmail,
@@ -3913,13 +3917,13 @@ class __$$AutomationRuleImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AutomationRuleImpl implements _AutomationRule {
   const _$AutomationRuleImpl({
-    required this.id,
-    required this.name,
-    required this.type,
-    required this.trigger,
-    required this.triggerValue,
+    this.id = '',
+    this.name = '',
+    this.type = '',
+    this.trigger = '',
+    this.triggerValue = 0,
     final List<String> actions = const [],
-    required this.scheduleTime,
+    this.scheduleTime = '09:00',
     this.scheduleDays,
     this.priority = 1,
     this.conditionAmount,
@@ -3936,16 +3940,21 @@ class _$AutomationRuleImpl implements _AutomationRule {
       _$$AutomationRuleImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String type;
   // reminder, escalation, collection
   @override
+  @JsonKey()
   final String trigger;
   // days_before_due, days_after_due, amount_threshold
   @override
+  @JsonKey()
   final int triggerValue;
   // 3 (days), 5000 (amount)
   // Actions to take
@@ -3963,6 +3972,7 @@ class _$AutomationRuleImpl implements _AutomationRule {
   // whatsapp, sms, email, call, agent_notify
   // Timing
   @override
+  @JsonKey()
   final String scheduleTime;
   // 09:00
   @override
@@ -4078,13 +4088,13 @@ class _$AutomationRuleImpl implements _AutomationRule {
 
 abstract class _AutomationRule implements AutomationRule {
   const factory _AutomationRule({
-    required final String id,
-    required final String name,
-    required final String type,
-    required final String trigger,
-    required final int triggerValue,
+    final String id,
+    final String name,
+    final String type,
+    final String trigger,
+    final int triggerValue,
     final List<String> actions,
-    required final String scheduleTime,
+    final String scheduleTime,
     final String? scheduleDays,
     final int priority,
     final String? conditionAmount,
@@ -4518,15 +4528,15 @@ class __$$AutomationExecutionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AutomationExecutionImpl implements _AutomationExecution {
   const _$AutomationExecutionImpl({
-    required this.id,
-    required this.ruleId,
-    required this.ruleName,
-    required this.customerId,
-    required this.bookingId,
-    required this.emiId,
-    required this.channel,
-    required this.action,
-    required this.status,
+    this.id = '',
+    this.ruleId = '',
+    this.ruleName = '',
+    this.customerId = '',
+    this.bookingId = '',
+    this.emiId = '',
+    this.channel = '',
+    this.action = '',
+    this.status = '',
     this.messageContent,
     this.templateUsed,
     final Map<String, dynamic>? metadata,
@@ -4545,25 +4555,34 @@ class _$AutomationExecutionImpl implements _AutomationExecution {
       _$$AutomationExecutionImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String ruleId;
   @override
+  @JsonKey()
   final String ruleName;
   @override
+  @JsonKey()
   final String customerId;
   @override
+  @JsonKey()
   final String bookingId;
   @override
+  @JsonKey()
   final String emiId;
   // Execution details
   @override
+  @JsonKey()
   final String channel;
   // whatsapp, sms, email, call, agent_app
   @override
+  @JsonKey()
   final String action;
   // reminder_sent, call_made, agent_notified
   @override
+  @JsonKey()
   final String status;
   // success, failed, pending, scheduled
   // Content
@@ -4697,15 +4716,15 @@ class _$AutomationExecutionImpl implements _AutomationExecution {
 
 abstract class _AutomationExecution implements AutomationExecution {
   const factory _AutomationExecution({
-    required final String id,
-    required final String ruleId,
-    required final String ruleName,
-    required final String customerId,
-    required final String bookingId,
-    required final String emiId,
-    required final String channel,
-    required final String action,
-    required final String status,
+    final String id,
+    final String ruleId,
+    final String ruleName,
+    final String customerId,
+    final String bookingId,
+    final String emiId,
+    final String channel,
+    final String action,
+    final String status,
     final String? messageContent,
     final String? templateUsed,
     final Map<String, dynamic>? metadata,
@@ -5171,17 +5190,17 @@ class __$$CustomerCommunicationLogImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CustomerCommunicationLogImpl implements _CustomerCommunicationLog {
   const _$CustomerCommunicationLogImpl({
-    required this.id,
-    required this.customerId,
-    required this.bookingId,
-    required this.channel,
-    required this.direction,
-    required this.type,
+    this.id = '',
+    this.customerId = '',
+    this.bookingId = '',
+    this.channel = '',
+    this.direction = '',
+    this.type = '',
     this.message,
     this.attachmentUrl,
     this.callRecordingUrl,
     this.callDurationSeconds,
-    required this.status,
+    this.status = '',
     this.sentAt,
     this.deliveredAt,
     this.readAt,
@@ -5199,19 +5218,25 @@ class _$CustomerCommunicationLogImpl implements _CustomerCommunicationLog {
       _$$CustomerCommunicationLogImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String customerId;
   @override
+  @JsonKey()
   final String bookingId;
   // Communication details
   @override
+  @JsonKey()
   final String channel;
   // whatsapp, sms, email, call, agent_visit
   @override
+  @JsonKey()
   final String direction;
   // outgoing, incoming
   @override
+  @JsonKey()
   final String type;
   // reminder, follow_up, payment_confirmation, enquiry
   // Content
@@ -5225,6 +5250,7 @@ class _$CustomerCommunicationLogImpl implements _CustomerCommunicationLog {
   final int? callDurationSeconds;
   // Status
   @override
+  @JsonKey()
   final String status;
   // sent, delivered, read, failed
   @override
@@ -5350,17 +5376,17 @@ class _$CustomerCommunicationLogImpl implements _CustomerCommunicationLog {
 
 abstract class _CustomerCommunicationLog implements CustomerCommunicationLog {
   const factory _CustomerCommunicationLog({
-    required final String id,
-    required final String customerId,
-    required final String bookingId,
-    required final String channel,
-    required final String direction,
-    required final String type,
+    final String id,
+    final String customerId,
+    final String bookingId,
+    final String channel,
+    final String direction,
+    final String type,
     final String? message,
     final String? attachmentUrl,
     final String? callRecordingUrl,
     final int? callDurationSeconds,
-    required final String status,
+    final String status,
     final DateTime? sentAt,
     final DateTime? deliveredAt,
     final DateTime? readAt,

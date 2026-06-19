@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Security;
+use App\Services\WebSocketBroadcaster;
 use UploadValidator;
 
 use EmailNotification;
@@ -1250,6 +1251,17 @@ class MobileApiController extends BaseController
             }
 
             $this->db->commit();
+
+            // Real-time WebSocket broadcast to admin panel
+            WebSocketBroadcaster::broadcastToAdmins([
+                'type'       => 'leads_synced',
+                'event'      => 'lead.created',
+                'count'      => count($leads),
+                'agent_id'   => $userId,
+                'message'    => count($leads) . ' new lead(s) synced from mobile app',
+                'created_at' => date('Y-m-d H:i:s'),
+            ], 'admin');
+
             return $this->successResponse(['synced_count' => count($leads)], 'Leads batch synced successfully');
         } catch (Exception $e) {
             error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
@@ -1524,11 +1536,13 @@ class MobileApiController extends BaseController
     public function startSiteVisit()
     {
         $this->setCorsHeaders();
-        $agentId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($_POST['user_id']) ?? null;
-        $leadId = \App\Core\Security::sanitize($_POST['lead_id']) ?? null;
-        $propertyId = \App\Core\Security::sanitize($_POST['property_id']) ?? null;
-        $destLat = \App\Core\Security::sanitize($_POST['dest_lat']) ?? null;
-        $destLng = \App\Core\Security::sanitize($_POST['dest_lng']) ?? null;
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        
+        $agentId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($input['user_id'] ?? null) ?? null;
+        $leadId = \App\Core\Security::sanitize($input['lead_id'] ?? null) ?? null;
+        $propertyId = \App\Core\Security::sanitize($input['property_id'] ?? null) ?? null;
+        $destLat = \App\Core\Security::sanitize($input['dest_lat'] ?? null) ?? null;
+        $destLng = \App\Core\Security::sanitize($input['dest_lng'] ?? null) ?? null;
 
         if (!$agentId) {
             http_response_code(401);
@@ -1539,9 +1553,21 @@ class MobileApiController extends BaseController
         try {
             $visitService = new \App\Services\SiteVisitService();
             $result = $visitService->startVisit($agentId, $leadId, $propertyId, $destLat, $destLng);
+
+            // Real-time WebSocket broadcast to admin panel
+            WebSocketBroadcaster::broadcastToAdmins([
+                'type'        => 'site_visit_started',
+                'event'       => 'visit.started',
+                'agent_id'    => $agentId,
+                'lead_id'     => $leadId,
+                'property_id' => $propertyId,
+                'message'     => "Agent started a site visit",
+                'created_at'  => date('Y-m-d H:i:s'),
+            ], 'admin');
+
             echo json_encode($result);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] startSiteVisit() exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to start site visit: ' . $e->getMessage()]);
@@ -1554,9 +1580,11 @@ class MobileApiController extends BaseController
     public function updateSiteVisitLocation()
     {
         $this->setCorsHeaders();
-        $visitId = \App\Core\Security::sanitize($_POST['visit_id']) ?? null;
-        $lat = \App\Core\Security::sanitize($_POST['lat']) ?? null;
-        $lng = \App\Core\Security::sanitize($_POST['lng']) ?? null;
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        
+        $visitId = \App\Core\Security::sanitize($input['visit_id'] ?? null) ?? null;
+        $lat = \App\Core\Security::sanitize($input['lat'] ?? null) ?? null;
+        $lng = \App\Core\Security::sanitize($input['lng'] ?? null) ?? null;
 
         if (!$visitId || !$lat || !$lng) {
             http_response_code(400);
@@ -1569,10 +1597,48 @@ class MobileApiController extends BaseController
             $visitService->updateLocation($visitId, $lat, $lng);
             echo json_encode(['success' => true, 'message' => 'Location updated']);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] updateSiteVisitLocation() exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Update failed: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Complete an active site visit session
+     */
+    public function completeSiteVisit()
+    {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        
+        $visitId = \App\Core\Security::sanitize($input['visit_id'] ?? null) ?? null;
+
+        if (!$visitId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Visit ID required']);
+            return;
+        }
+
+        try {
+            $visitService = new \App\Services\SiteVisitService();
+            $visitService->completeVisit($visitId);
+
+            // Real-time WebSocket broadcast to admin panel
+            WebSocketBroadcaster::broadcastToAdmins([
+                'type'      => 'site_visit_completed',
+                'event'     => 'visit.completed',
+                'visit_id'  => $visitId,
+                'message'   => "Site visit #$visitId completed",
+                'created_at' => date('Y-m-d H:i:s'),
+            ], 'admin');
+
+            echo json_encode(['success' => true, 'message' => 'Site visit completed']);
+        } catch (Exception $e) {
+            error_log("[MobileApiController] completeSiteVisit() exception: " . $e->getMessage());
+
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to complete visit: ' . $e->getMessage()]);
         }
     }
 
@@ -3098,6 +3164,271 @@ class MobileApiController extends BaseController
             error_log('MobileApiController::dashboardV3() exception: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Dashboard fetch failed', 'code' => 500]);
+        }
+    }
+
+    // ================================================================
+    // Attendance API — geo-fenced punch in/out
+    // ================================================================
+
+    /** Office coordinates (Kunraghat) */
+    private $officeLat = 26.8402;
+    private $officeLng = 83.3012;
+    private $allowedRadius = 100; // metres
+
+    /**
+     * POST /api/attendance/punch-in
+     * Body: { "latitude": 26.84, "longitude": 83.30 }
+     */
+    public function punchIn()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $userId = (int) $GLOBALS['api_user_id'];
+            $lat = (float) ($_POST['latitude'] ?? 0);
+            $lng = (float) ($_POST['longitude'] ?? 0);
+
+            if ($lat == 0 || $lng == 0) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Latitude and longitude are required']);
+                return;
+            }
+
+            $distance = $this->haversineDistance($lat, $lng, $this->officeLat, $this->officeLng);
+            if ($distance > $this->allowedRadius) {
+                http_response_code(403);
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'You are outside the office geofence',
+                    'distance_meters' => round($distance, 1),
+                    'allowed_meters' => $this->allowedRadius,
+                ]);
+                return;
+            }
+
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            // Check if already punched in today without punching out
+            $today = date('Y-m-d');
+            $stmt = $pdo->prepare(
+                "SELECT id FROM employee_attendance WHERE user_id = ? AND DATE(punch_in_time) = ? AND punch_out_time IS NULL LIMIT 1"
+            );
+            $stmt->execute([$userId, $today]);
+            if ($stmt->fetch()) {
+                http_response_code(409);
+                echo json_encode(['success' => false, 'error' => 'Already punched in today. Punch out first.']);
+                return;
+            }
+
+            $stmt = $pdo->prepare(
+                "INSERT INTO employee_attendance (user_id, punch_in_time, latitude, longitude, distance_from_office, status)
+                 VALUES (?, NOW(), ?, ?, ?, 'present')"
+            );
+            $stmt->execute([$userId, $lat, $lng, round($distance, 1)]);
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Punched in successfully',
+                'punch_in_time' => date('Y-m-d H:i:s'),
+                'distance_meters' => round($distance, 1),
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::punchIn() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Punch-in failed']);
+        }
+    }
+
+    /**
+     * POST /api/attendance/punch-out
+     * Body: { "latitude": 26.84, "longitude": 83.30 }
+     */
+    public function punchOut()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $userId = (int) $GLOBALS['api_user_id'];
+            $lat = (float) ($_POST['latitude'] ?? 0);
+            $lng = (float) ($_POST['longitude'] ?? 0);
+
+            if ($lat == 0 || $lng == 0) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Latitude and longitude are required']);
+                return;
+            }
+
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $today = date('Y-m-d');
+            $stmt = $pdo->prepare(
+                "SELECT id, punch_in_time FROM employee_attendance WHERE user_id = ? AND DATE(punch_in_time) = ? AND punch_out_time IS NULL LIMIT 1"
+            );
+            $stmt->execute([$userId, $today]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'No active punch-in found for today']);
+                return;
+            }
+
+            $inTime = new \DateTime($row['punch_in_time']);
+            $now = new \DateTime();
+            $hoursWorked = round($now->diff($inTime)->h + $now->diff($inTime)->i / 60, 2);
+
+            $distance = $this->haversineDistance($lat, $lng, $this->officeLat, $this->officeLng);
+
+            $stmt = $pdo->prepare(
+                "UPDATE employee_attendance SET punch_out_time = NOW(), hours_worked = ? WHERE id = ?"
+            );
+            $stmt->execute([$hoursWorked, $row['id']]);
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Punched out successfully',
+                'punch_out_time' => date('Y-m-d H:i:s'),
+                'hours_worked' => $hoursWorked,
+                'distance_meters' => round($distance, 1),
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::punchOut() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Punch-out failed']);
+        }
+    }
+
+    /**
+     * GET /api/attendance/status
+     * Returns today's attendance record for the authenticated user.
+     */
+    public function attendanceStatus()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $userId = (int) $GLOBALS['api_user_id'];
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $today = date('Y-m-d');
+            $stmt = $pdo->prepare(
+                "SELECT punch_in_time, punch_out_time, distance_from_office, status, hours_worked
+                 FROM employee_attendance WHERE user_id = ? AND DATE(punch_in_time) = ?
+                 ORDER BY id DESC LIMIT 1"
+            );
+            $stmt->execute([$userId, $today]);
+            $record = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => $record ? [
+                    'punched_in' => true,
+                    'punch_in_time' => $record['punch_in_time'],
+                    'punched_out' => !empty($record['punch_out_time']),
+                    'punch_out_time' => $record['punch_out_time'] ?? null,
+                    'hours_worked' => $record['hours_worked'] ?? null,
+                    'distance_meters' => $record['distance_from_office'] ?? null,
+                    'status' => $record['status'],
+                ] : [
+                    'punched_in' => false,
+                    'punched_out' => false,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::attendanceStatus() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Could not fetch attendance status']);
+        }
+    }
+
+    /**
+     * Haversine formula — returns distance in metres between two lat/lng points.
+     */
+    private function haversineDistance($lat1, $lng1, $lat2, $lng2)
+    {
+        $earthRadius = 6371000; // metres
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+        $a = sin($dLat / 2) * sin($dLat / 2)
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
+            * sin($dLng / 2) * sin($dLng / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        return $earthRadius * $c;
+    }
+
+    // ================================================================
+    // Referral Tracking API
+    // ================================================================
+
+    /**
+     * POST /api/referral/track
+     * Body: { "referral_code": "ABC123", "property_id": 42, "source": "whatsapp" }
+     */
+    public function trackReferral()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $referrerUserId = (int) $GLOBALS['api_user_id'];
+            $raw = file_get_contents('php://input');
+            $data = json_decode($raw, true) ?: $_POST;
+
+            $referralCode = trim($data['referral_code'] ?? '');
+            $propertyId = (int) ($data['property_id'] ?? 0);
+            $source = trim($data['source'] ?? 'whatsapp');
+
+            if (empty($referralCode)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'referral_code is required']);
+                return;
+            }
+
+            $validSources = ['whatsapp', 'sms', 'email', 'direct', 'social'];
+            if (!in_array($source, $validSources)) {
+                $source = 'direct';
+            }
+
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            // Validate referral code exists and belongs to a different user
+            $stmt = $pdo->prepare("SELECT id, name FROM users WHERE id = ?");
+            $stmt->execute([$referrerUserId]);
+            $referrer = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$referrer) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Referrer not found']);
+                return;
+            }
+
+            $stmt = $pdo->prepare(
+                "INSERT INTO customer_referrals
+                    (referrer_user_id, referral_code, property_id, source, status, ip_address, user_agent, created_at)
+                 VALUES (?, ?, ?, ?, 'pending', ?, ?, NOW())"
+            );
+            $stmt->execute([
+                $referrerUserId,
+                $referralCode,
+                $propertyId ?: null,
+                $source,
+                $_SERVER['REMOTE_ADDR'] ?? null,
+                $_SERVER['HTTP_USER_AGENT'] ?? null,
+            ]);
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Referral tracked',
+                'referral_id' => (int) $pdo->lastInsertId(),
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::trackReferral() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Referral tracking failed']);
         }
     }
 }

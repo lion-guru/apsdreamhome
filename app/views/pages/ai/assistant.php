@@ -8,12 +8,12 @@
                             <i class="fas fa-robot fa-2x"></i>
                         </div>
                         <div>
-                            <h2 class="mb-0">AI Assistant</h2>
-                            <p class="mb-0 text-white-50 mt-1">Your personal property concierge, available 24/7</p>
+                            <h2 class="mb-0"><?= __('aiast_heading', [], 'AI Assistant') ?></h2>
+                            <p class="mb-0 text-white-50 mt-1"><?= __('aiast_subtitle', [], 'Your personal property concierge, available 24/7') ?></p>
                         </div>
                         <div class="ms-auto">
                             <span class="badge bg-success rounded-pill px-3 py-2">
-                                <i class="fas fa-circle fa-xs me-1"></i> Online
+                                <i class="fas fa-circle fa-xs me-1"></i> <?= __('aiast_online', [], 'Online') ?>
                             </span>
                         </div>
                     </div>
@@ -25,27 +25,27 @@
                             <div class="d-inline-block p-3 rounded-circle mb-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <i class="fas fa-robot fa-2x text-white"></i>
                             </div>
-                            <h4 class="mb-1">Namaste! 🙏</h4>
-                            <p class="text-muted mb-0">I'm your <strong>APS Dream Home</strong> AI assistant. Ask me anything about properties, pricing, site visits, or loans!</p>
+                            <h4 class="mb-1"><?= __('aiast_greeting', [], 'Namaste!') ?> 🙏</h4>
+                            <p class="text-muted mb-0"><?= __('aiast_welcome', [], "I'm your APS Dream Home AI assistant. Ask me anything about properties, pricing, site visits, or loans!") ?></p>
                         </div>
                     </div>
 
                     <div class="quick-replies p-3 bg-white border-top" id="quickReplies">
                         <div class="d-flex flex-wrap gap-2">
                             <button class="btn btn-sm btn-outline-primary rounded-pill" data-q="I want to view properties">
-                                <i class="fas fa-building me-1"></i> View Properties
+                                <i class="fas fa-building me-1"></i> <?= __('aiast_q_view', [], 'View Properties') ?>
                             </button>
                             <button class="btn btn-sm btn-outline-success rounded-pill" data-q="What are the price details?">
-                                <i class="fas fa-tag me-1"></i> Price Details
+                                <i class="fas fa-tag me-1"></i> <?= __('aiast_q_price', [], 'Price Details') ?>
                             </button>
                             <button class="btn btn-sm btn-outline-info rounded-pill" data-q="Book a site visit">
-                                <i class="fas fa-calendar-check me-1"></i> Book Visit
+                                <i class="fas fa-calendar-check me-1"></i> <?= __('aiast_q_visit', [], 'Book Visit') ?>
                             </button>
                             <button class="btn btn-sm btn-outline-warning rounded-pill" data-q="I need a home loan">
-                                <i class="fas fa-hand-holding-usd me-1"></i> Home Loan
+                                <i class="fas fa-hand-holding-usd me-1"></i> <?= __('aiast_q_loan', [], 'Home Loan') ?>
                             </button>
                             <button class="btn btn-sm btn-outline-secondary rounded-pill" data-q="How can I contact you?">
-                                <i class="fas fa-phone me-1"></i> Contact
+                                <i class="fas fa-phone me-1"></i> <?= __('aiast_q_contact', [], 'Contact') ?>
                             </button>
                         </div>
                     </div>
@@ -58,20 +58,20 @@
                     <div class="chat-input p-3 bg-white border-top">
                         <form id="chatForm" class="input-group">
                             <input type="text" id="userInput" class="form-control rounded-start-pill border-end-0 py-2"
-                                   placeholder="Type your message..." autocomplete="off" required />
+                                   placeholder="<?= __('aiast_placeholder', [], 'Type your message...') ?>" autocomplete="off" required />
                             <button class="btn btn-primary rounded-end-pill px-4" type="submit" id="sendBtn">
-                                <i class="fas fa-paper-plane me-1"></i> Send
+                                <i class="fas fa-paper-plane me-1"></i> <?= __('aiast_send', [], 'Send') ?>
                             </button>
                         </form>
                         <small class="text-muted d-block mt-2 text-center">
-                            <i class="fas fa-shield-alt me-1"></i> Your conversation is private and secure.
+                            <i class="fas fa-shield-alt me-1"></i> <?= __('aiast_privacy', [], 'Your conversation is private and secure.') ?>
                         </small>
                     </div>
                 </div>
             </div>
 
             <div class="text-center mt-3 text-muted small">
-                <i class="fas fa-info-circle me-1"></i> Powered by APS Dream Home AI Engine
+                <i class="fas fa-info-circle me-1"></i> <?= __('aiast_powered_by', [], 'Powered by APS Dream Home AI Engine') ?>
             </div>
         </div>
     </div>
@@ -149,11 +149,11 @@
         .then(function (r) { return r.json().catch(function () { return {}; }); })
         .then(function (data) {
             var reply = data && (data.response || data.message || data.reply || data.text)
-                        || "I'm sorry, I couldn't process that right now. Please try again.";
+                        || "<?= __('aiast_fallback_reply', [], "I'm sorry, I couldn't process that right now. Please try again.") ?>";
             addMessage(reply, 'bot');
         })
         .catch(function () {
-            addMessage("Sorry, I'm having trouble connecting. Please try again in a moment.", 'bot');
+            addMessage("<?= __('aiast_fallback_error', [], "Sorry, I'm having trouble connecting. Please try again in a moment.") ?>", 'bot');
         })
         .finally(function () {
             loading.style.display = 'none';

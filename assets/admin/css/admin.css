@@ -1619,3 +1619,85 @@ img {
     background: #f8fafc;
   }
 }
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .aps-cp-card { animation: none; }
+  .aps-loading-spinner { animation: none; }
+  .aps-progress-fill { transition: none; }
+}
+
+/* ===== LANDSCAPE MOBILE ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .navbar-nav .dropdown-menu {
+    max-height: 80vh;
+  }
+  .modal-content { max-height: 90vh; overflow-y: auto; }
+}
+
+/* ===== SAFE AREA (notch devices) ===== */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+@supports (padding: env(safe-area-inset-bottom)) {
+  .aps-portal-footer,
+  footer {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* ===== MOBILE: MENU TOGGLE, SEARCH BAR, STATS ===== */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+@media (max-width: 576px) {
+  .mobile-menu-toggle { display: block !important; }
+  .sidebar.show { transform: translateX(0); }
+  .search-bar-mobile {
+    position: sticky; top: 0; background: #fff;
+    z-index: 100; padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .mobile-stats-row {
+    display: flex; flex-direction: column; gap: 0.5rem;
+  }
+  .mobile-stats-row .col-md-3 {
+    width: 100% !important; flex: 0 0 100%; max-width: 100%;
+  }
+}
+@media (min-width: 577px) and (max-width: 768px) {
+  .mobile-stats-row .col-md-3 {
+    flex: 0 0 50%; max-width: 50%;
+  }
+}
+.pull-to-refresh {
+  height: 60px; display: none;
+  align-items: center; justify-content: center;
+  background: #f8f9fa; border-radius: 0 0 0.5rem 0.5rem;
+  margin-bottom: 1rem;
+}
+.pull-to-refresh .spinner {
+  width: 20px; height: 20px;
+  border: 2px solid #e9ecef; border-top: 2px solid var(--primary);
+  border-radius: 50%; animation: spin 1s linear infinite;
+}

@@ -568,28 +568,28 @@ class __$$ColonyModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ColonyModelImpl extends _ColonyModel {
   const _$ColonyModelImpl({
-    required this.id,
-    required this.name,
-    required this.location,
-    required this.district,
-    required this.state,
+    this.id = '',
+    this.name = '',
+    this.location = '',
+    this.district = '',
+    this.state = '',
     this.description,
     final List<String>? images,
     this.masterPlanImage,
     this.videoUrl,
     this.latitude,
     this.longitude,
-    required this.totalPlots,
-    required this.availablePlots,
-    required this.holdPlots,
-    required this.bookedPlots,
-    required this.soldPlots,
-    required this.pricePerSqft,
+    this.totalPlots = 0,
+    this.availablePlots = 0,
+    this.holdPlots = 0,
+    this.bookedPlots = 0,
+    this.soldPlots = 0,
+    this.pricePerSqft = 0.0,
     this.tokenAmount,
     this.bookingPercentage,
     final Map<String, double>? blockWisePricing,
     final List<String>? amenities,
-    required this.status,
+    this.status = 'upcoming',
     this.launchDate,
     this.completionDate,
     this.createdAt,
@@ -614,14 +614,19 @@ class _$ColonyModelImpl extends _ColonyModel {
       _$$ColonyModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String location;
   @override
+  @JsonKey()
   final String district;
   @override
+  @JsonKey()
   final String state;
   @override
   final String? description;
@@ -645,17 +650,23 @@ class _$ColonyModelImpl extends _ColonyModel {
   final double? longitude;
   // Plot Statistics
   @override
+  @JsonKey()
   final int totalPlots;
   @override
+  @JsonKey()
   final int availablePlots;
   @override
+  @JsonKey()
   final int holdPlots;
   @override
+  @JsonKey()
   final int bookedPlots;
   @override
+  @JsonKey()
   final int soldPlots;
   // Pricing
   @override
+  @JsonKey()
   final double pricePerSqft;
   @override
   final double? tokenAmount;
@@ -687,6 +698,7 @@ class _$ColonyModelImpl extends _ColonyModel {
 
   // Status
   @override
+  @JsonKey()
   final String status;
   // upcoming, launching, active, completed, sold_out
   @override
@@ -876,28 +888,28 @@ class _$ColonyModelImpl extends _ColonyModel {
 
 abstract class _ColonyModel extends ColonyModel {
   const factory _ColonyModel({
-    required final String id,
-    required final String name,
-    required final String location,
-    required final String district,
-    required final String state,
+    final String id,
+    final String name,
+    final String location,
+    final String district,
+    final String state,
     final String? description,
     final List<String>? images,
     final String? masterPlanImage,
     final String? videoUrl,
     final double? latitude,
     final double? longitude,
-    required final int totalPlots,
-    required final int availablePlots,
-    required final int holdPlots,
-    required final int bookedPlots,
-    required final int soldPlots,
-    required final double pricePerSqft,
+    final int totalPlots,
+    final int availablePlots,
+    final int holdPlots,
+    final int bookedPlots,
+    final int soldPlots,
+    final double pricePerSqft,
     final double? tokenAmount,
     final double? bookingPercentage,
     final Map<String, double>? blockWisePricing,
     final List<String>? amenities,
-    required final String status,
+    final String status,
     final DateTime? launchDate,
     final DateTime? completionDate,
     final DateTime? createdAt,

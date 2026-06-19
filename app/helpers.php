@@ -4,6 +4,8 @@
  * Global Helper Functions
  */
 
+require_once __DIR__ . '/Helpers/TranslationHelper.php';
+
 if (!function_exists('env')) {
     /**
      * Get the value of an environment variable.

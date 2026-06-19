@@ -674,29 +674,29 @@ class __$$BookingModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$BookingModelImpl extends _BookingModel {
   const _$BookingModelImpl({
-    required this.id,
-    required this.plotId,
-    required this.plotNumber,
-    required this.colonyId,
-    required this.colonyName,
-    required this.customerId,
-    required this.customerName,
-    required this.customerPhone,
+    this.id = '',
+    this.plotId = '',
+    this.plotNumber = '',
+    this.colonyId = '',
+    this.colonyName = '',
+    this.customerId = '',
+    this.customerName = '',
+    this.customerPhone = '',
     this.customerEmail,
     this.customerAddress,
     this.associateId,
     this.associateName,
     this.associateRank,
     this.associateCommission,
-    required this.plotPrice,
-    required this.tokenAmount,
-    required this.totalAmount,
-    required this.paymentPlan,
+    this.plotPrice = 0.0,
+    this.tokenAmount = 0.0,
+    this.totalAmount = 0.0,
+    this.paymentPlan = '',
     this.downPayment,
     this.emiMonths,
     this.emiAmount,
     this.interestRate,
-    required this.status,
+    this.status = 'pending',
     this.statusReason,
     this.approvedAt,
     this.approvedBy,
@@ -726,21 +726,29 @@ class _$BookingModelImpl extends _BookingModel {
       _$$BookingModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String plotId;
   @override
+  @JsonKey()
   final String plotNumber;
   @override
+  @JsonKey()
   final String colonyId;
   @override
+  @JsonKey()
   final String colonyName;
   // Customer Info
   @override
+  @JsonKey()
   final String customerId;
   @override
+  @JsonKey()
   final String customerName;
   @override
+  @JsonKey()
   final String customerPhone;
   @override
   final String? customerEmail;
@@ -757,12 +765,16 @@ class _$BookingModelImpl extends _BookingModel {
   final double? associateCommission;
   // Pricing
   @override
+  @JsonKey()
   final double plotPrice;
   @override
+  @JsonKey()
   final double tokenAmount;
   @override
+  @JsonKey()
   final double totalAmount;
   @override
+  @JsonKey()
   final String paymentPlan;
   // full, emi, installment
   // EMI Details (if applicable)
@@ -776,6 +788,7 @@ class _$BookingModelImpl extends _BookingModel {
   final double? interestRate;
   // Status
   @override
+  @JsonKey()
   final String status;
   // pending, approved, rejected, completed, cancelled
   @override
@@ -1009,29 +1022,29 @@ class _$BookingModelImpl extends _BookingModel {
 
 abstract class _BookingModel extends BookingModel {
   const factory _BookingModel({
-    required final String id,
-    required final String plotId,
-    required final String plotNumber,
-    required final String colonyId,
-    required final String colonyName,
-    required final String customerId,
-    required final String customerName,
-    required final String customerPhone,
+    final String id,
+    final String plotId,
+    final String plotNumber,
+    final String colonyId,
+    final String colonyName,
+    final String customerId,
+    final String customerName,
+    final String customerPhone,
     final String? customerEmail,
     final String? customerAddress,
     final String? associateId,
     final String? associateName,
     final String? associateRank,
     final double? associateCommission,
-    required final double plotPrice,
-    required final double tokenAmount,
-    required final double totalAmount,
-    required final String paymentPlan,
+    final double plotPrice,
+    final double tokenAmount,
+    final double totalAmount,
+    final String paymentPlan,
     final double? downPayment,
     final int? emiMonths,
     final double? emiAmount,
     final double? interestRate,
-    required final String status,
+    final String status,
     final String? statusReason,
     final DateTime? approvedAt,
     final String? approvedBy,
@@ -1377,10 +1390,10 @@ class __$$BookingDocumentImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$BookingDocumentImpl implements _BookingDocument {
   const _$BookingDocumentImpl({
-    required this.id,
-    required this.type,
-    required this.name,
-    required this.url,
+    this.id = '',
+    this.type = '',
+    this.name = '',
+    this.url = '',
     this.thumbnailUrl,
     this.uploadedAt,
     this.verifiedBy,
@@ -1393,13 +1406,17 @@ class _$BookingDocumentImpl implements _BookingDocument {
       _$$BookingDocumentImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String type;
   // aadhar, pan, photo, agreement, etc.
   @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String url;
   @override
   final String? thumbnailUrl;
@@ -1476,10 +1493,10 @@ class _$BookingDocumentImpl implements _BookingDocument {
 
 abstract class _BookingDocument implements BookingDocument {
   const factory _BookingDocument({
-    required final String id,
-    required final String type,
-    required final String name,
-    required final String url,
+    final String id,
+    final String type,
+    final String name,
+    final String url,
     final String? thumbnailUrl,
     final DateTime? uploadedAt,
     final String? verifiedBy,
@@ -1809,11 +1826,11 @@ class __$$PaymentModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PaymentModelImpl implements _PaymentModel {
   const _$PaymentModelImpl({
-    required this.id,
-    required this.bookingId,
-    required this.amount,
-    required this.type,
-    required this.method,
+    this.id = '',
+    this.bookingId = '',
+    this.amount = 0.0,
+    this.type = '',
+    this.method = '',
     this.transactionId,
     this.razorpayOrderId,
     this.razorpayPaymentId,
@@ -1830,15 +1847,20 @@ class _$PaymentModelImpl implements _PaymentModel {
       _$$PaymentModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String bookingId;
   @override
+  @JsonKey()
   final double amount;
   @override
+  @JsonKey()
   final String type;
   // token, down_payment, installment, registry, full
   @override
+  @JsonKey()
   final String method;
   // cash, cheque, bank_transfer, upi, razorpay
   @override
@@ -1934,11 +1956,11 @@ class _$PaymentModelImpl implements _PaymentModel {
 
 abstract class _PaymentModel implements PaymentModel {
   const factory _PaymentModel({
-    required final String id,
-    required final String bookingId,
-    required final double amount,
-    required final String type,
-    required final String method,
+    final String id,
+    final String bookingId,
+    final double amount,
+    final String type,
+    final String method,
     final String? transactionId,
     final String? razorpayOrderId,
     final String? razorpayPaymentId,
@@ -2175,9 +2197,9 @@ class __$$BookingHistoryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$BookingHistoryImpl implements _BookingHistory {
   const _$BookingHistoryImpl({
-    required this.id,
-    required this.action,
-    required this.performedBy,
+    this.id = '',
+    this.action = '',
+    this.performedBy = '',
     required this.performedAt,
     this.notes,
     final Map<String, dynamic>? oldValues,
@@ -2189,10 +2211,13 @@ class _$BookingHistoryImpl implements _BookingHistory {
       _$$BookingHistoryImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String action;
   @override
+  @JsonKey()
   final String performedBy;
   @override
   final DateTime performedAt;
@@ -2277,9 +2302,9 @@ class _$BookingHistoryImpl implements _BookingHistory {
 
 abstract class _BookingHistory implements BookingHistory {
   const factory _BookingHistory({
-    required final String id,
-    required final String action,
-    required final String performedBy,
+    final String id,
+    final String action,
+    final String performedBy,
     required final DateTime performedAt,
     final String? notes,
     final Map<String, dynamic>? oldValues,

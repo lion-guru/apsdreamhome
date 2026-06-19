@@ -13,10 +13,10 @@
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/plots">Plots</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('colony_breadcrumb_home') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/plots"><?= __('colony_breadcrumb_plots') ?></a></li>
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($plot['colony_slug'] ?? '') ?>/plots"><?= htmlspecialchars($plot['colony_name'] ?? '') ?></a></li>
-            <li class="breadcrumb-item active">Plot <?= htmlspecialchars($plot['plot_number'] ?? '') ?></li>
+            <li class="breadcrumb-item active"><?= sprintf(__('plot_detail_plot'), htmlspecialchars($plot['plot_number'] ?? '')) ?></li>
         </ol>
     </nav>
 
@@ -29,7 +29,7 @@
                 <div class="plot-gallery-img bg-light d-flex align-items-center justify-content-center" style="height:350px">
                     <div class="text-center text-muted">
                         <i class="fas fa-map-marked-alt fa-4x mb-3"></i>
-                        <p class="mb-0">Plot Location Image</p>
+                        <p class="mb-0"><?= __('plot_detail_location_image') ?></p>
                     </div>
                 </div>
             <?php endif; ?>
@@ -37,7 +37,7 @@
             <?php if (!empty($plot['map_link'])): ?>
                 <div class="mt-3">
                     <a href="<?= htmlspecialchars($plot['map_link']) ?>" target="_blank" class="btn btn-outline-primary">
-                        <i class="fas fa-map"></i> View on Google Maps
+                        <i class="fas fa-map"></i> <?= __('plot_detail_view_map') ?>
                     </a>
                 </div>
             <?php endif; ?>
@@ -48,7 +48,7 @@
             <div class="detail-card">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <h2 class="fw-bold mb-1">Plot <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h2>
+                        <h2 class="fw-bold mb-1"><?= sprintf(__('plot_detail_heading'), htmlspecialchars($plot['plot_number'] ?? '')) ?></h2>
                         <p class="text-muted mb-0">
                             <i class="fas fa-building"></i> <?= htmlspecialchars($plot['colony_name'] ?? '') ?><br>
                             <i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars(($plot['state_name'] ?? '') . ($plot['district_name'] ? ', ' . $plot['district_name'] : '')) ?>
@@ -56,7 +56,7 @@
                     </div>
                     <?php 
                         $statusColor = match($plot['status'] ?? 'available') { 'available'=>'success', 'booked'=>'warning', 'sold'=>'danger', 'hold'=>'secondary', default=>'secondary' };
-                        $statusLabel = match($plot['status'] ?? 'available') { 'available'=>'Available', 'booked'=>'Booked', 'sold'=>'Sold', 'hold'=>'On Hold', default=>ucfirst($plot['status'] ?? '') };
+                        $statusLabel = match($plot['status'] ?? 'available') { 'available'=>__('compare_status_available'), 'booked'=>__('compare_status_booked'), 'sold'=>__('compare_status_sold'), 'hold'=>__('compare_status_hold'), default=>ucfirst($plot['status'] ?? '') };
                     ?>
                     <span class="badge bg-<?= $statusColor ?> fs-6 px-3 py-2"><?= $statusLabel ?></span>
                 </div>
@@ -68,47 +68,47 @@
                         <div class="spec-item">
                             <i class="fas fa-vector-square"></i>
                             <div class="detail-value"><?= number_format(floatval($plot['area_sqft'] ?? 0)) ?></div>
-                            <div class="detail-label">Sq.Ft.</div>
+                            <div class="detail-label"><?= __('plot_detail_sqft') ?></div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="spec-item">
                             <i class="fas fa-arrows-alt"></i>
                             <div class="detail-value"><?= htmlspecialchars($plot['dimension_label'] ?? '—') ?></div>
-                            <div class="detail-label">Dimension</div>
+                            <div class="detail-label"><?= __('plot_detail_dimension') ?></div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="spec-item">
                             <i class="fas fa-tag"></i>
                             <div class="detail-value">₹<?= number_format(floatval($plot['price_per_sqft'] ?? 0)) ?></div>
-                            <div class="detail-label">Per Sq.Ft.</div>
+                            <div class="detail-label"><?= __('plot_detail_per_sqft') ?></div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="spec-item">
                             <i class="fas fa-layer-group"></i>
                             <div class="detail-value"><?= htmlspecialchars($plot['block'] ?? '—') ?></div>
-                            <div class="detail-label">Block</div>
+                            <div class="detail-label"><?= __('colony_block_label') ?></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Features -->
                 <div class="mb-3">
-                    <h6 class="fw-bold">Features</h6>
+                    <h6 class="fw-bold"><?= __('plot_detail_features') ?></h6>
                     <div>
                         <?php if ($plot['corner_plot'] ?? false): ?>
-                            <span class="badge bg-primary me-1">Corner Plot</span>
+                            <span class="badge bg-primary me-1"><?= __('compare_corner_plot') ?></span>
                         <?php endif; ?>
                         <?php if ($plot['park_facing'] ?? false): ?>
-                            <span class="badge bg-success me-1">Park Facing</span>
+                            <span class="badge bg-success me-1"><?= __('colony_park_facing') ?></span>
                         <?php endif; ?>
                         <?php if (!empty($plot['facing'])): ?>
-                            <span class="badge bg-info me-1">Facing: <?= htmlspecialchars($plot['facing']) ?></span>
+                            <span class="badge bg-info me-1"><?= __('plot_detail_facing') ?> <?= htmlspecialchars($plot['facing']) ?></span>
                         <?php endif; ?>
                         <?php if ($plot['road_width_ft'] ?? false): ?>
-                            <span class="badge bg-secondary">Road: <?= floatval($plot['road_width_ft']) ?>ft</span>
+                            <span class="badge bg-secondary"><?= __('compare_road_width') ?> <?= floatval($plot['road_width_ft']) ?>ft</span>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                 <!-- Description -->
                 <?php if (!empty($plot['description'])): ?>
                     <div class="mb-3">
-                        <h6 class="fw-bold">Description</h6>
+                        <h6 class="fw-bold"><?= __('plot_detail_description') ?></h6>
                         <p class="text-muted"><?= nl2br(htmlspecialchars($plot['description'])) ?></p>
                     </div>
                 <?php endif; ?>
@@ -125,28 +125,28 @@
                 <div class="d-grid gap-2">
                     <?php if (($plot['status'] ?? '') === 'available'): ?>
                         <a href="<?= BASE_URL ?>/plot/<?= $plot['id'] ?>/book" class="btn btn-success btn-lg">
-                            <i class="fas fa-file-contract"></i> Book This Plot
+                            <i class="fas fa-file-contract"></i> <?= __('plot_detail_book_plot') ?>
                         </a>
                         <a href="<?= BASE_URL ?>/contact?plot=<?= $plot['id'] ?>&subject=I%27m%20interested%20in%20Plot%20<?= urlencode($plot['plot_number'] ?? '') ?>" class="btn btn-primary">
-                            <i class="fas fa-phone"></i> Enquire Now
+                            <i class="fas fa-phone"></i> <?= __('colony_enquire_now') ?>
                         </a>
                         <a href="<?= BASE_URL ?>/schedule-visit?plot=<?= $plot['id'] ?>" class="btn btn-outline-primary">
-                            <i class="fas fa-calendar-check"></i> Schedule Site Visit
+                            <i class="fas fa-calendar-check"></i> <?= __('plot_detail_schedule_visit') ?>
                         </a>
                         <button type="button" class="btn btn-outline-info" id="addCompareBtn" onclick="addToCompare(<?= $plot['id'] ?? 0 ?>)">
-                            <i class="fas fa-balance-scale"></i> Add to Compare
+                            <i class="fas fa-balance-scale"></i> <?= __('plot_detail_add_compare') ?>
                         </button>
                     <?php else: ?>
                         <button class="btn btn-secondary btn-lg" disabled>
-                            <i class="fas fa-lock"></i> Not Available
+                            <i class="fas fa-lock"></i> <?= __('colony_not_available') ?>
                         </button>
                         <a href="<?= BASE_URL ?>/contact?subject=Similar%20plots%20to%20<?= urlencode($plot['plot_number'] ?? '') ?>" class="btn btn-outline-primary">
-                            <i class="fas fa-search"></i> Find Similar Plots
+                            <i class="fas fa-search"></i> <?= __('plot_detail_find_similar') ?>
                         </a>
                     <?php endif; ?>
                 </div>
                 <div class="text-center mt-2" id="compareMsg" style="display:none;">
-                    <small class="text-success"><i class="fas fa-check-circle"></i> Added to comparison! <a href="<?= BASE_URL ?>/compare">View Compare</a></small>
+                    <small class="text-success"><i class="fas fa-check-circle"></i> <?= __('plot_detail_added_compare') ?> <a href="<?= BASE_URL ?>/compare"><?= __('compare_plot_header') ?></a></small>
                 </div>
             </div>
 
@@ -154,7 +154,7 @@
             <?php if (!empty($plot['negotiated_price']) && $plot['negotiated_price'] != $plot['total_price']): ?>
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle"></i> 
-                    <strong>Negotiated Price Available.</strong> Contact us for special deal pricing on this plot.
+                    <strong><?= __('plot_detail_negotiated') ?></strong> <?= __('plot_detail_negotiated_desc') ?>
                 </div>
             <?php endif; ?>
         </div>
@@ -166,7 +166,7 @@
     ?>
         <?php if (!empty($amenities)): ?>
         <div class="detail-card mt-3">
-            <h4 class="fw-bold mb-3">Colony Amenities</h4>
+            <h4 class="fw-bold mb-3"><?= __('plot_detail_colony_amenities') ?></h4>
             <div class="row g-2">
                 <?php foreach ($amenities as $amenity): ?>
                     <?php $a = is_string($amenity) ? str_replace(['[', ']', '"', '\\'], '', $amenity) : ''; ?>
@@ -186,10 +186,10 @@
     <!-- Price History -->
     <?php if (!empty($priceHistory)): ?>
     <div class="detail-card mt-3">
-        <h4 class="fw-bold mb-3"><i class="fas fa-history"></i> Price History</h4>
+        <h4 class="fw-bold mb-3"><i class="fas fa-history"></i> <?= __('plot_detail_price_history') ?></h4>
         <div class="table-responsive">
             <table class="table table-sm">
-                <thead><tr><th>Date</th><th>Old Price</th><th>New Price</th><th>Change Type</th><th>Reason</th></tr></thead>
+                <thead><tr><th><?= __('plot_detail_date') ?></th><th><?= __('plot_detail_old_price') ?></th><th><?= __('plot_detail_new_price') ?></th><th><?= __('plot_detail_change_type') ?></th><th><?= __('plot_detail_reason') ?></th></tr></thead>
                 <tbody>
                     <?php foreach ($priceHistory as $ph): ?>
                     <tr>
@@ -214,7 +214,7 @@
             <?php foreach ($nearbyPlots as $np): ?>
                 <?php 
                     $npStatusColor = match($np['status'] ?? 'available') { 'available'=>'success', 'booked'=>'warning', 'sold'=>'danger', default=>'secondary' };
-                    $npStatusLabel = match($np['status'] ?? 'available') { 'available'=>'Available', 'booked'=>'Booked', 'sold'=>'Sold', default=>ucfirst($np['status'] ?? '') };
+                    $npStatusLabel = match($np['status'] ?? 'available') { 'available'=>__('compare_status_available'), 'booked'=>__('compare_status_booked'), 'sold'=>__('compare_status_sold'), default=>ucfirst($np['status'] ?? '') };
                 ?>
                 <div class="col-md-4">
                     <div class="detail-card p-3">

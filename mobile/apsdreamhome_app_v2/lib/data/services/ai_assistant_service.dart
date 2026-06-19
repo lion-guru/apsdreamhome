@@ -1,18 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../core/services/api_service.dart';
 import '../../core/utils/logger.dart';
 
 /// AI Assistant Service
 /// Advanced conversational AI that can understand natural language
 /// and perform actions without RBAC restrictions
 class AIAssistantService {
-  final FirebaseFirestore _firestore;
+  final ApiService _api;
   
   // Conversation history for context
   final List<Map<String, dynamic>> _conversationHistory = [];
   
-  AIAssistantService({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+  AIAssistantService({ApiService? api})
+      : _api = api ?? ApiService();
 
   /// Process user message and generate AI response
   Future<AIResponse> processMessage(String userMessage, {String? userId, String? userRole}) async {
@@ -247,14 +247,19 @@ class AIAssistantService {
   /// Handle plot search
   Future<AIResponse> _handlePlotSearch(Map<String, dynamic> entities) async {
     try {
-      // Query available plots
-      final plotsSnapshot = await _firestore
-          .collection('plots')
-          .where('status', isEqualTo: 'available')
-          .limit(5)
-          .get();
+      // Query available plots via REST API
+      final result = await _api.request(
+        method: 'GET',
+        endpoint: 'properties',
+        queryParameters: {'status': 'available', 'limit': 5},
+      );
       
-      if (plotsSnapshot.docs.isEmpty) {
+      final plotsList = result['data'] ?? result['properties'] ?? [];
+      final List<Map<String, dynamic>> plots = List<Map<String, dynamic>>.from(
+        (plotsList is List) ? plotsList.map((p) => Map<String, dynamic>.from(p as Map)) : [],
+      );
+      
+      if (plots.isEmpty) {
         return AIResponse(
           message: "Sorry, I couldn't find any available plots matching your criteria right now. But don't worry! New plots are added regularly. Would you like me to notify you when plots become available?",
           suggestedActions: [
@@ -263,8 +268,6 @@ class AIAssistantService {
           ],
         );
       }
-      
-      final plots = plotsSnapshot.docs.map((doc) => doc.data()).toList();
       
       return AIResponse(
         message: "Great news! I found ${plots.length} available plots for you. Here are some options:\n\n🏠 Plot #${plots[0]['plotNumber']} - ${plots[0]['area']} sqft - ₹${plots[0]['price']}\n🏠 Plot #${plots[1]['plotNumber']} - ${plots[1]['area']} sqft - ₹${plots[1]['price']}\n\nWould you like to see more details or book a site visit to see these plots in person?",
@@ -343,13 +346,17 @@ class AIAssistantService {
     }
     
     try {
-      final commissionDoc = await _firestore.collection('commissions').doc(userId).get();
+      final result = await _api.request(
+        method: 'GET',
+        endpoint: 'mlm/summary',
+      );
       
-      if (commissionDoc.exists) {
-        final data = commissionDoc.data() as Map<String, dynamic>;
-        final pending = data['pending'] ?? 0;
-        final approved = data['approved'] ?? 0;
-        final paid = data['paid'] ?? 0;
+      final data = result['data'] ?? result;
+      
+      if (data is Map<String, dynamic> && data.isNotEmpty) {
+        final pending = data['pending_commission'] ?? data['pending'] ?? 0;
+        final approved = data['approved_commission'] ?? data['approved'] ?? 0;
+        final paid = data['total_commission'] ?? data['paid'] ?? 0;
         
         return AIResponse(
           message: "Here's your commission summary:\n\n💰 Pending: ₹${pending.toStringAsFixed(0)}\n✅ Approved: ₹${approved.toStringAsFixed(0)}\n💵 Paid (Total): ₹${paid.toStringAsFixed(0)}\n\nYour commissions are calculated based on the differential commission structure. Would you like to see your detailed genealogy and team performance?",
@@ -412,8 +419,13 @@ class AIAssistantService {
     }
     
     try {
-      final userDoc = await _firestore.collection('users').doc(userId).get();
-      final kycStatus = userDoc.data()?['kycStatus'] ?? 'pending';
+      final result = await _api.request(
+        method: 'GET',
+        endpoint: 'profile',
+      );
+      
+      final data = result['data'] ?? result;
+      final kycStatus = (data is Map<String, dynamic> ? data['kyc_status'] ?? data['kycStatus'] : null) ?? 'pending';
       
       switch (kycStatus) {
         case 'verified':

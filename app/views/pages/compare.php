@@ -57,23 +57,23 @@ $count = count($plots);
     <?php if ($count === 0): ?>
         <div class="compare-empty">
             <i class="fas fa-balance-scale"></i>
-            <h2>No Plots Selected</h2>
-            <p>Add plots from the colony pages to compare them side by side.</p>
+            <h2><?= __('compare_no_plots_title') ?></h2>
+            <p><?= __('compare_no_plots_hint') ?></p>
             <a href="<?= BASE_URL ?>/plots" class="btn btn-primary btn-lg px-5 rounded-3">
-                <i class="fas fa-map me-2"></i> Browse Plots
+                <i class="fas fa-map me-2"></i> <?= __('compare_browse_plots') ?>
             </a>
         </div>
     <?php else: ?>
         <div class="compare-header">
-            <h1><i class="fas fa-balance-scale me-2 text-primary"></i> Compare Plots (<?= $count ?>/4)</h1>
+            <h1><i class="fas fa-balance-scale me-2 text-primary"></i> <?= sprintf(__('compare_title'), $count) ?></h1>
             <div class="compare-actions">
                 <?php if ($count < 4): ?>
                     <a href="<?= BASE_URL ?>/plots" class="btn btn-outline-primary btn-sm rounded-3">
-                        <i class="fas fa-plus me-1"></i> Add More
+                        <i class="fas fa-plus me-1"></i> <?= __('compare_add_more') ?>
                     </a>
                 <?php endif; ?>
                 <button onclick="clearCompare()" class="btn btn-outline-danger btn-sm rounded-3">
-                    <i class="fas fa-trash me-1"></i> Clear All
+                    <i class="fas fa-trash me-1"></i> <?= __('compare_clear_all') ?>
                 </button>
             </div>
         </div>
@@ -81,7 +81,7 @@ $count = count($plots);
         <div class="compare-grid">
             <!-- Row: Plot Header -->
             <div class="compare-label-col">
-                <div class="compare-label" style="background:#f8fafc; font-weight:700;">Plot</div>
+                <div class="compare-label" style="background:#f8fafc; font-weight:700;"><?= __('compare_plot_header') ?></div>
             </div>
             <?php foreach ($plots as $i => $plot): ?>
                 <div class="compare-plot-header">
@@ -91,13 +91,13 @@ $count = count($plots);
             <?php endforeach; ?>
 
             <!-- Row: Colony Name -->
-            <div class="compare-label-col"><div class="compare-label">Colony</div></div>
+            <div class="compare-label-col"><div class="compare-label"><?= __('compare_colony') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell"><?= htmlspecialchars($plot['colony_name'] ?? '-') ?></div>
             <?php endforeach; ?>
 
             <!-- Row: Block + Plot -->
-            <div class="compare-label-col compare-row-even"><div class="compare-label">Block / Plot No.</div></div>
+            <div class="compare-label-col compare-row-even"><div class="compare-label"><?= __('compare_block_plot_no') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell compare-row-even">
                     <?= htmlspecialchars(($plot['block'] ?? '-') . ' / ' . ($plot['plot_number'] ?? '-')) ?>
@@ -109,7 +109,7 @@ $count = count($plots);
                 $areas = array_map(fn($p) => floatval($p['area_sqft'] ?? 0), $plots);
                 $maxArea = max($areas);
             ?>
-            <div class="compare-label-col"><div class="compare-label">Area (sq ft)</div></div>
+            <div class="compare-label-col"><div class="compare-label"><?= __('compare_area') ?></div></div>
             <?php foreach ($plots as $i => $plot): ?>
                 <div class="compare-cell <?= ($areas[$i] === $maxArea && $maxArea > 0) ? 'compare-best' : '' ?>">
                     <span class="area-highlight"><?= number_format(floatval($plot['area_sqft'] ?? 0)) ?></span> sqft
@@ -117,7 +117,7 @@ $count = count($plots);
             <?php endforeach; ?>
 
             <!-- Row: Dimensions -->
-            <div class="compare-label-col compare-row-even"><div class="compare-label">Dimensions (W x L)</div></div>
+            <div class="compare-label-col compare-row-even"><div class="compare-label"><?= __('compare_dimensions') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell compare-row-even">
                     <?php if (!empty($plot['dimension_label'])): ?>
@@ -135,7 +135,7 @@ $count = count($plots);
                 $prices = array_map(fn($p) => floatval($p['total_price'] ?? 0), $plots);
                 $minPrice = min(array_filter($prices));
             ?>
-            <div class="compare-label-col"><div class="compare-label">Price</div></div>
+            <div class="compare-label-col"><div class="compare-label"><?= __('compare_price') ?></div></div>
             <?php foreach ($plots as $i => $plot): ?>
                 <div class="compare-cell <?= ($prices[$i] > 0 && $prices[$i] === $minPrice) ? 'compare-best' : '' ?>">
                     <span class="price-highlight">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></span>
@@ -147,7 +147,7 @@ $count = count($plots);
                 $pps = array_map(fn($p) => floatval($p['price_per_sqft'] ?? 0), $plots);
                 $minPps = min(array_filter($pps));
             ?>
-            <div class="compare-label-col compare-row-even"><div class="compare-label">Price / sq ft</div></div>
+            <div class="compare-label-col compare-row-even"><div class="compare-label"><?= __('compare_price_per_sqft') ?></div></div>
             <?php foreach ($plots as $i => $plot): ?>
                 <div class="compare-cell compare-row-even <?= ($pps[$i] > 0 && $pps[$i] === $minPps) ? 'compare-best' : '' ?>">
                     <span class="price-per-sqft">₹<?= number_format(floatval($plot['price_per_sqft'] ?? 0)) ?></span>
@@ -155,20 +155,20 @@ $count = count($plots);
             <?php endforeach; ?>
 
             <!-- Row: Status -->
-            <div class="compare-label-col"><div class="compare-label">Status</div></div>
+            <div class="compare-label-col"><div class="compare-label"><?= __('compare_status') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell">
                     <?php
                         $st = $plot['status'] ?? 'available';
                         $cls = match($st) { 'available' => 'status-available', 'booked' => 'status-booked', 'sold' => 'status-sold', default => 'status-hold' };
-                        $lbl = ucfirst($st);
+                        $lbl = match($st) { 'available' => __('compare_status_available'), 'booked' => __('compare_status_booked'), 'sold' => __('compare_status_sold'), default => __('compare_status_hold') };
                     ?>
                     <span class="<?= $cls ?>"><?= $lbl ?></span>
                 </div>
             <?php endforeach; ?>
 
             <!-- Row: Facing -->
-            <div class="compare-label-col compare-row-even"><div class="compare-label">Facing</div></div>
+            <div class="compare-label-col compare-row-even"><div class="compare-label"><?= __('compare_facing') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell compare-row-even">
                     <?= htmlspecialchars(ucfirst($plot['facing'] ?? '-')) ?>
@@ -176,31 +176,31 @@ $count = count($plots);
             <?php endforeach; ?>
 
             <!-- Row: Corner Plot -->
-            <div class="compare-label-col"><div class="compare-label">Corner Plot</div></div>
+            <div class="compare-label-col"><div class="compare-label"><?= __('compare_corner_plot') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell">
                     <?php if (!empty($plot['corner_plot'])): ?>
-                        <span class="text-success"><i class="fas fa-check-circle"></i> Yes</span>
+                        <span class="text-success"><i class="fas fa-check-circle"></i> <?= __('compare_yes') ?></span>
                     <?php else: ?>
-                        <span class="text-muted">No</span>
+                        <span class="text-muted"><?= __('compare_no') ?></span>
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>
 
             <!-- Row: Park Facing -->
-            <div class="compare-label-col compare-row-even"><div class="compare-label">Park Facing</div></div>
+            <div class="compare-label-col compare-row-even"><div class="compare-label"><?= __('compare_park_facing') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell compare-row-even">
                     <?php if (!empty($plot['park_facing'])): ?>
-                        <span class="text-success"><i class="fas fa-check-circle"></i> Yes</span>
+                        <span class="text-success"><i class="fas fa-check-circle"></i> <?= __('compare_yes') ?></span>
                     <?php else: ?>
-                        <span class="text-muted">No</span>
+                        <span class="text-muted"><?= __('compare_no') ?></span>
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>
 
             <!-- Row: Road Width -->
-            <div class="compare-label-col"><div class="compare-label">Road Width</div></div>
+            <div class="compare-label-col"><div class="compare-label"><?= __('compare_road_width') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell">
                     <?= !empty($plot['road_width_ft']) ? htmlspecialchars($plot['road_width_ft']) . ' ft' : '-' ?>
@@ -208,28 +208,28 @@ $count = count($plots);
             <?php endforeach; ?>
 
             <!-- Row: Available for Booking -->
-            <div class="compare-label-col compare-row-even"><div class="compare-label">Available for Booking</div></div>
+            <div class="compare-label-col compare-row-even"><div class="compare-label"><?= __('compare_available_booking') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell compare-row-even">
                     <?php if (($plot['status'] ?? '') === 'available'): ?>
-                        <span class="text-success fw-semibold"><i class="fas fa-check-circle me-1"></i> Yes</span>
+                        <span class="text-success fw-semibold"><i class="fas fa-check-circle me-1"></i> <?= __('compare_yes') ?></span>
                     <?php else: ?>
-                        <span class="text-danger fw-semibold"><i class="fas fa-times-circle me-1"></i> No</span>
+                        <span class="text-danger fw-semibold"><i class="fas fa-times-circle me-1"></i> <?= __('compare_no') ?></span>
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>
 
             <!-- Row: Actions -->
-            <div class="compare-label-col"><div class="compare-label" style="font-weight:700;">Actions</div></div>
+            <div class="compare-label-col"><div class="compare-label" style="font-weight:700;"><?= __('compare_actions') ?></div></div>
             <?php foreach ($plots as $plot): ?>
                 <div class="compare-cell compare-actions-cell">
                     <button onclick="removeFromCompare(<?= $plot['id'] ?>)" class="btn-remove-compare mb-2">
-                        <i class="fas fa-times me-1"></i> Remove
+                        <i class="fas fa-times me-1"></i> <?= __('compare_remove') ?>
                     </button>
                     <br>
                     <?php if (($plot['status'] ?? '') === 'available'): ?>
                         <a href="<?= BASE_URL ?>/plot/<?= $plot['id'] ?>" class="btn-book-compare">
-                            <i class="fas fa-shopping-cart me-1"></i> Book Now
+                            <i class="fas fa-shopping-cart me-1"></i> <?= __('compare_book_now') ?>
                         </a>
                     <?php endif; ?>
                 </div>
@@ -255,7 +255,7 @@ function removeFromCompare(plotId) {
 }
 
 function clearCompare() {
-    if (!confirm('Clear all plots from comparison?')) return;
+    if (!confirm('<?= __('compare_clear_confirm') ?>')) return;
     fetch('<?= BASE_URL ?>/compare/clear', {
         method: 'POST',
         headers: {

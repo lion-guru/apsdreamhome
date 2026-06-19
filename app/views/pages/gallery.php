@@ -61,17 +61,17 @@
 <section class="py-5">
     <div class="container text-center">
         <i class="fas fa-images fa-4x text-muted mb-3"></i>
-        <h4 class="text-muted">Gallery images coming soon</h4>
-        <p class="text-muted">We're preparing stunning visuals of our projects for you.</p>
+        <h4 class="text-muted"><?= __('gallery_coming_soon') ?></h4>
+        <p class="text-muted"><?= __('gallery_coming_soon_desc') ?></p>
     </div>
 </section>
 <?php endif; ?>
 
 <section class="py-5 bg-light">
     <div class="container text-center">
-        <h3 class="mb-4">Want to See More?</h3>
-        <p class="text-muted mb-4">Contact us for site visits and detailed project galleries</p>
-        <a href="<?= BASE_URL ?>/contact" class="btn btn-primary btn-lg"><i class="fas fa-phone me-2"></i>Contact Us</a>
+        <h3 class="mb-4"><?= __('gallery_want_more') ?></h3>
+        <p class="text-muted mb-4"><?= __('gallery_want_more_desc') ?></p>
+        <a href="<?= BASE_URL ?>/contact" class="btn btn-primary btn-lg"><i class="fas fa-phone me-2"></i><?= __('gallery_contact_us') ?></a>
     </div>
 </section>
 

@@ -1,14 +1,15 @@
 <?php
+require_once __DIR__ . '/../../../Helpers/TranslationHelper.php';
 $current_page = $current_page ?? 'booking-confirmation';
 $baseUrl = defined('BASE_URL') ? BASE_URL : '';
 
 $statusSteps = [
-    ['label' => 'Booking Submitted',    'icon' => 'fas fa-file-signature',   'statuses' => ['token_paid']],
-    ['label' => 'Admin Confirmation',   'icon' => 'fas fa-check-circle',     'statuses' => ['token_paid', 'agreement_signed']],
-    ['label' => 'Agreement Signed',     'icon' => 'fas fa-file-signature',   'statuses' => ['agreement_signed', 'emi_active']],
-    ['label' => 'Payment in Progress',  'icon' => 'fas fa-credit-card',      'statuses' => ['emi_active', 'partially_paid']],
-    ['label' => 'Fully Paid',           'icon' => 'fas fa-check-double',     'statuses' => ['fully_paid', 'registration_done']],
-    ['label' => 'Registration Done',    'icon' => 'fas fa-home',             'statuses' => ['registration_done']],
+    ['label' => __('booking_conf_status_submitted', [], 'Booking Submitted'),    'icon' => 'fas fa-file-signature',   'statuses' => ['token_paid']],
+    ['label' => __('booking_conf_status_admin', [], 'Admin Confirmation'),   'icon' => 'fas fa-check-circle',     'statuses' => ['token_paid', 'agreement_signed']],
+    ['label' => __('booking_conf_status_agreement', [], 'Agreement Signed'),     'icon' => 'fas fa-file-signature',   'statuses' => ['agreement_signed', 'emi_active']],
+    ['label' => __('booking_conf_status_payment', [], 'Payment in Progress'),  'icon' => 'fas fa-credit-card',      'statuses' => ['emi_active', 'partially_paid']],
+    ['label' => __('booking_conf_status_fully_paid', [], 'Fully Paid'),           'icon' => 'fas fa-check-double',     'statuses' => ['fully_paid', 'registration_done']],
+    ['label' => __('booking_conf_status_registration', [], 'Registration Done'),    'icon' => 'fas fa-home',             'statuses' => ['registration_done']],
 ];
 
 $currentStatus = $booking['status'] ?? 'token_paid';
@@ -26,10 +27,10 @@ foreach ($statusSteps as $i => $step) {
     <!-- Success Banner -->
     <div class="alert alert-success py-4 mb-4 text-center" style="border-radius:14px;">
         <i class="fas fa-check-circle fa-3x mb-2"></i>
-        <h3 class="fw-bold mb-1">Booking Confirmed!</h3>
+        <h3 class="fw-bold mb-1"><?= __('booking_conf_heading', [], 'Booking Confirmed!') ?></h3>
         <p class="mb-0">
-            Your booking request for <strong>Plot <?= htmlspecialchars($booking['plot_number'] ?? '') ?></strong>
-            has been submitted successfully.
+            <?= __('booking_conf_success_prefix', [], 'Your booking request for') ?> <strong><?= __('booking_conf_success_plot', [], 'Plot') ?> <?= htmlspecialchars($booking['plot_number'] ?? '') ?></strong>
+            <?= __('booking_conf_success_suffix', [], 'has been submitted successfully.') ?>
         </p>
         <div class="mt-3">
             <span class="badge bg-dark fs-6">
@@ -46,7 +47,7 @@ foreach ($statusSteps as $i => $step) {
             <!-- Status Timeline -->
             <div class="aps-cp-card mb-4">
                 <div class="aps-cp-card-header">
-                    <span><i class="fas fa-clock me-2"></i>Booking Progress</span>
+                    <span><i class="fas fa-clock me-2"></i><?= __('booking_conf_progress', [], 'Booking Progress') ?></span>
                 </div>
                 <div class="aps-cp-card-body">
                     <div class="position-relative" style="padding-left: 24px;">
@@ -61,7 +62,7 @@ foreach ($statusSteps as $i => $step) {
                                 <i class="<?= $step['icon'] ?> me-1"></i>
                                 <strong><?= $step['label'] ?></strong>
                                 <?php if ($i === $currentStep): ?>
-                                    <span class="badge bg-primary ms-2">Current</span>
+                                    <span class="badge bg-primary ms-2"><?= __('booking_conf_current', [], 'Current') ?></span>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -73,36 +74,36 @@ foreach ($statusSteps as $i => $step) {
             <!-- Booking Details -->
             <div class="aps-cp-card mb-4">
                 <div class="aps-cp-card-header">
-                    <span><i class="fas fa-info-circle me-2"></i>Booking Details</span>
+                    <span><i class="fas fa-info-circle me-2"></i><?= __('booking_conf_details', [], 'Booking Details') ?></span>
                 </div>
                 <div class="aps-cp-card-body">
                     <div class="row g-3">
                         <div class="col-sm-6">
-                            <small class="text-muted d-block">Booking Number</small>
+                            <small class="text-muted d-block"><?= __('booking_conf_number', [], 'Booking Number') ?></small>
                             <strong><?= htmlspecialchars($booking['booking_number'] ?? '—') ?></strong>
                         </div>
                         <div class="col-sm-6">
-                            <small class="text-muted d-block">Booking Date</small>
+                            <small class="text-muted d-block"><?= __('booking_conf_date', [], 'Booking Date') ?></small>
                             <strong><?= htmlspecialchars($booking['booking_date'] ?? '—') ?></strong>
                         </div>
                         <div class="col-sm-6">
-                            <small class="text-muted d-block">Status</small>
+                            <small class="text-muted d-block"><?= __('booking_conf_status', [], 'Status') ?></small>
                             <span class="badge bg-primary"><?= ucfirst(str_replace('_', ' ', $booking['status'] ?? '')) ?></span>
                         </div>
                         <div class="col-sm-6">
-                            <small class="text-muted d-block">Plot</small>
+                            <small class="text-muted d-block"><?= __('booking_conf_plot', [], 'Plot') ?></small>
                             <strong><?= htmlspecialchars($booking['plot_number'] ?? '') ?> — <?= htmlspecialchars($booking['colony_name'] ?? '') ?></strong>
                         </div>
                         <div class="col-sm-6">
-                            <small class="text-muted d-block">Area</small>
+                            <small class="text-muted d-block"><?= __('booking_conf_area', [], 'Area') ?></small>
                             <strong><?= number_format($booking['area_sqft'] ?? 0) ?> sqft</strong>
                         </div>
                         <div class="col-sm-6">
-                            <small class="text-muted d-block">Dimensions</small>
+                            <small class="text-muted d-block"><?= __('booking_conf_dimensions', [], 'Dimensions') ?></small>
                             <strong><?= htmlspecialchars($booking['dimension_label'] ?? '—') ?></strong>
                         </div>
                         <div class="col-12">
-                            <small class="text-muted d-block">Total Amount</small>
+                            <small class="text-muted d-block"><?= __('booking_conf_total_amount', [], 'Total Amount') ?></small>
                             <strong class="fs-5 text-primary">₹<?= number_format($booking['total_plot_value'] ?? 0) ?></strong>
                         </div>
                     </div>
@@ -113,16 +114,16 @@ foreach ($statusSteps as $i => $step) {
             <?php if (!empty($schedule)): ?>
             <div class="aps-cp-card mb-4">
                 <div class="aps-cp-card-header">
-                    <span><i class="fas fa-calendar-alt me-2"></i>Payment Schedule</span>
+                    <span><i class="fas fa-calendar-alt me-2"></i><?= __('booking_conf_payment_schedule', [], 'Payment Schedule') ?></span>
                 </div>
                 <div class="aps-cp-card-body" style="overflow-x:auto;">
                     <table class="table table-sm table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
-                                <th>Due Date</th>
-                                <th class="text-end">Amount</th>
-                                <th class="text-center">Status</th>
+                                <th><?= __('booking_conf_th_due_date', [], 'Due Date') ?></th>
+                                <th class="text-end"><?= __('booking_conf_th_amount', [], 'Amount') ?></th>
+                                <th class="text-center"><?= __('booking_conf_th_status', [], 'Status') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -146,7 +147,7 @@ foreach ($statusSteps as $i => $step) {
                         </tbody>
                         <tfoot class="table-light">
                             <tr>
-                                <th colspan="2">Totals</th>
+                                <th colspan="2"><?= __('booking_conf_totals', [], 'Totals') ?></th>
                                 <th class="text-end">₹<?= number_format($totalPaid + $totalPending) ?></th>
                                 <th></th>
                             </tr>
@@ -163,36 +164,36 @@ foreach ($statusSteps as $i => $step) {
             <!-- What's Next -->
             <div class="aps-cp-card mb-4">
                 <div class="aps-cp-card-header">
-                    <span><i class="fas fa-list-check me-2"></i>What's Next</span>
+                    <span><i class="fas fa-list-check me-2"></i><?= __('booking_conf_whats_next', [], "What's Next") ?></span>
                 </div>
                 <div class="aps-cp-card-body">
                     <ol class="list-unstyled mb-0">
                         <li class="mb-3 d-flex">
                             <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" style="width:24px;height:24px;line-height:24px;">1</span>
                             <div>
-                                <strong>Admin Confirmation</strong>
-                                <small class="d-block text-muted">Our team will review and confirm your booking within 24 hours.</small>
+                                <strong><?= __('booking_conf_step1_title', [], 'Admin Confirmation') ?></strong>
+                                <small class="d-block text-muted"><?= __('booking_conf_step1_desc', [], 'Our team will review and confirm your booking within 24 hours.') ?></small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
                             <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" style="width:24px;height:24px;line-height:24px;">2</span>
                             <div>
-                                <strong>Pay Token Amount</strong>
-                                <small class="d-block text-muted">Pay 25% token (₹<?= number_format((float)($booking['total_plot_value'] ?? 0) * 0.25) ?>) to confirm your spot.</small>
+                                <strong><?= __('booking_conf_step2_title', [], 'Pay Token Amount') ?></strong>
+                                <small class="d-block text-muted"><?= __('booking_conf_step2_prefix', [], 'Pay 25% token') ?> (₹<?= number_format((float)($booking['total_plot_value'] ?? 0) * 0.25) ?>) <?= __('booking_conf_step2_suffix', [], 'to confirm your spot.') ?></small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
                             <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" style="width:24px;height:24px;line-height:24px;">3</span>
                             <div>
-                                <strong>Sign Agreement</strong>
-                                <small class="d-block text-muted">Visit our office or complete online agreement signing.</small>
+                                <strong><?= __('booking_conf_step3_title', [], 'Sign Agreement') ?></strong>
+                                <small class="d-block text-muted"><?= __('booking_conf_step3_desc', [], 'Visit our office or complete online agreement signing.') ?></small>
                             </div>
                         </li>
                         <li class="mb-3 d-flex">
                             <span class="badge bg-primary rounded-circle me-2 flex-shrink-0" style="width:24px;height:24px;line-height:24px;">4</span>
                             <div>
-                                <strong>Registration</strong>
-                                <small class="d-block text-muted">Complete registration at the Sub-Registrar office.</small>
+                                <strong><?= __('booking_conf_step4_title', [], 'Registration') ?></strong>
+                                <small class="d-block text-muted"><?= __('booking_conf_step4_desc', [], 'Complete registration at the Sub-Registrar office.') ?></small>
                             </div>
                         </li>
                     </ol>
@@ -203,14 +204,14 @@ foreach ($statusSteps as $i => $step) {
             <div class="aps-cp-card mb-4">
                 <div class="aps-cp-card-body d-grid gap-2">
                     <a href="<?= $baseUrl ?>/user/dashboard" class="btn btn-primary">
-                        <i class="fas fa-tachometer-alt me-1"></i>My Dashboard
+                        <i class="fas fa-tachometer-alt me-1"></i><?= __('booking_conf_my_dashboard', [], 'My Dashboard') ?>
                     </a>
                     <a href="<?= $baseUrl ?>/plots/browse" class="btn btn-outline-primary">
-                        <i class="fas fa-search me-1"></i>Browse More Plots
+                        <i class="fas fa-search me-1"></i><?= __('booking_conf_browse', [], 'Browse More Plots') ?>
                     </a>
                     <?php if (!empty($booking['plot_number'])): ?>
                     <a href="<?= $baseUrl ?>/plots/<?= $booking['plot_id'] ?? 0 ?>/detail" class="btn btn-outline-secondary">
-                        <i class="fas fa-eye me-1"></i>View Plot Detail
+                        <i class="fas fa-eye me-1"></i><?= __('booking_conf_view_detail', [], 'View Plot Detail') ?>
                     </a>
                     <?php endif; ?>
                 </div>
@@ -220,8 +221,8 @@ foreach ($statusSteps as $i => $step) {
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
                     <i class="fas fa-headset fa-2x text-primary mb-2"></i>
-                    <h6 class="fw-bold">Need Help?</h6>
-                    <p class="small text-muted mb-2">Our team is here to assist you.</p>
+                    <h6 class="fw-bold"><?= __('booking_conf_need_help', [], 'Need Help?') ?></h6>
+                    <p class="small text-muted mb-2"><?= __('booking_conf_help_desc', [], 'Our team is here to assist you.') ?></p>
                     <a href="tel:+919277121112" class="btn btn-sm btn-outline-primary">
                         <i class="fas fa-phone me-1"></i>+91 92771 21112
                     </a>

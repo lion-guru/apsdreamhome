@@ -280,7 +280,7 @@ $base = BASE_URL;
         }
     </style>
     <a href="<?php echo $base; ?>/" class="home-link">
-        <i class="fa-solid fa-arrow-left"></i> Back to Home
+        <i class="fa-solid fa-arrow-left"></i> <?php echo __('auth_back_to_home', 'Back to Home'); ?>
     </a>
 
     <div class="register-card">
@@ -288,13 +288,13 @@ $base = BASE_URL;
             <div class="brand-icon">
                 <i class="fa-solid fa-house-chimney-user"></i>
             </div>
-            <h2 class="brand-title">APS Dream Home</h2>
-            <p class="brand-subtitle">Agent Registration</p>
+            <h2 class="brand-title"><?php echo __('auth_aps_dream_home', 'APS Dream Home'); ?></h2>
+            <p class="brand-subtitle"><?php echo __('auth_agent_registration_title', 'Agent Registration'); ?></p>
         </div>
 
         <?php if (!empty($errors)): ?>
             <div class="error-box">
-                <div class="error-title"><i class="fa-solid fa-circle-exclamation me-1"></i>Please fix the following errors:</div>
+                <div class="error-title"><i class="fa-solid fa-circle-exclamation me-1"></i><?php echo __('auth_fix_errors', 'Please fix the following errors:'); ?></div>
                 <ul>
                     <?php foreach ($errors as $error): ?>
                         <li><?php echo htmlspecialchars($error); ?></li>
@@ -306,83 +306,83 @@ $base = BASE_URL;
         <form method="POST" action="<?php echo $base; ?>/agent/register" novalidate>
             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? ''; ?>">
 
-            <div class="section-label"><i class="fa-solid fa-user"></i> Personal Details</div>
+            <div class="section-label"><i class="fa-solid fa-user"></i> <?php echo __('auth_personal_details', 'Personal Details'); ?></div>
 
             <div class="input-group-custom">
                 <i class="fa-solid fa-user-pen icon-top"></i>
-                <label class="form-label-custom">Full Name</label>
-                <input type="text" class="form-control" name="full_name" placeholder="Enter your full name" value="<?php echo htmlspecialchars($old['full_name'] ?? ''); ?>" required>
+                <label class="form-label-custom"><?php echo __('auth_full_name', 'Full Name'); ?></label>
+                <input type="text" class="form-control" name="full_name" placeholder="<?php echo __('auth_enter_full_name', 'Enter your full name'); ?>" value="<?php echo htmlspecialchars($old['full_name'] ?? ''); ?>" required>
             </div>
 
             <div class="row">
                 <div class="col-md-6">
                     <div class="input-group-custom">
                         <i class="fa-solid fa-envelope icon-top"></i>
-                        <label class="form-label-custom">Email Address</label>
-                        <input type="email" class="form-control" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required>
+                        <label class="form-label-custom"><?php echo __('auth_email_address', 'Email Address'); ?></label>
+                        <input type="email" class="form-control" name="email" placeholder="<?php echo __('auth_email_ph', 'you@example.com'); ?>" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="input-group-custom">
                         <i class="fa-solid fa-phone icon-top"></i>
-                        <label class="form-label-custom">Phone Number</label>
-                        <input type="tel" class="form-control" name="phone" placeholder="10-digit phone number" pattern="[0-9]{10}" maxlength="10" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" required>
+                        <label class="form-label-custom"><?php echo __('auth_phone_number', 'Phone Number'); ?></label>
+                        <input type="tel" class="form-control" name="phone" placeholder="<?php echo __('auth_10digit_phone', '10-digit phone number'); ?>" pattern="[0-9]{10}" maxlength="10" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" required>
                     </div>
                 </div>
             </div>
 
-            <div class="section-label"><i class="fa-solid fa-lock"></i> Security</div>
+            <div class="section-label"><i class="fa-solid fa-lock"></i> <?php echo __('auth_security', 'Security'); ?></div>
 
             <div class="row">
                 <div class="col-md-6">
                     <div class="input-group-custom">
                         <i class="fa-solid fa-key icon-top"></i>
-                        <label class="form-label-custom">Password</label>
-                        <input type="password" class="form-control" name="password" placeholder="Create a password" required>
+                        <label class="form-label-custom"><?php echo __('auth_password', 'Password'); ?></label>
+                        <input type="password" class="form-control" name="password" placeholder="<?php echo __('auth_create_a_password', 'Create a password'); ?>" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="input-group-custom">
                         <i class="fa-solid fa-shield-halved icon-top"></i>
-                        <label class="form-label-custom">Confirm Password</label>
-                        <input type="password" class="form-control" name="confirm_password" placeholder="Re-enter password" required>
+                        <label class="form-label-custom"><?php echo __('auth_confirm_password', 'Confirm Password'); ?></label>
+                        <input type="password" class="form-control" name="confirm_password" placeholder="<?php echo __('auth_reenter_password', 'Re-enter password'); ?>" required>
                     </div>
                 </div>
             </div>
 
-            <div class="section-label"><i class="fa-solid fa-briefcase"></i> Professional Info</div>
+            <div class="section-label"><i class="fa-solid fa-briefcase"></i> <?php echo __('auth_professional_info', 'Professional Info'); ?></div>
 
             <div class="input-group-custom">
                 <i class="fa-solid fa-clock-rotate-left icon-top"></i>
-                <label class="form-label-custom">Experience</label>
+                <label class="form-label-custom"><?php echo __('auth_experience', 'Experience'); ?></label>
                 <select class="form-select" name="experience" required>
-                    <option value="" disabled selected>Select your experience</option>
-                    <option value="fresher" <?php echo (($old['experience'] ?? '') === 'fresher') ? 'selected' : ''; ?>>Fresher</option>
-                    <option value="1-2" <?php echo (($old['experience'] ?? '') === '1-2') ? 'selected' : ''; ?>>1-2 years</option>
-                    <option value="3-5" <?php echo (($old['experience'] ?? '') === '3-5') ? 'selected' : ''; ?>>3-5 years</option>
-                    <option value="5+" <?php echo (($old['experience'] ?? '') === '5+') ? 'selected' : ''; ?>>5+ years</option>
+                    <option value="" disabled selected><?php echo __('auth_select_experience', 'Select your experience'); ?></option>
+                    <option value="fresher" <?php echo (($old['experience'] ?? '') === 'fresher') ? 'selected' : ''; ?>><?php echo __('auth_fresher', 'Fresher'); ?></option>
+                    <option value="1-2" <?php echo (($old['experience'] ?? '') === '1-2') ? 'selected' : ''; ?>><?php echo __('auth_exp_1_2', '1-2 years'); ?></option>
+                    <option value="3-5" <?php echo (($old['experience'] ?? '') === '3-5') ? 'selected' : ''; ?>><?php echo __('auth_exp_3_5', '3-5 years'); ?></option>
+                    <option value="5+" <?php echo (($old['experience'] ?? '') === '5+') ? 'selected' : ''; ?>><?php echo __('auth_exp_5_plus', '5+ years'); ?></option>
                 </select>
             </div>
 
             <div class="input-group-custom">
                 <i class="fa-solid fa-ticket icon-top"></i>
-                <label class="form-label-custom">Referral Code <span class="required-badge">*</span></label>
-                <input type="text" class="form-control" name="referral_code" placeholder="Enter referral code" required value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>">
+                <label class="form-label-custom"><?php echo __('auth_referral_code', 'Referral Code'); ?> <span class="required-badge">*</span></label>
+                <input type="text" class="form-control" name="referral_code" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>" required value="<?php echo htmlspecialchars($old['referral_code'] ?? ''); ?>">
             </div>
 
             <div class="terms-text text-center mb-3">
-                By registering, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                <?php echo __('auth_terms_prefix', 'By registering, you agree to our'); ?> <a href="#"><?php echo __('auth_terms', 'Terms of Service'); ?></a> and <a href="#"><?php echo __('auth_privacy_policy', 'Privacy Policy'); ?></a>.
             </div>
 
             <button type="submit" class="btn btn-register">
-                <i class="fa-solid fa-user-plus me-2"></i>Create Account
+                <i class="fa-solid fa-user-plus me-2"></i><?php echo __('auth_create_account', 'Create Account'); ?>
             </button>
         </form>
 
         <div class="divider-line"></div>
 
         <p class="text-center mb-0" style="font-size: 0.9rem; color: #64748b;">
-            Already have an account? <a href="<?php echo $base; ?>/agent/login" class="login-link">Login here</a>
+            <?php echo __('auth_already_have_account', 'Already have an account?'); ?> <a href="<?php echo $base; ?>/agent/login" class="login-link"><?php echo __('auth_login_here', 'Login here'); ?></a>
         </p>
     </div>
 

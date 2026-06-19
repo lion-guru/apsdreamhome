@@ -34,17 +34,17 @@
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <span class="badge bg-warning text-dark mb-3 px-3 py-2"><i class="fas fa-hard-hat me-1"></i> ISO Certified Construction Company</span>
-                <h1 class="display-4 fw-bold mb-4">Building Your Dreams<br><span class="text-warning">With Quality & Trust</span></h1>
-                <p class="lead mb-4 fs-5 opacity-90">APS Dream Home provides end-to-end construction and project contracting services. From residential homes to commercial complexes, we deliver quality, on time, and on budget.</p>
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2"><i class="fas fa-hard-hat me-1"></i> <?= __('const_iso_badge') ?></span>
+                <h1 class="display-4 fw-bold mb-4"><?= __('const_hero_title') ?><br><span class="text-warning"><?= __('const_hero_subtitle') ?></span></h1>
+                <p class="lead mb-4 fs-5 opacity-90"><?= __('const_hero_desc') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
-                    <a href="#contact-form" class="btn btn-warning btn-lg px-4"><i class="fas fa-building me-2"></i>Get a Free Quote</a>
-                    <a href="#services" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-list me-2"></i>Our Services</a>
+                    <a href="#contact-form" class="btn btn-warning btn-lg px-4"><i class="fas fa-building me-2"></i><?= __('const_get_quote') ?></a>
+                    <a href="#services" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-list me-2"></i><?= __('const_our_services') ?></a>
                 </div>
                 <div class="row mt-5 g-3">
-                    <div class="col-4"><h3 class="text-warning mb-0">50+</h3><small>Projects Completed</small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">15+</h3><small>Years Experience</small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">1000+</h3><small>Happy Clients</small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">50+</h3><small><?= __('const_projects_completed') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">15+</h3><small><?= __('const_years_exp') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">1000+</h3><small><?= __('const_happy_clients') ?></small></div>
                 </div>
             </div>
             <div class="col-lg-5 d-none d-lg-block">
@@ -62,8 +62,8 @@
 <nav class="bg-white border-bottom shadow-sm" aria-label="breadcrumb">
     <div class="container py-2">
         <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-            <li class="breadcrumb-item active">Construction Services</li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('colony_breadcrumb_home') ?></a></li>
+            <li class="breadcrumb-item active"><?= __('const_nav') ?></li>
         </ol>
     </div>
 </nav>
@@ -71,86 +71,86 @@
 <section id="services" class="py-5 bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge bg-primary mb-2 px-3 py-2">WHAT WE OFFER</span>
-            <h2 class="display-5 fw-bold">Construction & Contracting Services</h2>
-            <p class="lead text-muted">Complete construction solutions for residential, commercial, and industrial projects</p>
+            <span class="badge bg-primary mb-2 px-3 py-2"><?= __('const_services_badge') ?></span>
+            <h2 class="display-5 fw-bold"><?= __('const_services_heading') ?></h2>
+            <p class="lead text-muted"><?= __('const_services_desc') ?></p>
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
                 <div class="service-card card p-4">
                     <div class="card-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-home"></i></div>
-                    <h4>Residential Construction</h4>
-                    <p class="text-muted">Custom homes, villas, apartments, and residential complexes built with quality materials and modern techniques.</p>
+                    <h4><?= __('const_residential') ?></h4>
+                    <p class="text-muted"><?= __('const_residential_desc') ?></p>
                     <ul class="list-unstyled text-muted small">
-                        <li><i class="fas fa-check text-success me-1"></i> Custom Home Building</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Villa Construction</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Apartment Complexes</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Renovation & Extension</li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_res_custom') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_res_villa') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_res_apartment') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_res_renovation') ?></li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="service-card card p-4">
                     <div class="card-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-building"></i></div>
-                    <h4>Commercial Construction</h4>
-                    <p class="text-muted">Office buildings, retail spaces, showrooms, and commercial complexes designed for functionality.</p>
+                    <h4><?= __('const_commercial') ?></h4>
+                    <p class="text-muted"><?= __('const_commercial_desc') ?></p>
                     <ul class="list-unstyled text-muted small">
-                        <li><i class="fas fa-check text-success me-1"></i> Office Buildings</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Retail & Showrooms</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Shopping Complexes</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Industrial Sheds</li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_com_office') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_com_retail') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_com_shopping') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_com_industrial') ?></li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="service-card card p-4">
                     <div class="card-icon bg-success bg-opacity-10 text-success"><i class="fas fa-drafting-compass"></i></div>
-                    <h4>Architectural Design</h4>
-                    <p class="text-muted">Professional architectural plans, 3D elevations, structural designs, and Vastu-compliant layouts.</p>
+                    <h4><?= __('const_architectural') ?></h4>
+                    <p class="text-muted"><?= __('const_architectural_desc') ?></p>
                     <ul class="list-unstyled text-muted small">
-                        <li><i class="fas fa-check text-success me-1"></i> Architectural Plans</li>
-                        <li><i class="fas fa-check text-success me-1"></i> 3D Elevations</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Structural Design</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Vastu Consultation</li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_arch_plans') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_arch_3d') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_arch_structural') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_arch_vastu') ?></li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="service-card card p-4">
                     <div class="card-icon bg-danger bg-opacity-10 text-danger"><i class="fas fa-road"></i></div>
-                    <h4>Infrastructure Development</h4>
-                    <p class="text-muted">Road construction, drainage systems, sewage lines, water supply, and community infrastructure.</p>
+                    <h4><?= __('const_infrastructure') ?></h4>
+                    <p class="text-muted"><?= __('const_infrastructure_desc') ?></p>
                     <ul class="list-unstyled text-muted small">
-                        <li><i class="fas fa-check text-success me-1"></i> Road Construction</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Drainage Systems</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Water Supply</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Community Facilities</li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_infra_road') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_infra_drainage') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_infra_water') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_infra_community') ?></li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="service-card card p-4">
                     <div class="card-icon bg-info bg-opacity-10 text-info"><i class="fas fa-tools"></i></div>
-                    <h4>Renovation & Repair</h4>
-                    <p class="text-muted">Complete renovation services for homes, offices, and commercial spaces including structural repairs.</p>
+                    <h4><?= __('const_renovation') ?></h4>
+                    <p class="text-muted"><?= __('const_renovation_desc') ?></p>
                     <ul class="list-unstyled text-muted small">
-                        <li><i class="fas fa-check text-success me-1"></i> Home Renovation</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Office Remodeling</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Structural Repairs</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Waterproofing</li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_reno_home') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_reno_office') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_reno_structural') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_reno_waterproof') ?></li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="service-card card p-4">
                     <div class="card-icon bg-secondary bg-opacity-10 text-secondary"><i class="fas fa-handshake"></i></div>
-                    <h4>Turnkey Projects</h4>
-                    <p class="text-muted">End-to-end project management from concept to handover. We handle everything.</p>
+                    <h4><?= __('const_turnkey') ?></h4>
+                    <p class="text-muted"><?= __('const_turnkey_desc') ?></p>
                     <ul class="list-unstyled text-muted small">
-                        <li><i class="fas fa-check text-success me-1"></i> End-to-End Management</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Material Procurement</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Labour Management</li>
-                        <li><i class="fas fa-check text-success me-1"></i> Quality Assurance</li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_turnkey_management') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_turnkey_material') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_turnkey_labour') ?></li>
+                        <li><i class="fas fa-check text-success me-1"></i> <?= __('const_turnkey_quality') ?></li>
                     </ul>
                 </div>
             </div>
@@ -161,14 +161,14 @@
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge bg-primary mb-2 px-3 py-2">HOW IT WORKS</span>
-            <h2 class="display-5 fw-bold">Our Construction Process</h2>
+            <span class="badge bg-primary mb-2 px-3 py-2"><?= __('const_process_badge') ?></span>
+            <h2 class="display-5 fw-bold"><?= __('const_process_heading') ?></h2>
         </div>
         <div class="row">
-            <div class="col-md-3"><div class="process-step"><div class="step-num">1</div><h5>Consultation</h5><p class="text-muted small">Free site visit and requirement discussion</p></div></div>
-            <div class="col-md-3"><div class="process-step"><div class="step-num">2</div><h5>Design & Estimate</h5><p class="text-muted small">Detailed plans with cost estimation</p></div></div>
-            <div class="col-md-3"><div class="process-step"><div class="step-num">3</div><h5>Construction</h5><p class="text-muted small">Quality execution with regular updates</p></div></div>
-            <div class="col-md-3"><div class="process-step"><div class="step-num">4</div><h5>Handover</h5><p class="text-muted small">Final inspection and keys delivered</p></div></div>
+            <div class="col-md-3"><div class="process-step"><div class="step-num">1</div><h5><?= __('const_step1_title') ?></h5><p class="text-muted small"><?= __('const_step1_desc') ?></p></div></div>
+            <div class="col-md-3"><div class="process-step"><div class="step-num">2</div><h5><?= __('const_step2_title') ?></h5><p class="text-muted small"><?= __('const_step2_desc') ?></p></div></div>
+            <div class="col-md-3"><div class="process-step"><div class="step-num">3</div><h5><?= __('const_step3_title') ?></h5><p class="text-muted small"><?= __('const_step3_desc') ?></p></div></div>
+            <div class="col-md-3"><div class="process-step"><div class="step-num">4</div><h5><?= __('const_step4_title') ?></h5><p class="text-muted small"><?= __('const_step4_desc') ?></p></div></div>
         </div>
     </div>
 </section>
@@ -176,9 +176,9 @@
 <section id="projects" class="py-5 bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge bg-primary mb-2 px-3 py-2">OUR WORK</span>
-            <h2 class="display-5 fw-bold">Recent Projects</h2>
-            <p class="lead text-muted">Take a look at some of our completed and ongoing construction projects</p>
+            <span class="badge bg-primary mb-2 px-3 py-2"><?= __('const_our_work') ?></span>
+            <h2 class="display-5 fw-bold"><?= __('const_recent_projects') ?></h2>
+            <p class="lead text-muted"><?= __('const_recent_projects_desc') ?></p>
         </div>
         <div class="row g-4">
             <?php if (!empty($projects)): ?>
@@ -201,8 +201,8 @@
             <?php else: ?>
                 <div class="col-12 text-center py-5">
                     <i class="fas fa-hard-hat fa-4x text-muted mb-3"></i>
-                    <h4 class="text-muted">Projects Gallery Coming Soon</h4>
-                    <p class="text-muted">We are currently updating our project portfolio. Contact us for information about our completed projects.</p>
+                    <h4 class="text-muted"><?= __('const_coming_soon') ?></h4>
+                    <p class="text-muted"><?= __('const_coming_soon_desc') ?></p>
                 </div>
             <?php endif; ?>
         </div>
@@ -214,42 +214,42 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="text-center mb-5">
-                    <span class="badge bg-primary mb-2 px-3 py-2">GET STARTED</span>
-                    <h2 class="display-5 fw-bold">Request a Free Quote</h2>
-                    <p class="lead text-muted">Tell us about your construction project and we'll get back to you within 24 hours</p>
+                    <span class="badge bg-primary mb-2 px-3 py-2"><?= __('const_get_started') ?></span>
+                    <h2 class="display-5 fw-bold"><?= __('const_quote_heading') ?></h2>
+                    <p class="lead text-muted"><?= __('const_quote_desc') ?></p>
                 </div>
                 <div class="card border-0 shadow-lg">
                     <div class="card-body p-5">
                         <form action="<?= BASE_URL ?>/construction-services/inquiry" method="POST">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row g-3">
-                                <div class="col-md-6"><label class="form-label fw-medium">Your Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control form-control-lg" required></div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Phone Number <span class="text-danger">*</span></label><input type="tel" name="phone" class="form-control form-control-lg" required></div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Email Address</label><input type="email" name="email" class="form-control form-control-lg"></div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Project Type</label>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('contact_form_name') ?> <span class="text-danger">*</span></label><input type="text" name="name" class="form-control form-control-lg" required></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('contact_form_phone') ?> <span class="text-danger">*</span></label><input type="tel" name="phone" class="form-control form-control-lg" required></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('contact_form_email') ?></label><input type="email" name="email" class="form-control form-control-lg"></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_project_type') ?></label>
                                     <select name="project_type" class="form-select form-select-lg">
-                                        <option value="">Select...</option>
-                                        <option value="residential">Residential House</option>
-                                        <option value="commercial">Commercial Building</option>
-                                        <option value="renovation">Renovation / Repair</option>
-                                        <option value="infrastructure">Infrastructure</option>
-                                        <option value="turnkey">Turnkey Project</option>
+                                        <option value=""><?= __('const_select') ?></option>
+                                        <option value="residential"><?= __('const_type_residential') ?></option>
+                                        <option value="commercial"><?= __('const_type_commercial') ?></option>
+                                        <option value="renovation"><?= __('const_type_renovation') ?></option>
+                                        <option value="infrastructure"><?= __('const_type_infrastructure') ?></option>
+                                        <option value="turnkey"><?= __('const_type_turnkey') ?></option>
                                     </select>
                                 </div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Budget Range (₹)</label><input type="number" name="budget" class="form-control form-control-lg" placeholder="Approximate budget"></div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Location</label><input type="text" name="location" class="form-control form-control-lg" placeholder="Project location"></div>
-                                <div class="col-12"><label class="form-label fw-medium">Project Details</label><textarea name="message" rows="4" class="form-control" placeholder="Describe your project requirements..."></textarea></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_budget_range') ?></label><input type="number" name="budget" class="form-control form-control-lg" placeholder="<?= __('const_budget_placeholder') ?>"></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_location') ?></label><input type="text" name="location" class="form-control form-control-lg" placeholder="<?= __('const_location_placeholder') ?>"></div>
+                                <div class="col-12"><label class="form-label fw-medium"><?= __('const_project_details') ?></label><textarea name="message" rows="4" class="form-control" placeholder="<?= __('const_project_details_placeholder') ?>"></textarea></div>
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fas fa-paper-plane me-2"></i>Submit Inquiry</button>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fas fa-paper-plane me-2"></i><?= __('const_submit_inquiry') ?></button>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="row mt-4 g-3 text-center">
-                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-phone-alt text-primary fa-2x mb-2"></i><h6>Call Us</h6><p class="mb-0 text-muted"><?= $phoneDisplay ?></p></div></div>
-                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-envelope text-primary fa-2x mb-2"></i><h6>Email</h6><p class="mb-0 text-muted">info@apsdreamhome.com</p></div></div>
-                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-map-marker-alt text-primary fa-2x mb-2"></i><h6>Office</h6><p class="mb-0 text-muted">Gorakhpur, UP</p></div></div>
+                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-phone-alt text-primary fa-2x mb-2"></i><h6><?= __('const_call_us') ?></h6><p class="mb-0 text-muted"><?= $phoneDisplay ?></p></div></div>
+                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-envelope text-primary fa-2x mb-2"></i><h6><?= __('const_email') ?></h6><p class="mb-0 text-muted">info@apsdreamhome.com</p></div></div>
+                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-map-marker-alt text-primary fa-2x mb-2"></i><h6><?= __('const_office') ?></h6><p class="mb-0 text-muted">Gorakhpur, UP</p></div></div>
                 </div>
             </div>
         </div>
@@ -260,11 +260,11 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8 text-md-start">
-                <h4 class="mb-1">Ready to Build Your Dream Project?</h4>
-                <p class="mb-0 opacity-75">Get a free consultation and detailed estimate with no obligation</p>
+                <h4 class="mb-1"><?= __('const_cta_title') ?></h4>
+                <p class="mb-0 opacity-75"><?= __('const_cta_desc') ?></p>
             </div>
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg px-4"><i class="fas fa-phone me-2"></i>Call Now</a>
+                <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg px-4"><i class="fas fa-phone me-2"></i><?= __('const_call_now') ?></a>
             </div>
         </div>
     </div>

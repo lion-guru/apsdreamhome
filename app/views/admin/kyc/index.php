@@ -1,9 +1,53 @@
-<?php $stats = $stats ?? ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0]; $currentFilter = $currentFilter ?? ''; ?>
+<?php
+$stats = $stats ?? ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0];
+$currentFilter = $currentFilter ?? '';
+$nsdlConfigured = $nsdlConfigured ?? false;
+$nsdlTestMode = $nsdlTestMode ?? true;
+$uidaiConfigured = $uidaiConfigured ?? false;
+$uidaiTestMode = $uidaiTestMode ?? true;
+?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0"><i class="fas fa-id-card me-2"></i>KYC Requests</h1>
         <div>
             <a href="<?= BASE_URL ?>/admin/kyc?status=pending" class="btn btn-outline-warning"><i class="fas fa-clock me-1"></i>Pending (<?= $stats['pending'] ?>)</a>
+        </div>
+    </div>
+
+    <div class="row g-2 mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 <?= $nsdlConfigured ? ($nsdlTestMode ? 'border-warning' : 'border-success') : 'border-secondary' ?>">
+                <div class="card-body py-2 px-3 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-shield-alt <?= $nsdlConfigured ? 'text-success' : 'text-secondary' ?>"></i>
+                        <span class="fw-semibold">NSDL PAN Verification</span>
+                    </div>
+                    <?php if (!$nsdlConfigured): ?>
+                        <span class="badge bg-secondary">Not Configured</span>
+                    <?php elseif ($nsdlTestMode): ?>
+                        <span class="badge bg-warning text-dark">TEST MODE</span>
+                    <?php else: ?>
+                        <span class="badge bg-success">LIVE</span>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 <?= $uidaiConfigured ? ($uidaiTestMode ? 'border-warning' : 'border-success') : 'border-secondary' ?>">
+                <div class="card-body py-2 px-3 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-shield-alt <?= $uidaiConfigured ? 'text-success' : 'text-secondary' ?>"></i>
+                        <span class="fw-semibold">UIDAI Aadhaar Verification</span>
+                    </div>
+                    <?php if (!$uidaiConfigured): ?>
+                        <span class="badge bg-secondary">Not Configured</span>
+                    <?php elseif ($uidaiTestMode): ?>
+                        <span class="badge bg-warning text-dark">TEST MODE</span>
+                    <?php else: ?>
+                        <span class="badge bg-success">LIVE</span>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
 

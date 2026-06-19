@@ -1,17 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:mime_type/mime_type.dart';
 
+import '../../core/services/api_service.dart';
 import '../../core/utils/logger.dart';
 
 /// Google Drive Integration Service
 /// Multi-drive support: Admin Drive, Colony Drives, Department Drives
 class GoogleDriveService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final ApiService _api;
   
   // Google Drive API Credentials
   static const String _clientId = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
@@ -26,6 +25,8 @@ class GoogleDriveService {
   
   late drive.DriveApi _driveApi;
   AuthClient? _authClient;
+
+  GoogleDriveService({ApiService? api}) : _api = api ?? ApiService();
 
   // ==================== AUTHENTICATION ====================
   
@@ -73,7 +74,6 @@ class GoogleDriveService {
         ..properties = metadata ?? {};
       
       // Upload file
-      final mimeType = mime(fileName) ?? 'application/octet-stream';
       final media = drive.Media(file.openRead(), file.lengthSync());
       
       final result = await _driveApi.files.create(
@@ -186,9 +186,6 @@ class GoogleDriveService {
     required String localFileName,
   }) async {
     try {
-      // Get file metadata
-      final file = await _driveApi.files.get(driveFileId) as drive.File;
-      
       // Download
       final media = await _driveApi.files.get(
         driveFileId,
@@ -428,14 +425,22 @@ class GoogleDriveService {
     required String relatedId,
     required DriveFolder folder,
   }) async {
-    await _firestore.collection('drive_documents').add({
-      'driveFileId': driveFileId,
-      'fileName': fileName,
-      'documentType': documentType,
-      'relatedId': relatedId,
-      'folder': folder.name,
-      'uploadedAt': FieldValue.serverTimestamp(),
-    });
+    try {
+      await _api.request(
+        method: 'POST',
+        endpoint: 'documents',
+        data: {
+          'drive_file_id': driveFileId,
+          'file_name': fileName,
+          'document_type': documentType,
+          'related_id': relatedId,
+          'folder': folder.name,
+          'uploaded_at': DateTime.now().toIso8601String(),
+        },
+      );
+    } catch (e) {
+      AppLogger.error('Error saving document reference', e);
+    }
   }
   
   Future<void> _logDriveActivity({
@@ -444,32 +449,45 @@ class GoogleDriveService {
     required String fileName,
     required DriveFolder folder,
   }) async {
-    await _firestore.collection('drive_activity_logs').add({
-      'action': action,
-      'fileId': fileId,
-      'fileName': fileName,
-      'folder': folder.name,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+    try {
+      await _api.request(
+        method: 'POST',
+        endpoint: 'documents/activity',
+        data: {
+          'action': action,
+          'file_id': fileId,
+          'file_name': fileName,
+          'folder': folder.name,
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
+    } catch (e) {
+      AppLogger.error('Error logging drive activity', e);
+    }
   }
   
   Future<Map<String, dynamic>> _exportFirestoreData() async {
     final backup = <String, dynamic>{};
     
-    final collections = [
-      'users',
-      'bookings',
-      'payments',
-      'colonies',
-      'plots',
-    ];
+    final endpoints = {
+      'users': 'profile',
+      'bookings': 'properties',
+      'payments': 'mlm/payouts',
+      'colonies': 'properties',
+      'plots': 'properties',
+    };
     
-    for (final collection in collections) {
-      final snapshot = await _firestore.collection(collection).get();
-      backup[collection] = snapshot.docs.map((doc) => {
-        'id': doc.id,
-        'data': doc.data(),
-      }).toList();
+    for (final entry in endpoints.entries) {
+      try {
+        final result = await _api.request(
+          method: 'GET',
+          endpoint: entry.value,
+        );
+        backup[entry.key] = result['data'] ?? result;
+      } catch (e) {
+        AppLogger.error('Error exporting ${entry.key}', e);
+        backup[entry.key] = [];
+      }
     }
     
     return backup;

@@ -181,7 +181,20 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
         final property = _sampleProperties[index];
         return _PropertyCard(
           property: property,
-          onTap: () => context.push('/property/${property['id']}'),
+          onTap: () => context.push(
+            '/property-detail/${property['id']}',
+            extra: {
+              'title': property['title'] as String,
+              'price': (property['price'] as num).toDouble(),
+              'location': property['location'] as String,
+              'area': (property['area'] as num).toDouble(),
+              'type': property['type'] as String,
+              'description': property['description'] as String,
+              'image': (property['images'] as List).isNotEmpty
+                  ? property['images'][0] as String
+                  : '',
+            },
+          ),
         );
       },
     );

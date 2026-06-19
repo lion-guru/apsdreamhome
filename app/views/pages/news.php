@@ -3,8 +3,8 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
-                <h1 class="display-4 fw-bold mb-4">Latest News</h1>
-                <p class="lead mb-4">Stay informed with the latest updates, announcements, and achievements from APS Dream Home</p>
+                <h1 class="display-4 fw-bold mb-4"><?= __('news_hero_title') ?></h1>
+                <p class="lead mb-4"><?= __('news_hero_subtitle') ?></p>
             </div>
         </div>
     </div>
@@ -24,8 +24,8 @@
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">News</li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('breadcrumb_home') ?></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><?= __('nav_news') ?></li>
                 <?php endif; ?>
             </ol>
         </nav>
@@ -39,7 +39,7 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="news-filter text-center">
-                    <a href="<?= BASE_URL ?>/news" class="btn btn-primary me-2 mb-2">All News</a>
+                    <a href="<?= BASE_URL ?>/news" class="btn btn-primary me-2 mb-2"><?= __('news_all') ?></a>
                     <?php foreach ($categories as $cat): ?>
                         <a href="<?= BASE_URL ?>/news?category=<?= urlencode($cat) ?>"
                             class="btn btn-outline-primary me-2 mb-2">
@@ -56,8 +56,8 @@
                 <div class="col-12 text-center py-5">
                     <div class="empty-state">
                         <i class="far fa-newspaper fa-3x text-muted mb-3"></i>
-                        <h3>No news found</h3>
-                        <p class="text-muted">There are no news items to display at this time.</p>
+                        <h3><?= __('news_not_found') ?></h3>
+                        <p class="text-muted"><?= __('news_empty_desc') ?></p>
                     </div>
                 </div>
             <?php else: ?>
@@ -102,14 +102,14 @@
 
         <!-- Newsletter CTA -->
         <div class="newsletter-cta text-center mt-5 py-5 bg-light rounded-3">
-            <h3>Stay Updated</h3>
-            <p class="text-muted mb-4">Subscribe to our newsletter for the latest real estate news and market insights</p>
+            <h3><?= __('news_subscribe_title') ?></h3>
+            <p class="text-muted mb-4"><?= __('news_subscribe_desc') ?></p>
             <form class="newsletter-form" id="newsletterForm">
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <div class="input-group">
-                            <input type="email" class="form-control" placeholder="Enter your email" required>
-                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                            <input type="email" class="form-control" placeholder="<?= __('newsletter_email_placeholder') ?>" required>
+                            <button class="btn btn-primary" type="submit"><?= __('newsletter_subscribe_btn') ?></button>
                         </div>
                     </div>
                 </div>

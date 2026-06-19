@@ -31,25 +31,25 @@
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <span class="badge bg-warning text-dark mb-3 px-3 py-2"><i class="fas fa-palette me-1"></i> Premium Interior Design</span>
-                <h1 class="display-4 fw-bold mb-4">Transform Your Space<br><span class="text-warning">Into a Masterpiece</span></h1>
-                <p class="lead mb-4 fs-5 opacity-90">Professional interior design services in Gorakhpur, Lucknow, Varanasi & Kushinagar. We turn your dream home into reality with innovative designs and quality execution.</p>
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2"><i class="fas fa-palette me-1"></i> <?= __('id_hero_badge') ?></span>
+                <h1 class="display-4 fw-bold mb-4"><?= __('id_hero_title') ?><br><span class="text-warning"><?= __('id_hero_title_span') ?></span></h1>
+                <p class="lead mb-4 fs-5 opacity-90"><?= __('id_hero_desc') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
-                    <a href="#contact-form" class="btn btn-warning btn-lg px-4"><i class="fas fa-pen-fancy me-2"></i>Free Consultation</a>
-                    <a href="#services" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-list me-2"></i>Our Services</a>
-                    <a href="#tools" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-calculator me-2"></i>Free Tools</a>
+                    <a href="#contact-form" class="btn btn-warning btn-lg px-4"><i class="fas fa-pen-fancy me-2"></i><?= __('id_free_consultation') ?></a>
+                    <a href="#services" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-list me-2"></i><?= __('id_our_services') ?></a>
+                    <a href="#tools" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-calculator me-2"></i><?= __('id_free_tools') ?></a>
                 </div>
                 <div class="row mt-5 g-3">
-                    <div class="col-4"><h3 class="text-warning mb-0">200+</h3><small>Projects Done</small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">10+</h3><small>Designers</small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">98%</h3><small>Satisfaction</small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">200+</h3><small><?= __('id_projects_done') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">10+</h3><small><?= __('id_designers') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">98%</h3><small><?= __('id_satisfaction') ?></small></div>
                 </div>
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="position-relative">
                     <img loading="lazy" src="https://img.freepik.com/free-photo/living-room-interior-design_23-2148892625.jpg" alt="Interior Design" class="img-fluid rounded-4 shadow-lg">
                     <div class="position-absolute bottom-0 end-0 bg-white text-dark p-3 rounded-3 m-3 shadow">
-                        <i class="fas fa-star text-warning me-1"></i> Award-Winning Designs
+                        <i class="fas fa-star text-warning me-1"></i> <?= __('id_award_winning') ?>
                     </div>
                 </div>
             </div>
@@ -60,9 +60,9 @@
 <nav class="bg-white border-bottom shadow-sm" aria-label="breadcrumb">
     <div class="container py-2">
         <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/services">Services</a></li>
-            <li class="breadcrumb-item active">Interior Design</li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('id_breadcrumb_home') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/services"><?= __('id_breadcrumb_services') ?></a></li>
+            <li class="breadcrumb-item active"><?= __('id_breadcrumb_active') ?></li>
         </ol>
     </div>
 </nav>
@@ -70,9 +70,9 @@
 <section id="services" class="py-5 bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge bg-primary mb-2 px-3 py-2">WHAT WE OFFER</span>
-            <h2 class="display-5 fw-bold">Our Interior Design Services</h2>
-            <p class="lead text-muted">Comprehensive interior design solutions for every space and budget</p>
+            <span class="badge bg-primary mb-2 px-3 py-2"><?= __('id_what_we_offer') ?></span>
+            <h2 class="display-5 fw-bold"><?= __('id_services_title') ?></h2>
+            <p class="lead text-muted"><?= __('id_services_desc') ?></p>
         </div>
         <div class="row g-4">
             <?php if (!empty($services) && is_array($services)): ?>
@@ -94,16 +94,16 @@
                                     </ul>
                                 <?php endif; ?>
                             <?php endif; ?>
-                            <a href="#contact-form" class="btn btn-outline-primary mt-2">Enquire Now <i class="fas fa-arrow-right ms-1"></i></a>
+                            <a href="#contact-form" class="btn btn-outline-primary mt-2"><?= __('id_enquire_now') ?> <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12 text-center py-5">
                     <i class="fas fa-palette fa-4x text-muted mb-3"></i>
-                    <h4 class="text-muted">Contact us for interior design services</h4>
-                    <p class="text-muted mb-4">We offer residential, commercial, and modular interior design solutions</p>
-                    <a href="#contact-form" class="btn btn-primary btn-lg">Get Started</a>
+                    <h4 class="text-muted"><?= __('id_no_services_title') ?></h4>
+                    <p class="text-muted mb-4"><?= __('id_no_services_desc') ?></p>
+                    <a href="#contact-form" class="btn btn-primary btn-lg"><?= __('id_get_started') ?></a>
                 </div>
             <?php endif; ?>
         </div>
@@ -113,16 +113,16 @@
 <section id="tools" class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge bg-success mb-2 px-3 py-2">FREE TOOLS</span>
-            <h2 class="display-5 fw-bold">Interior Design Tools</h2>
-            <p class="lead text-muted">Use our free tools to plan and estimate your interior design project</p>
+            <span class="badge bg-success mb-2 px-3 py-2"><?= __('id_free_tools_badge') ?></span>
+            <h2 class="display-5 fw-bold"><?= __('id_tools_title') ?></h2>
+            <p class="lead text-muted"><?= __('id_tools_desc') ?></p>
         </div>
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
                     <i class="fas fa-calculator fa-3x text-primary mb-3"></i>
-                    <h5>Cost Estimator</h5>
-                    <p class="text-muted small mb-2">Estimate interior design costs per sq ft</p>
+                    <h5><?= __('id_cost_estimator') ?></h5>
+                    <p class="text-muted small mb-2"><?= __('id_cost_estimator_desc') ?></p>
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
@@ -147,8 +147,8 @@
             <div class="col-md-4">
                 <div class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
                     <i class="fas fa-ruler-combined fa-3x text-success mb-3"></i>
-                    <h5>Room Size Planner</h5>
-                    <p class="text-muted small mb-2">Convert and plan room dimensions</p>
+                    <h5><?= __('id_room_planner') ?></h5>
+                    <p class="text-muted small mb-2"><?= __('id_room_planner_desc') ?></p>
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
@@ -167,8 +167,8 @@
             <div class="col-md-4">
                 <div class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
                     <i class="fas fa-home fa-3x text-warning mb-3"></i>
-                    <h5>Budget Planner</h5>
-                    <p class="text-muted small mb-2">Plan your interior design budget</p>
+                    <h5><?= __('id_budget_planner') ?></h5>
+                    <p class="text-muted small mb-2"><?= __('id_budget_planner_desc') ?></p>
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
@@ -191,8 +191,8 @@
             <div class="col-md-6">
                 <div class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
                     <i class="fas fa-palette fa-2x text-purple mb-2" style="color:#6a1b9a;"></i>
-                    <h5>Room Color Palette Generator</h5>
-                    <p class="text-muted small mb-2">Generate harmonious color schemes for any room</p>
+                    <h5><?= __('id_color_palette') ?></h5>
+                    <p class="text-muted small mb-2"><?= __('id_color_palette_desc') ?></p>
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
@@ -212,8 +212,8 @@
             <div class="col-md-6">
                 <div class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
                     <i class="fas fa-couch fa-2x text-success mb-2"></i>
-                    <h5>Furniture Layout Planner</h5>
-                    <p class="text-muted small mb-2">Plan furniture placement in any room size</p>
+                    <h5><?= __('id_furniture_planner') ?></h5>
+                    <p class="text-muted small mb-2"><?= __('id_furniture_planner_desc') ?></p>
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
@@ -385,9 +385,9 @@ function planBudget() {
 <section class="py-5 bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge bg-primary mb-2 px-3 py-2">OUR WORK</span>
-            <h2 class="display-5 fw-bold">Portfolio</h2>
-            <p class="lead text-muted">Browse our recent interior design projects</p>
+            <span class="badge bg-primary mb-2 px-3 py-2"><?= __('id_portfolio_badge') ?></span>
+            <h2 class="display-5 fw-bold"><?= __('id_portfolio_title') ?></h2>
+            <p class="lead text-muted"><?= __('id_portfolio_desc') ?></p>
         </div>
         <div class="row g-3">
             <?php foreach (array_slice($portfolio, 0, 6) as $item): ?>
@@ -410,8 +410,8 @@ function planBudget() {
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="badge bg-primary mb-2 px-3 py-2">TESTIMONIALS</span>
-            <h2 class="display-5 fw-bold">What Our Clients Say</h2>
+            <span class="badge bg-primary mb-2 px-3 py-2"><?= __('id_testimonials_badge') ?></span>
+            <h2 class="display-5 fw-bold"><?= __('id_testimonials_title') ?></h2>
         </div>
         <div class="row g-4">
             <?php foreach ($testimonials as $t): ?>
@@ -435,9 +435,9 @@ function planBudget() {
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="text-center mb-5">
-                    <span class="badge bg-primary mb-2 px-3 py-2">GET STARTED</span>
-                    <h2 class="display-5 fw-bold">Book Your Free Consultation</h2>
-                    <p class="lead text-muted">Get a free design consultation and estimate. No obligation, just expert advice.</p>
+                    <span class="badge bg-primary mb-2 px-3 py-2"><?= __('id_consultation_badge') ?></span>
+                    <h2 class="display-5 fw-bold"><?= __('id_consultation_title') ?></h2>
+                    <p class="lead text-muted"><?= __('id_consultation_desc') ?></p>
                 </div>
                 <div class="card border-0 shadow-lg">
                     <div class="card-body p-5">
@@ -445,22 +445,22 @@ function planBudget() {
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="service_type" value="interior">
                             <div class="row g-3">
-                                <div class="col-md-6"><label class="form-label fw-medium">Your Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control form-control-lg" required></div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Phone Number <span class="text-danger">*</span></label><input type="tel" name="phone" class="form-control form-control-lg" required></div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Email Address</label><input type="email" name="email" class="form-control form-control-lg"></div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Property Type</label>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_name') ?> <span class="text-danger">*</span></label><input type="text" name="name" class="form-control form-control-lg" required></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_phone') ?> <span class="text-danger">*</span></label><input type="tel" name="phone" class="form-control form-control-lg" required></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_email') ?></label><input type="email" name="email" class="form-control form-control-lg"></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_property_type') ?></label>
                                     <select name="property_type" class="form-select form-select-lg">
-                                        <option value="">Select...</option>
-                                        <option value="apartment">Apartment/Flat</option>
-                                        <option value="house">Independent House</option>
-                                        <option value="villa">Villa</option>
-                                        <option value="office">Office/Commercial</option>
+                                        <option value=""><?= __('id_form_select') ?></option>
+                                        <option value="apartment"><?= __('id_form_apartment') ?></option>
+                                        <option value="house"><?= __('id_form_house') ?></option>
+                                        <option value="villa"><?= __('id_form_villa') ?></option>
+                                        <option value="office"><?= __('id_form_office') ?></option>
                                     </select>
                                 </div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Approx. Area (sq ft)</label><input type="number" name="area" class="form-control form-control-lg" placeholder="e.g. 1200"></div>
-                                <div class="col-md-6"><label class="form-label fw-medium">Budget Range (₹)</label>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_area') ?></label><input type="number" name="area" class="form-control form-control-lg" placeholder="<?= __('id_form_area_placeholder') ?>"></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_budget') ?></label>
                                     <select name="budget" class="form-select form-select-lg">
-                                        <option value="">Select range</option>
+                                        <option value=""><?= __('id_form_budget_select') ?></option>
                                         <option value="50000">Under ₹50,000</option>
                                         <option value="100000">₹50,000 - ₹1,00,000</option>
                                         <option value="200000">₹1,00,000 - ₹2,00,000</option>
@@ -468,18 +468,18 @@ function planBudget() {
                                         <option value="1000000">₹5,00,000+</option>
                                     </select>
                                 </div>
-                                <div class="col-12"><label class="form-label fw-medium">Your Requirements</label><textarea name="message" rows="3" class="form-control" placeholder="Tell us about your interior design needs..."></textarea></div>
+                                <div class="col-12"><label class="form-label fw-medium"><?= __('id_form_requirements') ?></label><textarea name="message" rows="3" class="form-control" placeholder="<?= __('id_form_requirements_placeholder') ?>"></textarea></div>
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fas fa-paper-plane me-2"></i>Get Free Consultation</button>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fas fa-paper-plane me-2"></i><?= __('id_form_submit') ?></button>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="row mt-4 g-3 text-center">
-                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-phone-alt text-primary fa-2x mb-2"></i><h6>Call Us</h6><p class="mb-0 text-muted"><?= $phoneDisplay ?></p></div></div>
-                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fab fa-whatsapp text-success fa-2x mb-2"></i><h6>WhatsApp</h6><p class="mb-0 text-muted"><?= $phoneDisplay ?></p></div></div>
-                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-map-marker-alt text-primary fa-2x mb-2"></i><h6>Visit Us</h6><p class="mb-0 text-muted">Gorakhpur, UP</p></div></div>
+                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-phone-alt text-primary fa-2x mb-2"></i><h6><?= __('id_call_us') ?></h6><p class="mb-0 text-muted"><?= $phoneDisplay ?></p></div></div>
+                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fab fa-whatsapp text-success fa-2x mb-2"></i><h6><?= __('id_whatsapp') ?></h6><p class="mb-0 text-muted"><?= $phoneDisplay ?></p></div></div>
+                    <div class="col-md-4"><div class="p-3 bg-white rounded-3 shadow-sm"><i class="fas fa-map-marker-alt text-primary fa-2x mb-2"></i><h6><?= __('id_visit_us') ?></h6><p class="mb-0 text-muted">Gorakhpur, UP</p></div></div>
                 </div>
             </div>
         </div>
@@ -492,8 +492,8 @@ function planBudget() {
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="text-center mb-5">
-                    <span class="badge bg-primary mb-2 px-3 py-2">FAQ</span>
-                    <h2 class="display-5 fw-bold">Frequently Asked Questions</h2>
+                    <span class="badge bg-primary mb-2 px-3 py-2"><?= __('id_faq_badge') ?></span>
+                    <h2 class="display-5 fw-bold"><?= __('id_faq_title') ?></h2>
                 </div>
                 <div class="accordion faq-accordion" id="interiorFaq">
                     <?php foreach ($faqs as $idx => $faq): ?>
@@ -519,11 +519,11 @@ function planBudget() {
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8 text-md-start">
-                <h4 class="mb-1">Ready to Transform Your Space?</h4>
-                <p class="mb-0 opacity-75">Get a free consultation and detailed estimate within 24 hours</p>
+                <h4 class="mb-1"><?= __('id_cta_title') ?></h4>
+                <p class="mb-0 opacity-75"><?= __('id_cta_desc') ?></p>
             </div>
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg px-4"><i class="fas fa-phone me-2"></i>Call Now</a>
+                <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg px-4"><i class="fas fa-phone me-2"></i><?= __('id_cta_btn') ?></a>
             </div>
         </div>
     </div>

@@ -598,14 +598,7 @@ class Router
             }
 
             // Execute the method
-            error_log("Executing controller method: " . get_class($controller) . "::$method()");
             $response = $controller->$method();
-            error_log("Controller returned: " . gettype($response));
-            if ($response instanceof Response) {
-                error_log("Response is instance of Response class");
-            } else {
-                error_log("Response is NOT instance of Response class");
-            }
 
             return $this->prepareResponse($response);
         }

@@ -168,13 +168,67 @@ $totalActive = (int)($stats['active_associates'] ?? 0);
 document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('mlm-rank-chart');
     if (!ctx) { return; }
+    
+    function hexToRgba(hex, alpha) {
+        hex = hex.replace('#', '');
+        if (hex.length === 3) {
+            hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+        }
+        var r = parseInt(hex.substring(0, 2), 16);
+        var g = parseInt(hex.substring(2, 4), 16);
+        var b = parseInt(hex.substring(4, 6), 16);
+        return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+    }
+
+    var dbColors = <?= json_encode(array_map(fn($r) => (string)($r['color_code'] ?? '#94a3b8'), $rankBenefits)) ?>;
+    var bgColors = dbColors.map(function(hex) { return hexToRgba(hex, 0.75); });
+    var borderColors = dbColors.map(function(hex) { return hexToRgba(hex, 1.0); });
+
     var data = {
         labels: <?= json_encode(array_map(fn($r) => ucfirst((string)($r['rank_name'] ?? '')), $rankBenefits)) ?>,
         datasets: [{
             data: <?= json_encode(array_map(fn($r) => (int)($rankDist[$r['rank_name']] ?? 0), $rankBenefits)) ?>,
-            backgroundColor: <?= json_encode(array_map(fn($r) => (string)($r['color_code'] ?? '#94a3b8'), $rankBenefits)) ?>
+            backgroundColor: bgColors,
+            borderColor: borderColors,
+            borderWidth: 2,
+            hoverOffset: 6
         }]
     };
-    new Chart(ctx, { type: 'doughnut', data: data, options: { responsive: true, maintainAspectRatio: false } });
+
+    new Chart(ctx, { 
+        type: 'doughnut', 
+        data: data, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: {
+                            family: "'Inter', 'Segoe UI', sans-serif",
+                            size: 11,
+                            weight: '600'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#1e293b',
+                    titleFont: { family: "'Inter', sans-serif", size: 12, weight: 'bold' },
+                    bodyFont: { family: "'Inter', sans-serif", size: 12 },
+                    padding: 10,
+                    cornerRadius: 8,
+                    usePointStyle: true,
+                    boxWidth: 8,
+                    boxHeight: 8
+                }
+            }
+        } 
+    });
 });
 </script>

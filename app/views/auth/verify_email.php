@@ -9,7 +9,7 @@
                         <h2 class="h3 mb-3">
                             <i class="fas fa-home"></i> APS Dream Home
                         </h2>
-                        <p class="text-muted">Verify email</p>
+                        <p class="text-muted"><?= __('auth_verify_email') ?></p>
                     </div>
                 </div>
             </div>

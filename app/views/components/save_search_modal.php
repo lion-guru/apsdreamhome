@@ -20,42 +20,42 @@ $currentFilters = $currentFilters ?? [];
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header bg-gradient-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <h5 class="modal-title" id="saveSearchModalLabel">
-                    <i class="fas fa-bookmark me-2"></i>Save this search
+                    <i class="fas fa-bookmark me-2"></i>__('component_save_this_search', 'Save this search')
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="saveSearchForm">
                 <div class="modal-body">
-                    <p class="text-muted small">Save your current filters to access this search later and (optionally) receive email alerts when new properties match.</p>
+                    <p class="text-muted small">__('component_save_filters_description', 'Save your current filters to access this search later and (optionally) receive email alerts when new properties match.')</p>
 
                     <div class="mb-3">
-                        <label for="saveSearchName" class="form-label fw-semibold">Search name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control form-control-lg" id="saveSearchName" name="name" placeholder="e.g. Plots in Gorakhpur under 20L" maxlength="100" required>
+                        <label for="saveSearchName" class="form-label fw-semibold">__('component_search_name', 'Search name') <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-lg" id="saveSearchName" name="name" placeholder="htmlspecialchars(__('component_search_name_placeholder', 'e.g. Plots in Gorakhpur under 20L'))" maxlength="100" required>
                     </div>
 
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="saveSearchAlerts" name="email_alerts" value="1">
                         <label class="form-check-label" for="saveSearchAlerts">
-                            <i class="fas fa-bell text-success me-1"></i>Send me email alerts when new properties match
+                            <i class="fas fa-bell text-success me-1"></i>__('component_send_email_alerts', 'Send me email alerts when new properties match')
                         </label>
                     </div>
 
                     <div class="mb-3">
-                        <label for="saveSearchDescription" class="form-label fw-semibold">Description (optional)</label>
-                        <textarea class="form-control" id="saveSearchDescription" name="description" rows="2" placeholder="Add notes about this search..." maxlength="500"></textarea>
+                        <label for="saveSearchDescription" class="form-label fw-semibold">__('component_description_optional', 'Description (optional)')</label>
+                        <textarea class="form-control" id="saveSearchDescription" name="description" rows="2" placeholder="htmlspecialchars(__('component_add_notes_placeholder', 'Add notes about this search...'))" maxlength="500"></textarea>
                     </div>
 
                     <div class="alert alert-light border small">
-                        <strong>Filters being saved:</strong>
+                        <strong>__('component_filters_being_saved', 'Filters being saved:')</strong>
                         <ul id="saveSearchFiltersPreview" class="mb-0 mt-1"></ul>
                     </div>
 
                     <div id="saveSearchError" class="alert alert-danger d-none small" role="alert"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">__('component_cancel', 'Cancel')</button>
                     <button type="submit" class="btn btn-primary" id="saveSearchSubmitBtn">
-                        <i class="fas fa-bookmark me-1"></i>Save Search
+                        <i class="fas fa-bookmark me-1"></i>__('component_save_search', 'Save Search')
                     </button>
                 </div>
             </form>
@@ -138,7 +138,7 @@ $currentFilters = $currentFilters ?? [];
             errorBox.textContent = 'Please enter a name for this search.';
             errorBox.classList.remove('d-none');
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-bookmark me-1"></i>Save Search';
+            submitBtn.innerHTML = '<i class="fas fa-bookmark me-1"></i>__('component_save_search', 'Save Search')';
             return;
         }
 
@@ -169,13 +169,13 @@ $currentFilters = $currentFilters ?? [];
                 errorBox.textContent = data.error || 'Failed to save search.';
                 errorBox.classList.remove('d-none');
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-bookmark me-1"></i>Save Search';
+                submitBtn.innerHTML = '<i class="fas fa-bookmark me-1"></i>__('component_save_search', 'Save Search')';
             }
         } catch (err) {
             errorBox.textContent = 'Network error. Please try again.';
             errorBox.classList.remove('d-none');
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-bookmark me-1"></i>Save Search';
+            submitBtn.innerHTML = '<i class="fas fa-bookmark me-1"></i>__('component_save_search', 'Save Search')';
         }
     });
 
@@ -184,7 +184,7 @@ $currentFilters = $currentFilters ?? [];
         submitBtn.disabled = false;
         submitBtn.classList.remove('btn-success');
         submitBtn.classList.add('btn-primary');
-        submitBtn.innerHTML = '<i class="fas fa-bookmark me-1"></i>Save Search';
+        submitBtn.innerHTML = '<i class="fas fa-bookmark me-1"></i>__('component_save_search', 'Save Search')';
         form.reset();
     });
 })();

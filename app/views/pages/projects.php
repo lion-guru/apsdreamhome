@@ -1,6 +1,6 @@
 <?php
-$page_title = $page_title ?? 'Our Projects - APS Dream Home';
-$page_description = $page_description ?? 'Explore our ongoing and completed real estate projects';
+$page_title = $page_title ?? __('projects_hero_title') . ' - APS Dream Home';
+$page_description = $page_description ?? __('projects_hero_desc');
 $projects = $projects ?? [];
 $base = $base ?? BASE_URL;
 ?>
@@ -10,12 +10,12 @@ $base = $base ?? BASE_URL;
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3"><i class="fas fa-hard-hat me-3"></i>Our Projects</h1>
-                <p class="lead mb-0">Discover our premium residential and commercial developments across Uttar Pradesh</p>
+                <h1 class="display-4 fw-bold mb-3"><i class="fas fa-hard-hat me-3"></i><?= __('projects_hero_title') ?></h1>
+                <p class="lead mb-0"><?= __('projects_hero_desc') ?></p>
             </div>
             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                 <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/properties" class="btn btn-light">
-                    <i class="fas fa-building me-1"></i> View Properties
+                    <i class="fas fa-building me-1"></i> <?= __('projects_view_properties') ?>
                 </a>
             </div>
         </div>
@@ -38,8 +38,13 @@ $base = $base ?? BASE_URL;
                         </div>
                         <?php endif; ?>
                         <div class="position-absolute top-0 end-0 m-2">
-                            <span class="badge bg-<?= (($project->status ?? $project['status'] ?? '') === 'Completed') ? 'success' : 'warning' ?> fs-6">
-                                <?= htmlspecialchars($project->status ?? $project['status'] ?? 'N/A') ?>
+                            <?php
+                            $status = $project->status ?? $project['status'] ?? '';
+                            $statusKey = strtolower(str_replace(' ', '_', $status));
+                            $translatedStatus = __('projects_status_' . $statusKey);
+                            ?>
+                            <span class="badge bg-<?= ($status === 'Completed') ? 'success' : 'warning' ?> fs-6">
+                                <?= htmlspecialchars($translatedStatus !== 'projects_status_' . $statusKey ? $translatedStatus : $status) ?>
                             </span>
                         </div>
                     </div>
@@ -52,13 +57,13 @@ $base = $base ?? BASE_URL;
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="badge bg-info"><?= htmlspecialchars(ucfirst($project->type ?? $project['type'] ?? 'N/A')) ?></span>
                             <?php if (!empty($project->completion ?? $project['completion'] ?? '')): ?>
-                            <small class="text-muted">Completion: <?= htmlspecialchars($project->completion ?? $project['completion']) ?></small>
+                            <small class="text-muted"><?= sprintf(__('projects_completion'), htmlspecialchars($project->completion ?? $project['completion'])) ?></small>
                             <?php endif; ?>
                         </div>
                     </div>
                     <div class="card-footer bg-white border-top-0">
                         <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/project/<?= htmlspecialchars($project->id ?? $project['id'] ?? 0) ?>" class="btn btn-outline-primary btn-sm w-100">
-                            <i class="fas fa-info-circle me-1"></i> View Details
+                            <i class="fas fa-info-circle me-1"></i> <?= __('projects_view_details') ?>
                         </a>
                     </div>
                 </div>
@@ -70,10 +75,10 @@ $base = $base ?? BASE_URL;
             <div class="mb-4">
                 <i class="fas fa-tools fa-4x text-muted" style="opacity:0.5;"></i>
             </div>
-            <h3 class="text-muted">Projects Coming Soon</h3>
-            <p class="text-muted mb-4">We're developing exciting new projects. Stay tuned!</p>
+            <h3 class="text-muted"><?= __('projects_coming_soon') ?></h3>
+            <p class="text-muted mb-4"><?= __('projects_coming_soon_desc') ?></p>
             <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/properties" class="btn btn-primary btn-lg">
-                <i class="fas fa-building me-2"></i> Browse Available Properties
+                <i class="fas fa-building me-2"></i> <?= __('projects_browse_properties') ?>
             </a>
         </div>
         <?php endif; ?>

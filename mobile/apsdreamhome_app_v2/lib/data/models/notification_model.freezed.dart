@@ -343,11 +343,11 @@ class __$$NotificationModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$NotificationModelImpl implements _NotificationModel {
   const _$NotificationModelImpl({
-    required this.id,
-    required this.userId,
-    required this.type,
-    required this.title,
-    required this.body,
+    this.id = '',
+    this.userId = '',
+    this.type = '',
+    this.title = '',
+    this.body = '',
     this.imageUrl,
     this.actionType,
     this.actionData,
@@ -367,15 +367,20 @@ class _$NotificationModelImpl implements _NotificationModel {
       _$$NotificationModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String userId;
   @override
+  @JsonKey()
   final String type;
   // booking, commission, payout, lead, general, promotional
   @override
+  @JsonKey()
   final String title;
   @override
+  @JsonKey()
   final String body;
   @override
   final String? imageUrl;
@@ -495,11 +500,11 @@ class _$NotificationModelImpl implements _NotificationModel {
 
 abstract class _NotificationModel implements NotificationModel {
   const factory _NotificationModel({
-    required final String id,
-    required final String userId,
-    required final String type,
-    required final String title,
-    required final String body,
+    final String id,
+    final String userId,
+    final String type,
+    final String title,
+    final String body,
     final String? imageUrl,
     final String? actionType,
     final String? actionData,

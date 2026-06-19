@@ -1,6 +1,6 @@
 <?php
-$page_title = $page_title ?? 'Schedule Site Visit';
-$page_heading = $page_heading ?? 'Book Property Visit';
+$page_title = $page_title ?? __('visit_hero_title', [], 'Schedule Site Visit');
+$page_heading = $page_heading ?? __('visit_hero_subtitle', [], 'Book Property Visit');
 $content = $content ?? '';
 $property = $property ?? null;
 $slots = $slots ?? [];
@@ -25,7 +25,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
 <section class="visit-hero">
     <div class="container text-center">
         <h1 class="display-5 fw-bold mb-2"><i class="fas fa-calendar-check me-2"></i>Schedule a Site Visit</h1>
-        <p class="lead mb-0 opacity-90">Pick a convenient time and we'll arrange a free site visit for you</p>
+        <p class="lead mb-0 opacity-90"><?= __('visit_hero_desc', [], 'Pick a convenient time and we\'ll arrange a free site visit for you') ?></p>
     </div>
 </section>
 
@@ -67,11 +67,11 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-header bg-white py-3">
-                        <h5 class="mb-0"><i class="fas fa-calendar-day me-2"></i>1. Pick a Date</h5>
+                        <h5 class="mb-0"><i class="fas fa-calendar-day me-2"></i><?= __('visit_step1_title', [], '1. Pick a Date') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <?php if (empty($slots)): ?>
-                            <p class="text-muted">No available slots in the next 14 days</p>
+                            <p class="text-muted"><?= __('visit_no_slots', [], 'No available slots in the next 14 days') ?></p>
                         <?php else: ?>
                             <?php
                             $byDate = [];
@@ -92,7 +92,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
 
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-header bg-white py-3">
-                        <h5 class="mb-0"><i class="fas fa-clock me-2"></i>2. Pick a Time Slot</h5>
+                        <h5 class="mb-0"><i class="fas fa-clock me-2"></i><?= __('visit_step2_title', [], '2. Pick a Time Slot') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="row g-2" id="timeSlots">
@@ -118,38 +118,38 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
 
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white py-3">
-                        <h5 class="mb-0"><i class="fas fa-user me-2"></i>3. Your Information</h5>
+                        <h5 class="mb-0"><i class="fas fa-user me-2"></i><?= __('visit_step3_title', [], '3. Your Information') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label">Visit Type</label>
+                                <label class="form-label"><?= __('visit_type_label', [], 'Visit Type') ?></label>
                                 <select class="form-select" name="visit_type">
-                                    <option value="site_visit">🏠 Site Visit (in-person)</option>
-                                    <option value="virtual_tour">💻 Virtual Tour (video)</option>
-                                    <option value="office_meeting">🏢 Office Meeting</option>
+                                    <option value="site_visit">🏠 <?= __('visit_type_site', [], 'Site Visit (in-person)') ?></option>
+                                    <option value="virtual_tour">💻 <?= __('visit_type_virtual', [], 'Virtual Tour (video)') ?></option>
+                                    <option value="office_meeting">🏢 <?= __('visit_type_office', [], 'Office Meeting') ?></option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Name *</label>
+                                <label class="form-label"><?= __('visit_name_label', [], 'Name *') ?></label>
                                 <input type="text" class="form-control" name="name" required
                                        value="<?= htmlspecialchars($form_data['name'] ?? ($_SESSION['user_name'] ?? '')) ?>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Phone *</label>
+                                <label class="form-label"><?= __('visit_phone_label', [], 'Phone *') ?></label>
                                 <input type="tel" class="form-control" name="phone" required
                                        value="<?= htmlspecialchars($form_data['phone'] ?? ($_SESSION['user_phone'] ?? '')) ?>">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Email *</label>
+                                <label class="form-label"><?= __('visit_email_label', [], 'Email *') ?></label>
                                 <input type="email" class="form-control" name="email" required
                                        value="<?= htmlspecialchars($form_data['email'] ?? ($_SESSION['user_email'] ?? '')) ?>">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Additional Notes</label>
+                                <label class="form-label"><?= __('visit_notes_label', [], 'Additional Notes') ?></label>
                                 <input type="text" class="form-control" name="notes"
                                        value="<?= htmlspecialchars($form_data['notes'] ?? '') ?>"
-                                       placeholder="Any specific requirements?">
+                                       placeholder="<?= __('visit_notes_placeholder', [], 'Any specific requirements?') ?>">
                             </div>
                         </div>
                     </div>
@@ -159,26 +159,26 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm mb-3" style="position: sticky; top: 100px;">
                     <div class="card-header bg-primary text-white py-3">
-                        <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Booking Summary</h5>
+                        <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i><?= __('visit_summary_title', [], 'Booking Summary') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
-                            <small class="text-muted d-block">Selected Date</small>
-                            <strong id="summaryDate">Please pick a date</strong>
+                            <small class="text-muted d-block"><?= __('visit_summary_date', [], 'Selected Date') ?></small>
+                            <strong id="summaryDate"><?= __('visit_summary_date_placeholder', [], 'Please pick a date') ?></strong>
                         </div>
                         <div class="mb-3">
-                            <small class="text-muted d-block">Selected Time</small>
-                            <strong id="summaryTime">Please pick a time</strong>
+                            <small class="text-muted d-block"><?= __('visit_summary_time', [], 'Selected Time') ?></small>
+                            <strong id="summaryTime"><?= __('visit_summary_time_placeholder', [], 'Please pick a time') ?></strong>
                         </div>
                         <div class="mb-3">
-                            <small class="text-muted d-block">Visit Type</small>
-                            <strong id="summaryType">Site Visit</strong>
+                            <small class="text-muted d-block"><?= __('visit_summary_type', [], 'Visit Type') ?></small>
+                            <strong id="summaryType"><?= __('visit_summary_type_default', [], 'Site Visit') ?></strong>
                         </div>
                         <hr>
                         <button type="submit" class="btn btn-primary btn-lg w-100" id="submitBtn" disabled>
-                            <i class="fas fa-check-circle me-2"></i> Confirm Booking
+                            <i class="fas fa-check-circle me-2"></i> <?= __('visit_summary_submit', [], 'Confirm Booking') ?>
                         </button>
-                        <p class="small text-muted mt-2 mb-0 text-center">Free visit · No obligations</p>
+                        <p class="small text-muted mt-2 mb-0 text-center"><?= __('visit_summary_note', [], 'Free visit · No obligations') ?></p>
                     </div>
                 </div>
             </div>

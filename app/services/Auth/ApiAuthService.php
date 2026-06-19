@@ -43,8 +43,10 @@ class ApiAuthService
             try {
                 // Fetch full profile info for initial app state
                 $stmt = $this->db->prepare("
-                    SELECT u.id as user_id, u.name, u.email, u.phone, u.created_at, u.updated_at,
-                           mp.current_level as rank
+                    SELECT u.id as userId, u.name, u.email, u.phone, 
+                           COALESCE(u.created_at, NOW()) as createdAt, 
+                           COALESCE(u.updated_at, NOW()) as updatedAt,
+                           COALESCE(mp.current_level, 'Customer') as rank
                     FROM users u
                     LEFT JOIN mlm_profiles mp ON u.id = mp.user_id
                     WHERE u.id = ?
@@ -55,12 +57,15 @@ class ApiAuthService
             $stmt->execute([$user['id']]);
             $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $userData['avatar'] = null; // Placeholder
+            $userData['avatar'] = null;
+            $userData['target'] = 0.0;
 
             return [
                 'success' => true,
-                'token' => $token,
-                'data' => $userData,
+                'data' => [
+                    'user' => $userData,
+                    'token' => $token,
+                ],
                 'expires_at' => $expiresAt
             ];
 

@@ -9,16 +9,16 @@ part of 'daily_caller_model.dart';
 _$DailyCallerImpl _$$DailyCallerImplFromJson(
   Map<String, dynamic> json,
 ) => _$DailyCallerImpl(
-  id: json['id'] as String,
-  name: json['name'] as String,
-  phone: json['phone'] as String,
-  email: json['email'] as String,
+  id: json['id'] as String? ?? '',
+  name: json['name'] as String? ?? '',
+  phone: json['phone'] as String? ?? '',
+  email: json['email'] as String? ?? '',
   photoUrl: json['photoUrl'] as String?,
-  employeeId: json['employeeId'] as String,
+  employeeId: json['employeeId'] as String? ?? '',
   joiningDate: DateTime.parse(json['joiningDate'] as String),
   callerType: $enumDecode(_$CallerTypeEnumMap, json['callerType']),
   salaryType: $enumDecode(_$SalaryTypeEnumMap, json['salaryType']),
-  monthlySalary: (json['monthlySalary'] as num).toDouble(),
+  monthlySalary: (json['monthlySalary'] as num?)?.toDouble() ?? 0.0,
   dailyTargetAmount: (json['dailyTargetAmount'] as num?)?.toDouble(),
   dailyCallTarget: (json['dailyCallTarget'] as num?)?.toInt(),
   dailyTalkTimeTarget: (json['dailyTalkTimeTarget'] as num?)?.toInt(),
@@ -40,9 +40,9 @@ _$DailyCallerImpl _$$DailyCallerImplFromJson(
   currentMonthValidLeads:
       (json['currentMonthValidLeads'] as num?)?.toInt() ?? 0,
   currentMonthBookings: (json['currentMonthBookings'] as num?)?.toInt() ?? 0,
-  currentMonthRevenue: (json['currentMonthRevenue'] as num?)?.toDouble() ?? 0,
+  currentMonthRevenue: (json['currentMonthRevenue'] as num?)?.toDouble() ?? 0.0,
   currentMonthCommission:
-      (json['currentMonthCommission'] as num?)?.toDouble() ?? 0,
+      (json['currentMonthCommission'] as num?)?.toDouble() ?? 0.0,
   currentMonthTalkTimeMinutes:
       (json['currentMonthTalkTimeMinutes'] as num?)?.toInt() ?? 0,
   assignedLeadIds:
@@ -128,7 +128,7 @@ const _$CallerStatusEnumMap = {
 _$DailyCallReportImpl _$$DailyCallReportImplFromJson(
   Map<String, dynamic> json,
 ) => _$DailyCallReportImpl(
-  id: json['id'] as String,
+  id: json['id'] as String? ?? '',
   date: DateTime.parse(json['date'] as String),
   totalCalls: (json['totalCalls'] as num?)?.toInt() ?? 0,
   connected: (json['connected'] as num?)?.toInt() ?? 0,
@@ -138,13 +138,13 @@ _$DailyCallReportImpl _$$DailyCallReportImplFromJson(
   callLater: (json['callLater'] as num?)?.toInt() ?? 0,
   notInterested: (json['notInterested'] as num?)?.toInt() ?? 0,
   totalTalkTimeMinutes: (json['totalTalkTimeMinutes'] as num?)?.toInt() ?? 0,
-  avgTalkTimeMinutes: (json['avgTalkTimeMinutes'] as num?)?.toDouble() ?? 0,
+  avgTalkTimeMinutes: (json['avgTalkTimeMinutes'] as num?)?.toDouble() ?? 0.0,
   validLeadsGenerated: (json['validLeadsGenerated'] as num?)?.toInt() ?? 0,
   interestedCustomers: (json['interestedCustomers'] as num?)?.toInt() ?? 0,
   siteVisitsScheduled: (json['siteVisitsScheduled'] as num?)?.toInt() ?? 0,
   bookingsConfirmed: (json['bookingsConfirmed'] as num?)?.toInt() ?? 0,
-  revenueGenerated: (json['revenueGenerated'] as num?)?.toDouble() ?? 0,
-  commissionEarned: (json['commissionEarned'] as num?)?.toDouble() ?? 0,
+  revenueGenerated: (json['revenueGenerated'] as num?)?.toDouble() ?? 0.0,
+  commissionEarned: (json['commissionEarned'] as num?)?.toDouble() ?? 0.0,
   callDetails:
       (json['callDetails'] as List<dynamic>?)
           ?.map((e) => CallDetail.fromJson(e as Map<String, dynamic>))
@@ -196,9 +196,9 @@ const _$ReportStatusEnumMap = {
 
 _$CallDetailImpl _$$CallDetailImplFromJson(Map<String, dynamic> json) =>
     _$CallDetailImpl(
-      leadId: json['leadId'] as String,
-      leadName: json['leadName'] as String,
-      leadPhone: json['leadPhone'] as String,
+      leadId: json['leadId'] as String? ?? '',
+      leadName: json['leadName'] as String? ?? '',
+      leadPhone: json['leadPhone'] as String? ?? '',
       callTime: DateTime.parse(json['callTime'] as String),
       outcome: $enumDecode(_$CallOutcomeEnumMap, json['outcome']),
       talkTimeSeconds: (json['talkTimeSeconds'] as num?)?.toInt(),
@@ -238,29 +238,29 @@ const _$CallOutcomeEnumMap = {
 _$MonthlyPerformanceImpl _$$MonthlyPerformanceImplFromJson(
   Map<String, dynamic> json,
 ) => _$MonthlyPerformanceImpl(
-  id: json['id'] as String,
-  year: (json['year'] as num).toInt(),
-  month: (json['month'] as num).toInt(),
+  id: json['id'] as String? ?? '',
+  year: (json['year'] as num?)?.toInt() ?? 0,
+  month: (json['month'] as num?)?.toInt() ?? 0,
   totalCalls: (json['totalCalls'] as num?)?.toInt() ?? 0,
   connectedCalls: (json['connectedCalls'] as num?)?.toInt() ?? 0,
   totalTalkTimeMinutes: (json['totalTalkTimeMinutes'] as num?)?.toInt() ?? 0,
   validLeads: (json['validLeads'] as num?)?.toInt() ?? 0,
   siteVisits: (json['siteVisits'] as num?)?.toInt() ?? 0,
   bookings: (json['bookings'] as num?)?.toInt() ?? 0,
-  totalRevenue: (json['totalRevenue'] as num?)?.toDouble() ?? 0,
-  baseSalary: (json['baseSalary'] as num?)?.toDouble() ?? 0,
-  commissionEarned: (json['commissionEarned'] as num?)?.toDouble() ?? 0,
-  incentives: (json['incentives'] as num?)?.toDouble() ?? 0,
-  deductions: (json['deductions'] as num?)?.toDouble() ?? 0,
-  totalEarnings: (json['totalEarnings'] as num?)?.toDouble() ?? 0,
+  totalRevenue: (json['totalRevenue'] as num?)?.toDouble() ?? 0.0,
+  baseSalary: (json['baseSalary'] as num?)?.toDouble() ?? 0.0,
+  commissionEarned: (json['commissionEarned'] as num?)?.toDouble() ?? 0.0,
+  incentives: (json['incentives'] as num?)?.toDouble() ?? 0.0,
+  deductions: (json['deductions'] as num?)?.toDouble() ?? 0.0,
+  totalEarnings: (json['totalEarnings'] as num?)?.toDouble() ?? 0.0,
   targetAchievementPercentage:
-      (json['targetAchievementPercentage'] as num?)?.toDouble() ?? 0,
+      (json['targetAchievementPercentage'] as num?)?.toDouble() ?? 0.0,
   ranking: (json['ranking'] as num?)?.toInt() ?? 0,
-  avgCallsPerDay: (json['avgCallsPerDay'] as num?)?.toDouble() ?? 0,
-  avgTalkTimePerDay: (json['avgTalkTimePerDay'] as num?)?.toDouble() ?? 0,
-  avgLeadsPerDay: (json['avgLeadsPerDay'] as num?)?.toDouble() ?? 0,
-  leadQualityScore: (json['leadQualityScore'] as num?)?.toDouble() ?? 0,
-  conversionRate: (json['conversionRate'] as num?)?.toDouble() ?? 0,
+  avgCallsPerDay: (json['avgCallsPerDay'] as num?)?.toDouble() ?? 0.0,
+  avgTalkTimePerDay: (json['avgTalkTimePerDay'] as num?)?.toDouble() ?? 0.0,
+  avgLeadsPerDay: (json['avgLeadsPerDay'] as num?)?.toDouble() ?? 0.0,
+  leadQualityScore: (json['leadQualityScore'] as num?)?.toDouble() ?? 0.0,
+  conversionRate: (json['conversionRate'] as num?)?.toDouble() ?? 0.0,
   paymentStatus: $enumDecode(_$PaymentStatusEnumMap, json['paymentStatus']),
   paidAt: json['paidAt'] == null
       ? null
@@ -306,11 +306,11 @@ const _$PaymentStatusEnumMap = {
 _$CallerLeadAssignmentImpl _$$CallerLeadAssignmentImplFromJson(
   Map<String, dynamic> json,
 ) => _$CallerLeadAssignmentImpl(
-  leadId: json['leadId'] as String,
-  leadName: json['leadName'] as String,
-  leadPhone: json['leadPhone'] as String,
+  leadId: json['leadId'] as String? ?? '',
+  leadName: json['leadName'] as String? ?? '',
+  leadPhone: json['leadPhone'] as String? ?? '',
   assignedAt: DateTime.parse(json['assignedAt'] as String),
-  assignedBy: json['assignedBy'] as String,
+  assignedBy: json['assignedBy'] as String? ?? '',
   priority: $enumDecodeNullable(_$AssignmentPriorityEnumMap, json['priority']),
   dueDate: json['dueDate'] == null
       ? null
@@ -352,10 +352,10 @@ const _$AssignmentPriorityEnumMap = {
 _$LeadDistributionBatchImpl _$$LeadDistributionBatchImplFromJson(
   Map<String, dynamic> json,
 ) => _$LeadDistributionBatchImpl(
-  id: json['id'] as String,
-  batchName: json['batchName'] as String,
+  id: json['id'] as String? ?? '',
+  batchName: json['batchName'] as String? ?? '',
   createdAt: DateTime.parse(json['createdAt'] as String),
-  createdBy: json['createdBy'] as String,
+  createdBy: json['createdBy'] as String? ?? '',
   leadSourceIds:
       (json['leadSourceIds'] as List<dynamic>?)
           ?.map((e) => e as String)

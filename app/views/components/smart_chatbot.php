@@ -31,7 +31,7 @@ if (isset($_SESSION['associate_id'])) {
     <!-- Chat Button -->
     <button id="chatbot-toggle" class="chatbot-toggle" onclick="toggleChatbot()">
         <i class="fas fa-robot"></i>
-        <span class="chatbot-label">APS AI</span>
+        <span class="chatbot-label">__('component_aps_ai_label', 'APS AI')</span>
     </button>
 
     <!-- Chat Window -->
@@ -42,12 +42,12 @@ if (isset($_SESSION['associate_id'])) {
                 <i class="fas fa-robot"></i>
             </div>
             <div class="chatbot-info">
-                <h5>APS AI Assistant</h5>
-                <span class="status"><i class="fas fa-circle"></i> Online</span>
+                <h5>__('component_aps_ai_assistant', 'APS AI Assistant')</h5>
+                <span class="status"><i class="fas fa-circle"></i> __('component_online', 'Online')</span>
             </div>
             <div class="chatbot-actions">
-                <button onclick="clearChat()" title="Clear Chat"><i class="fas fa-trash"></i></button>
-                <button onclick="toggleChatbot()" title="Close"><i class="fas fa-times"></i></button>
+                <button onclick="clearChat()" title="htmlspecialchars(__('component_clear_chat', 'Clear Chat'))"><i class="fas fa-trash"></i></button>
+                <button onclick="toggleChatbot()" title="htmlspecialchars(__('component_close', 'Close'))"><i class="fas fa-times"></i></button>
             </div>
         </div>
 
@@ -84,7 +84,7 @@ if (isset($_SESSION['associate_id'])) {
         <div class="chatbot-input-area">
             <input type="text"
                 id="chatbot-input"
-                placeholder="Type message in Hindi or English..."
+                placeholder="htmlspecialchars(__('component_type_message_hindi_english', 'Type message in Hindi or English...'))"
                 onkeypress="handleKeyPress(event)"
                 autocomplete="off">
             <button onclick="sendMessage()" class="send-btn">

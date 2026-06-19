@@ -6,17 +6,17 @@ $searchQuery = $search_query ?? '';
 <div class="container mt-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-            <li class="breadcrumb-item active">Document Gallery</li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('breadcrumb_home') ?></a></li>
+            <li class="breadcrumb-item active"><?= __('document_gallery_title') ?></li>
         </ol>
     </nav>
 
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="display-6 fw-bold text-primary">
-                <i class="fas fa-folder-open me-2"></i>Document Gallery
+                <i class="fas fa-folder-open me-2"></i><?= __('document_gallery_title') ?>
             </h1>
-            <p class="text-muted">Download brochures, legal documents, guides, and project layouts</p>
+            <p class="text-muted"><?= __('document_gallery_subtitle') ?></p>
         </div>
     </div>
 
@@ -25,13 +25,13 @@ $searchQuery = $search_query ?? '';
         <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/documents" class="row g-3">
                 <div class="col-md-6">
-                    <label for="q" class="form-label">Search</label>
-                    <input type="text" class="form-control" id="q" name="q" placeholder="Search documents..." value="<?= htmlspecialchars($searchQuery) ?>">
+                    <label for="q" class="form-label"><?= __('common_search') ?></label>
+                    <input type="text" class="form-control" id="q" name="q" placeholder="<?= __('document_search_placeholder') ?>" value="<?= htmlspecialchars($searchQuery) ?>">
                 </div>
                 <div class="col-md-4">
-                    <label for="category" class="form-label">Category</label>
+                    <label for="category" class="form-label"><?= __('common_category') ?></label>
                     <select class="form-select" id="category" name="category">
-                        <option value="">All Categories</option>
+                        <option value=""><?= __('documents_all_categories') ?></option>
                         <?php foreach ($categories as $cat): ?>
                             <option value="<?= htmlspecialchars($cat['category']) ?>" <?= $selectedCategory === $cat['category'] ? 'selected' : '' ?>>
                                 <?= ucfirst(htmlspecialchars($cat['category'])) ?>
@@ -41,7 +41,7 @@ $searchQuery = $search_query ?? '';
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i> Filter
+                        <i class="fas fa-search"></i> <?= __('common_filter') ?>
                     </button>
                 </div>
             </form>
@@ -83,10 +83,10 @@ $searchQuery = $search_query ?? '';
                             <?php endif; ?>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">
-                                    <i class="fas fa-download me-1"></i><?= (int)($doc['downloads_count'] ?? 0) ?> downloads
+                                    <i class="fas fa-download me-1"></i><?= (int)($doc['downloads_count'] ?? 0) ?> <?= __('documents_downloads') ?>
                                 </small>
                                 <a href="<?= BASE_URL ?>/documents/download/<?= $doc['id'] ?>" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-download me-1"></i>Download
+                                    <i class="fas fa-download me-1"></i><?= __('common_download') ?>
                                 </a>
                             </div>
                         </div>
@@ -98,9 +98,9 @@ $searchQuery = $search_query ?? '';
                 <div class="card aps-cp-card">
                     <div class="card-body text-center py-5">
                         <i class="fas fa-file fa-4x text-muted mb-3"></i>
-                        <h5 class="text-muted">No documents found</h5>
-                        <p class="text-muted">Try adjusting your search or filter criteria.</p>
-                        <a href="<?= BASE_URL ?>/documents" class="btn btn-primary">View All Documents</a>
+                        <h5 class="text-muted"><?= __('documents_not_found') ?></h5>
+                        <p class="text-muted"><?= __('documents_adjust_search') ?></p>
+                        <a href="<?= BASE_URL ?>/documents" class="btn btn-primary"><?= __('documents_view_all') ?></a>
                     </div>
                 </div>
             </div>

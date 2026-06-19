@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseApiController;
 use App\Services\KYCService;
-use App\Core\Database;
 
 /**
  * KYC API Controller
@@ -17,7 +16,12 @@ class KYCController extends BaseApiController
     public function __construct()
     {
         parent::__construct();
-        $this->kycService = new KYCService();
+        try {
+            $this->kycService = new KYCService();
+        } catch (\Throwable $e) {
+            error_log('KYCService init failed: ' . $e->getMessage());
+            $this->kycService = null;
+        }
     }
 
     /**
@@ -26,47 +30,47 @@ class KYCController extends BaseApiController
      */
     public function verifyPAN()
     {
+        header('Content-Type: application/json');
+
+        if (!$this->kycService) {
+            return $this->jsonError('KYC service is not available', 503);
+        }
+
         try {
-            // Require authentication
             $authError = $this->requireLogin();
             if ($authError) return $authError;
 
-            // Get input data
             $pan = $this->request()->input('pan');
             $name = $this->request()->input('name', '');
 
-            // Validate input
             if (empty($pan)) {
                 return $this->jsonError('PAN number is required', 400);
             }
 
-            // Sanitize PAN
             $pan = strtoupper(trim($pan));
-
-            // Call KYC service
             $result = $this->kycService->verifyPAN($pan, $name);
-
-            // Log verification attempt
             $this->logKYCAttempt('pan', $pan, $result['success'] ?? false);
 
             if ($result['success']) {
-                // Save verification record if successful
-                $this->saveVerificationRecord('pan', $pan, $result['data'] ?? []);
+                $this->saveVerificationLog('pan', $pan, true, $result['message'] ?? 'Verified');
                 return $this->jsonSuccess(
                     $result['data'] ?? [],
                     $result['message'] ?? 'PAN verified successfully'
                 );
             } else {
+                $this->saveVerificationLog('pan', $pan, false, $result['message'] ?? 'Failed');
                 return $this->jsonError(
                     $result['message'] ?? 'PAN verification failed',
                     400,
                     $result['data'] ?? []
                 );
             }
-
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("KYC PAN Verification Error: " . $e->getMessage());
-            return $this->jsonError('Internal server error during PAN verification', 500);
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Internal server error during PAN verification', 'data' => []]);
+            exit;
         }
     }
 
@@ -76,43 +80,45 @@ class KYCController extends BaseApiController
      */
     public function verifyAadhaar()
     {
+        header('Content-Type: application/json');
+
+        if (!$this->kycService) {
+            return $this->jsonError('KYC service is not available', 503);
+        }
+
         try {
-            // Require authentication
             $authError = $this->requireLogin();
             if ($authError) return $authError;
 
-            // Get input data
             $aadhaar = $this->request()->input('aadhaar');
 
-            // Validate input
             if (empty($aadhaar)) {
                 return $this->jsonError('Aadhaar number is required', 400);
             }
 
-            // Call KYC service
             $result = $this->kycService->verifyAadhaar($aadhaar);
-
-            // Log verification attempt
             $this->logKYCAttempt('aadhaar', $aadhaar, $result['success'] ?? false);
 
             if ($result['success']) {
-                // Save verification record if successful
-                $this->saveVerificationRecord('aadhaar', $aadhaar, $result['data'] ?? []);
+                $this->saveVerificationLog('aadhaar', $aadhaar, true, $result['message'] ?? 'Verified');
                 return $this->jsonSuccess(
                     $result['data'] ?? [],
                     $result['message'] ?? 'Aadhaar verified successfully'
                 );
             } else {
+                $this->saveVerificationLog('aadhaar', $aadhaar, false, $result['message'] ?? 'Failed');
                 return $this->jsonError(
                     $result['message'] ?? 'Aadhaar verification failed',
                     400,
                     $result['data'] ?? []
                 );
             }
-
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("KYC Aadhaar Verification Error: " . $e->getMessage());
-            return $this->jsonError('Internal server error during Aadhaar verification', 500);
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Internal server error during Aadhaar verification', 'data' => []]);
+            exit;
         }
     }
 
@@ -122,48 +128,59 @@ class KYCController extends BaseApiController
      */
     public function getStatus()
     {
+        header('Content-Type: application/json');
+
         try {
-            // Require authentication
             $authError = $this->requireLogin();
             if ($authError) return $authError;
 
             $userId = $this->getCurrentUserId();
 
-            // Get verification records from database
-            $db = Database::getInstance();
-            $sql = "SELECT * FROM kyc_verifications WHERE user_id = :user_id ORDER BY created_at DESC";
-            $records = $db->fetchAll($sql, ['user_id' => $userId]);
+            $db = \App\Core\Database\Database::getInstance();
 
-            // Get latest status for each type
+            // Get latest KYC request from kyc_requests table
+            $kyc = $db->fetchOne(
+                "SELECT pan_number, aadhaar_number, legal_name, status, rejection_reason, verified_at, created_at
+                 FROM kyc_requests WHERE user_id = ? ORDER BY created_at DESC",
+                [$userId]
+            );
+
             $panStatus = null;
             $aadhaarStatus = null;
 
-            foreach ($records as $record) {
-                if ($record['type'] === 'pan' && !$panStatus) {
+            if ($kyc) {
+                if (!empty($kyc['pan_number'])) {
                     $panStatus = [
-                        'verified' => true,
-                        'verified_at' => $record['created_at'],
-                        'details' => json_decode($record['response_data'], true)
+                        'verified' => $kyc['status'] === 'approved',
+                        'pan_number' => substr($kyc['pan_number'], 0, 4) . 'XXXX' . substr($kyc['pan_number'], -1),
+                        'status' => $kyc['status'],
+                        'verified_at' => $kyc['verified_at'] ?? null,
                     ];
                 }
-                if ($record['type'] === 'aadhaar' && !$aadhaarStatus) {
+                if (!empty($kyc['aadhaar_number'])) {
                     $aadhaarStatus = [
-                        'verified' => true,
-                        'verified_at' => $record['created_at'],
-                        'details' => json_decode($record['response_data'], true)
+                        'verified' => $kyc['status'] === 'approved',
+                        'aadhaar_number' => 'XXXX XXXX ' . substr($kyc['aadhaar_number'], -4),
+                        'status' => $kyc['status'],
+                        'verified_at' => $kyc['verified_at'] ?? null,
                     ];
                 }
             }
 
             return $this->jsonSuccess([
+                'kyc_status' => $kyc['status'] ?? null,
                 'pan' => $panStatus,
                 'aadhaar' => $aadhaarStatus,
-                'is_fully_verified' => ($panStatus !== null && $aadhaarStatus !== null)
+                'is_fully_verified' => ($kyc['status'] ?? '') === 'approved',
+                'rejection_reason' => $kyc['rejection_reason'] ?? null,
+                'submitted_at' => $kyc['created_at'] ?? null,
             ], 'KYC status retrieved successfully');
-
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("KYC Status Error: " . $e->getMessage());
-            return $this->jsonError('Internal server error', 500);
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Internal server error', 'data' => []]);
+            exit;
         }
     }
 
@@ -173,76 +190,97 @@ class KYCController extends BaseApiController
     private function logKYCAttempt($type, $identifier, $success)
     {
         try {
-            $userId = $this->getCurrentUserId();
-            error_log("KYC Attempt: Type={$type}, User={$userId}, Success={$success}");
-        } catch (\Exception $e) {
-            // Silent fail - don't break the flow
-                    error_log("KYCController.php: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Save verification record to database
-     */
-    private function saveVerificationRecord($type, $identifier, $data)
-    {
-        try {
-            $userId = $this->getCurrentUserId();
-            if (!$userId) return;
-
-            $db = \App\Core\Database\Database::getInstance();
-            
-            // Check if kyc_verifications table exists, if not create it
-            $this->ensureKYCTableExists($db);
-
-            try {
-                $sql = "INSERT INTO kyc_verifications 
-                        (user_id, type, identifier, response_data, status, created_at) 
-                        VALUES 
-                        (:user_id, :type, :identifier, :response_data, 'verified', NOW())";
-            } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
+            if ($this->kycService) {
+                $this->kycService->logVerification($type, $identifier, $success, $success ? 'Passed' : 'Failed');
             }
-            
-            $db->execute($sql, [
-                'user_id' => $userId,
-                'type' => $type,
-                'identifier' => $this->maskIdentifier($type, $identifier),
-                'response_data' => json_encode($data)
-            ]);
-
-        } catch (\Exception $e) {
-            error_log("KYC Save Record Error: " . $e->getMessage());
-            // Silent fail - don't break the verification flow
+        } catch (\Throwable $e) {
+            error_log("KYC Log Attempt Error: " . $e->getMessage());
         }
     }
 
     /**
-     * Ensure KYC verifications table exists
+     * Save verification log to kyc_verification_logs table
      */
-    private function ensureKYCTableExists($db)
+    private function saveVerificationLog($type, $identifier, $success, $message)
     {
         try {
-            $sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-            
-            $db->execute($sql);
-        } catch (\Exception $e) {
-            error_log("KYC Table Creation Error: " . $e->getMessage());
+            if ($this->kycService) {
+                $this->kycService->logVerification($type, $identifier, $success, $message);
+            }
+        } catch (\Throwable $e) {
+            error_log("KYC Save Log Error: " . $e->getMessage());
         }
     }
 
     /**
-     * Mask identifier for privacy
+     * Send OTP to Aadhaar-linked mobile
+     * POST /api/kyc/aadhaar/send-otp
      */
-    private function maskIdentifier($type, $identifier)
+    public function sendAadhaarOtp()
     {
-        if ($type === 'pan') {
-            // Show last 4 characters of PAN
-            return 'XXXXX' . substr($identifier, -5);
-        } elseif ($type === 'aadhaar') {
-            // Show last 4 digits of Aadhaar
-            return 'XXXXXXXX' . substr($identifier, -4);
+        header('Content-Type: application/json');
+
+        try {
+            $authError = $this->requireLogin();
+            if ($authError) return $authError;
+
+            $aadhaar = $this->request()->input('aadhaar');
+            if (empty($aadhaar)) {
+                return $this->jsonError('Aadhaar number is required', 400);
+            }
+
+            $uidai = new \App\Services\KYC\UIDAIVerificationService();
+            $result = $uidai->sendOtp($aadhaar);
+
+            if ($result['success']) {
+                return $this->jsonSuccess($result['data'] ?? [], $result['message'] ?? 'OTP sent');
+            }
+            return $this->jsonError($result['message'] ?? 'Failed to send OTP', 400, $result['data'] ?? []);
+        } catch (\Throwable $e) {
+            error_log("KYC Send OTP Error: " . $e->getMessage());
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Internal server error', 'data' => []]);
+            exit;
         }
-        return $identifier;
+    }
+
+    /**
+     * Verify Aadhaar OTP
+     * POST /api/kyc/aadhaar/verify-otp
+     */
+    public function verifyAadhaarOtp()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $authError = $this->requireLogin();
+            if ($authError) return $authError;
+
+            $aadhaar = $this->request()->input('aadhaar');
+            $otp = $this->request()->input('otp');
+            $txnId = $this->request()->input('transaction_id');
+
+            if (empty($aadhaar) || empty($otp) || empty($txnId)) {
+                return $this->jsonError('Aadhaar, OTP, and transaction_id are required', 400);
+            }
+
+            $uidai = new \App\Services\KYC\UIDAIVerificationService();
+            $result = $uidai->verifyOtp($aadhaar, $otp, $txnId);
+            $this->logKYCAttempt('aadhaar_otp', $aadhaar, $result['success'] ?? false);
+
+            if ($result['success']) {
+                $this->saveVerificationLog('aadhaar_otp', $aadhaar, true, $result['message'] ?? 'OTP verified');
+                return $this->jsonSuccess($result['data'] ?? [], $result['message'] ?? 'OTP verified');
+            }
+            $this->saveVerificationLog('aadhaar_otp', $aadhaar, false, $result['message'] ?? 'OTP failed');
+            return $this->jsonError($result['message'] ?? 'OTP verification failed', 400, $result['data'] ?? []);
+        } catch (\Throwable $e) {
+            error_log("KYC Verify OTP Error: " . $e->getMessage());
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Internal server error', 'data' => []]);
+            exit;
+        }
     }
 }

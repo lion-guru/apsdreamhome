@@ -25,34 +25,34 @@ $receiptUrl = $bookingId > 0 ? $baseUrl . '/pdf/download/receipt/' . $bookingId 
 <div class="success-shell">
     <div class="success-icon"><i class="fas fa-check"></i></div>
     <div class="success-card">
-        <h1>Payment Successful!</h1>
-        <p>Thank you for your payment. Your booking is now confirmed.</p>
+        <h1><?php echo __('payment_success_title', [], 'Payment Successful!'); ?></h1>
+        <p><?php echo __('payment_success_subtitle', [], 'Thank you for your payment. Your booking is now confirmed.'); ?></p>
 
         <?php if ($paymentId): ?>
         <div class="detail-row">
-            <span class="detail-label">Payment ID</span>
+            <span class="detail-label"><?php echo __('payment_success_payment_id', [], 'Payment ID'); ?></span>
             <span class="detail-value"><?= htmlspecialchars($paymentId, ENT_QUOTES, 'UTF-8') ?></span>
         </div>
         <?php endif; ?>
 
         <?php if ($orderId): ?>
         <div class="detail-row">
-            <span class="detail-label">Order ID</span>
+            <span class="detail-label"><?php echo __('payment_success_order_id', [], 'Order ID'); ?></span>
             <span class="detail-value"><?= htmlspecialchars($orderId, ENT_QUOTES, 'UTF-8') ?></span>
         </div>
         <?php endif; ?>
 
         <div class="action-row">
             <a href="/user/bookings" class="btn-primary">
-                <i class="fas fa-list"></i> View My Bookings
+                <i class="fas fa-list"></i> <?php echo __('payment_success_view_bookings', [], 'View My Bookings'); ?>
             </a>
             <?php if ($receiptUrl): ?>
             <a href="<?= htmlspecialchars($receiptUrl, ENT_QUOTES, 'UTF-8') ?>" class="btn-secondary" target="_blank" rel="noopener">
-                <i class="fas fa-file-pdf"></i> Download Receipt
+                <i class="fas fa-file-pdf"></i> <?php echo __('payment_success_download_receipt', [], 'Download Receipt'); ?>
             </a>
             <?php endif; ?>
             <a href="/" class="btn-secondary">
-                <i class="fas fa-home"></i> Continue Browsing
+                <i class="fas fa-home"></i> <?php echo __('payment_success_continue_browsing', [], 'Continue Browsing'); ?>
             </a>
         </div>
     </div>

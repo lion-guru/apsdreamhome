@@ -100,16 +100,11 @@ class App
         $uri = $_SERVER["REQUEST_URI"] ?? "/";
         $method = $_SERVER["REQUEST_METHOD"] ?? "GET";
         
-        // Debug logging
-        error_log("DEBUG: handleRequest() called with URI: " . $uri . " METHOD: " . $method);
-        
         // Check if this is an API request
         if (strpos($uri, '/api') === 0) {
-            error_log("DEBUG: API request detected, calling handleApiRequest");
             return $this->handleApiRequest($uri, $method);
         }
         
-        error_log("DEBUG: Regular request, calling route()");
         // Route to appropriate controller
         return $this->route($uri, $method);
     }

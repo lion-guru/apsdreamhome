@@ -38,7 +38,7 @@ class PushSender
 
         // Handle PEM:file reference
         if (strpos($privRaw, 'PEM:') === 0) {
-            $pemFile = dirname(__DIR__, 2) . '/' . substr($privRaw, 4);
+            $pemFile = dirname(__DIR__, 3) . '/' . substr($privRaw, 4);
             $pemContent = @file_get_contents($pemFile);
             $this->vapidPrivateKey = $pemContent ? $this->decodeVapidKey($pemContent) : '';
         } else {
@@ -561,6 +561,33 @@ class PushSender
         $key = trim($key);
         if ($key === '') {
             return '';
+        }
+        if (strpos($key, '-----BEGIN') !== false) {
+            $lines = explode("\n", $key);
+            $base64 = '';
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if ($line === '' || strpos($line, '-----') === 0) {
+                    continue;
+                }
+                $base64 .= $line;
+            }
+            $der = base64_decode($base64);
+            if ($der !== false) {
+                $pos = strpos($der, "\x04\x20");
+                if ($pos !== false) {
+                    return substr($der, $pos + 2, 32);
+                }
+                return $der;
+            }
+        }
+        if (strpos($key, '.') !== false) {
+            $parts = explode('.', $key, 2);
+            $xDec = self::b64UrlDecode($parts[0]);
+            $yDec = self::b64UrlDecode($parts[1]);
+            if (strlen($xDec) === 32 && strlen($yDec) === 32) {
+                return "\x04" . $xDec . $yDec;
+            }
         }
         $decoded = self::b64UrlDecode($key);
         if ($decoded === false || $decoded === '') {

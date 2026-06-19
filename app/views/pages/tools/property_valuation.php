@@ -1,70 +1,95 @@
-<section class="py-5" style="background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);">
+<section class="py-5" style="background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);">
     <div class="container">
         <div class="text-center mb-4">
-            <h1 class="text-white fw-bold">Property Valuation Tool</h1>
-            <p class="text-white-50">Apni property ki estimated market value turant jaanein</p>
+            <h1 class="text-white fw-bold"><i class="fas fa-home me-2"></i><?php echo __('tool_property_valuation_title', [], 'Property Valuation Tool'); ?></h1>
+            <p class="text-white-50"><?php echo __('tool_property_valuation_subtitle', [], 'Apni property ki current market value jaanein'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
-                        <div class="row g-3 mb-3">
+                        <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">City</label>
-                                <select class="form-select" id="valCity" onchange="calcValuation()">
-                                    <option value="3000">Gorakhpur</option>
-                                    <option value="4000">Lucknow</option>
-                                    <option value="2500">Varanasi</option>
-                                    <option value="2000">Kushinagar</option>
-                                    <option value="3500">Ayodhya</option>
+                                <label class="form-label fw-bold"><?php echo __('property_type', [], 'Property Type'); ?></label>
+                                <select class="form-select" id="propType" onchange="calcVal()">
+                                    <option value="plot"><?php echo __('plot', [], 'Plot'); ?></option>
+                                    <option value="house" selected><?php echo __('house', [], 'House'); ?></option>
+                                    <option value="flat"><?php echo __('flat', [], 'Flat'); ?></option>
+                                    <option value="shop"><?php echo __('shop', [], 'Shop'); ?></option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Property Type</label>
-                                <select class="form-select" id="valType" onchange="calcValuation()">
-                                    <option value="1.0">Residential Plot</option>
-                                    <option value="1.5">House / Villa</option>
-                                    <option value="1.2">Flat / Apartment</option>
-                                    <option value="0.8">Agricultural Land</option>
-                                    <option value="1.8">Commercial Shop</option>
+                                <label class="form-label fw-bold"><?php echo __('area_sqft', [], 'Area (sq ft)'); ?></label>
+                                <input type="number" class="form-control form-control-lg" id="area" value="1500" min="100" oninput="calcVal()">
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold"><?php echo __('location', [], 'Location'); ?></label>
+                                <select class="form-select" id="locSel" onchange="calcVal()">
+                                    <option value="gorakhpur"><?php echo __('gorakhpur', [], 'Gorakhpur'); ?></option>
+                                    <option value="lucknow"><?php echo __('lucknow', [], 'Lucknow'); ?></option>
+                                    <option value="kushinagar"><?php echo __('kushinagar', [], 'Kushinagar'); ?></option>
+                                    <option value="varanasi"><?php echo __('varanasi', [], 'Varanasi'); ?></option>
+                                    <option value="delhi"><?php echo __('delhi', [], 'Delhi'); ?></option>
+                                    <option value="mumbai"><?php echo __('mumbai', [], 'Mumbai'); ?></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold"><?php echo __('property_age_years', [], 'Property Age (Years)'); ?></label>
+                                <input type="number" class="form-control" id="age" value="0" min="0" max="50" oninput="calcVal()">
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold"><?php echo __('bedrooms', [], 'Bedrooms'); ?></label>
+                                <select class="form-select" id="beds" onchange="calcVal()">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3" selected>3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5+</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold"><?php echo __('bathrooms', [], 'Bathrooms'); ?></label>
+                                <select class="form-select" id="baths" onchange="calcVal()">
+                                    <option value="1">1</option>
+                                    <option value="2" selected>2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4+</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold"><?php echo __('furnished_status', [], 'Furnished?'); ?></label>
+                                <select class="form-select" id="furn" onchange="calcVal()">
+                                    <option value="unfurnished"><?php echo __('unfurnished', [], 'Unfurnished'); ?></option>
+                                    <option value="semi"><?php echo __('semi_furnished', [], 'Semi-Furnished'); ?></option>
+                                    <option value="furnished"><?php echo __('fully_furnished', [], 'Fully Furnished'); ?></option>
                                 </select>
                             </div>
                         </div>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Area (sq ft)</label>
-                                <input type="number" class="form-control" id="valArea" value="1200" oninput="calcValuation()">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Age of Property</label>
-                                <select class="form-select" id="valAge" onchange="calcValuation()">
-                                    <option value="1.0">New (0-5 years)</option>
-                                    <option value="0.85">Moderate (5-15 years)</option>
-                                    <option value="0.70">Old (15+ years)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row g-3 text-center" id="valResults">
-                            <div class="col-4">
-                                <div class="bg-light rounded p-3">
-                                    <small class="text-muted">Per Sq Ft Rate</small>
-                                    <h5 class="text-primary mb-0" id="perSqft">₹3,000</h5>
+
+                        <div class="row g-3 text-center">
+                            <div class="col-md-4">
+                                <div class="bg-light rounded-3 p-3">
+                                    <small class="text-muted d-block"><?php echo __('estimated_value', [], 'Estimated Value'); ?></small>
+                                    <h4 class="text-primary mb-0" id="estVal">₹75,00,000</h4>
                                 </div>
                             </div>
-                            <div class="col-4">
-                                <div class="bg-light rounded p-3">
-                                    <small class="text-muted">Estimated Value</small>
-                                    <h5 class="text-success mb-0" id="totalValue">₹36,00,000</h5>
+                            <div class="col-md-4">
+                                <div class="bg-light rounded-3 p-3">
+                                    <small class="text-muted d-block"><?php echo __('price_per_sqft', [], 'Price per sq ft'); ?></small>
+                                    <h4 class="text-success mb-0" id="ppsf">₹5,000</h4>
                                 </div>
                             </div>
-                            <div class="col-4">
-                                <div class="bg-light rounded p-3">
-                                    <small class="text-muted">Market Range</small>
-                                    <h5 class="text-danger mb-0" id="marketRange">₹32.4L - ₹39.6L</h5>
+                            <div class="col-md-4">
+                                <div class="bg-primary text-white rounded-3 p-3">
+                                    <small class="d-block"><?php echo __('range', [], 'Range'); ?></small>
+                                    <h5 class="mb-0" id="valRange">₹67L — ₹83L</h5>
                                 </div>
                             </div>
                         </div>
-                        <p class="text-muted small mt-3 text-center"><i class="fas fa-info-circle me-1"></i>This is an estimated value based on area rates. Actual value may vary. For accurate valuation, contact our team.</p>
                     </div>
                 </div>
             </div>
@@ -72,19 +97,28 @@
     </div>
 </section>
 <script>
-function calcValuation() {
-    const baseRate = parseFloat(document.getElementById('valCity').value) || 3000;
-    const typeMul = parseFloat(document.getElementById('valType').value) || 1.0;
-    const area = parseFloat(document.getElementById('valArea').value) || 0;
-    const ageMul = parseFloat(document.getElementById('valAge').value) || 1.0;
-    const rate = baseRate * typeMul;
-    const value = rate * area * ageMul;
-    const lowValue = value * 0.9;
-    const highValue = value * 1.1;
-    document.getElementById('perSqft').textContent = '₹' + Math.round(rate).toLocaleString('en-IN');
-    document.getElementById('totalValue').textContent = '₹' + Math.round(value).toLocaleString('en-IN');
-    document.getElementById('marketRange').textContent = '₹' + Math.round(lowValue / 100000) / 10 + 'L - ₹' + Math.round(highValue / 100000) / 10 + 'L';
+function calcVal() {
+    const type = document.getElementById('propType').value;
+    const area = parseFloat(document.getElementById('area').value) || 0;
+    const loc = document.getElementById('locSel').value;
+    const age = parseInt(document.getElementById('age').value) || 0;
+    const beds = parseInt(document.getElementById('beds').value) || 3;
+    const baths = parseInt(document.getElementById('baths').value) || 2;
+    const furn = document.getElementById('furn').value;
+    const baseRates = { plot: 2800, house: 5000, flat: 4500, shop: 8000 };
+    const locMult = { gorakhpur: 1.0, lucknow: 1.2, kushinagar: 0.7, varanasi: 1.1, delhi: 2.5, mumbai: 4.0 };
+    let ppsf = (baseRates[type] || 5000) * (locMult[loc] || 1);
+    if (age > 0) ppsf *= Math.max(0.5, 1 - age * 0.03);
+    if (beds >= 4) ppsf *= 1.1;
+    if (furn === 'furnished') ppsf *= 1.2;
+    else if (furn === 'semi') ppsf *= 1.1;
+    const total = Math.round(ppsf * area);
+    const low = Math.round(total * 0.9);
+    const high = Math.round(total * 1.1);
+    document.getElementById('estVal').textContent = '\u20B9' + total.toLocaleString('en-IN');
+    document.getElementById('ppsf').textContent = '\u20B9' + Math.round(ppsf).toLocaleString('en-IN');
+    document.getElementById('valRange').textContent = '\u20B9' + (low / 100000).toFixed(1) + 'L \u2014 \u20B9' + (high / 100000).toFixed(1) + 'L';
 }
-calcValuation();
+calcVal();
 </script>
 <?php include __DIR__ . '/../partials/related_tools.php'; ?>

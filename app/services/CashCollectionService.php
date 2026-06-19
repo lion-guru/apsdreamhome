@@ -36,11 +36,13 @@ class CashCollectionService
         if ($amount <= 0) return ['success' => false, 'error' => 'Amount must be positive'];
 
         try {
+            $collectionNumber = 'CC-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
             $stmt = $this->db->prepare("INSERT INTO cash_collections
-                (booking_id, installment_id, collector_id, customer_name, amount, collection_date,
+                (collection_number, booking_id, installment_id, collector_id, customer_name, amount, collection_date,
                  payment_method, reference_number, receipt_photo, notes, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'submitted')");
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'submitted')");
             $stmt->execute([
+                $collectionNumber,
                 !empty($data['booking_id']) ? (int)$data['booking_id'] : null,
                 !empty($data['installment_id']) ? (int)$data['installment_id'] : null,
                 (int)$data['collector_id'],
@@ -66,7 +68,7 @@ class CashCollectionService
                 }
             }
 
-            return ['success' => true, 'collection_id' => $id];
+            return ['success' => true, 'collection_id' => $id, 'collection_number' => $collectionNumber];
         } catch (\Throwable $e) {
             return ['success' => false, 'error' => 'Failed: ' . $e->getMessage()];
         }

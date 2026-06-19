@@ -1,16 +1,16 @@
 <?php
-$page_title = $page_title ?? 'My Visits';
-$page_heading = $page_heading ?? 'My Property Visits';
+$page_title = $page_title ?? __('visit_my_title', [], 'My Visits');
+$page_heading = $page_heading ?? __('visit_my_subtitle', [], 'My Property Visits');
 $content = $content ?? '';
 $visits = $visits ?? [];
 ?>
 <div class="container py-5">
-    <h2 class="mb-4">My Property Visits</h2>
+    <h2 class="mb-4"><?= __('visit_my_heading', [], 'My Property Visits') ?></h2>
     <?php if (empty($visits)): ?>
         <div class="text-center py-5">
             <div class="display-1 text-muted mb-3"><i class="fas fa-calendar"></i></div>
-            <h4 class="text-muted">No visits scheduled</h4>
-            <a href="<?= BASE_URL ?>/properties" class="btn btn-primary">Browse Properties</a>
+            <h4 class="text-muted"><?= __('visit_my_empty', [], 'No visits scheduled') ?></h4>
+            <a href="<?= BASE_URL ?>/properties" class="btn btn-primary"><?= __('visit_my_browse', [], 'Browse Properties') ?></a>
         </div>
     <?php else: ?>
         <div class="row g-3">
@@ -33,7 +33,7 @@ $visits = $visits ?? [];
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="hidden" name="id" value="<?= $v['id'] ?>">
                                     <input type="hidden" name="reason" value="Cancelled by customer">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times me-1"></i> Cancel Visit</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times me-1"></i> <?= __('visit_my_cancel_button', [], 'Cancel Visit') ?></button>
                                 </form>
                             <?php endif; ?>
                         </div>

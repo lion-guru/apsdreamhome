@@ -101,28 +101,113 @@ class EMIAutomationService
     public function applyDailyPenalties(): bool
     {
         try {
-            $sql = "SELECT id, booking_id, amount, due_date,
-                           DATEDIFF(CURDATE(), due_date) AS days_overdue
-                    FROM booking_payment_schedules
-                    WHERE status IN ('overdue','pending')
-                      AND due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)
-                      AND due_date >= DATE_SUB(CURDATE(), INTERVAL 365 DAY)";
+            $sql = "SELECT bps.id, bps.booking_id, bps.amount, bps.due_date, bps.accrued_penalty,
+                           pb.booking_date,
+                           DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
+                    FROM booking_payment_schedules bps
+                    LEFT JOIN plot_bookings pb ON pb.id = bps.booking_id
+                    WHERE bps.status IN ('overdue','pending')
+                      AND bps.due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)
+                      AND bps.due_date >= DATE_SUB(CURDATE(), INTERVAL 365 DAY)";
             $rows = $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
+            $advanceCache = [];
+
             foreach ($rows as $row) {
+                $bookingId = (int)$row['booking_id'];
+
+                // 1. Advance Payment Check
+                if (!isset($advanceCache[$bookingId])) {
+                    $stmtPaid = $this->db->prepare("SELECT COALESCE(SUM(paid_amount), 0) AS total FROM booking_payment_schedules WHERE booking_id = ?");
+                    $stmtPaid->execute([$bookingId]);
+                    $totalPaid = (float)$stmtPaid->fetchColumn();
+
+                    $stmtScheduled = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) AS total FROM booking_payment_schedules WHERE booking_id = ? AND due_date <= CURDATE()");
+                    $stmtScheduled->execute([$bookingId]);
+                    $totalScheduled = (float)$stmtScheduled->fetchColumn();
+
+                    $advanceCache[$bookingId] = ($totalPaid >= $totalScheduled);
+                }
+
+                if ($advanceCache[$bookingId]) {
+                    // Skip completely: customer has paid in advance
+                    continue;
+                }
+
+                // 2. 3-Year Interest Free Check
+                $bookingDate = $row['booking_date'] ?? null;
+                $isInterestFree = false;
+                if ($bookingDate) {
+                    $bDate = new \DateTime($bookingDate);
+                    $dDate = new \DateTime($row['due_date']);
+                    $threeYearsLimit = (clone $bDate)->modify('+3 years');
+                    if ($dDate <= $threeYearsLimit) {
+                        $isInterestFree = true;
+                    }
+                }
+
+                // 3. Lose Interest-Free status if 3 consecutive bounces
+                if ($isInterestFree) {
+                    if ($this->hasThreeConsecutiveOverdueEMIs($bookingId)) {
+                        $isInterestFree = false;
+                    }
+                }
+
                 $days = (int)$row['days_overdue'];
-                $penalty = round((float)$row['amount'] * 0.18 * $days / 365, 2);
-                $this->db->prepare(
-                    "UPDATE booking_payment_schedules
-                     SET accrued_penalty = ?, updated_at = NOW()
-                     WHERE id = ? AND accrued_penalty < ?"
-                )->execute([$penalty, $row['id'], $penalty]);
+
+                if ($isInterestFree) {
+                    $penalty = 0.0;
+                } else {
+                    $penalty = round((float)$row['amount'] * 0.18 * $days / 365, 2);
+                }
+
+                $currentAccrued = (float)($row['accrued_penalty'] ?? 0);
+                if ($isInterestFree || $penalty > $currentAccrued) {
+                    $this->db->prepare(
+                        "UPDATE booking_payment_schedules
+                         SET accrued_penalty = ?, status = 'overdue', updated_at = NOW()
+                         WHERE id = ?"
+                    )->execute([$penalty, $row['id']]);
+                } else {
+                    $this->db->prepare(
+                        "UPDATE booking_payment_schedules
+                         SET status = 'overdue', updated_at = NOW()
+                         WHERE id = ?"
+                    )->execute([$row['id']]);
+                }
             }
             return true;
         } catch (\Exception $e) {
             error_log("applyDailyPenalties: " . $e->getMessage());
             return false;
         }
+    }
+
+    private function hasThreeConsecutiveOverdueEMIs(int $bookingId): bool
+    {
+        $stmt = $this->db->prepare(
+            "SELECT status, due_date FROM booking_payment_schedules 
+             WHERE booking_id = ? 
+             ORDER BY installment_no ASC"
+        );
+        $stmt->execute([$bookingId]);
+        $installments = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+        $consecutive = 0;
+        $today = date('Y-m-d');
+        foreach ($installments as $inst) {
+            $isUnpaid = ($inst['status'] !== 'paid');
+            $isPastDue = ($inst['due_date'] < $today);
+            if ($isUnpaid && $isPastDue) {
+                $consecutive++;
+                if ($consecutive >= 3) {
+                    return true;
+                }
+            } else {
+                $consecutive = 0;
+            }
+        }
+        return false;
     }
 
     /**

@@ -13,8 +13,8 @@ $featuredProperties = [
 
 <section class="py-5 bg-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3">Featured Properties</h1>
-        <p class="lead">Handpicked premium properties for you</p>
+        <h1 class="display-4 fw-bold mb-3"><?= __('featured_hero_title') ?></h1>
+        <p class="lead"><?= __('featured_hero_desc') ?></p>
     </div>
 </section>
 
@@ -26,7 +26,7 @@ $featuredProperties = [
                 <div class="card h-100 shadow-sm border-0">
                     <div class="position-relative">
                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?= htmlspecialchars($property['name']) ?>" style="height:220px;object-fit:cover;">
-                        <span class="badge bg-success position-absolute top-0 start-0 m-3">Featured</span>
+                        <span class="badge bg-success position-absolute top-0 start-0 m-3"><?= __('featured_badge') ?></span>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <h5 class="card-title"><?= htmlspecialchars($property['name']) ?></h5>
@@ -38,7 +38,7 @@ $featuredProperties = [
                         <div class="h4 text-primary">₹<?= $property['price'] ?></div>
                     </div>
                     <div class="card-footer bg-white border-0 pb-3">
-                        <a href="/apsdreamhome/properties" class="btn btn-primary w-100">View Details</a>
+                        <a href="/apsdreamhome/properties" class="btn btn-primary w-100"><?= __('featured_view_details') ?></a>
                     </div>
                 </div>
             </div>

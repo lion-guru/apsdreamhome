@@ -14,7 +14,7 @@ class ApiService {
 
   Future<void> initialize() async {
     _dio = Dio(BaseOptions(
-      baseUrl: AppConstants.baseUrl,
+      baseUrl: '${AppConstants.baseUrl.endsWith('/') ? AppConstants.baseUrl : '${AppConstants.baseUrl}/'}${AppConstants.apiVersion}/',
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       headers: {
@@ -53,8 +53,13 @@ class ApiService {
         throw const NetworkFailure('No internet connection');
       }
 
+      String cleanEndpoint = endpoint;
+      if (cleanEndpoint.startsWith('/')) {
+        cleanEndpoint = cleanEndpoint.substring(1);
+      }
+
       final response = await _dio.request(
-        endpoint,
+        cleanEndpoint,
         data: data,
         queryParameters: queryParameters,
         options: Options(method: method),
@@ -198,6 +203,42 @@ class ApiService {
     final response =
         await post(AppConstants.parseLeadEndpoint, data: {'text': text});
     return (response['data'] ?? {}) as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> startSiteVisit({
+    required String userId,
+    required String leadId,
+    required String propertyId,
+    required double destLat,
+    required double destLng,
+  }) async {
+    return post('/site-visit/start', data: {
+      'user_id': userId,
+      'lead_id': leadId,
+      'property_id': propertyId,
+      'dest_lat': destLat,
+      'dest_lng': destLng,
+    });
+  }
+
+  Future<Map<String, dynamic>> updateSiteVisitLocation({
+    required int visitId,
+    required double lat,
+    required double lng,
+  }) async {
+    return post('/site-visit/update', data: {
+      'visit_id': visitId,
+      'lat': lat,
+      'lng': lng,
+    });
+  }
+
+  Future<Map<String, dynamic>> completeSiteVisit({
+    required int visitId,
+  }) async {
+    return post('/site-visit/complete', data: {
+      'visit_id': visitId,
+    });
   }
 }
 

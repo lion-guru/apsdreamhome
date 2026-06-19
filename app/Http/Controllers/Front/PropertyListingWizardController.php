@@ -335,7 +335,7 @@ class PropertyListingWizardController extends BaseController
             return;
         }
         $file = $_FILES['image'];
-        $v = \UploadValidator::validate($file, ['types' => 'images', 'max_size' => 5]);
+        $v = \UploadValidator::validate($file, ['types' => 'images', 'max_size' => 5]); // 5MB limit enforced
         if (!$v['valid']) {
             http_response_code(400);
             echo json_encode(['ok' => false, 'error' => $v['error']]);

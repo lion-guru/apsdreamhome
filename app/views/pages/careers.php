@@ -68,7 +68,7 @@
             <?php endforeach; ?>
             <?php else: ?>
             <div class="col-12 text-center text-muted py-4">
-                <i class="fas fa-info-circle me-2"></i>Benefits information coming soon.
+                <i class="fas fa-info-circle me-2"></i><?= __('careers_benefits_soon', null, 'Benefits information coming soon.') ?>
             </div>
             <?php endif; ?>
         </div>
@@ -79,8 +79,8 @@
 <section class="py-5" id="jobs">
     <div class="container">
         <div class="text-center mb-5">
-            <h2>Current Openings</h2>
-            <p class="lead text-muted">Join our growing team and make a difference</p>
+            <h2><?= __('careers_current_openings') ?></h2>
+            <p class="lead text-muted"><?= __('careers_join_growing') ?></p>
         </div>
 
         <div class="row">
@@ -102,7 +102,7 @@
                             <?php if (isset($career->salary_min) && isset($career->salary_max)): ?>
                                 <div class="mb-2">
                                     <span class="text-primary fw-bold">₹<?php echo number_format($career->salary_min); ?> - ₹<?php echo number_format($career->salary_max); ?></span>
-                                    <small class="text-muted"> / month</small>
+                                    <small class="text-muted"> <?= __('careers_per_month') ?></small>
                                 </div>
                             <?php endif; ?>
 
@@ -118,11 +118,11 @@
                             <div class="d-flex justify-content-between align-items-center mt-auto">
                                 <small class="text-muted">
                                     <?php if (isset($career->experience)): ?>
-                                        Experience: <?php echo htmlspecialchars($career->experience); ?>
+                                        <?= __('careers_experience_label') ?>: <?php echo htmlspecialchars($career->experience); ?>
                                     <?php endif; ?>
                                 </small>
                                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#applyModal" onclick="setJobTitle('<?php echo addslashes($career->title); ?>')">
-                                    Apply Now
+                                    <?= __('careers_apply_now') ?>
                                 </button>
                             </div>
                         </div>
@@ -131,8 +131,8 @@
             <?php else: ?>
                 <div class="col-12 text-center">
                     <div class="alert alert-info">
-                        <h4>No current openings</h4>
-                        <p>We don't have any specific openings right now, but we're always looking for talent. Feel free to send your resume!</p>
+                        <h4><?= __('careers_no_openings') ?></h4>
+                        <p><?= __('careers_no_openings_desc') ?></p>
                     </div>
                 </div>
             <?php endif; ?>
@@ -145,45 +145,45 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Apply for <span id="jobTitle">Position</span></h5>
+                <h5 class="modal-title"><?= sprintf(__('careers_apply_for'), '<span id="jobTitle">Position</span>') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form id="jobApplicationForm">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Full Name *</label>
+                            <label class="form-label"><?= __('careers_full_name') ?></label>
                             <input type="text" class="form-control" name="name" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Email *</label>
+                            <label class="form-label"><?= __('careers_email') ?></label>
                             <input type="email" class="form-control" name="email" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Phone *</label>
+                            <label class="form-label"><?= __('careers_phone') ?></label>
                             <input type="tel" class="form-control" name="phone" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Position Applied For</label>
+                            <label class="form-label"><?= __('careers_position_applied') ?></label>
                             <input type="text" class="form-control" name="position" id="applicationPosition" readonly>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Cover Letter</label>
-                        <textarea class="form-control" name="cover_letter" rows="4" placeholder="Tell us why you're interested in this position..."></textarea>
+                        <label class="form-label"><?= __('careers_cover_letter') ?></label>
+                        <textarea class="form-control" name="cover_letter" rows="4" placeholder="<?= __('careers_cover_letter_ph') ?>"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Resume/CV *</label>
+                        <label class="form-label"><?= __('careers_resume_cv') ?></label>
                         <input type="file" class="form-control" name="resume" accept=".pdf,.doc,.docx" required>
-                        <small class="text-muted">Upload PDF, DOC, or DOCX files only (Max 5MB)</small>
+                        <small class="text-muted"><?= __('careers_resume_help') ?></small>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="submitApplication()">Submit Application</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('careers_cancel') ?></button>
+                <button type="button" class="btn btn-primary" onclick="submitApplication()"><?= __('careers_submit_application') ?></button>
             </div>
         </div>
     </div>
@@ -194,12 +194,12 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
-                <h2 class="mb-4">Don't See a Position That Fits?</h2>
+                <h2 class="mb-4"><?= __('careers_no_position_title') ?></h2>
                 <p class="lead mb-4">
-                    We're always looking for talented individuals. Send us your resume and we'll keep you in mind for future opportunities.
+                    <?= __('careers_no_position_desc') ?>
                 </p>
                 <a href="<?= BASE_URL ?>/contact" class="btn btn-primary btn-lg">
-                    <i class="fas fa-envelope me-2"></i>Get In Touch
+                    <i class="fas fa-envelope me-2"></i><?= __('careers_get_in_touch') ?>
                 </a>
             </div>
         </div>
@@ -223,7 +223,7 @@
 
         // Here you would typically submit to your backend
         // TODO: Implement actual form submission endpoint
-        alert('Application submitted successfully! We will review your application and get back to you soon.');
+        alert('<?= __('careers_submission_success') ?>');
 
         // Close modal and reset form
         const modal = bootstrap.Modal.getInstance(document.getElementById('applyModal'));

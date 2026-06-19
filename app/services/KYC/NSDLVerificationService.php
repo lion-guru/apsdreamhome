@@ -181,6 +181,33 @@ class NSDLVerificationService
      */
     private function callNSDLApi(string $pan, string $name, ?string $dob): array
     {
+        return $this->callNSDLApiWithRetry($pan, $name, $dob, 2);
+    }
+
+    /**
+     * NSDL API call with retry (max 2 retries on 5xx/connection errors)
+     */
+    private function callNSDLApiWithRetry(string $pan, string $name, ?string $dob, int $maxRetries = 2): array
+    {
+        $lastError = null;
+        for ($attempt = 0; $attempt <= $maxRetries; $attempt++) {
+            $result = $this->callNSDLApiOnce($pan, $name, $dob);
+            if ($result['success'] || (($result['data']['status'] ?? '') !== 'API_ERROR')) {
+                return $result;
+            }
+            $lastError = $result;
+            if ($attempt < $maxRetries) {
+                usleep(500000 * (1 << $attempt));
+            }
+        }
+        return $lastError;
+    }
+
+    /**
+     * Single NSDL API attempt
+     */
+    private function callNSDLApiOnce(string $pan, string $name, ?string $dob): array
+    {
         $payload = [
             'pan' => $pan,
             'name' => $name,

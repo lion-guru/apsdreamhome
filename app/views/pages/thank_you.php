@@ -141,26 +141,26 @@
             <i class="fas fa-check-circle"></i>
         </div>
         
-        <h1 class="thank-you-title">Thank You!</h1>
-        <p class="thank-you-subtitle">Your submission has been received successfully.</p>
+        <h1 class="thank-you-title"><?php echo __('thank_you_title', [], 'Thank You!'); ?></h1>
+        <p class="thank-you-subtitle"><?php echo __('thank_you_subtitle', [], 'Your submission has been received successfully.'); ?></p>
         
         <div class="action-buttons">
             <a href="<?= BASE_URL ?>" class="btn-custom btn-primary-custom">
                 <i class="fas fa-home"></i>
-                Back to Home
+                <?php echo __('thank_you_back_home', [], 'Back to Home'); ?>
             </a>
             <a href="<?= BASE_URL ?>properties" class="btn-custom btn-secondary-custom">
                 <i class="fas fa-building"></i>
-                Browse Properties
+                <?php echo __('thank_you_browse_properties', [], 'Browse Properties'); ?>
             </a>
             <a href="<?= BASE_URL ?>contact" class="btn-custom btn-secondary-custom">
                 <i class="fas fa-phone"></i>
-                Contact Us
+                <?php echo __('thank_you_contact_us', [], 'Contact Us'); ?>
             </a>
         </div>
         
         <div class="contact-info">
-            <h3>Need Assistance?</h3>
+            <h3><?php echo __('thank_you_need_assistance', [], 'Need Assistance?'); ?></h3>
             <div class="contact-item">
                 <i class="fas fa-envelope"></i>
                 <span><?= htmlspecialchars($emailDisplay) ?></span>
@@ -171,7 +171,7 @@
             </div>
             <div class="contact-item">
                 <i class="fas fa-map-marker-alt"></i>
-                <span>Gorakhpur, Uttar Pradesh</span>
+                <span><?php echo __('thank_you_location', [], 'Gorakhpur, Uttar Pradesh'); ?></span>
             </div>
         </div>
     </div>
@@ -179,7 +179,7 @@
     <script>
         // Auto-redirect after 10 seconds (optional)
         setTimeout(() => {
-            const autoRedirect = confirm('Would you like to return to the homepage?');
+            const autoRedirect = confirm('<?php echo addslashes(__('thank_you_auto_redirect', [], 'Would you like to return to the homepage?')); ?>');
             if (autoRedirect) {
                 window.location.href = '<?= BASE_URL ?>';
             }

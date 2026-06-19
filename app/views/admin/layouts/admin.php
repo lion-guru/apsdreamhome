@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * Unified Admin Layout with RBAC Sidebar
@@ -19,6 +19,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <title><?php echo htmlspecialchars($page_title ?? 'APS Dream Home Admin'); ?></title>
     <link rel="icon" type="image/png" href="/apsdreamhome/assets/img/favicon.png">
     <!-- Admin CSS -->

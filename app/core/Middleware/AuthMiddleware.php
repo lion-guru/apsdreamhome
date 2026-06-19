@@ -56,14 +56,7 @@ class AuthMiddleware {
 
             if (!$user) return false;
 
-            $password_verified = false;
-            if (isset($user['password']) && password_verify($password, $user['password'])) {
-                $password_verified = true;
-            } else if (isset($user['apass']) && sha1($password) === $user['apass']) {
-                $password_verified = true;
-            }
-
-            if (!$password_verified) return false;
+            if (!isset($user['password']) || !password_verify($password, $user['password'])) return false;
             
             self::createSecureSession($user['username'] ?? $username);
             return true;

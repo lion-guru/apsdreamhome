@@ -5,12 +5,12 @@
     <div class="row mb-5 text-center">
         <div class="col-lg-8 mx-auto">
             <h1 class="display-4 fw-bold text-dark mb-3"><?= __('plots_title') ?? 'Explore Our Premium Colonies' ?></h1>
-            <p class="lead text-muted">Discover fully developed, verified residential and commercial plots across Uttar Pradesh's prime hubs.</p>
+            <p class="lead text-muted"><?= __('plots_subtitle') ?></p>
             <div class="d-flex justify-content-center gap-2 mt-4">
-                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> Lucknow</span>
-                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> Gorakhpur</span>
-                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> Varanasi</span>
-                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> Kushinagar</span>
+                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> <?= __('plots_lucknow') ?></span>
+                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> <?= __('plots_gorakhpur') ?></span>
+                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> <?= __('plots_varanasi') ?></span>
+                <span class="badge bg-light text-dark border px-3 py-2"><i class="fas fa-map-marker-alt text-danger me-1"></i> <?= __('plots_kushinagar') ?></span>
             </div>
         </div>
     </div>
@@ -26,7 +26,7 @@
                     <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative aps-colony-card" style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
                         <?php if (!empty($colony['is_featured'])): ?>
                             <span class="position-absolute top-0 start-0 m-3 badge bg-warning text-dark fw-bold px-3 py-2 shadow-sm" style="z-index: 10;">
-                                <i class="fas fa-star me-1"></i> FEATURED
+                                <i class="fas fa-star me-1"></i> <?= __('plots_featured') ?>
                             </span>
                         <?php endif; ?>
                         
@@ -45,11 +45,11 @@
                             
                             <div class="row g-0 align-items-center mb-3">
                                 <div class="col-6">
-                                    <span class="text-muted d-block small">Starting From</span>
+                                    <span class="text-muted d-block small"><?= __('plots_starting_from') ?></span>
                                     <span class="fs-5 fw-bold text-primary"><?= $startingPrice ?></span>
                                 </div>
                                 <div class="col-6 text-end">
-                                    <span class="text-muted d-block small">Available Plots</span>
+                                    <span class="text-muted d-block small"><?= __('plots_available') ?></span>
                                     <span class="fs-5 fw-bold text-success"><?= (int)($colony['available_plots'] ?? 0) ?></span>
                                 </div>
                             </div>
@@ -65,8 +65,8 @@
             <div class="col-12 text-center py-5">
                 <div class="empty-state p-5 bg-white rounded-4 shadow-sm border">
                     <i class="fas fa-map-marked-alt text-muted fa-4x mb-3 opacity-25"></i>
-                    <h3 class="fw-bold">No Colonies Available</h3>
-                    <p class="text-muted">Aapki locations ke liye abhi koi colony available nahi hai. Kripya baad mein check karein.</p>
+                    <h3 class="fw-bold"><?= __('plots_no_colonies') ?></h3>
+                    <p class="text-muted"><?= __('plots_no_colonies_desc') ?></p>
                 </div>
             </div>
         <?php endif; ?>

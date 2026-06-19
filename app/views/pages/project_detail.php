@@ -29,8 +29,8 @@ if ($project) {
             <div class="col-lg-8">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo $baseUrl; ?>/" class="text-white">Home</a></li>
-                        <li class="breadcrumb-item"><a href="<?php echo $baseUrl; ?>/company/projects" class="text-white">Projects</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo $baseUrl; ?>/" class="text-white"><?= __('breadcrumb_home') ?></a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo $baseUrl; ?>/company/projects" class="text-white"><?= __('breadcrumb_projects') ?></a></li>
                         <li class="breadcrumb-item text-white active"><?php echo htmlspecialchars($project->site_name); ?></li>
                     </ol>
                 </nav>
@@ -44,7 +44,7 @@ if ($project) {
                         <?php echo ucfirst($project->site_type ?? 'Residential'); ?>
                     </span>
                     <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'secondary'; ?> fs-6">
-                        <?php echo $project->status === 'active' ? 'Available' : ucfirst($project->status ?? 'Active'); ?>
+                        <?php echo $project->status === 'active' ? __('colony_available') : ucfirst($project->status ?? 'Active'); ?>
                     </span>
                     <?php if (!empty($project->total_area)): ?>
                     <span class="badge bg-info fs-6">
@@ -71,7 +71,7 @@ if ($project) {
             </div>
             <div class="col-md-4">
                 <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success">
-                    <i class="fab fa-whatsapp me-2"></i>WhatsApp Now
+                    <i class="fab fa-whatsapp me-2"></i><?= __('project_whatsapp_now') ?>
                 </a>
             </div>
         </div>
@@ -83,20 +83,20 @@ if ($project) {
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
-                <h2 class="mb-4"><i class="fas fa-info-circle text-primary me-2"></i>Project Overview</h2>
+                <h2 class="mb-4"><i class="fas fa-info-circle text-primary me-2"></i><?= __('project_overview') ?></h2>
                 <p class="lead">
                     <?php echo nl2br(htmlspecialchars($project->description ?? 'Premium residential plots with modern infrastructure and excellent amenities located in the heart of ' . ($project->district ?? 'Uttar Pradesh') . '.')); ?>
                 </p>
                 
                 <!-- Key Highlights -->
-                <h3 class="mt-5 mb-4"><i class="fas fa-star text-warning me-2"></i>Key Highlights</h3>
+                <h3 class="mt-5 mb-4"><i class="fas fa-star text-warning me-2"></i><?= __('project_highlights') ?></h3>
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <div class="d-flex align-items-center p-3 bg-light rounded">
                             <i class="fas fa-road fa-2x text-primary me-3"></i>
                             <div>
-                                <h6 class="mb-0">Wide Roads</h6>
-                                <small class="text-muted">30-40 ft internal roads</small>
+                                <h6 class="mb-0"><?= __('project_wide_roads') ?></h6>
+                                <small class="text-muted"><?= __('project_wide_roads_desc') ?></small>
                             </div>
                         </div>
                     </div>
@@ -104,8 +104,8 @@ if ($project) {
                         <div class="d-flex align-items-center p-3 bg-light rounded">
                             <i class="fas fa-shield-alt fa-2x text-success me-3"></i>
                             <div>
-                                <h6 class="mb-0">Gated Community</h6>
-                                <small class="text-muted">24/7 security with CCTV</small>
+                                <h6 class="mb-0"><?= __('project_gated_community') ?></h6>
+                                <small class="text-muted"><?= __('project_gated_community_desc') ?></small>
                             </div>
                         </div>
                     </div>
@@ -113,8 +113,8 @@ if ($project) {
                         <div class="d-flex align-items-center p-3 bg-light rounded">
                             <i class="fas fa-bolt fa-2x text-warning me-3"></i>
                             <div>
-                                <h6 class="mb-0">Underground Electricity</h6>
-                                <small class="text-muted">Safe and reliable power</small>
+                                <h6 class="mb-0"><?= __('project_underground_electricity') ?></h6>
+                                <small class="text-muted"><?= __('project_underground_electricity_desc') ?></small>
                             </div>
                         </div>
                     </div>
@@ -122,8 +122,8 @@ if ($project) {
                         <div class="d-flex align-items-center p-3 bg-light rounded">
                             <i class="fas fa-tree fa-2x text-info me-3"></i>
                             <div>
-                                <h6 class="mb-0">Green Parks</h6>
-                                <small class="text-muted">Open spaces and gardens</small>
+                                <h6 class="mb-0"><?= __('project_green_parks') ?></h6>
+                                <small class="text-muted"><?= __('project_green_parks_desc') ?></small>
                             </div>
                         </div>
                     </div>
@@ -139,7 +139,7 @@ if ($project) {
                     }
                 }
                 ?>
-                <h3 class="mt-5 mb-4"><i class="fas fa-concierge-bell text-primary me-2"></i>Amenities</h3>
+                <h3 class="mt-5 mb-4"><i class="fas fa-concierge-bell text-primary me-2"></i><?= __('project_amenities') ?></h3>
                 <div class="row">
                     <?php if (!empty($amenities)): ?>
                         <?php foreach ($amenities as $amenity): ?>
@@ -170,22 +170,22 @@ if ($project) {
                 <!-- Contact Card -->
                 <div class="card shadow-lg mb-4 sticky-top" style="top: 100px;">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0"><i class="fas fa-headset me-2"></i>Get In Touch</h4>
+                        <h4 class="mb-0"><i class="fas fa-headset me-2"></i><?= __('project_get_in_touch') ?></h4>
                     </div>
                     <div class="card-body aps-cp-card-body">
-                        <h5 class="text-primary mb-3">Interested in this project?</h5>
+                        <h5 class="text-primary mb-3"><?= __('project_interested') ?></h5>
                         <div class="d-grid gap-2">
                             <a href="tel:<?= $phoneRaw ?>" class="btn btn-success btn-lg">
-                                <i class="fas fa-phone me-2"></i>Call Now
+                                <i class="fas fa-phone me-2"></i><?= __('project_call_now') ?>
                             </a>
                             <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-outline-success btn-lg">
-                                <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                                <i class="fab fa-whatsapp me-2"></i><?= __('contact_whatsapp') ?>
                             </a>
                             <a href="<?php echo $baseUrl; ?>/contact" class="btn btn-primary btn-lg">
-                                <i class="fas fa-envelope me-2"></i>Send Inquiry
+                                <i class="fas fa-envelope me-2"></i><?= __('contact_inquiry') ?>
                             </a>
                             <a href="<?php echo $baseUrl; ?>/register" class="btn btn-outline-primary btn-lg">
-                                <i class="fas fa-user-plus me-2"></i>Register Now
+                                <i class="fas fa-user-plus me-2"></i><?= __('contact_register') ?>
                             </a>
                         </div>
                     </div>
@@ -194,7 +194,7 @@ if ($project) {
                 <!-- Project Details Card -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0"><i class="fas fa-building me-2"></i>Project Details</h5>
+                        <h5 class="mb-0"><i class="fas fa-building me-2"></i><?= __('project_details') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="table-responsive"><table class="table table-borderless table-sm table-responsive">
@@ -245,12 +245,12 @@ if ($project) {
 <!-- Location Section -->
 <section class="py-5 bg-light">
     <div class="container">
-        <h3 class="mb-4"><i class="fas fa-map-marked-alt text-primary me-2"></i>Location & Accessibility</h3>
+                <h3 class="mb-4"><i class="fas fa-map-marked-alt text-primary me-2"></i><?= __('project_location_access') ?></h3>
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Address</h5>
+                        <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i><?= __('project_address') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <p class="mb-1"><strong><?php echo htmlspecialchars($project->site_name); ?></strong></p>
@@ -266,33 +266,33 @@ if ($project) {
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-header bg-success text-white">
-                        <h5 class="mb-0"><i class="fas fa-directions me-2"></i>Nearby Places</h5>
+                        <h5 class="mb-0"><i class="fas fa-directions me-2"></i><?= __('project_nearby') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="row">
                             <div class="col-6 mb-3">
                                 <i class="fas fa-train text-muted me-2"></i>
-                                <small>Railway Station</small>
+                                <small><?= __('contact_railway') ?></small>
                             </div>
                             <div class="col-6 mb-3">
                                 <i class="fas fa-bus text-muted me-2"></i>
-                                <small>Bus Stand</small>
+                                <small><?= __('contact_bus') ?></small>
                             </div>
                             <div class="col-6 mb-3">
                                 <i class="fas fa-school text-muted me-2"></i>
-                                <small>Schools</small>
+                                <small><?= __('contact_school') ?></small>
                             </div>
                             <div class="col-6 mb-3">
                                 <i class="fas fa-hospital text-muted me-2"></i>
-                                <small>Hospitals</small>
+                                <small><?= __('contact_hospital') ?></small>
                             </div>
                             <div class="col-6 mb-3">
                                 <i class="fas fa-shopping-cart text-muted me-2"></i>
-                                <small>Market</small>
+                                <small><?= __('contact_market') ?></small>
                             </div>
                             <div class="col-6 mb-3">
                                 <i class="fas fa-place-of-worship text-muted me-2"></i>
-                                <small>Temple/Church</small>
+                                <small><?= __('contact_temple') ?></small>
                             </div>
                         </div>
                     </div>
@@ -305,7 +305,7 @@ if ($project) {
             <div class="col-12">
                 <div class="card aps-cp-card">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="fas fa-map-marked me-2"></i>Location on Map</h5>
+                        <h5 class="mb-0"><i class="fas fa-map-marked me-2"></i><?= __('project_map') ?></h5>
                     </div>
                     <div class="card-body p-0">
                         <iframe 
@@ -320,7 +320,7 @@ if ($project) {
                     </div>
                     <div class="card-footer text-center">
                         <a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode(($project->location ?? $project->city ?? '') . ', ' . ($project->district ?? 'Uttar Pradesh')); ?>" target="_blank" class="btn btn-outline-primary">
-                            <i class="fas fa-external-link-alt me-2"></i>Open in Google Maps
+                            <i class="fas fa-external-link-alt me-2"></i><?= __('project_open_maps') ?>
                         </a>
                     </div>
                 </div>
@@ -332,7 +332,7 @@ if ($project) {
 <!-- Other Projects -->
 <section class="py-5">
     <div class="container">
-        <h3 class="mb-4"><i class="fas fa-th-large text-primary me-2"></i>Other Projects You May Like</h3>
+        <h3 class="mb-4"><i class="fas fa-th-large text-primary me-2"></i><?= __('project_other_projects') ?></h3>
         <div class="row">
             <?php if (!empty($related_projects)): ?>
                 <?php foreach (array_slice($related_projects, 0, 3) as $related): 
@@ -350,7 +350,7 @@ if ($project) {
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title"><?php echo htmlspecialchars($related->site_name); ?></h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($related->district ?? ''); ?></p>
-                            <a href="<?php echo $baseUrl; ?>/projects/<?php echo $relSlug; ?>" class="btn btn-sm btn-primary">View Details</a>
+                            <a href="<?php echo $baseUrl; ?>/projects/<?php echo $relSlug; ?>" class="btn btn-sm btn-primary"><?= __('featured_view_details') ?></a>
                         </div>
                     </div>
                 </div>
@@ -390,7 +390,7 @@ if ($project) {
         </div>
         <div class="text-center mt-3">
             <a href="<?php echo $baseUrl; ?>/company/projects" class="btn btn-outline-primary btn-lg">
-                <i class="fas fa-building me-2"></i>View All Projects
+                <i class="fas fa-building me-2"></i><?= __('project_view_all') ?>
             </a>
         </div>
     </div>
@@ -400,16 +400,16 @@ if ($project) {
 <section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container text-center">
         <h2 class="mb-3">Interested in <?php echo htmlspecialchars($project->site_name); ?>?</h2>
-        <p class="lead mb-4">Book your dream plot today and secure your future!</p>
+        <p class="lead mb-4"><?= __('project_cta_desc') ?></p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg">
-                <i class="fas fa-phone me-2"></i>Call Now
+                <i class="fas fa-phone me-2"></i><?= __('project_call_now') ?>
             </a>
             <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-lg">
-                <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                <i class="fab fa-whatsapp me-2"></i><?= __('contact_whatsapp') ?>
             </a>
             <a href="<?php echo $baseUrl; ?>/register" class="btn btn-light btn-lg">
-                <i class="fas fa-user-plus me-2"></i>Register Now
+                <i class="fas fa-user-plus me-2"></i><?= __('contact_register') ?>
             </a>
         </div>
     </div>
@@ -420,10 +420,10 @@ if ($project) {
 <section class="py-5 text-center">
     <div class="container">
         <div class="alert alert-info">
-            <h2><i class="fas fa-info-circle me-2"></i>Project Not Found</h2>
-            <p class="lead">The requested project could not be found.</p>
+            <h2><i class="fas fa-info-circle me-2"></i><?= __('project_not_found') ?></h2>
+            <p class="lead"><?= __('project_not_found_desc') ?></p>
             <a href="<?php echo $baseUrl; ?>/company/projects" class="btn btn-primary">
-                <i class="fas fa-arrow-left me-2"></i>Back to Projects
+                <i class="fas fa-arrow-left me-2"></i><?= __('project_back_to_projects') ?>
             </a>
         </div>
     </div>

@@ -11,20 +11,20 @@ class DailyCaller with _$DailyCaller {
   const DailyCaller._();
 
   const factory DailyCaller({
-    required String id,
-    required String name,
-    required String phone,
-    required String email,
+    @Default('') String id,
+    @Default('') String name,
+    @Default('') String phone,
+    @Default('') String email,
     String? photoUrl,
     
     // Employment Details
-    required String employeeId,
+    @Default('') String employeeId,
     required DateTime joiningDate,
     required CallerType callerType, // FullTime, PartTime, Freelance
     required SalaryType salaryType, // Fixed, CommissionOnly, FixedPlusCommission
     
     // Salary Structure
-    required double monthlySalary,
+    @Default(0.0) double monthlySalary,
     double? dailyTargetAmount, // Sales target per day
     int? dailyCallTarget, // Minimum calls per day
     int? dailyTalkTimeTarget, // Minutes per day
@@ -43,8 +43,8 @@ class DailyCaller with _$DailyCaller {
     @Default(0) int currentMonthConnected,
     @Default(0) int currentMonthValidLeads,
     @Default(0) int currentMonthBookings,
-    @Default(0) double currentMonthRevenue,
-    @Default(0) double currentMonthCommission,
+    @Default(0.0) double currentMonthRevenue,
+    @Default(0.0) double currentMonthCommission,
     @Default(0) int currentMonthTalkTimeMinutes,
     
     // Assigned Leads
@@ -76,7 +76,7 @@ enum CallerStatus { active, onLeave, suspended, terminated }
 @freezed
 class DailyCallReport with _$DailyCallReport {
   const factory DailyCallReport({
-    required String id,
+    @Default('') String id,
     required DateTime date,
     
     // Call Statistics
@@ -90,7 +90,7 @@ class DailyCallReport with _$DailyCallReport {
     
     // Talk Time
     @Default(0) int totalTalkTimeMinutes,
-    @Default(0) double avgTalkTimeMinutes,
+    @Default(0.0) double avgTalkTimeMinutes,
     
     // Lead Generation
     @Default(0) int validLeadsGenerated,
@@ -99,8 +99,8 @@ class DailyCallReport with _$DailyCallReport {
     @Default(0) int bookingsConfirmed,
     
     // Financial
-    @Default(0) double revenueGenerated,
-    @Default(0) double commissionEarned,
+    @Default(0.0) double revenueGenerated,
+    @Default(0.0) double commissionEarned,
     
     // Detailed Log
     @Default([]) List<CallDetail> callDetails,
@@ -121,9 +121,9 @@ enum ReportStatus { pending, submitted, verified, rejected }
 @freezed
 class CallDetail with _$CallDetail {
   const factory CallDetail({
-    required String leadId,
-    required String leadName,
-    required String leadPhone,
+    @Default('') String leadId,
+    @Default('') String leadName,
+    @Default('') String leadPhone,
     required DateTime callTime,
     required CallOutcome outcome,
     int? talkTimeSeconds,
@@ -152,9 +152,9 @@ enum CallOutcome {
 @freezed
 class MonthlyPerformance with _$MonthlyPerformance {
   const factory MonthlyPerformance({
-    required String id,
-    required int year,
-    required int month,
+    @Default('') String id,
+    @Default(0) int year,
+    @Default(0) int month,
     
     // Call Stats
     @Default(0) int totalCalls,
@@ -165,27 +165,27 @@ class MonthlyPerformance with _$MonthlyPerformance {
     @Default(0) int validLeads,
     @Default(0) int siteVisits,
     @Default(0) int bookings,
-    @Default(0) double totalRevenue,
+    @Default(0.0) double totalRevenue,
     
     // Financial
-    @Default(0) double baseSalary,
-    @Default(0) double commissionEarned,
-    @Default(0) double incentives,
-    @Default(0) double deductions,
-    @Default(0) double totalEarnings,
+    @Default(0.0) double baseSalary,
+    @Default(0.0) double commissionEarned,
+    @Default(0.0) double incentives,
+    @Default(0.0) double deductions,
+    @Default(0.0) double totalEarnings,
     
     // Target Achievement
-    @Default(0) double targetAchievementPercentage,
+    @Default(0.0) double targetAchievementPercentage,
     @Default(0) int ranking, // Among all callers
     
     // Daily average
-    @Default(0) double avgCallsPerDay,
-    @Default(0) double avgTalkTimePerDay,
-    @Default(0) double avgLeadsPerDay,
+    @Default(0.0) double avgCallsPerDay,
+    @Default(0.0) double avgTalkTimePerDay,
+    @Default(0.0) double avgLeadsPerDay,
     
     // Quality metrics
-    @Default(0) double leadQualityScore, // 0-100
-    @Default(0) double conversionRate,
+    @Default(0.0) double leadQualityScore, // 0-100
+    @Default(0.0) double conversionRate,
     
     required PaymentStatus paymentStatus,
     DateTime? paidAt,
@@ -200,11 +200,11 @@ enum PaymentStatus { pending, calculated, approved, paid }
 @freezed
 class CallerLeadAssignment with _$CallerLeadAssignment {
   const factory CallerLeadAssignment({
-    required String leadId,
-    required String leadName,
-    required String leadPhone,
+    @Default('') String leadId,
+    @Default('') String leadName,
+    @Default('') String leadPhone,
     required DateTime assignedAt,
-    required String assignedBy,
+    @Default('') String assignedBy,
     AssignmentPriority? priority, // High, Medium, Low
     DateTime? dueDate,
     @Default([]) List<String> tags,
@@ -224,10 +224,10 @@ enum AssignmentPriority { high, medium, low }
 @freezed
 class LeadDistributionBatch with _$LeadDistributionBatch {
   const factory LeadDistributionBatch({
-    required String id,
-    required String batchName,
+    @Default('') String id,
+    @Default('') String batchName,
     required DateTime createdAt,
-    required String createdBy,
+    @Default('') String createdBy,
     
     // Lead Sources
     @Default([]) List<String> leadSourceIds, // From campaigns, website, etc.

@@ -165,6 +165,7 @@ class BaseController
         header('X-Frame-Options: SAMEORIGIN');
         header('Referrer-Policy: strict-origin-when-cross-origin');
         header('X-XSS-Protection: 1; mode=block');
+        header('Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()');
         if (class_exists('\App\Services\Log')) {
             header('X-Request-Id: ' . \App\Services\Log::getRequestId());
         }
@@ -174,6 +175,19 @@ class BaseController
             || (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443)) {
             header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');
         }
+        // Content Security Policy — single source of truth for all pages
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        $csp = "default-src 'self'; "
+            . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com; "
+            . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
+            . "img-src 'self' data: blob: https:; "
+            . "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; "
+            . "frame-src 'self' https://www.google.com; "
+            . "connect-src 'self' https: ws: wss:; "
+            . "report-uri {$base}/csp-report; "
+            . "report-to csp-endpoint";
+        header("Content-Security-Policy: " . $csp);
+        header("Reporting-Endpoints: csp-endpoint=\"{$base}/csp-report\"");
     }
 
     protected function skipCsrfProtection(): bool

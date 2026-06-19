@@ -7,9 +7,9 @@ part 'site_visit_model.g.dart';
 @freezed
 class SiteVisitModel with _$SiteVisitModel {
   const factory SiteVisitModel({
-    required String id,
-    required String agentId,
-    required String agentName,
+    @Default('') String id,
+    @Default('') String agentId,
+    @Default('') String agentName,
     
     // Customer Info
     String? customerId,
@@ -17,14 +17,14 @@ class SiteVisitModel with _$SiteVisitModel {
     String? customerPhone,
     
     // Location
-    required String colonyId,
-    required String colonyName,
+    @Default('') String colonyId,
+    @Default('') String colonyName,
     List<String>? plotIdsShown,
     List<String>? plotNumbersShown,
     
     // GPS Coordinates
-    required double latitude,
-    required double longitude,
+    @Default(0.0) double latitude,
+    @Default(0.0) double longitude,
     String? address,
     double? accuracy,
     
@@ -66,11 +66,11 @@ class SiteVisitModel with _$SiteVisitModel {
 @freezed
 class LiveLocationModel with _$LiveLocationModel {
   const factory LiveLocationModel({
-    required String userId,
-    required String userName,
-    required String userType, // agent, customer
-    required double latitude,
-    required double longitude,
+    @Default('') String userId,
+    @Default('') String userName,
+    @Default('') String userType, // agent, customer
+    @Default(0.0) double latitude,
+    @Default(0.0) double longitude,
     required DateTime timestamp,
     double? speed,
     double? heading,

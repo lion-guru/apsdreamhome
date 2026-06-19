@@ -4,6 +4,7 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/services/api_service.dart';
 import '../../../data/models/lead_model.dart';
 import '../../providers/lead_provider.dart';
 import '../../widgets/glass_card.dart';
@@ -65,8 +66,8 @@ class _VoiceToLeadPageState extends ConsumerState<VoiceToLeadPage> {
       onResult: (result) {
         setState(() {
           _recognizedText = result.recognizedWords;
-          _processVoiceInput(result.recognizedWords);
         });
+        _processVoiceInput(result.recognizedWords);
       },
       listenFor: const Duration(seconds: 30),
       pauseFor: const Duration(seconds: 3),
@@ -86,8 +87,113 @@ class _VoiceToLeadPageState extends ConsumerState<VoiceToLeadPage> {
     });
   }
 
-  void _processVoiceInput(String text) {
-    // Simple voice processing - in production, use NLP/AI
+  String _normalizeHinglish(String text) {
+    String normalized = text.toLowerCase();
+
+    // Map Hindi numbers to digits
+    final hindiNumbers = {
+      'ek': '1', 'do': '2', 'teen': '3', 'chaar': '4', 'paanch': '5',
+      'cheh': '6', 'saat': '7', 'aath': '8', 'nau': '9', 'das': '10'
+    };
+    hindiNumbers.forEach((key, val) {
+      normalized = normalized.replaceAll(RegExp(r'\b' + key + r'\b'), val);
+    });
+
+    // Normalize local land units in Gorakhpur to sqft
+    normalized = normalized.replaceAllMapped(
+      RegExp(r'(\d+)\s*(?:kattha|katha|kathaen|katthe)\b'),
+      (match) {
+        final val = int.tryParse(match.group(1) ?? '0') ?? 0;
+        return '${val * 1360} sqft';
+      }
+    );
+    normalized = normalized.replaceAllMapped(
+      RegExp(r'(\d+)\s*(?:bigha|bighas|bighae)\b'),
+      (match) {
+        final val = int.tryParse(match.group(1) ?? '0') ?? 0;
+        return '${val * 27225} sqft';
+      }
+    );
+    normalized = normalized.replaceAllMapped(
+      RegExp(r'(\d+)\s*(?:dhur|dhurs)\b'),
+      (match) {
+        final val = int.tryParse(match.group(1) ?? '0') ?? 0;
+        return '${val * 68} sqft';
+      }
+    );
+
+    // Normalize Gorakhpur landmarks
+    final landmarks = {
+      'taramandal': 'Taramandal, Gorakhpur',
+      'kunraghat': 'Kunraghat, Gorakhpur',
+      'golghar': 'Golghar, Gorakhpur',
+      'medical college': 'Medical College, Gorakhpur',
+      'asuran': 'Asuran, Gorakhpur',
+      'pipraich': 'Pipraich, Gorakhpur',
+      'ramgarh taal': 'Ramgarh Tal, Gorakhpur',
+      'ramgarhtal': 'Ramgarh Tal, Gorakhpur',
+      'bargadwa': 'Bargadwa, Gorakhpur',
+      'gida': 'GIDA, Gorakhpur',
+      'shahpur': 'Shahpur, Gorakhpur',
+      'subhash nagar': 'Subhash Nagar, Gorakhpur'
+    };
+    landmarks.forEach((key, val) {
+      normalized = normalized.replaceAll(RegExp(r'\b' + key + r'\b'), val);
+    });
+
+    return normalized;
+  }
+
+  Future<void> _processVoiceInput(String text) async {
+    final normalizedText = _normalizeHinglish(text);
+    
+    // First apply local regex parser (fast local feedback)
+    _applyLocalParsing(normalizedText);
+
+    // Then try advanced AI parsing from backend
+    try {
+      final apiService = ApiService();
+      final response = await apiService.parseLead(normalizedText);
+      if (response['success'] == true && response['data'] != null) {
+        final data = response['data'] as Map<String, dynamic>;
+        
+        setState(() {
+          if (data['name'] != null && data['name'].toString().isNotEmpty) {
+            _nameController.text = data['name'].toString();
+          }
+          if (data['phone'] != null && data['phone'].toString().isNotEmpty) {
+            _phoneController.text = data['phone'].toString();
+          }
+          if (data['location'] != null && data['location'].toString().isNotEmpty) {
+            _notesController.text = 'Location: ${data['location']}\nVoice input: $text';
+          }
+          if (data['budget'] != null && data['budget'].toString().isNotEmpty) {
+            final budgetStr = data['budget'].toString();
+            // Parse budget string if possible
+            final cleanBudget = RegExp(r'\d+').stringMatch(budgetStr);
+            if (cleanBudget != null) {
+              final val = int.tryParse(cleanBudget) ?? 0;
+              if (budgetStr.contains('lakh') || budgetStr.contains('l')) {
+                _budgetController.text = (val * 100000).toString();
+              } else if (budgetStr.contains('crore') || budgetStr.contains('cr')) {
+                _budgetController.text = (val * 10000000).toString();
+              } else {
+                _budgetController.text = val.toString();
+              }
+            }
+          }
+          if (data['property_type'] != null && data['property_type'].toString().isNotEmpty) {
+            _propertyController.text = data['property_type'].toString();
+          }
+        });
+      }
+    } catch (e) {
+      // Fallback silently if API fails or offline - we already have local parsing
+      print('AI Parsing failed, using local fallback: $e');
+    }
+  }
+
+  void _applyLocalParsing(String text) {
     final lowerText = text.toLowerCase();
 
     // Extract name (simple pattern matching)
@@ -108,7 +214,7 @@ class _VoiceToLeadPageState extends ConsumerState<VoiceToLeadPage> {
       _propertyController.text = '3 BHK Apartment';
     } else if (lowerText.contains('2 bhk')) {
       _propertyController.text = '2 BHK Apartment';
-    } else if (lowerText.contains('plot')) {
+    } else if (lowerText.contains('plot') || lowerText.contains('sqft') || lowerText.contains('land')) {
       _propertyController.text = 'Residential Plot';
     }
 

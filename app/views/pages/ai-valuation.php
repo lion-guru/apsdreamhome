@@ -5,16 +5,16 @@
  * Complete AI-powered property valuation and market analysis
  */
 
-$page_title = $page_title ?? 'AI Property Valuation - APS Dream Home';
-$page_heading = $page_heading ?? 'AI Property Valuation';
+$page_title = $page_title ?? __('user_ai_valuation_title', 'AI Property Valuation - APS Dream Home');
+$page_heading = $page_heading ?? __('user_ai_valuation_heading', 'AI Property Valuation');
 $content = $content ?? '';
 ?>
 
 <div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="h3 mb-2"><i class="fas fa-robot me-2"></i>AI Property Valuation</h1>
-            <p class="text-muted">Get AI-powered property price estimates based on market trends and comparable properties</p>
+            <h1 class="h3 mb-2"><i class="fas fa-robot me-2"></i><?= __('user_ai_valuation_page_heading', 'AI Property Valuation') ?></h1>
+            <p class="text-muted"><?= __('user_ai_valuation_subtitle', 'Get AI-powered property price estimates based on market trends and comparable properties') ?></p>
         </div>
     </div>
 
@@ -23,30 +23,30 @@ $content = $content ?? '';
         <div class="col-md-8">
             <div class="card aps-cp-card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Property Details</h5>
+                    <h5 class="mb-0"><i class="fas fa-calculator me-2"></i><?= __('user_ai_valuation_property_details', 'Property Details') ?></h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <form id="valuation-form">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Location</label>
+                                <label class="form-label"><?= __('user_ai_valuation_label_location', 'Location') ?></label>
                                 <select class="form-select" id="location" name="location" required>
-                                    <option value="">Select Location</option>
+                                    <option value=""><?= __('user_ai_valuation_select_location', 'Select Location') ?></option>
                                     <?php foreach ($locations as $location): ?>
                                         <option value="<?= htmlspecialchars($location) ?>"><?= htmlspecialchars($location) ?></option>
                                     <?php endforeach; ?>
-                                    <option value="Gorakhpur">Gorakhpur</option>
-                                    <option value="Lucknow">Lucknow</option>
-                                    <option value="Noida">Noida</option>
-                                    <option value="Delhi">Delhi</option>
-                                    <option value="Mumbai">Mumbai</option>
-                                    <option value="Bangalore">Bangalore</option>
+                                    <option value="Gorakhpur"><?= __('city_gorakhpur', 'Gorakhpur') ?></option>
+                                    <option value="Lucknow"><?= __('city_lucknow', 'Lucknow') ?></option>
+                                    <option value="Noida"><?= __('city_noida', 'Noida') ?></option>
+                                    <option value="Delhi"><?= __('city_delhi', 'Delhi') ?></option>
+                                    <option value="Mumbai"><?= __('city_mumbai', 'Mumbai') ?></option>
+                                    <option value="Bangalore"><?= __('city_bangalore', 'Bangalore') ?></option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Property Type</label>
+                                <label class="form-label"><?= __('user_ai_valuation_label_property_type', 'Property Type') ?></label>
                                 <select class="form-select" id="property_type" name="property_type" required>
-                                    <option value="">Select Type</option>
+                                    <option value=""><?= __('user_ai_valuation_select_type', 'Select Type') ?></option>
                                     <?php foreach ($property_types as $type): ?>
                                         <option value="<?= htmlspecialchars($type, ENT_QUOTES, 'UTF-8') ?>"><?= ucfirst($type) ?></option>
                                     <?php endforeach; ?>
@@ -56,25 +56,25 @@ $content = $content ?? '';
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Area (sqft)</label>
+                                <label class="form-label"><?= __('user_ai_valuation_label_area', 'Area (sqft)') ?></label>
                                 <input type="number" class="form-control" id="area_sqft" name="area_sqft"
-                                    placeholder="e.g. 1200" required min="100">
+                                    placeholder="<?= __('user_ai_valuation_placeholder_area', 'e.g. 1200') ?>" required min="100">
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label class="form-label">Bedrooms</label>
+                                <label class="form-label"><?= __('user_ai_valuation_label_bedrooms', 'Bedrooms') ?></label>
                                 <input type="number" class="form-control" id="bedrooms" name="bedrooms"
-                                    placeholder="e.g. 3" min="0">
+                                    placeholder="<?= __('user_ai_valuation_placeholder_bedrooms', 'e.g. 3') ?>" min="0">
                             </div>
                             <div class="col-md-3 mb-3">
-                                <label class="form-label">Bathrooms</label>
+                                <label class="form-label"><?= __('user_ai_valuation_label_bathrooms', 'Bathrooms') ?></label>
                                 <input type="number" class="form-control" id="bathrooms" name="bathrooms"
-                                    placeholder="e.g. 2" min="0">
+                                    placeholder="<?= __('user_ai_valuation_placeholder_bathrooms', 'e.g. 2') ?>" min="0">
                             </div>
                         </div>
 
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-magic me-2"></i>Generate Valuation
+                                <i class="fas fa-magic me-2"></i><?= __('user_ai_valuation_btn_generate', 'Generate Valuation') ?>
                             </button>
                         </div>
                     </form>
@@ -83,21 +83,21 @@ $content = $content ?? '';
                     <div id="valuation-result" class="mt-4" style="display: none;">
                         <hr>
                         <div class="alert alert-success">
-                            <h5 class="alert-heading"><i class="fas fa-check-circle me-2"></i>Estimated Price</h5>
+                            <h5 class="alert-heading"><i class="fas fa-check-circle me-2"></i><?= __('user_ai_valuation_estimated_price', 'Estimated Price') ?></h5>
                             <div class="row mt-3">
                                 <div class="col-md-6">
                                     <h2 class="text-primary mb-0" id="estimated-price">₹0</h2>
-                                    <small class="text-muted">Estimated Market Value</small>
+                                    <small class="text-muted"><?= __('user_ai_valuation_market_value', 'Estimated Market Value') ?></small>
                                 </div>
                                 <div class="col-md-6 text-end">
                                     <h4 class="text-success mb-0" id="price-per-sqft">₹0/sqft</h4>
-                                    <small class="text-muted">Price per sqft</small>
+                                    <small class="text-muted"><?= __('user_ai_valuation_price_per_sqft', 'Price per sqft') ?></small>
                                 </div>
                             </div>
                             <div class="mt-3">
-                                <p class="mb-1"><strong>Price Range:</strong> <span id="price-range">₹0 - ₹0</span></p>
-                                <p class="mb-1"><strong>Confidence:</strong> <span id="confidence-score">0%</span></p>
-                                <p class="mb-0"><strong>Similar Properties:</strong> <span id="similar-count">0</span> found</p>
+                                <p class="mb-1"><strong><?= __('user_ai_valuation_price_range', 'Price Range:') ?></strong> <span id="price-range">₹0 - ₹0</span></p>
+                                <p class="mb-1"><strong><?= __('user_ai_valuation_confidence', 'Confidence:') ?></strong> <span id="confidence-score">0%</span></p>
+                                <p class="mb-0"><strong><?= __('user_ai_valuation_similar_properties', 'Similar Properties:') ?></strong> <span id="similar-count">0</span> <?= __('user_ai_valuation_found', 'found') ?></p>
                             </div>
                         </div>
                     </div>
@@ -107,7 +107,7 @@ $content = $content ?? '';
             <!-- Select from Existing Properties -->
             <div class="card mt-4">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Or Select Existing Property</h5>
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i><?= __('user_ai_valuation_select_existing', 'Or Select Existing Property') ?></h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="row" id="properties-grid">
@@ -153,13 +153,13 @@ $content = $content ?? '';
         <div class="col-md-4">
             <div class="card aps-cp-card">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Valuations</h5>
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i><?= __('user_ai_valuation_recent', 'Recent Valuations') ?></h5>
                 </div>
                 <div class="card-body p-0">
                     <?php if (empty($recentValuations)): ?>
                         <div class="p-3 text-center text-muted">
                             <i class="fas fa-inbox fa-2x mb-2"></i>
-                            <p>No recent valuations</p>
+                            <p><?= __('user_ai_valuation_no_recent', 'No recent valuations') ?></p>
                         </div>
                     <?php else: ?>
                         <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
@@ -176,7 +176,7 @@ $content = $content ?? '';
                                         <small class="text-muted">(<?= $valuation['area_sqft'] ?> sqft)</small>
                                     </p>
                                     <small class="text-muted">
-                                        <i class="fas fa-chart-line me-1"></i>Confidence: <?= $valuation['confidence_score'] ?>%
+                                        <i class="fas fa-chart-line me-1"></i><?= __('user_ai_valuation_confidence_label', 'Confidence:') ?> <?= $valuation['confidence_score'] ?>%
                                     </small>
                                 </div>
                             <?php endforeach; ?>
@@ -188,14 +188,14 @@ $content = $content ?? '';
             <!-- How It Works -->
             <div class="card mt-4">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>How It Works</h5>
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= __('user_ai_valuation_how_it_works', 'How It Works') ?></h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <ol class="list-group list-group-numbered list-group-flush">
-                        <li class="list-group-item px-0">Enter property details or select existing property</li>
-                        <li class="list-group-item px-0">AI analyzes market trends and comparable properties</li>
-                        <li class="list-group-item px-0">Get estimated market value with confidence score</li>
-                        <li class="list-group-item px-0">View similar properties for comparison</li>
+                        <li class="list-group-item px-0"><?= __('user_ai_valuation_step1', 'Enter property details or select existing property') ?></li>
+                        <li class="list-group-item px-0"><?= __('user_ai_valuation_step2', 'AI analyzes market trends and comparable properties') ?></li>
+                        <li class="list-group-item px-0"><?= __('user_ai_valuation_step3', 'Get estimated market value with confidence score') ?></li>
+                        <li class="list-group-item px-0"><?= __('user_ai_valuation_step4', 'View similar properties for comparison') ?></li>
                     </ol>
                 </div>
             </div>
@@ -229,10 +229,10 @@ $content = $content ?? '';
             if (data.success) {
                 displayValuation(data.valuation);
             } else {
-                alert('Error: ' + data.message);
+                alert('<?= __('user_ai_valuation_error', 'Error:') ?> ' + data.message);
             }
         } catch (error) {
-            alert('Failed to generate valuation');
+            alert('<?= __('user_ai_valuation_failed', 'Failed to generate valuation') ?>');
         }
     });
 

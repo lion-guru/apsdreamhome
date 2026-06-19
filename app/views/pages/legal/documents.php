@@ -1,21 +1,22 @@
 <?php
-// Legal Documents Page - APS Dream Homes
-$page_title = 'Legal Documents | APS Dream Homes';
+require_once __DIR__ . '/../../../Helpers/TranslationHelper.php';
+
+$page_title = __('legal_documents_title', [], 'Legal Documents | APS Dream Homes');
 
 $documents = [
-    ['title' => 'Registration Certificate', 'description' => 'Official company registration certificate.'],
-    ['title' => 'ISO Certification', 'description' => 'Quality management system certification.'],
-    ['title' => 'RERA Approval', 'description' => 'Real Estate Regulatory Authority approval documents.'],
-    ['title' => 'PAN Card', 'description' => 'Company Permanent Account Number card.'],
-    ['title' => 'GST Certificate', 'description' => 'Goods and Services Tax registration certificate.'],
-    ['title' => 'Trade License', 'description' => 'Municipal trade license for real estate business.'],
+    ['title' => __('doc_registration', [], 'Registration Certificate'), 'description' => __('doc_registration_desc', [], 'Official company registration certificate.')],
+    ['title' => __('doc_iso', [], 'ISO Certification'), 'description' => __('doc_iso_desc', [], 'Quality management system certification.')],
+    ['title' => __('doc_rera', [], 'RERA Approval'), 'description' => __('doc_rera_desc', [], 'Real Estate Regulatory Authority approval documents.')],
+    ['title' => __('doc_pan', [], 'PAN Card'), 'description' => __('doc_pan_desc', [], 'Company Permanent Account Number card.')],
+    ['title' => __('doc_gst', [], 'GST Certificate'), 'description' => __('doc_gst_desc', [], 'Goods and Services Tax registration certificate.')],
+    ['title' => __('doc_trade', [], 'Trade License'), 'description' => __('doc_trade_desc', [], 'Municipal trade license for real estate business.')],
 ];
 ?>
 
 <section class="py-5 bg-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3">Legal Documents</h1>
-        <p class="lead">Transparency and Trust in Every Step</p>
+        <h1 class="display-4 fw-bold mb-3"><?php echo __('legal_documents_heading', [], 'Legal Documents'); ?></h1>
+        <p class="lead"><?php echo __('legal_documents_subtitle', [], 'Transparency and Trust in Every Step'); ?></p>
     </div>
 </section>
 
@@ -23,8 +24,8 @@ $documents = [
     <div class="container">
         <div class="row justify-content-center mb-5">
             <div class="col-lg-8 text-center">
-                <h2 class="fw-bold mb-3">Our Credentials</h2>
-                <p class="text-muted">At APS Dream Homes, we maintain complete transparency. Here are our official legal documents and certifications.</p>
+                <h2 class="fw-bold mb-3"><?php echo __('our_credentials', [], 'Our Credentials'); ?></h2>
+                <p class="text-muted"><?php echo __('credentials_desc', [], 'At APS Dream Homes, we maintain complete transparency. Here are our official legal documents and certifications.'); ?></p>
             </div>
         </div>
         <div class="row">
@@ -37,7 +38,7 @@ $documents = [
                         </div>
                         <h5 class="fw-bold"><?= htmlspecialchars($doc['title']) ?></h5>
                         <p class="text-muted small"><?= htmlspecialchars($doc['description']) ?></p>
-                        <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Verified</span>
+                        <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i><?php echo __('verified', [], 'Verified'); ?></span>
                     </div>
                 </div>
             </div>
@@ -45,7 +46,7 @@ $documents = [
         </div>
         <div class="mt-4 p-4 bg-light rounded border-start border-primary border-4">
             <i class="fas fa-info-circle text-primary me-2"></i>
-            <strong>Important:</strong> For legal verification, please contact our corporate office.
+            <strong><?php echo __('important', [], 'Important:'); ?></strong> <?php echo __('legal_verify_contact', [], 'For legal verification, please contact our corporate office.'); ?>
         </div>
     </div>
 </section>

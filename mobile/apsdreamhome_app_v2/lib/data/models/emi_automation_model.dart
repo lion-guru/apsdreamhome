@@ -47,7 +47,7 @@ class EMIAutomationConfig with _$EMIAutomationConfig {
 @freezed
 class WhatsAppConfig with _$WhatsAppConfig {
   const factory WhatsAppConfig({
-    required bool isEnabled,
+    @Default(false) bool isEnabled,
     String? businessAccountId,
     String? phoneNumberId,
     String? accessToken,
@@ -78,7 +78,7 @@ class WhatsAppConfig with _$WhatsAppConfig {
 @freezed
 class VoiceCallConfig with _$VoiceCallConfig {
   const factory VoiceCallConfig({
-    required bool isEnabled,
+    @Default(false) bool isEnabled,
     String? provider, // Exotel, Knowlarity, Twilio, Ozonetel
     String? apiKey,
     String? apiSecret,
@@ -111,7 +111,7 @@ class VoiceCallConfig with _$VoiceCallConfig {
 @freezed
 class SMSConfig with _$SMSConfig {
   const factory SMSConfig({
-    required bool isEnabled,
+    @Default(false) bool isEnabled,
     String? provider, // Msg91, Twilio, ValueFirst
     String? apiKey,
     String? senderId, // APSDLRM
@@ -136,7 +136,7 @@ class SMSConfig with _$SMSConfig {
 @freezed
 class EmailConfig with _$EmailConfig {
   const factory EmailConfig({
-    required bool isEnabled,
+    @Default(false) bool isEnabled,
     String? provider, // SendGrid, AWS SES, Mailgun
     String? apiKey,
     String? fromEmail,
@@ -228,17 +228,17 @@ class AIConfig with _$AIConfig {
 @freezed
 class AutomationRule with _$AutomationRule {
   const factory AutomationRule({
-    required String id,
-    required String name,
-    required String type, // reminder, escalation, collection
-    required String trigger, // days_before_due, days_after_due, amount_threshold
-    required int triggerValue, // 3 (days), 5000 (amount)
+    @Default('') String id,
+    @Default('') String name,
+    @Default('') String type, // reminder, escalation, collection
+    @Default('') String trigger, // days_before_due, days_after_due, amount_threshold
+    @Default(0) int triggerValue, // 3 (days), 5000 (amount)
     
     // Actions to take
     @Default([]) List<String> actions, // whatsapp, sms, email, call, agent_notify
     
     // Timing
-    required String scheduleTime, // 09:00
+    @Default('09:00') String scheduleTime, // 09:00
     String? scheduleDays, // monday,tuesday,wednesday
     
     // Priority
@@ -268,17 +268,17 @@ class AutomationRule with _$AutomationRule {
 @freezed
 class AutomationExecution with _$AutomationExecution {
   const factory AutomationExecution({
-    required String id,
-    required String ruleId,
-    required String ruleName,
-    required String customerId,
-    required String bookingId,
-    required String emiId,
+    @Default('') String id,
+    @Default('') String ruleId,
+    @Default('') String ruleName,
+    @Default('') String customerId,
+    @Default('') String bookingId,
+    @Default('') String emiId,
     
     // Execution details
-    required String channel, // whatsapp, sms, email, call, agent_app
-    required String action, // reminder_sent, call_made, agent_notified
-    required String status, // success, failed, pending, scheduled
+    @Default('') String channel, // whatsapp, sms, email, call, agent_app
+    @Default('') String action, // reminder_sent, call_made, agent_notified
+    @Default('') String status, // success, failed, pending, scheduled
     
     // Content
     String? messageContent,
@@ -311,14 +311,14 @@ class AutomationExecution with _$AutomationExecution {
 @freezed
 class CustomerCommunicationLog with _$CustomerCommunicationLog {
   const factory CustomerCommunicationLog({
-    required String id,
-    required String customerId,
-    required String bookingId,
+    @Default('') String id,
+    @Default('') String customerId,
+    @Default('') String bookingId,
     
     // Communication details
-    required String channel, // whatsapp, sms, email, call, agent_visit
-    required String direction, // outgoing, incoming
-    required String type, // reminder, follow_up, payment_confirmation, enquiry
+    @Default('') String channel, // whatsapp, sms, email, call, agent_visit
+    @Default('') String direction, // outgoing, incoming
+    @Default('') String type, // reminder, follow_up, payment_confirmation, enquiry
     
     // Content
     String? message,
@@ -327,7 +327,7 @@ class CustomerCommunicationLog with _$CustomerCommunicationLog {
     int? callDurationSeconds,
     
     // Status
-    required String status, // sent, delivered, read, failed
+    @Default('') String status, // sent, delivered, read, failed
     DateTime? sentAt,
     DateTime? deliveredAt,
     DateTime? readAt,

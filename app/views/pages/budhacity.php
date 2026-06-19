@@ -7,8 +7,8 @@
 <!-- Page Header -->
 <section class="project-hero-section section-padding bg-primary text-white text-center rounded-bottom-4 py-5" data-aos="fade-down">
     <div class="container py-4">
-        <h1 class="display-5 fw-bold mb-2">Budha City</h1>
-        <p class="lead mb-0">Integrated Township at Premwaliya, Kushinagar Highway</p>
+                        <h1 class="display-5 fw-bold mb-2"><?= __('budha_city_title') ?></h1>
+                        <p class="lead mb-0"><?= __('budha_city_subtitle') ?></p>
     </div>
 </section>
 
@@ -34,10 +34,10 @@
                         <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid rounded-4 shadow-lg" alt="Budha City Overview" />
                     </div>
                     <div class="col-md-6" data-aos="fade-left">
-                        <h2 class="text-secondary double-down-line mb-4">OVERVIEW - Budha City</h2>
-                        <p class="lead"><b>BUDHA CITY Situated At Premwaliya kushinagar highway.</b></p>
-                        <p>APS Dream Homes is an integrated township located at Prime Location of Kushinagar. The township spread across more than 15 acres being developed in blocks, which includes Plots, Row Houses and commercial space along with Entrance Gate, Electricity, Drainage system, Shopping Centre etc.</p>
-                        <p class="fw-bold text-dark">Our Township is located nearby maximum number of Engineering Colleges, Educational Institutions, Dental Colleges, Railway Station, Petrol Pumps, Airport, service stations, Banks, ATM, and City Mall.</p>
+                        <h2 class="text-secondary double-down-line mb-4"><?= __('budha_city_overview_heading') ?></h2>
+                        <p class="lead"><b><?= __('budha_city_location_tag') ?></b></p>
+                        <p><?= __('budha_city_overview_p1') ?></p>
+                        <p class="fw-bold text-dark"><?= __('budha_city_overview_p2') ?></p>
                     </div>
                 </div>
             </div>
@@ -48,8 +48,8 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12 text-center mb-5">
-                        <h2 class="text-secondary">TOP AMENITIES</h2>
-                        <p class="text-muted">Modern facilities for a comfortable lifestyle</p>
+                        <h2 class="text-secondary"><?= __('top_amenities') ?></h2>
+                        <p class="text-muted"><?= __('top_amenities_desc') ?></p>
                     </div>
                 </div>
                 <div class="row g-4">

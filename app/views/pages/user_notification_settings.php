@@ -14,10 +14,10 @@
 
     <div class="card profile-card">
         <div class="card-header bg-white">
-            <h4 class="mb-0"><i class="fas fa-bell me-2 text-primary"></i>Notification Preferences</h4>
+            <h4 class="mb-0"><i class="fas fa-bell me-2 text-primary"></i><?php echo __('notif_pref_heading', [], 'Notification Preferences'); ?></h4>
         </div>
         <div class="card-body aps-cp-card-body">
-            <p class="text-muted mb-4">Choose how you want to be notified for each type of activity.</p>
+            <p class="text-muted mb-4"><?php echo __('notif_pref_subtitle', [], 'Choose how you want to be notified for each type of activity.'); ?></p>
 
             <form method="POST" action="<?php echo BASE_URL; ?>/user/notification-settings">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
@@ -25,23 +25,23 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th style="min-width:140px;">Notification Type</th>
-                                <th class="text-center"><i class="fas fa-envelope"></i><br><small>Email</small></th>
-                                <th class="text-center"><i class="fas fa-mobile-alt"></i><br><small>SMS</small></th>
-                                <th class="text-center"><i class="fab fa-whatsapp"></i><br><small>WhatsApp</small></th>
-                                <th class="text-center"><i class="fas fa-bell"></i><br><small>Push</small></th>
-                                <th class="text-center"><i class="fas fa-globe"></i><br><small>In-App</small></th>
+                                <th style="min-width:140px;"><?php echo __('notif_pref_type', [], 'Notification Type'); ?></th>
+                                <th class="text-center"><i class="fas fa-envelope"></i><br><small><?php echo __('notif_pref_email', [], 'Email'); ?></small></th>
+                                <th class="text-center"><i class="fas fa-mobile-alt"></i><br><small><?php echo __('notif_pref_sms', [], 'SMS'); ?></small></th>
+                                <th class="text-center"><i class="fab fa-whatsapp"></i><br><small><?php echo __('notif_pref_whatsapp', [], 'WhatsApp'); ?></small></th>
+                                <th class="text-center"><i class="fas fa-bell"></i><br><small><?php echo __('notif_pref_push', [], 'Push'); ?></small></th>
+                                <th class="text-center"><i class="fas fa-globe"></i><br><small><?php echo __('notif_pref_inapp', [], 'In-App'); ?></small></th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             $typeLabels = [
-                                'booking' => ['Booking Updates', 'When a plot or property is booked or status changes'],
-                                'payment' => ['Payment Confirmations', 'When payments are received or due'],
-                                'agreement' => ['Agreement Updates', 'When agreement is generated or signed'],
-                                'registry' => ['Registry Alerts', 'When registry is scheduled or completed'],
-                                'possession' => ['Possession Updates', 'When possession or handover is scheduled'],
-                                'marketing' => ['Marketing & Offers', 'New projects, offers, and promotional updates'],
+                                'booking' => [__('notif_type_booking', [], 'Booking Updates'), __('notif_type_booking_desc', [], 'When a plot or property is booked or status changes')],
+                                'payment' => [__('notif_type_payment', [], 'Payment Confirmations'), __('notif_type_payment_desc', [], 'When payments are received or due')],
+                                'agreement' => [__('notif_type_agreement', [], 'Agreement Updates'), __('notif_type_agreement_desc', [], 'When agreement is generated or signed')],
+                                'registry' => [__('notif_type_registry', [], 'Registry Alerts'), __('notif_type_registry_desc', [], 'When registry is scheduled or completed')],
+                                'possession' => [__('notif_type_possession', [], 'Possession Updates'), __('notif_type_possession_desc', [], 'When possession or handover is scheduled')],
+                                'marketing' => [__('notif_type_marketing', [], 'Marketing & Offers'), __('notif_type_marketing_desc', [], 'New projects, offers, and promotional updates')],
                             ];
                             foreach ($typeLabels as $type => $label):
                                 $p = $prefs[$type] ?? [];
@@ -74,7 +74,7 @@
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
                                         <input class="form-check-input" type="checkbox" disabled checked>
-                                        <small class="d-block text-muted">Always On</small>
+                                        <small class="d-block text-muted"><?php echo __('notif_pref_always_on', [], 'Always On'); ?></small>
                                     </div>
                                 </td>
                             </tr>
@@ -85,40 +85,40 @@
 
                 <div class="row mt-4">
                     <div class="col-md-6">
-                        <h5 class="mb-3"><i class="fas fa-clock me-2 text-info"></i>Quiet Hours</h5>
+                        <h5 class="mb-3"><i class="fas fa-clock me-2 text-info"></i><?php echo __('notif_pref_quiet_hours', [], 'Quiet Hours'); ?></h5>
                         <div class="row g-3">
                             <div class="col-6">
-                                <label class="form-label">Start Time</label>
+                                <label class="form-label"><?php echo __('notif_pref_start_time', [], 'Start Time'); ?></label>
                                 <input type="time" name="quiet_hours_start" class="form-control" value="<?php echo htmlspecialchars($prefs['booking']['quiet_hours_start'] ?? ''); ?>">
                             </div>
                             <div class="col-6">
-                                <label class="form-label">End Time</label>
+                                <label class="form-label"><?php echo __('notif_pref_end_time', [], 'End Time'); ?></label>
                                 <input type="time" name="quiet_hours_end" class="form-control" value="<?php echo htmlspecialchars($prefs['booking']['quiet_hours_end'] ?? ''); ?>">
                             </div>
                         </div>
-                        <small class="text-muted d-block mt-1">No notifications will be sent during this time.</small>
+                        <small class="text-muted d-block mt-1"><?php echo __('notif_pref_quiet_desc', [], 'No notifications will be sent during this time.'); ?></small>
                     </div>
                     <div class="col-md-6">
-                        <h5 class="mb-3"><i class="fas fa-tachometer-alt me-2 text-success"></i>Default Frequency</h5>
+                        <h5 class="mb-3"><i class="fas fa-tachometer-alt me-2 text-success"></i><?php echo __('notif_pref_frequency', [], 'Default Frequency'); ?></h5>
                         <select name="frequency" class="form-select">
                             <?php
-                            $freqs = ['immediate' => 'Immediate', 'hourly' => 'Hourly Digest', 'daily' => 'Daily Digest', 'weekly' => 'Weekly Digest', 'never' => 'Never'];
+                            $freqs = ['immediate' => __('freq_immediate', [], 'Immediate'), 'hourly' => __('freq_hourly', [], 'Hourly Digest'), 'daily' => __('freq_daily', [], 'Daily Digest'), 'weekly' => __('freq_weekly', [], 'Weekly Digest'), 'never' => __('freq_never', [], 'Never')];
                             $currentFreq = $prefs['booking']['frequency'] ?? 'immediate';
                             foreach ($freqs as $val => $lab):
                             ?>
                             <option value="<?php echo $val; ?>" <?php echo $currentFreq === $val ? 'selected' : ''; ?>><?php echo htmlspecialchars($lab); ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <small class="text-muted d-block mt-1">How often you receive non-urgent notifications.</small>
+                        <small class="text-muted d-block mt-1"><?php echo __('notif_pref_frequency_desc', [], 'How often you receive non-urgent notifications.'); ?></small>
                     </div>
                 </div>
 
                 <div class="text-end mt-4 pt-3 border-top">
                     <a href="<?php echo BASE_URL; ?>/user/dashboard" class="btn btn-outline-secondary me-2">
-                        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                        <i class="fas fa-arrow-left me-1"></i><?php echo __('back_to_dashboard', [], 'Back to Dashboard'); ?>
                     </a>
                     <button type="submit" class="btn btn-primary px-4">
-                        <i class="fas fa-save me-2"></i>Save Preferences
+                        <i class="fas fa-save me-2"></i><?php echo __('notif_pref_save', [], 'Save Preferences'); ?>
                     </button>
                 </div>
             </form>

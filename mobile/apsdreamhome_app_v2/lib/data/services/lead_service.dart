@@ -1,21 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:hive/hive.dart'; // Incompatible with Flutter 3.41.6
 
 import '../../core/constants/app_constants.dart';
+import '../../core/services/api_service.dart';
 import '../../core/utils/logger.dart';
 import '../../data/models/lead_model.dart';
 import '../../data/models/lead_activity_model.dart';
 
-/// Lead Service - CRM Lead Management
+/// Lead Service - CRM Lead Management (MySQL-first, REST API)
 class LeadService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // final Box _offlineBox = Hive.box(AppConstants.offlineBoxName); // Disabled due to Flutter 3.41.6 incompatibility
+  final ApiService _api = ApiService();
 
-  CollectionReference get _leads =>
-      _firestore.collection(AppConstants.leadsCollection);
-
-  /// Create New Lead (Online + Offline Support)
+  /// Create New Lead via REST API
   Future<String> createLead({
     required String name,
     required String phone,
@@ -31,133 +26,86 @@ class LeadService {
     String? voiceNoteUrl,
     String? voiceTranscript,
   }) async {
-    LeadModel? lead;
     try {
-      lead = LeadModel(
-        id: '',
-        name: name,
-        phone: phone,
-        email: email,
-        interestedIn: interestedIn ?? preferredLocation,
-        budgetMax: budgetMax ?? budgetMin,
-        status: AppConstants.leadStatusNew,
-        followUpNotes: notes,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+      final response = await _api.post(
+        AppConstants.leadsEndpoint,
+        data: {
+          'name': name,
+          'phone': phone,
+          'email': email,
+          'source': source,
+          'interested_in': interestedIn ?? preferredLocation,
+          'preferred_location': preferredLocation,
+          'budget_min': budgetMin,
+          'budget_max': budgetMax,
+          'notes': notes,
+          'assigned_to': assignedTo,
+          'voice_note_url': voiceNoteUrl,
+          'voice_transcript': voiceTranscript,
+          'status': AppConstants.leadStatusNew,
+        },
       );
 
-      final docRef = await _leads.add(lead.toJson()..remove('id'));
-
-      AppLogger.info('Lead created: ${docRef.id}');
-      return docRef.id;
+      final id = (response['data']?['id'] ?? '').toString();
+      AppLogger.info('Lead created via API: $id');
+      return id;
     } catch (e, stackTrace) {
-      AppLogger.error('Error creating lead', e, stackTrace);
-
-      // Store offline for later sync - Disabled due to Flutter 3.41.6 incompatibility
-      // if (lead != null) {
-      //   await _storeOfflineLead(lead.toJson()..remove('id'));
-      // }
-
+      AppLogger.error('Error creating lead via API', e, stackTrace);
       rethrow;
     }
   }
 
-  /// Create Lead Offline (for field agents) - Disabled due to Flutter 3.41.6 incompatibility
-  /*
-  Future<void> createLeadOffline({
-    required String name,
-    required String phone,
-    String? email,
-    String? source,
-    String? interestedIn,
-    String? notes,
-    String? voiceNotePath,
-  }) async {
-    final leadData = {
-      'name': name,
-      'phone': phone,
-      'email': email,
-      'source': source ?? 'field_visit',
-      'interestedIn': interestedIn,
-      'followUpNotes': notes,
-      'voiceNotePath': voiceNotePath,
-      'isOfflineCreated': true,
-      'createdAt': DateTime.now().toIso8601String(),
-      'status': AppConstants.leadStatusNew,
-    };
+  /// Get Leads for Associate via REST API
+  Future<List<LeadModel>> getLeadsForAssociate(String associateId) async {
+    try {
+      final response = await _api.get(
+        AppConstants.leadsEndpoint,
+        queryParameters: {'assigned_to': associateId},
+      );
 
-    await _storeOfflineLead(leadData);
-    AppLogger.info('Lead stored offline');
+      final data = response['data'] ?? [];
+      final leads = (data as List).map((json) {
+        return LeadModel.fromJson(json as Map<String, dynamic>);
+      }).toList();
+
+      AppLogger.info('Fetched ${leads.length} leads for associate $associateId');
+      return leads;
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching leads for associate', e, stackTrace);
+      return [];
+    }
   }
-  */
 
-  /// Sync Offline Leads - Disabled due to Flutter 3.41.6 incompatibility
-  /*
-  Future<void> syncOfflineLeads() async {
-    final offlineLeadsRaw = _offlineBox
-        .get('pending_leads', defaultValue: <Map<String, dynamic>>[]);
-    final offlineLeads =
-        (offlineLeadsRaw as List<dynamic>?)?.cast<Map<String, dynamic>>() ?? [];
-
-    for (var leadData in offlineLeads) {
-      try {
-        leadData['isOfflineCreated'] = false;
-        leadData['syncedAt'] = DateTime.now().toIso8601String();
-
-        await _leads.add(leadData);
-
-        // Remove from offline storage
-        offlineLeads.remove(leadData);
-      } catch (e) {
-        AppLogger.error('Failed to sync lead', e);
+  /// Get All Leads (for Admin) via REST API
+  Future<List<LeadModel>> getAllLeads({String? status}) async {
+    try {
+      final params = <String, dynamic>{};
+      if (status != null && status != 'all') {
+        params['status'] = status;
       }
+
+      final response = await _api.get(
+        AppConstants.leadsEndpoint,
+        queryParameters: params,
+      );
+
+      final data = response['data'] ?? [];
+      return (data as List).map((json) {
+        return LeadModel.fromJson(json as Map<String, dynamic>);
+      }).toList();
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching all leads', e, stackTrace);
+      return [];
     }
-
-    await _offlineBox.put('pending_leads', offlineLeads);
-    AppLogger.info('Offline leads synced');
-  }
-  */
-
-  /// Get Leads for Associate
-  Stream<List<LeadModel>> getLeadsForAssociate(String associateId) {
-    return _leads
-        .where('assignedTo', isEqualTo: associateId)
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => LeadModel.fromJson({
-                  'id': doc.id,
-                  ...doc.data() as Map<String, dynamic>,
-                }))
-            .toList());
   }
 
-  /// Get All Leads (for Admin)
-  Stream<List<LeadModel>> getAllLeads({String? status}) {
-    Query query = _leads.orderBy('createdAt', descending: true);
-
-    if (status != null && status != 'all') {
-      query = query.where('status', isEqualTo: status);
-    }
-
-    return query.snapshots().map((snapshot) => snapshot.docs
-        .map((doc) => LeadModel.fromJson({
-              'id': doc.id,
-              ...doc.data() as Map<String, dynamic>,
-            }))
-        .toList());
-  }
-
-  /// Get Lead by ID
+  /// Get Lead by ID via REST API
   Future<LeadModel?> getLeadById(String leadId) async {
     try {
-      final doc = await _leads.doc(leadId).get();
-
-      if (doc.exists) {
-        return LeadModel.fromJson({
-          'id': doc.id,
-          ...doc.data() as Map<String, dynamic>,
-        });
+      final response = await _api.get('${AppConstants.leadsEndpoint}/$leadId');
+      final data = response['data'];
+      if (data != null) {
+        return LeadModel.fromJson(data as Map<String, dynamic>);
       }
       return null;
     } catch (e) {
@@ -166,7 +114,7 @@ class LeadService {
     }
   }
 
-  /// Update Lead Status
+  /// Update Lead Status via REST API
   Future<void> updateLeadStatus({
     required String leadId,
     required String status,
@@ -174,23 +122,14 @@ class LeadService {
     String? performedBy,
   }) async {
     try {
-      final lead = await getLeadById(leadId);
-      if (lead == null) throw Exception('Lead not found');
-
-      final activity = LeadActivity(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        leadId: leadId,
-        type: 'status_change',
-        performedBy: performedBy ?? '',
-        performedAt: DateTime.now(),
-        notes: notes,
+      await _api.post(
+        '${AppConstants.leadsEndpoint}/$leadId/status',
+        data: {
+          'status': status,
+          'notes': notes,
+          'performed_by': performedBy,
+        },
       );
-
-      await _leads.doc(leadId).update({
-        'status': status,
-        'updatedAt': DateTime.now().toIso8601String(),
-        'activities': FieldValue.arrayUnion([activity.toJson()]),
-      });
 
       AppLogger.info('Lead $leadId status updated to: $status');
     } catch (e, stackTrace) {
@@ -199,7 +138,7 @@ class LeadService {
     }
   }
 
-  /// Schedule Follow-up
+  /// Schedule Follow-up via REST API
   Future<void> scheduleFollowUp({
     required String leadId,
     required DateTime followUpDate,
@@ -207,12 +146,14 @@ class LeadService {
     String? notes,
   }) async {
     try {
-      await _leads.doc(leadId).update({
-        'nextFollowUpDate': followUpDate.toIso8601String(),
-        'nextFollowUpType': type,
-        'followUpNotes': notes,
-        'updatedAt': DateTime.now().toIso8601String(),
-      });
+      await _api.post(
+        '${AppConstants.leadsEndpoint}/$leadId/follow-up',
+        data: {
+          'follow_up_date': followUpDate.toIso8601String(),
+          'follow_up_type': type,
+          'notes': notes,
+        },
+      );
 
       AppLogger.info('Follow-up scheduled for lead: $leadId');
     } catch (e, stackTrace) {
@@ -221,7 +162,7 @@ class LeadService {
     }
   }
 
-  /// Add Activity to Lead
+  /// Add Activity to Lead via REST API
   Future<void> addActivity({
     required String leadId,
     required String type,
@@ -232,22 +173,17 @@ class LeadService {
     List<String>? photos,
   }) async {
     try {
-      final activity = LeadActivity(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        leadId: leadId,
-        type: type,
-        performedBy: performedBy,
-        performedAt: DateTime.now(),
-        notes: notes,
-        outcome: outcome,
-        recordingUrl: recordingUrl,
-        photos: photos,
+      await _api.post(
+        '${AppConstants.leadsEndpoint}/$leadId/activities',
+        data: {
+          'type': type,
+          'performed_by': performedBy,
+          'notes': notes,
+          'outcome': outcome,
+          'recording_url': recordingUrl,
+          'photos': photos,
+        },
       );
-
-      await _leads.doc(leadId).update({
-        'activities': FieldValue.arrayUnion([activity.toJson()]),
-        'updatedAt': DateTime.now().toIso8601String(),
-      });
 
       AppLogger.info('Activity added to lead: $leadId');
     } catch (e, stackTrace) {
@@ -256,32 +192,29 @@ class LeadService {
     }
   }
 
-  /// Get Follow-ups for Today
+  /// Get Follow-ups for Today via REST API
   Future<List<LeadModel>> getTodaysFollowUps(String associateId) async {
     try {
       final today = DateTime.now();
-      final tomorrow = today.add(const Duration(days: 1));
+      final response = await _api.get(
+        '${AppConstants.leadsEndpoint}/follow-ups',
+        queryParameters: {
+          'assigned_to': associateId,
+          'date': today.toIso8601String().split('T')[0],
+        },
+      );
 
-      final snapshot = await _leads
-          .where('assignedTo', isEqualTo: associateId)
-          .where('nextFollowUpDate',
-              isGreaterThanOrEqualTo: today.toIso8601String())
-          .where('nextFollowUpDate', isLessThan: tomorrow.toIso8601String())
-          .get();
-
-      return snapshot.docs
-          .map((doc) => LeadModel.fromJson({
-                'id': doc.id,
-                ...doc.data() as Map<String, dynamic>,
-              }))
-          .toList();
+      final data = response['data'] ?? [];
+      return (data as List).map((json) {
+        return LeadModel.fromJson(json as Map<String, dynamic>);
+      }).toList();
     } catch (e) {
       AppLogger.error('Error getting today\'s follow-ups', e);
       return [];
     }
   }
 
-  /// Convert Lead to Customer
+  /// Convert Lead to Customer via REST API
   Future<void> convertLead({
     required String leadId,
     required String convertedBy,
@@ -289,14 +222,14 @@ class LeadService {
     double? convertedAmount,
   }) async {
     try {
-      await _leads.doc(leadId).update({
-        'status': AppConstants.leadStatusConverted,
-        'convertedAt': DateTime.now().toIso8601String(),
-        'convertedBy': convertedBy,
-        'bookingId': bookingId,
-        'convertedAmount': convertedAmount,
-        'updatedAt': DateTime.now().toIso8601String(),
-      });
+      await _api.post(
+        '${AppConstants.leadsEndpoint}/$leadId/convert',
+        data: {
+          'converted_by': convertedBy,
+          'booking_id': bookingId,
+          'converted_amount': convertedAmount,
+        },
+      );
 
       AppLogger.info('Lead converted: $leadId');
     } catch (e, stackTrace) {
@@ -305,20 +238,20 @@ class LeadService {
     }
   }
 
-  /// Mark Lead as Lost
+  /// Mark Lead as Lost via REST API
   Future<void> markLeadAsLost({
     required String leadId,
     required String reason,
     String? notes,
   }) async {
     try {
-      await _leads.doc(leadId).update({
-        'status': AppConstants.leadStatusLost,
-        'lostAt': DateTime.now().toIso8601String(),
-        'lostReason': reason,
-        'lostNotes': notes,
-        'updatedAt': DateTime.now().toIso8601String(),
-      });
+      await _api.post(
+        '${AppConstants.leadsEndpoint}/$leadId/lost',
+        data: {
+          'reason': reason,
+          'notes': notes,
+        },
+      );
 
       AppLogger.info('Lead marked as lost: $leadId');
     } catch (e, stackTrace) {
@@ -327,73 +260,50 @@ class LeadService {
     }
   }
 
-  /// Get Lead Statistics
+  /// Batch Sync Leads (for offline queue) via REST API
+  Future<int> batchSyncLeads(List<Map<String, dynamic>> offlineLeads) async {
+    try {
+      final response = await _api.post(
+        AppConstants.leadsEndpoint,
+        data: {'leads': offlineLeads},
+      );
+
+      final data = response['data'] as Map<String, dynamic>?;
+      final syncedCount = (data?['synced_count'] as num?)?.toInt() ?? 0;
+      AppLogger.info('Batch synced $syncedCount leads');
+      return syncedCount;
+    } catch (e, stackTrace) {
+      AppLogger.error('Error batch syncing leads', e, stackTrace);
+      rethrow;
+    }
+  }
+
+  /// Get Lead Statistics via REST API
   Future<LeadStatistics> getLeadStatistics(String associateId) async {
     try {
-      final snapshot =
-          await _leads.where('assignedTo', isEqualTo: associateId).get();
+      final response = await _api.get(
+        '${AppConstants.leadsEndpoint}/statistics',
+        queryParameters: {'assigned_to': associateId},
+      );
 
-      int total = 0,
-          newLeads = 0,
-          contacted = 0,
-          interested = 0,
-          visited = 0,
-          converted = 0,
-          lost = 0;
-
-      for (var doc in snapshot.docs) {
-        final data = doc.data() as Map<String, dynamic>;
-        final status = data['status'] as String?;
-
-        total++;
-        switch (status) {
-          case 'new':
-            newLeads++;
-            break;
-          case 'contacted':
-            contacted++;
-            break;
-          case 'interested':
-            interested++;
-            break;
-          case 'visited':
-            visited++;
-            break;
-          case 'converted':
-            converted++;
-            break;
-          case 'lost':
-            lost++;
-            break;
-        }
-      }
-
-      final conversionRate =
-          total > 0 ? ((converted / total) * 100).toDouble() : 0.0;
-
+      final raw = response['data'] ?? {};
+      final data = raw is Map<String, dynamic> ? raw : <String, dynamic>{};
       return LeadStatistics(
-        totalLeads: total,
-        newLeads: newLeads,
-        contactedLeads: contacted,
-        qualifiedLeads: 0,
-        interestedLeads: interested,
-        visitedLeads: visited,
-        convertedLeads: converted,
-        lostLeads: lost,
-        conversionRate: conversionRate,
-        bySource: {},
-        byStatus: {
-          'new': newLeads,
-          'contacted': contacted,
-          'interested': interested,
-          'visited': visited,
-          'converted': converted,
-          'lost': lost,
-        },
-        byMonth: {},
-        averageResponseTime: 0,
-        followUpsDueToday: 0,
-        followUpsOverdue: 0,
+        totalLeads: (data['total_leads'] as num?)?.toInt() ?? 0,
+        newLeads: (data['new_leads'] as num?)?.toInt() ?? 0,
+        contactedLeads: (data['contacted_leads'] as num?)?.toInt() ?? 0,
+        qualifiedLeads: (data['qualified_leads'] as num?)?.toInt() ?? 0,
+        interestedLeads: (data['interested_leads'] as num?)?.toInt() ?? 0,
+        visitedLeads: (data['visited_leads'] as num?)?.toInt() ?? 0,
+        convertedLeads: (data['converted_leads'] as num?)?.toInt() ?? 0,
+        lostLeads: (data['lost_leads'] as num?)?.toInt() ?? 0,
+        conversionRate: ((data['conversion_rate'] as num?) ?? 0).toDouble(),
+        bySource: Map<String, int>.from((data['by_source'] as Map?) ?? {}),
+        byStatus: Map<String, int>.from((data['by_status'] as Map?) ?? {}),
+        byMonth: Map<String, int>.from((data['by_month'] as Map?) ?? {}),
+        averageResponseTime: ((data['average_response_time'] as num?) ?? 0).toDouble(),
+        followUpsDueToday: (data['follow_ups_due_today'] as num?)?.toInt() ?? 0,
+        followUpsOverdue: (data['follow_ups_overdue'] as num?)?.toInt() ?? 0,
       );
     } catch (e) {
       AppLogger.error('Error getting lead statistics', e);
@@ -416,30 +326,20 @@ class LeadService {
       );
     }
   }
-
-  /// Helper: Store Lead Offline
-  /// Store Offline Lead - Disabled due to Flutter 3.41.6 incompatibility
-  /*
-  Future<void> _storeOfflineLead(Map<String, dynamic> leadData) async {
-    final pendingLeads = _offlineBox.get('pending_leads', defaultValue: []);
-    pendingLeads.add(leadData);
-    await _offlineBox.put('pending_leads', pendingLeads);
-  }
-  */
 }
 
 // Lead Service Provider
 final leadServiceProvider = Provider<LeadService>((ref) => LeadService());
 
-final leadsProvider = StreamProvider.family<List<LeadModel>, String>(
-  (ref, associateId) {
+final leadsProvider = FutureProvider.family<List<LeadModel>, String>(
+  (ref, associateId) async {
     final leadService = ref.watch(leadServiceProvider);
     return leadService.getLeadsForAssociate(associateId);
   },
 );
 
-final allLeadsProvider = StreamProvider.family<List<LeadModel>, String?>(
-  (ref, status) {
+final allLeadsProvider = FutureProvider.family<List<LeadModel>, String?>(
+  (ref, status) async {
     final leadService = ref.watch(leadServiceProvider);
     return leadService.getAllLeads(status: status);
   },

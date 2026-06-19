@@ -1,6 +1,6 @@
 <?php
-$page_title = $page_title ?? 'Property Comparison';
-$page_heading = $page_heading ?? 'Property Comparison';
+$page_title = $page_title ?? __('cmp_page_title', [], 'Property Comparison');
+$page_heading = $page_heading ?? __('cmp_page_heading', [], 'Property Comparison');
 $content = $content ?? '';
 $properties = $properties ?? [];
 $comparison = $comparison ?? [];
@@ -23,8 +23,8 @@ $view_count = $view_count ?? 0;
 
 <section class="cmp-hero">
     <div class="container text-center">
-        <h1 class="display-5 fw-bold mb-2"><i class="fas fa-balance-scale me-2"></i>Compare Properties</h1>
-        <p class="lead mb-0 opacity-90">Side-by-side comparison of up to 4 properties</p>
+        <h1 class="display-5 fw-bold mb-2"><i class="fas fa-balance-scale me-2"></i><?= __('cmp_hero_heading', [], 'Compare Properties') ?></h1>
+        <p class="lead mb-0 opacity-90"><?= __('cmp_hero_subtitle', [], 'Side-by-side comparison of up to 4 properties') ?></p>
     </div>
 </section>
 
@@ -39,30 +39,30 @@ $view_count = $view_count ?? 0;
 
     <?php if ($not_found): ?>
         <div class="alert alert-danger text-center">
-            <h4>Comparison Not Found</h4>
-            <p>The shared comparison link is invalid or has expired.</p>
-            <a href="<?= BASE_URL ?>/property-comparison" class="btn btn-primary">My Comparison</a>
+            <h4><?= __('cmp_not_found', [], 'Comparison Not Found') ?></h4>
+            <p><?= __('cmp_not_found_desc', [], 'The shared comparison link is invalid or has expired.') ?></p>
+            <a href="<?= BASE_URL ?>/property-comparison" class="btn btn-primary"><?= __('cmp_my_comparison', [], 'My Comparison') ?></a>
         </div>
     <?php endif; ?>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0"><?= $shared ? 'Shared Comparison (' . $view_count . ' views)' : 'Your Comparison List' ?> <span class="badge bg-warning text-dark"><?= $count ?> / 4</span></h4>
+        <h4 class="mb-0"><?= $shared ? __('cmp_shared_comparison', [], 'Shared Comparison') . ' (' . $view_count . ' views)' : __('cmp_your_list', [], 'Your Comparison List') ?> <span class="badge bg-warning text-dark"><?= $count ?> / 4</span></h4>
         <div class="d-flex gap-2">
             <?php if (!empty($share_token) && $count > 0): ?>
                 <button class="btn btn-outline-primary" onclick="copyShareLink()">
-                    <i class="fas fa-share-alt me-1"></i> Copy Share Link
+                    <i class="fas fa-share-alt me-1"></i> <?= __('cmp_copy_link', [], 'Copy Share Link') ?>
                 </button>
             <?php endif; ?>
             <?php if ($count > 0): ?>
                 <form method="POST" action="<?= BASE_URL ?>/property-comparison/clear" style="display:inline;">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Clear all?')">
-                        <i class="fas fa-trash me-1"></i> Clear All
+                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('<?= __('cmp_clear_confirm', [], 'Clear all?') ?>')">
+                        <i class="fas fa-trash me-1"></i> <?= __('cmp_clear_all', [], 'Clear All') ?>
                     </button>
                 </form>
             <?php endif; ?>
             <a href="<?= BASE_URL ?>/properties" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i> Add More
+                <i class="fas fa-plus me-1"></i> <?= __('cmp_add_more', [], 'Add More') ?>
             </a>
         </div>
     </div>
@@ -70,10 +70,10 @@ $view_count = $view_count ?? 0;
     <?php if ($count === 0): ?>
         <div class="text-center py-5">
             <div class="display-1 text-muted mb-3"><i class="fas fa-balance-scale"></i></div>
-            <h4 class="text-muted">No Properties to Compare</h4>
-            <p class="text-muted mb-4">Add properties from listing pages to compare them side-by-side</p>
+            <h4 class="text-muted"><?= __('cmp_no_properties', [], 'No Properties to Compare') ?></h4>
+            <p class="text-muted mb-4"><?= __('cmp_no_properties_desc', [], 'Add properties from listing pages to compare them side-by-side') ?></p>
             <a href="<?= BASE_URL ?>/properties" class="btn btn-primary btn-lg">
-                <i class="fas fa-search me-2"></i>Browse Properties
+                <i class="fas fa-search me-2"></i><?= __('cmp_browse', [], 'Browse Properties') ?>
             </a>
         </div>
     <?php else: ?>
@@ -107,7 +107,7 @@ $view_count = $view_count ?? 0;
             </div>
 
             <div class="cmp-row">
-                <div class="label"><i class="fas fa-tag me-1"></i> Property Type</div>
+                <div class="label"><i class="fas fa-tag me-1"></i> <?= __('cmp_property_type', [], 'Property Type') ?></div>
                 <?php foreach ($properties as $p): ?>
                     <div><strong><?= htmlspecialchars(ucfirst($p['property_type'] ?? 'N/A')) ?></strong></div>
                 <?php endforeach; ?>
@@ -115,7 +115,7 @@ $view_count = $view_count ?? 0;
             </div>
 
             <div class="cmp-row">
-                <div class="label"><i class="fas fa-map-marker-alt me-1"></i> Location</div>
+                <div class="label"><i class="fas fa-map-marker-alt me-1"></i> <?= __('cmp_location', [], 'Location') ?></div>
                 <?php foreach ($properties as $p): ?>
                     <div>
                         <i class="fas fa-map-marker-alt text-danger me-1"></i>
@@ -126,7 +126,7 @@ $view_count = $view_count ?? 0;
             </div>
 
             <div class="cmp-row">
-                <div class="label"><i class="fas fa-rupee-sign me-1"></i> Price</div>
+                <div class="label"><i class="fas fa-rupee-sign me-1"></i> <?= __('cmp_price', [], 'Price') ?></div>
                 <?php foreach ($properties as $p): ?>
                     <div>
                         <strong class="text-success">₹<?= number_format($p['price'] ?? 0) ?></strong>
@@ -141,7 +141,7 @@ $view_count = $view_count ?? 0;
             </div>
 
             <div class="cmp-row">
-                <div class="label"><i class="fas fa-ruler-combined me-1"></i> Area (sqft)</div>
+                <div class="label"><i class="fas fa-ruler-combined me-1"></i> <?= __('cmp_area', [], 'Area (sqft)') ?></div>
                 <?php foreach ($properties as $p): ?>
                     <div>
                         <strong><?= number_format($p['area_sqft'] ?? 0) ?></strong> sqft
@@ -154,14 +154,14 @@ $view_count = $view_count ?? 0;
             </div>
 
             <div class="cmp-row">
-                <div class="label"><i class="fas fa-calculator me-1"></i> Price/sqft</div>
+                <div class="label"><i class="fas fa-calculator me-1"></i> <?= __('cmp_price_sqft', [], 'Price/sqft') ?></div>
                 <?php foreach ($properties as $p):
                     $ps = (!empty($p['price']) && !empty($p['area_sqft']) && $p['area_sqft'] > 0) ? round($p['price'] / $p['area_sqft'], 2) : 0;
                 ?>
                     <div>
                         <strong>₹<?= number_format($ps) ?></strong>
                         <?php if (($comparison['best_value_id'] ?? null) == $p['id']): ?>
-                            <span class="badge bg-success ms-1">Best</span>
+                            <span class="badge bg-success ms-1"><?= __('cmp_best', [], 'Best') ?></span>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
@@ -169,7 +169,7 @@ $view_count = $view_count ?? 0;
             </div>
 
             <div class="cmp-row">
-                <div class="label"><i class="fas fa-bed me-1"></i> Bedrooms</div>
+                <div class="label"><i class="fas fa-bed me-1"></i> <?= __('cmp_bedrooms', [], 'Bedrooms') ?></div>
                 <?php foreach ($properties as $p): ?>
                     <div><?= htmlspecialchars($p['bedrooms'] ?? '—') ?></div>
                 <?php endforeach; ?>
@@ -177,7 +177,7 @@ $view_count = $view_count ?? 0;
             </div>
 
             <div class="cmp-row">
-                <div class="label"><i class="fas fa-bath me-1"></i> Bathrooms</div>
+                <div class="label"><i class="fas fa-bath me-1"></i> <?= __('cmp_bathrooms', [], 'Bathrooms') ?></div>
                 <?php foreach ($properties as $p): ?>
                     <div><?= htmlspecialchars($p['bathrooms'] ?? '—') ?></div>
                 <?php endforeach; ?>
@@ -185,7 +185,7 @@ $view_count = $view_count ?? 0;
             </div>
 
             <div class="cmp-row">
-                <div class="label"><i class="fas fa-list me-1"></i> Listing</div>
+                <div class="label"><i class="fas fa-list me-1"></i> <?= __('cmp_listing', [], 'Listing') ?></div>
                 <?php foreach ($properties as $p): ?>
                     <div>
                         <span class="badge bg-<?= ($p['listing_type'] ?? '') === 'rent' ? 'info' : 'success' ?>">
@@ -197,7 +197,7 @@ $view_count = $view_count ?? 0;
             </div>
 
             <div class="cmp-row">
-                <div class="label"><i class="fas fa-info-circle me-1"></i> Status</div>
+                <div class="label"><i class="fas fa-info-circle me-1"></i> <?= __('cmp_status', [], 'Status') ?></div>
                 <?php foreach ($properties as $p): ?>
                     <div>
                         <span class="badge bg-<?= ($p['status'] ?? '') === 'approved' ? 'success' : 'warning' ?>">
@@ -209,14 +209,14 @@ $view_count = $view_count ?? 0;
             </div>
 
             <div class="cmp-row">
-                <div class="label"><i class="fas fa-cogs me-1"></i> Actions</div>
+                <div class="label"><i class="fas fa-cogs me-1"></i> <?= __('cmp_actions', [], 'Actions') ?></div>
                 <?php foreach ($properties as $p): ?>
                     <div class="d-grid gap-1">
                         <a href="<?= BASE_URL ?>/properties/<?= $p['id'] ?>" class="btn btn-sm btn-primary">
-                            <i class="fas fa-eye me-1"></i> View
+                            <i class="fas fa-eye me-1"></i> <?= __('cmp_view', [], 'View') ?>
                         </a>
                         <a href="<?= BASE_URL ?>/property/inquire?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-success">
-                            <i class="fas fa-envelope me-1"></i> Inquire
+                            <i class="fas fa-envelope me-1"></i> <?= __('cmp_inquire', [], 'Inquire') ?>
                         </a>
                     </div>
                 <?php endforeach; ?>
@@ -229,7 +229,7 @@ $view_count = $view_count ?? 0;
                 <div class="col-md-3">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
-                            <p class="text-muted small mb-1">Cheapest</p>
+                            <p class="text-muted small mb-1"><?= __('cmp_cheapest', [], 'Cheapest') ?></p>
                             <h4 class="text-success mb-0">₹<?= number_format($comparison['cheapest'] ?? 0) ?></h4>
                         </div>
                     </div>
@@ -237,7 +237,7 @@ $view_count = $view_count ?? 0;
                 <div class="col-md-3">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
-                            <p class="text-muted small mb-1">Most Expensive</p>
+                            <p class="text-muted small mb-1"><?= __('cmp_most_expensive', [], 'Most Expensive') ?></p>
                             <h4 class="text-danger mb-0">₹<?= number_format($comparison['priciest'] ?? 0) ?></h4>
                         </div>
                     </div>
@@ -245,7 +245,7 @@ $view_count = $view_count ?? 0;
                 <div class="col-md-3">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
-                            <p class="text-muted small mb-1">Average Price</p>
+                            <p class="text-muted small mb-1"><?= __('cmp_avg_price', [], 'Average Price') ?></p>
                             <h4 class="text-info mb-0">₹<?= number_format($comparison['avg_price'] ?? 0) ?></h4>
                         </div>
                     </div>
@@ -253,7 +253,7 @@ $view_count = $view_count ?? 0;
                 <div class="col-md-3">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
-                            <p class="text-muted small mb-1">Largest Area</p>
+                            <p class="text-muted small mb-1"><?= __('cmp_largest_area', [], 'Largest Area') ?></p>
                             <h4 class="text-warning mb-0"><?= number_format($comparison['largest'] ?? 0) ?> sqft</h4>
                         </div>
                     </div>

@@ -9,22 +9,22 @@ part of 'site_visit_model.dart';
 _$SiteVisitModelImpl _$$SiteVisitModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$SiteVisitModelImpl(
-  id: json['id'] as String,
-  agentId: json['agentId'] as String,
-  agentName: json['agentName'] as String,
+  id: json['id'] as String? ?? '',
+  agentId: json['agentId'] as String? ?? '',
+  agentName: json['agentName'] as String? ?? '',
   customerId: json['customerId'] as String?,
   customerName: json['customerName'] as String?,
   customerPhone: json['customerPhone'] as String?,
-  colonyId: json['colonyId'] as String,
-  colonyName: json['colonyName'] as String,
+  colonyId: json['colonyId'] as String? ?? '',
+  colonyName: json['colonyName'] as String? ?? '',
   plotIdsShown: (json['plotIdsShown'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
   plotNumbersShown: (json['plotNumbersShown'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
-  latitude: (json['latitude'] as num).toDouble(),
-  longitude: (json['longitude'] as num).toDouble(),
+  latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
+  longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
   address: json['address'] as String?,
   accuracy: (json['accuracy'] as num?)?.toDouble(),
   visitStartTime: DateTime.parse(json['visitStartTime'] as String),
@@ -97,11 +97,11 @@ Map<String, dynamic> _$$SiteVisitModelImplToJson(
 _$LiveLocationModelImpl _$$LiveLocationModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$LiveLocationModelImpl(
-  userId: json['userId'] as String,
-  userName: json['userName'] as String,
-  userType: json['userType'] as String,
-  latitude: (json['latitude'] as num).toDouble(),
-  longitude: (json['longitude'] as num).toDouble(),
+  userId: json['userId'] as String? ?? '',
+  userName: json['userName'] as String? ?? '',
+  userType: json['userType'] as String? ?? '',
+  latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
+  longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
   timestamp: DateTime.parse(json['timestamp'] as String),
   speed: (json['speed'] as num?)?.toDouble(),
   heading: (json['heading'] as num?)?.toDouble(),

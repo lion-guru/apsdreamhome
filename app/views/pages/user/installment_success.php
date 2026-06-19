@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Payment Successful';
+$page_title = $page_title ?? __('user_installment_success_page_title', 'Payment Successful');
 $current_page = 'bookings';
 $user = $user ?? [];
 $installment = $installment ?? null;
@@ -18,12 +18,12 @@ $instStatusColors = [
 <div class="aps-cp-hero">
     <div class="row align-items-center">
         <div class="col-md-8">
-            <h2><i class="fas fa-check-circle me-2"></i>Payment Successful</h2>
-            <p>Your installment payment has been processed successfully.</p>
+            <h2><i class="fas fa-check-circle me-2"></i><?= __('user_installment_success_hero_heading', 'Payment Successful') ?></h2>
+            <p><?= __('user_installment_success_hero_subtitle', 'Your installment payment has been processed successfully.') ?></p>
         </div>
         <div class="col-md-4 mt-3 mt-md-0 text-md-end">
             <a href="<?= BASE_URL ?>/user/bookings/<?= (int)($installment['booking_id'] ?? 0) ?>" class="btn btn-outline-light">
-                <i class="fas fa-arrow-left me-2"></i>Back to Booking
+                <i class="fas fa-arrow-left me-2"></i><?= __('user_installment_success_back_to_booking', 'Back to Booking') ?>
             </a>
         </div>
     </div>
@@ -36,54 +36,54 @@ $instStatusColors = [
             <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 8px 24px rgba(16,185,129,0.3);">
                 <i class="fas fa-check" style="font-size:36px;color:#fff;"></i>
             </div>
-            <h3 class="mt-2">Thank You, <?= htmlspecialchars($user['name'] ?? '') ?>!</h3>
+            <h3 class="mt-2"><?= __('user_installment_success_thank_you', 'Thank You,') ?> <?= htmlspecialchars($user['name'] ?? '') ?>!</h3>
             <p class="text-muted">
-                Your installment #<?= (int)($installment['installment_number'] ?? 0) ?> payment of
+                <?= __('user_installment_success_received_prefix', 'Your installment #') ?><?= (int)($installment['installment_number'] ?? 0) ?> <?= __('user_installment_success_received_middle', 'payment of') ?>
                 <strong class="text-success">₹<?= number_format((float)($receipt['amount'] ?? 0)) ?></strong>
-                has been received.
+                <?= __('user_installment_success_received_suffix', 'has been received.') ?>
             </p>
         </div>
 
         <?php if ($receipt): ?>
         <div class="aps-cp-card mb-4">
             <div class="aps-cp-card-header">
-                <h5><i class="fas fa-receipt text-success"></i> Payment Receipt</h5>
+                <h5><i class="fas fa-receipt text-success"></i> <?= __('user_installment_success_receipt_header', 'Payment Receipt') ?></h5>
             </div>
             <div class="aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-sm-6">
-                        <small class="text-muted d-block">Receipt Number</small>
+                        <small class="text-muted d-block"><?= __('user_installment_success_receipt_number', 'Receipt Number') ?></small>
                         <strong><?= htmlspecialchars($receipt['receipt_number'] ?? 'N/A') ?></strong>
                     </div>
                     <div class="col-sm-6">
-                        <small class="text-muted d-block">Payment Date</small>
+                        <small class="text-muted d-block"><?= __('user_installment_success_payment_date', 'Payment Date') ?></small>
                         <strong><?= date('d M Y, h:i A', strtotime($receipt['created_at'] ?? 'now')) ?></strong>
                     </div>
                     <div class="col-sm-6">
-                        <small class="text-muted d-block">Amount Paid</small>
+                        <small class="text-muted d-block"><?= __('user_installment_success_amount_paid', 'Amount Paid') ?></small>
                         <strong class="text-success fs-5">₹<?= number_format((float)($receipt['amount'] ?? 0)) ?></strong>
                     </div>
                     <div class="col-sm-6">
-                        <small class="text-muted d-block">Payment Method</small>
-                        <strong><i class="fas fa-credit-card me-1"></i> Razorpay (Online)</strong>
+                        <small class="text-muted d-block"><?= __('user_installment_success_payment_method', 'Payment Method') ?></small>
+                        <strong><i class="fas fa-credit-card me-1"></i> <?= __('user_installment_success_razorpay_online', 'Razorpay (Online)') ?></strong>
                     </div>
                     <?php if (!empty($receipt['transaction_ref'])): ?>
                     <div class="col-sm-6">
-                        <small class="text-muted d-block">Transaction ID</small>
+                        <small class="text-muted d-block"><?= __('user_installment_success_transaction_id', 'Transaction ID') ?></small>
                         <strong class="text-break"><?= htmlspecialchars($receipt['transaction_ref']) ?></strong>
                     </div>
                     <?php endif; ?>
                     <div class="col-sm-6">
-                        <small class="text-muted d-block">Status</small>
-                        <span class="badge bg-success fs-6"><i class="fas fa-check-circle me-1"></i> Completed</span>
+                        <small class="text-muted d-block"><?= __('user_installment_success_status', 'Status') ?></small>
+                        <span class="badge bg-success fs-6"><i class="fas fa-check-circle me-1"></i> <?= __('user_installment_success_completed', 'Completed') ?></span>
                     </div>
                     <div class="col-sm-6">
-                        <small class="text-muted d-block">Installment</small>
+                        <small class="text-muted d-block"><?= __('user_installment_success_installment', 'Installment') ?></small>
                         <strong>#<?= (int)($installment['installment_number'] ?? 0) ?></strong>
                     </div>
                     <div class="col-sm-6">
-                        <small class="text-muted d-block">Plot</small>
-                        <strong><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></strong> at <?= htmlspecialchars($booking['colony_name'] ?? 'N/A') ?>
+                        <small class="text-muted d-block"><?= __('user_installment_success_plot', 'Plot') ?></small>
+                        <strong><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></strong> <?= __('user_installment_success_plot_at', 'at') ?> <?= htmlspecialchars($booking['colony_name'] ?? 'N/A') ?>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@ $instStatusColors = [
         <?php if (!empty($all_installments)): ?>
         <div class="aps-cp-card mb-4">
             <div class="aps-cp-card-header">
-                <h5><i class="fas fa-list-check text-primary"></i> Updated Payment Schedule</h5>
+                <h5><i class="fas fa-list-check text-primary"></i> <?= __('user_installment_success_updated_schedule', 'Updated Payment Schedule') ?></h5>
             </div>
             <div class="aps-cp-card-body p-0">
                 <div class="table-responsive">
@@ -101,10 +101,10 @@ $instStatusColors = [
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Due Date</th>
-                                <th class="text-end">Amount</th>
-                                <th class="text-end">Paid</th>
-                                <th>Status</th>
+                                <th><?= __('user_installment_success_th_due_date', 'Due Date') ?></th>
+                                <th class="text-end"><?= __('user_installment_success_th_amount', 'Amount') ?></th>
+                                <th class="text-end"><?= __('user_installment_success_th_paid', 'Paid') ?></th>
+                                <th><?= __('user_installment_success_th_status', 'Status') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -130,12 +130,12 @@ $instStatusColors = [
         <div class="row g-3">
             <div class="col-sm-6">
                 <a href="<?= BASE_URL ?>/user/bookings/<?= (int)($installment['booking_id'] ?? 0) ?>" class="btn btn-outline-primary w-100">
-                    <i class="fas fa-eye me-2"></i>Back to Booking
+                    <i class="fas fa-eye me-2"></i><?= __('user_installment_success_view_booking', 'Back to Booking') ?>
                 </a>
             </div>
             <div class="col-sm-6">
                 <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-primary w-100">
-                    <i class="fas fa-list me-2"></i>All My Bookings
+                    <i class="fas fa-list me-2"></i><?= __('user_installment_success_all_bookings', 'All My Bookings') ?>
                 </a>
             </div>
         </div>

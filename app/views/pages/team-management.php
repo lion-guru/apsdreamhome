@@ -13,12 +13,12 @@ $base = $base ?? BASE_URL;
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3"><i class="fas fa-users me-3"></i>Team Management</h1>
-                <p class="lead mb-0">Manage members, track performance, and grow your network</p>
+                <h1 class="display-4 fw-bold mb-3"><i class="fas fa-users me-3"></i><?= __('team_heading', [], 'Team Management') ?></h1>
+                <p class="lead mb-0"><?= __('team_subtitle', [], 'Manage members, track performance, and grow your network') ?></p>
             </div>
             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                 <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addMemberModal">
-                    <i class="fas fa-user-plus me-1"></i> Add Member
+                    <i class="fas fa-user-plus me-1"></i> <?= __('team_add', [], 'Add Member') ?>
                 </button>
             </div>
         </div>
@@ -41,7 +41,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-primary mb-2"><?= htmlspecialchars(number_format($team_stats['total_members'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0">Total Members</h6>
+                        <h6 class="text-muted mb-0"><?= __('team_total_members', [], 'Total Members') ?></h6>
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-success mb-2"><?= htmlspecialchars(number_format($team_stats['active_members'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0">Active (30d)</h6>
+                        <h6 class="text-muted mb-0"><?= __('team_active_members', [], 'Active (30d)') ?></h6>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-warning mb-2"><?= htmlspecialchars(number_format($team_stats['new_members'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0">New This Month</h6>
+                        <h6 class="text-muted mb-0"><?= __('team_new_members', [], 'New This Month') ?></h6>
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-info mb-2">&#8377; <?= htmlspecialchars($team_stats['total_commission'] ?? 0) ?></div>
-                        <h6 class="text-muted mb-0">Total Commission</h6>
+                        <h6 class="text-muted mb-0"><?= __('team_total_commission', [], 'Total Commission') ?></h6>
                     </div>
                 </div>
             </div>
@@ -74,7 +74,7 @@ $base = $base ?? BASE_URL;
             <div class="col-lg-7">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-chart-line me-2 text-success"></i>Recent Activities</h5>
+                        <h5 class="mb-0"><i class="fas fa-chart-line me-2 text-success"></i><?= __('team_recent_activity', [], 'Recent Activities') ?></h5>
                     </div>
                     <div class="card-body p-0">
                         <?php if (!empty($recent_activities)): ?>
@@ -95,7 +95,7 @@ $base = $base ?? BASE_URL;
                         <?php else: ?>
                         <div class="text-center py-5">
                             <i class="fas fa-clock fa-3x text-muted mb-3"></i>
-                            <p class="text-muted mb-0">No recent activities</p>
+                            <p class="text-muted mb-0"><?= __('team_no_activity', [], 'No recent activities') ?></p>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -104,7 +104,7 @@ $base = $base ?? BASE_URL;
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-trophy me-2 text-warning"></i>Top Performers</h5>
+                        <h5 class="mb-0"><i class="fas fa-trophy me-2 text-warning"></i><?= __('team_top_performers', [], 'Top Performers') ?></h5>
                     </div>
                     <div class="card-body p-0">
                         <?php if (!empty($top_performers)): ?>
@@ -133,14 +133,14 @@ $base = $base ?? BASE_URL;
                         <?php else: ?>
                         <div class="text-center py-5">
                             <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                            <p class="text-muted mb-0">No performers data yet</p>
+                            <p class="text-muted mb-0"><?= __('team_no_performers', [], 'No performers data yet') ?></p>
                         </div>
                         <?php endif; ?>
                     </div>
                 </div>
                 <div class="card border-0 shadow-sm mt-3">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="fas fa-layer-group me-2 text-info"></i>Level Distribution</h5>
+                        <h5 class="mb-0"><i class="fas fa-layer-group me-2 text-info"></i><?= __('team_level_distribution', [], 'Level Distribution') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <?php $levels = $team_stats['level_distribution'] ?? []; ?>
@@ -152,7 +152,7 @@ $base = $base ?? BASE_URL;
                         </div>
                         <?php endforeach; ?>
                         <?php else: ?>
-                        <p class="text-muted text-center mb-0 small">No level data</p>
+                        <p class="text-muted text-center mb-0 small"><?= __('team_no_levels', [], 'No level data') ?></p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -165,25 +165,25 @@ $base = $base ?? BASE_URL;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Add Team Member</h5>
+                <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i><?= __('team_add_member', [], 'Add Team Member') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form id="addMemberForm">
                     <div class="mb-3">
-                        <label class="form-label">Full Name</label>
+                        <label class="form-label"><?= __('team_label_name', [], 'Full Name') ?></label>
                         <input type="text" name="name" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label class="form-label"><?= __('team_label_email', [], 'Email') ?></label>
                         <input type="email" name="email" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Phone</label>
+                        <label class="form-label"><?= __('team_label_phone', [], 'Phone') ?></label>
                         <input type="tel" name="phone" class="form-control">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Position</label>
+                        <label class="form-label"><?= __('team_label_position', [], 'Position') ?></label>
                         <select name="position" class="form-control">
                             <option value="left">Left</option>
                             <option value="right">Right</option>
@@ -192,9 +192,9 @@ $base = $base ?? BASE_URL;
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('team_cancel', [], 'Cancel') ?></button>
                 <button type="button" class="btn btn-primary" onclick="submitAddMember()">
-                    <i class="fas fa-check me-1"></i> Add Member
+                    <i class="fas fa-check me-1"></i> <?= __('team_add_member', [], 'Add Member') ?>
                 </button>
             </div>
         </div>

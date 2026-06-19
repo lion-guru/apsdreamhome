@@ -15,20 +15,20 @@ $reviews = [
 
 <section class="py-5 bg-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3">Customer Reviews</h1>
-        <p class="lead">What our clients say about us</p>
+        <h1 class="display-4 fw-bold mb-3"><?= __('reviews_hero_title') ?></h1>
+        <p class="lead"><?= __('reviews_hero_desc') ?></p>
         <div class="d-flex justify-content-center gap-4 mt-4">
             <div class="text-center">
                 <div class="h2 fw-bold">4.8</div>
-                <small>Average Rating</small>
+                <small><?= __('reviews_avg_rating') ?></small>
             </div>
             <div class="text-center">
                 <div class="h2 fw-bold">950+</div>
-                <small>Happy users</small>
+                <small><?= __('reviews_happy_users') ?></small>
             </div>
             <div class="text-center">
                 <div class="h2 fw-bold">98%</div>
-                <small>Satisfaction</small>
+                <small><?= __('reviews_satisfaction') ?></small>
             </div>
         </div>
     </div>
@@ -70,23 +70,23 @@ $reviews = [
             <div class="col-lg-8">
                 <div class="card shadow border-0">
                     <div class="card-body p-5">
-                        <h3 class="text-center mb-4">Share Your Experience</h3>
+                        <h3 class="text-center mb-4"><?= __('reviews_share_experience') ?></h3>
                         <form method="POST" action="/apsdreamhome/contact">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Your Name</label>
+                                    <label class="form-label"><?= __('reviews_your_name') ?></label>
                                     <input type="text" class="form-control" name="name" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Email</label>
+                                    <label class="form-label"><?= __('contact_form_email') ?></label>
                                     <input type="email" class="form-control" name="email" required>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Property</label>
+                                <label class="form-label"><?= __('reviews_property') ?></label>
                                 <select class="form-select" name="property">
-                                    <option value="">Select Property</option>
+                                    <option value=""><?= __('reviews_select_property') ?></option>
                                     <option>APS Anant City</option>
                                     <option>Suyoday Colony</option>
                                     <option>Raghunath Nagri</option>
@@ -95,7 +95,7 @@ $reviews = [
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Rating</label>
+                                <label class="form-label"><?= __('reviews_rating') ?></label>
                                 <div>
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
                                         <i class="fas fa-star fs-4 text-muted rating-star" data-rating="<?= htmlspecialchars($i, ENT_QUOTES, 'UTF-8') ?>" style="cursor:pointer"></i>
@@ -103,10 +103,10 @@ $reviews = [
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Your Review</label>
+                                <label class="form-label"><?= __('reviews_your_review') ?></label>
                                 <textarea class="form-control" rows="4" name="review" required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-lg w-100">Submit Review</button>
+                            <button type="submit" class="btn btn-primary btn-lg w-100"><?= __('reviews_submit') ?></button>
                         </form>
                     </div>
                 </div>

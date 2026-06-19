@@ -16,16 +16,16 @@
  *   $gamify['gradient']    string  (optional) CSS gradient for bg
  */
 $gamify = $gamify ?? [];
-$gTitle = $gamify['title'] ?? 'Progress';
+$gTitle = $gamify['title'] ?? __('component_progress', 'Progress');
 $gIcon = $gamify['icon'] ?? 'fa-trophy';
-$gLevel = $gamify['level'] ?? 'Bronze';
+$gLevel = $gamify['level'] ?? __('component_bronze', 'Bronze');
 $gColor = $gamify['level_color'] ?? 'primary';
 $gMetric = $gamify['metric'] ?? '';
 $gPct = (float)($gamify['progress_pct'] ?? 0);
-$gNextLabel = $gamify['next_label'] ?? 'Next';
+$gNextLabel = $gamify['next_label'] ?? __('component_next', 'Next');
 $gNextTarget = $gamify['next_target'] ?? '';
 $gCta = $gamify['cta_url'] ?? '#';
-$gCtaText = $gamify['cta_text'] ?? 'Upgrade';
+$gCtaText = $gamify['cta_text'] ?? __('component_upgrade', 'Upgrade');
 $gGradient = $gamify['gradient'] ?? 'linear-gradient(135deg, #fff 0%, #ede9fe 100%)';
 ?>
 <div class="aps-cp-card mb-4" style="background: <?= htmlspecialchars($gGradient) ?>;">
@@ -42,7 +42,7 @@ $gGradient = $gamify['gradient'] ?? 'linear-gradient(135deg, #fff 0%, #ede9fe 10
         </div>
         <p class="text-muted small mt-2 mb-0">
             <?php if ($gNextTarget !== ''): ?>
-                <?= htmlspecialchars($gNextTarget) ?> more to reach <strong><?= htmlspecialchars($gNextLabel) ?></strong>
+                <?= htmlspecialchars($gNextTarget) ?> __('component_more_to_reach', 'more to reach') <strong><?= htmlspecialchars($gNextLabel) ?></strong>
             <?php else: ?>
                 Reach <strong><?= htmlspecialchars($gNextLabel) ?></strong>
             <?php endif; ?>

@@ -2,8 +2,8 @@
 <!-- Hero Section -->
 <section class="py-5 text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
     <div class="container text-center py-5">
-        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-chart-line me-3"></i>Investment Opportunities</h1>
-        <p class="lead">Smart investment options with high returns</p>
+        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-chart-line me-3"></i><?= __('invest_hero_title') ?></h1>
+        <p class="lead"><?= __('invest_hero_desc') ?></p>
     </div>
 </section>
 
@@ -11,8 +11,8 @@
     <div class="container">
         <div class="row mb-5">
             <div class="col-lg-8 mx-auto text-center">
-                <h3>Why Invest in Real Estate?</h3>
-                <p class="text-muted">Real estate is one of the most stable and profitable investment options. With our expertise, make the right investment decisions.</p>
+                <h3><?= __('invest_why_title') ?></h3>
+                <p class="text-muted"><?= __('invest_why_desc') ?></p>
             </div>
         </div>
         <div class="row">
@@ -20,8 +20,8 @@
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
                         <i class="fas fa-trending-up fa-3x text-success mb-3"></i>
-                        <h5>High Returns</h5>
-                        <p class="text-muted">Get excellent returns on your investment with properties in growing areas</p>
+                        <h5><?= __('invest_high_returns') ?></h5>
+                        <p class="text-muted"><?= __('invest_high_returns_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -29,8 +29,8 @@
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
                         <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
-                        <h5>Safe & Secure</h5>
-                        <p class="text-muted">All our properties are legally verified with clear documentation</p>
+                        <h5><?= __('invest_safe_secure') ?></h5>
+                        <p class="text-muted"><?= __('invest_safe_secure_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -38,8 +38,8 @@
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
                         <i class="fas fa-hand-holding-usd fa-3x text-warning mb-3"></i>
-                        <h5>Easy Financing</h5>
-                        <p class="text-muted">Home loan assistance available with attractive interest rates</p>
+                        <h5><?= __('invest_easy_financing') ?></h5>
+                        <p class="text-muted"><?= __('invest_easy_financing_desc') ?></p>
                     </div>
                 </div>
             </div>
@@ -47,7 +47,7 @@
         
         <div class="row mt-5">
             <div class="col-12 text-center">
-                <h4>Featured Investment Opportunities</h4>
+                <h4><?= __('invest_featured_title') ?></h4>
             </div>
             <?php if (!empty($featured_properties)): ?>
                 <?php foreach (array_slice($featured_properties, 0, 3) as $project): 
@@ -59,7 +59,7 @@
                             <h5><?php echo htmlspecialchars($project['title']); ?></h5>
                             <p class="text-muted small"><?php echo htmlspecialchars($project['location']); ?></p>
                             <p class="h4 text-success"><?php echo $project['price']; ?></p>
-                            <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-outline-success">View Details</a>
+                            <a href="<?php echo BASE_URL; ?>/projects/<?php echo $slug; ?>" class="btn btn-outline-success"><?= __('featured_view_details') ?></a>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
         
         <div class="text-center mt-5">
             <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg">
-                <i class="fas fa-phone me-2"></i>Call for Investment Advice
+                <i class="fas fa-phone me-2"></i><?= __('invest_call_advice') ?>
             </a>
         </div>
     </div>

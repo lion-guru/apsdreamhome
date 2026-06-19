@@ -12,6 +12,8 @@ $router->post('/api/v2/mobile/auth/logout', 'Api\MobileApiController@logout');
 $router->get('/api/v2/mobile/sync', 'Api\MobileApiController@syncProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads', 'Api\MobileApiController@batchSyncLeads')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/properties', 'Api\MobileApiController@syncProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/updates', 'Api\MobileApiController@getUpdates')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/sync', 'Api\MobileApiController@sync')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/mlm/summary', 'Api\MobileApiController@getMlmSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/mlm/payouts', 'Api\MobileApiController@getMlmPayouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/mlm/incentives', 'Api\MobileApiController@getMlmIncentives')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -19,6 +21,7 @@ $router->post('/api/v2/mobile/upload-document', 'Api\MobileApiController@uploadD
 $router->get('/api/v2/mobile/mlm/documents', 'Api\MobileApiController@getDocuments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/site-visit/start', 'Api\MobileApiController@startSiteVisit')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/site-visit/update', 'Api\MobileApiController@updateSiteVisitLocation')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/site-visit/complete', 'Api\MobileApiController@completeSiteVisit')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/site-visit/status', 'Api\MobileApiController@getSiteVisitStatus')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/user/profile', 'Api\MobileApiController@getUserProfile')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/payouts/pending', 'Api\MobileApiController@getPendingPayouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -145,6 +148,12 @@ $router->get('/api/whatsapp-templates/preview/{id}', 'App\\Http\\Controllers\\Wh
 $router->get('/api/referral/dashboard', 'Api\ReferralController@dashboard');
 $router->get('/api/referral/stats', 'Api\ReferralController@stats');
 $router->get('/api/referral/list', 'Api\ReferralController@index');
+$router->post('/api/referral/track', 'Api\\MobileApiController@trackReferral');
+
+// Attendance API Routes (geo-fenced to office)
+$router->post('/api/attendance/punch-in', 'Api\\MobileApiController@punchIn');
+$router->post('/api/attendance/punch-out', 'Api\\MobileApiController@punchOut');
+$router->get('/api/attendance/status', 'Api\\MobileApiController@attendanceStatus');
 
 // MLM API Routes
 $router->get('/api/mlm/analytics', 'App\\Http\\Controllers\\MLMController@getAnalytics');

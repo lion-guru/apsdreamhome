@@ -14,7 +14,7 @@ $base = BASE_URL;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Associate Login | APS Dream Home</title>
+    <title><?php echo __('auth_associate_login_title', 'Associate Login'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -166,8 +166,8 @@ $base = BASE_URL;
             <div class="brand-icon">
                 <i class="fas fa-handshake"></i>
             </div>
-            <h1 class="brand-title">APS Dream Home</h1>
-            <p class="brand-subtitle">Associate Portal Login</p>
+            <h1 class="brand-title"><?php echo __('auth_aps_dream_home', 'APS Dream Home'); ?></h1>
+            <p class="brand-subtitle"><?php echo __('auth_associate_portal_login', 'Associate Portal Login'); ?></p>
         </div>
         <div class="card-body aps-cp-card-body">
             <?php if ($error): ?>
@@ -181,14 +181,14 @@ $base = BASE_URL;
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
 
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email or Phone</label>
-                    <input type="text" class="form-control" id="email" name="email" placeholder="Enter email or phone" required>
+                    <label for="email" class="form-label"><?php echo __('auth_email_or_phone', 'Email or Phone'); ?></label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="<?php echo __('auth_enter_email_phone', 'Enter email or phone'); ?>" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label"><?php echo __('auth_password', 'Password'); ?></label>
                     <div class="input-group">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="<?php echo __('auth_enter_password', 'Enter password'); ?>" required>
                         <span class="input-group-text toggle-password" style="cursor: pointer;" onclick="togglePassword()">
                             <i class="fas fa-eye" id="toggleIcon"></i>
                         </span>

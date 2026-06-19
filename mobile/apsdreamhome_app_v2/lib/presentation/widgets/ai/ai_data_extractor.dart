@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/utils/logger.dart';
+import '../../../data/repositories/kyc_repository_provider.dart';
 
 /// AI Data Extractor
 /// Allows users to query any data using natural language
@@ -36,13 +36,8 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
     });
 
     try {
-      // Parse natural language query
       final parsedQuery = _parseQuery(query);
-
-      // Execute Firebase query
       final data = await _fetchData(parsedQuery);
-
-      // Generate explanation
       final explanation = _generateExplanation(query, data, parsedQuery);
 
       setState(() {
@@ -71,7 +66,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
       'limit': 10,
     };
 
-    // Determine collection
     if (lower.contains('plot') || lower.contains('property')) {
       result['collection'] = 'plots';
     } else if (lower.contains('colony') || lower.contains('project')) {
@@ -88,7 +82,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
       result['collection'] = 'leads';
     }
 
-    // Determine filters
     if (lower.contains('available') || lower.contains('unsold')) {
       result['filters']['status'] = 'available';
     }
@@ -99,7 +92,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
       result['filters']['status'] = 'pending';
     }
 
-    // Location filters
     final locations = [
       'gorakhpur',
       'lucknow',
@@ -114,7 +106,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
       }
     }
 
-    // Price range
     if (lower.contains('under') && lower.contains('lakh')) {
       final match = RegExp(r'under\s*(\d+)\s*lakh').firstMatch(lower);
       if (match != null) {
@@ -123,7 +114,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
       }
     }
 
-    // Sort
     if (lower.contains('cheapest') || lower.contains('lowest price')) {
       result['sort'] = {'field': 'price', 'direction': 'asc'};
     } else if (lower.contains('expensive') || lower.contains('highest price')) {
@@ -132,7 +122,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
       result['sort'] = {'field': 'createdAt', 'direction': 'desc'};
     }
 
-    // Count/aggregate
     if (lower.contains('count') ||
         lower.contains('how many') ||
         lower.contains('total')) {
@@ -145,7 +134,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
       result['field'] = 'price';
     }
 
-    // Limit
     if (lower.contains('top') || lower.contains('best')) {
       final match = RegExp(r'(top|best)\s*(\d+)').firstMatch(lower);
       if (match != null) {
@@ -158,46 +146,96 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
     return result;
   }
 
-  /// Fetch data from Firebase
+  /// Map parsed collection to REST API endpoint + query params
+  String _getEndpoint(String collection, Map<String, dynamic> filters) {
+    switch (collection) {
+      case 'plots':
+      case 'colonies':
+        return 'properties';
+      case 'bookings':
+        return 'bookings';
+      case 'commissions':
+        return 'mlm/payouts';
+      case 'leads':
+        return 'leads';
+      case 'users':
+      default:
+        return 'user/profile';
+    }
+  }
+
+  Map<String, dynamic> _getQueryParams(Map<String, dynamic> filters) {
+    final params = <String, dynamic>{};
+    if (filters.containsKey('status')) {
+      params['status'] = filters['status'];
+    }
+    if (filters.containsKey('location')) {
+      params['location'] = filters['location'];
+    }
+    if (filters.containsKey('maxPrice')) {
+      params['max_price'] = filters['maxPrice'];
+    }
+    return params;
+  }
+
+  /// Fetch data via REST API (replaces Firestore Query)
   Future<Map<String, dynamic>> _fetchData(Map<String, dynamic> query) async {
     final collection = query['collection'] as String?;
     if (collection == null) {
       return {'error': 'Could not determine data type from query'};
     }
 
-    final firestore = FirebaseFirestore.instance;
-    Query q = firestore.collection(collection);
+    final api = ref.read(apiServiceProvider);
+    final endpoint = _getEndpoint(collection, query['filters'] as Map<String, dynamic>);
+    final queryParams = _getQueryParams(query['filters'] as Map<String, dynamic>);
 
-    // Apply filters
-    final filters = query['filters'] as Map<String, dynamic>;
-    filters.forEach((key, value) {
-      if (key == 'maxPrice') {
-        q = q.where('price', isLessThanOrEqualTo: value);
+    final response = await api.request(
+      method: 'GET',
+      endpoint: endpoint,
+      queryParameters: queryParams,
+    );
+
+    // Handle different response shapes from backend
+    List<Map<String, dynamic>> documents;
+    if (response is Map<String, dynamic>) {
+      final data = response['data'];
+      if (data is List) {
+        documents = data.map((e) => e as Map<String, dynamic>).toList();
+      } else if (data is Map<String, dynamic> && data.containsKey('properties')) {
+        final props = data['properties'];
+        if (props is List) {
+          documents = props.map((e) => e as Map<String, dynamic>).toList();
+        } else {
+          documents = [];
+        }
       } else {
-        q = q.where(key, isEqualTo: value);
+        documents = [];
       }
-    });
-
-    // Apply sort
-    final sort = query['sort'] as Map<String, dynamic>?;
-    if (sort != null) {
-      q = q.orderBy(
-        sort['field'] as Object,
-        descending: sort['direction'] == 'desc',
-      );
+    } else {
+      documents = [];
     }
 
-    // Apply limit
     final limit = query['limit'] as int;
-    q = q.limit(limit);
+    documents = documents.take(limit).toList();
 
-    final snapshot = await q.get();
-
-    final documents = snapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      data['id'] = doc.id;
-      return data;
-    }).toList();
+    // Client-side sort (backend doesn't support dynamic sort params)
+    final sort = query['sort'] as Map<String, dynamic>?;
+    if (sort != null) {
+      final field = sort['field'] as String;
+      final desc = sort['direction'] == 'desc';
+      documents.sort((a, b) {
+        final aVal = a[field] ?? 0;
+        final bVal = b[field] ?? 0;
+        if (desc) {
+          return (bVal is num && aVal is num)
+              ? bVal.compareTo(aVal)
+              : bVal.toString().compareTo(aVal.toString());
+        }
+        return (aVal is num && bVal is num)
+            ? aVal.compareTo(bVal)
+            : aVal.toString().compareTo(bVal.toString());
+      });
+    }
 
     return {
       'collection': collection,
@@ -239,7 +277,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
 
     explanation += '.';
 
-    // Add insights
     final docs = data['documents'] as List<dynamic>;
     if (docs.isNotEmpty && collection == 'plots') {
       final prices = docs.map((d) {
@@ -263,7 +300,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Row(
               children: [
                 Container(
@@ -301,8 +337,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
               ],
             ),
             const SizedBox(height: 16),
-
-            // Query Input
             TextField(
               controller: _queryController,
               decoration: InputDecoration(
@@ -329,8 +363,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
               onSubmitted: (_) => _executeQuery(),
             ),
             const SizedBox(height: 12),
-
-            // Example queries
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -344,8 +376,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Results
             if (_explanation != null)
               Container(
                 padding: const EdgeInsets.all(12),
@@ -367,7 +397,6 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
                   ],
                 ),
               ),
-
             if (_result != null && _result!['documents'] != null)
               Expanded(
                 child:

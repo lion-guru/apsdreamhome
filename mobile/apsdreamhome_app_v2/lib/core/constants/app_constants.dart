@@ -5,8 +5,7 @@ class AppConstants {
   // For Android Emulator: use 10.0.2.2 (points to host localhost)
   // For Physical Device via ngrok: use ngrok URL
   // For Physical Device on same WiFi: use PC IP
-  static const String baseUrl =
-      'https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome';
+  static const String baseUrl = 'http://10.0.2.2/apsdreamhome';
 
   static const String apiVersion = 'api/v2/mobile';
 
@@ -163,7 +162,7 @@ class AppConstants {
   static const String version = '1.0.0';
 
   // Demo Mode
-  static const bool demoMode = false;
+  static const bool demoMode = true;
 
   // Validation Constants
   static const int minPasswordLength = 6;

@@ -6,8 +6,8 @@
 <!-- Hero Section -->
 <section class="downloads-hero text-center">
     <div class="container">
-        <h1 class="display-4 fw-bold">Downloads & Resources</h1>
-        <p class="lead mb-0">Access important documents, brochures, and forms.</p>
+        <h1 class="display-4 fw-bold"><?= __('downloads_title') ?></h1>
+        <p class="lead mb-0"><?= __('downloads_subtitle') ?></p>
     </div>
 </section>
 
@@ -25,8 +25,8 @@
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Downloads</li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('breadcrumb_home') ?></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><?= __('nav_downloads') ?></li>
                 <?php endif; ?>
             </ol>
         </nav>
@@ -40,7 +40,7 @@
             <div class="row mb-4">
                 <div class="col-12 text-center">
                     <div class="btn-group flex-wrap" role="group">
-                        <a href="<?= BASE_URL ?>downloads" class="btn btn-outline-primary <?= (!isset($_GET['category']) || Security::sanitize($_GET['category']) == 'all') ? 'active' : '' ?>">All</a>
+                        <a href="<?= BASE_URL ?>downloads" class="btn btn-outline-primary <?= (!isset($_GET['category']) || Security::sanitize($_GET['category']) == 'all') ? 'active' : '' ?>"><?= __('filter_all') ?></a>
                         <?php foreach ($categories as $cat): ?>
                             <a href="<?= BASE_URL ?>downloads?category=<?= urlencode($cat) ?>" class="btn btn-outline-primary <?= (isset($_GET['category']) && Security::sanitize($_GET['category']) == $cat) ? 'active' : '' ?>">
                                 <?= htmlspecialchars(ucfirst($cat)) ?>
@@ -70,7 +70,7 @@
 
                             <div class="mt-auto">
                                 <a href="<?= !empty($download['file_path']) ? get_asset_url($download['file_path']) : '#' ?>" class="btn btn-primary download-btn rounded-pill px-4" download>
-                                    <i class="fas fa-download me-2"></i> Download
+                                    <i class="fas fa-download me-2"></i> <?= __('common_download') ?>
                                 </a>
                                 <div class="download-meta mt-3 small text-muted">
                                     <span><i class="fas fa-calendar-alt me-1"></i> <?= date('M d, Y', strtotime($download['created_at'] ?? 'now')) ?></span>
@@ -103,8 +103,8 @@
                 <div class="mb-4">
                     <i class="fas fa-cloud-download-alt fa-4x text-muted opacity-50"></i>
                 </div>
-                <h3 class="h4 text-muted">No downloads available at the moment.</h3>
-                <p class="text-muted">Please check back later for updates.</p>
+                <h3 class="h4 text-muted"><?= __('downloads_empty_title') ?></h3>
+                <p class="text-muted"><?= __('downloads_empty_desc') ?></p>
             </div>
         <?php endif; ?>
     </div>

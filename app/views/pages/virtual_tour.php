@@ -15,7 +15,7 @@
                     <?= h($error) ?>
                 </div>
             <?php elseif (isset($tour)): ?>
-                <h1 class="mb-4"><?= h($tour['property_title'] ?? 'Virtual Property Tour') ?></h1>
+                <h1 class="mb-4"><?= h($tour['property_title'] ?? __('virtual_tour_default_title')) ?></h1>
                 
                 <div id="viewer-container" style="width: 100%; height: 600px; background: #000; position: relative;">
                     <?php if (!empty($tour['assets'])): ?>
@@ -43,19 +43,19 @@
                         </script>
                     <?php else: ?>
                         <div class="d-flex align-items-center justify-content-center h-100 text-white">
-                            <p>No assets found for this virtual tour.</p>
+                            <p><?= __('virtual_tour_no_assets') ?></p>
                         </div>
                     <?php endif; ?>
                 </div>
 
                 <div class="mt-4">
-                    <h3>About this Tour</h3>
-                    <p><?= nl2br(h($tour['description'] ?? 'Experience this property in immersive 360Â°.')) ?></p>
+                    <h3><?= __('virtual_tour_about') ?></h3>
+                    <p><?= nl2br(h($tour['description'] ?? __('virtual_tour_about_default'))) ?></p>
                 </div>
 
                 <?php if (!empty($tour['assets']) && count($tour['assets']) > 1): ?>
                     <div class="mt-4">
-                        <h4>Tour Scenes</h4>
+                        <h4><?= __('virtual_tour_scenes') ?></h4>
                         <div class="row g-3">
                             <?php foreach ($tour['assets'] as $asset): ?>
                                 <div class="col-md-3">

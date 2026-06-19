@@ -1,5 +1,5 @@
 <div class="container mt-4">
-    <h1 class="mb-4"><?php echo $page_title ?? 'Frequently Asked Questions'; ?></h1>
+    <h1 class="mb-4"><?php echo $page_title ?? __('faq_page_title'); ?></h1>
     <?php if (!empty($faqs)): ?>
         <div class="accordion" id="faqAccordion">
             <?php foreach ($faqs as $index => $faq): ?>
@@ -16,6 +16,6 @@
             <?php endforeach; ?>
         </div>
     <?php else: ?>
-        <div class="alert alert-info">No FAQs available at this time.</div>
+        <div class="alert alert-info"><?= __('faq_no_available') ?></div>
     <?php endif; ?>
 </div>

@@ -1,4 +1,4 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-14)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-16)
 
 ---
 
@@ -24,6 +24,33 @@
 
 ### Lesson learned
 - `commission_plan_manager.php` (769 lines) was deleted as "orphaned dead" — had real CRUD for `mlm_commission_plans` table (5 rows). Had to rebuild entirely as MVC (CommissionPlanController + 4 views + 11 routes + mlm_plan_levels table). **Cost: 1 full session.**
+
+---
+
+## Session 2026-06-15: EMI Penalty Engine Upgrades (Interest-Free Period & Advance Offset)
+
+### What Was Done
+Updated the EMI Penalty Engine to implement specialized billing rules that reward early payments and provide initial interest-free cushions, while penalizing chronic defaulters.
+
+1. **3-Year Interest-Free Period**: Installed a check where installments with due dates within 3 years (1095 days) of the booking date do not accrue penalty interest (accrues ₹0.00).
+2. **3-Month Consecutive Default Exception**: If a customer fails to pay their EMIs for 3 consecutive months (3 consecutive installments are unpaid and past due), they lose their interest-free status and normal penalty interest (18% p.a.) begins to accrue.
+3. **Advance Payment Offset Grace**: If a customer's cumulative paid EMI amount (sum of `paid_amount` on schedules) is greater than or equal to their cumulative scheduled EMI amount due up to `CURDATE()`, they are marked as "in advance". The penalty engine bypasses them entirely (accrues ₹0), and they are filtered out of the overdue penalty summary.
+4. **Service Synchronization**: Updated the logic in both manual trigger (`MoneyWorkflowService.php`) and scheduled cron (`EMIAutomationService.php`).
+5. **E2E & Logic Verification**: Built and ran a transactional E2E test script checking all 4 business scenarios (grace within 3 years, default loss of grace, outside 3 years, and advance paid offset), resulting in 100% verification success.
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `app/Services/Accounting/MoneyWorkflowService.php` | Joined `plot_bookings` for `booking_date`, added advance payment bypass, added 3-year interest-free grace and 3-month consecutive default checks inside `applyDailyPenalties()`, updated `getOverduePenaltySummary()` to filter out advance accounts, and added `hasThreeConsecutiveOverdueEMIs()` helper. |
+| `app/Services/EMIAutomationService.php` | Joined `plot_bookings` for `booking_date`, synchronized the same advance-payment offset and interest-free logic using raw PDO, and added `hasThreeConsecutiveOverdueEMIs()` helper. |
+
+### Verification
+| Scenario | Status | Expected | Actual |
+|----------|--------|----------|--------|
+| Booking < 3 yrs, 1 missed | PASS | ₹0.00 penalty, status = `overdue` | ₹0.00 penalty, status = `overdue` |
+| Booking < 3 yrs, 3 consecutive missed | PASS | Penalty > ₹0.00, status = `overdue` | Penalty > ₹0.00, status = `overdue` |
+| Booking > 3 yrs, 1 missed | PASS | Penalty > ₹0.00, status = `overdue` | Penalty > ₹0.00, status = `overdue` |
+| Booking has advance payment balance | PASS | Skipped from penalty run, excluded from summary | Skipped from run, excluded from summary |
 
 ---
 
@@ -6030,6 +6057,6 @@ Comprehensive end-to-end verification of the complete commission + penalty + cla
 1. **Legal/Registry NOC Pipe** — ✅ DONE. `checkRegistryEligibility()` now correctly blocks registry when overdue installments exist.
 2. **Real KYC API** — NSDL PAN verification, UIDAI Aadhaar e-KYC integration
 3. **Mobile responsiveness** — Admin portal mobile fixes
-4. **Admin CSS modernization** — Replace Bootstrap with aps-cp-* design system
-5. **On-field cash collection & reconciliation** — Build receipt verification workflows for cash collectors and associates
+4. **Admin CSS modernization** — ✅ DONE (Phase 33 + CSS consolidation already complete)
+5. **On-field cash collection & reconciliation** — ✅ DONE. 3 tables, 2 services, 1 controller, 12 routes, 5 views, 43/43 E2E tests pass. Both `CashCollectionService` and `MoneyWorkflowService::recordCollection()` now update `booking_payment_schedules.paid_amount`.
 

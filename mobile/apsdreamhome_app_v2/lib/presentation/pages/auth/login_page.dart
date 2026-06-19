@@ -6,6 +6,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../widgets/app_widgets.dart';
+import '../../widgets/glass_card.dart';
 
 /// Login Page - Connected to AuthRepository
 class LoginPage extends ConsumerStatefulWidget {
@@ -79,48 +80,50 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final authState = ref.watch(authStateProvider);
     
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 40),
-                
-                // Logo and Title
-                _buildHeader(),
-                
-                const SizedBox(height: 40),
-                
-                // Tab Selection
-                _buildTabSelection(),
-                
-                const SizedBox(height: 32),
-                
-                // Login Form
-                if (_selectedTab == 0) 
-                  _buildEmailLoginForm()
-                else 
-                  _buildPhoneLoginForm(),
-                
-                const SizedBox(height: 24),
-                
-                // Demo Mode Section
-                if (AppConstants.demoMode) _buildDemoMode(),
-                
-                const SizedBox(height: 24),
-                
-                // Forgot Password
-                _buildForgotPassword(),
-                
-                const SizedBox(height: 24),
-                
-                // Register Link
-                _buildRegisterLink(),
-                
-                const SizedBox(height: 20),
-              ],
+      body: MeshGradientBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 40),
+                  
+                  // Logo and Title
+                  _buildHeader(),
+                  
+                  const SizedBox(height: 40),
+                  
+                  // Tab Selection
+                  _buildTabSelection(),
+                  
+                  const SizedBox(height: 32),
+                  
+                  // Login Form
+                  if (_selectedTab == 0) 
+                    _buildEmailLoginForm()
+                  else 
+                    _buildPhoneLoginForm(),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Demo Mode Section
+                  if (AppConstants.demoMode) _buildDemoMode(),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Forgot Password
+                  _buildForgotPassword(),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Register Link
+                  _buildRegisterLink(),
+                  
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),
@@ -499,7 +502,34 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final isSelected = _selectedDemoRole == role;
     
     return GestureDetector(
-      onTap: () => setState(() => _selectedDemoRole = role),
+      onTap: () async {
+        setState(() {
+          _selectedDemoRole = role;
+          _isLoading = true;
+        });
+        try {
+          final authRepository = ref.read(authRepositoryProvider);
+          final user = await authRepository.demoLogin(role);
+          if (mounted) {
+            AppWidgets.showSuccessSnackBar(context, 'Demo login as ${label}');
+            if (user.isCustomer) {
+              context.go('/home');
+            } else if (user.isAssociate) {
+              context.go('/associate/dashboard');
+            } else if (user.isAdmin) {
+              context.go('/admin/dashboard');
+            } else {
+              context.go('/home');
+            }
+          }
+        } catch (e) {
+          if (mounted) {
+            AppWidgets.showErrorSnackBar(context, 'Demo login failed: $e');
+          }
+        } finally {
+          if (mounted) setState(() => _isLoading = false);
+        }
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(

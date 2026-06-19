@@ -147,10 +147,10 @@ $colonyId = (int)($colony['id'] ?? 0);
                 <td><span class="badge bg-<?= $statusClass ?>"><?= ucfirst($plot['status'] ?? 'unknown') ?></span></td>
                 <td><?= !empty($flags) ? implode(' ', $flags) : '<span class="text-muted">—</span>' ?></td>
                 <td>
-                  <a href="<?= BASE_URL ?>/admin/plots/show/<?= (int)$plot['id'] ?>" class="btn btn-outline-primary btn-sm" title="View">
+                  <a href="<?= BASE_URL ?>/admin/plots/<?= (int)$plot['id'] ?>" class="btn btn-outline-primary btn-sm" title="View">
                     <i class="fas fa-eye"></i>
                   </a>
-                  <a href="<?= BASE_URL ?>/admin/plots/edit/<?= (int)$plot['id'] ?>" class="btn btn-outline-warning btn-sm" title="Edit">
+                  <a href="<?= BASE_URL ?>/admin/plots/<?= (int)$plot['id'] ?>/edit" class="btn btn-outline-warning btn-sm" title="Edit">
                     <i class="fas fa-edit"></i>
                   </a>
                 </td>

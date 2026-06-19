@@ -515,18 +515,18 @@ class __$$SiteVisitModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SiteVisitModelImpl implements _SiteVisitModel {
   const _$SiteVisitModelImpl({
-    required this.id,
-    required this.agentId,
-    required this.agentName,
+    this.id = '',
+    this.agentId = '',
+    this.agentName = '',
     this.customerId,
     this.customerName,
     this.customerPhone,
-    required this.colonyId,
-    required this.colonyName,
+    this.colonyId = '',
+    this.colonyName = '',
     final List<String>? plotIdsShown,
     final List<String>? plotNumbersShown,
-    required this.latitude,
-    required this.longitude,
+    this.latitude = 0.0,
+    this.longitude = 0.0,
     this.address,
     this.accuracy,
     required this.visitStartTime,
@@ -555,10 +555,13 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
       _$$SiteVisitModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String agentId;
   @override
+  @JsonKey()
   final String agentName;
   // Customer Info
   @override
@@ -569,8 +572,10 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
   final String? customerPhone;
   // Location
   @override
+  @JsonKey()
   final String colonyId;
   @override
+  @JsonKey()
   final String colonyName;
   final List<String>? _plotIdsShown;
   @override
@@ -595,8 +600,10 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
 
   // GPS Coordinates
   @override
+  @JsonKey()
   final double latitude;
   @override
+  @JsonKey()
   final double longitude;
   @override
   final String? address;
@@ -789,18 +796,18 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
 
 abstract class _SiteVisitModel implements SiteVisitModel {
   const factory _SiteVisitModel({
-    required final String id,
-    required final String agentId,
-    required final String agentName,
+    final String id,
+    final String agentId,
+    final String agentName,
     final String? customerId,
     final String? customerName,
     final String? customerPhone,
-    required final String colonyId,
-    required final String colonyName,
+    final String colonyId,
+    final String colonyName,
     final List<String>? plotIdsShown,
     final List<String>? plotNumbersShown,
-    required final double latitude,
-    required final double longitude,
+    final double latitude,
+    final double longitude,
     final String? address,
     final double? accuracy,
     required final DateTime visitStartTime,
@@ -1158,11 +1165,11 @@ class __$$LiveLocationModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LiveLocationModelImpl implements _LiveLocationModel {
   const _$LiveLocationModelImpl({
-    required this.userId,
-    required this.userName,
-    required this.userType,
-    required this.latitude,
-    required this.longitude,
+    this.userId = '',
+    this.userName = '',
+    this.userType = '',
+    this.latitude = 0.0,
+    this.longitude = 0.0,
     required this.timestamp,
     this.speed,
     this.heading,
@@ -1177,15 +1184,20 @@ class _$LiveLocationModelImpl implements _LiveLocationModel {
       _$$LiveLocationModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String userId;
   @override
+  @JsonKey()
   final String userName;
   @override
+  @JsonKey()
   final String userType;
   // agent, customer
   @override
+  @JsonKey()
   final double latitude;
   @override
+  @JsonKey()
   final double longitude;
   @override
   final DateTime timestamp;
@@ -1277,11 +1289,11 @@ class _$LiveLocationModelImpl implements _LiveLocationModel {
 
 abstract class _LiveLocationModel implements LiveLocationModel {
   const factory _LiveLocationModel({
-    required final String userId,
-    required final String userName,
-    required final String userType,
-    required final double latitude,
-    required final double longitude,
+    final String userId,
+    final String userName,
+    final String userType,
+    final double latitude,
+    final double longitude,
     required final DateTime timestamp,
     final double? speed,
     final double? heading,

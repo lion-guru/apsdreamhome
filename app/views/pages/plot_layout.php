@@ -106,12 +106,12 @@
     <!-- SIDEBAR -->
     <div class="map-sidebar">
         <div class="sidebar-header">
-            <h2><i class="fas fa-map-marked-alt"></i> Plot Layout Map</h2>
-            <p>Interactive colony plot grid</p>
+            <h2><i class="fas fa-map-marked-alt"></i> <?= __('plot_title', [], 'Plot Layout Map') ?></h2>
+            <p><?= __('plot_subtitle', [], 'Interactive colony plot grid') ?></p>
         </div>
         <div class="colony-tabs" id="colonyTabs">
             <button class="colony-tab active" data-colony="all" onclick="switchColony('all')">
-                <div>All Colonies</div>
+                <div><?= __('plot_all_colonies', [], 'All Colonies') ?></div>
                 <div class="tab-stats"><?= $total_stats['total'] ?> plots &bull; <?= $total_stats['available'] ?> available</div>
             </button>
             <?php foreach ($colonies as $col): ?>
@@ -122,29 +122,29 @@
             <?php endforeach; ?>
         </div>
         <div class="sidebar-legend">
-            <h3>Status Legend</h3>
+            <h3><?= __('plot_legend_title', [], 'Status Legend') ?></h3>
             <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div> Available</div>
             <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> Booked / Reserved</div>
             <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> Sold</div>
             <div class="legend-item"><div class="legend-dot" style="background:#6b7280"></div> Hold / Other</div>
         </div>
         <div class="sidebar-chart">
-            <h3>Distribution</h3>
+            <h3><?= __('plot_distribution', [], 'Distribution') ?></h3>
             <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
         </div>
         <div class="sidebar-stats" id="sidebarStats">
-            <div class="stat-row"><span class="label">Total Plots</span><span class="value" id="statTotal"><?= $total_stats['total'] ?></span></div>
-            <div class="stat-row"><span class="label">Available</span><span class="value" style="color:#10b981" id="statAvail"><?= $total_stats['available'] ?></span></div>
-            <div class="stat-row"><span class="label">Booked</span><span class="value" style="color:#f59e0b" id="statBooked"><?= $total_stats['booked'] ?></span></div>
-            <div class="stat-row"><span class="label">Sold</span><span class="value" style="color:#ef4444" id="statSold"><?= $total_stats['sold'] ?></span></div>
-            <div class="stat-row"><span class="label">Blocked</span><span class="value" style="color:#94a3b8" id="statBlocked"><?= $total_stats['blocked'] ?></span></div>
+            <div class="stat-row"><span class="label"><?= __('plot_stat_total', [], 'Total Plots') ?></span><span class="value" id="statTotal"><?= $total_stats['total'] ?></span></div>
+            <div class="stat-row"><span class="label"><?= __('plot_stat_available', [], 'Available') ?></span><span class="value" style="color:#10b981" id="statAvail"><?= $total_stats['available'] ?></span></div>
+            <div class="stat-row"><span class="label"><?= __('plot_stat_booked', [], 'Booked') ?></span><span class="value" style="color:#f59e0b" id="statBooked"><?= $total_stats['booked'] ?></span></div>
+            <div class="stat-row"><span class="label"><?= __('plot_stat_sold', [], 'Sold') ?></span><span class="value" style="color:#ef4444" id="statSold"><?= $total_stats['sold'] ?></span></div>
+            <div class="stat-row"><span class="label"><?= __('plot_stat_blocked', [], 'Blocked') ?></span><span class="value" style="color:#94a3b8" id="statBlocked"><?= $total_stats['blocked'] ?></span></div>
         </div>
     </div>
 
     <!-- MAIN AREA -->
     <div class="map-main">
         <div class="map-toolbar">
-            <input type="text" id="searchInput" placeholder="Search plot number..." oninput="searchPlots(this.value)">
+            <input type="text" id="searchInput" placeholder="<?= __('plot_search_placeholder', [], 'Search plot number...') ?>" oninput="searchPlots(this.value)">
             <button class="filter-btn active" data-status="all" onclick="filterStatus('all', this)">All</button>
             <button class="filter-btn" data-status="available" onclick="filterStatus('available', this)">Available</button>
             <button class="filter-btn" data-status="booked" onclick="filterStatus('booked', this)">Booked</button>
@@ -166,7 +166,7 @@
 <div class="overlay" id="overlay" onclick="closeDetail()"></div>
 <div class="detail-panel" id="detailPanel">
     <div class="detail-header">
-        <h3 id="detailTitle">Plot Details</h3>
+        <h3 id="detailTitle"><?= __('plot_detail_title', [], 'Plot Details') ?></h3>
         <button class="detail-close" onclick="closeDetail()">&times;</button>
     </div>
     <div class="detail-body" id="detailBody"></div>

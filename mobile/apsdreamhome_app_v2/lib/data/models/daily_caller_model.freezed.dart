@@ -552,16 +552,16 @@ class __$$DailyCallerImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DailyCallerImpl extends _DailyCaller {
   const _$DailyCallerImpl({
-    required this.id,
-    required this.name,
-    required this.phone,
-    required this.email,
+    this.id = '',
+    this.name = '',
+    this.phone = '',
+    this.email = '',
     this.photoUrl,
-    required this.employeeId,
+    this.employeeId = '',
     required this.joiningDate,
     required this.callerType,
     required this.salaryType,
-    required this.monthlySalary,
+    this.monthlySalary = 0.0,
     this.dailyTargetAmount,
     this.dailyCallTarget,
     this.dailyTalkTimeTarget,
@@ -574,8 +574,8 @@ class _$DailyCallerImpl extends _DailyCaller {
     this.currentMonthConnected = 0,
     this.currentMonthValidLeads = 0,
     this.currentMonthBookings = 0,
-    this.currentMonthRevenue = 0,
-    this.currentMonthCommission = 0,
+    this.currentMonthRevenue = 0.0,
+    this.currentMonthCommission = 0.0,
     this.currentMonthTalkTimeMinutes = 0,
     final List<String> assignedLeadIds = const [],
     final List<CallerLeadAssignment> leadAssignments = const [],
@@ -596,17 +596,22 @@ class _$DailyCallerImpl extends _DailyCaller {
       _$$DailyCallerImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String phone;
   @override
+  @JsonKey()
   final String email;
   @override
   final String? photoUrl;
   // Employment Details
   @override
+  @JsonKey()
   final String employeeId;
   @override
   final DateTime joiningDate;
@@ -618,6 +623,7 @@ class _$DailyCallerImpl extends _DailyCaller {
   // Fixed, CommissionOnly, FixedPlusCommission
   // Salary Structure
   @override
+  @JsonKey()
   final double monthlySalary;
   @override
   final double? dailyTargetAmount;
@@ -867,16 +873,16 @@ class _$DailyCallerImpl extends _DailyCaller {
 
 abstract class _DailyCaller extends DailyCaller {
   const factory _DailyCaller({
-    required final String id,
-    required final String name,
-    required final String phone,
-    required final String email,
+    final String id,
+    final String name,
+    final String phone,
+    final String email,
     final String? photoUrl,
-    required final String employeeId,
+    final String employeeId,
     required final DateTime joiningDate,
     required final CallerType callerType,
     required final SalaryType salaryType,
-    required final double monthlySalary,
+    final double monthlySalary,
     final double? dailyTargetAmount,
     final int? dailyCallTarget,
     final int? dailyTalkTimeTarget,
@@ -1365,7 +1371,7 @@ class __$$DailyCallReportImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DailyCallReportImpl implements _DailyCallReport {
   const _$DailyCallReportImpl({
-    required this.id,
+    this.id = '',
     required this.date,
     this.totalCalls = 0,
     this.connected = 0,
@@ -1375,13 +1381,13 @@ class _$DailyCallReportImpl implements _DailyCallReport {
     this.callLater = 0,
     this.notInterested = 0,
     this.totalTalkTimeMinutes = 0,
-    this.avgTalkTimeMinutes = 0,
+    this.avgTalkTimeMinutes = 0.0,
     this.validLeadsGenerated = 0,
     this.interestedCustomers = 0,
     this.siteVisitsScheduled = 0,
     this.bookingsConfirmed = 0,
-    this.revenueGenerated = 0,
-    this.commissionEarned = 0,
+    this.revenueGenerated = 0.0,
+    this.commissionEarned = 0.0,
     final List<CallDetail> callDetails = const [],
     required this.status,
     this.supervisorNotes,
@@ -1393,6 +1399,7 @@ class _$DailyCallReportImpl implements _DailyCallReport {
       _$$DailyCallReportImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
   final DateTime date;
@@ -1568,7 +1575,7 @@ class _$DailyCallReportImpl implements _DailyCallReport {
 
 abstract class _DailyCallReport implements DailyCallReport {
   const factory _DailyCallReport({
-    required final String id,
+    final String id,
     required final DateTime date,
     final int totalCalls,
     final int connected,
@@ -1857,9 +1864,9 @@ class __$$CallDetailImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CallDetailImpl implements _CallDetail {
   const _$CallDetailImpl({
-    required this.leadId,
-    required this.leadName,
-    required this.leadPhone,
+    this.leadId = '',
+    this.leadName = '',
+    this.leadPhone = '',
     required this.callTime,
     required this.outcome,
     this.talkTimeSeconds,
@@ -1872,10 +1879,13 @@ class _$CallDetailImpl implements _CallDetail {
       _$$CallDetailImplFromJson(json);
 
   @override
+  @JsonKey()
   final String leadId;
   @override
+  @JsonKey()
   final String leadName;
   @override
+  @JsonKey()
   final String leadPhone;
   @override
   final DateTime callTime;
@@ -1949,9 +1959,9 @@ class _$CallDetailImpl implements _CallDetail {
 
 abstract class _CallDetail implements CallDetail {
   const factory _CallDetail({
-    required final String leadId,
-    required final String leadName,
-    required final String leadPhone,
+    final String leadId,
+    final String leadName,
+    final String leadPhone,
     required final DateTime callTime,
     required final CallOutcome outcome,
     final int? talkTimeSeconds,
@@ -2397,28 +2407,28 @@ class __$$MonthlyPerformanceImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MonthlyPerformanceImpl implements _MonthlyPerformance {
   const _$MonthlyPerformanceImpl({
-    required this.id,
-    required this.year,
-    required this.month,
+    this.id = '',
+    this.year = 0,
+    this.month = 0,
     this.totalCalls = 0,
     this.connectedCalls = 0,
     this.totalTalkTimeMinutes = 0,
     this.validLeads = 0,
     this.siteVisits = 0,
     this.bookings = 0,
-    this.totalRevenue = 0,
-    this.baseSalary = 0,
-    this.commissionEarned = 0,
-    this.incentives = 0,
-    this.deductions = 0,
-    this.totalEarnings = 0,
-    this.targetAchievementPercentage = 0,
+    this.totalRevenue = 0.0,
+    this.baseSalary = 0.0,
+    this.commissionEarned = 0.0,
+    this.incentives = 0.0,
+    this.deductions = 0.0,
+    this.totalEarnings = 0.0,
+    this.targetAchievementPercentage = 0.0,
     this.ranking = 0,
-    this.avgCallsPerDay = 0,
-    this.avgTalkTimePerDay = 0,
-    this.avgLeadsPerDay = 0,
-    this.leadQualityScore = 0,
-    this.conversionRate = 0,
+    this.avgCallsPerDay = 0.0,
+    this.avgTalkTimePerDay = 0.0,
+    this.avgLeadsPerDay = 0.0,
+    this.leadQualityScore = 0.0,
+    this.conversionRate = 0.0,
     required this.paymentStatus,
     this.paidAt,
   });
@@ -2427,10 +2437,13 @@ class _$MonthlyPerformanceImpl implements _MonthlyPerformance {
       _$$MonthlyPerformanceImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final int year;
   @override
+  @JsonKey()
   final int month;
   // Call Stats
   @override
@@ -2610,9 +2623,9 @@ class _$MonthlyPerformanceImpl implements _MonthlyPerformance {
 
 abstract class _MonthlyPerformance implements MonthlyPerformance {
   const factory _MonthlyPerformance({
-    required final String id,
-    required final int year,
-    required final int month,
+    final String id,
+    final int year,
+    final int month,
     final int totalCalls,
     final int connectedCalls,
     final int totalTalkTimeMinutes,
@@ -2948,11 +2961,11 @@ class __$$CallerLeadAssignmentImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CallerLeadAssignmentImpl implements _CallerLeadAssignment {
   const _$CallerLeadAssignmentImpl({
-    required this.leadId,
-    required this.leadName,
-    required this.leadPhone,
+    this.leadId = '',
+    this.leadName = '',
+    this.leadPhone = '',
     required this.assignedAt,
-    required this.assignedBy,
+    this.assignedBy = '',
     this.priority,
     this.dueDate,
     final List<String> tags = const [],
@@ -2966,14 +2979,18 @@ class _$CallerLeadAssignmentImpl implements _CallerLeadAssignment {
       _$$CallerLeadAssignmentImplFromJson(json);
 
   @override
+  @JsonKey()
   final String leadId;
   @override
+  @JsonKey()
   final String leadName;
   @override
+  @JsonKey()
   final String leadPhone;
   @override
   final DateTime assignedAt;
   @override
+  @JsonKey()
   final String assignedBy;
   @override
   final AssignmentPriority? priority;
@@ -3068,11 +3085,11 @@ class _$CallerLeadAssignmentImpl implements _CallerLeadAssignment {
 
 abstract class _CallerLeadAssignment implements CallerLeadAssignment {
   const factory _CallerLeadAssignment({
-    required final String leadId,
-    required final String leadName,
-    required final String leadPhone,
+    final String leadId,
+    final String leadName,
+    final String leadPhone,
     required final DateTime assignedAt,
-    required final String assignedBy,
+    final String assignedBy,
     final AssignmentPriority? priority,
     final DateTime? dueDate,
     final List<String> tags,
@@ -3388,10 +3405,10 @@ class __$$LeadDistributionBatchImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LeadDistributionBatchImpl implements _LeadDistributionBatch {
   const _$LeadDistributionBatchImpl({
-    required this.id,
-    required this.batchName,
+    this.id = '',
+    this.batchName = '',
     required this.createdAt,
-    required this.createdBy,
+    this.createdBy = '',
     final List<String> leadSourceIds = const [],
     final List<Map<String, dynamic>> importedLeads = const [],
     final List<String> assignedCallerIds = const [],
@@ -3410,12 +3427,15 @@ class _$LeadDistributionBatchImpl implements _LeadDistributionBatch {
       _$$LeadDistributionBatchImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String batchName;
   @override
   final DateTime createdAt;
   @override
+  @JsonKey()
   final String createdBy;
   // Lead Sources
   final List<String> _leadSourceIds;
@@ -3560,10 +3580,10 @@ class _$LeadDistributionBatchImpl implements _LeadDistributionBatch {
 
 abstract class _LeadDistributionBatch implements LeadDistributionBatch {
   const factory _LeadDistributionBatch({
-    required final String id,
-    required final String batchName,
+    final String id,
+    final String batchName,
     required final DateTime createdAt,
-    required final String createdBy,
+    final String createdBy,
     final List<String> leadSourceIds,
     final List<Map<String, dynamic>> importedLeads,
     final List<String> assignedCallerIds,

@@ -1,6 +1,6 @@
 <?php
-$page_title = $page_title ?? 'Security Dashboard - APS Dream Home';
-$page_description = $page_description ?? 'Monitor and manage system security';
+$page_title = $page_title ?? __('security_dash_title', [], 'Security Dashboard - APS Dream Home');
+$page_description = $page_description ?? __('security_dash_desc', [], 'Monitor and manage system security');
 $security_stats = $security_stats ?? ['total_events' => 0, 'blocked_attempts' => 0, 'failed_logins' => 0, 'suspicious_activities' => 0, 'security_score' => 100];
 $recent_events = $recent_events ?? [];
 $vulnerabilities = $vulnerabilities ?? [];
@@ -13,12 +13,12 @@ $base = $base ?? BASE_URL;
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3"><i class="fas fa-shield-alt me-3"></i>Security Dashboard</h1>
-                <p class="lead mb-0">Monitor, analyze, and protect your system</p>
+                <h1 class="display-4 fw-bold mb-3"><i class="fas fa-shield-alt me-3"></i><?= __('security_dash_heading', [], 'Security Dashboard') ?></h1>
+                <p class="lead mb-0"><?= __('security_dash_subtitle', [], 'Monitor, analyze, and protect your system') ?></p>
             </div>
             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                 <button class="btn btn-outline-light" onclick="location.reload()">
-                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                    <i class="fas fa-sync-alt me-1"></i> <?= __('security_dash_refresh', [], 'Refresh') ?>
                 </button>
             </div>
         </div>
@@ -41,7 +41,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-5 text-primary mb-2"><?= htmlspecialchars($security_stats['security_score'] ?? 0) ?><small class="fs-6">%</small></div>
-                        <h6 class="text-muted mb-0">Security Score</h6>
+                        <h6 class="text-muted mb-0"><?= __('security_dash_score', [], 'Security Score') ?></h6>
                         <div class="progress mt-2" style="height: 4px;">
                             <div class="progress-bar bg-<?= ($security_stats['security_score'] ?? 0) >= 80 ? 'success' : (($security_stats['security_score'] ?? 0) >= 50 ? 'warning' : 'danger') ?>" style="width: <?= htmlspecialchars($security_stats['security_score'] ?? 0) ?>%"></div>
                         </div>
@@ -52,8 +52,8 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-danger mb-2"><?= htmlspecialchars(number_format($security_stats['total_events'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0">Total Events (24h)</h6>
-                        <small class="text-muted">All security events</small>
+                        <h6 class="text-muted mb-0"><?= __('security_dash_total_events', [], 'Total Events (24h)') ?></h6>
+                        <small class="text-muted"><?= __('security_dash_all_events', [], 'All security events') ?></small>
                     </div>
                 </div>
             </div>
@@ -61,8 +61,8 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-warning mb-2"><?= htmlspecialchars(number_format($security_stats['failed_logins'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0">Failed Logins</h6>
-                        <small class="text-muted">Unsuccessful attempts</small>
+                        <h6 class="text-muted mb-0"><?= __('security_dash_failed_logins', [], 'Failed Logins') ?></h6>
+                        <small class="text-muted"><?= __('security_dash_unsuccessful', [], 'Unsuccessful attempts') ?></small>
                     </div>
                 </div>
             </div>
@@ -70,8 +70,8 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-info mb-2"><?= htmlspecialchars(number_format($security_stats['suspicious_activities'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0">Suspicious</h6>
-                        <small class="text-muted">High severity alerts</small>
+                        <h6 class="text-muted mb-0"><?= __('security_dash_suspicious', [], 'Suspicious') ?></h6>
+                        <small class="text-muted"><?= __('security_dash_high_severity', [], 'High severity alerts') ?></small>
                     </div>
                 </div>
             </div>
@@ -80,8 +80,8 @@ $base = $base ?? BASE_URL;
             <div class="col-lg-7">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-history me-2 text-primary"></i>Recent Security Events</h5>
-                        <span class="badge bg-primary"><?= count($recent_events) ?> events</span>
+                        <h5 class="mb-0"><i class="fas fa-history me-2 text-primary"></i><?= __('security_dash_recent_events', [], 'Recent Security Events') ?></h5>
+                        <span class="badge bg-primary"><?= count($recent_events) ?> <?= __('security_dash_events_badge', [], 'events') ?></span>
                     </div>
                     <div class="card-body p-0">
                         <?php if (!empty($recent_events)): ?>
@@ -89,11 +89,11 @@ $base = $base ?? BASE_URL;
                             <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Action</th>
-                                        <th>Description</th>
-                                        <th>IP</th>
-                                        <th>Severity</th>
-                                        <th>Time</th>
+                                        <th><?= __('security_dash_th_action', [], 'Action') ?></th>
+                                        <th><?= __('security_dash_th_description', [], 'Description') ?></th>
+                                        <th><?= __('security_dash_th_ip', [], 'IP') ?></th>
+                                        <th><?= __('security_dash_th_severity', [], 'Severity') ?></th>
+                                        <th><?= __('security_dash_th_time', [], 'Time') ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -116,8 +116,8 @@ $base = $base ?? BASE_URL;
                         <?php else: ?>
                         <div class="text-center py-5">
                             <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
-                            <p class="text-muted mb-0">No recent security events</p>
-                            <small>Everything looks clean!</small>
+                            <p class="text-muted mb-0"><?= __('security_dash_no_events', [], 'No recent security events') ?></p>
+                            <small><?= __('security_dash_all_clean', [], 'Everything looks clean!') ?></small>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -126,8 +126,8 @@ $base = $base ?? BASE_URL;
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-bug me-2 text-warning"></i>Open Vulnerabilities</h5>
-                        <span class="badge bg-warning"><?= count($vulnerabilities) ?> open</span>
+                        <h5 class="mb-0"><i class="fas fa-bug me-2 text-warning"></i><?= __('security_dash_vulnerabilities', [], 'Open Vulnerabilities') ?></h5>
+                        <span class="badge bg-warning"><?= count($vulnerabilities) ?> <?= __('security_dash_open_badge', [], 'open') ?></span>
                     </div>
                     <div class="card-body p-0">
                         <?php if (!empty($vulnerabilities)): ?>
@@ -143,7 +143,7 @@ $base = $base ?? BASE_URL;
                                     </div>
                                     <span class="badge bg-secondary"><?= htmlspecialchars($vuln['status'] ?? 'open') ?></span>
                                 </div>
-                                <p class="small mb-0 mt-1"><?= htmlspecialchars($vuln['description'] ?? 'No description') ?></p>
+                                <p class="small mb-0 mt-1"><?= htmlspecialchars($vuln['description'] ?? __('security_dash_no_description', [], 'No description'))) ?></p>
                                 <small class="text-muted"><?= htmlspecialchars(date('d M Y', strtotime($vuln['created_at'] ?? 'now'))) ?></small>
                             </div>
                             <?php endforeach; ?>
@@ -151,8 +151,8 @@ $base = $base ?? BASE_URL;
                         <?php else: ?>
                         <div class="text-center py-5">
                             <i class="fas fa-shield-virus fa-3x text-success mb-3"></i>
-                            <p class="text-muted mb-0">No vulnerabilities detected</p>
-                            <small>System is secure</small>
+                            <p class="text-muted mb-0"><?= __('security_dash_no_vulns', [], 'No vulnerabilities detected') ?></p>
+                            <small><?= __('security_dash_system_secure', [], 'System is secure') ?></small>
                         </div>
                         <?php endif; ?>
                     </div>

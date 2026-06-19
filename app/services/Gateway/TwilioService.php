@@ -68,10 +68,10 @@ class TwilioService
     {
         // Fallback chain: DB (service_configs) → env → hardcoded default
         $dbCfg = self::getDbConfig();
-        $this->accountSid     = $dbCfg['account_sid']     ?: $this->env('TWILIO_ACCOUNT_SID');
-        $this->authToken      = $dbCfg['auth_token']      ?: $this->env('TWILIO_AUTH_TOKEN');
-        $this->fromNumber     = $dbCfg['from_number']      ?: $this->env('TWILIO_FROM_NUMBER');
-        $this->whatsappNumber = $dbCfg['whatsapp_number']  ?: $this->env('TWILIO_WHATSAPP_NUMBER');
+        $this->accountSid     = ($dbCfg['account_sid'] ?? null)     ?: $this->env('TWILIO_ACCOUNT_SID');
+        $this->authToken      = ($dbCfg['auth_token'] ?? null)      ?: $this->env('TWILIO_AUTH_TOKEN');
+        $this->fromNumber     = ($dbCfg['from_number'] ?? null)      ?: $this->env('TWILIO_FROM_NUMBER');
+        $this->whatsappNumber = ($dbCfg['whatsapp_number'] ?? null)  ?: $this->env('TWILIO_WHATSAPP_NUMBER');
         $this->testMode       = ($dbCfg['test_mode'] ?? '') === '1'
                              || ($dbCfg['test_mode'] ?? '') === 'true'
                              || $this->env('TWILIO_TEST_MODE') === 'true'

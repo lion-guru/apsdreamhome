@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Saved Search Results';
+$page_title = $page_title ?? __('saved_res_page_title', null, 'Saved Search Results');
 $current_page = 'saved-searches';
 $user = $user ?? [];
 $search = $search ?? [];

@@ -16,7 +16,7 @@ if (isset($_POST['update_basic'])) {
     $uid = is_numeric($uid) ? (int)$uid : 0;
 
     if ($uid <= 0) {
-        $msg = "Invalid user session!";
+        $msg = __('user_edit_invalid_session', null, 'Invalid user session!');
         $msg_type = "error";
     } else {
         $name = trim(\App\Core\Security::sanitize($_POST['name'] ?? ''));
@@ -33,17 +33,17 @@ if (isset($_POST['update_basic'])) {
                     'uid' => (int)$uid
                 ]);
                 if ($success) {
-                    $msg = "Profile updated successfully!";
+                    $msg = __('user_edit_profile_updated', null, 'Profile updated successfully!');
                     $_SESSION['name'] = $name;
                     $_SESSION['uemail'] = $email;
                 } else {
-                    $error = "Failed to update profile.";
+                    $error = __('user_edit_profile_failed', null, 'Failed to update profile.');
                 }
             } catch (Exception $e) {
-                $error = "An error occurred while updating profile: " . $e->getMessage();
+                $error = __('user_edit_profile_error', null, 'An error occurred while updating profile: ') . $e->getMessage();
             }
         } else {
-            $error = "Name and Email are required.";
+            $error = __('user_edit_name_email_required', null, 'Name and Email are required.');
         }
     }
 }
@@ -66,18 +66,18 @@ if (isset($_POST['update_password'])) {
                     'uid' => (int)$uid
                 ]);
                 if ($success) {
-                    $msg = "Password changed successfully!";
+                    $msg = __('user_edit_password_changed', null, 'Password changed successfully!');
                 } else {
-                    $error = "Failed to update password.";
+                    $error = __('user_edit_password_failed', null, 'Failed to update password.');
                 }
             } else {
-                $error = "Incorrect old password.";
+                $error = __('user_edit_old_password_incorrect', null, 'Incorrect old password.');
             }
         } catch (Exception $e) {
-            $error = "An error occurred while updating password: " . $e->getMessage();
+            $error = __('user_edit_password_error', null, 'An error occurred while updating password: ') . $e->getMessage();
         }
     } else {
-        $error = "Please ensure all password fields are filled and match.";
+        $error = __('user_edit_password_fields_required', null, 'Please ensure all password fields are filled and match.');
     }
 }
 

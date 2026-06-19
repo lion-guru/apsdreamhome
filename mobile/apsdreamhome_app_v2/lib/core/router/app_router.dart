@@ -19,6 +19,10 @@ import '../../presentation/pages/customer/kyc_verification_page.dart';
 import '../../presentation/pages/customer/kyc_status_page.dart';
 import '../../presentation/pages/associate/leads_page.dart';
 import '../../presentation/pages/associate/associate_dashboard_page.dart';
+import '../../presentation/pages/employee/check_in_page.dart';
+import '../../presentation/pages/associate/offline_booking_page.dart';
+import '../../presentation/pages/customer/colony_plot_grid_page.dart';
+import '../../presentation/pages/property/property_detail_page.dart';
 import '../../core/providers/auth_provider.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -137,6 +141,49 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/mlm',
         builder: (context, state) => const AssociateDashboardPage(),
+      ),
+
+      // Check-In Route
+      GoRoute(
+        path: '/check-in',
+        builder: (context, state) => const CheckInPage(),
+      ),
+
+      // Offline Booking Route
+      GoRoute(
+        path: '/offline-booking',
+        builder: (context, state) => const OfflineBookingPage(),
+      ),
+
+      // Colony Plot Grid Route
+      GoRoute(
+        path: '/colony-plots/:colonyId',
+        builder: (context, state) {
+          final colonyId = int.parse(state.pathParameters['colonyId']!);
+          final extra = state.extra as Map<String, dynamic>?;
+          return ColonyPlotGridPage(
+            colonyId: colonyId,
+            colonyName: extra?['colonyName'] as String? ?? 'Colony',
+          );
+        },
+      ),
+
+      // Property Detail Route
+      GoRoute(
+        path: '/property-detail/:propertyId',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return PropertyDetailPage(
+            propertyId: state.pathParameters['propertyId']!,
+            title: extra?['title'] as String? ?? '',
+            price: (extra?['price'] as num?)?.toDouble() ?? 0,
+            location: extra?['location'] as String? ?? '',
+            area: (extra?['area'] as num?)?.toDouble() ?? 0,
+            type: extra?['type'] as String? ?? '',
+            description: extra?['description'] as String? ?? '',
+            image: extra?['image'] as String? ?? '',
+          );
+        },
       ),
     ],
     errorBuilder: (context, state) => ErrorPage(error: state.error),

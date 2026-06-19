@@ -1,5 +1,5 @@
 # Deep Sidebar & Routing Audit Report
-Generated on: 2026-06-14 10:21:12
+Generated on: 2026-06-16 22:58:18
 
 This report audits all active database-driven sidebar items for route registration, controller status, method existence, and view integrity.
 
@@ -30,12 +30,23 @@ This report audits all active database-driven sidebar items for route registrati
 | 14 | crm | Support Tickets | `/admin/support-tickets` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\SupportTicketController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 15 | crm | NPS Surveys | `/admin/nps` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\NpsController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 16 | crm | Customer Referrals | `/admin/referrals` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\ReferralController` | ✅ Exists | ✅ Exists | ✅ Yes |
+| 146 | crm | KYC Verification | `/admin/kyc` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\KycController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 1 | dashboards | ERP Overview | `/admin/erp` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\AdminController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 2 | dashboards | Main Dashboard | `/admin/dashboard` | ✅ Registered (GET) | `App\\Http\\Controllers\\RoleBasedDashboardController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 3 | dashboards | CEO Dashboard | `/admin/dashboard/ceo` | ✅ Registered (GET) | `App\\Http\\Controllers\\RoleBasedDashboardController` | ✅ Exists | ⚠️ Skipped (no controller) | ✅ Yes |
 | 4 | dashboards | CFO Dashboard | `/admin/dashboard/cfo` | ✅ Registered (GET) | `App\\Http\\Controllers\\RoleBasedDashboardController` | ✅ Exists | ⚠️ Skipped (no controller) | ✅ Yes |
 | 5 | dashboards | Finance Dashboard | `/admin/dashboard/finance` | ✅ Registered (GET) | `Closure` | ✅ N/A | ✅ N/A (Closure) | ✅ Yes |
 | 6 | dashboards | Sales Dashboard | `/admin/dashboard/sales` | ✅ Registered (GET) | `App\\Http\\Controllers\\RoleBasedDashboardController` | ✅ Exists | ⚠️ Skipped (no controller) | ✅ Yes |
+| 136 | employee | Dashboard | `/employee/dashboard` | ✅ Registered (GET) | `Employee\\EmployeeController` | ❌ N/A | ⚠️ Skipped (no controller) | ❌ Invalid |
+| 137 | employee | My Tasks | `/employee/tasks` | ✅ Registered (GET) | `Employee\\EmployeeController` | ❌ N/A | ⚠️ Skipped (no controller) | ❌ Invalid |
+| 138 | employee | Attendance | `/employee/attendance` | ✅ Registered (GET) | `Employee\\EmployeeController` | ❌ N/A | ⚠️ Skipped (no controller) | ❌ Invalid |
+| 139 | employee | Leaves | `/employee/leaves` | ✅ Registered (GET) | `Employee\\EmployeeController` | ❌ N/A | ⚠️ Skipped (no controller) | ❌ Invalid |
+| 140 | employee | Payroll | `/employee/payroll` | ✅ Registered (GET) | `Employee\\EmployeeController` | ❌ N/A | ⚠️ Skipped (no controller) | ❌ Invalid |
+| 141 | employee | Performance | `/employee/performance` | ✅ Registered (GET) | `Employee\\EmployeeController` | ❌ N/A | ⚠️ Skipped (no controller) | ❌ Invalid |
+| 142 | employee | Documents | `/employee/documents` | ✅ Registered (GET) | `Employee\\EmployeeController` | ❌ N/A | ⚠️ Skipped (no controller) | ❌ Invalid |
+| 143 | employee | My Profile | `/employee/profile` | ✅ Registered (POST) | `Employee\\EmployeeController` | ❌ N/A | ⚠️ Skipped (no controller) | ❌ Invalid |
+| 144 | employee | Settings | `/employee/settings` | ✅ Registered (GET) | `Employee\\EmployeeController` | ❌ N/A | ⚠️ Skipped (no controller) | ❌ Invalid |
+| 145 | employee | Logout | `/employee/logout` | ✅ Registered (GET) | `Employee\\EmployeeController` | ❌ N/A | ⚠️ Skipped (no controller) | ❌ Invalid |
 | 53 | finance | Payments Ledger | `/admin/payments` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\PaymentController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 54 | finance | Invoices Billing | `/admin/invoices` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\MoneyWorkflowController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 55 | finance | Expenses Tracking | `/admin/expense` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\ExpensesController` | ✅ Exists | ✅ Exists | ✅ Yes |
@@ -53,7 +64,7 @@ This report audits all active database-driven sidebar items for route registrati
 | 67 | finance | Plot Costs | `/admin/plot-costs` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\PlotCostController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 68 | finance | Banking Transactions | `/admin/banking` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\BankingController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 69 | finance | Bank Import | `/admin/bank-import` | ✅ Registered (GET) | `App\Http\Controllers\Admin\\BankImportController` | ✅ Exists | ✅ Exists | ✅ Yes |
-| 70 | finance | Cash Collections | `/admin/finance/collections` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\MoneyWorkflowController` | ✅ Exists | ✅ Exists | ✅ Yes |
+| 70 | finance | Cash Collections | `/admin/cash-collections` | ✅ Registered (GET) | `App\Http\Controllers\Admin\\CashCollectionController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 71 | hrm | Employees Manager | `/admin/employees` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\HRMController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 72 | hrm | Payroll Management | `/admin/payroll` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\PayrollController` | ✅ Exists | ✅ Exists | ✅ Yes |
 | 73 | hrm | Attendance Register | `/admin/backoffice/attendance` | ✅ Registered (GET) | `App\\Http\\Controllers\\Admin\\BackofficeController` | ✅ Exists | ✅ Exists | ✅ Yes |
@@ -144,6 +155,25 @@ This report audits all active database-driven sidebar items for route registrati
 | 106 | users | Progressive Registrations | `/admin/features/registrations` | ✅ Registered (GET) | `App\Http\Controllers\Admin\\NewFeaturesController` | ✅ Exists | ✅ Exists | ✅ Yes |
 
 
-## Detailed Warnings & Failures (0 issues)
+## Detailed Warnings & Failures (20 issues)
 
-✅ **All systems clear! No errors or missing routes detected.**
+* ⚠️ Menu ID [136] ('Dashboard') uses unregistered section 'employee'.
+* ⚠️ Controller File not found: 'C:\xampp\htdocs\apsdreamhome/app/Employee//EmployeeController.php' for Class 'Employee\\EmployeeController'.
+* ⚠️ Menu ID [137] ('My Tasks') uses unregistered section 'employee'.
+* ⚠️ Controller File not found: 'C:\xampp\htdocs\apsdreamhome/app/Employee//EmployeeController.php' for Class 'Employee\\EmployeeController'.
+* ⚠️ Menu ID [138] ('Attendance') uses unregistered section 'employee'.
+* ⚠️ Controller File not found: 'C:\xampp\htdocs\apsdreamhome/app/Employee//EmployeeController.php' for Class 'Employee\\EmployeeController'.
+* ⚠️ Menu ID [139] ('Leaves') uses unregistered section 'employee'.
+* ⚠️ Controller File not found: 'C:\xampp\htdocs\apsdreamhome/app/Employee//EmployeeController.php' for Class 'Employee\\EmployeeController'.
+* ⚠️ Menu ID [140] ('Payroll') uses unregistered section 'employee'.
+* ⚠️ Controller File not found: 'C:\xampp\htdocs\apsdreamhome/app/Employee//EmployeeController.php' for Class 'Employee\\EmployeeController'.
+* ⚠️ Menu ID [141] ('Performance') uses unregistered section 'employee'.
+* ⚠️ Controller File not found: 'C:\xampp\htdocs\apsdreamhome/app/Employee//EmployeeController.php' for Class 'Employee\\EmployeeController'.
+* ⚠️ Menu ID [142] ('Documents') uses unregistered section 'employee'.
+* ⚠️ Controller File not found: 'C:\xampp\htdocs\apsdreamhome/app/Employee//EmployeeController.php' for Class 'Employee\\EmployeeController'.
+* ⚠️ Menu ID [143] ('My Profile') uses unregistered section 'employee'.
+* ⚠️ Controller File not found: 'C:\xampp\htdocs\apsdreamhome/app/Employee//EmployeeController.php' for Class 'Employee\\EmployeeController'.
+* ⚠️ Menu ID [144] ('Settings') uses unregistered section 'employee'.
+* ⚠️ Controller File not found: 'C:\xampp\htdocs\apsdreamhome/app/Employee//EmployeeController.php' for Class 'Employee\\EmployeeController'.
+* ⚠️ Menu ID [145] ('Logout') uses unregistered section 'employee'.
+* ⚠️ Controller File not found: 'C:\xampp\htdocs\apsdreamhome/app/Employee//EmployeeController.php' for Class 'Employee\\EmployeeController'.

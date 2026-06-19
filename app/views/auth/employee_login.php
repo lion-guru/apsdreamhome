@@ -1,6 +1,6 @@
 <?php
 $layout = 'layouts/base';
-$page_title = $page_title ?? 'Employee Login - APS Dream Home';
+$page_title = $page_title ?? __('auth_employee_login') . ' - APS Dream Home';
 $page_description = $page_description ?? 'Login to your APS Dream Home account';
 ?>
 
@@ -12,29 +12,29 @@ $page_description = $page_description ?? 'Login to your APS Dream Home account';
                     <div class="card-body p-5">
                         <div class="text-center mb-4">
                             <i class="fas fa-building fa-3x text-primary mb-3"></i>
-                            <h2 class="fw-bold">Employee Login</h2>
-                            <p class="text-muted">Access your employee dashboard</p>
+                            <h2 class="fw-bold"><?= __('auth_employee_login') ?></h2>
+                            <p class="text-muted"><?= __('auth_employee_login_subtitle') ?></p>
                         </div>
 
                         <form action="<?php echo BASE_URL; ?>/login" method="POST">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email Address</label>
+                                <label for="email" class="form-label"><?= __('email_address') ?></label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
+                                <label for="password" class="form-label"><?= __('password') ?></label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                                <label class="form-check-label" for="remember">Remember me</label>
+                                <label class="form-check-label" for="remember"><?= __('remember_me') ?></label>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+                            <button type="submit" class="btn btn-primary w-100 mb-3"><?= __('login') ?></button>
 
                             <!-- Google Login Button -->
                             <div class="text-center mb-3" style="position: relative;">
-                                <span style="background: #f8f9fa; padding: 0 1rem; position: relative; z-index: 1; color: #666; font-size: 0.85rem;">or continue with</span>
+                                <span style="background: #f8f9fa; padding: 0 1rem; position: relative; z-index: 1; color: #666; font-size: 0.85rem;"><?= __('or_continue_with') ?></span>
                                 <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #dee2e6; z-index: 0;"></div>
                             </div>
                             <a href="<?php echo BASE_URL; ?>/auth/google" class="btn btn-outline-secondary w-100 mb-3" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
@@ -48,17 +48,17 @@ $page_description = $page_description ?? 'Login to your APS Dream Home account';
                             </a>
 
                             <div class="text-center">
-                                <a href="<?php echo BASE_URL; ?>/register" class="text-decoration-none">Don't have an account? Register</a>
+                                <a href="<?php echo BASE_URL; ?>/register" class="text-decoration-none"><?= __('auth_dont_have_account') ?> <?= __('register') ?></a>
                             </div>
                         </form>
 
                         <hr class="my-4">
 
                         <div class="text-center">
-                            <p class="mb-2">Login as:</p>
+                            <p class="mb-2"><?= __('auth_login_as_text') ?></p>
                             <div class="d-flex gap-2 justify-content-center">
-                                <a href="<?php echo BASE_URL; ?>/associate/register" class="btn btn-outline-primary btn-sm">Associate</a>
-                                <a href="<?php echo BASE_URL; ?>/register" class="btn btn-outline-success btn-sm">Customer</a>
+                                <a href="<?php echo BASE_URL; ?>/associate/register" class="btn btn-outline-primary btn-sm"><?= __('register_associate') ?></a>
+                                <a href="<?php echo BASE_URL; ?>/register" class="btn btn-outline-success btn-sm"><?= __('auth_register_as_customer_text') ?></a>
                             </div>
                         </div>
                     </div>

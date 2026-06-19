@@ -1,8 +1,8 @@
 <div class="container py-5">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Home</a></li>
-            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/blog">Blog</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>"><?= __('blog_home') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/blog"><?= __('blog_blog') ?></a></li>
             <li class="breadcrumb-item active"><?php echo htmlspecialchars($post['title'] ?? ''); ?></li>
         </ol>
     </nav>
@@ -22,7 +22,7 @@
                 <?php echo nl2br(htmlspecialchars($post['content'] ?? '')); ?>
             </div>
             <div class="mt-5">
-                <a href="<?php echo BASE_URL; ?>/blog" class="btn btn-outline-secondary">&larr; Back to Blog</a>
+                <a href="<?php echo BASE_URL; ?>/blog" class="btn btn-outline-secondary">&larr; <?= __('blog_back_to') ?></a>
             </div>
         </div>
     </div>

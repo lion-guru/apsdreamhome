@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'My Support Tickets';
+$page_title = $page_title ?? __('tickets_page_title', [], 'My Support Tickets');
 $tickets = $tickets ?? [];
 $bookings = $bookings ?? [];
 $extraHead = '<style>
@@ -15,9 +15,9 @@ $extraHead = '<style>
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="mb-0"><i class="fas fa-headset me-2 text-primary"></i>My Support Tickets</h3>
+        <h3 class="mb-0"><i class="fas fa-headset me-2 text-primary"></i><?php echo __('tickets_heading', [], 'My Support Tickets'); ?></h3>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTicketModal">
-            <i class="fas fa-plus me-1"></i>Raise Ticket
+            <i class="fas fa-plus me-1"></i><?php echo __('tickets_raise', [], 'Raise Ticket'); ?>
         </button>
     </div>
 
@@ -32,10 +32,10 @@ $extraHead = '<style>
         <div class="card ticket-card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
-                <h5 class="text-muted">No support tickets yet</h5>
-                <p class="text-muted">Need help? Raise a ticket and our team will get back to you.</p>
+                <h5 class="text-muted"><?php echo __('tickets_empty_title', [], 'No support tickets yet'); ?></h5>
+                <p class="text-muted"><?php echo __('tickets_empty_desc', [], 'Need help? Raise a ticket and our team will get back to you.'); ?></p>
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTicketModal">
-                    <i class="fas fa-plus me-1"></i>Raise Your First Ticket
+                    <i class="fas fa-plus me-1"></i><?php echo __('tickets_raise_first', [], 'Raise Your First Ticket'); ?>
                 </button>
             </div>
         </div>
@@ -81,11 +81,11 @@ $extraHead = '<style>
             </div>
             <div class="collapse" id="ticketReplies<?= $t['id'] ?>">
                 <div class="card-body border-top pt-3">
-                    <p class="fw-bold mb-2">Original Message:</p>
+                    <p class="fw-bold mb-2"><?php echo __('tickets_original_message', [], 'Original Message:'); ?></p>
                     <p class="text-muted small mb-3"><?= nl2br(htmlspecialchars($t['message'] ?? '')) ?></p>
                     <?php if (!empty($t['replies'])): ?>
                         <hr>
-                        <p class="fw-bold mb-2">Conversation:</p>
+                        <p class="fw-bold mb-2"><?php echo __('tickets_conversation', [], 'Conversation:'); ?></p>
                         <?php foreach ($t['replies'] as $r): ?>
                             <div class="ticket-reply <?= ($r['is_admin'] ?? 0) ? 'admin' : '' ?>">
                                 <div class="d-flex justify-content-between">
@@ -109,27 +109,27 @@ $extraHead = '<style>
                 <form method="post" action="<?= BASE_URL ?>/user/tickets/create">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="modal-header">
-                        <h5 class="modal-title"><i class="fas fa-plus-circle me-2 text-primary"></i>Raise a Support Ticket</h5>
+                        <h5 class="modal-title"><i class="fas fa-plus-circle me-2 text-primary"></i><?php echo __('tickets_modal_title', [], 'Raise a Support Ticket'); ?></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Subject <span class="text-danger">*</span></label>
-                            <input type="text" name="subject" class="form-control" required placeholder="Brief title of your issue">
+                            <label class="form-label"><?php echo __('tickets_subject', [], 'Subject'); ?> <span class="text-danger">*</span></label>
+                            <input type="text" name="subject" class="form-control" required placeholder="<?php echo __('tickets_subject_placeholder', [], 'Brief title of your issue'); ?>">
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label class="form-label">Priority</label>
+                                <label class="form-label"><?php echo __('tickets_priority', [], 'Priority'); ?></label>
                                 <select name="priority" class="form-select">
-                                    <option value="low">Low</option>
-                                    <option value="medium" selected>Medium</option>
-                                    <option value="high">High</option>
+                                    <option value="low"><?php echo __('tickets_priority_low', [], 'Low'); ?></option>
+                                    <option value="medium" selected><?php echo __('tickets_priority_medium', [], 'Medium'); ?></option>
+                                    <option value="high"><?php echo __('tickets_priority_high', [], 'High'); ?></option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Related Booking (optional)</label>
+                                <label class="form-label"><?php echo __('tickets_related_booking', [], 'Related Booking (optional)'); ?></label>
                                 <select name="booking_id" class="form-select">
-                                    <option value="">-- None --</option>
+                                    <option value=""><?php echo __('tickets_none', [], '-- None --'); ?></option>
                                     <?php foreach ($bookings as $b): ?>
                                         <option value="<?= $b['id'] ?>">#<?= htmlspecialchars($b['plot_number'] ?? $b['id']) ?> - <?= htmlspecialchars($b['colony_name'] ?? '') ?> (<?= ucfirst($b['status'] ?? '') ?>)</option>
                                     <?php endforeach; ?>
@@ -137,13 +137,13 @@ $extraHead = '<style>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Message <span class="text-danger">*</span></label>
-                            <textarea name="message" class="form-control" rows="5" required placeholder="Describe your issue in detail..."></textarea>
+                            <label class="form-label"><?php echo __('tickets_message', [], 'Message'); ?> <span class="text-danger">*</span></label>
+                            <textarea name="message" class="form-control" rows="5" required placeholder="<?php echo __('tickets_message_placeholder', [], 'Describe your issue in detail...'); ?>"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i>Submit Ticket</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo __('cancel', [], 'Cancel'); ?></button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i><?php echo __('tickets_submit', [], 'Submit Ticket'); ?></button>
                     </div>
                 </form>
             </div>

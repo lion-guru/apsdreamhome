@@ -128,7 +128,7 @@ class HybridCommissionEngine
        ================================================================ */
 
     /** Total cap on payment value that may be distributed as commission. */
-    private const GLOBAL_CAP_PCT    = 15;
+    private const GLOBAL_CAP_PCT    = 20;
 
     /** Track A: Slab differential — 15% of payment value. */
     private const TRACK_A_CAP_PCT   = 15;
@@ -1073,7 +1073,32 @@ class HybridCommissionEngine
             $notes,
             null, // property_id — booking tracked via notes, not FK
         ]);
-        return (int) $this->pdo->lastInsertId();
+        $ledgerId = (int) $this->pdo->lastInsertId();
+
+        // Broadcast commission event via WebSocket + Push
+        try {
+            $payload = [
+                'event'       => 'commission_credited',
+                'ledger_id'   => $ledgerId,
+                'beneficiary' => $beneficiaryId,
+                'source'      => $sourceId,
+                'type'        => $type,
+                'amount'      => round($amount, 2),
+                'level'       => $level,
+                'created_at'  => date('Y-m-d H:i:s'),
+            ];
+            \App\Services\WebSocketBroadcaster::broadcastToUser($beneficiaryId, $payload);
+            \App\Services\Communication\PushNotificationService::sendToUser(
+                $beneficiaryId,
+                'Commission Credited',
+                '₹' . number_format(round($amount, 2)) . ' ' . ucfirst($type) . ' commission credited',
+                $payload
+            );
+        } catch (\Throwable $e) {
+            error_log("[HybridCommissionEngine] broadcast failed: " . $e->getMessage());
+        }
+
+        return $ledgerId;
     }
 
     /**

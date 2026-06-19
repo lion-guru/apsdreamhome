@@ -7,16 +7,16 @@ part 'booking_model.g.dart';
 @freezed
 class BookingModel with _$BookingModel {
   const factory BookingModel({
-    required String id,
-    required String plotId,
-    required String plotNumber,
-    required String colonyId,
-    required String colonyName,
+    @Default('') String id,
+    @Default('') String plotId,
+    @Default('') String plotNumber,
+    @Default('') String colonyId,
+    @Default('') String colonyName,
     
     // Customer Info
-    required String customerId,
-    required String customerName,
-    required String customerPhone,
+    @Default('') String customerId,
+    @Default('') String customerName,
+    @Default('') String customerPhone,
     String? customerEmail,
     String? customerAddress,
     
@@ -27,10 +27,10 @@ class BookingModel with _$BookingModel {
     double? associateCommission,
     
     // Pricing
-    required double plotPrice,
-    required double tokenAmount,
-    required double totalAmount,
-    required String paymentPlan, // full, emi, installment
+    @Default(0.0) double plotPrice,
+    @Default(0.0) double tokenAmount,
+    @Default(0.0) double totalAmount,
+    @Default('') String paymentPlan, // full, emi, installment
     
     // EMI Details (if applicable)
     double? downPayment,
@@ -39,7 +39,7 @@ class BookingModel with _$BookingModel {
     double? interestRate,
     
     // Status
-    required String status, // pending, approved, rejected, completed, cancelled
+    @Default('pending') String status, // pending, approved, rejected, completed, cancelled
     String? statusReason,
     DateTime? approvedAt,
     String? approvedBy,
@@ -92,10 +92,10 @@ class BookingModel with _$BookingModel {
 @freezed
 class BookingDocument with _$BookingDocument {
   const factory BookingDocument({
-    required String id,
-    required String type, // aadhar, pan, photo, agreement, etc.
-    required String name,
-    required String url,
+    @Default('') String id,
+    @Default('') String type, // aadhar, pan, photo, agreement, etc.
+    @Default('') String name,
+    @Default('') String url,
     String? thumbnailUrl,
     DateTime? uploadedAt,
     String? verifiedBy,
@@ -111,11 +111,11 @@ class BookingDocument with _$BookingDocument {
 @freezed
 class PaymentModel with _$PaymentModel {
   const factory PaymentModel({
-    required String id,
-    required String bookingId,
-    required double amount,
-    required String type, // token, down_payment, installment, registry, full
-    required String method, // cash, cheque, bank_transfer, upi, razorpay
+    @Default('') String id,
+    @Default('') String bookingId,
+    @Default(0.0) double amount,
+    @Default('') String type, // token, down_payment, installment, registry, full
+    @Default('') String method, // cash, cheque, bank_transfer, upi, razorpay
     String? transactionId,
     String? razorpayOrderId,
     String? razorpayPaymentId,
@@ -135,9 +135,9 @@ class PaymentModel with _$PaymentModel {
 @freezed
 class BookingHistory with _$BookingHistory {
   const factory BookingHistory({
-    required String id,
-    required String action,
-    required String performedBy,
+    @Default('') String id,
+    @Default('') String action,
+    @Default('') String performedBy,
     required DateTime performedAt,
     String? notes,
     Map<String, dynamic>? oldValues,

@@ -169,7 +169,9 @@ class _ColoniesPageState extends ConsumerState<ColoniesPage> {
 
   Widget _buildColonyCard(BuildContext context, ColonyModel colony) {
     return AppWidgets.customCard(
-      onTap: () => context.push('/colony/${colony.id}'),
+      onTap: () => context.push('/colony-plots/${colony.id}', extra: {
+        'colonyName': colony.name,
+      }),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

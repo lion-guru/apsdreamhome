@@ -7,11 +7,11 @@ part 'colony_model.g.dart';
 @freezed
 class ColonyModel with _$ColonyModel {
   const factory ColonyModel({
-    required String id,
-    required String name,
-    required String location,
-    required String district,
-    required String state,
+    @Default('') String id,
+    @Default('') String name,
+    @Default('') String location,
+    @Default('') String district,
+    @Default('') String state,
     String? description,
     List<String>? images,
     String? masterPlanImage,
@@ -20,14 +20,14 @@ class ColonyModel with _$ColonyModel {
     double? longitude,
     
     // Plot Statistics
-    required int totalPlots,
-    required int availablePlots,
-    required int holdPlots,
-    required int bookedPlots,
-    required int soldPlots,
+    @Default(0) int totalPlots,
+    @Default(0) int availablePlots,
+    @Default(0) int holdPlots,
+    @Default(0) int bookedPlots,
+    @Default(0) int soldPlots,
     
     // Pricing
-    required double pricePerSqft,
+    @Default(0.0) double pricePerSqft,
     double? tokenAmount,
     double? bookingPercentage,
     Map<String, double>? blockWisePricing, // A, B, C blocks with different rates
@@ -36,7 +36,7 @@ class ColonyModel with _$ColonyModel {
     List<String>? amenities,
     
     // Status
-    required String status, // upcoming, launching, active, completed, sold_out
+    @Default('upcoming') String status, // upcoming, launching, active, completed, sold_out
     DateTime? launchDate,
     DateTime? completionDate,
     

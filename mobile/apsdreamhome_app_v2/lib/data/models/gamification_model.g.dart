@@ -9,12 +9,12 @@ part of 'gamification_model.dart';
 _$GamificationModelImpl _$$GamificationModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$GamificationModelImpl(
-  userId: json['userId'] as String,
-  totalPoints: (json['totalPoints'] as num).toInt(),
-  availablePoints: (json['availablePoints'] as num).toInt(),
-  redeemedPoints: (json['redeemedPoints'] as num).toInt(),
-  currentLevel: (json['currentLevel'] as num).toInt(),
-  currentRank: json['currentRank'] as String,
+  userId: json['userId'] as String? ?? '',
+  totalPoints: (json['totalPoints'] as num?)?.toInt() ?? 0,
+  availablePoints: (json['availablePoints'] as num?)?.toInt() ?? 0,
+  redeemedPoints: (json['redeemedPoints'] as num?)?.toInt() ?? 0,
+  currentLevel: (json['currentLevel'] as num?)?.toInt() ?? 0,
+  currentRank: json['currentRank'] as String? ?? '',
   pointsToNextLevel: (json['pointsToNextLevel'] as num?)?.toInt(),
   levelProgressPercentage: (json['levelProgressPercentage'] as num?)
       ?.toDouble(),
@@ -68,11 +68,11 @@ Map<String, dynamic> _$$GamificationModelImplToJson(
 _$PointsTransactionImpl _$$PointsTransactionImplFromJson(
   Map<String, dynamic> json,
 ) => _$PointsTransactionImpl(
-  id: json['id'] as String,
-  userId: json['userId'] as String,
-  points: (json['points'] as num).toInt(),
-  type: json['type'] as String,
-  activityType: json['activityType'] as String,
+  id: json['id'] as String? ?? '',
+  userId: json['userId'] as String? ?? '',
+  points: (json['points'] as num?)?.toInt() ?? 0,
+  type: json['type'] as String? ?? '',
+  activityType: json['activityType'] as String? ?? '',
   description: json['description'] as String?,
   metadata: json['metadata'] as String?,
   balanceBefore: (json['balanceBefore'] as num?)?.toInt(),
@@ -99,13 +99,13 @@ Map<String, dynamic> _$$PointsTransactionImplToJson(
 
 _$AchievementImpl _$$AchievementImplFromJson(Map<String, dynamic> json) =>
     _$AchievementImpl(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      icon: json['icon'] as String,
-      pointsReward: (json['pointsReward'] as num).toInt(),
-      category: json['category'] as String,
-      condition: json['condition'] as String,
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      icon: json['icon'] as String? ?? '',
+      pointsReward: (json['pointsReward'] as num?)?.toInt() ?? 0,
+      category: json['category'] as String? ?? '',
+      condition: json['condition'] as String? ?? '',
       targetValue: (json['targetValue'] as num?)?.toInt(),
       currentValue: (json['currentValue'] as num?)?.toInt(),
       progressPercentage: (json['progressPercentage'] as num?)?.toDouble(),
@@ -136,12 +136,12 @@ Map<String, dynamic> _$$AchievementImplToJson(_$AchievementImpl instance) =>
     };
 
 _$BadgeImpl _$$BadgeImplFromJson(Map<String, dynamic> json) => _$BadgeImpl(
-  id: json['id'] as String,
-  name: json['name'] as String,
-  description: json['description'] as String,
-  icon: json['icon'] as String,
-  rarity: json['rarity'] as String,
-  category: json['category'] as String,
+  id: json['id'] as String? ?? '',
+  name: json['name'] as String? ?? '',
+  description: json['description'] as String? ?? '',
+  icon: json['icon'] as String? ?? '',
+  rarity: json['rarity'] as String? ?? '',
+  category: json['category'] as String? ?? '',
   earnedAt: json['earnedAt'] == null
       ? null
       : DateTime.parse(json['earnedAt'] as String),
@@ -163,12 +163,12 @@ Map<String, dynamic> _$$BadgeImplToJson(_$BadgeImpl instance) =>
     };
 
 _$RewardImpl _$$RewardImplFromJson(Map<String, dynamic> json) => _$RewardImpl(
-  id: json['id'] as String,
-  name: json['name'] as String,
-  description: json['description'] as String,
-  imageUrl: json['imageUrl'] as String,
-  pointsCost: (json['pointsCost'] as num).toInt(),
-  stockQuantity: (json['stockQuantity'] as num).toInt(),
+  id: json['id'] as String? ?? '',
+  name: json['name'] as String? ?? '',
+  description: json['description'] as String? ?? '',
+  imageUrl: json['imageUrl'] as String? ?? '',
+  pointsCost: (json['pointsCost'] as num?)?.toInt() ?? 0,
+  stockQuantity: (json['stockQuantity'] as num?)?.toInt() ?? 0,
   category: json['category'] as String?,
   termsAndConditions: json['termsAndConditions'] as String?,
   isActive: json['isActive'] as bool?,
@@ -202,12 +202,12 @@ Map<String, dynamic> _$$RewardImplToJson(_$RewardImpl instance) =>
 _$RewardRedemptionImpl _$$RewardRedemptionImplFromJson(
   Map<String, dynamic> json,
 ) => _$RewardRedemptionImpl(
-  id: json['id'] as String,
-  userId: json['userId'] as String,
-  rewardId: json['rewardId'] as String,
-  rewardName: json['rewardName'] as String,
-  pointsSpent: (json['pointsSpent'] as num).toInt(),
-  status: json['status'] as String,
+  id: json['id'] as String? ?? '',
+  userId: json['userId'] as String? ?? '',
+  rewardId: json['rewardId'] as String? ?? '',
+  rewardName: json['rewardName'] as String? ?? '',
+  pointsSpent: (json['pointsSpent'] as num?)?.toInt() ?? 0,
+  status: json['status'] as String? ?? '',
   deliveryAddress: json['deliveryAddress'] as String?,
   trackingNumber: json['trackingNumber'] as String?,
   requestedAt: json['requestedAt'] == null
@@ -246,14 +246,14 @@ Map<String, dynamic> _$$RewardRedemptionImplToJson(
 _$LeaderboardEntryImpl _$$LeaderboardEntryImplFromJson(
   Map<String, dynamic> json,
 ) => _$LeaderboardEntryImpl(
-  userId: json['userId'] as String,
-  userName: json['userName'] as String,
-  userPhoto: json['userPhoto'] as String,
-  rank: (json['rank'] as num).toInt(),
-  totalPoints: (json['totalPoints'] as num).toInt(),
-  level: (json['level'] as num).toInt(),
-  salesCount: (json['salesCount'] as num).toInt(),
-  recruitsCount: (json['recruitsCount'] as num).toInt(),
+  userId: json['userId'] as String? ?? '',
+  userName: json['userName'] as String? ?? '',
+  userPhoto: json['userPhoto'] as String? ?? '',
+  rank: (json['rank'] as num?)?.toInt() ?? 0,
+  totalPoints: (json['totalPoints'] as num?)?.toInt() ?? 0,
+  level: (json['level'] as num?)?.toInt() ?? 0,
+  salesCount: (json['salesCount'] as num?)?.toInt() ?? 0,
+  recruitsCount: (json['recruitsCount'] as num?)?.toInt() ?? 0,
   isCurrentUser: json['isCurrentUser'] as bool?,
 );
 

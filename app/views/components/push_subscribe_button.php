@@ -26,9 +26,9 @@ define('PUSH_SUBSCRIBE_BTN_LOADED', true);
     <button id="push-subscribe-btn"
             type="button"
             class="push-subscribe-btn push-state-default"
-            aria-label="Enable browser notifications">
+            aria-label="htmlspecialchars(__('component_enable_browser_notifications', 'Enable browser notifications'))">
         <i class="fas fa-bell" aria-hidden="true"></i>
-        <span class="push-subscribe-label">Enable Browser Notifications</span>
+        <span class="push-subscribe-label">__('component_enable_browser_notifications_btn', 'Enable Browser Notifications')</span>
     </button>
 </div>
 

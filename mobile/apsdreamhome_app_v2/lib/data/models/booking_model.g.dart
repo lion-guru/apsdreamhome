@@ -8,29 +8,29 @@ part of 'booking_model.dart';
 
 _$BookingModelImpl _$$BookingModelImplFromJson(Map<String, dynamic> json) =>
     _$BookingModelImpl(
-      id: json['id'] as String,
-      plotId: json['plotId'] as String,
-      plotNumber: json['plotNumber'] as String,
-      colonyId: json['colonyId'] as String,
-      colonyName: json['colonyName'] as String,
-      customerId: json['customerId'] as String,
-      customerName: json['customerName'] as String,
-      customerPhone: json['customerPhone'] as String,
+      id: json['id'] as String? ?? '',
+      plotId: json['plotId'] as String? ?? '',
+      plotNumber: json['plotNumber'] as String? ?? '',
+      colonyId: json['colonyId'] as String? ?? '',
+      colonyName: json['colonyName'] as String? ?? '',
+      customerId: json['customerId'] as String? ?? '',
+      customerName: json['customerName'] as String? ?? '',
+      customerPhone: json['customerPhone'] as String? ?? '',
       customerEmail: json['customerEmail'] as String?,
       customerAddress: json['customerAddress'] as String?,
       associateId: json['associateId'] as String?,
       associateName: json['associateName'] as String?,
       associateRank: json['associateRank'] as String?,
       associateCommission: (json['associateCommission'] as num?)?.toDouble(),
-      plotPrice: (json['plotPrice'] as num).toDouble(),
-      tokenAmount: (json['tokenAmount'] as num).toDouble(),
-      totalAmount: (json['totalAmount'] as num).toDouble(),
-      paymentPlan: json['paymentPlan'] as String,
+      plotPrice: (json['plotPrice'] as num?)?.toDouble() ?? 0.0,
+      tokenAmount: (json['tokenAmount'] as num?)?.toDouble() ?? 0.0,
+      totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
+      paymentPlan: json['paymentPlan'] as String? ?? '',
       downPayment: (json['downPayment'] as num?)?.toDouble(),
       emiMonths: (json['emiMonths'] as num?)?.toInt(),
       emiAmount: (json['emiAmount'] as num?)?.toDouble(),
       interestRate: (json['interestRate'] as num?)?.toDouble(),
-      status: json['status'] as String,
+      status: json['status'] as String? ?? 'pending',
       statusReason: json['statusReason'] as String?,
       approvedAt: json['approvedAt'] == null
           ? null
@@ -123,10 +123,10 @@ Map<String, dynamic> _$$BookingModelImplToJson(_$BookingModelImpl instance) =>
 _$BookingDocumentImpl _$$BookingDocumentImplFromJson(
   Map<String, dynamic> json,
 ) => _$BookingDocumentImpl(
-  id: json['id'] as String,
-  type: json['type'] as String,
-  name: json['name'] as String,
-  url: json['url'] as String,
+  id: json['id'] as String? ?? '',
+  type: json['type'] as String? ?? '',
+  name: json['name'] as String? ?? '',
+  url: json['url'] as String? ?? '',
   thumbnailUrl: json['thumbnailUrl'] as String?,
   uploadedAt: json['uploadedAt'] == null
       ? null
@@ -156,11 +156,11 @@ Map<String, dynamic> _$$BookingDocumentImplToJson(
 
 _$PaymentModelImpl _$$PaymentModelImplFromJson(Map<String, dynamic> json) =>
     _$PaymentModelImpl(
-      id: json['id'] as String,
-      bookingId: json['bookingId'] as String,
-      amount: (json['amount'] as num).toDouble(),
-      type: json['type'] as String,
-      method: json['method'] as String,
+      id: json['id'] as String? ?? '',
+      bookingId: json['bookingId'] as String? ?? '',
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      type: json['type'] as String? ?? '',
+      method: json['method'] as String? ?? '',
       transactionId: json['transactionId'] as String?,
       razorpayOrderId: json['razorpayOrderId'] as String?,
       razorpayPaymentId: json['razorpayPaymentId'] as String?,
@@ -198,9 +198,9 @@ Map<String, dynamic> _$$PaymentModelImplToJson(_$PaymentModelImpl instance) =>
 
 _$BookingHistoryImpl _$$BookingHistoryImplFromJson(Map<String, dynamic> json) =>
     _$BookingHistoryImpl(
-      id: json['id'] as String,
-      action: json['action'] as String,
-      performedBy: json['performedBy'] as String,
+      id: json['id'] as String? ?? '',
+      action: json['action'] as String? ?? '',
+      performedBy: json['performedBy'] as String? ?? '',
       performedAt: DateTime.parse(json['performedAt'] as String),
       notes: json['notes'] as String?,
       oldValues: json['oldValues'] as Map<String, dynamic>?,

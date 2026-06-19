@@ -826,7 +826,9 @@ $router->get('/employee/tasks', 'Employee\\EmployeeController@tasks');
 $router->get('/employee/activities', 'Employee\\EmployeeController@activities');
 $router->get('/employee/attendance', 'Employee\\EmployeeController@attendance');
 $router->get('/employee/performance-page', 'Employee\\EmployeeController@performancePage');
+$router->get('/employee/performance', 'Employee\\EmployeeController@performancePage');
 $router->get('/employee/salary', 'Employee\\EmployeeController@salary');
+$router->get('/employee/payroll', 'Employee\\EmployeeController@salary');
 $router->get('/employee/documents', 'Employee\\EmployeeController@documents');
 $router->get('/employee/leaves', 'Employee\\EmployeeController@leaves');
 $router->get('/employee/reporting', 'Employee\\EmployeeController@reporting');
@@ -3397,6 +3399,8 @@ $router->get('/api/leads/data/lookup', 'App\\Http\\Controllers\\Api\\ApiLeadCont
 // ============================================================
 $router->post('/api/kyc/verify-pan', 'App\\Http\\Controllers\\Api\\KYCController@verifyPAN');
 $router->post('/api/kyc/verify-aadhaar', 'App\\Http\\Controllers\\Api\\KYCController@verifyAadhaar');
+$router->post('/api/kyc/aadhaar/send-otp', 'App\\Http\\Controllers\\Api\\KYCController@sendAadhaarOtp');
+$router->post('/api/kyc/aadhaar/verify-otp', 'App\\Http\\Controllers\\Api\\KYCController@verifyAadhaarOtp');
 $router->get('/api/kyc/status', 'App\\Http\\Controllers\\Api\\KYCController@getStatus');
 
 // ============================================================

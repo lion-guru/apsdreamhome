@@ -44,51 +44,51 @@ $extraHead = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/lib
 
 <div class="container whatsapp-page-wrapper">
     <div class="text-center mb-5">
-        <h1><i class="fab fa-whatsapp me-2"></i>WhatsApp Support</h1>
-        <p class="lead text-muted">Chat with us directly on WhatsApp for instant property queries</p>
+        <h1><i class="fab fa-whatsapp me-2"></i><?= __('wapp_title', [], 'WhatsApp Support') ?></h1>
+        <p class="lead text-muted"><?= __('wapp_subtitle', [], 'Chat with us directly on WhatsApp for instant property queries') ?></p>
     </div>
 </div>
 
 <!-- WhatsApp Widget -->
 <div class="whatsapp-widget">
-    <button class="whatsapp-button" id="whatsappToggle" title="Chat with us on WhatsApp">
+    <button class="whatsapp-button" id="whatsappToggle" title="<?= __('wapp_chat_title', [], 'Chat with us on WhatsApp') ?>">
         <i class="fab fa-whatsapp"></i>
     </button>
     <div class="whatsapp-popup" id="whatsappPopup">
         <div class="whatsapp-header">
-            <h6 class="mb-1"><i class="fab fa-whatsapp me-1"></i> APS Dream Homes Support</h6>
-            <small>Typically replies in a few minutes</small>
+            <h6 class="mb-1"><i class="fab fa-whatsapp me-1"></i> <?= __('wapp_support_header', [], 'APS Dream Homes Support') ?></h6>
+            <small><?= __('wapp_typically_replies', [], 'Typically replies in a few minutes') ?></small>
         </div>
         <div class="whatsapp-body" id="chatBody">
             <div class="chat-message support">
-                Hi! Welcome to APS Dream Homes!<br>How can we help you today?
+                <?= __('wapp_welcome_message', [], 'Hi! Welcome to APS Dream Homes! How can we help you today?') ?>
             </div>
             <div class="mb-3">
-                <strong>Quick Questions:</strong>
+                <strong><?= __('wapp_quick_questions', [], 'Quick Questions:') ?></strong>
                 <div class="mt-2">
                     <div class="quick-reply" data-message="I'm looking for a property to buy">
-                        <i class="fas fa-home me-1"></i> Property Search
+                        <i class="fas fa-home me-1"></i> <?= __('wapp_quick_property', [], 'Property Search') ?>
                     </div>
                     <div class="quick-reply" data-message="I want to sell my property">
-                        <i class="fas fa-tag me-1"></i> Sell Property
+                        <i class="fas fa-tag me-1"></i> <?= __('wapp_quick_sell', [], 'Sell Property') ?>
                     </div>
                     <div class="quick-reply" data-message="I need financing help">
-                        <i class="fas fa-rupee-sign me-1"></i> Home Loan
+                        <i class="fas fa-rupee-sign me-1"></i> <?= __('wapp_quick_loan', [], 'Home Loan') ?>
                     </div>
                     <div class="quick-reply" data-message="I want to become an agent">
-                        <i class="fas fa-users me-1"></i> Join as Agent
+                        <i class="fas fa-users me-1"></i> <?= __('wapp_quick_agent', [], 'Join as Agent') ?>
                     </div>
                 </div>
             </div>
-            <div class="typing-indicator" id="typingIndicator">Support is typing...</div>
+            <div class="typing-indicator" id="typingIndicator"><?= __('wapp_typing', [], 'Support is typing...') ?></div>
         </div>
         <div class="whatsapp-footer">
             <form id="whatsappForm">
-                <input type="text" class="whatsapp-input" id="customerName" placeholder="Your name" required>
-                <input type="tel" class="whatsapp-input" id="customerPhone" placeholder="Your phone number" required>
-                <textarea class="whatsapp-input" id="customerMessage" placeholder="Type your message..." rows="2" required></textarea>
+                <input type="text" class="whatsapp-input" id="customerName" placeholder="<?= __('wapp_placeholder_name', [], 'Your name') ?>" required>
+                <input type="tel" class="whatsapp-input" id="customerPhone" placeholder="<?= __('wapp_placeholder_phone', [], 'Your phone number') ?>" required>
+                <textarea class="whatsapp-input" id="customerMessage" placeholder="<?= __('wapp_placeholder_message', [], 'Type your message...') ?>" rows="2" required></textarea>
                 <button type="submit" class="whatsapp-send">
-                    <i class="fab fa-whatsapp me-2"></i>Send Message
+                    <i class="fab fa-whatsapp me-2"></i><?= __('wapp_send', [], 'Send Message') ?>
                 </button>
             </form>
         </div>
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const replyMsg = document.createElement('div');
                 replyMsg.className = 'chat-message support';
-                replyMsg.innerHTML = (data.success ? '&#10004; ' : '&#10060; ') + (data.message || 'Message sent!');
+                replyMsg.innerHTML = (data.success ? '&#10004; ' : '&#10060; ') + (data.message || '<?= __('wapp_sent_success', [], 'Message sent!') ?>');
                 chatBody.appendChild(replyMsg);
                 chatBody.scrollTop = chatBody.scrollHeight;
 
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 typingIndicator.style.display = 'none';
                 const errMsg = document.createElement('div');
                 errMsg.className = 'chat-message support';
-                errMsg.innerHTML = 'Sorry, there was an error. Please try calling us directly.';
+                errMsg.innerHTML = '<?= __('wapp_error_call', [], 'Sorry, there was an error. Please try calling us directly.') ?>';
                 chatBody.appendChild(errMsg);
                 chatBody.scrollTop = chatBody.scrollHeight;
             });

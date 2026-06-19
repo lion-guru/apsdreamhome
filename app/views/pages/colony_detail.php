@@ -36,22 +36,22 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
     <div class="container hero-content">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <?php if ($colony['is_featured'] ?? 0): ?><span class="badge-feat mb-3 d-inline-block"><i class="fas fa-star me-1"></i>Featured Project</span><?php endif; ?>
+                <?php if ($colony['is_featured'] ?? 0): ?><span class="badge-feat mb-3 d-inline-block"><i class="fas fa-star me-1"></i><?= __('colony_featured_project') ?></span><?php endif; ?>
                 <h1><?php echo htmlspecialchars($colony['name'] ?? 'Our Project'); ?></h1>
                 <p class="lead mb-4 opacity-75"><?php echo htmlspecialchars(substr($colony['description'] ?? '', 0, 200)); ?></p>
                 <div class="d-flex flex-wrap gap-3">
-                    <a href="#contact" class="btn btn-light btn-lg"><i class="fas fa-phone me-2"></i>Enquire Now</a>
+                    <a href="#contact" class="btn btn-light btn-lg"><i class="fas fa-phone me-2"></i><?= __('colony_enquire_now') ?></a>
                     <?php if ($colony['brochure_path'] ?? ''): ?>
-                    <a href="<?php echo BASE_URL . '/' . ltrim($colony['brochure_path'], '/'); ?>" class="btn btn-outline-light btn-lg" target="_blank"><i class="fas fa-download me-2"></i>Download Brochure</a>
+                    <a href="<?php echo BASE_URL . '/' . ltrim($colony['brochure_path'], '/'); ?>" class="btn btn-outline-light btn-lg" target="_blank"><i class="fas fa-download me-2"></i><?= __('colony_download_brochure') ?></a>
                     <?php endif; ?>
                 </div>
             </div>
             <div class="col-lg-5 mt-4 mt-lg-0">
                 <div class="row g-3">
-                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['total_plots'] ?? 0; ?></div><div class="lbl">Total Plots</div></div></div>
-                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['available_plots'] ?? 0; ?></div><div class="lbl">Available</div></div></div>
-                    <div class="col-6"><div class="stat-card"><div class="num">₹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl">Starting Price</div></div></div>
-                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo count($amenities); ?>+</div><div class="lbl">Amenities</div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['total_plots'] ?? 0; ?></div><div class="lbl"><?= __('colony_total_plots') ?></div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo $colony['available_plots'] ?? 0; ?></div><div class="lbl"><?= __('colony_available') ?></div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num">₹<?php echo number_format($colony['starting_price'] ?? 0); ?></div><div class="lbl"><?= __('colony_starting_price') ?></div></div></div>
+                    <div class="col-6"><div class="stat-card"><div class="num"><?php echo count($amenities); ?>+</div><div class="lbl"><?= __('colony_amenities') ?></div></div></div>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 <?php if (!empty($highlights)): ?>
 <section class="py-5 bg-white">
     <div class="container">
-        <h2 class="text-center mb-5">Why Choose <span class="text-primary"><?php echo htmlspecialchars($colony['name'] ?? ''); ?></span></h2>
+        <h2 class="text-center mb-5"><?= sprintf(__('colony_why_choose'), '<span class="text-primary">' . htmlspecialchars($colony['name'] ?? '') . '</span>') ?></h2>
         <div class="row g-4">
             <?php foreach ($highlights as $h): ?>
             <div class="col-md-4 col-sm-6">
@@ -94,7 +94,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
             </div>
             <?php endif; ?>
             <div class="col-lg-<?php echo ($colony['image_path'] ?? '') ? '6' : '12'; ?>">
-                <h2 class="mb-4">About <span class="text-primary"><?php echo htmlspecialchars($colony['name'] ?? ''); ?></span></h2>
+                <h2 class="mb-4"><?= sprintf(__('colony_about'), '<span class="text-primary">' . htmlspecialchars($colony['name'] ?? '') . '</span>') ?></h2>
                 <?php echo nl2br(htmlspecialchars($colony['description'] ?? '')); ?>
             </div>
         </div>
@@ -106,7 +106,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 <?php if (!empty($amenities)): ?>
 <section class="py-5 bg-white">
     <div class="container">
-        <h2 class="text-center mb-5"><i class="fas fa-concierge-bell text-primary me-2"></i>Amenities</h2>
+        <h2 class="text-center mb-5"><i class="fas fa-concierge-bell text-primary me-2"></i><?= __('colony_amenities_heading') ?></h2>
         <div class="text-center">
             <?php foreach ($amenities as $a): ?><span class="amenity-tag"><i class="fas fa-check-circle me-1"></i><?php echo htmlspecialchars($a); ?></span><?php endforeach; ?>
         </div>
@@ -118,14 +118,14 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 <?php if (($colony['show_plots_publicly'] ?? 0) && !empty($availablePlots)): ?>
 <section class="py-5 bg-light">
     <div class="container">
-        <h2 class="text-center mb-5"><i class="fas fa-map-marked-alt text-primary me-2"></i>Available Plots</h2>
+        <h2 class="text-center mb-5"><i class="fas fa-map-marked-alt text-primary me-2"></i><?= __('colony_available_plots_heading') ?></h2>
         <div class="row g-4">
             <?php foreach (array_slice($availablePlots, 0, 12) as $p): ?>
             <div class="col-md-4 col-sm-6">
                 <div class="plot-card bg-white">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h6 class="mb-0">Plot <?php echo htmlspecialchars($p['plot_number'] ?? 'N/A'); ?></h6>
-                        <span class="badge bg-success">Available</span>
+                        <h6 class="mb-0"><?= sprintf(__('colony_plot_number'), htmlspecialchars($p['plot_number'] ?? 'N/A')) ?></h6>
+                        <span class="badge bg-success"><?= __('colony_available') ?></span>
                     </div>
                     <p class="text-muted small mb-2"><?php echo htmlspecialchars($p['block'] ?? ''); ?> &bull; <?php echo $p['area_sqft'] ?? 0; ?> sqft</p>
                     <div class="price">₹<?php echo number_format($p['total_price'] ?? 0); ?></div>
@@ -134,7 +134,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
             <?php endforeach; ?>
         </div>
         <?php if (count($availablePlots) > 12): ?>
-        <div class="text-center mt-4"><a href="<?php echo BASE_URL; ?>/colony/<?php echo htmlspecialchars($colony['slug'] ?? ''); ?>/plots" class="btn btn-outline-primary">View All <?php echo count($availablePlots); ?> Plots</a></div>
+        <div class="text-center mt-4"><a href="<?php echo BASE_URL; ?>/colony/<?php echo htmlspecialchars($colony['slug'] ?? ''); ?>/plots" class="btn btn-outline-primary"><?= sprintf(__('colony_view_all_plots'), count($availablePlots)) ?></a></div>
         <?php endif; ?>
     </div>
 </section>
@@ -144,7 +144,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 <?php if (!empty($galleryImages)): ?>
 <section class="py-5 bg-white">
     <div class="container">
-        <h2 class="text-center mb-5"><i class="fas fa-images text-primary me-2"></i>Gallery</h2>
+        <h2 class="text-center mb-5"><i class="fas fa-images text-primary me-2"></i><?= __('colony_gallery_heading') ?></h2>
         <div class="row g-3">
             <?php foreach ($galleryImages as $img): ?>
             <div class="col-md-4 col-sm-6">
@@ -162,7 +162,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 <?php if ($colony['youtube_video_url'] ?? ''): ?>
 <section class="py-5 bg-light">
     <div class="container">
-        <h2 class="text-center mb-5"><i class="fas fa-video text-primary me-2"></i>Video Tour</h2>
+        <h2 class="text-center mb-5"><i class="fas fa-video text-primary me-2"></i><?= __('colony_video_tour_heading') ?></h2>
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow">
@@ -178,7 +178,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 <?php if (!empty($nearbyPlaces)): ?>
 <section class="py-5 bg-white">
     <div class="container">
-        <h2 class="text-center mb-5"><i class="fas fa-location-dot text-primary me-2"></i>Nearby Places</h2>
+        <h2 class="text-center mb-5"><i class="fas fa-location-dot text-primary me-2"></i><?= __('colony_nearby_places_heading') ?></h2>
         <div class="row g-4">
             <?php foreach ($nearbyPlaces as $np): ?>
             <div class="col-md-4 col-sm-6">
@@ -202,7 +202,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 <?php if ($colony['map_link'] ?? ''): ?>
 <section class="py-5 bg-light">
     <div class="container">
-        <h2 class="text-center mb-5"><i class="fas fa-map text-primary me-2"></i>Location Map</h2>
+        <h2 class="text-center mb-5"><i class="fas fa-map text-primary me-2"></i><?= __('colony_location_map_heading') ?></h2>
         <div class="rounded-4 overflow-hidden shadow">
             <iframe src="<?php echo htmlspecialchars($colony['map_link']); ?>" width="100%" height="400" style="border:0" allowfullscreen loading="lazy"></iframe>
         </div>
@@ -214,8 +214,8 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 <section class="py-5" id="contact">
     <div class="container">
         <div class="contact-card text-center">
-            <h3 class="mb-3">Interested in <?php echo htmlspecialchars($colony['name'] ?? ''); ?>?</h3>
-            <p class="mb-4 opacity-75">Get in touch with our team for more details, price list, and site visit.</p>
+            <h3 class="mb-3"><?= sprintf(__('colony_interested_in'), htmlspecialchars($colony['name'] ?? '')) ?></h3>
+            <p class="mb-4 opacity-75"><?= __('colony_get_in_touch') ?></p>
             <div class="d-flex flex-wrap justify-content-center gap-4 mb-4">
                 <?php if ($colony['contact_phone'] ?? ''): ?>
                 <a href="tel:<?php echo htmlspecialchars($colony['contact_phone']); ?>" class="btn btn-light btn-lg"><i class="fas fa-phone me-2"></i><?php echo htmlspecialchars($colony['contact_phone']); ?></a>
@@ -224,7 +224,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
                 <a href="mailto:<?php echo htmlspecialchars($colony['contact_email']); ?>" class="btn btn-outline-light btn-lg"><i class="fas fa-envelope me-2"></i><?php echo htmlspecialchars($colony['contact_email']); ?></a>
                 <?php endif; ?>
             </div>
-            <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-warning btn-lg"><i class="fas fa-paper-plane me-2"></i>Send Enquiry</a>
+            <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-warning btn-lg"><i class="fas fa-paper-plane me-2"></i><?= __('colony_send_enquiry') ?></a>
         </div>
     </div>
 </section>

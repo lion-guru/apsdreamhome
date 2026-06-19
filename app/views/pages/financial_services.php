@@ -25,16 +25,16 @@ try {
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-4" data-aos="fade-up">Financial Services</h1>
+                <h1 class="display-4 fw-bold mb-4" data-aos="fade-up"><?= __('fs_hero_title') ?></h1>
                 <p class="lead mb-4" data-aos="fade-up" data-aos-delay="100">
-                    Expert financial solutions for your real estate investments with comprehensive mortgage and financing options.
+                    <?= __('fs_hero_desc') ?>
                 </p>
                 <div class="d-flex gap-3 justify-content-center flex-wrap" data-aos="fade-up" data-aos-delay="200">
                     <a href="#contact-form" class="btn btn-light btn-lg">
-                        <i class="fas fa-coins me-2"></i>Get Financial Advice
+                        <i class="fas fa-coins me-2"></i><?= __('fs_get_advice') ?>
                     </a>
                     <a href="#services" class="btn btn-outline-light btn-lg">
-                        <i class="fas fa-list me-2"></i>Our Services
+                        <i class="fas fa-list me-2"></i><?= __('fs_our_services') ?>
                     </a>
                 </div>
             </div>
@@ -46,9 +46,9 @@ try {
 <nav class="bg-light border-bottom py-2" aria-label="breadcrumb">
     <div class="container">
         <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/">Home</a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/services">Services</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Financial Services</li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/"><?= __('fs_breadcrumb_home') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/services"><?= __('fs_breadcrumb_services') ?></a></li>
+            <li class="breadcrumb-item active" aria-current="page"><?= __('fs_breadcrumb_active') ?></li>
         </ol>
     </div>
 </nav>
@@ -58,9 +58,9 @@ try {
     <div class="container">
         <div class="row">
             <div class="col-12 text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Our Financial Services</h2>
+                <h2 class="display-5 fw-bold mb-3" data-aos="fade-up"><?= __('fs_section_title') ?></h2>
                 <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                    Comprehensive financial solutions for real estate investments and property financing
+                    <?= __('fs_section_desc') ?>
                 </p>
             </div>
         </div>
@@ -97,11 +97,11 @@ try {
             <div class="text-center py-5">
                 <div class="empty-state">
                     <i class="fas fa-coins fa-4x text-muted mb-4"></i>
-                    <h3 class="text-muted">Financial Services Coming Soon</h3>
+                    <h3 class="text-muted"><?= __('fs_coming_soon') ?></h3>
                     <p class="text-muted mb-4">
-                        We're currently expanding our financial services. Please contact us for immediate financial assistance.
+                        <?= __('fs_coming_soon_desc') ?>
                     </p>
-                    <a href="<?= BASE_URL ?>/contact" class="btn btn-primary">Contact Us</a>
+                    <a href="<?= BASE_URL ?>/contact" class="btn btn-primary"><?= __('fs_contact_us') ?></a>
                 </div>
             </div>
         <?php endif; ?>

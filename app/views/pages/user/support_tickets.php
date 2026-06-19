@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'My Support Tickets';
+$page_title = $page_title ?? __('user_support_tickets_page_title', 'My Support Tickets');
 $tickets = $tickets ?? [];
 $userStats = $userStats ?? ['total' => 0, 'open' => 0, 'in_progress' => 0, 'resolved' => 0];
 $total = $total ?? 0;
@@ -12,12 +12,12 @@ $currentCategory = $category ?? null;
 <div class="aps-cp-hero">
     <div class="row align-items-center">
         <div class="col-md-8">
-            <h2><i class="fas fa-headset me-2"></i>My Support Tickets</h2>
-            <p>Track and manage your support requests with our team.</p>
+            <h2><i class="fas fa-headset me-2"></i><?= __('user_support_tickets_heading', 'My Support Tickets') ?></h2>
+            <p><?= __('user_support_tickets_subtitle', 'Track and manage your support requests with our team.') ?></p>
         </div>
         <div class="col-md-4 mt-3 mt-md-0 text-md-end">
             <a href="<?= BASE_URL ?>/user/support/create" class="btn btn-light">
-                <i class="fas fa-plus me-2"></i>New Ticket
+                <i class="fas fa-plus me-2"></i><?= __('user_support_tickets_new_ticket', 'New Ticket') ?>
             </a>
         </div>
     </div>
@@ -40,50 +40,50 @@ $currentCategory = $category ?? null;
     <div class="col-md-3 col-6">
         <div class="aps-cp-card text-center p-3">
             <div class="fw-bold fs-3 text-primary" data-aps-count="<?= $userStats['total'] ?>">0</div>
-            <small class="text-muted">Total Tickets</small>
+            <small class="text-muted"><?= __('user_support_tickets_total_tickets', 'Total Tickets') ?></small>
         </div>
     </div>
     <div class="col-md-3 col-6">
         <div class="aps-cp-card text-center p-3">
             <div class="fw-bold fs-3 text-danger" data-aps-count="<?= $userStats['open'] ?>">0</div>
-            <small class="text-muted">Open</small>
+            <small class="text-muted"><?= __('user_support_tickets_status_open', 'Open') ?></small>
         </div>
     </div>
     <div class="col-md-3 col-6">
         <div class="aps-cp-card text-center p-3">
             <div class="fw-bold fs-3 text-info" data-aps-count="<?= $userStats['in_progress'] ?>">0</div>
-            <small class="text-muted">In Progress</small>
+            <small class="text-muted"><?= __('user_support_tickets_status_in_progress', 'In Progress') ?></small>
         </div>
     </div>
     <div class="col-md-3 col-6">
         <div class="aps-cp-card text-center p-3">
             <div class="fw-bold fs-3 text-success" data-aps-count="<?= $userStats['resolved'] ?>">0</div>
-            <small class="text-muted">Resolved</small>
+            <small class="text-muted"><?= __('user_support_tickets_status_resolved', 'Resolved') ?></small>
         </div>
     </div>
 </div>
 
 <div class="aps-cp-card mb-4">
     <div class="aps-cp-card-header">
-        <h5 class="mb-0"><i class="fas fa-list me-2 text-primary"></i>All Tickets (<?= $total ?>)</h5>
+        <h5 class="mb-0"><i class="fas fa-list me-2 text-primary"></i><?= __('user_support_tickets_all_tickets', 'All Tickets') ?> (<?= $total ?>)</h5>
         <div class="d-flex gap-2">
             <select class="form-select form-select-sm" style="width: auto;" onchange="filterTickets('status', this.value)">
-                <option value="">All Status</option>
-                <option value="open" <?= $currentStatus === 'open' ? 'selected' : '' ?>>Open</option>
-                <option value="in_progress" <?= $currentStatus === 'in_progress' ? 'selected' : '' ?>>In Progress</option>
-                <option value="waiting_customer" <?= $currentStatus === 'waiting_customer' ? 'selected' : '' ?>>Awaiting Reply</option>
-                <option value="resolved" <?= $currentStatus === 'resolved' ? 'selected' : '' ?>>Resolved</option>
-                <option value="closed" <?= $currentStatus === 'closed' ? 'selected' : '' ?>>Closed</option>
+                <option value=""><?= __('user_support_tickets_all_status', 'All Status') ?></option>
+                <option value="open" <?= $currentStatus === 'open' ? 'selected' : '' ?>><?= __('user_support_tickets_filter_open', 'Open') ?></option>
+                <option value="in_progress" <?= $currentStatus === 'in_progress' ? 'selected' : '' ?>><?= __('user_support_tickets_filter_in_progress', 'In Progress') ?></option>
+                <option value="waiting_customer" <?= $currentStatus === 'waiting_customer' ? 'selected' : '' ?>><?= __('user_support_tickets_filter_awaiting_reply', 'Awaiting Reply') ?></option>
+                <option value="resolved" <?= $currentStatus === 'resolved' ? 'selected' : '' ?>><?= __('user_support_tickets_filter_resolved', 'Resolved') ?></option>
+                <option value="closed" <?= $currentStatus === 'closed' ? 'selected' : '' ?>><?= __('user_support_tickets_filter_closed', 'Closed') ?></option>
             </select>
             <select class="form-select form-select-sm" style="width: auto;" onchange="filterTickets('category', this.value)">
-                <option value="">All Categories</option>
-                <option value="general" <?= $currentCategory === 'general' ? 'selected' : '' ?>>General</option>
-                <option value="payment" <?= $currentCategory === 'payment' ? 'selected' : '' ?>>Payment</option>
-                <option value="booking" <?= $currentCategory === 'booking' ? 'selected' : '' ?>>Booking</option>
-                <option value="legal" <?= $currentCategory === 'legal' ? 'selected' : '' ?>>Legal</option>
-                <option value="technical" <?= $currentCategory === 'technical' ? 'selected' : '' ?>>Technical</option>
-                <option value="complaint" <?= $currentCategory === 'complaint' ? 'selected' : '' ?>>Complaint</option>
-                <option value="other" <?= $currentCategory === 'other' ? 'selected' : '' ?>>Other</option>
+                <option value=""><?= __('user_support_tickets_all_categories', 'All Categories') ?></option>
+                <option value="general" <?= $currentCategory === 'general' ? 'selected' : '' ?>><?= __('user_support_tickets_category_general', 'General') ?></option>
+                <option value="payment" <?= $currentCategory === 'payment' ? 'selected' : '' ?>><?= __('user_support_tickets_category_payment', 'Payment') ?></option>
+                <option value="booking" <?= $currentCategory === 'booking' ? 'selected' : '' ?>><?= __('user_support_tickets_category_booking', 'Booking') ?></option>
+                <option value="legal" <?= $currentCategory === 'legal' ? 'selected' : '' ?>><?= __('user_support_tickets_category_legal', 'Legal') ?></option>
+                <option value="technical" <?= $currentCategory === 'technical' ? 'selected' : '' ?>><?= __('user_support_tickets_category_technical', 'Technical') ?></option>
+                <option value="complaint" <?= $currentCategory === 'complaint' ? 'selected' : '' ?>><?= __('user_support_tickets_category_complaint', 'Complaint') ?></option>
+                <option value="other" <?= $currentCategory === 'other' ? 'selected' : '' ?>><?= __('user_support_tickets_category_other', 'Other') ?></option>
             </select>
         </div>
     </div>
@@ -91,10 +91,10 @@ $currentCategory = $category ?? null;
         <?php if (empty($tickets)): ?>
             <div class="aps-cp-empty py-5">
                 <div class="aps-cp-empty-icon"><i class="fas fa-ticket-alt"></i></div>
-                <h5>No support tickets found</h5>
-                <p>Create a ticket and our team will assist you.</p>
+                <h5><?= __('user_support_tickets_empty_heading', 'No support tickets found') ?></h5>
+                <p><?= __('user_support_tickets_empty_description', 'Create a ticket and our team will assist you.') ?></p>
                 <a href="<?= BASE_URL ?>/user/support/create" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Create Your First Ticket
+                    <i class="fas fa-plus me-2"></i><?= __('user_support_tickets_create_first', 'Create Your First Ticket') ?>
                 </a>
             </div>
         <?php else: ?>
@@ -102,13 +102,13 @@ $currentCategory = $category ?? null;
                 <table class="aps-cp-table">
                     <thead>
                         <tr>
-                            <th>Ticket #</th>
-                            <th>Subject</th>
-                            <th>Category</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Replies</th>
-                            <th>Created</th>
+                            <th><?= __('user_support_tickets_col_ticket_number', 'Ticket #') ?></th>
+                            <th><?= __('user_support_tickets_col_subject', 'Subject') ?></th>
+                            <th><?= __('user_support_tickets_col_category', 'Category') ?></th>
+                            <th><?= __('user_support_tickets_col_priority', 'Priority') ?></th>
+                            <th><?= __('user_support_tickets_col_status', 'Status') ?></th>
+                            <th><?= __('user_support_tickets_col_replies', 'Replies') ?></th>
+                            <th><?= __('user_support_tickets_col_created', 'Created') ?></th>
                         </tr>
                     </thead>
                     <tbody>

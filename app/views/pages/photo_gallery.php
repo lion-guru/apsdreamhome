@@ -1,5 +1,5 @@
 <div class="container mt-4">
-    <h1 class="mb-4"><?php echo $page_title ?? 'Photo Gallery'; ?></h1>
+    <h1 class="mb-4"><?php echo $page_title ?? __('gallery_title'); ?></h1>
     <?php if (!empty($images)): ?>
         <div class="row">
             <?php foreach ($images as $image): ?>
@@ -16,6 +16,6 @@
             <?php endforeach; ?>
         </div>
     <?php else: ?>
-        <div class="alert alert-info">No gallery images available at this time.</div>
+        <div class="alert alert-info"><?= __('gallery_empty') ?></div>
     <?php endif; ?>
 </div>

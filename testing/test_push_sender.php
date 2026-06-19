@@ -118,7 +118,7 @@ ok('HKDF matches RFC 5869 vector 3 (42 bytes OKM)',
 
 // ---------------------------------------------------------------
 section('Subscribe / Unsubscribe (DB round-trip)');
-$testUserId = 99999;  // Non-existent user — INSERT should still succeed; FK is not enforced on this table
+$testUserId = 3;  // Use an existing user ID to respect database FK constraints
 $endpoint = 'https://fcm.googleapis.com/fcm/send/test-' . uniqid();
 $p256dh = 'BNcRdreAa-bmFRm7lmsXK6cQOgmNIhv3nXg5k2xY8bR1N8Q-fake-p256dh-key-aaaaaaaaaaaaaa';
 $auth   = 'dGVzdC1hdXRoLXNlY3JldC1iCg';

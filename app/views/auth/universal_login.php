@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
 
 // Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
@@ -22,8 +23,8 @@ $active_page = 'login';
                         <div class="login-icon">
                             <i class="fas fa-sign-in-alt"></i>
                         </div>
-                        <h2 class="login-title">Welcome Back</h2>
-                        <p class="login-subtitle">Choose your preferred login method</p>
+                        <h2 class="login-title"><?php echo __('auth_welcome_back', 'Welcome Back'); ?></h2>
+                        <p class="login-subtitle"><?php echo __('auth_choose_login_method', 'Choose your preferred login method'); ?></p>
                     </div>
 
                     <?php if (isset($_SESSION['error'])): ?>
@@ -73,10 +74,10 @@ $active_page = 'login';
 
                                 <div class="mb-3">
                                     <label for="email" class="form-label">
-                                        <i class="fas fa-envelope me-2"></i>Email Address
+                                        <i class="fas fa-envelope me-2"></i><?php echo __('auth_email_address', 'Email Address'); ?>
                                     </label>
                                     <input type="email" class="form-control form-control-lg" id="email" name="email" required
-                                        placeholder="Enter your email address" autocomplete="email">
+                                        placeholder="<?php echo __('auth_enter_email', 'Enter your email address'); ?>" autocomplete="email">
                                 </div>
 
                                 <div class="mb-3">
@@ -85,7 +86,7 @@ $active_page = 'login';
                                     </label>
                                     <div class="input-group">
                                         <input type="password" class="form-control form-control-lg" id="password" name="password" required
-                                            placeholder="Enter your password" autocomplete="current-password">
+                                            placeholder="<?php echo __('auth_enter_password', 'Enter your password'); ?>" autocomplete="current-password">
                                         <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
                                             <i class="fas fa-eye" id="password-toggle"></i>
                                         </button>
@@ -96,7 +97,7 @@ $active_page = 'login';
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="remember-email" name="remember">
                                         <label class="form-check-label" for="remember-email">
-                                            Remember me for 30 days
+                                            <?php echo __('auth_remember_me', 'Remember me for 30 days'); ?>
                                         </label>
                                     </div>
                                 </div>
@@ -120,23 +121,23 @@ $active_page = 'login';
 
                                 <div class="mb-3">
                                     <label for="mobile" class="form-label">
-                                        <i class="fas fa-mobile-alt me-2"></i>Mobile Number
+                                        <i class="fas fa-mobile-alt me-2"></i><?php echo __('auth_mobile_number', 'Mobile Number'); ?>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text">+91</span>
                                         <input type="tel" class="form-control form-control-lg" id="mobile" name="mobile" required
-                                            placeholder="9876543210" pattern="[0-9]{10}" maxlength="10">
+                                            placeholder="<?php echo __('auth_phone_placeholder', '9876543210'); ?>" pattern="[0-9]{10}" maxlength="10">
                                     </div>
-                                    <div class="form-text">Enter 10-digit mobile number without country code</div>
+                                    <div class="form-text"><?php echo __('auth_phone_hint', 'Enter 10-digit mobile number without country code'); ?></div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="mobile-password" class="form-label">
-                                        <i class="fas fa-lock me-2"></i>Password / PIN
+                                        <i class="fas fa-lock me-2"></i><?php echo __('auth_password_or_pin', 'Password / PIN'); ?>
                                     </label>
                                     <div class="input-group">
                                         <input type="password" class="form-control form-control-lg" id="mobile-password" name="password" required
-                                            placeholder="Enter password or 4-digit PIN">
+                                            placeholder="<?php echo __('auth_enter_pin', 'Enter password or 4-digit PIN'); ?>">
                                         <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('mobile-password')">
                                             <i class="fas fa-eye" id="mobile-password-toggle"></i>
                                         </button>
@@ -147,7 +148,7 @@ $active_page = 'login';
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="remember-mobile" name="remember">
                                         <label class="form-check-label" for="remember-mobile">
-                                            Remember me for 30 days
+                                            <?php echo __('auth_remember_me', 'Remember me for 30 days'); ?>
                                         </label>
                                     </div>
                                 </div>
@@ -156,7 +157,7 @@ $active_page = 'login';
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="send-otp" name="send_otp">
                                         <label class="form-check-label" for="send-otp">
-                                            Send OTP instead of password
+                                            <?php echo __('auth_send_otp', 'Send OTP instead of password'); ?>
                                         </label>
                                     </div>
                                 </div>
@@ -177,8 +178,8 @@ $active_page = 'login';
                             <div class="text-center mb-4">
                                 <div class="google-login-info">
                                     <i class="fab fa-google fa-3x text-danger mb-3"></i>
-                                    <h4>Google Sign-In</h4>
-                                    <p class="text-muted">Quick and secure login with your Google account</p>
+                                    <h4><?php echo __('auth_google_signin', 'Google Sign-In'); ?></h4>
+                                    <p class="text-muted"><?php echo __('auth_google_desc', 'Quick and secure login with your Google account'); ?></p>
                                 </div>
                             </div>
 
@@ -192,12 +193,12 @@ $active_page = 'login';
                             </div>
 
                             <div class="google-features">
-                                <h6>Benefits of Google Login:</h6>
+                                <h6><?php echo __('auth_google_benefits', 'Benefits of Google Login:'); ?></h6>
                                 <ul class="feature-list">
-                                    <li><i class="fas fa-check text-success me-2"></i>No password to remember</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Two-factor authentication</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Quick access</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Secure connection</li>
+                                    <li><i class="fas fa-check text-success me-2"></i><?php echo __('auth_no_password', 'No password to remember'); ?></li>
+                                    <li><i class="fas fa-check text-success me-2"></i><?php echo __('auth_two_factor', 'Two-factor authentication'); ?></li>
+                                    <li><i class="fas fa-check text-success me-2"></i><?php echo __('auth_quick_access', 'Quick access'); ?></li>
+                                    <li><i class="fas fa-check text-success me-2"></i><?php echo __('auth_secure_connection', 'Secure connection'); ?></li>
                                 </ul>
                             </div>
                         </div>

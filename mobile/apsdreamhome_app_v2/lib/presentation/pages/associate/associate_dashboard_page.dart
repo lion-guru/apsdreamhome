@@ -5,9 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/services/auth_service.dart';
-import '../../../data/services/mlm_service.dart';
+import '../../../data/repositories/mlm_repository.dart';
 import '../../../data/models/user_model.dart';
-import '../../../data/models/commission_model.dart';
 import '../../widgets/app_widgets.dart';
 
 class AssociateDashboardPage extends ConsumerWidget {
@@ -27,7 +26,7 @@ class AssociateDashboardPage extends ConsumerWidget {
             );
           }
 
-          final commissionAsync = ref.watch(commissionSummaryProvider(user.id));
+          final commissionAsync = ref.watch(mlmSummaryProvider);
 
           return CustomScrollView(
             slivers: [
@@ -57,7 +56,7 @@ class AssociateDashboardPage extends ConsumerWidget {
                   child: AppWidgets.errorWidget(
                     message: error.toString(),
                     onRetry: () =>
-                        ref.refresh(commissionSummaryProvider(user.id)),
+                        ref.refresh(mlmSummaryProvider),
                   ),
                 ),
               ),
@@ -302,29 +301,29 @@ class AssociateDashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatsCards(BuildContext context, CommissionSummary summary) {
+  Widget _buildStatsCards(BuildContext context, MlmSummary summary) {
     final stats = [
       {
         'title': 'Total Earnings',
-        'amount': summary.totalEarned,
+        'amount': summary.totalEarnings,
         'icon': Icons.account_balance_wallet_outlined,
         'color': AppTheme.primaryColor,
       },
       {
-        'title': 'Pending',
-        'amount': summary.totalPending,
+        'title': 'Pending (Balance)',
+        'amount': summary.currentBalance,
         'icon': Icons.pending_actions_outlined,
         'color': AppTheme.warningColor,
       },
       {
         'title': 'Paid Out',
-        'amount': summary.totalPaid,
+        'amount': summary.totalEarnings - summary.currentBalance,
         'icon': Icons.check_circle_outline,
         'color': AppTheme.successColor,
       },
       {
-        'title': 'Total Sales',
-        'count': summary.totalSales,
+        'title': 'Total Referrals',
+        'count': summary.totalReferrals,
         'icon': Icons.trending_up,
         'color': AppTheme.accentColor,
       },

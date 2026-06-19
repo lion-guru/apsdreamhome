@@ -70,27 +70,8 @@ class AuthMiddleware
                 return false;
             }
 
-            // Verify password - support both modern and legacy hashing
-            $password_verified = false;
-
-            // Modern bcrypt check
-            if (isset($user['password']) && password_verify($password, $user['password'])) {
-                $password_verified = true;
-            }
-            // Legacy SHA1/MD5 check (fallback)
-            else if (isset($user['salt']) && isset($user['password_hash'])) {
-                // Legacy user table format
-                $hashedPassword = hash('sha256', $password . $user['salt']);
-                if (hash_equals($user['password_hash'], $hashedPassword)) {
-                    $password_verified = true;
-                }
-            }
-            // Simple SHA1 check (legacy admin)
-            else if (isset($user['apass']) && sha1($password) === $user['apass']) {
-                $password_verified = true;
-            }
-
-            if (!$password_verified) {
+            // Verify password (bcrypt only)
+            if (!isset($user['password']) || !password_verify($password, $user['password'])) {
                 AdminLogger::log('INVALID_PASSWORD_ATTEMPT', [
                     'username' => $username,
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'

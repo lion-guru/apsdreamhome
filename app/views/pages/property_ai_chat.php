@@ -1,6 +1,6 @@
 <?php
-$page_title = $page_title ?? 'Property AI Assistant - APS Dream Home';
-$page_description = $page_description ?? 'AI Assistant for Property Information';
+$page_title = $page_title ?? __('user_property_ai_chat_title', 'Property AI Assistant - APS Dream Home');
+$page_description = $page_description ?? __('user_property_ai_chat_desc', 'AI Assistant for Property Information');
 $property = $property ?? null;
 $user_role = $user_role ?? 'customer';
 $context = $context ?? '';
@@ -12,12 +12,12 @@ $base = $base ?? BASE_URL;
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3"><i class="fas fa-home me-3"></i>Property AI Assistant</h1>
-                <p class="lead mb-0">Ask questions about this property</p>
+                <h1 class="display-4 fw-bold mb-3"><i class="fas fa-home me-3"></i><?= __('user_property_ai_chat_heading', 'Property AI Assistant') ?></h1>
+                <p class="lead mb-0"><?= __('user_property_ai_chat_subtitle', 'Ask questions about this property') ?></p>
             </div>
             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                 <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/properties" class="btn btn-light btn-sm">
-                    <i class="fas fa-arrow-left me-1"></i> Back to Properties
+                    <i class="fas fa-arrow-left me-1"></i> <?= __('user_property_ai_chat_back', 'Back to Properties') ?>
                 </a>
             </div>
         </div>
@@ -30,13 +30,13 @@ $base = $base ?? BASE_URL;
             <div class="col-lg-5 mb-4">
                 <div class="card shadow-sm border-0">
                     <div class="card-body aps-cp-card-body">
-                        <h5 class="card-title"><i class="fas fa-info-circle text-primary me-2"></i>Property Details</h5>
+                        <h5 class="card-title"><i class="fas fa-info-circle text-primary me-2"></i><?= __('user_property_ai_chat_details_heading', 'Property Details') ?></h5>
                         <?php if ($property): ?>
                         <div class="mb-3">
                             <?php if (!empty($property['image'])): ?>
-                            <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image']) : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" alt="<?= htmlspecialchars($property['title'] ?? 'Property') ?>" class="img-fluid rounded mb-3">
+                            <img src="<?= !empty($property['image']) ? htmlspecialchars($property['image']) : (BASE_URL . '/assets/images/property-placeholder.jpg') ?>" alt="<?= htmlspecialchars($property['title'] ?? __('user_property_ai_chat_default_alt', 'Property')) ?>" class="img-fluid rounded mb-3">
                             <?php endif; ?>
-                            <h4><?= htmlspecialchars($property['title'] ?? 'Untitled') ?></h4>
+                            <h4><?= htmlspecialchars($property['title'] ?? __('user_property_ai_chat_untitled', 'Untitled')) ?></h4>
                             <p class="text-muted mb-1">
                                 <i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($property['location'] ?? 'N/A') ?>
                             </p>
@@ -47,19 +47,19 @@ $base = $base ?? BASE_URL;
                             <div class="row text-center mt-3 g-2">
                                 <?php if (!empty($property['bedrooms'])): ?>
                                 <div class="col-4">
-                                    <small class="text-muted d-block">Bedrooms</small>
+                                    <small class="text-muted d-block"><?= __('user_property_ai_chat_bedrooms', 'Bedrooms') ?></small>
                                     <strong><?= htmlspecialchars($property['bedrooms']) ?></strong>
                                 </div>
                                 <?php endif; ?>
                                 <?php if (!empty($property['bathrooms'])): ?>
                                 <div class="col-4">
-                                    <small class="text-muted d-block">Bathrooms</small>
+                                    <small class="text-muted d-block"><?= __('user_property_ai_chat_bathrooms', 'Bathrooms') ?></small>
                                     <strong><?= htmlspecialchars($property['bathrooms']) ?></strong>
                                 </div>
                                 <?php endif; ?>
                                 <?php if (!empty($property['area'])): ?>
                                 <div class="col-4">
-                                    <small class="text-muted d-block">Area</small>
+                                    <small class="text-muted d-block"><?= __('user_property_ai_chat_area', 'Area') ?></small>
                                     <strong><?= htmlspecialchars($property['area']) ?> sq.ft</strong>
                                 </div>
                                 <?php endif; ?>
@@ -68,17 +68,17 @@ $base = $base ?? BASE_URL;
                         <?php else: ?>
                         <div class="text-center py-4">
                             <i class="fas fa-building fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No property selected. Ask me about our available properties!</p>
-                            <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/properties" class="btn btn-outline-primary btn-sm">Browse Properties</a>
+                            <p class="text-muted"><?= __('user_property_ai_chat_no_property', 'No property selected. Ask me about our available properties!') ?></p>
+                            <a href="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>/properties" class="btn btn-outline-primary btn-sm"><?= __('user_property_ai_chat_browse', 'Browse Properties') ?></a>
                         </div>
                         <?php endif; ?>
                         <hr>
-                        <h6>Suggested Questions</h6>
+                        <h6><?= __('user_property_ai_chat_suggested', 'Suggested Questions') ?></h6>
                         <div class="d-flex flex-wrap gap-1 mb-0">
-                            <button class="btn btn-sm btn-outline-primary" onclick="sendPropertyQuery('What is the price?')">Price</button>
-                            <button class="btn btn-sm btn-outline-success" onclick="sendPropertyQuery('Tell me about the location')">Location</button>
-                            <button class="btn btn-sm btn-outline-info" onclick="sendPropertyQuery('What amenities are nearby?')">Amenities</button>
-                            <button class="btn btn-sm btn-outline-warning" onclick="sendPropertyQuery('Is this a good investment?')">Investment</button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="sendPropertyQuery('What is the price?')"><?= __('user_property_ai_chat_q_price', 'Price') ?></button>
+                            <button class="btn btn-sm btn-outline-success" onclick="sendPropertyQuery('Tell me about the location')"><?= __('user_property_ai_chat_q_location', 'Location') ?></button>
+                            <button class="btn btn-sm btn-outline-info" onclick="sendPropertyQuery('What amenities are nearby?')"><?= __('user_property_ai_chat_q_amenities', 'Amenities') ?></button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="sendPropertyQuery('Is this a good investment?')"><?= __('user_property_ai_chat_q_investment', 'Investment') ?></button>
                         </div>
                     </div>
                 </div>
@@ -86,23 +86,23 @@ $base = $base ?? BASE_URL;
             <div class="col-lg-7">
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-                        <h5 class="mb-0"><i class="fas fa-comment-dots text-primary me-2"></i>Chat</h5>
-                        <span class="badge bg-info">Context: Property Chat</span>
+                        <h5 class="mb-0"><i class="fas fa-comment-dots text-primary me-2"></i><?= __('user_property_ai_chat_chat_heading', 'Chat') ?></h5>
+                        <span class="badge bg-info"><?= __('user_property_ai_chat_context_badge', 'Context: Property Chat') ?></span>
                     </div>
                     <div class="card-body p-0">
                         <div id="property-chat-messages" class="p-4" style="height: 450px; overflow-y: auto; background: #f8f9fa;">
                             <div class="text-center py-5">
-                                <div class="mb-3"><span class="display-1">ðŸ </span></div>
-                                <h5>Ask about this property!</h5>
-                                <p class="text-muted">Get instant answers about pricing, location, amenities, and more.</p>
+                                <div class="mb-3"><span class="display-1">🏠</span></div>
+                                <h5><?= __('user_property_ai_chat_welcome', 'Ask about this property!') ?></h5>
+                                <p class="text-muted"><?= __('user_property_ai_chat_welcome_desc', 'Get instant answers about pricing, location, amenities, and more.') ?></p>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer bg-white">
                         <div class="input-group">
-                            <input type="text" id="property-chat-input" class="form-control" placeholder="Ask about this property..." onkeypress="handlePropertyKeyPress(event)">
+                            <input type="text" id="property-chat-input" class="form-control" placeholder="<?= __('user_property_ai_chat_input_ph', 'Ask about this property...') ?>" onkeypress="handlePropertyKeyPress(event)">
                             <button class="btn btn-primary" onclick="sendPropertyMessage()">
-                                <i class="fas fa-paper-plane me-1"></i> Ask
+                                <i class="fas fa-paper-plane me-1"></i> <?= __('user_property_ai_chat_send', 'Ask') ?>
                             </button>
                         </div>
                     </div>
@@ -139,10 +139,10 @@ async function sendPropertyMessage() {
         });
         const data = await res.json();
         removePropertyTyping();
-        addPropertyMessage('assistant', data.reply ?? 'No response.');
+        addPropertyMessage('assistant', data.reply ?? '<?= __('user_property_ai_chat_no_response', 'No response.') ?>');
     } catch (e) {
         removePropertyTyping();
-        addPropertyMessage('assistant', 'Connection error. Please try again.');
+        addPropertyMessage('assistant', '<?= __('user_property_ai_chat_connection_error', 'Connection error. Please try again.') ?>');
     }
 }
 

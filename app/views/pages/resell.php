@@ -8,14 +8,14 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto">
-                <h1 class="display-4 fw-bold mb-4">Resell Properties Marketplace</h1>
-                <p class="lead mb-4">Buy directly from individual sellers. No brokerage. Verified properties. Trusted transactions.</p>
+                <h1 class="display-4 fw-bold mb-4"><?= __('resell_hero_title') ?></h1>
+                <p class="lead mb-4"><?= __('resell_hero_desc') ?></p>
                 <div class="d-flex justify-content-center gap-3">
                     <a href="<?= BASE_URL ?>/list-property" class="btn btn-light btn-lg">
-                        <i class="fas fa-plus me-2"></i>List Your Property
+                        <i class="fas fa-plus me-2"></i><?= __('resell_list_property') ?>
                     </a>
                     <a href="#properties" class="btn btn-outline-light btn-lg">
-                        <i class="fas fa-home me-2"></i>Browse Properties
+                        <i class="fas fa-home me-2"></i><?= __('resell_browse') ?>
                     </a>
                 </div>
             </div>
@@ -37,8 +37,8 @@
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Resell Properties</li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('breadcrumb_home') ?></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><?= __('resell_breadcrumb') ?></li>
                 <?php endif; ?>
             </ol>
         </nav>
@@ -50,17 +50,17 @@
     <div class="resell-filter-section shadow-sm bg-white p-4 rounded-3" style="margin-top: -50px;">
         <form action="<?= BASE_URL ?>/resell" method="GET" class="row g-3">
             <div class="col-md-4">
-                <label class="form-label fw-bold">Search</label>
+                <label class="form-label fw-bold"><?= __('resell_search') ?></label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Locality, Landmark..." value="<?= htmlspecialchars($filters['search']) ?>">
+                    <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="<?= __('resell_search_ph') ?>" value="<?= htmlspecialchars($filters['search']) ?>">
                 </div>
             </div>
 
             <div class="col-md-2">
-                <label class="form-label fw-bold">City</label>
+                <label class="form-label fw-bold"><?= __('resell_city') ?></label>
                 <select name="city" class="form-select">
-                    <option value="">All Cities</option>
+                    <option value=""><?= __('resell_all_cities') ?></option>
                     <?php foreach ($cities as $city): ?>
                         <?php $cityValue = is_array($city) ? ($city['city'] ?? '') : ($city ?? ''); ?>
                         <option value="<?= htmlspecialchars($cityValue) ?>" <?= $filters['city'] == $cityValue ? 'selected' : '' ?>>
@@ -71,9 +71,9 @@
             </div>
 
             <div class="col-md-2">
-                <label class="form-label fw-bold">Type</label>
+                <label class="form-label fw-bold"><?= __('resell_type') ?></label>
                 <select name="type" class="form-select">
-                    <option value="">All Types</option>
+                    <option value=""><?= __('resell_all_types') ?></option>
                     <?php foreach ($property_types as $type): ?>
                         <?php $typeValue = is_array($type) ? ($type['type'] ?? '') : ($type ?? ''); ?>
                         <option value="<?= htmlspecialchars($typeValue) ?>" <?= $filters['type'] == $typeValue ? 'selected' : '' ?>>
@@ -84,18 +84,18 @@
             </div>
 
             <div class="col-md-2">
-                <label class="form-label fw-bold">Min Price</label>
+                <label class="form-label fw-bold"><?= __('resell_min_price') ?></label>
                 <input type="number" name="min_price" class="form-control" placeholder="Min" value="<?= htmlspecialchars($filters['min_price']) ?>">
             </div>
 
             <div class="col-md-2">
-                <label class="form-label fw-bold">Max Price</label>
+                <label class="form-label fw-bold"><?= __('resell_max_price') ?></label>
                 <input type="number" name="max_price" class="form-control" placeholder="Max" value="<?= htmlspecialchars($filters['max_price']) ?>">
             </div>
 
             <div class="col-12 text-end mt-4">
-                <a href="<?= BASE_URL ?>/resell" class="btn btn-outline-secondary me-2">Reset</a>
-                <button type="submit" class="btn btn-primary px-4">Apply Filters</button>
+                <a href="<?= BASE_URL ?>/resell" class="btn btn-outline-secondary me-2"><?= __('resell_reset') ?></a>
+                <button type="submit" class="btn btn-primary px-4"><?= __('resell_apply') ?></button>
             </div>
         </form>
     </div>
@@ -109,9 +109,9 @@
                 <div class="mb-4">
                     <i class="fas fa-home fa-4x text-muted opacity-50"></i>
                 </div>
-                <h3>No Properties Found</h3>
-                <p class="text-muted">Try adjusting your filters or search criteria.</p>
-                <a href="<?= BASE_URL ?>/resell" class="btn btn-primary mt-3">View All Properties</a>
+                <h3><?= __('resell_empty') ?></h3>
+                <p class="text-muted"><?= __('resell_empty_desc') ?></p>
+                <a href="<?= BASE_URL ?>/resell" class="btn btn-primary mt-3"><?= __('resell_view_all') ?></a>
             </div>
         <?php else: ?>
             <div class="row g-4">
@@ -121,7 +121,7 @@
                             <div class="position-relative">
                                 <?php if ($prop->is_featured): ?>
                                     <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-3 z-index-2">
-                                        <i class="fas fa-star me-1"></i> Featured
+                                        <i class="fas fa-star me-1"></i> <?= __('featured_badge') ?>
                                     </span>
                                 <?php endif; ?>
 
@@ -147,15 +147,15 @@
                                 <div class="row g-2 mb-3 text-center small text-muted">
                                     <div class="col-4 border-end">
                                         <i class="fas fa-bed d-block mb-1 fa-lg"></i>
-                                        <?= $prop->bedrooms ?> Beds
+                                        <?= $prop->bedrooms ?> <?= __('resell_beds') ?>
                                     </div>
                                     <div class="col-4 border-end">
                                         <i class="fas fa-bath d-block mb-1 fa-lg"></i>
-                                        <?= $prop->bathrooms ?> Baths
+                                        <?= $prop->bathrooms ?> <?= __('resell_baths') ?>
                                     </div>
                                     <div class="col-4">
                                         <i class="fas fa-vector-square d-block mb-1 fa-lg"></i>
-                                        <?= $prop->area ?> sqft
+                                        <?= $prop->area ?> <?= __('resell_sqft') ?>
                                     </div>
                                 </div>
 
@@ -167,11 +167,11 @@
                                             <i class="fas fa-user text-secondary"></i>
                                         </div>
                                         <small class="text-muted">
-                                            Seller<br>
-                                            <span class="text-dark fw-bold"><?= htmlspecialchars($prop->full_name ?? 'Verified Seller') ?></span>
+                                            <?= __('resell_seller') ?><br>
+                                            <span class="text-dark fw-bold"><?= htmlspecialchars($prop->full_name ?? __('resell_verified_seller')) ?></span>
                                         </small>
                                     </div>
-                                    <a href="<?= BASE_URL ?>/property/<?= $prop->id ?>" class="btn btn-outline-primary btn-sm rounded-pill px-3">View Details</a>
+                                    <a href="<?= BASE_URL ?>/property/<?= $prop->id ?>" class="btn btn-outline-primary btn-sm rounded-pill px-3"><?= __('featured_view_details') ?></a>
                                 </div>
                             </div>
                         </div>

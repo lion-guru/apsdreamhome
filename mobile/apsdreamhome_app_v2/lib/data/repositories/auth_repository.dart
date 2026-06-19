@@ -127,13 +127,19 @@ class AuthRepository {
 
   /// Get current user
   Future<UserModel?> getCurrentUser() async {
-    // Try local first
+    // Try local SQLite first
     final localUser = await _dbHelper.getCurrentUser();
     if (localUser != null) {
       return UserModel.fromJson(localUser);
     }
 
-    // If online, fetch from API
+    // Check for token — skip API if no token or demo token
+    final token = await _apiService.getToken();
+    if (token == null || token.isEmpty || token.startsWith('demo_')) {
+      return null;
+    }
+
+    // If online, fetch from API (real token only)
     if (await _apiService.isConnected()) {
       try {
         final response = await _apiService.getProfile();
@@ -184,6 +190,55 @@ class AuthRepository {
       }
       throw Exception('Update failed: $e');
     }
+  }
+
+  /// Quick demo login (no API needed)
+  Future<UserModel> demoLogin(String role) async {
+    final now = DateTime.now().toIso8601String();
+    final demoUsers = {
+      'customer': {
+        'userId': '3',
+        'name': 'Customer One',
+        'email': 'customer1@apsdreamhome.com',
+        'phone': '9999999991',
+        'rank': 'Customer',
+        'target': 0.0,
+        'avatar': null,
+        'createdAt': now,
+        'updatedAt': now,
+      },
+      'associate': {
+        'userId': '9',
+        'name': 'Test Emp',
+        'email': 'associate@apsdreamhome.com',
+        'phone': '9999999992',
+        'rank': 'Associate',
+        'target': 1000000.0,
+        'avatar': null,
+        'createdAt': now,
+        'updatedAt': now,
+      },
+      'admin': {
+        'userId': '1',
+        'name': 'Admin',
+        'email': 'admin@apsdreamhome.com',
+        'phone': '9999999990',
+        'rank': 'Admin',
+        'target': 0.0,
+        'avatar': null,
+        'createdAt': now,
+        'updatedAt': now,
+      },
+    };
+
+    final userData = demoUsers[role] ?? demoUsers['customer']!;
+    final user = UserModel.fromJson(userData);
+
+    await _secureStorage.write(key: 'auth_token', value: 'demo_token_$role');
+    await _secureStorage.write(key: 'current_user', value: user.toJson().toString());
+    await _dbHelper.saveUser(user.toJson());
+
+    return user;
   }
 
   /// Check if user is logged in

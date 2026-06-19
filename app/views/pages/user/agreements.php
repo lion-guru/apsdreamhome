@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'My Agreements';
+$page_title = $page_title ?? __('user_agreements_page_title', null, 'My Agreements');
 $current_page = 'agreements';
 $agreements = $agreements ?? [];
 $user = $user ?? [];
@@ -13,33 +13,33 @@ $statusColors = [
     'expired' => 'dark',
 ];
 $statusLabels = [
-    'draft' => 'Draft',
-    'pending_signature' => 'Pending Signature',
-    'signed' => 'Signed',
-    'registered' => 'Registered',
-    'cancelled' => 'Cancelled',
-    'expired' => 'Expired',
+    'draft' => __('user_agreements_status_draft', null, 'Draft'),
+    'pending_signature' => __('user_agreements_status_pending', null, 'Pending Signature'),
+    'signed' => __('user_agreements_status_signed', null, 'Signed'),
+    'registered' => __('user_agreements_status_registered', null, 'Registered'),
+    'cancelled' => __('user_agreements_status_cancelled', null, 'Cancelled'),
+    'expired' => __('user_agreements_status_expired', null, 'Expired'),
 ];
 $typeLabels = [
-    'sale_deed' => 'Sale Deed',
-    'allotment' => 'Allotment Letter',
-    'mortgage' => 'Mortgage',
-    'lease' => 'Lease Agreement',
-    'nda' => 'NDA',
-    'joint_venture' => 'Joint Venture',
-    'other' => 'Other',
+    'sale_deed' => __('user_agreements_type_sale_deed', null, 'Sale Deed'),
+    'allotment' => __('user_agreements_type_allotment', null, 'Allotment Letter'),
+    'mortgage' => __('user_agreements_type_mortgage', null, 'Mortgage'),
+    'lease' => __('user_agreements_type_lease', null, 'Lease Agreement'),
+    'nda' => __('user_agreements_type_nda', null, 'NDA'),
+    'joint_venture' => __('user_agreements_type_joint_venture', null, 'Joint Venture'),
+    'other' => __('user_agreements_type_other', null, 'Other'),
 ];
 ?>
 
 <div class="aps-cp-hero">
     <div class="row align-items-center">
         <div class="col-md-8">
-            <h2><i class="fas fa-file-signature me-2"></i>My Agreements</h2>
-            <p>Review, sign, and download your property agreements.</p>
+            <h2><i class="fas fa-file-signature me-2"></i><?= __('user_agreements_heading', null, 'My Agreements') ?></h2>
+            <p><?= __('user_agreements_subtitle', null, 'Review, sign, and download your property agreements.') ?></p>
         </div>
         <div class="col-md-4 mt-3 mt-md-0 text-md-end">
             <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-light">
-                <i class="fas fa-arrow-left me-2"></i>Back to Bookings
+                <i class="fas fa-arrow-left me-2"></i><?= __('user_agreements_back_bookings', null, 'Back to Bookings') ?>
             </a>
         </div>
     </div>
@@ -50,10 +50,10 @@ $typeLabels = [
         <div class="aps-cp-card-body">
             <div class="aps-cp-empty">
                 <div class="aps-cp-empty-icon"><i class="fas fa-file-signature"></i></div>
-                <h5>No agreements yet</h5>
-                <p>Agreements are generated automatically when you book a plot. Book your dream plot to get started.</p>
+                <h5><?= __('user_agreements_empty_heading', null, 'No agreements yet') ?></h5>
+                <p><?= __('user_agreements_empty_desc', null, 'Agreements are generated automatically when you book a plot. Book your dream plot to get started.') ?></p>
                 <a href="<?= BASE_URL ?>/properties" class="btn btn-primary">
-                    <i class="fas fa-search me-2"></i>Browse Properties
+                    <i class="fas fa-search me-2"></i><?= __('user_agreements_browse_properties', null, 'Browse Properties') ?>
                 </a>
             </div>
         </div>
@@ -71,45 +71,45 @@ $typeLabels = [
         <div class="col-md-3">
             <div class="aps-cp-stat" style="border-left: 4px solid #6366f1;">
                 <div class="stat-value"><?= count($agreements) ?></div>
-                <div class="stat-label">Total Agreements</div>
+                <div class="stat-label"><?= __('user_agreements_total', null, 'Total Agreements') ?></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="aps-cp-stat" style="border-left: 4px solid #f59e0b;">
                 <div class="stat-value"><?= $pendingCount ?></div>
-                <div class="stat-label">Pending Signature</div>
+                <div class="stat-label"><?= __('user_agreements_pending_count', null, 'Pending Signature') ?></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="aps-cp-stat" style="border-left: 4px solid #10b981;">
                 <div class="stat-value"><?= $signedCount ?></div>
-                <div class="stat-label">Signed</div>
+                <div class="stat-label"><?= __('user_agreements_signed_count', null, 'Signed') ?></div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="aps-cp-stat" style="border-left: 4px solid #3b82f6;">
                 <div class="stat-value"><?= count($agreements) - $pendingCount - $signedCount ?></div>
-                <div class="stat-label">Other</div>
+                <div class="stat-label"><?= __('user_agreements_other_count', null, 'Other') ?></div>
             </div>
         </div>
     </div>
 
     <div class="aps-cp-card">
         <div class="aps-cp-card-header">
-            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Agreement List</h5>
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i><?= __('user_agreements_list_heading', null, 'Agreement List') ?></h5>
         </div>
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive">
                 <table class="aps-cp-table mb-0">
                     <thead>
                         <tr>
-                            <th>Agreement No</th>
-                            <th>Type</th>
-                            <th>Plot / Colony</th>
-                            <th>Value</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
+                            <th><?= __('user_agreements_th_number', null, 'Agreement No') ?></th>
+                            <th><?= __('user_agreements_th_type', null, 'Type') ?></th>
+                            <th><?= __('user_agreements_th_plot', null, 'Plot / Colony') ?></th>
+                            <th><?= __('user_agreements_th_value', null, 'Value') ?></th>
+                            <th><?= __('user_agreements_th_status', null, 'Status') ?></th>
+                            <th><?= __('user_agreements_th_date', null, 'Date') ?></th>
+                            <th><?= __('user_agreements_th_actions', null, 'Actions') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -136,16 +136,16 @@ $typeLabels = [
                                 <td><span class="aps-cp-badge aps-cp-badge-<?= $color ?>"><?= $label ?></span></td>
                                 <td><?= date('d M Y', strtotime($ag['created_at'] ?? 'now')) ?></td>
                                 <td>
-                                    <a href="<?= BASE_URL ?>/user/agreements/<?= $ag['id'] ?>" class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <a href="<?= BASE_URL ?>/user/agreements/<?= $ag['id'] ?>" class="btn btn-sm btn-outline-primary" title="<?= __('user_agreements_view_details', null, 'View Details') ?>">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <?php if ($status === 'pending_signature'): ?>
-                                        <a href="<?= BASE_URL ?>/user/agreements/<?= $ag['id'] ?>" class="btn btn-sm btn-success" title="Sign Now">
+                                        <a href="<?= BASE_URL ?>/user/agreements/<?= $ag['id'] ?>" class="btn btn-sm btn-success" title="<?= __('user_agreements_sign_now', null, 'Sign Now') ?>">
                                             <i class="fas fa-pen"></i>
                                         </a>
                                     <?php endif; ?>
                                     <?php if ($status === 'signed' || $status === 'registered'): ?>
-                                        <a href="<?= BASE_URL ?>/user/agreements/<?= $ag['id'] ?>/preview" class="btn btn-sm btn-outline-secondary" title="Preview" target="_blank">
+                                        <a href="<?= BASE_URL ?>/user/agreements/<?= $ag['id'] ?>/preview" class="btn btn-sm btn-outline-secondary" title="<?= __('user_agreements_preview', null, 'Preview') ?>" target="_blank">
                                             <i class="fas fa-print"></i>
                                         </a>
                                     <?php endif; ?>

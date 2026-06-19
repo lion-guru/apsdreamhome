@@ -14,6 +14,26 @@ $updated = $updated_at ?? date('d M Y, h:i A');
 $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 ?>
 
+<style>
+.quick-action-btn {
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:12px 16px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+    background:#fff;
+    text-decoration:none;
+    transition:all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+.quick-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+}
+</style>
+
 <!-- Title Bar -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
     <div>
@@ -32,8 +52,8 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     <!-- Module 1: Land -->
     <div class="aps-cp-card" style="border-left:4px solid #10b981;">
         <div class="aps-cp-card-body" style="padding:16px 20px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                <span style="font-size:1.4rem;">&#127968;</span>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;color:#10b981;font-size:1.1rem;"><i class="fas fa-map-marked-alt"></i></div>
                 <span style="font-size:0.8rem;font-weight:600;text-transform:uppercase;color:#10b981;letter-spacing:0.05em;">Module 1: Land</span>
             </div>
             <div style="display:flex;justify-content:space-between;">
@@ -52,8 +72,8 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     <!-- Module 2: Sales -->
     <div class="aps-cp-card" style="border-left:4px solid #3b82f6;">
         <div class="aps-cp-card-body" style="padding:16px 20px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                <span style="font-size:1.4rem;">&#128203;</span>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;color:#3b82f6;font-size:1.1rem;"><i class="fas fa-chart-line"></i></div>
                 <span style="font-size:0.8rem;font-weight:600;text-transform:uppercase;color:#3b82f6;letter-spacing:0.05em;">Module 2: Sales</span>
             </div>
             <div style="display:flex;justify-content:space-between;">
@@ -72,8 +92,8 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     <!-- Module 3: Money -->
     <div class="aps-cp-card" style="border-left:4px solid #8b5cf6;">
         <div class="aps-cp-card-body" style="padding:16px 20px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                <span style="font-size:1.4rem;">&#128176;</span>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;color:#8b5cf6;font-size:1.1rem;"><i class="fas fa-hand-holding-usd"></i></div>
                 <span style="font-size:0.8rem;font-weight:600;text-transform:uppercase;color:#8b5cf6;letter-spacing:0.05em;">Module 3: Money</span>
             </div>
             <div style="display:flex;justify-content:space-between;">
@@ -92,8 +112,8 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     <!-- Module 4: MLM -->
     <div class="aps-cp-card" style="border-left:4px solid #f59e0b;">
         <div class="aps-cp-card-body" style="padding:16px 20px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                <span style="font-size:1.4rem;">&#127942;</span>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;color:#f59e0b;font-size:1.1rem;"><i class="fas fa-sitemap"></i></div>
                 <span style="font-size:0.8rem;font-weight:600;text-transform:uppercase;color:#f59e0b;letter-spacing:0.05em;">Module 4: MLM</span>
             </div>
             <div style="display:flex;justify-content:space-between;">
@@ -112,8 +132,8 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     <!-- Module 5: Backoffice -->
     <div class="aps-cp-card" style="border-left:4px solid #ef4444;">
         <div class="aps-cp-card-body" style="padding:16px 20px;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                <span style="font-size:1.4rem;">&#128188;</span>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:50%;background:rgba(239,68,68,0.1);display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:1.1rem;"><i class="fas fa-building"></i></div>
                 <span style="font-size:0.8rem;font-weight:600;text-transform:uppercase;color:#ef4444;letter-spacing:0.05em;">Module 5: Backoffice</span>
             </div>
             <div style="display:flex;justify-content:space-between;">
@@ -160,54 +180,66 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     <div class="aps-cp-card">
         <div class="aps-cp-card-header" style="font-weight:700;">Quick Actions</div>
         <div class="aps-cp-card-body" style="padding:16px;">
-            <div style="display:flex;flex-direction:column;gap:10px;">
-                <a href="<?= BASE_URL ?>/admin/land-inventory/leads" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:#ecfdf5;color:#065f46;text-decoration:none;transition:transform 0.15s;">
-                    <span style="font-size:1.3rem;">&#127968;</span>
-                    <div>
-                        <div style="font-weight:600;">Land Inventory</div>
-                        <div style="font-size:0.75rem;opacity:0.8;">Manage land leads, acquisitions & mapping</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                <a href="<?= BASE_URL ?>/admin/land-inventory/leads" class="quick-action-btn">
+                    <div style="width:40px;height:40px;border-radius:50%;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;color:#10b981;font-size:1.2rem;flex-shrink:0;">
+                        <i class="fas fa-map-marked-alt"></i>
                     </div>
-                    <span style="margin-left:auto;font-size:0.8rem;opacity:0.6;">&rarr;</span>
+                    <div>
+                        <div style="font-weight:600;color:#1e293b;">Land Inventory</div>
+                        <div style="font-size:0.75rem;color:#64748b;">Manage land leads, acquisitions & mapping</div>
+                    </div>
+                    <i class="fas fa-chevron-right ms-auto text-muted" style="font-size:0.8rem;"></i>
                 </a>
-                <a href="<?= BASE_URL ?>/admin/sales/bookings" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:#eff6ff;color:#1e40af;text-decoration:none;transition:transform 0.15s;">
-                    <span style="font-size:1.3rem;">&#128203;</span>
-                    <div>
-                        <div style="font-weight:600;">Sales Bookings</div>
-                        <div style="font-size:0.75rem;opacity:0.8;">View bookings, EMI schedule & commissions</div>
+                <a href="<?= BASE_URL ?>/admin/sales/bookings" class="quick-action-btn">
+                    <div style="width:40px;height:40px;border-radius:50%;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;color:#3b82f6;font-size:1.2rem;flex-shrink:0;">
+                        <i class="fas fa-chart-line"></i>
                     </div>
-                    <span style="margin-left:auto;font-size:0.8rem;opacity:0.6;">&rarr;</span>
+                    <div>
+                        <div style="font-weight:600;color:#1e293b;">Sales Bookings</div>
+                        <div style="font-size:0.75rem;color:#64748b;">View bookings, EMI schedule & commissions</div>
+                    </div>
+                    <i class="fas fa-chevron-right ms-auto text-muted" style="font-size:0.8rem;"></i>
                 </a>
-                <a href="<?= BASE_URL ?>/admin/finance/penalties" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:#fef2f2;color:#991b1b;text-decoration:none;transition:transform 0.15s;<?php if (($s['emi_overdue_count'] ?? 0) > 0) echo 'border:2px solid #fecaca;'; ?>">
-                    <span style="font-size:1.3rem;">&#9888;</span>
-                    <div>
-                        <div style="font-weight:600;">EMI Dunning & Penalties</div>
-                        <div style="font-size:0.75rem;opacity:0.8;"><?= ($s['emi_overdue_count'] ?? 0) ?> overdue installments</div>
+                <a href="<?= BASE_URL ?>/admin/finance/penalties" class="quick-action-btn" <?php if (($s['emi_overdue_count'] ?? 0) > 0) echo 'style="border-color:#fecaca; background:#fffcfc;"'; ?>>
+                    <div style="width:40px;height:40px;border-radius:50%;background:rgba(239,68,68,0.1);display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:1.2rem;flex-shrink:0;">
+                        <i class="fas fa-exclamation-triangle"></i>
                     </div>
-                    <span style="margin-left:auto;font-size:0.8rem;opacity:0.6;">&rarr;</span>
+                    <div>
+                        <div style="font-weight:600;color:#1e293b;">EMI Dunning & Penalties</div>
+                        <div style="font-size:0.75rem;color:#64748b;"><?= ($s['emi_overdue_count'] ?? 0) ?> overdue installments</div>
+                    </div>
+                    <i class="fas fa-chevron-right ms-auto text-muted" style="font-size:0.8rem;"></i>
                 </a>
-                <a href="<?= BASE_URL ?>/admin/finance/cash-book" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:#f5f3ff;color:#5b21b6;text-decoration:none;transition:transform 0.15s;">
-                    <span style="font-size:1.3rem;">&#128176;</span>
-                    <div>
-                        <div style="font-weight:600;">Finance Hub</div>
-                        <div style="font-size:0.75rem;opacity:0.8;">Cash book, cheques, TDS, GST & expenses</div>
+                <a href="<?= BASE_URL ?>/admin/finance/cash-book" class="quick-action-btn">
+                    <div style="width:40px;height:40px;border-radius:50%;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;color:#8b5cf6;font-size:1.2rem;flex-shrink:0;">
+                        <i class="fas fa-wallet"></i>
                     </div>
-                    <span style="margin-left:auto;font-size:0.8rem;opacity:0.6;">&rarr;</span>
+                    <div>
+                        <div style="font-weight:600;color:#1e293b;">Finance Hub</div>
+                        <div style="font-size:0.75rem;color:#64748b;">Cash book, cheques, TDS, GST & expenses</div>
+                    </div>
+                    <i class="fas fa-chevron-right ms-auto text-muted" style="font-size:0.8rem;"></i>
                 </a>
-                <a href="<?= BASE_URL ?>/admin/mlm/commissions" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:#fffbeb;color:#92400e;text-decoration:none;transition:transform 0.15s;">
-                    <span style="font-size:1.3rem;">&#127942;</span>
-                    <div>
-                        <div style="font-weight:600;">MLM Network</div>
-                        <div style="font-size:0.75rem;opacity:0.8;">Commissions, payouts & network tree</div>
+                <a href="<?= BASE_URL ?>/admin/mlm/commissions" class="quick-action-btn">
+                    <div style="width:40px;height:40px;border-radius:50%;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;color:#f59e0b;font-size:1.2rem;flex-shrink:0;">
+                        <i class="fas fa-sitemap"></i>
                     </div>
-                    <span style="margin-left:auto;font-size:0.8rem;opacity:0.6;">&rarr;</span>
+                    <div>
+                        <div style="font-weight:600;color:#1e293b;">MLM Network</div>
+                        <div style="font-size:0.75rem;color:#64748b;">Commissions, payouts & network tree</div>
+                    </div>
+                    <i class="fas fa-chevron-right ms-auto text-muted" style="font-size:0.8rem;"></i>
                 </a>
-                <a href="<?= BASE_URL ?>/admin/backoffice" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:#fef2f2;color:#991b1b;text-decoration:none;transition:transform 0.15s;">
-                    <span style="font-size:1.3rem;">&#128188;</span>
-                    <div>
-                        <div style="font-weight:600;">Backoffice Ops</div>
-                        <div style="font-size:0.75rem;opacity:0.8;">Attendance, leaves, payslips & operations</div>
+                <a href="<?= BASE_URL ?>/admin/backoffice" class="quick-action-btn">
+                    <div style="width:40px;height:40px;border-radius:50%;background:rgba(100,116,139,0.1);display:flex;align-items:center;justify-content:center;color:#64748b;font-size:1.2rem;flex-shrink:0;">
+                        <i class="fas fa-briefcase"></i>
                     </div>
-                    <span style="margin-left:auto;font-size:0.8rem;opacity:0.6;">&rarr;</span>
+                    <div>
+                        <div style="font-weight:600;color:#1e293b;">Backoffice Ops</div>
+                        <div style="font-size:0.75rem;color:#64748b;">Attendance, leaves, payslips & operations</div>
+                    </div>
+                    <i class="fas fa-chevron-right ms-auto text-muted" style="font-size:0.8rem;"></i>
                 </a>
             </div>
         </div>

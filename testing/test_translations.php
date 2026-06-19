@@ -100,9 +100,15 @@ $allowedIdentical = [
     'google_login', 'facebook_login', 'linkedin_login',
     'upi_id', 'phone_ph', 'email_ph', 'name_ph', 'password_ph',
     'british_english', 'american_english', 'english_lang', 'hindi_lang',
-    'admin_hash_label',
+    'admin_hash_label', 'id_faq_badge',
     // BHK is a universally accepted abbreviation in Hindi too ("Bedroom Hall Kitchen")
     'bhk', 'home_bhk_1', 'home_bhk_2', 'home_bhk_3', 'home_bhk_4',
+    'notif_pref_sms', 'notif_pref_whatsapp', // brand names identical in Hindi
+    'plot_th_id', // "#" symbol identical in Hindi
+    'receipt_company', // brand name identical in Hindi
+    'aps_dream_home', 'component_aps_ai_label', // brand names
+    'nav_robots', 'property_bhk', // technical/industry terms
+    'schedule_form_email_ph', 'breg_type_llp', // placeholder/abbreviation
 ];
 $identicalFound = [];
 foreach ($enFlat as $k => $v) {

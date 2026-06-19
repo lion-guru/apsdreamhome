@@ -1,9 +1,10 @@
+<?php require_once __DIR__ . '/../../Helpers/TranslationHelper.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Your Registration - APS Dream Home</title>
+    <title><?php echo __('auth_complete_registration_title', 'Complete Registration'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -183,7 +184,7 @@
             <p class="text-muted mb-0"><?php echo htmlspecialchars($googleUserData['email']); ?></p>
         </div>
 
-        <h5 class="mb-3">I want to join as:</h5>
+        <h5 class="mb-3"><?php echo __('auth_join_as', 'I want to join as:'); ?></h5>
 
         <div class="role-option" onclick="selectRole('customer')" id="role-customer">
             <div class="d-flex align-items-center">
@@ -191,8 +192,8 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="info">
-                    <h5>Customer</h5>
-                    <small>Search properties, buy/rent, get 5% discount with referral</small>
+                    <h5><?php echo __('auth_role_customer', 'Customer'); ?></h5>
+                    <small><?php echo __('auth_role_customer_desc', 'Search properties, buy/rent, get 5% discount with referral'); ?></small>
                 </div>
             </div>
         </div>
@@ -203,8 +204,8 @@
                     <i class="fas fa-handshake"></i>
                 </div>
                 <div class="info">
-                    <h5>Associate</h5>
-                    <small>Earn commissions, build network, mandatory referral code</small>
+                    <h5><?php echo __('auth_role_associate', 'Associate'); ?></h5>
+                    <small><?php echo __('auth_role_associate_desc', 'Earn commissions, build network, mandatory referral code'); ?></small>
                 </div>
             </div>
         </div>
@@ -215,29 +216,29 @@
                     <i class="fas fa-briefcase"></i>
                 </div>
                 <div class="info">
-                    <h5>Agent</h5>
-                    <small>Sell properties, earn higher commissions, mandatory referral</small>
+                    <h5><?php echo __('auth_role_agent', 'Agent'); ?></h5>
+                    <small><?php echo __('auth_role_agent_desc', 'Sell properties, earn higher commissions, mandatory referral'); ?></small>
                 </div>
             </div>
         </div>
 
         <div class="referral-section" id="referralSection">
-            <h6 class="mb-3"><i class="fas fa-ticket-alt me-2"></i>Referral Code</h6>
+            <h6 class="mb-3"><i class="fas fa-ticket-alt me-2"></i><?php echo __('auth_referral_code', 'Referral Code'); ?></h6>
             <div class="d-flex align-items-center mb-3">
-                <input type="text" class="form-control" id="referralCode" placeholder="Enter referral code">
+                <input type="text" class="form-control" id="referralCode" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>">
                 <span class="company-code-badge ms-2" onclick="useCompanyCode()">
                     <i class="fas fa-building me-1"></i>Use Company Code
                 </span>
             </div>
             <small class="text-muted">
                 <i class="fas fa-info-circle me-1"></i>
-                Associate/Agent require referral code. Use company code to join directly.
+                <?php echo __('auth_referral_note', 'Associate/Agent require referral code. Use company code to join directly.'); ?>
             </small>
         </div>
 
         <div class="mb-3 mt-4" id="phoneSection" style="display: none;">
-            <label class="form-label fw-bold">Phone Number *</label>
-            <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" pattern="[0-9]{10}">
+            <label class="form-label fw-bold"><?php echo __('auth_phone_number_required', 'Phone Number *'); ?></label>
+            <input type="tel" class="form-control" id="phone" placeholder="<?php echo __('auth_enter_phone', 'Enter your phone number'); ?>" pattern="[0-9]{10}">
         </div>
 
         <button class="btn-complete mt-3" id="completeBtn" onclick="completeRegistration()" disabled>
@@ -246,7 +247,7 @@
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Creating your account...</p>
+            <p><?php echo __('auth_creating_account', 'Creating your account...'); ?></p>
         </div>
 
         <div class="text-center mt-3">

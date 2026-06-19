@@ -3,9 +3,10 @@
  * Plots Availability View - APS Dream Homes
  * Migrated from resources/views/Views/plots-availability.php
  */
+require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
 
-$page_title = 'Plots Availability | APS Dream Homes';
-$page_description = 'Explore live availability across APS Dream Homes colonies. Check which plots are available, booked, or sold in real time.';
+$page_title = __('plots_avail_title', [], 'Plots Availability | APS Dream Homes');
+$page_description = __('plots_avail_meta_desc', [], 'Explore live availability across APS Dream Homes colonies. Check which plots are available, booked, or sold in real time.');
 
 // Sample plot data (to be replaced with dynamic source in future)
 $plots = [
@@ -57,13 +58,13 @@ foreach ($plots as $plot) {
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <span class="info-chip mb-3 bg-white"><i class="fas fa-certificate text-warning"></i> RERA Registered Projects</span>
-                <h1 class="display-5 fw-bold mb-3">Live Plot Availability</h1>
-                <p class="lead opacity-90">Stay updated with the latest inventory across APS Dream Homes colonies. Check real-time status and schedule site visits.</p>
+                <span class="info-chip mb-3 bg-white"><i class="fas fa-certificate text-warning"></i> <?= __('plots_avail_rera', [], 'RERA Registered Projects') ?></span>
+                <h1 class="display-5 fw-bold mb-3"><?= __('plots_avail_hero_heading', [], 'Live Plot Availability') ?></h1>
+                <p class="lead opacity-90"><?= __('plots_avail_hero_desc', [], 'Stay updated with the latest inventory across APS Dream Homes colonies. Check real-time status and schedule site visits.') ?></p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
-                    <span class="badge bg-white text-dark px-3 py-2"><span class="legend-dot legend-available"></span>Available</span>
-                    <span class="badge bg-white text-dark px-3 py-2"><span class="legend-dot legend-booked"></span>Booked</span>
-                    <span class="badge bg-white text-dark px-3 py-2"><span class="legend-dot legend-sold"></span>Sold</span>
+                    <span class="badge bg-white text-dark px-3 py-2"><span class="legend-dot legend-available"></span><?= __('plot_status_available', [], 'Available') ?></span>
+                    <span class="badge bg-white text-dark px-3 py-2"><span class="legend-dot legend-booked"></span><?= __('plot_status_booked', [], 'Booked') ?></span>
+                    <span class="badge bg-white text-dark px-3 py-2"><span class="legend-dot legend-sold"></span><?= __('plot_status_sold', [], 'Sold') ?></span>
                 </div>
             </div>
         </div>
@@ -74,41 +75,41 @@ foreach ($plots as $plot) {
     <div class="col-12">
         <div class="card plot-card mb-5">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
-                <h2 class="h5 mb-0">Suryoday Colony</h2>
-                <span class="badge bg-light text-primary">Phase 1</span>
+                <h2 class="h5 mb-0"><?= __('plots_avail_colony', [], 'Suryoday Colony') ?></h2>
+                <span class="badge bg-light text-primary"><?= __('plots_avail_phase', [], 'Phase 1') ?></span>
             </div>
             <div class="card-body p-4">
                 <div class="row">
                     <div class="col-lg-6 mb-4 mb-lg-0">
-                        <h5 class="fw-bold mb-3">Plot Status Summary</h5>
+                        <h5 class="fw-bold mb-3"><?= __('plots_avail_summary', [], 'Plot Status Summary') ?></h5>
                         <div class="row g-3 mb-4">
                             <div class="col-4">
                                 <div class="p-3 text-center border rounded-3 bg-light">
                                     <div class="h3 fw-bold text-success mb-0"><?= $summary['available'] ?></div>
-                                    <small class="text-muted">Available</small>
+                                    <small class="text-muted"><?= __('plot_status_available', [], 'Available') ?></small>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="p-3 text-center border rounded-3 bg-light">
                                     <div class="h3 fw-bold text-warning mb-0"><?= $summary['booked'] ?></div>
-                                    <small class="text-muted">Booked</small>
+                                    <small class="text-muted"><?= __('plot_status_booked', [], 'Booked') ?></small>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="p-3 text-center border rounded-3 bg-light">
                                     <div class="h3 fw-bold text-danger mb-0"><?= $summary['sold'] ?></div>
-                                    <small class="text-muted">Sold</small>
+                                    <small class="text-muted"><?= __('plot_status_sold', [], 'Sold') ?></small>
                                 </div>
                             </div>
                         </div>
 
-                        <h6 class="fw-bold mb-3">Detailed Plot Status</h6>
+                        <h6 class="fw-bold mb-3"><?= __('plots_avail_detailed', [], 'Detailed Plot Status') ?></h6>
                         <div class="table-responsive">
                             <div class="table-responsive"><table class="table table-hover align-middle plot-status-table table-responsive">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Plot No.</th>
-                                        <th>Current Status</th>
+                                        <th><?= __('plots_avail_plot_no', [], 'Plot No.') ?></th>
+                                        <th><?= __('plots_avail_current_status', [], 'Current Status') ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -127,18 +128,18 @@ foreach ($plots as $plot) {
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <h5 class="fw-bold mb-3">Colony Layout Map</h5>
+                        <h5 class="fw-bold mb-3"><?= __('plots_avail_map_heading', [], 'Colony Layout Map') ?></h5>
                         <div class="text-center">
-                            <img loading="lazy" src="/assets/img/suryoday-colony-map-sample.jpg" alt="Suryoday Colony Map" class="plot-map-img mb-3 border img-fluid">
+                            <img loading="lazy" src="/assets/img/suryoday-colony-map-sample.jpg" alt="<?= __('plots_avail_map_alt', [], 'Suryoday Colony Map') ?>" class="plot-map-img mb-3 border img-fluid">
                             <div class="alert alert-info py-2 small">
-                                <i class="fas fa-info-circle me-2"></i>Map numbering matches the table. For an interactive experience, contact our sales team.
+                                <i class="fas fa-info-circle me-2"></i><?= __('plots_avail_map_desc', [], 'Map numbering matches the table. For an interactive experience, contact our sales team.') ?>
                             </div>
                             <div class="d-grid gap-2">
                                 <a href="/contact" class="btn btn-primary py-3">
-                                    <i class="fas fa-calendar-check me-2"></i>Schedule a Site Visit
+                                    <i class="fas fa-calendar-check me-2"></i><?= __('plots_avail_schedule_visit', [], 'Schedule a Site Visit') ?>
                                 </a>
                                 <a href="tel:+91XXXXXXXXXX" class="btn btn-outline-secondary py-2">
-                                    <i class="fas fa-phone-alt me-2"></i>Call for Inquiry
+                                    <i class="fas fa-phone-alt me-2"></i><?= __('plots_avail_call', [], 'Call for Inquiry') ?>
                                 </a>
                             </div>
                         </div>

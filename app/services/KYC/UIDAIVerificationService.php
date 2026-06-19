@@ -130,7 +130,12 @@ class UIDAIVerificationService
             ];
         }
 
-        // Step 2: Verhoeff checksum
+        // Step 2: MOCK mode (skip checksum validation)
+        if ($this->testMode) {
+            return $this->mockVerify($aadhaar, $name, $dob, $gender);
+        }
+
+        // Step 3: Verhoeff checksum (production only)
         if (!$this->verhoeffCheck($aadhaar)) {
             return [
                 'success' => false,
@@ -139,18 +144,13 @@ class UIDAIVerificationService
             ];
         }
 
-        // Step 3: Check known invalid test numbers
+        // Step 4: Check known invalid test numbers
         if (isset($this->testAadhaar[$aadhaar])) {
             return [
                 'success' => false,
                 'message' => $this->testAadhaar[$aadhaar]['reason'],
                 'data' => ['aadhaar' => 'XXXXXXXX' . substr($aadhaar, -4), 'valid' => false],
             ];
-        }
-
-        // Step 4: MOCK mode
-        if ($this->testMode) {
-            return $this->mockVerify($aadhaar, $name, $dob, $gender);
         }
 
         // Step 5: Real UIDAI API call
@@ -263,7 +263,7 @@ class UIDAIVerificationService
     /**
      * Verhoeff checksum validation
      */
-    private function verhoeffCheck(string $num): bool
+    public function verhoeffCheck(string $num): bool
     {
         $len = strlen($num);
         $inv = 0;
@@ -309,5 +309,170 @@ class UIDAIVerificationService
     public function isTestMode(): bool
     {
         return $this->testMode;
+    }
+
+    /**
+     * Send OTP to registered Aadhaar mobile
+     *
+     * @param string $aadhaar 12-digit Aadhaar number
+     * @return array {success, message, data: {transaction_id, masked_mobile}}
+     */
+    public function sendOtp(string $aadhaar): array
+    {
+        $aadhaar = preg_replace('/\D/', '', $aadhaar);
+        if (strlen($aadhaar) !== 12) {
+            return ['success' => false, 'message' => 'Aadhaar must be exactly 12 digits', 'data' => ['aadhaar' => $aadhaar]];
+        }
+
+        if ($this->testMode) {
+            $txnId = 'MOCK-' . bin2hex(random_bytes(8));
+            return [
+                'success' => true,
+                'message' => 'OTP sent successfully (mock)',
+                'data' => [
+                    'transaction_id' => $txnId,
+                    'masked_mobile' => 'XXXXXX' . rand(1000, 9999),
+                    'expires_in' => 300,
+                ],
+                'provider_response' => ['mock' => true],
+            ];
+        }
+
+        if (!$this->verhoeffCheck($aadhaar)) {
+            return ['success' => false, 'message' => 'Invalid Aadhaar number (checksum failed)', 'data' => ['aadhaar' => $aadhaar]];
+        }
+
+        return $this->callUidaiApiWithRetry('/aadhaar/send-otp', [
+            'aadhaar' => $aadhaar,
+        ]);
+    }
+
+    /**
+     * Verify OTP sent to Aadhaar-linked mobile
+     *
+     * @param string $aadhaar 12-digit Aadhaar number
+     * @param string $otp 6-digit OTP
+     * @param string $txnId Transaction ID from sendOtp
+     * @return array {success, message, data, provider_response}
+     */
+    public function verifyOtp(string $aadhaar, string $otp, string $txnId): array
+    {
+        $aadhaar = preg_replace('/\D/', '', $aadhaar);
+        if (strlen($otp) !== 6 || !ctype_digit($otp)) {
+            return ['success' => false, 'message' => 'OTP must be exactly 6 digits', 'data' => []];
+        }
+
+        if ($this->testMode) {
+            return [
+                'success' => true,
+                'message' => 'Aadhaar OTP verified successfully (mock)',
+                'data' => [
+                    'aadhaar' => 'XXXXXXXX' . substr($aadhaar, -4),
+                    'status' => 'ACTIVE',
+                    'verification_type' => 'otp',
+                    'verified_at' => date('Y-m-d H:i:s'),
+                ],
+                'provider_response' => ['mock' => true, 'test_mode' => true],
+            ];
+        }
+
+        return $this->callUidaiApiWithRetry('/aadhaar/verify-otp', [
+            'aadhaar' => $aadhaar,
+            'otp' => $otp,
+            'transaction_id' => $txnId,
+        ]);
+    }
+
+    /**
+     * Call UIDAI API with retry (max 2 retries on 5xx/connection errors)
+     */
+    private function callUidaiApiWithRetry(string $endpoint, array $payload, int $maxRetries = 2): array
+    {
+        $lastError = null;
+        for ($attempt = 0; $attempt <= $maxRetries; $attempt++) {
+            $result = $this->callUidaiApiRaw($endpoint, $payload);
+            if ($result['success'] || ($result['data']['status'] ?? '') !== 'API_ERROR') {
+                return $result;
+            }
+            $lastError = $result;
+            if ($attempt < $maxRetries) {
+                usleep(500000 * (1 << $attempt));
+            }
+        }
+        return $lastError;
+    }
+
+    /**
+     * Raw UIDAI API call (single attempt)
+     */
+    private function callUidaiApiRaw(string $endpoint, array $payload): array
+    {
+        $maskedAadhaar = 'XXXXXXXX' . substr($payload['aadhaar'] ?? '', -4);
+        $ch = curl_init($this->baseUrl . $endpoint);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($payload),
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'X-UIDAI-API-Key: ' . $this->apiKey,
+                'X-UIDAI-License-Key: ' . $this->licenseKey,
+            ],
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_SSL_VERIFYPEER => true,
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            return [
+                'success' => false,
+                'message' => 'UIDAI API connection error: ' . $error,
+                'data' => ['aadhaar' => $maskedAadhaar, 'valid' => false, 'status' => 'API_ERROR'],
+                'provider_response' => ['error' => $error],
+            ];
+        }
+
+        if ($httpCode !== 200) {
+            return [
+                'success' => false,
+                'message' => 'UIDAI API returned HTTP ' . $httpCode,
+                'data' => ['aadhaar' => $maskedAadhaar, 'valid' => false, 'status' => 'API_ERROR', 'http_code' => $httpCode],
+                'provider_response' => ['http_code' => $httpCode, 'body' => $response],
+            ];
+        }
+
+        $result = json_decode($response, true);
+        if (!$result) {
+            return [
+                'success' => false,
+                'message' => 'Invalid response from UIDAI API',
+                'data' => ['aadhaar' => $maskedAadhaar, 'valid' => false, 'status' => 'PARSE_ERROR'],
+                'provider_response' => ['raw' => substr($response, 0, 500)],
+            ];
+        }
+
+        $uidaiStatus = $result['status'] ?? 'UNKNOWN';
+        $isSuccess = in_array($uidaiStatus, ['VALID', 'ACTIVE', 'verified', 'demographic_verified', 'otp_verified']);
+
+        return [
+            'success' => $isSuccess,
+            'message' => $isSuccess ? 'UIDAI verification successful' : 'UIDAI verification failed: ' . $uidaiStatus,
+            'data' => [
+                'aadhaar' => $maskedAadhaar,
+                'name_match' => $result['name_match'] ?? false,
+                'dob_match' => $result['dob_match'] ?? false,
+                'gender' => $result['gender'] ?? '',
+                'status' => $uidaiStatus,
+                'verification_type' => $result['verification_type'] ?? 'demographic',
+                'verified_at' => date('Y-m-d H:i:s'),
+                'transaction_id' => $result['transaction_id'] ?? null,
+                'masked_mobile' => $result['masked_mobile'] ?? null,
+            ],
+            'provider_response' => $result,
+        ];
     }
 }

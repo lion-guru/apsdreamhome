@@ -24,7 +24,7 @@ try {
 // Group menu items by section
 $groupedItems = [];
 foreach ($menuItems as $item) {
-    $section = $item['section'] ?? 'main';
+    $section = strtolower($item['section'] ?? 'main');
     $groupedItems[$section][] = $item;
 }
 

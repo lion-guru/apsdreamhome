@@ -11,10 +11,10 @@ use Psr\Log\LoggerInterface;
  */
 class SecurityService
 {
-    private Database $db;
-    private LoggerInterface $logger;
-    private array $securityConfig;
-    private string $logFile;
+    protected Database $db;
+    protected LoggerInterface $logger;
+    protected array $securityConfig;
+    protected string $logFile;
 
     // Security Levels
     public const LEVEL_LOW = 1;
@@ -466,7 +466,10 @@ class SecurityService
         ];
 
         foreach ($tables as $sql) {
-            $this->db->execute($sql);
+            $sql = trim($sql);
+            if ($sql !== '') {
+                $this->db->execute($sql);
+            }
         }
     }
 

@@ -20,9 +20,11 @@
 */
 <?php
 
+require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
+
 // Navigation Menu for APS Dream Homes
-$page_title = 'Navigation - APS Dream Homes';
-$page_description = 'Navigate through all pages of APS Dream Homes website';
+$page_title = __('nav_page_title', 'Navigation - APS Dream Homes');
+$page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream Homes website');
 ?>
 
 <!DOCTYPE html>
@@ -243,7 +245,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
         <div class="container">
             <h1 class="hero-title" data-aos="fade-up">APS Dream Homes</h1>
             <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
-                Complete Website Navigation - All Pages Ready to Use
+                <?php echo __('nav_complete_navigation', 'Complete Website Navigation - All Pages Ready to Use'); ?>
             </p>
         </div>
     </section>
@@ -252,34 +254,34 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
     <section class="navigation-section">
         <div class="container">
             <div class="quick-actions" data-aos="fade-up">
-                <h2 style="text-align: center; margin-bottom: 30px;">🚀 Quick Start</h2>
+                <h2 style="text-align: center; margin-bottom: 30px;">🚀 <?php echo __('nav_quick_start', 'Quick Start'); ?></h2>
                 <div class="text-center">
                     <a href="index_improved.php" class="action-btn">
-                        <i class="fas fa-home me-2"></i>Go to Homepage
+                        <i class="fas fa-home me-2"></i><?php echo __('nav_go_to_homepage', 'Go to Homepage'); ?>
                     </a>
                     <a href="admin/" class="action-btn secondary">
-                        <i class="fas fa-cog me-2"></i>Admin Panel
+                        <i class="fas fa-cog me-2"></i><?php echo __('nav_admin_panel', 'Admin Panel'); ?>
                     </a>
                 </div>
             </div>
 
             <!-- Main Pages -->
-            <h2 class="category-title" data-aos="fade-up">🏠 Main Pages</h2>
+            <h2 class="category-title" data-aos="fade-up">🏠 <?php echo __('nav_main_pages', 'Main Pages'); ?></h2>
             <div class="row mb-5">
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon main">
                             <i class="fas fa-home"></i>
                         </div>
-                        <h3 class="nav-title">Homepage</h3>
+                        <h3 class="nav-title"><?php echo __('nav_homepage', 'Homepage'); ?></h3>
                         <p class="nav-description">
-                            Enhanced homepage with company showcase, team presentation, and featured properties
+                            <?php echo __('nav_homepage_desc', 'Enhanced homepage with company showcase, team presentation, and featured properties'); ?>
                         </p>
                         <a href="index_improved.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>Visit Homepage
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_visit_homepage', 'Visit Homepage'); ?>
                         </a>
                     </div>
                 </div>
@@ -287,17 +289,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon main">
                             <i class="fas fa-building"></i>
                         </div>
-                        <h3 class="nav-title">Properties</h3>
+                        <h3 class="nav-title"><?php echo __('properties_title', 'Properties'); ?></h3>
                         <p class="nav-description">
-                            Browse all available properties with advanced search and filtering options
+                            <?php echo __('nav_properties_desc', 'Browse all available properties with advanced search and filtering options'); ?>
                         </p>
                         <a href="property-listings.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>View Properties
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_properties', 'View Properties'); ?>
                         </a>
                     </div>
                 </div>
@@ -305,17 +307,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon main">
                             <i class="fas fa-info-circle"></i>
                         </div>
-                        <h3 class="nav-title">About Us</h3>
+                        <h3 class="nav-title"><?php echo __('about_title', 'About Us'); ?></h3>
                         <p class="nav-description">
-                            Learn about APS Dream Homes, our team, and our commitment to excellence
+                            <?php echo __('nav_about_desc', 'Learn about APS Dream Homes, our team, and our commitment to excellence'); ?>
                         </p>
                         <a href="about.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>About Company
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_about_company', 'About Company'); ?>
                         </a>
                     </div>
                 </div>
@@ -323,17 +325,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon main">
                             <i class="fas fa-phone"></i>
                         </div>
-                        <h3 class="nav-title">Contact</h3>
+                        <h3 class="nav-title"><?php echo __('contact_title', 'Contact'); ?></h3>
                         <p class="nav-description">
-                            Get in touch with us for inquiries, appointments, and property consultations
+                            <?php echo __('nav_contact_desc', 'Get in touch with us for inquiries, appointments, and property consultations'); ?>
                         </p>
                         <a href="contact.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>Contact Us
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('contact_us', 'Contact Us'); ?>
                         </a>
                     </div>
                 </div>
@@ -341,17 +343,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon main">
                             <i class="fas fa-briefcase"></i>
                         </div>
-                        <h3 class="nav-title">Careers</h3>
+                        <h3 class="nav-title"><?php echo __('careers_title', 'Careers'); ?></h3>
                         <p class="nav-description">
-                            Join our team! Explore career opportunities and apply for positions
+                            <?php echo __('nav_careers_desc', 'Join our team! Explore career opportunities and apply for positions'); ?>
                         </p>
                         <a href="careers.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>View Careers
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_careers', 'View Careers'); ?>
                         </a>
                     </div>
                 </div>
@@ -359,39 +361,39 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon main">
                             <i class="fas fa-question-circle"></i>
                         </div>
-                        <h3 class="nav-title">FAQ</h3>
+                        <h3 class="nav-title"><?php echo __('faqs_title', 'FAQ'); ?></h3>
                         <p class="nav-description">
-                            Find answers to frequently asked questions about our services and properties
+                            <?php echo __('nav_faq_desc', 'Find answers to frequently asked questions about our services and properties'); ?>
                         </p>
                         <a href="faq.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>View FAQ
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_faq', 'View FAQ'); ?>
                         </a>
                     </div>
                 </div>
             </div>
 
             <!-- Feature Pages -->
-            <h2 class="category-title" data-aos="fade-up">⭐ Feature Pages</h2>
+            <h2 class="category-title" data-aos="fade-up">⭐ <?php echo __('nav_feature_pages', 'Feature Pages'); ?></h2>
             <div class="row mb-5">
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon feature">
                             <i class="fas fa-star"></i>
                         </div>
-                        <h3 class="nav-title">Customer Reviews</h3>
+                        <h3 class="nav-title"><?php echo __('nav_customer_reviews', 'Customer Reviews'); ?></h3>
                         <p class="nav-description">
-                            Read genuine customer reviews and testimonials about our services
+                            <?php echo __('nav_reviews_desc', 'Read genuine customer reviews and testimonials about our services'); ?>
                         </p>
                         <a href="customer-reviews.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>Read Reviews
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_read_reviews', 'Read Reviews'); ?>
                         </a>
                     </div>
                 </div>
@@ -399,17 +401,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon feature">
                             <i class="fas fa-blog"></i>
                         </div>
-                        <h3 class="nav-title">Blog</h3>
+                        <h3 class="nav-title"><?php echo __('blog_title', 'Blog'); ?></h3>
                         <p class="nav-description">
-                            Read our latest articles, tips, and insights about real estate
+                            <?php echo __('nav_blog_desc', 'Read our latest articles, tips, and insights about real estate'); ?>
                         </p>
                         <a href="blog.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>Read Blog
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_read_blog', 'Read Blog'); ?>
                         </a>
                     </div>
                 </div>
@@ -417,17 +419,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon feature">
                             <i class="fas fa-cogs"></i>
                         </div>
-                        <h3 class="nav-title">Services</h3>
+                        <h3 class="nav-title"><?php echo __('services_title', 'Services'); ?></h3>
                         <p class="nav-description">
-                            Explore our comprehensive real estate services and solutions
+                            <?php echo __('nav_services_desc', 'Explore our comprehensive real estate services and solutions'); ?>
                         </p>
                         <a href="services.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>Our Services
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_our_services', 'Our Services'); ?>
                         </a>
                     </div>
                 </div>
@@ -435,17 +437,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon feature">
                             <i class="fas fa-project-diagram"></i>
                         </div>
-                        <h3 class="nav-title">Projects</h3>
+                        <h3 class="nav-title"><?php echo __('projects_title', 'Projects'); ?></h3>
                         <p class="nav-description">
-                            View our completed and ongoing real estate projects
+                            <?php echo __('nav_projects_desc', 'View our completed and ongoing real estate projects'); ?>
                         </p>
                         <a href="projects.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>View Projects
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_projects', 'View Projects'); ?>
                         </a>
                     </div>
                 </div>
@@ -453,17 +455,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon feature">
                             <i class="fas fa-users"></i>
                         </div>
-                        <h3 class="nav-title">Team</h3>
+                        <h3 class="nav-title"><?php echo __('team_title', 'Team'); ?></h3>
                         <p class="nav-description">
-                            Meet our dedicated team of real estate professionals
+                            <?php echo __('nav_team_desc', 'Meet our dedicated team of real estate professionals'); ?>
                         </p>
                         <a href="team.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>Our Team
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_our_team', 'Our Team'); ?>
                         </a>
                     </div>
                 </div>
@@ -471,17 +473,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon feature">
                             <i class="fas fa-lightbulb"></i>
                         </div>
-                        <h3 class="nav-title">Enhanced Features</h3>
+                        <h3 class="nav-title"><?php echo __('nav_enhanced_features', 'Enhanced Features'); ?></h3>
                         <p class="nav-description">
-                            Premium features inspired by market leaders with modern amenities
+                            <?php echo __('nav_enhanced_desc', 'Premium features inspired by market leaders with modern amenities'); ?>
                         </p>
                         <a href="enhanced-features.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>View Features
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_features', 'View Features'); ?>
                         </a>
                     </div>
                 </div>
@@ -489,39 +491,39 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="700">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon marketing">
                             <i class="fas fa-chart-bar"></i>
                         </div>
-                        <h3 class="nav-title">Competitor Analysis</h3>
+                        <h3 class="nav-title"><?php echo __('nav_competitor_analysis', 'Competitor Analysis'); ?></h3>
                         <p class="nav-description">
-                            Market comparison and competitive advantages analysis
+                            <?php echo __('nav_competitor_desc', 'Market comparison and competitive advantages analysis'); ?>
                         </p>
                         <a href="competitor-analysis.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>View Analysis
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_analysis', 'View Analysis'); ?>
                         </a>
                     </div>
                 </div>
             </div>
 
             <!-- Marketing Pages -->
-            <h2 class="category-title" data-aos="fade-up">📊 Marketing & Admin</h2>
+            <h2 class="category-title" data-aos="fade-up">📊 <?php echo __('nav_marketing_admin', 'Marketing & Admin'); ?></h2>
             <div class="row mb-5">
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon marketing">
                             <i class="fab fa-google"></i>
                         </div>
-                        <h3 class="nav-title">Google Business Profile</h3>
+                        <h3 class="nav-title"><?php echo __('nav_google_business', 'Google Business Profile'); ?></h3>
                         <p class="nav-description">
-                            Complete setup guide for Google Business Profile optimization
+                            <?php echo __('nav_google_desc', 'Complete setup guide for Google Business Profile optimization'); ?>
                         </p>
                         <a href="google-business-profile.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>Setup Guide
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_setup_guide', 'Setup Guide'); ?>
                         </a>
                     </div>
                 </div>
@@ -529,17 +531,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon marketing">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <h3 class="nav-title">Marketing Dashboard</h3>
+                        <h3 class="nav-title"><?php echo __('nav_marketing_dashboard', 'Marketing Dashboard'); ?></h3>
                         <p class="nav-description">
-                            Track your marketing performance and online presence
+                            <?php echo __('nav_marketing_desc', 'Track your marketing performance and online presence'); ?>
                         </p>
                         <a href="marketing-dashboard.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>View Dashboard
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_dashboard', 'View Dashboard'); ?>
                         </a>
                     </div>
                 </div>
@@ -547,17 +549,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon marketing">
                             <i class="fas fa-tasks"></i>
                         </div>
-                        <h3 class="nav-title">Implementation Status</h3>
+                        <h3 class="nav-title"><?php echo __('nav_implementation_status', 'Implementation Status'); ?></h3>
                         <p class="nav-description">
-                            Track complete implementation status and next steps
+                            <?php echo __('nav_implementation_desc', 'Track complete implementation status and next steps'); ?>
                         </p>
                         <a href="online-presence-status.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>View Status
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_status', 'View Status'); ?>
                         </a>
                     </div>
                 </div>
@@ -565,17 +567,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon admin">
                             <i class="fas fa-cog"></i>
                         </div>
-                        <h3 class="nav-title">Admin Panel</h3>
+                        <h3 class="nav-title"><?php echo __('nav_admin_panel', 'Admin Panel'); ?></h3>
                         <p class="nav-description">
-                            Access admin dashboard for content management
+                            <?php echo __('nav_admin_desc', 'Access admin dashboard for content management'); ?>
                         </p>
                         <a href="admin/" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>Admin Login
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_admin_login', 'Admin Login'); ?>
                         </a>
                     </div>
                 </div>
@@ -583,17 +585,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon admin">
                             <i class="fas fa-sitemap"></i>
                         </div>
-                        <h3 class="nav-title">Sitemap</h3>
+                        <h3 class="nav-title"><?php echo __('nav_sitemap', 'Sitemap'); ?></h3>
                         <p class="nav-description">
-                            XML sitemap for search engine optimization
+                            <?php echo __('nav_sitemap_desc', 'XML sitemap for search engine optimization'); ?>
                         </p>
                         <a href="sitemap.xml.php" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>View Sitemap
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_sitemap', 'View Sitemap'); ?>
                         </a>
                     </div>
                 </div>
@@ -601,17 +603,17 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                 <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="600">
                     <div class="nav-card">
                         <div class="nav-status complete">
-                            <i class="fas fa-check me-1"></i>Complete
+                            <i class="fas fa-check me-1"></i><?php echo __('nav_complete', 'Complete'); ?>
                         </div>
                         <div class="nav-icon admin">
                             <i class="fas fa-robot"></i>
                         </div>
-                        <h3 class="nav-title">Robots.txt</h3>
+                        <h3 class="nav-title"><?php echo __('nav_robots', 'Robots.txt'); ?></h3>
                         <p class="nav-description">
-                            Search engine crawling instructions
+                            <?php echo __('nav_robots_desc', 'Search engine crawling instructions'); ?>
                         </p>
                         <a href="robots.txt" class="nav-link">
-                            <i class="fas fa-arrow-right me-2"></i>View Robots
+                            <i class="fas fa-arrow-right me-2"></i><?php echo __('nav_view_robots', 'View Robots'); ?>
                         </a>
                     </div>
                 </div>
@@ -619,16 +621,16 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
 
             <!-- User Section -->
             <div class="text-center mt-5" data-aos="fade-up">
-                <h2 style="margin-bottom: 30px;">👤 User Section</h2>
+                <h2 style="margin-bottom: 30px;">👤 <?php echo __('nav_user_section', 'User Section'); ?></h2>
                 <div class="d-flex justify-content-center flex-wrap">
                     <a href="<?= BASE_URL ?>/login" class="action-btn">
-                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                        <i class="fas fa-sign-in-alt me-2"></i><?php echo __('nav_login', 'Login'); ?>
                     </a>
                     <a href="<?= BASE_URL ?>/register" class="action-btn secondary">
-                        <i class="fas fa-user-plus me-2"></i>Register
+                        <i class="fas fa-user-plus me-2"></i><?php echo __('nav_register', 'Register'); ?>
                     </a>
                     <a href="<?= BASE_URL ?>/dashboard" class="action-btn secondary">
-                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        <i class="fas fa-tachometer-alt me-2"></i><?php echo __('nav_dashboard', 'Dashboard'); ?>
                     </a>
                 </div>
             </div>
@@ -684,21 +686,3 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
 </body>
 
 </html>
-
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 670 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//

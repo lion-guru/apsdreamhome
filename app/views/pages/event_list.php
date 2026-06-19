@@ -1,5 +1,5 @@
 <div class="container mt-4">
-    <h1 class="mb-4"><?php echo $page_title ?? 'Upcoming Events'; ?></h1>
+    <h1 class="mb-4"><?php echo $page_title ?? __('events_title'); ?></h1>
     <?php if (!empty($events)): ?>
         <div class="row">
             <?php foreach ($events as $event): ?>
@@ -12,13 +12,13 @@
                                 <i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($event['location'] ?? ''); ?>
                             </p>
                             <p class="card-text"><?php echo htmlspecialchars(substr($event['description'] ?? '', 0, 150)); ?></p>
-                            <a href="<?php echo BASE_URL; ?>/event-calendar/<?php echo $event['id']; ?>" class="btn btn-outline-primary">View Details</a>
+                            <a href="<?php echo BASE_URL; ?>/event-calendar/<?php echo $event['id']; ?>" class="btn btn-outline-primary"><?= __('featured_view_details') ?></a>
                         </div>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
     <?php else: ?>
-        <div class="alert alert-info">No upcoming events at this time.</div>
+        <div class="alert alert-info"><?= __('events_empty') ?></div>
     <?php endif; ?>
 </div>

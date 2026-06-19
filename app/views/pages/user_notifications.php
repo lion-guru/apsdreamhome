@@ -1,11 +1,11 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0"><i class="fas fa-bell text-primary me-2"></i>Notifications</h4>
+        <h4 class="mb-0"><i class="fas fa-bell text-primary me-2"></i><?php echo __('notifications_heading', [], 'Notifications'); ?></h4>
         <div>
-            <span class="badge bg-secondary me-2" id="notifCountBadge"><?php echo $unread_count ?? 0; ?> unread</span>
+            <span class="badge bg-secondary me-2" id="notifCountBadge"><?php echo $unread_count ?? 0; ?> <?php echo __('notifications_unread', [], 'unread'); ?></span>
             <?php if (($unread_count ?? 0) > 0): ?>
                 <button class="btn btn-sm btn-outline-primary" onclick="markAllRead()">
-                    <i class="fas fa-check-double me-1"></i>Mark All Read
+                    <i class="fas fa-check-double me-1"></i><?php echo __('notifications_mark_all_read', [], 'Mark All Read'); ?>
                 </button>
             <?php endif; ?>
         </div>
@@ -14,7 +14,7 @@
     <?php if (empty($notifications)): ?>
         <div class="text-center py-5 text-muted">
             <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
-            <p>No notifications yet. We'll notify you when something important happens!</p>
+            <p><?php echo __('notifications_empty', [], 'No notifications yet. We\'ll notify you when something important happens!'); ?></p>
         </div>
     <?php else: ?>
         <div class="list-group" id="notifList">
@@ -37,11 +37,11 @@
                     </div>
                     <p class="mb-1 text-muted small"><?php echo htmlspecialchars($n['message'] ?? ''); ?></p>
                     <?php if (!empty($n['action_url'])): ?>
-                        <a href="<?php echo htmlspecialchars($n['action_url']); ?>" class="btn btn-sm btn-link ps-0">View Details &raquo;</a>
+                        <a href="<?php echo htmlspecialchars($n['action_url']); ?>" class="btn btn-sm btn-link ps-0"><?php echo __('notifications_view_details', [], 'View Details'); ?> &raquo;</a>
                     <?php endif; ?>
                 </div>
                 <?php if ($isUnread): ?>
-                    <button class="btn btn-sm btn-light mark-read-btn" onclick="markRead(this)" title="Mark as read"><i class="fas fa-check text-success"></i></button>
+                    <button class="btn btn-sm btn-light mark-read-btn" onclick="markRead(this)" title="<?php echo __('notifications_mark_as_read', [], 'Mark as read'); ?>"><i class="fas fa-check text-success"></i></button>
                 <?php endif; ?>
             </div>
             <?php endforeach; ?>

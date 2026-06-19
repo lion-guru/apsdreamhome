@@ -1,8 +1,10 @@
+<?php require_once __DIR__ . '/../../../Helpers/TranslationHelper.php'; ?>
+
 <!-- Hero Section -->
 <section class="legal-hero text-center" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
     <div class="container">
-        <h1 class="display-4 fw-bold">Legal Services</h1>
-        <p class="lead mb-0">Expert legal guidance for all your property transactions</p>
+        <h1 class="display-4 fw-bold"><?php echo __('legal_services_heading', [], 'Legal Services'); ?></h1>
+        <p class="lead mb-0"><?php echo __('legal_services_subtitle', [], 'Expert legal guidance for all your property transactions'); ?></p>
     </div>
 </section>
 
@@ -20,30 +22,28 @@
                         <?php endif; ?>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Legal Services</li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?php echo __('home', [], 'Home'); ?></a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><?php echo __('legal_services', [], 'Legal Services'); ?></li>
                 <?php endif; ?>
             </ol>
         </nav>
     </div>
 </div>
 
-<!-- Legal Services Content -->
-
 <!-- Intro Section -->
 <section class="section py-5">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <h2 class="section-title mb-3">Professional Legal Assistance for Real Estate</h2>
-                <p class="lead text-muted mb-4">Secure your property transactions with our expert legal verification and documentation services.</p>
-                <p>At APS Dream Homes, we understand that buying a property is one of the biggest financial decisions you'll make. Our dedicated legal team ensures that your investment is safe, secure, and legally sound. From title verification to registration, we handle all legal aspects so you can have peace of mind.</p>
+                <h2 class="section-title mb-3"><?php echo __('legal_assistance_title', [], 'Professional Legal Assistance for Real Estate'); ?></h2>
+                <p class="lead text-muted mb-4"><?php echo __('legal_assistance_subtitle', [], 'Secure your property transactions with our expert legal verification and documentation services.'); ?></p>
+                <p><?php echo __('legal_assistance_desc', [], 'At APS Dream Homes, we understand that buying a property is one of the biggest financial decisions you\'ll make. Our dedicated legal team ensures that your investment is safe, secure, and legally sound. From title verification to registration, we handle all legal aspects so you can have peace of mind.'); ?></p>
                 <div class="mt-4">
-                    <a href="#consultation" class="btn btn-primary btn-lg">Get Free Consultation</a>
+                    <a href="#consultation" class="btn btn-primary btn-lg"><?php echo __('free_consultation', [], 'Get Free Consultation'); ?></a>
                 </div>
             </div>
             <div class="col-lg-6">
-                <img src="<?= BASE_URL ?>/assets/images/legal-services.jpg" alt="Legal Services" class="img-fluid rounded shadow-lg">
+                <img src="<?= BASE_URL ?>/assets/images/legal-services.jpg" alt="<?php echo __('legal_services', [], 'Legal Services'); ?>" class="img-fluid rounded shadow-lg">
             </div>
         </div>
     </div>
@@ -53,10 +53,9 @@
 <section class="section bg-light py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="section-title">Our Legal Services</h2>
-            <p class="text-muted">Comprehensive legal solutions for all your property needs</p>
+            <h2 class="section-title"><?php echo __('our_legal_services', [], 'Our Legal Services'); ?></h2>
+            <p class="text-muted"><?php echo __('legal_services_desc', [], 'Comprehensive legal solutions for all your property needs'); ?></p>
         </div>
-
         <div class="row">
             <?php if (!empty($services)): ?>
                 <?php foreach ($services as $service): ?>
@@ -74,7 +73,7 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12 text-center">
-                    <p>No services currently listed.</p>
+                    <p><?php echo __('no_services', [], 'No services currently listed.'); ?></p>
                 </div>
             <?php endif; ?>
         </div>
@@ -86,16 +85,11 @@
     <section class="section py-5">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="section-title">Meet Our Legal Experts</h2>
-                <p class="text-muted">Experienced lawyers and legal advisors at your service</p>
+                <h2 class="section-title"><?php echo __('meet_legal_experts', [], 'Meet Our Legal Experts'); ?></h2>
+                <p class="text-muted"><?php echo __('legal_experts_subtitle', [], 'Experienced lawyers and legal advisors at your service'); ?></p>
             </div>
-
             <div class="row justify-content-center">
                 <?php foreach ($lawyers as $lawyer): ?>
-                    <?php
-                    $lawyerImage = !empty($lawyer['image']) ? 'uploads/team/' . $lawyer['image'] : '';
-                    $lawyerImageUrl = !empty($lawyerImage) ? get_asset_url($lawyerImage) : 'https://via.placeholder.com/300x300/667eea/ffffff?text=' . substr($lawyer['name'], 0, 2);
-                    ?>
                     <div class="col-md-6 col-lg-3 mb-4">
                         <div class="card h-100 border-0 shadow-sm team-card">
                             <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= htmlspecialchars($lawyer['name']) ?>"
@@ -118,10 +112,9 @@
     <section class="section bg-light py-5">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="section-title">Frequently Asked Questions</h2>
-                <p class="text-muted">Common queries about property laws and documentation</p>
+                <h2 class="section-title"><?php echo __('legal_faq', [], 'Frequently Asked Questions'); ?></h2>
+                <p class="text-muted"><?php echo __('legal_faq_subtitle', [], 'Common queries about property laws and documentation'); ?></p>
             </div>
-
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="accordion" id="legalFaq">
@@ -137,7 +130,6 @@
                                         </button>
                                     </h5>
                                 </div>
-
                                 <div id="collapse<?= $index ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= $index ?>" data-bs-parent="#legalFaq">
                                     <div class="card-body text-muted">
                                         <?= nl2br(htmlspecialchars($faq['answer'])) ?>
@@ -155,10 +147,8 @@
 <!-- CTA Section -->
 <section class="section py-5 bg-primary text-white text-center" id="consultation">
     <div class="container">
-        <h2 class="mb-4">Need Legal Advice?</h2>
-        <p class="lead mb-4">Book a consultation with our legal experts today.</p>
-        <a href="<?= BASE_URL ?>/contact" class="btn btn-light btn-lg">Contact Us Now</a>
+        <h2 class="mb-4"><?php echo __('need_legal_advice', [], 'Need Legal Advice?'); ?></h2>
+        <p class="lead mb-4"><?php echo __('book_consultation', [], 'Book a consultation with our legal experts today.'); ?></p>
+        <a href="<?= BASE_URL ?>/contact" class="btn btn-light btn-lg"><?php echo __('contact_us_now', [], 'Contact Us Now'); ?></a>
     </div>
 </section>
-
-<!-- End Legal Services Content -->

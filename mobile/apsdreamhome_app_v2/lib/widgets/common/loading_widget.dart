@@ -59,7 +59,7 @@ class FullScreenLoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: backgroundColor ?? Colors.white.withOpacity(0.8),
+      color: backgroundColor ?? Colors.white.withValues(alpha: 0.8),
       child: LoadingWidget(message: message),
     );
   }

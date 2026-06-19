@@ -4,14 +4,14 @@
  * AI Chat Page
  * Redirects to AI Assistant
  */
-$page_title = 'AI Assistant - APS Dream Home';
-$page_description = 'Professional AI Chat Assistant for Real Estate & Development';
+$page_title = __('user_ai_chat_title', 'AI Assistant - APS Dream Home');
+$page_description = __('user_ai_chat_description', 'Professional AI Chat Assistant for Real Estate & Development');
 ?>
 
 <section class="py-5 bg-primary text-white">
     <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-robot me-2"></i>AI Assistant</h1>
-        <p class="lead">Professional AI Chat for Real Estate & Development</p>
+        <h1 class="display-4 fw-bold mb-3"><i class="fas fa-robot me-2"></i><?= __('user_ai_chat_heading', 'AI Assistant') ?></h1>
+        <p class="lead"><?= __('user_ai_chat_subtitle', 'Professional AI Chat for Real Estate & Development') ?></p>
     </div>
 </section>
 
@@ -21,30 +21,30 @@ $page_description = 'Professional AI Chat Assistant for Real Estate & Developmen
             <div class="col-lg-8 mx-auto">
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0"><i class="fas fa-comments me-2"></i>AI Chat Assistant</h4>
+                        <h4 class="mb-0"><i class="fas fa-comments me-2"></i><?= __('user_ai_chat_header', 'AI Chat Assistant') ?></h4>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div id="chat-container" style="height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
                             <div class="text-center text-muted">
                                 <i class="fas fa-robot fa-3x mb-3"></i>
-                                <p>Welcome to APS Dream Home AI Assistant!</p>
-                                <p class="small">How can I help you today?</p>
+                                <p><?= __('user_ai_chat_welcome', 'Welcome to APS Dream Home AI Assistant!') ?></p>
+                                <p class="small"><?= __('user_ai_chat_welcome_sub', 'How can I help you today?') ?></p>
                             </div>
                         </div>
                         
                         <div class="input-group">
-                            <input type="text" id="chat-input" class="form-control" placeholder="Type your message...">
+                            <input type="text" id="chat-input" class="form-control" placeholder="<?= __('user_ai_chat_placeholder', 'Type your message...') ?>">
                             <button class="btn btn-primary" onclick="sendMessage()">
-                                <i class="fas fa-paper-plane"></i> Send
+                                <i class="fas fa-paper-plane"></i> <?= __('user_ai_chat_send', 'Send') ?>
                             </button>
                         </div>
                         
                         <div class="mt-3">
-                            <p class="text-muted small mb-2">Quick Questions:</p>
+                            <p class="text-muted small mb-2"><?= __('user_ai_chat_quick_questions', 'Quick Questions:') ?></p>
                             <div class="d-flex flex-wrap gap-2">
-                                <button class="btn btn-outline-primary btn-sm" onclick="askQuestion('What properties are available in Gorakhpur?')">Properties in Gorakhpur</button>
-                                <button class="btn btn-outline-primary btn-sm" onclick="askQuestion('What is the price range for residential plots?')">Price Range</button>
-                                <button class="btn btn-outline-primary btn-sm" onclick="askQuestion('Do you provide home loan assistance?')">Home Loan</button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="askQuestion('What properties are available in Gorakhpur?')"><?= __('user_ai_chat_q1', 'Properties in Gorakhpur') ?></button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="askQuestion('What is the price range for residential plots?')"><?= __('user_ai_chat_q2', 'Price Range') ?></button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="askQuestion('Do you provide home loan assistance?')"><?= __('user_ai_chat_q3', 'Home Loan') ?></button>
                             </div>
                         </div>
                     </div>
@@ -67,7 +67,7 @@ function sendMessage() {
     
     // Simulate AI response
     setTimeout(() => {
-        addMessage("Thank you for your inquiry! Our team will get back to you shortly. For immediate assistance, please call <?= $phoneDisplay ?>.", 'ai');
+        addMessage("<?= __('user_ai_chat_auto_reply', 'Thank you for your inquiry! Our team will get back to you shortly. For immediate assistance, please call') ?> <?= $phoneDisplay ?>.", 'ai');
     }, 1000);
 }
 

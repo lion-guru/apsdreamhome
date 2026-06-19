@@ -42,7 +42,11 @@ class KycController extends AdminController
             'page_title' => 'KYC Requests',
             'requests' => $requests,
             'stats' => $stats,
-            'currentFilter' => $statusFilter
+            'currentFilter' => $statusFilter,
+            'nsdlConfigured' => !empty($_ENV['NSDL_API_KEY']),
+            'nsdlTestMode' => ($_ENV['NSDL_TEST_MODE'] ?? 'true') === 'true',
+            'uidaiConfigured' => !empty($_ENV['UIDAI_API_KEY']),
+            'uidaiTestMode' => ($_ENV['UIDAI_TEST_MODE'] ?? 'true') === 'true',
         ]);
     }
 
@@ -84,6 +88,15 @@ class KycController extends AdminController
             ");
             $stmt->execute([$adminId, (int)$id]);
             if ($stmt->rowCount() > 0) {
+                // Sync users.kyc_status
+                try {
+                    $row0 = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
+                    if (!empty($row0['user_id'])) {
+                        $this->db->execute("UPDATE users SET kyc_status = 'verified' WHERE id = ?", [(int)$row0['user_id']]);
+                    }
+                } catch (\Throwable $e) {
+                    error_log("[KycController] kyc_status sync failed: " . $e->getMessage());
+                }
                 $this->setFlash('success', 'KYC approved successfully');
                 // Send approval email
                 try {
@@ -138,6 +151,15 @@ class KycController extends AdminController
             ");
             $stmt->execute([$adminId, $reason, (int)$id]);
             if ($stmt->rowCount() > 0) {
+                // Sync users.kyc_status
+                try {
+                    $row0 = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
+                    if (!empty($row0['user_id'])) {
+                        $this->db->execute("UPDATE users SET kyc_status = 'rejected' WHERE id = ?", [(int)$row0['user_id']]);
+                    }
+                } catch (\Throwable $e) {
+                    error_log("[KycController] kyc_status sync failed: " . $e->getMessage());
+                }
                 $this->setFlash('success', 'KYC rejected');
                 // Send rejection email
                 try {

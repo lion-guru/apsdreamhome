@@ -19,8 +19,8 @@
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/plots">Plots</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('colony_breadcrumb_home') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/plots"><?= __('colony_breadcrumb_plots') ?></a></li>
             <li class="breadcrumb-item active"><?= htmlspecialchars($colony['name'] ?? '') ?></li>
         </ol>
     </nav>
@@ -37,10 +37,10 @@
         </div>
         <div class="col-md-4 text-md-end">
             <a href="<?= $colony['map_link'] ?? '#' ?>" target="_blank" class="btn btn-outline-primary me-2">
-                <i class="fas fa-map"></i> View on Map
+                <i class="fas fa-map"></i> <?= __('colony_view_on_map') ?>
             </a>
             <a href="<?= BASE_URL ?>/contact" class="btn btn-primary">
-                <i class="fas fa-phone"></i> Enquire Now
+                <i class="fas fa-phone"></i> <?= __('colony_enquire_now') ?>
             </a>
         </div>
     </div>
@@ -50,37 +50,37 @@
         <div class="col-4 col-md-2">
             <div class="stat-card bg-primary text-white">
                 <h3><?= intval($stats['total'] ?? 0) ?></h3>
-                <p>Total Plots</p>
+                <p><?= __('colony_total_plots') ?></p>
             </div>
         </div>
         <div class="col-4 col-md-2">
             <div class="stat-card bg-success text-white">
                 <h3><?= intval($stats['available'] ?? 0) ?></h3>
-                <p>Available</p>
+                <p><?= __('colony_plots_available') ?></p>
             </div>
         </div>
         <div class="col-4 col-md-2">
             <div class="stat-card bg-warning text-white">
                 <h3><?= intval($stats['booked'] ?? 0) ?></h3>
-                <p>Booked</p>
+                <p><?= __('colony_plots_booked') ?></p>
             </div>
         </div>
         <div class="col-4 col-md-2">
             <div class="stat-card bg-danger text-white">
                 <h3><?= intval($stats['sold'] ?? 0) ?></h3>
-                <p>Sold</p>
+                <p><?= __('colony_plots_sold') ?></p>
             </div>
         </div>
         <div class="col-4 col-md-2">
             <div class="stat-card bg-info text-white">
                 <h3>₹<?= number_format(intval($stats['min_price'] ?? 0)) ?></h3>
-                <p>Min Price</p>
+                <p><?= __('colony_plots_min_price') ?></p>
             </div>
         </div>
         <div class="col-4 col-md-2">
             <div class="stat-card bg-secondary text-white">
                 <h3>₹<?= number_format(intval($stats['max_price'] ?? 0)) ?></h3>
-                <p>Max Price</p>
+                <p><?= __('colony_plots_max_price') ?></p>
             </div>
         </div>
     </div>
@@ -90,14 +90,14 @@
         <form method="GET" class="row g-3 align-items-end" id="filterForm">
             <!-- Search -->
             <div class="col-md-4">
-                <label class="form-label"><i class="fas fa-search"></i> Search Plot</label>
-                <input type="text" name="q" class="form-control" placeholder="Plot number, area, or features..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+                <label class="form-label"><i class="fas fa-search"></i> <?= __('colony_search_plot') ?></label>
+                <input type="text" name="q" class="form-control" placeholder="<?= __('colony_search_plot_placeholder') ?>" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
             </div>
             <!-- Dimension Filter -->
             <div class="col-12">
-                <label class="fw-semibold mb-2">Plot Size (width x length)</label>
+                <label class="fw-semibold mb-2"><?= __('colony_plot_size_label') ?></label>
                 <div class="d-flex flex-wrap gap-2">
-                    <button type="button" class="dimension-btn <?= empty($current_dimension) ? 'active' : '' ?>" onclick="setFilter('dimension', '')">All Sizes</button>
+                    <button type="button" class="dimension-btn <?= empty($current_dimension) ? 'active' : '' ?>" onclick="setFilter('dimension', '')"><?= __('colony_all_sizes') ?></button>
                     <?php foreach ($dimensions as $d): ?>
                         <?php $dim = $d['dimension_label'] ?? ''; ?>
                         <?php if ($dim): ?>
@@ -111,13 +111,13 @@
 
             <!-- Block Filter -->
             <div class="col-md-3">
-                <label class="form-label">Block</label>
+                <label class="form-label"><?= __('colony_block_label') ?></label>
                 <select name="block" class="form-select" onchange="this.form.submit()">
-                    <option value="">All Blocks</option>
+                    <option value=""><?= __('colony_all_blocks') ?></option>
                     <?php foreach ($blocks as $b): ?>
                         <?php $blk = $b['block'] ?? ''; ?>
                         <option value="<?= htmlspecialchars($blk) ?>" <?= $current_block === $blk ? 'selected' : '' ?>>
-                            Block <?= htmlspecialchars($blk) ?>
+                            <?= sprintf(__('colony_block_prefix'), htmlspecialchars($blk)) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -125,18 +125,18 @@
 
             <!-- Status Filter -->
             <div class="col-md-2">
-                <label class="form-label">Status</label>
+                <label class="form-label"><?= __('colony_status_label') ?></label>
                 <select name="status" class="form-select" onchange="this.form.submit()">
-                    <option value="available" <?= $current_status === 'available' ? 'selected' : '' ?>>Available</option>
-                    <option value="booked" <?= $current_status === 'booked' ? 'selected' : '' ?>>Booked</option>
-                    <option value="sold" <?= $current_status === 'sold' ? 'selected' : '' ?>>Sold</option>
-                    <option value="hold" <?= $current_status === 'hold' ? 'selected' : '' ?>>Hold</option>
+                    <option value="available" <?= $current_status === 'available' ? 'selected' : '' ?>><?= __('colony_status_available') ?></option>
+                    <option value="booked" <?= $current_status === 'booked' ? 'selected' : '' ?>><?= __('colony_status_booked') ?></option>
+                    <option value="sold" <?= $current_status === 'sold' ? 'selected' : '' ?>><?= __('colony_status_sold') ?></option>
+                    <option value="hold" <?= $current_status === 'hold' ? 'selected' : '' ?>><?= __('colony_status_hold') ?></option>
                 </select>
             </div>
 
             <!-- Price Range -->
             <div class="col-md-3">
-                <label class="form-label">Price Range</label>
+                <label class="form-label"><?= __('colony_price_range') ?></label>
                 <div class="input-group">
                     <input type="number" name="min_price" class="form-control" placeholder="Min ₹" value="<?= $current_min_price > 0 ? $current_min_price : '' ?>">
                     <input type="number" name="max_price" class="form-control" placeholder="Max ₹" value="<?= $current_max_price > 0 ? $current_max_price : '' ?>">
@@ -145,18 +145,18 @@
 
             <!-- Sort -->
             <div class="col-md-2">
-                <label class="form-label">Sort By</label>
+                <label class="form-label"><?= __('colony_sort_by') ?></label>
                 <select name="sort" class="form-select" onchange="this.form.submit()">
-                    <option value="plot_number" <?= $current_sort === 'plot_number' ? 'selected' : '' ?>>Plot No.</option>
-                    <option value="price_asc" <?= $current_sort === 'price_asc' ? 'selected' : '' ?>>Price: Low</option>
-                    <option value="price_desc" <?= $current_sort === 'price_desc' ? 'selected' : '' ?>>Price: High</option>
-                    <option value="area_asc" <?= $current_sort === 'area_asc' ? 'selected' : '' ?>>Area: Small</option>
-                    <option value="area_desc" <?= $current_sort === 'area_desc' ? 'selected' : '' ?>>Area: Large</option>
+                    <option value="plot_number" <?= $current_sort === 'plot_number' ? 'selected' : '' ?>><?= __('colony_sort_plot_no') ?></option>
+                    <option value="price_asc" <?= $current_sort === 'price_asc' ? 'selected' : '' ?>><?= __('colony_sort_price_low') ?></option>
+                    <option value="price_desc" <?= $current_sort === 'price_desc' ? 'selected' : '' ?>><?= __('colony_sort_price_high') ?></option>
+                    <option value="area_asc" <?= $current_sort === 'area_asc' ? 'selected' : '' ?>><?= __('colony_sort_area_small') ?></option>
+                    <option value="area_desc" <?= $current_sort === 'area_desc' ? 'selected' : '' ?>><?= __('colony_sort_area_large') ?></option>
                 </select>
             </div>
 
             <div class="col-md-2">
-                <a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($colony['slug'] ?? '') ?>/plots" class="btn btn-outline-secondary w-100">Reset Filters</a>
+                <a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($colony['slug'] ?? '') ?>/plots" class="btn btn-outline-secondary w-100"><?= __('colony_reset_filters') ?></a>
             </div>
         </form>
     </div>
@@ -165,8 +165,8 @@
     <?php if (empty($plots)): ?>
         <div class="text-center py-5">
             <i class="fas fa-search fa-3x text-muted mb-3"></i>
-            <h4>No Plots Found</h4>
-            <p class="text-muted">Try adjusting your filters or check back later for new listings.</p>
+            <h4><?= __('colony_no_plots_found') ?></h4>
+            <p class="text-muted"><?= __('colony_no_plots_hint') ?></p>
         </div>
     <?php else: ?>
         <div class="row g-3">
@@ -181,11 +181,11 @@
                         default => 'secondary'
                     };
                     $statusLabel = match($plot['status'] ?? 'available') {
-                        'available' => 'Available',
-                        'booked' => 'Booked',
-                        'sold' => 'Sold',
-                        'hold' => 'On Hold',
-                        'reserved' => 'Reserved',
+                        'available' => __('colony_status_available'),
+                        'booked' => __('colony_status_booked'),
+                        'sold' => __('colony_status_sold'),
+                        'hold' => __('colony_status_on_hold'),
+                        'reserved' => __('colony_status_reserved'),
                         default => ucfirst($plot['status'] ?? 'available')
                     };
                 ?>
@@ -197,7 +197,7 @@
                                 <div>
                                     <span class="plot-number"><?= htmlspecialchars($plot['plot_number'] ?? '') ?></span>
                                     <?php if (!empty($plot['block'])): ?>
-                                        <span class="badge bg-light text-dark ms-1">Block <?= htmlspecialchars($plot['block']) ?></span>
+                                        <span class="badge bg-light text-dark ms-1"><?= sprintf(__('colony_block_prefix'), htmlspecialchars($plot['block'])) ?></span>
                                     <?php endif; ?>
                                 </div>
                                 <span class="plot-price">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></span>
@@ -217,17 +217,17 @@
                                 </div>
                                 <div class="col-6 plot-detail">
                                     <?php if ($plot['corner_plot'] ?? false): ?>
-                                        <span class="amenity-tag">Corner</span>
+                                        <span class="amenity-tag"><?= __('colony_corner_plot') ?></span>
                                     <?php endif; ?>
                                     <?php if ($plot['park_facing'] ?? false): ?>
-                                        <span class="amenity-tag">Park Facing</span>
+                                        <span class="amenity-tag"><?= __('colony_park_facing') ?></span>
                                     <?php endif; ?>
                                 </div>
                             </div>
                             <div class="d-flex gap-1">
                                 <?php if (($plot['status'] ?? '') === 'available'): ?>
                                     <a href="<?= BASE_URL ?>/plot/<?= $plot['id'] ?>" class="btn btn-sm btn-outline-primary flex-grow-1">
-                                        <i class="fas fa-info-circle"></i> View
+                                        <i class="fas fa-info-circle"></i> <?= __('colony_view_plot') ?>
                                     </a>
                                     <button class="btn btn-sm btn-compare" data-id="<?= $plot['id'] ?>" onclick="addToCompare(<?= $plot['id'] ?>)" title="Compare">
                                         <i class="fas fa-balance-scale"></i>
@@ -237,7 +237,7 @@
                                     </button>
                                 <?php else: ?>
                                     <button class="btn btn-sm btn-outline-secondary w-100" disabled>
-                                        <i class="fas fa-lock"></i> Not Available
+                                        <i class="fas fa-lock"></i> <?= __('colony_not_available') ?>
                                     </button>
                                 <?php endif; ?>
                             </div>
@@ -252,10 +252,10 @@
 <!-- Floating Compare Bar -->
 <div id="compare-bar" class="compare-bar" style="display:none;">
     <div class="compare-bar-inner">
-        <span class="compare-bar-count"><i class="fas fa-balance-scale me-1"></i> <span id="compare-count">0</span> plots selected</span>
+        <span class="compare-bar-count"><i class="fas fa-balance-scale me-1"></i> <span id="compare-count">0</span> <?= __('colony_plots_selected') ?></span>
         <div class="compare-bar-actions">
-            <a href="<?= BASE_URL ?>/compare" class="btn btn-sm btn-primary rounded-3 px-3 fw-semibold">Compare Now</a>
-            <button onclick="clearCompare()" class="btn btn-sm btn-outline-light rounded-3 px-3">Clear</button>
+            <a href="<?= BASE_URL ?>/compare" class="btn btn-sm btn-primary rounded-3 px-3 fw-semibold"><?= __('colony_compare_now') ?></a>
+            <button onclick="clearCompare()" class="btn btn-sm btn-outline-light rounded-3 px-3"><?= __('colony_clear') ?></button>
         </div>
     </div>
 </div>

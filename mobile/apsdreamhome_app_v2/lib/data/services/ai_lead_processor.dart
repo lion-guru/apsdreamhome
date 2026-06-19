@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:http/http.dart' as http;
 
+import '../../core/services/api_service.dart';
 import '../../core/utils/logger.dart';
 import '../../data/models/lead_model.dart';
 
@@ -12,8 +12,11 @@ import '../../data/models/lead_model.dart';
 /// Extracts lead data from photos, documents, contacts
 /// Validates and creates leads automatically
 class AILeadProcessor {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // final TextRecognizer _textRecognizer = TextRecognizer();
+
+  final ApiService _api;
+
+  AILeadProcessor({ApiService? api}) : _api = api ?? ApiService();
 
   // AI/ML API Endpoints
   static const String _geminiApiKey = 'YOUR_GEMINI_API_KEY';
@@ -23,36 +26,28 @@ class AILeadProcessor {
   // ==================== PHOTO TO LEAD ====================
 
   /// Process Photo and Extract Lead Information
-  /// Handles: Visiting cards, handwritten notes, contact lists, documents
   Future<ProcessedLeadResult> processPhoto({
     required File imageFile,
-    required String
-        sourceType, // 'visiting_card', 'handwritten', 'document', 'contact_list'
-    String? uploadedBy, // User ID who uploaded
+    required String sourceType,
+    String? uploadedBy,
     String? notes,
   }) async {
     try {
       AppLogger.info('Processing photo for lead extraction: ${imageFile.path}');
 
-      // Step 1: Extract text from image using ML Kit
       final extractedText = await _extractTextFromImage(imageFile);
       AppLogger.info('Extracted text: $extractedText');
 
-      // Step 2: AI processing to extract structured data
       final structuredData = await _aiExtractLeadData(
         rawText: extractedText,
         sourceType: sourceType,
       );
 
-      // Step 3: Validate the extracted data
       final validation = _validateLeadData(structuredData);
-
-      // Step 4: Check if it's a genuine lead
       final genuinenessScore = await _calculateGenuinenessScore(structuredData);
 
-      // Step 5: Create lead object
       final lead = LeadModel(
-        id: '', // Will be set by Firestore
+        id: '',
         name: (structuredData['name'] as String?) ?? 'Unknown',
         phone: (structuredData['phone'] as String?) ?? '',
         email: structuredData['email'] as String?,
@@ -76,7 +71,6 @@ class AILeadProcessor {
         updatedAt: DateTime.now(),
       );
 
-      // Step 6: Save to Firestore if genuine enough
       String? leadId;
       if (genuinenessScore > 50) {
         leadId = await _saveLead(lead, imageFile);
@@ -103,10 +97,6 @@ class AILeadProcessor {
   /// Extract Text from Image using ML Kit OCR
   Future<String> _extractTextFromImage(File imageFile) async {
     try {
-      // final inputImage = InputImage.fromFile(imageFile);
-      // final recognizedText = await _textRecognizer.processImage(inputImage);
-      // return recognizedText.text;
-
       // TODO: Re-enable ML Kit OCR once SDK 36 issues are resolved
       AppLogger.warning(
           'ML Kit OCR is temporarily disabled due to SDK compatibility issues.');
@@ -123,10 +113,8 @@ class AILeadProcessor {
     required String sourceType,
   }) async {
     try {
-      // Prepare prompt for AI
       final prompt = _buildExtractionPrompt(rawText, sourceType);
 
-      // Call Gemini API
       final response = await http.post(
         Uri.parse('$_geminiEndpoint?key=$_geminiApiKey'),
         headers: {'Content-Type': 'application/json'},
@@ -150,14 +138,12 @@ class AILeadProcessor {
         final generatedText =
             result['candidates'][0]['content']['parts'][0]['text'] as String;
 
-        // Parse JSON from AI response
         final jsonMatch = RegExp(r'\{[\s\S]*\}').firstMatch(generatedText);
         if (jsonMatch != null) {
           return jsonDecode(jsonMatch.group(0)!) as Map<String, dynamic>;
         }
       }
 
-      // Fallback: Extract manually if AI fails
       return _manualExtractData(rawText);
     } catch (e) {
       AppLogger.error('Error in AI extraction', e);
@@ -195,7 +181,6 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
   Map<String, dynamic> _manualExtractData(String rawText) {
     final data = <String, dynamic>{};
 
-    // Extract phone numbers
     final phoneRegex = RegExp(r'(\+91[-\s]?)?[0]?(91)?[789]\d{9}');
     final phones =
         phoneRegex.allMatches(rawText).map((m) => m.group(0)).toList();
@@ -203,7 +188,6 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
       data['phone'] = phones.first?.replaceAll(RegExp(r'[^0-9]'), '');
     }
 
-    // Extract email
     final emailRegex = RegExp(r'[\w.-]+@[\w.-]+\.\w+');
     final emails =
         emailRegex.allMatches(rawText).map((m) => m.group(0)).toList();
@@ -211,7 +195,6 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
       data['email'] = emails.first;
     }
 
-    // Extract name (first capitalized words)
     final lines = rawText.split('\n');
     for (final line in lines) {
       if (line.trim().isNotEmpty &&
@@ -232,7 +215,7 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
   /// Process Excel/CSV file with lead data
   Future<BulkLeadProcessResult> processBulkLeadsFile({
     required File file,
-    required String fileType, // 'excel', 'csv', 'pdf'
+    required String fileType,
     String? uploadedBy,
     String? campaignName,
   }) async {
@@ -242,7 +225,6 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
       final leads = <LeadModel>[];
       final errors = <String>[];
 
-      // Parse file based on type
       List<Map<String, dynamic>> rawData;
 
       switch (fileType) {
@@ -256,21 +238,17 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
           throw Exception('Unsupported file type: $fileType');
       }
 
-      // Process each row
       for (int i = 0; i < rawData.length; i++) {
         try {
           final row = rawData[i];
 
-          // Validate minimum data
           if (row['phone'] == null || row['phone'].toString().isEmpty) {
             errors.add('Row ${i + 1}: Missing phone number');
             continue;
           }
 
-          // AI validation
           final genuinenessScore = await _calculateGenuinenessScore(row);
 
-          // Check for duplicates
           final isDuplicate =
               await _checkDuplicateLead(row['phone'].toString());
           if (isDuplicate) {
@@ -310,7 +288,6 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
         }
       }
 
-      // Save leads to Firestore
       final savedCount = await _saveBulkLeads(leads);
 
       return BulkLeadProcessResult(
@@ -336,7 +313,6 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
 
     if (lines.isEmpty) return [];
 
-    // Parse header
     final headers = lines[0].split(',').map((h) => h.trim()).toList();
 
     final data = <Map<String, dynamic>>[];
@@ -357,17 +333,14 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
 
   Future<List<Map<String, dynamic>>> _parseExcel(File file) async {
     // Would use excel package here
-    // For now return empty
     return [];
   }
 
   // ==================== AI VALIDATION ====================
 
-  /// Calculate Genuineness Score using AI
   Future<int> _calculateGenuinenessScore(Map<String, dynamic> data) async {
-    int score = 50; // Base score
+    int score = 50;
 
-    // Phone number validation
     final phone = data['phone']?.toString() ?? '';
     if (phone.isNotEmpty) {
       if (RegExp(r'^[789]\d{9}$').hasMatch(phone)) {
@@ -375,28 +348,23 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
       }
     }
 
-    // Name validation
     final name = data['name']?.toString() ?? '';
     if (name.isNotEmpty && name.length > 2) {
       score += 10;
       if (!RegExp(r'\d').hasMatch(name)) {
-        // No numbers in name
         score += 5;
       }
     }
 
-    // Email validation
     final email = data['email']?.toString() ?? '';
     if (email.isNotEmpty && email.contains('@') && email.contains('.')) {
       score += 10;
     }
 
-    // Requirements/budget mentioned
     if (data['requirements'] != null || data['budget'] != null) {
       score += 10;
     }
 
-    // Check against known fake patterns
     if (_isKnownFakePattern(data)) {
       score -= 30;
     }
@@ -408,12 +376,10 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
     final phone = data['phone']?.toString() ?? '';
     final name = data['name']?.toString().toLowerCase() ?? '';
 
-    // Test numbers
     if (phone.contains('000000') || phone.contains('111111')) {
       return true;
     }
 
-    // Fake names
     if (name.contains('test') || name.contains('xyz') || name.contains('abc')) {
       return true;
     }
@@ -421,7 +387,6 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
     return false;
   }
 
-  /// Validate extracted lead data
   ValidationResult _validateLeadData(Map<String, dynamic> data) {
     final errors = <String>[];
 
@@ -441,91 +406,113 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
 
   // ==================== DUPLICATE CHECK ====================
 
-  /// Check if lead with same phone already exists
+  /// Check if lead with same phone already exists via REST API
   Future<bool> _checkDuplicateLead(String phone) async {
-    final normalizedPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    try {
+      final normalizedPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+      final result = await _api.request(
+        method: 'GET',
+        endpoint: 'leads',
+        queryParameters: {'phone': normalizedPhone},
+      );
 
-    final existing = await _firestore
-        .collection('leads')
-        .where('phone', isEqualTo: normalizedPhone)
-        .limit(1)
-        .get();
-
-    return existing.docs.isNotEmpty;
+      final data = result['data'];
+      if (data is List) {
+        return data.isNotEmpty;
+      }
+      return false;
+    } catch (e) {
+      AppLogger.error('Error checking duplicate lead', e);
+      return false;
+    }
   }
 
   // ==================== LEAD ASSIGNMENT ====================
 
-  /// Auto-assign lead to best agent
+  /// Auto-assign lead to best agent via REST API
   Future<String?> autoAssignLead({
     required String leadId,
     required LeadModel lead,
   }) async {
     try {
-      // Find best agent based on:
-      // 1. Current workload (least active leads)
-      // 2. Specialization (location, property type)
-      // 3. Performance (conversion rate)
-      // 4. Availability
+      // Get associates via REST API
+      final agentsResult = await _api.request(
+        method: 'GET',
+        endpoint: 'mlm/genealogy',
+      );
 
-      final agents = await _firestore
-          .collection('users')
-          .where('role', isEqualTo: 'associate')
-          .where('isActive', isEqualTo: true)
-          .get();
+      List<Map<String, dynamic>> agentsList = [];
+      final data = agentsResult['data'];
+      if (data is Map<String, dynamic> && data.containsKey('downline')) {
+        final downline = data['downline'];
+        if (downline is List) {
+          agentsList = downline.map((e) => e as Map<String, dynamic>).toList();
+        }
+      } else if (data is List) {
+        agentsList = data.map((e) => e as Map<String, dynamic>).toList();
+      }
 
-      if (agents.docs.isEmpty) return null;
+      if (agentsList.isEmpty) return null;
 
       // Score each agent
       final scoredAgents = <Map<String, dynamic>>[];
 
-      for (final agent in agents.docs) {
-        final agentData = agent.data();
+      for (final agentData in agentsList) {
+        final agentId = (agentData['id'] ?? agentData['user_id'])?.toString();
+        if (agentId == null) continue;
 
-        // Get agent's current workload
-        final workloadQuery = await _firestore
-            .collection('leads')
-            .where('assignedTo', isEqualTo: agent.id)
-            .where('status', whereIn: ['new', 'contacted', 'follow_up'])
-            .count()
-            .get();
-        final workloadCount = workloadQuery.count ?? 0;
+        // Get agent's lead workload via REST API
+        int workloadCount = 0;
+        try {
+          final leadsResult = await _api.request(
+            method: 'GET',
+            endpoint: 'leads',
+            queryParameters: {'assigned_to': agentId},
+          );
+          final leadsData = leadsResult['data'];
+          if (leadsData is List) {
+            workloadCount = leadsData.length;
+          }
+        } catch (_) {}
 
-        // Get agent's conversion rate
         final totalLeads = (agentData['totalLeads'] as num? ?? 0).toInt();
         final convertedLeads =
             (agentData['convertedLeads'] as num? ?? 0).toInt();
         final conversionRate =
             totalLeads > 0 ? convertedLeads / totalLeads : 0.0;
 
-        // Calculate score (lower workload + higher conversion = better)
         final workloadScore = (100 - workloadCount * 5).toDouble();
         final conversionScore = (conversionRate * 100).toDouble();
 
         final totalScore = (workloadScore * 0.6) + (conversionScore * 0.4);
 
         scoredAgents.add({
-          'id': agent.id,
-          'name': agentData['name'] as String,
+          'id': agentId,
+          'name': agentData['name'] as String? ?? 'Agent',
           'score': totalScore,
         });
       }
 
-      // Sort by score
+      if (scoredAgents.isEmpty) return null;
+
       scoredAgents.sort(
           (a, b) => (b['score'] as double).compareTo(a['score'] as double));
 
-      // Assign to best agent
       final bestAgent = scoredAgents.first;
 
-      await _firestore.collection('leads').doc(leadId).update({
-        'assignedTo': bestAgent['id'],
-        'assignedToName': bestAgent['name'],
-        'autoAssigned': true,
-        'assignedAt': FieldValue.serverTimestamp(),
-      });
+      // Update lead assignment via REST API
+      await _api.request(
+        method: 'POST',
+        endpoint: 'leads',
+        data: {
+          'id': leadId,
+          'assigned_to': bestAgent['id'],
+          'assigned_to_name': bestAgent['name'],
+          'auto_assigned': true,
+        },
+      );
 
-      // Notify agent
+      // Notify agent via REST API
       await _notifyAgentOfNewLead(
         agentId: bestAgent['id'] as String,
         leadId: leadId,
@@ -544,60 +531,64 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
     required String leadId,
     required String leadName,
   }) async {
-    // Send push notification
-    await _firestore.collection('notifications').add({
-      'userId': agentId,
-      'title': 'New Lead Assigned',
-      'body': 'Lead "$leadName" has been assigned to you',
-      'type': 'new_lead',
-      'leadId': leadId,
-      'createdAt': FieldValue.serverTimestamp(),
-      'read': false,
-    });
+    try {
+      await _api.request(
+        method: 'POST',
+        endpoint: 'notification',
+        data: {
+          'user_id': agentId,
+          'title': 'New Lead Assigned',
+          'body': 'Lead "$leadName" has been assigned to you',
+          'type': 'new_lead',
+          'lead_id': leadId,
+          'read': false,
+        },
+      );
+    } catch (e) {
+      AppLogger.error('Error notifying agent', e);
+    }
   }
 
   // ==================== DATABASE OPERATIONS ====================
 
+  /// Save lead via REST API (replaces Firestore leads.add)
   Future<String?> _saveLead(LeadModel lead, File? photoFile) async {
     try {
-      // Upload photo to storage if exists
-      String? photoUrl;
-      if (photoFile != null) {
-        // Upload to Firebase Storage
-        // photoUrl = await _uploadPhoto(photoFile);
-      }
+      final result = await _api.request(
+        method: 'POST',
+        endpoint: 'leads',
+        data: {
+          ...lead.toJson(),
+          if (photoFile != null) 'photo_path': photoFile.path,
+        },
+      );
 
-      final docRef = await _firestore.collection('leads').add({
-        ...lead.toJson(),
-        'photoUrl': photoUrl,
-      });
-
-      AppLogger.info('Lead saved: ${docRef.id}');
-      return docRef.id;
+      final leadId = (result is Map<String, dynamic>)
+          ? (result['data']?['id']?.toString() ?? result['id']?.toString())
+          : null;
+      AppLogger.info('Lead saved: $leadId');
+      return leadId;
     } catch (e) {
       AppLogger.error('Error saving lead', e);
       return null;
     }
   }
 
+  /// Save bulk leads via REST API (replaces Firestore batch)
   Future<int> _saveBulkLeads(List<LeadModel> leads) async {
     int saved = 0;
 
-    final batch = _firestore.batch();
-
     for (final lead in leads) {
-      final docRef = _firestore.collection('leads').doc();
-      batch.set(docRef, lead.toJson());
-      saved++;
-
-      // Batch limit is 500
-      if (saved % 400 == 0) {
-        await batch.commit();
+      try {
+        await _api.request(
+          method: 'POST',
+          endpoint: 'leads',
+          data: lead.toJson(),
+        );
+        saved++;
+      } catch (e) {
+        AppLogger.error('Error saving bulk lead', e);
       }
-    }
-
-    if (saved % 400 != 0) {
-      await batch.commit();
     }
 
     return saved;
