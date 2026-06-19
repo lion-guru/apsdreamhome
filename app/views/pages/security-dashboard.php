@@ -143,7 +143,7 @@ $base = $base ?? BASE_URL;
                                     </div>
                                     <span class="badge bg-secondary"><?= htmlspecialchars($vuln['status'] ?? 'open') ?></span>
                                 </div>
-                                <p class="small mb-0 mt-1"><?= htmlspecialchars($vuln['description'] ?? __('security_dash_no_description', [], 'No description'))) ?></p>
+                                <p class="small mb-0 mt-1"><?= htmlspecialchars($vuln['description'] ?? __('security_dash_no_description', [], 'No description')) ?></p>
                                 <small class="text-muted"><?= htmlspecialchars(date('d M Y', strtotime($vuln['created_at'] ?? 'now'))) ?></small>
                             </div>
                             <?php endforeach; ?>
