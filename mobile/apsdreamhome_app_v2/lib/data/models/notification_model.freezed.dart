@@ -12,7 +12,8 @@ part of 'notification_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 NotificationModel _$NotificationModelFromJson(Map<String, dynamic> json) {
   return _NotificationModel.fromJson(json);
@@ -55,28 +56,30 @@ mixin _$NotificationModel {
 /// @nodoc
 abstract class $NotificationModelCopyWith<$Res> {
   factory $NotificationModelCopyWith(
-          NotificationModel value, $Res Function(NotificationModel) then) =
-      _$NotificationModelCopyWithImpl<$Res, NotificationModel>;
+    NotificationModel value,
+    $Res Function(NotificationModel) then,
+  ) = _$NotificationModelCopyWithImpl<$Res, NotificationModel>;
   @useResult
-  $Res call(
-      {String id,
-      String userId,
-      String type,
-      String title,
-      String body,
-      String? imageUrl,
-      String? actionType,
-      String? actionData,
-      String? actionUrl,
-      String? relatedId,
-      String? relatedType,
-      bool? isRead,
-      DateTime? readAt,
-      DateTime? createdAt,
-      DateTime? expiresAt,
-      bool? pushDelivered,
-      DateTime? pushDeliveredAt,
-      String? fcmMessageId});
+  $Res call({
+    String id,
+    String userId,
+    String type,
+    String title,
+    String body,
+    String? imageUrl,
+    String? actionType,
+    String? actionData,
+    String? actionUrl,
+    String? relatedId,
+    String? relatedType,
+    bool? isRead,
+    DateTime? readAt,
+    DateTime? createdAt,
+    DateTime? expiresAt,
+    bool? pushDelivered,
+    DateTime? pushDeliveredAt,
+    String? fcmMessageId,
+  });
 }
 
 /// @nodoc
@@ -113,119 +116,125 @@ class _$NotificationModelCopyWithImpl<$Res, $Val extends NotificationModel>
     Object? pushDeliveredAt = freezed,
     Object? fcmMessageId = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      body: null == body
-          ? _value.body
-          : body // ignore: cast_nullable_to_non_nullable
-              as String,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      actionType: freezed == actionType
-          ? _value.actionType
-          : actionType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      actionData: freezed == actionData
-          ? _value.actionData
-          : actionData // ignore: cast_nullable_to_non_nullable
-              as String?,
-      actionUrl: freezed == actionUrl
-          ? _value.actionUrl
-          : actionUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      relatedId: freezed == relatedId
-          ? _value.relatedId
-          : relatedId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      relatedType: freezed == relatedType
-          ? _value.relatedType
-          : relatedType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isRead: freezed == isRead
-          ? _value.isRead
-          : isRead // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      readAt: freezed == readAt
-          ? _value.readAt
-          : readAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      expiresAt: freezed == expiresAt
-          ? _value.expiresAt
-          : expiresAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      pushDelivered: freezed == pushDelivered
-          ? _value.pushDelivered
-          : pushDelivered // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      pushDeliveredAt: freezed == pushDeliveredAt
-          ? _value.pushDeliveredAt
-          : pushDeliveredAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      fcmMessageId: freezed == fcmMessageId
-          ? _value.fcmMessageId
-          : fcmMessageId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            userId: null == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as String,
+            title: null == title
+                ? _value.title
+                : title // ignore: cast_nullable_to_non_nullable
+                      as String,
+            body: null == body
+                ? _value.body
+                : body // ignore: cast_nullable_to_non_nullable
+                      as String,
+            imageUrl: freezed == imageUrl
+                ? _value.imageUrl
+                : imageUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            actionType: freezed == actionType
+                ? _value.actionType
+                : actionType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            actionData: freezed == actionData
+                ? _value.actionData
+                : actionData // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            actionUrl: freezed == actionUrl
+                ? _value.actionUrl
+                : actionUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            relatedId: freezed == relatedId
+                ? _value.relatedId
+                : relatedId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            relatedType: freezed == relatedType
+                ? _value.relatedType
+                : relatedType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            isRead: freezed == isRead
+                ? _value.isRead
+                : isRead // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            readAt: freezed == readAt
+                ? _value.readAt
+                : readAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            expiresAt: freezed == expiresAt
+                ? _value.expiresAt
+                : expiresAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            pushDelivered: freezed == pushDelivered
+                ? _value.pushDelivered
+                : pushDelivered // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            pushDeliveredAt: freezed == pushDeliveredAt
+                ? _value.pushDeliveredAt
+                : pushDeliveredAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            fcmMessageId: freezed == fcmMessageId
+                ? _value.fcmMessageId
+                : fcmMessageId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$NotificationModelImplCopyWith<$Res>
     implements $NotificationModelCopyWith<$Res> {
-  factory _$$NotificationModelImplCopyWith(_$NotificationModelImpl value,
-          $Res Function(_$NotificationModelImpl) then) =
-      __$$NotificationModelImplCopyWithImpl<$Res>;
+  factory _$$NotificationModelImplCopyWith(
+    _$NotificationModelImpl value,
+    $Res Function(_$NotificationModelImpl) then,
+  ) = __$$NotificationModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String userId,
-      String type,
-      String title,
-      String body,
-      String? imageUrl,
-      String? actionType,
-      String? actionData,
-      String? actionUrl,
-      String? relatedId,
-      String? relatedType,
-      bool? isRead,
-      DateTime? readAt,
-      DateTime? createdAt,
-      DateTime? expiresAt,
-      bool? pushDelivered,
-      DateTime? pushDeliveredAt,
-      String? fcmMessageId});
+  $Res call({
+    String id,
+    String userId,
+    String type,
+    String title,
+    String body,
+    String? imageUrl,
+    String? actionType,
+    String? actionData,
+    String? actionUrl,
+    String? relatedId,
+    String? relatedType,
+    bool? isRead,
+    DateTime? readAt,
+    DateTime? createdAt,
+    DateTime? expiresAt,
+    bool? pushDelivered,
+    DateTime? pushDeliveredAt,
+    String? fcmMessageId,
+  });
 }
 
 /// @nodoc
 class __$$NotificationModelImplCopyWithImpl<$Res>
     extends _$NotificationModelCopyWithImpl<$Res, _$NotificationModelImpl>
     implements _$$NotificationModelImplCopyWith<$Res> {
-  __$$NotificationModelImplCopyWithImpl(_$NotificationModelImpl _value,
-      $Res Function(_$NotificationModelImpl) _then)
-      : super(_value, _then);
+  __$$NotificationModelImplCopyWithImpl(
+    _$NotificationModelImpl _value,
+    $Res Function(_$NotificationModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of NotificationModel
   /// with the given fields replaced by the non-null parameter values.
@@ -251,105 +260,108 @@ class __$$NotificationModelImplCopyWithImpl<$Res>
     Object? pushDeliveredAt = freezed,
     Object? fcmMessageId = freezed,
   }) {
-    return _then(_$NotificationModelImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      body: null == body
-          ? _value.body
-          : body // ignore: cast_nullable_to_non_nullable
-              as String,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      actionType: freezed == actionType
-          ? _value.actionType
-          : actionType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      actionData: freezed == actionData
-          ? _value.actionData
-          : actionData // ignore: cast_nullable_to_non_nullable
-              as String?,
-      actionUrl: freezed == actionUrl
-          ? _value.actionUrl
-          : actionUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      relatedId: freezed == relatedId
-          ? _value.relatedId
-          : relatedId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      relatedType: freezed == relatedType
-          ? _value.relatedType
-          : relatedType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isRead: freezed == isRead
-          ? _value.isRead
-          : isRead // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      readAt: freezed == readAt
-          ? _value.readAt
-          : readAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      expiresAt: freezed == expiresAt
-          ? _value.expiresAt
-          : expiresAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      pushDelivered: freezed == pushDelivered
-          ? _value.pushDelivered
-          : pushDelivered // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      pushDeliveredAt: freezed == pushDeliveredAt
-          ? _value.pushDeliveredAt
-          : pushDeliveredAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      fcmMessageId: freezed == fcmMessageId
-          ? _value.fcmMessageId
-          : fcmMessageId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$NotificationModelImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        userId: null == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as String,
+        title: null == title
+            ? _value.title
+            : title // ignore: cast_nullable_to_non_nullable
+                  as String,
+        body: null == body
+            ? _value.body
+            : body // ignore: cast_nullable_to_non_nullable
+                  as String,
+        imageUrl: freezed == imageUrl
+            ? _value.imageUrl
+            : imageUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        actionType: freezed == actionType
+            ? _value.actionType
+            : actionType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        actionData: freezed == actionData
+            ? _value.actionData
+            : actionData // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        actionUrl: freezed == actionUrl
+            ? _value.actionUrl
+            : actionUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        relatedId: freezed == relatedId
+            ? _value.relatedId
+            : relatedId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        relatedType: freezed == relatedType
+            ? _value.relatedType
+            : relatedType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        isRead: freezed == isRead
+            ? _value.isRead
+            : isRead // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        readAt: freezed == readAt
+            ? _value.readAt
+            : readAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        expiresAt: freezed == expiresAt
+            ? _value.expiresAt
+            : expiresAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        pushDelivered: freezed == pushDelivered
+            ? _value.pushDelivered
+            : pushDelivered // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        pushDeliveredAt: freezed == pushDeliveredAt
+            ? _value.pushDeliveredAt
+            : pushDeliveredAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        fcmMessageId: freezed == fcmMessageId
+            ? _value.fcmMessageId
+            : fcmMessageId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$NotificationModelImpl implements _NotificationModel {
-  const _$NotificationModelImpl(
-      {required this.id,
-      required this.userId,
-      required this.type,
-      required this.title,
-      required this.body,
-      this.imageUrl,
-      this.actionType,
-      this.actionData,
-      this.actionUrl,
-      this.relatedId,
-      this.relatedType,
-      this.isRead,
-      this.readAt,
-      this.createdAt,
-      this.expiresAt,
-      this.pushDelivered,
-      this.pushDeliveredAt,
-      this.fcmMessageId});
+  const _$NotificationModelImpl({
+    required this.id,
+    required this.userId,
+    required this.type,
+    required this.title,
+    required this.body,
+    this.imageUrl,
+    this.actionType,
+    this.actionData,
+    this.actionUrl,
+    this.relatedId,
+    this.relatedType,
+    this.isRead,
+    this.readAt,
+    this.createdAt,
+    this.expiresAt,
+    this.pushDelivered,
+    this.pushDeliveredAt,
+    this.fcmMessageId,
+  });
 
   factory _$NotificationModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$NotificationModelImplFromJson(json);
@@ -360,38 +372,38 @@ class _$NotificationModelImpl implements _NotificationModel {
   final String userId;
   @override
   final String type;
-// booking, commission, payout, lead, general, promotional
+  // booking, commission, payout, lead, general, promotional
   @override
   final String title;
   @override
   final String body;
   @override
   final String? imageUrl;
-// Action
+  // Action
   @override
   final String? actionType;
-// open_screen, open_url, show_dialog, none
+  // open_screen, open_url, show_dialog, none
   @override
   final String? actionData;
-// screen_name, url, etc.
+  // screen_name, url, etc.
   @override
   final String? actionUrl;
-// Related Entity
+  // Related Entity
   @override
   final String? relatedId;
   @override
   final String? relatedType;
-// Status
+  // Status
   @override
   final bool? isRead;
   @override
   final DateTime? readAt;
-// Timestamps
+  // Timestamps
   @override
   final DateTime? createdAt;
   @override
   final DateTime? expiresAt;
-// Delivery
+  // Delivery
   @override
   final bool? pushDelivered;
   @override
@@ -443,25 +455,26 @@ class _$NotificationModelImpl implements _NotificationModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      userId,
-      type,
-      title,
-      body,
-      imageUrl,
-      actionType,
-      actionData,
-      actionUrl,
-      relatedId,
-      relatedType,
-      isRead,
-      readAt,
-      createdAt,
-      expiresAt,
-      pushDelivered,
-      pushDeliveredAt,
-      fcmMessageId);
+    runtimeType,
+    id,
+    userId,
+    type,
+    title,
+    body,
+    imageUrl,
+    actionType,
+    actionData,
+    actionUrl,
+    relatedId,
+    relatedType,
+    isRead,
+    readAt,
+    createdAt,
+    expiresAt,
+    pushDelivered,
+    pushDeliveredAt,
+    fcmMessageId,
+  );
 
   /// Create a copy of NotificationModel
   /// with the given fields replaced by the non-null parameter values.
@@ -470,36 +483,37 @@ class _$NotificationModelImpl implements _NotificationModel {
   @pragma('vm:prefer-inline')
   _$$NotificationModelImplCopyWith<_$NotificationModelImpl> get copyWith =>
       __$$NotificationModelImplCopyWithImpl<_$NotificationModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$NotificationModelImplToJson(
-      this,
-    );
+    return _$$NotificationModelImplToJson(this);
   }
 }
 
 abstract class _NotificationModel implements NotificationModel {
-  const factory _NotificationModel(
-      {required final String id,
-      required final String userId,
-      required final String type,
-      required final String title,
-      required final String body,
-      final String? imageUrl,
-      final String? actionType,
-      final String? actionData,
-      final String? actionUrl,
-      final String? relatedId,
-      final String? relatedType,
-      final bool? isRead,
-      final DateTime? readAt,
-      final DateTime? createdAt,
-      final DateTime? expiresAt,
-      final bool? pushDelivered,
-      final DateTime? pushDeliveredAt,
-      final String? fcmMessageId}) = _$NotificationModelImpl;
+  const factory _NotificationModel({
+    required final String id,
+    required final String userId,
+    required final String type,
+    required final String title,
+    required final String body,
+    final String? imageUrl,
+    final String? actionType,
+    final String? actionData,
+    final String? actionUrl,
+    final String? relatedId,
+    final String? relatedType,
+    final bool? isRead,
+    final DateTime? readAt,
+    final DateTime? createdAt,
+    final DateTime? expiresAt,
+    final bool? pushDelivered,
+    final DateTime? pushDeliveredAt,
+    final String? fcmMessageId,
+  }) = _$NotificationModelImpl;
 
   factory _NotificationModel.fromJson(Map<String, dynamic> json) =
       _$NotificationModelImpl.fromJson;

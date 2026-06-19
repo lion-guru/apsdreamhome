@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/utils/logger.dart';
-import '../../../data/services/firebase_seeder.dart';
 
 /// Developer Tools Page
 /// For admins to seed demo data, clear data, etc.
@@ -11,8 +10,6 @@ class DevToolsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final seeder = FirebaseSeeder();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Developer Tools'),
@@ -57,39 +54,24 @@ class DevToolsPage extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            // Seed All Data
             _buildActionCard(
               context,
               icon: Icons.playlist_add,
               title: 'Seed All Demo Data',
               subtitle: 'Creates colonies, users, leads, listings, agents',
               color: Colors.blue,
-              onTap: () => _showConfirmationDialog(
-                context,
-                title: 'Seed All Data?',
-                message:
-                    'This will create demo data in your Firebase database. Existing data will be preserved.',
-                onConfirm: () async {
-                  try {
-                    await seeder.seedAllData();
-                    _showSuccess(context, 'All demo data seeded successfully!');
-                  } catch (e) {
-                    _showError(context, 'Failed to seed data: $e');
-                  }
-                },
-              ),
+              onTap: () => _showInfo(context, 'Data seeding is handled by the PHP backend. Use the admin panel web interface.'),
             ),
 
             const SizedBox(height: 12),
 
-            // Seed Specific Data
             _buildActionCard(
               context,
               icon: Icons.add_circle_outline,
               title: 'Seed Specific Data',
               subtitle: 'Choose which data to seed',
               color: Colors.green,
-              onTap: () => _showSpecificSeedingDialog(context, seeder),
+              onTap: () => _showInfo(context, 'Data seeding is handled by the PHP backend. Use the admin panel web interface.'),
             ),
 
             const SizedBox(height: 32),
@@ -106,28 +88,13 @@ class DevToolsPage extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            // Clear All Data
             _buildActionCard(
               context,
               icon: Icons.delete_forever,
               title: 'Clear All Demo Data',
-              subtitle: '⚠️ Deletes all seeded data (colonies, leads, etc.)',
+              subtitle: 'Deletes all seeded data (colonies, leads, etc.)',
               color: Colors.red,
-              onTap: () => _showConfirmationDialog(
-                context,
-                title: '⚠️ Clear All Data?',
-                message:
-                    'This will DELETE all demo data from Firebase. This action cannot be undone!',
-                isDestructive: true,
-                onConfirm: () async {
-                  try {
-                    await seeder.clearAllData();
-                    _showSuccess(context, 'All demo data cleared!');
-                  } catch (e) {
-                    _showError(context, 'Failed to clear data: $e');
-                  }
-                },
-              ),
+              onTap: () => _showInfo(context, 'Data management is handled by the PHP backend. Use the admin panel web interface.'),
             ),
 
             const SizedBox(height: 32),
@@ -148,8 +115,8 @@ class DevToolsPage extends ConsumerWidget {
                 children: [
                   _buildInfoRow('Version', '2.0.0'),
                   _buildInfoRow('Build', 'Release'),
-                  _buildInfoRow('Flutter', '3.41.6'),
-                  _buildInfoRow('Dart', '3.11.4'),
+                  _buildInfoRow('Flutter', '3.44.2'),
+                  _buildInfoRow('Dart', '3.12.2'),
                 ],
               ),
             ),
@@ -159,7 +126,7 @@ class DevToolsPage extends ConsumerWidget {
             _buildInfoCard(
               context,
               icon: Icons.storage,
-              title: 'Firebase Collections',
+              title: 'Backend Tables',
               content: const Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -171,9 +138,7 @@ class DevToolsPage extends ConsumerWidget {
                   Chip(label: Text('commissions')),
                   Chip(label: Text('leads')),
                   Chip(label: Text('payouts')),
-                  Chip(label: Text('property_listings')),
-                  Chip(label: Text('emi_agents')),
-                  Chip(label: Text('daily_callers')),
+                  Chip(label: Text('user_properties')),
                 ],
               ),
             ),
@@ -309,94 +274,18 @@ class DevToolsPage extends ConsumerWidget {
     );
   }
 
-  void _showConfirmationDialog(
-    BuildContext context, {
-    required String title,
-    required String message,
-    required VoidCallback onConfirm,
-    bool isDestructive = false,
-  }) {
+  void _showInfo(BuildContext context, String message) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title),
+        title: const Text('Info'),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              onConfirm();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: isDestructive ? Colors.red : null,
-              foregroundColor: isDestructive ? Colors.white : null,
-            ),
-            child: Text(isDestructive ? 'Delete' : 'Confirm'),
+            child: const Text('OK'),
           ),
         ],
-      ),
-    );
-  }
-
-  void _showSpecificSeedingDialog(BuildContext context, FirebaseSeeder seeder) {
-    final options = {
-      'Colonies': false,
-      'Users': false,
-      'Leads': false,
-      'Property Listings': false,
-      'EMI Agents': false,
-      'Daily Callers': false,
-      'EMI Rules': false,
-    };
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Select Data to Seed'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: options.keys.map((key) {
-                return CheckboxListTile(
-                  title: Text(key),
-                  value: options[key],
-                  onChanged: (value) {
-                    setState(() {
-                      options[key] = value ?? false;
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                seeder.seedSpecific(
-                  colonies: options['Colonies']!,
-                  users: options['Users']!,
-                  leads: options['Leads']!,
-                  propertyListings: options['Property Listings']!,
-                  emiAgents: options['EMI Agents']!,
-                  dailyCallers: options['Daily Callers']!,
-                  emiRules: options['EMI Rules']!,
-                );
-                _showSuccess(context, 'Selected data seeded!');
-              },
-              child: const Text('Seed Selected'),
-            ),
-          ],
-        ),
       ),
     );
   }

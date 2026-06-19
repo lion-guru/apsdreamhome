@@ -1,132 +1,86 @@
-name: aps_dream_home
-version: 2.0.0+1
+name: apsdreamhome_app_v2
+description: APS Dream Home Flutter application
 publish_to: 'none'
-description: APS Dream Home - Complete Plot Management & MLM System
-
+version: 1.0.0+1
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ^3.12.0
 
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.2
+  flutter_localizations:
+    sdk: flutter
 
-  # Firebase Core
-  firebase_core: ^2.24.2
-  firebase_auth: ^4.16.0
-  cloud_firestore: ^4.14.0
-  firebase_storage: ^11.6.0
-  firebase_messaging: ^14.7.10
-  firebase_analytics: ^10.8.0
-  firebase_crashlytics: ^3.4.8
+  # State management
+  flutter_riverpod: ^2.4.0
+  go_router: ^12.0.0
+  provider: ^6.1.1
 
-  # Environment Variables
-  flutter_dotenv: ^5.1.0
-
-  # State Management
-  flutter_riverpod: ^2.4.9
-  riverpod_annotation: ^2.3.3
-
-  # Navigation
-  go_router: ^13.0.1
-
-  # Offline Support (Disabled due to Flutter 3.41.6 incompatibility)
-  # hive: ^2.2.3
-  # hive_flutter: ^1.1.0
-  connectivity_plus: ^5.0.2
-  sqflite: ^2.3.0
-
-  # UI/UX
-  google_fonts: ^6.1.0
-  flutter_svg: ^2.0.9
-  cached_network_image: ^3.3.1
-  shimmer: ^3.0.0
-  flutter_staggered_grid_view: ^0.7.0
-  flutter_slidable: ^3.0.1
-
-  # Payments
-  # razorpay_flutter: ^1.3.5
-  # upi_india: ^3.0.1
-  crypto: ^3.0.3
-  path_provider: ^2.1.0
-
-  # Voice (Updated to latest for SDK 34 compatibility)
-  speech_to_text: ^7.3.0
-  flutter_tts: ^4.2.2
-  
-  # Geolocation for Site Visit Tracking
-  geolocator: ^11.0.0
-
-  # Camera & Image Picker for KYC
-  camera: ^0.10.5+5
-  image_picker: ^1.0.4
-  permission_handler: ^11.0.1
-
-  share_plus: ^7.2.1
-  font_awesome_flutter: ^10.6.0
+  # Networking
+  dio: ^5.4.0
+  http: ^1.2.0
+  connectivity_plus: ^6.0.0
   url_launcher: ^6.2.0
 
-  # Notifications
-  awesome_notifications: ^0.11.0
+  # Camera & Media
+  camera: ^0.11.0
+  image_picker: ^1.1.0
+  flutter_svg: ^2.0.0
 
-  # Biometric
-  local_auth: ^2.2.0
+  # Fonts
+  google_fonts: ^6.1.0
 
-  # Deep Links
-  app_links: ^6.3.3
+  # Permissions & Location
+  permission_handler: ^11.0.0
+  geolocator: 11.1.0
 
-  # App Update
-  package_info_plus: ^9.0.1
-
-  # PDF & Documents
-  pdf: ^3.10.7
-  printing: ^5.11.1
-  open_filex: ^4.3.4
-
-  # Security
+  # Storage
   flutter_secure_storage: ^9.0.0
+  sqflite: ^2.3.0
+  path_provider: ^2.1.0
+  path: ^1.9.0
 
-  # Utils (Updated to 0.20.2 for awesome_notifications compatibility)
+  # Environment
+  flutter_dotenv: ^5.1.0
+
+  # Code generation (freezed + json_serializable)
+  freezed_annotation: ^2.4.0
+  json_annotation: ^4.9.0
+
+  # Utilities
   intl: ^0.20.2
-  uuid: ^4.3.3
-  dartz: ^0.10.1
-  freezed_annotation: ^2.4.1
-  json_annotation: ^4.8.1
-  equatable: ^2.0.5
-  firebase_dynamic_links: ^5.5.7
-  http: ^1.1.0
+  logger: ^2.0.0
+  uuid: ^4.3.0
+  crypto: ^3.0.3
 
-  # Charts & Analytics
-  fl_chart: ^0.66.0
+  # UI
+  shimmer: ^3.0.0
 
-  # QR Codes
-  qr_flutter: ^4.1.0
+  # PDF & Sharing
+  pdf: ^3.10.0
+  printing: ^5.12.0
+  share_plus: ^7.2.0
 
-  # Google APIs
+  # Device
+  local_auth: ^2.1.0
+  package_info_plus: 9.0.1
+  speech_to_text: 7.4.0
+
+  # Google APIs (for Drive backup)
   googleapis: ^12.0.0
-  googleapis_auth: ^1.4.1
-  mime_type: ^1.0.0
-
-  # Missing Dependencies
-  path: ^1.8.3
-  shared_preferences: ^2.2.2
-  dio: ^5.4.0
+  googleapis_auth: ^1.6.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
-  build_runner: ^2.4.8
-  freezed: ^2.4.7
-  json_serializable: ^6.8.0
-  riverpod_generator: ^2.3.9
-  mockito: ^5.4.4
-
-dependency_overrides:
-  sqflite_android: 2.4.0
-  path_provider_android: 2.2.10
+  flutter_lints: ^2.0.0
+  build_runner: ^2.4.0
+  freezed: ^2.5.0
+  json_serializable: ^6.7.0
 
 flutter:
   uses-material-design: true
   assets:
-    - .env
     - assets/images/
+    - .env

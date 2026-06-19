@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 class AppConstants {
   // API Configuration
   // For Android Emulator: use 10.0.2.2 (points to host localhost)
-  // For Physical Device: use your PC's IP (same WiFi network)
-  // For iOS Simulator: use localhost
-  // static const String baseUrl = 'http://10.0.2.2/apsdreamhome'; // Android Emulator
-  // static const String baseUrl = 'http://localhost/apsdreamhome'; // iOS Simulator
+  // For Physical Device via ngrok: use ngrok URL
+  // For Physical Device on same WiFi: use PC IP
   static const String baseUrl =
-      'http://192.168.29.133/apsdreamhome'; // PC IP - Physical Device
+      'https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome';
 
   static const String apiVersion = 'api/v2/mobile';
 
@@ -27,6 +25,17 @@ class AppConstants {
   static const String genealogyEndpoint = '/mlm/genealogy';
   static const String businessBreakdownEndpoint = '/mlm/business-breakdown';
   static const String requestPayoutEndpoint = '/mlm/request-payout';
+  static const String notificationsRegisterEndpoint = '/notifications/register';
+  static const String coloniesEndpoint = '/colonies';
+  static const String plotsEndpoint = '/plots';
+
+  // V2 Mobile Attendance
+  static const String attendancePunchInEndpoint = '/attendance/punch-in';
+  static const String attendancePunchOutEndpoint = '/attendance/punch-out';
+  static const String attendanceStatusEndpoint = '/attendance/status';
+
+  // Referral
+  static const String referralTrackEndpoint = '/referral/track';
 
   // Database
   static const String databaseName = 'aps_dream_home.db';
@@ -47,7 +56,7 @@ class AppConstants {
   static const String lastSyncTimeKey = 'last_sync_time';
   static const String offlineBoxName = 'offline_data';
 
-  // Firebase Collection Names
+  // Table Names (for sync)
   static const String usersCollection = 'users';
   static const String leadsCollection = 'leads';
   static const String propertiesCollection = 'properties';

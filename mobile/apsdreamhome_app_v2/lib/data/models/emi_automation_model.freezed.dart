@@ -12,7 +12,8 @@ part of 'emi_automation_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 EMIAutomationConfig _$EMIAutomationConfigFromJson(Map<String, dynamic> json) {
   return _EMIAutomationConfig.fromJson(json);
@@ -57,25 +58,27 @@ mixin _$EMIAutomationConfig {
 /// @nodoc
 abstract class $EMIAutomationConfigCopyWith<$Res> {
   factory $EMIAutomationConfigCopyWith(
-          EMIAutomationConfig value, $Res Function(EMIAutomationConfig) then) =
-      _$EMIAutomationConfigCopyWithImpl<$Res, EMIAutomationConfig>;
+    EMIAutomationConfig value,
+    $Res Function(EMIAutomationConfig) then,
+  ) = _$EMIAutomationConfigCopyWithImpl<$Res, EMIAutomationConfig>;
   @useResult
-  $Res call(
-      {String id,
-      String companyId,
-      String companyName,
-      WhatsAppConfig whatsappConfig,
-      VoiceCallConfig voiceCallConfig,
-      SMSConfig smsConfig,
-      EmailConfig emailConfig,
-      List<AutomationRule> reminderRules,
-      List<AutomationRule> escalationRules,
-      List<AutomationRule> collectionRules,
-      FieldAgentConfig fieldAgentConfig,
-      AIConfig aiConfig,
-      bool isActive,
-      DateTime createdAt,
-      DateTime updatedAt});
+  $Res call({
+    String id,
+    String companyId,
+    String companyName,
+    WhatsAppConfig whatsappConfig,
+    VoiceCallConfig voiceCallConfig,
+    SMSConfig smsConfig,
+    EmailConfig emailConfig,
+    List<AutomationRule> reminderRules,
+    List<AutomationRule> escalationRules,
+    List<AutomationRule> collectionRules,
+    FieldAgentConfig fieldAgentConfig,
+    AIConfig aiConfig,
+    bool isActive,
+    DateTime createdAt,
+    DateTime updatedAt,
+  });
 
   $WhatsAppConfigCopyWith<$Res> get whatsappConfig;
   $VoiceCallConfigCopyWith<$Res> get voiceCallConfig;
@@ -116,68 +119,71 @@ class _$EMIAutomationConfigCopyWithImpl<$Res, $Val extends EMIAutomationConfig>
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      companyId: null == companyId
-          ? _value.companyId
-          : companyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      companyName: null == companyName
-          ? _value.companyName
-          : companyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      whatsappConfig: null == whatsappConfig
-          ? _value.whatsappConfig
-          : whatsappConfig // ignore: cast_nullable_to_non_nullable
-              as WhatsAppConfig,
-      voiceCallConfig: null == voiceCallConfig
-          ? _value.voiceCallConfig
-          : voiceCallConfig // ignore: cast_nullable_to_non_nullable
-              as VoiceCallConfig,
-      smsConfig: null == smsConfig
-          ? _value.smsConfig
-          : smsConfig // ignore: cast_nullable_to_non_nullable
-              as SMSConfig,
-      emailConfig: null == emailConfig
-          ? _value.emailConfig
-          : emailConfig // ignore: cast_nullable_to_non_nullable
-              as EmailConfig,
-      reminderRules: null == reminderRules
-          ? _value.reminderRules
-          : reminderRules // ignore: cast_nullable_to_non_nullable
-              as List<AutomationRule>,
-      escalationRules: null == escalationRules
-          ? _value.escalationRules
-          : escalationRules // ignore: cast_nullable_to_non_nullable
-              as List<AutomationRule>,
-      collectionRules: null == collectionRules
-          ? _value.collectionRules
-          : collectionRules // ignore: cast_nullable_to_non_nullable
-              as List<AutomationRule>,
-      fieldAgentConfig: null == fieldAgentConfig
-          ? _value.fieldAgentConfig
-          : fieldAgentConfig // ignore: cast_nullable_to_non_nullable
-              as FieldAgentConfig,
-      aiConfig: null == aiConfig
-          ? _value.aiConfig
-          : aiConfig // ignore: cast_nullable_to_non_nullable
-              as AIConfig,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            companyId: null == companyId
+                ? _value.companyId
+                : companyId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            companyName: null == companyName
+                ? _value.companyName
+                : companyName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            whatsappConfig: null == whatsappConfig
+                ? _value.whatsappConfig
+                : whatsappConfig // ignore: cast_nullable_to_non_nullable
+                      as WhatsAppConfig,
+            voiceCallConfig: null == voiceCallConfig
+                ? _value.voiceCallConfig
+                : voiceCallConfig // ignore: cast_nullable_to_non_nullable
+                      as VoiceCallConfig,
+            smsConfig: null == smsConfig
+                ? _value.smsConfig
+                : smsConfig // ignore: cast_nullable_to_non_nullable
+                      as SMSConfig,
+            emailConfig: null == emailConfig
+                ? _value.emailConfig
+                : emailConfig // ignore: cast_nullable_to_non_nullable
+                      as EmailConfig,
+            reminderRules: null == reminderRules
+                ? _value.reminderRules
+                : reminderRules // ignore: cast_nullable_to_non_nullable
+                      as List<AutomationRule>,
+            escalationRules: null == escalationRules
+                ? _value.escalationRules
+                : escalationRules // ignore: cast_nullable_to_non_nullable
+                      as List<AutomationRule>,
+            collectionRules: null == collectionRules
+                ? _value.collectionRules
+                : collectionRules // ignore: cast_nullable_to_non_nullable
+                      as List<AutomationRule>,
+            fieldAgentConfig: null == fieldAgentConfig
+                ? _value.fieldAgentConfig
+                : fieldAgentConfig // ignore: cast_nullable_to_non_nullable
+                      as FieldAgentConfig,
+            aiConfig: null == aiConfig
+                ? _value.aiConfig
+                : aiConfig // ignore: cast_nullable_to_non_nullable
+                      as AIConfig,
+            isActive: null == isActive
+                ? _value.isActive
+                : isActive // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            updatedAt: null == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of EMIAutomationConfig
@@ -244,27 +250,29 @@ class _$EMIAutomationConfigCopyWithImpl<$Res, $Val extends EMIAutomationConfig>
 /// @nodoc
 abstract class _$$EMIAutomationConfigImplCopyWith<$Res>
     implements $EMIAutomationConfigCopyWith<$Res> {
-  factory _$$EMIAutomationConfigImplCopyWith(_$EMIAutomationConfigImpl value,
-          $Res Function(_$EMIAutomationConfigImpl) then) =
-      __$$EMIAutomationConfigImplCopyWithImpl<$Res>;
+  factory _$$EMIAutomationConfigImplCopyWith(
+    _$EMIAutomationConfigImpl value,
+    $Res Function(_$EMIAutomationConfigImpl) then,
+  ) = __$$EMIAutomationConfigImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String companyId,
-      String companyName,
-      WhatsAppConfig whatsappConfig,
-      VoiceCallConfig voiceCallConfig,
-      SMSConfig smsConfig,
-      EmailConfig emailConfig,
-      List<AutomationRule> reminderRules,
-      List<AutomationRule> escalationRules,
-      List<AutomationRule> collectionRules,
-      FieldAgentConfig fieldAgentConfig,
-      AIConfig aiConfig,
-      bool isActive,
-      DateTime createdAt,
-      DateTime updatedAt});
+  $Res call({
+    String id,
+    String companyId,
+    String companyName,
+    WhatsAppConfig whatsappConfig,
+    VoiceCallConfig voiceCallConfig,
+    SMSConfig smsConfig,
+    EmailConfig emailConfig,
+    List<AutomationRule> reminderRules,
+    List<AutomationRule> escalationRules,
+    List<AutomationRule> collectionRules,
+    FieldAgentConfig fieldAgentConfig,
+    AIConfig aiConfig,
+    bool isActive,
+    DateTime createdAt,
+    DateTime updatedAt,
+  });
 
   @override
   $WhatsAppConfigCopyWith<$Res> get whatsappConfig;
@@ -284,9 +292,10 @@ abstract class _$$EMIAutomationConfigImplCopyWith<$Res>
 class __$$EMIAutomationConfigImplCopyWithImpl<$Res>
     extends _$EMIAutomationConfigCopyWithImpl<$Res, _$EMIAutomationConfigImpl>
     implements _$$EMIAutomationConfigImplCopyWith<$Res> {
-  __$$EMIAutomationConfigImplCopyWithImpl(_$EMIAutomationConfigImpl _value,
-      $Res Function(_$EMIAutomationConfigImpl) _then)
-      : super(_value, _then);
+  __$$EMIAutomationConfigImplCopyWithImpl(
+    _$EMIAutomationConfigImpl _value,
+    $Res Function(_$EMIAutomationConfigImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of EMIAutomationConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -309,93 +318,95 @@ class __$$EMIAutomationConfigImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
-    return _then(_$EMIAutomationConfigImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      companyId: null == companyId
-          ? _value.companyId
-          : companyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      companyName: null == companyName
-          ? _value.companyName
-          : companyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      whatsappConfig: null == whatsappConfig
-          ? _value.whatsappConfig
-          : whatsappConfig // ignore: cast_nullable_to_non_nullable
-              as WhatsAppConfig,
-      voiceCallConfig: null == voiceCallConfig
-          ? _value.voiceCallConfig
-          : voiceCallConfig // ignore: cast_nullable_to_non_nullable
-              as VoiceCallConfig,
-      smsConfig: null == smsConfig
-          ? _value.smsConfig
-          : smsConfig // ignore: cast_nullable_to_non_nullable
-              as SMSConfig,
-      emailConfig: null == emailConfig
-          ? _value.emailConfig
-          : emailConfig // ignore: cast_nullable_to_non_nullable
-              as EmailConfig,
-      reminderRules: null == reminderRules
-          ? _value._reminderRules
-          : reminderRules // ignore: cast_nullable_to_non_nullable
-              as List<AutomationRule>,
-      escalationRules: null == escalationRules
-          ? _value._escalationRules
-          : escalationRules // ignore: cast_nullable_to_non_nullable
-              as List<AutomationRule>,
-      collectionRules: null == collectionRules
-          ? _value._collectionRules
-          : collectionRules // ignore: cast_nullable_to_non_nullable
-              as List<AutomationRule>,
-      fieldAgentConfig: null == fieldAgentConfig
-          ? _value.fieldAgentConfig
-          : fieldAgentConfig // ignore: cast_nullable_to_non_nullable
-              as FieldAgentConfig,
-      aiConfig: null == aiConfig
-          ? _value.aiConfig
-          : aiConfig // ignore: cast_nullable_to_non_nullable
-              as AIConfig,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$EMIAutomationConfigImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        companyId: null == companyId
+            ? _value.companyId
+            : companyId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        companyName: null == companyName
+            ? _value.companyName
+            : companyName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        whatsappConfig: null == whatsappConfig
+            ? _value.whatsappConfig
+            : whatsappConfig // ignore: cast_nullable_to_non_nullable
+                  as WhatsAppConfig,
+        voiceCallConfig: null == voiceCallConfig
+            ? _value.voiceCallConfig
+            : voiceCallConfig // ignore: cast_nullable_to_non_nullable
+                  as VoiceCallConfig,
+        smsConfig: null == smsConfig
+            ? _value.smsConfig
+            : smsConfig // ignore: cast_nullable_to_non_nullable
+                  as SMSConfig,
+        emailConfig: null == emailConfig
+            ? _value.emailConfig
+            : emailConfig // ignore: cast_nullable_to_non_nullable
+                  as EmailConfig,
+        reminderRules: null == reminderRules
+            ? _value._reminderRules
+            : reminderRules // ignore: cast_nullable_to_non_nullable
+                  as List<AutomationRule>,
+        escalationRules: null == escalationRules
+            ? _value._escalationRules
+            : escalationRules // ignore: cast_nullable_to_non_nullable
+                  as List<AutomationRule>,
+        collectionRules: null == collectionRules
+            ? _value._collectionRules
+            : collectionRules // ignore: cast_nullable_to_non_nullable
+                  as List<AutomationRule>,
+        fieldAgentConfig: null == fieldAgentConfig
+            ? _value.fieldAgentConfig
+            : fieldAgentConfig // ignore: cast_nullable_to_non_nullable
+                  as FieldAgentConfig,
+        aiConfig: null == aiConfig
+            ? _value.aiConfig
+            : aiConfig // ignore: cast_nullable_to_non_nullable
+                  as AIConfig,
+        isActive: null == isActive
+            ? _value.isActive
+            : isActive // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        updatedAt: null == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$EMIAutomationConfigImpl implements _EMIAutomationConfig {
-  const _$EMIAutomationConfigImpl(
-      {required this.id,
-      required this.companyId,
-      required this.companyName,
-      required this.whatsappConfig,
-      required this.voiceCallConfig,
-      required this.smsConfig,
-      required this.emailConfig,
-      final List<AutomationRule> reminderRules = const [],
-      final List<AutomationRule> escalationRules = const [],
-      final List<AutomationRule> collectionRules = const [],
-      required this.fieldAgentConfig,
-      required this.aiConfig,
-      required this.isActive,
-      required this.createdAt,
-      required this.updatedAt})
-      : _reminderRules = reminderRules,
-        _escalationRules = escalationRules,
-        _collectionRules = collectionRules;
+  const _$EMIAutomationConfigImpl({
+    required this.id,
+    required this.companyId,
+    required this.companyName,
+    required this.whatsappConfig,
+    required this.voiceCallConfig,
+    required this.smsConfig,
+    required this.emailConfig,
+    final List<AutomationRule> reminderRules = const [],
+    final List<AutomationRule> escalationRules = const [],
+    final List<AutomationRule> collectionRules = const [],
+    required this.fieldAgentConfig,
+    required this.aiConfig,
+    required this.isActive,
+    required this.createdAt,
+    required this.updatedAt,
+  }) : _reminderRules = reminderRules,
+       _escalationRules = escalationRules,
+       _collectionRules = collectionRules;
 
   factory _$EMIAutomationConfigImpl.fromJson(Map<String, dynamic> json) =>
       _$$EMIAutomationConfigImplFromJson(json);
@@ -406,21 +417,21 @@ class _$EMIAutomationConfigImpl implements _EMIAutomationConfig {
   final String companyId;
   @override
   final String companyName;
-// WhatsApp Business Configuration
+  // WhatsApp Business Configuration
   @override
   final WhatsAppConfig whatsappConfig;
-// Voice Call Configuration (IVR/Cloud telephony)
+  // Voice Call Configuration (IVR/Cloud telephony)
   @override
   final VoiceCallConfig voiceCallConfig;
-// SMS Gateway Configuration
+  // SMS Gateway Configuration
   @override
   final SMSConfig smsConfig;
-// Email Configuration
+  // Email Configuration
   @override
   final EmailConfig emailConfig;
-// Automation Rules
+  // Automation Rules
   final List<AutomationRule> _reminderRules;
-// Automation Rules
+  // Automation Rules
   @override
   @JsonKey()
   List<AutomationRule> get reminderRules {
@@ -447,10 +458,10 @@ class _$EMIAutomationConfigImpl implements _EMIAutomationConfig {
     return EqualUnmodifiableListView(_collectionRules);
   }
 
-// Field Agent Settings
+  // Field Agent Settings
   @override
   final FieldAgentConfig fieldAgentConfig;
-// AI/ML Settings
+  // AI/ML Settings
   @override
   final AIConfig aiConfig;
   @override
@@ -483,12 +494,18 @@ class _$EMIAutomationConfigImpl implements _EMIAutomationConfig {
                 other.smsConfig == smsConfig) &&
             (identical(other.emailConfig, emailConfig) ||
                 other.emailConfig == emailConfig) &&
-            const DeepCollectionEquality()
-                .equals(other._reminderRules, _reminderRules) &&
-            const DeepCollectionEquality()
-                .equals(other._escalationRules, _escalationRules) &&
-            const DeepCollectionEquality()
-                .equals(other._collectionRules, _collectionRules) &&
+            const DeepCollectionEquality().equals(
+              other._reminderRules,
+              _reminderRules,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._escalationRules,
+              _escalationRules,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._collectionRules,
+              _collectionRules,
+            ) &&
             (identical(other.fieldAgentConfig, fieldAgentConfig) ||
                 other.fieldAgentConfig == fieldAgentConfig) &&
             (identical(other.aiConfig, aiConfig) ||
@@ -504,22 +521,23 @@ class _$EMIAutomationConfigImpl implements _EMIAutomationConfig {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      companyId,
-      companyName,
-      whatsappConfig,
-      voiceCallConfig,
-      smsConfig,
-      emailConfig,
-      const DeepCollectionEquality().hash(_reminderRules),
-      const DeepCollectionEquality().hash(_escalationRules),
-      const DeepCollectionEquality().hash(_collectionRules),
-      fieldAgentConfig,
-      aiConfig,
-      isActive,
-      createdAt,
-      updatedAt);
+    runtimeType,
+    id,
+    companyId,
+    companyName,
+    whatsappConfig,
+    voiceCallConfig,
+    smsConfig,
+    emailConfig,
+    const DeepCollectionEquality().hash(_reminderRules),
+    const DeepCollectionEquality().hash(_escalationRules),
+    const DeepCollectionEquality().hash(_collectionRules),
+    fieldAgentConfig,
+    aiConfig,
+    isActive,
+    createdAt,
+    updatedAt,
+  );
 
   /// Create a copy of EMIAutomationConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -528,33 +546,34 @@ class _$EMIAutomationConfigImpl implements _EMIAutomationConfig {
   @pragma('vm:prefer-inline')
   _$$EMIAutomationConfigImplCopyWith<_$EMIAutomationConfigImpl> get copyWith =>
       __$$EMIAutomationConfigImplCopyWithImpl<_$EMIAutomationConfigImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$EMIAutomationConfigImplToJson(
-      this,
-    );
+    return _$$EMIAutomationConfigImplToJson(this);
   }
 }
 
 abstract class _EMIAutomationConfig implements EMIAutomationConfig {
-  const factory _EMIAutomationConfig(
-      {required final String id,
-      required final String companyId,
-      required final String companyName,
-      required final WhatsAppConfig whatsappConfig,
-      required final VoiceCallConfig voiceCallConfig,
-      required final SMSConfig smsConfig,
-      required final EmailConfig emailConfig,
-      final List<AutomationRule> reminderRules,
-      final List<AutomationRule> escalationRules,
-      final List<AutomationRule> collectionRules,
-      required final FieldAgentConfig fieldAgentConfig,
-      required final AIConfig aiConfig,
-      required final bool isActive,
-      required final DateTime createdAt,
-      required final DateTime updatedAt}) = _$EMIAutomationConfigImpl;
+  const factory _EMIAutomationConfig({
+    required final String id,
+    required final String companyId,
+    required final String companyName,
+    required final WhatsAppConfig whatsappConfig,
+    required final VoiceCallConfig voiceCallConfig,
+    required final SMSConfig smsConfig,
+    required final EmailConfig emailConfig,
+    final List<AutomationRule> reminderRules,
+    final List<AutomationRule> escalationRules,
+    final List<AutomationRule> collectionRules,
+    required final FieldAgentConfig fieldAgentConfig,
+    required final AIConfig aiConfig,
+    required final bool isActive,
+    required final DateTime createdAt,
+    required final DateTime updatedAt,
+  }) = _$EMIAutomationConfigImpl;
 
   factory _EMIAutomationConfig.fromJson(Map<String, dynamic> json) =
       _$EMIAutomationConfigImpl.fromJson;
@@ -566,8 +585,7 @@ abstract class _EMIAutomationConfig implements EMIAutomationConfig {
   @override
   String get companyName; // WhatsApp Business Configuration
   @override
-  WhatsAppConfig
-      get whatsappConfig; // Voice Call Configuration (IVR/Cloud telephony)
+  WhatsAppConfig get whatsappConfig; // Voice Call Configuration (IVR/Cloud telephony)
   @override
   VoiceCallConfig get voiceCallConfig; // SMS Gateway Configuration
   @override
@@ -622,7 +640,7 @@ mixin _$WhatsAppConfig {
   bool get sendOverdueAlerts => throw _privateConstructorUsedError;
   bool get sendVoiceNotes =>
       throw _privateConstructorUsedError; // AI generated voice messages
-// Business hours
+  // Business hours
   String? get businessHoursStart => throw _privateConstructorUsedError; // 09:00
   String? get businessHoursEnd => throw _privateConstructorUsedError; // 18:00
   bool get sendOutsideBusinessHours => throw _privateConstructorUsedError;
@@ -640,26 +658,28 @@ mixin _$WhatsAppConfig {
 /// @nodoc
 abstract class $WhatsAppConfigCopyWith<$Res> {
   factory $WhatsAppConfigCopyWith(
-          WhatsAppConfig value, $Res Function(WhatsAppConfig) then) =
-      _$WhatsAppConfigCopyWithImpl<$Res, WhatsAppConfig>;
+    WhatsAppConfig value,
+    $Res Function(WhatsAppConfig) then,
+  ) = _$WhatsAppConfigCopyWithImpl<$Res, WhatsAppConfig>;
   @useResult
-  $Res call(
-      {bool isEnabled,
-      String? businessAccountId,
-      String? phoneNumberId,
-      String? accessToken,
-      String? apiVersion,
-      String? welcomeTemplateId,
-      String? reminderTemplateId,
-      String? overdueTemplateId,
-      String? paymentConfirmationTemplateId,
-      String? defaulterTemplateId,
-      bool sendReminders,
-      bool sendOverdueAlerts,
-      bool sendVoiceNotes,
-      String? businessHoursStart,
-      String? businessHoursEnd,
-      bool sendOutsideBusinessHours});
+  $Res call({
+    bool isEnabled,
+    String? businessAccountId,
+    String? phoneNumberId,
+    String? accessToken,
+    String? apiVersion,
+    String? welcomeTemplateId,
+    String? reminderTemplateId,
+    String? overdueTemplateId,
+    String? paymentConfirmationTemplateId,
+    String? defaulterTemplateId,
+    bool sendReminders,
+    bool sendOverdueAlerts,
+    bool sendVoiceNotes,
+    String? businessHoursStart,
+    String? businessHoursEnd,
+    bool sendOutsideBusinessHours,
+  });
 }
 
 /// @nodoc
@@ -694,100 +714,106 @@ class _$WhatsAppConfigCopyWithImpl<$Res, $Val extends WhatsAppConfig>
     Object? businessHoursEnd = freezed,
     Object? sendOutsideBusinessHours = null,
   }) {
-    return _then(_value.copyWith(
-      isEnabled: null == isEnabled
-          ? _value.isEnabled
-          : isEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      businessAccountId: freezed == businessAccountId
-          ? _value.businessAccountId
-          : businessAccountId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      phoneNumberId: freezed == phoneNumberId
-          ? _value.phoneNumberId
-          : phoneNumberId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      accessToken: freezed == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apiVersion: freezed == apiVersion
-          ? _value.apiVersion
-          : apiVersion // ignore: cast_nullable_to_non_nullable
-              as String?,
-      welcomeTemplateId: freezed == welcomeTemplateId
-          ? _value.welcomeTemplateId
-          : welcomeTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      reminderTemplateId: freezed == reminderTemplateId
-          ? _value.reminderTemplateId
-          : reminderTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      overdueTemplateId: freezed == overdueTemplateId
-          ? _value.overdueTemplateId
-          : overdueTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentConfirmationTemplateId: freezed == paymentConfirmationTemplateId
-          ? _value.paymentConfirmationTemplateId
-          : paymentConfirmationTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      defaulterTemplateId: freezed == defaulterTemplateId
-          ? _value.defaulterTemplateId
-          : defaulterTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sendReminders: null == sendReminders
-          ? _value.sendReminders
-          : sendReminders // ignore: cast_nullable_to_non_nullable
-              as bool,
-      sendOverdueAlerts: null == sendOverdueAlerts
-          ? _value.sendOverdueAlerts
-          : sendOverdueAlerts // ignore: cast_nullable_to_non_nullable
-              as bool,
-      sendVoiceNotes: null == sendVoiceNotes
-          ? _value.sendVoiceNotes
-          : sendVoiceNotes // ignore: cast_nullable_to_non_nullable
-              as bool,
-      businessHoursStart: freezed == businessHoursStart
-          ? _value.businessHoursStart
-          : businessHoursStart // ignore: cast_nullable_to_non_nullable
-              as String?,
-      businessHoursEnd: freezed == businessHoursEnd
-          ? _value.businessHoursEnd
-          : businessHoursEnd // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sendOutsideBusinessHours: null == sendOutsideBusinessHours
-          ? _value.sendOutsideBusinessHours
-          : sendOutsideBusinessHours // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            isEnabled: null == isEnabled
+                ? _value.isEnabled
+                : isEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            businessAccountId: freezed == businessAccountId
+                ? _value.businessAccountId
+                : businessAccountId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            phoneNumberId: freezed == phoneNumberId
+                ? _value.phoneNumberId
+                : phoneNumberId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            accessToken: freezed == accessToken
+                ? _value.accessToken
+                : accessToken // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            apiVersion: freezed == apiVersion
+                ? _value.apiVersion
+                : apiVersion // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            welcomeTemplateId: freezed == welcomeTemplateId
+                ? _value.welcomeTemplateId
+                : welcomeTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            reminderTemplateId: freezed == reminderTemplateId
+                ? _value.reminderTemplateId
+                : reminderTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            overdueTemplateId: freezed == overdueTemplateId
+                ? _value.overdueTemplateId
+                : overdueTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            paymentConfirmationTemplateId:
+                freezed == paymentConfirmationTemplateId
+                ? _value.paymentConfirmationTemplateId
+                : paymentConfirmationTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            defaulterTemplateId: freezed == defaulterTemplateId
+                ? _value.defaulterTemplateId
+                : defaulterTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            sendReminders: null == sendReminders
+                ? _value.sendReminders
+                : sendReminders // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            sendOverdueAlerts: null == sendOverdueAlerts
+                ? _value.sendOverdueAlerts
+                : sendOverdueAlerts // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            sendVoiceNotes: null == sendVoiceNotes
+                ? _value.sendVoiceNotes
+                : sendVoiceNotes // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            businessHoursStart: freezed == businessHoursStart
+                ? _value.businessHoursStart
+                : businessHoursStart // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            businessHoursEnd: freezed == businessHoursEnd
+                ? _value.businessHoursEnd
+                : businessHoursEnd // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            sendOutsideBusinessHours: null == sendOutsideBusinessHours
+                ? _value.sendOutsideBusinessHours
+                : sendOutsideBusinessHours // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$WhatsAppConfigImplCopyWith<$Res>
     implements $WhatsAppConfigCopyWith<$Res> {
-  factory _$$WhatsAppConfigImplCopyWith(_$WhatsAppConfigImpl value,
-          $Res Function(_$WhatsAppConfigImpl) then) =
-      __$$WhatsAppConfigImplCopyWithImpl<$Res>;
+  factory _$$WhatsAppConfigImplCopyWith(
+    _$WhatsAppConfigImpl value,
+    $Res Function(_$WhatsAppConfigImpl) then,
+  ) = __$$WhatsAppConfigImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool isEnabled,
-      String? businessAccountId,
-      String? phoneNumberId,
-      String? accessToken,
-      String? apiVersion,
-      String? welcomeTemplateId,
-      String? reminderTemplateId,
-      String? overdueTemplateId,
-      String? paymentConfirmationTemplateId,
-      String? defaulterTemplateId,
-      bool sendReminders,
-      bool sendOverdueAlerts,
-      bool sendVoiceNotes,
-      String? businessHoursStart,
-      String? businessHoursEnd,
-      bool sendOutsideBusinessHours});
+  $Res call({
+    bool isEnabled,
+    String? businessAccountId,
+    String? phoneNumberId,
+    String? accessToken,
+    String? apiVersion,
+    String? welcomeTemplateId,
+    String? reminderTemplateId,
+    String? overdueTemplateId,
+    String? paymentConfirmationTemplateId,
+    String? defaulterTemplateId,
+    bool sendReminders,
+    bool sendOverdueAlerts,
+    bool sendVoiceNotes,
+    String? businessHoursStart,
+    String? businessHoursEnd,
+    bool sendOutsideBusinessHours,
+  });
 }
 
 /// @nodoc
@@ -795,8 +821,9 @@ class __$$WhatsAppConfigImplCopyWithImpl<$Res>
     extends _$WhatsAppConfigCopyWithImpl<$Res, _$WhatsAppConfigImpl>
     implements _$$WhatsAppConfigImplCopyWith<$Res> {
   __$$WhatsAppConfigImplCopyWithImpl(
-      _$WhatsAppConfigImpl _value, $Res Function(_$WhatsAppConfigImpl) _then)
-      : super(_value, _then);
+    _$WhatsAppConfigImpl _value,
+    $Res Function(_$WhatsAppConfigImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of WhatsAppConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -820,95 +847,98 @@ class __$$WhatsAppConfigImplCopyWithImpl<$Res>
     Object? businessHoursEnd = freezed,
     Object? sendOutsideBusinessHours = null,
   }) {
-    return _then(_$WhatsAppConfigImpl(
-      isEnabled: null == isEnabled
-          ? _value.isEnabled
-          : isEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      businessAccountId: freezed == businessAccountId
-          ? _value.businessAccountId
-          : businessAccountId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      phoneNumberId: freezed == phoneNumberId
-          ? _value.phoneNumberId
-          : phoneNumberId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      accessToken: freezed == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apiVersion: freezed == apiVersion
-          ? _value.apiVersion
-          : apiVersion // ignore: cast_nullable_to_non_nullable
-              as String?,
-      welcomeTemplateId: freezed == welcomeTemplateId
-          ? _value.welcomeTemplateId
-          : welcomeTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      reminderTemplateId: freezed == reminderTemplateId
-          ? _value.reminderTemplateId
-          : reminderTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      overdueTemplateId: freezed == overdueTemplateId
-          ? _value.overdueTemplateId
-          : overdueTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentConfirmationTemplateId: freezed == paymentConfirmationTemplateId
-          ? _value.paymentConfirmationTemplateId
-          : paymentConfirmationTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      defaulterTemplateId: freezed == defaulterTemplateId
-          ? _value.defaulterTemplateId
-          : defaulterTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sendReminders: null == sendReminders
-          ? _value.sendReminders
-          : sendReminders // ignore: cast_nullable_to_non_nullable
-              as bool,
-      sendOverdueAlerts: null == sendOverdueAlerts
-          ? _value.sendOverdueAlerts
-          : sendOverdueAlerts // ignore: cast_nullable_to_non_nullable
-              as bool,
-      sendVoiceNotes: null == sendVoiceNotes
-          ? _value.sendVoiceNotes
-          : sendVoiceNotes // ignore: cast_nullable_to_non_nullable
-              as bool,
-      businessHoursStart: freezed == businessHoursStart
-          ? _value.businessHoursStart
-          : businessHoursStart // ignore: cast_nullable_to_non_nullable
-              as String?,
-      businessHoursEnd: freezed == businessHoursEnd
-          ? _value.businessHoursEnd
-          : businessHoursEnd // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sendOutsideBusinessHours: null == sendOutsideBusinessHours
-          ? _value.sendOutsideBusinessHours
-          : sendOutsideBusinessHours // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$WhatsAppConfigImpl(
+        isEnabled: null == isEnabled
+            ? _value.isEnabled
+            : isEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        businessAccountId: freezed == businessAccountId
+            ? _value.businessAccountId
+            : businessAccountId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        phoneNumberId: freezed == phoneNumberId
+            ? _value.phoneNumberId
+            : phoneNumberId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        accessToken: freezed == accessToken
+            ? _value.accessToken
+            : accessToken // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        apiVersion: freezed == apiVersion
+            ? _value.apiVersion
+            : apiVersion // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        welcomeTemplateId: freezed == welcomeTemplateId
+            ? _value.welcomeTemplateId
+            : welcomeTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        reminderTemplateId: freezed == reminderTemplateId
+            ? _value.reminderTemplateId
+            : reminderTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        overdueTemplateId: freezed == overdueTemplateId
+            ? _value.overdueTemplateId
+            : overdueTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        paymentConfirmationTemplateId: freezed == paymentConfirmationTemplateId
+            ? _value.paymentConfirmationTemplateId
+            : paymentConfirmationTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        defaulterTemplateId: freezed == defaulterTemplateId
+            ? _value.defaulterTemplateId
+            : defaulterTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        sendReminders: null == sendReminders
+            ? _value.sendReminders
+            : sendReminders // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        sendOverdueAlerts: null == sendOverdueAlerts
+            ? _value.sendOverdueAlerts
+            : sendOverdueAlerts // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        sendVoiceNotes: null == sendVoiceNotes
+            ? _value.sendVoiceNotes
+            : sendVoiceNotes // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        businessHoursStart: freezed == businessHoursStart
+            ? _value.businessHoursStart
+            : businessHoursStart // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        businessHoursEnd: freezed == businessHoursEnd
+            ? _value.businessHoursEnd
+            : businessHoursEnd // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        sendOutsideBusinessHours: null == sendOutsideBusinessHours
+            ? _value.sendOutsideBusinessHours
+            : sendOutsideBusinessHours // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$WhatsAppConfigImpl implements _WhatsAppConfig {
-  const _$WhatsAppConfigImpl(
-      {required this.isEnabled,
-      this.businessAccountId,
-      this.phoneNumberId,
-      this.accessToken,
-      this.apiVersion,
-      this.welcomeTemplateId,
-      this.reminderTemplateId,
-      this.overdueTemplateId,
-      this.paymentConfirmationTemplateId,
-      this.defaulterTemplateId,
-      this.sendReminders = true,
-      this.sendOverdueAlerts = true,
-      this.sendVoiceNotes = false,
-      this.businessHoursStart,
-      this.businessHoursEnd,
-      this.sendOutsideBusinessHours = false});
+  const _$WhatsAppConfigImpl({
+    required this.isEnabled,
+    this.businessAccountId,
+    this.phoneNumberId,
+    this.accessToken,
+    this.apiVersion,
+    this.welcomeTemplateId,
+    this.reminderTemplateId,
+    this.overdueTemplateId,
+    this.paymentConfirmationTemplateId,
+    this.defaulterTemplateId,
+    this.sendReminders = true,
+    this.sendOverdueAlerts = true,
+    this.sendVoiceNotes = false,
+    this.businessHoursStart,
+    this.businessHoursEnd,
+    this.sendOutsideBusinessHours = false,
+  });
 
   factory _$WhatsAppConfigImpl.fromJson(Map<String, dynamic> json) =>
       _$$WhatsAppConfigImplFromJson(json);
@@ -923,7 +953,7 @@ class _$WhatsAppConfigImpl implements _WhatsAppConfig {
   final String? accessToken;
   @override
   final String? apiVersion;
-// Template IDs for different scenarios
+  // Template IDs for different scenarios
   @override
   final String? welcomeTemplateId;
   @override
@@ -934,7 +964,7 @@ class _$WhatsAppConfigImpl implements _WhatsAppConfig {
   final String? paymentConfirmationTemplateId;
   @override
   final String? defaulterTemplateId;
-// Default message settings
+  // Default message settings
   @override
   @JsonKey()
   final bool sendReminders;
@@ -944,14 +974,14 @@ class _$WhatsAppConfigImpl implements _WhatsAppConfig {
   @override
   @JsonKey()
   final bool sendVoiceNotes;
-// AI generated voice messages
-// Business hours
+  // AI generated voice messages
+  // Business hours
   @override
   final String? businessHoursStart;
-// 09:00
+  // 09:00
   @override
   final String? businessHoursEnd;
-// 18:00
+  // 18:00
   @override
   @JsonKey()
   final bool sendOutsideBusinessHours;
@@ -982,8 +1012,10 @@ class _$WhatsAppConfigImpl implements _WhatsAppConfig {
                 other.reminderTemplateId == reminderTemplateId) &&
             (identical(other.overdueTemplateId, overdueTemplateId) ||
                 other.overdueTemplateId == overdueTemplateId) &&
-            (identical(other.paymentConfirmationTemplateId,
-                    paymentConfirmationTemplateId) ||
+            (identical(
+                  other.paymentConfirmationTemplateId,
+                  paymentConfirmationTemplateId,
+                ) ||
                 other.paymentConfirmationTemplateId ==
                     paymentConfirmationTemplateId) &&
             (identical(other.defaulterTemplateId, defaulterTemplateId) ||
@@ -999,30 +1031,33 @@ class _$WhatsAppConfigImpl implements _WhatsAppConfig {
             (identical(other.businessHoursEnd, businessHoursEnd) ||
                 other.businessHoursEnd == businessHoursEnd) &&
             (identical(
-                    other.sendOutsideBusinessHours, sendOutsideBusinessHours) ||
+                  other.sendOutsideBusinessHours,
+                  sendOutsideBusinessHours,
+                ) ||
                 other.sendOutsideBusinessHours == sendOutsideBusinessHours));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      isEnabled,
-      businessAccountId,
-      phoneNumberId,
-      accessToken,
-      apiVersion,
-      welcomeTemplateId,
-      reminderTemplateId,
-      overdueTemplateId,
-      paymentConfirmationTemplateId,
-      defaulterTemplateId,
-      sendReminders,
-      sendOverdueAlerts,
-      sendVoiceNotes,
-      businessHoursStart,
-      businessHoursEnd,
-      sendOutsideBusinessHours);
+    runtimeType,
+    isEnabled,
+    businessAccountId,
+    phoneNumberId,
+    accessToken,
+    apiVersion,
+    welcomeTemplateId,
+    reminderTemplateId,
+    overdueTemplateId,
+    paymentConfirmationTemplateId,
+    defaulterTemplateId,
+    sendReminders,
+    sendOverdueAlerts,
+    sendVoiceNotes,
+    businessHoursStart,
+    businessHoursEnd,
+    sendOutsideBusinessHours,
+  );
 
   /// Create a copy of WhatsAppConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -1031,34 +1066,35 @@ class _$WhatsAppConfigImpl implements _WhatsAppConfig {
   @pragma('vm:prefer-inline')
   _$$WhatsAppConfigImplCopyWith<_$WhatsAppConfigImpl> get copyWith =>
       __$$WhatsAppConfigImplCopyWithImpl<_$WhatsAppConfigImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$WhatsAppConfigImplToJson(
-      this,
-    );
+    return _$$WhatsAppConfigImplToJson(this);
   }
 }
 
 abstract class _WhatsAppConfig implements WhatsAppConfig {
-  const factory _WhatsAppConfig(
-      {required final bool isEnabled,
-      final String? businessAccountId,
-      final String? phoneNumberId,
-      final String? accessToken,
-      final String? apiVersion,
-      final String? welcomeTemplateId,
-      final String? reminderTemplateId,
-      final String? overdueTemplateId,
-      final String? paymentConfirmationTemplateId,
-      final String? defaulterTemplateId,
-      final bool sendReminders,
-      final bool sendOverdueAlerts,
-      final bool sendVoiceNotes,
-      final String? businessHoursStart,
-      final String? businessHoursEnd,
-      final bool sendOutsideBusinessHours}) = _$WhatsAppConfigImpl;
+  const factory _WhatsAppConfig({
+    required final bool isEnabled,
+    final String? businessAccountId,
+    final String? phoneNumberId,
+    final String? accessToken,
+    final String? apiVersion,
+    final String? welcomeTemplateId,
+    final String? reminderTemplateId,
+    final String? overdueTemplateId,
+    final String? paymentConfirmationTemplateId,
+    final String? defaulterTemplateId,
+    final bool sendReminders,
+    final bool sendOverdueAlerts,
+    final bool sendVoiceNotes,
+    final String? businessHoursStart,
+    final String? businessHoursEnd,
+    final bool sendOutsideBusinessHours,
+  }) = _$WhatsAppConfigImpl;
 
   factory _WhatsAppConfig.fromJson(Map<String, dynamic> json) =
       _$WhatsAppConfigImpl.fromJson;
@@ -1089,7 +1125,7 @@ abstract class _WhatsAppConfig implements WhatsAppConfig {
   bool get sendOverdueAlerts;
   @override
   bool get sendVoiceNotes; // AI generated voice messages
-// Business hours
+  // Business hours
   @override
   String? get businessHoursStart; // 09:00
   @override
@@ -1121,18 +1157,18 @@ mixin _$VoiceCallConfig {
   String? get ivrGreetingMessage => throw _privateConstructorUsedError;
   String? get ivrMenuOptions =>
       throw _privateConstructorUsedError; // "Press 1 for EMI status, 2 for payment link..."
-// AI Voice Bot
+  // AI Voice Bot
   bool get useAIVoiceBot => throw _privateConstructorUsedError;
   String? get aiVoiceLanguage =>
       throw _privateConstructorUsedError; // hi-IN, en-IN
   String? get aiVoiceGender =>
       throw _privateConstructorUsedError; // male, female
-// Call scheduling
+  // Call scheduling
   int get maxRetryAttempts => throw _privateConstructorUsedError;
   int get retryIntervalMinutes => throw _privateConstructorUsedError;
   List<int> get preferredCallHours =>
       throw _privateConstructorUsedError; // 10 AM, 2 PM, 4 PM
-// Recording
+  // Recording
   bool get recordCalls => throw _privateConstructorUsedError;
   bool get transcribeCalls => throw _privateConstructorUsedError;
 
@@ -1149,26 +1185,28 @@ mixin _$VoiceCallConfig {
 /// @nodoc
 abstract class $VoiceCallConfigCopyWith<$Res> {
   factory $VoiceCallConfigCopyWith(
-          VoiceCallConfig value, $Res Function(VoiceCallConfig) then) =
-      _$VoiceCallConfigCopyWithImpl<$Res, VoiceCallConfig>;
+    VoiceCallConfig value,
+    $Res Function(VoiceCallConfig) then,
+  ) = _$VoiceCallConfigCopyWithImpl<$Res, VoiceCallConfig>;
   @useResult
-  $Res call(
-      {bool isEnabled,
-      String? provider,
-      String? apiKey,
-      String? apiSecret,
-      String? fromNumber,
-      bool useIVR,
-      String? ivrGreetingMessage,
-      String? ivrMenuOptions,
-      bool useAIVoiceBot,
-      String? aiVoiceLanguage,
-      String? aiVoiceGender,
-      int maxRetryAttempts,
-      int retryIntervalMinutes,
-      List<int> preferredCallHours,
-      bool recordCalls,
-      bool transcribeCalls});
+  $Res call({
+    bool isEnabled,
+    String? provider,
+    String? apiKey,
+    String? apiSecret,
+    String? fromNumber,
+    bool useIVR,
+    String? ivrGreetingMessage,
+    String? ivrMenuOptions,
+    bool useAIVoiceBot,
+    String? aiVoiceLanguage,
+    String? aiVoiceGender,
+    int maxRetryAttempts,
+    int retryIntervalMinutes,
+    List<int> preferredCallHours,
+    bool recordCalls,
+    bool transcribeCalls,
+  });
 }
 
 /// @nodoc
@@ -1203,100 +1241,105 @@ class _$VoiceCallConfigCopyWithImpl<$Res, $Val extends VoiceCallConfig>
     Object? recordCalls = null,
     Object? transcribeCalls = null,
   }) {
-    return _then(_value.copyWith(
-      isEnabled: null == isEnabled
-          ? _value.isEnabled
-          : isEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      provider: freezed == provider
-          ? _value.provider
-          : provider // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apiKey: freezed == apiKey
-          ? _value.apiKey
-          : apiKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apiSecret: freezed == apiSecret
-          ? _value.apiSecret
-          : apiSecret // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fromNumber: freezed == fromNumber
-          ? _value.fromNumber
-          : fromNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      useIVR: null == useIVR
-          ? _value.useIVR
-          : useIVR // ignore: cast_nullable_to_non_nullable
-              as bool,
-      ivrGreetingMessage: freezed == ivrGreetingMessage
-          ? _value.ivrGreetingMessage
-          : ivrGreetingMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      ivrMenuOptions: freezed == ivrMenuOptions
-          ? _value.ivrMenuOptions
-          : ivrMenuOptions // ignore: cast_nullable_to_non_nullable
-              as String?,
-      useAIVoiceBot: null == useAIVoiceBot
-          ? _value.useAIVoiceBot
-          : useAIVoiceBot // ignore: cast_nullable_to_non_nullable
-              as bool,
-      aiVoiceLanguage: freezed == aiVoiceLanguage
-          ? _value.aiVoiceLanguage
-          : aiVoiceLanguage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      aiVoiceGender: freezed == aiVoiceGender
-          ? _value.aiVoiceGender
-          : aiVoiceGender // ignore: cast_nullable_to_non_nullable
-              as String?,
-      maxRetryAttempts: null == maxRetryAttempts
-          ? _value.maxRetryAttempts
-          : maxRetryAttempts // ignore: cast_nullable_to_non_nullable
-              as int,
-      retryIntervalMinutes: null == retryIntervalMinutes
-          ? _value.retryIntervalMinutes
-          : retryIntervalMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      preferredCallHours: null == preferredCallHours
-          ? _value.preferredCallHours
-          : preferredCallHours // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-      recordCalls: null == recordCalls
-          ? _value.recordCalls
-          : recordCalls // ignore: cast_nullable_to_non_nullable
-              as bool,
-      transcribeCalls: null == transcribeCalls
-          ? _value.transcribeCalls
-          : transcribeCalls // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            isEnabled: null == isEnabled
+                ? _value.isEnabled
+                : isEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            provider: freezed == provider
+                ? _value.provider
+                : provider // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            apiKey: freezed == apiKey
+                ? _value.apiKey
+                : apiKey // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            apiSecret: freezed == apiSecret
+                ? _value.apiSecret
+                : apiSecret // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            fromNumber: freezed == fromNumber
+                ? _value.fromNumber
+                : fromNumber // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            useIVR: null == useIVR
+                ? _value.useIVR
+                : useIVR // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            ivrGreetingMessage: freezed == ivrGreetingMessage
+                ? _value.ivrGreetingMessage
+                : ivrGreetingMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            ivrMenuOptions: freezed == ivrMenuOptions
+                ? _value.ivrMenuOptions
+                : ivrMenuOptions // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            useAIVoiceBot: null == useAIVoiceBot
+                ? _value.useAIVoiceBot
+                : useAIVoiceBot // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            aiVoiceLanguage: freezed == aiVoiceLanguage
+                ? _value.aiVoiceLanguage
+                : aiVoiceLanguage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            aiVoiceGender: freezed == aiVoiceGender
+                ? _value.aiVoiceGender
+                : aiVoiceGender // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            maxRetryAttempts: null == maxRetryAttempts
+                ? _value.maxRetryAttempts
+                : maxRetryAttempts // ignore: cast_nullable_to_non_nullable
+                      as int,
+            retryIntervalMinutes: null == retryIntervalMinutes
+                ? _value.retryIntervalMinutes
+                : retryIntervalMinutes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            preferredCallHours: null == preferredCallHours
+                ? _value.preferredCallHours
+                : preferredCallHours // ignore: cast_nullable_to_non_nullable
+                      as List<int>,
+            recordCalls: null == recordCalls
+                ? _value.recordCalls
+                : recordCalls // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            transcribeCalls: null == transcribeCalls
+                ? _value.transcribeCalls
+                : transcribeCalls // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$VoiceCallConfigImplCopyWith<$Res>
     implements $VoiceCallConfigCopyWith<$Res> {
-  factory _$$VoiceCallConfigImplCopyWith(_$VoiceCallConfigImpl value,
-          $Res Function(_$VoiceCallConfigImpl) then) =
-      __$$VoiceCallConfigImplCopyWithImpl<$Res>;
+  factory _$$VoiceCallConfigImplCopyWith(
+    _$VoiceCallConfigImpl value,
+    $Res Function(_$VoiceCallConfigImpl) then,
+  ) = __$$VoiceCallConfigImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool isEnabled,
-      String? provider,
-      String? apiKey,
-      String? apiSecret,
-      String? fromNumber,
-      bool useIVR,
-      String? ivrGreetingMessage,
-      String? ivrMenuOptions,
-      bool useAIVoiceBot,
-      String? aiVoiceLanguage,
-      String? aiVoiceGender,
-      int maxRetryAttempts,
-      int retryIntervalMinutes,
-      List<int> preferredCallHours,
-      bool recordCalls,
-      bool transcribeCalls});
+  $Res call({
+    bool isEnabled,
+    String? provider,
+    String? apiKey,
+    String? apiSecret,
+    String? fromNumber,
+    bool useIVR,
+    String? ivrGreetingMessage,
+    String? ivrMenuOptions,
+    bool useAIVoiceBot,
+    String? aiVoiceLanguage,
+    String? aiVoiceGender,
+    int maxRetryAttempts,
+    int retryIntervalMinutes,
+    List<int> preferredCallHours,
+    bool recordCalls,
+    bool transcribeCalls,
+  });
 }
 
 /// @nodoc
@@ -1304,8 +1347,9 @@ class __$$VoiceCallConfigImplCopyWithImpl<$Res>
     extends _$VoiceCallConfigCopyWithImpl<$Res, _$VoiceCallConfigImpl>
     implements _$$VoiceCallConfigImplCopyWith<$Res> {
   __$$VoiceCallConfigImplCopyWithImpl(
-      _$VoiceCallConfigImpl _value, $Res Function(_$VoiceCallConfigImpl) _then)
-      : super(_value, _then);
+    _$VoiceCallConfigImpl _value,
+    $Res Function(_$VoiceCallConfigImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of VoiceCallConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -1329,96 +1373,98 @@ class __$$VoiceCallConfigImplCopyWithImpl<$Res>
     Object? recordCalls = null,
     Object? transcribeCalls = null,
   }) {
-    return _then(_$VoiceCallConfigImpl(
-      isEnabled: null == isEnabled
-          ? _value.isEnabled
-          : isEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      provider: freezed == provider
-          ? _value.provider
-          : provider // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apiKey: freezed == apiKey
-          ? _value.apiKey
-          : apiKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apiSecret: freezed == apiSecret
-          ? _value.apiSecret
-          : apiSecret // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fromNumber: freezed == fromNumber
-          ? _value.fromNumber
-          : fromNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      useIVR: null == useIVR
-          ? _value.useIVR
-          : useIVR // ignore: cast_nullable_to_non_nullable
-              as bool,
-      ivrGreetingMessage: freezed == ivrGreetingMessage
-          ? _value.ivrGreetingMessage
-          : ivrGreetingMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      ivrMenuOptions: freezed == ivrMenuOptions
-          ? _value.ivrMenuOptions
-          : ivrMenuOptions // ignore: cast_nullable_to_non_nullable
-              as String?,
-      useAIVoiceBot: null == useAIVoiceBot
-          ? _value.useAIVoiceBot
-          : useAIVoiceBot // ignore: cast_nullable_to_non_nullable
-              as bool,
-      aiVoiceLanguage: freezed == aiVoiceLanguage
-          ? _value.aiVoiceLanguage
-          : aiVoiceLanguage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      aiVoiceGender: freezed == aiVoiceGender
-          ? _value.aiVoiceGender
-          : aiVoiceGender // ignore: cast_nullable_to_non_nullable
-              as String?,
-      maxRetryAttempts: null == maxRetryAttempts
-          ? _value.maxRetryAttempts
-          : maxRetryAttempts // ignore: cast_nullable_to_non_nullable
-              as int,
-      retryIntervalMinutes: null == retryIntervalMinutes
-          ? _value.retryIntervalMinutes
-          : retryIntervalMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      preferredCallHours: null == preferredCallHours
-          ? _value._preferredCallHours
-          : preferredCallHours // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-      recordCalls: null == recordCalls
-          ? _value.recordCalls
-          : recordCalls // ignore: cast_nullable_to_non_nullable
-              as bool,
-      transcribeCalls: null == transcribeCalls
-          ? _value.transcribeCalls
-          : transcribeCalls // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$VoiceCallConfigImpl(
+        isEnabled: null == isEnabled
+            ? _value.isEnabled
+            : isEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        provider: freezed == provider
+            ? _value.provider
+            : provider // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        apiKey: freezed == apiKey
+            ? _value.apiKey
+            : apiKey // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        apiSecret: freezed == apiSecret
+            ? _value.apiSecret
+            : apiSecret // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        fromNumber: freezed == fromNumber
+            ? _value.fromNumber
+            : fromNumber // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        useIVR: null == useIVR
+            ? _value.useIVR
+            : useIVR // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        ivrGreetingMessage: freezed == ivrGreetingMessage
+            ? _value.ivrGreetingMessage
+            : ivrGreetingMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        ivrMenuOptions: freezed == ivrMenuOptions
+            ? _value.ivrMenuOptions
+            : ivrMenuOptions // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        useAIVoiceBot: null == useAIVoiceBot
+            ? _value.useAIVoiceBot
+            : useAIVoiceBot // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        aiVoiceLanguage: freezed == aiVoiceLanguage
+            ? _value.aiVoiceLanguage
+            : aiVoiceLanguage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        aiVoiceGender: freezed == aiVoiceGender
+            ? _value.aiVoiceGender
+            : aiVoiceGender // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        maxRetryAttempts: null == maxRetryAttempts
+            ? _value.maxRetryAttempts
+            : maxRetryAttempts // ignore: cast_nullable_to_non_nullable
+                  as int,
+        retryIntervalMinutes: null == retryIntervalMinutes
+            ? _value.retryIntervalMinutes
+            : retryIntervalMinutes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        preferredCallHours: null == preferredCallHours
+            ? _value._preferredCallHours
+            : preferredCallHours // ignore: cast_nullable_to_non_nullable
+                  as List<int>,
+        recordCalls: null == recordCalls
+            ? _value.recordCalls
+            : recordCalls // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        transcribeCalls: null == transcribeCalls
+            ? _value.transcribeCalls
+            : transcribeCalls // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$VoiceCallConfigImpl implements _VoiceCallConfig {
-  const _$VoiceCallConfigImpl(
-      {required this.isEnabled,
-      this.provider,
-      this.apiKey,
-      this.apiSecret,
-      this.fromNumber,
-      this.useIVR = false,
-      this.ivrGreetingMessage,
-      this.ivrMenuOptions,
-      this.useAIVoiceBot = false,
-      this.aiVoiceLanguage,
-      this.aiVoiceGender,
-      this.maxRetryAttempts = 3,
-      this.retryIntervalMinutes = 30,
-      final List<int> preferredCallHours = const [10, 14, 16],
-      this.recordCalls = true,
-      this.transcribeCalls = true})
-      : _preferredCallHours = preferredCallHours;
+  const _$VoiceCallConfigImpl({
+    required this.isEnabled,
+    this.provider,
+    this.apiKey,
+    this.apiSecret,
+    this.fromNumber,
+    this.useIVR = false,
+    this.ivrGreetingMessage,
+    this.ivrMenuOptions,
+    this.useAIVoiceBot = false,
+    this.aiVoiceLanguage,
+    this.aiVoiceGender,
+    this.maxRetryAttempts = 3,
+    this.retryIntervalMinutes = 30,
+    final List<int> preferredCallHours = const [10, 14, 16],
+    this.recordCalls = true,
+    this.transcribeCalls = true,
+  }) : _preferredCallHours = preferredCallHours;
 
   factory _$VoiceCallConfigImpl.fromJson(Map<String, dynamic> json) =>
       _$$VoiceCallConfigImplFromJson(json);
@@ -1427,14 +1473,14 @@ class _$VoiceCallConfigImpl implements _VoiceCallConfig {
   final bool isEnabled;
   @override
   final String? provider;
-// Exotel, Knowlarity, Twilio, Ozonetel
+  // Exotel, Knowlarity, Twilio, Ozonetel
   @override
   final String? apiKey;
   @override
   final String? apiSecret;
   @override
   final String? fromNumber;
-// IVR Settings
+  // IVR Settings
   @override
   @JsonKey()
   final bool useIVR;
@@ -1442,18 +1488,18 @@ class _$VoiceCallConfigImpl implements _VoiceCallConfig {
   final String? ivrGreetingMessage;
   @override
   final String? ivrMenuOptions;
-// "Press 1 for EMI status, 2 for payment link..."
-// AI Voice Bot
+  // "Press 1 for EMI status, 2 for payment link..."
+  // AI Voice Bot
   @override
   @JsonKey()
   final bool useAIVoiceBot;
   @override
   final String? aiVoiceLanguage;
-// hi-IN, en-IN
+  // hi-IN, en-IN
   @override
   final String? aiVoiceGender;
-// male, female
-// Call scheduling
+  // male, female
+  // Call scheduling
   @override
   @JsonKey()
   final int maxRetryAttempts;
@@ -1470,8 +1516,8 @@ class _$VoiceCallConfigImpl implements _VoiceCallConfig {
     return EqualUnmodifiableListView(_preferredCallHours);
   }
 
-// 10 AM, 2 PM, 4 PM
-// Recording
+  // 10 AM, 2 PM, 4 PM
+  // Recording
   @override
   @JsonKey()
   final bool recordCalls;
@@ -1513,8 +1559,10 @@ class _$VoiceCallConfigImpl implements _VoiceCallConfig {
                 other.maxRetryAttempts == maxRetryAttempts) &&
             (identical(other.retryIntervalMinutes, retryIntervalMinutes) ||
                 other.retryIntervalMinutes == retryIntervalMinutes) &&
-            const DeepCollectionEquality()
-                .equals(other._preferredCallHours, _preferredCallHours) &&
+            const DeepCollectionEquality().equals(
+              other._preferredCallHours,
+              _preferredCallHours,
+            ) &&
             (identical(other.recordCalls, recordCalls) ||
                 other.recordCalls == recordCalls) &&
             (identical(other.transcribeCalls, transcribeCalls) ||
@@ -1524,23 +1572,24 @@ class _$VoiceCallConfigImpl implements _VoiceCallConfig {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      isEnabled,
-      provider,
-      apiKey,
-      apiSecret,
-      fromNumber,
-      useIVR,
-      ivrGreetingMessage,
-      ivrMenuOptions,
-      useAIVoiceBot,
-      aiVoiceLanguage,
-      aiVoiceGender,
-      maxRetryAttempts,
-      retryIntervalMinutes,
-      const DeepCollectionEquality().hash(_preferredCallHours),
-      recordCalls,
-      transcribeCalls);
+    runtimeType,
+    isEnabled,
+    provider,
+    apiKey,
+    apiSecret,
+    fromNumber,
+    useIVR,
+    ivrGreetingMessage,
+    ivrMenuOptions,
+    useAIVoiceBot,
+    aiVoiceLanguage,
+    aiVoiceGender,
+    maxRetryAttempts,
+    retryIntervalMinutes,
+    const DeepCollectionEquality().hash(_preferredCallHours),
+    recordCalls,
+    transcribeCalls,
+  );
 
   /// Create a copy of VoiceCallConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -1549,34 +1598,35 @@ class _$VoiceCallConfigImpl implements _VoiceCallConfig {
   @pragma('vm:prefer-inline')
   _$$VoiceCallConfigImplCopyWith<_$VoiceCallConfigImpl> get copyWith =>
       __$$VoiceCallConfigImplCopyWithImpl<_$VoiceCallConfigImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$VoiceCallConfigImplToJson(
-      this,
-    );
+    return _$$VoiceCallConfigImplToJson(this);
   }
 }
 
 abstract class _VoiceCallConfig implements VoiceCallConfig {
-  const factory _VoiceCallConfig(
-      {required final bool isEnabled,
-      final String? provider,
-      final String? apiKey,
-      final String? apiSecret,
-      final String? fromNumber,
-      final bool useIVR,
-      final String? ivrGreetingMessage,
-      final String? ivrMenuOptions,
-      final bool useAIVoiceBot,
-      final String? aiVoiceLanguage,
-      final String? aiVoiceGender,
-      final int maxRetryAttempts,
-      final int retryIntervalMinutes,
-      final List<int> preferredCallHours,
-      final bool recordCalls,
-      final bool transcribeCalls}) = _$VoiceCallConfigImpl;
+  const factory _VoiceCallConfig({
+    required final bool isEnabled,
+    final String? provider,
+    final String? apiKey,
+    final String? apiSecret,
+    final String? fromNumber,
+    final bool useIVR,
+    final String? ivrGreetingMessage,
+    final String? ivrMenuOptions,
+    final bool useAIVoiceBot,
+    final String? aiVoiceLanguage,
+    final String? aiVoiceGender,
+    final int maxRetryAttempts,
+    final int retryIntervalMinutes,
+    final List<int> preferredCallHours,
+    final bool recordCalls,
+    final bool transcribeCalls,
+  }) = _$VoiceCallConfigImpl;
 
   factory _VoiceCallConfig.fromJson(Map<String, dynamic> json) =
       _$VoiceCallConfigImpl.fromJson;
@@ -1597,21 +1647,21 @@ abstract class _VoiceCallConfig implements VoiceCallConfig {
   String? get ivrGreetingMessage;
   @override
   String? get ivrMenuOptions; // "Press 1 for EMI status, 2 for payment link..."
-// AI Voice Bot
+  // AI Voice Bot
   @override
   bool get useAIVoiceBot;
   @override
   String? get aiVoiceLanguage; // hi-IN, en-IN
   @override
   String? get aiVoiceGender; // male, female
-// Call scheduling
+  // Call scheduling
   @override
   int get maxRetryAttempts;
   @override
   int get retryIntervalMinutes;
   @override
   List<int> get preferredCallHours; // 10 AM, 2 PM, 4 PM
-// Recording
+  // Recording
   @override
   bool get recordCalls;
   @override
@@ -1636,7 +1686,7 @@ mixin _$SMSConfig {
       throw _privateConstructorUsedError; // Msg91, Twilio, ValueFirst
   String? get apiKey => throw _privateConstructorUsedError;
   String? get senderId => throw _privateConstructorUsedError; // APSDLRM
-// DLT Template IDs (India TRAI compliance)
+  // DLT Template IDs (India TRAI compliance)
   String? get otpTemplateId => throw _privateConstructorUsedError;
   String? get reminderTemplateId => throw _privateConstructorUsedError;
   String? get overdueTemplateId => throw _privateConstructorUsedError;
@@ -1662,19 +1712,20 @@ abstract class $SMSConfigCopyWith<$Res> {
   factory $SMSConfigCopyWith(SMSConfig value, $Res Function(SMSConfig) then) =
       _$SMSConfigCopyWithImpl<$Res, SMSConfig>;
   @useResult
-  $Res call(
-      {bool isEnabled,
-      String? provider,
-      String? apiKey,
-      String? senderId,
-      String? otpTemplateId,
-      String? reminderTemplateId,
-      String? overdueTemplateId,
-      String? paymentLinkTemplateId,
-      String? receiptTemplateId,
-      bool useShortURL,
-      bool trackClicks,
-      List<String> blockedHours});
+  $Res call({
+    bool isEnabled,
+    String? provider,
+    String? apiKey,
+    String? senderId,
+    String? otpTemplateId,
+    String? reminderTemplateId,
+    String? overdueTemplateId,
+    String? paymentLinkTemplateId,
+    String? receiptTemplateId,
+    bool useShortURL,
+    bool trackClicks,
+    List<String> blockedHours,
+  });
 }
 
 /// @nodoc
@@ -1705,56 +1756,59 @@ class _$SMSConfigCopyWithImpl<$Res, $Val extends SMSConfig>
     Object? trackClicks = null,
     Object? blockedHours = null,
   }) {
-    return _then(_value.copyWith(
-      isEnabled: null == isEnabled
-          ? _value.isEnabled
-          : isEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      provider: freezed == provider
-          ? _value.provider
-          : provider // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apiKey: freezed == apiKey
-          ? _value.apiKey
-          : apiKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-      senderId: freezed == senderId
-          ? _value.senderId
-          : senderId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      otpTemplateId: freezed == otpTemplateId
-          ? _value.otpTemplateId
-          : otpTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      reminderTemplateId: freezed == reminderTemplateId
-          ? _value.reminderTemplateId
-          : reminderTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      overdueTemplateId: freezed == overdueTemplateId
-          ? _value.overdueTemplateId
-          : overdueTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentLinkTemplateId: freezed == paymentLinkTemplateId
-          ? _value.paymentLinkTemplateId
-          : paymentLinkTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      receiptTemplateId: freezed == receiptTemplateId
-          ? _value.receiptTemplateId
-          : receiptTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      useShortURL: null == useShortURL
-          ? _value.useShortURL
-          : useShortURL // ignore: cast_nullable_to_non_nullable
-              as bool,
-      trackClicks: null == trackClicks
-          ? _value.trackClicks
-          : trackClicks // ignore: cast_nullable_to_non_nullable
-              as bool,
-      blockedHours: null == blockedHours
-          ? _value.blockedHours
-          : blockedHours // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            isEnabled: null == isEnabled
+                ? _value.isEnabled
+                : isEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            provider: freezed == provider
+                ? _value.provider
+                : provider // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            apiKey: freezed == apiKey
+                ? _value.apiKey
+                : apiKey // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            senderId: freezed == senderId
+                ? _value.senderId
+                : senderId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            otpTemplateId: freezed == otpTemplateId
+                ? _value.otpTemplateId
+                : otpTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            reminderTemplateId: freezed == reminderTemplateId
+                ? _value.reminderTemplateId
+                : reminderTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            overdueTemplateId: freezed == overdueTemplateId
+                ? _value.overdueTemplateId
+                : overdueTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            paymentLinkTemplateId: freezed == paymentLinkTemplateId
+                ? _value.paymentLinkTemplateId
+                : paymentLinkTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            receiptTemplateId: freezed == receiptTemplateId
+                ? _value.receiptTemplateId
+                : receiptTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            useShortURL: null == useShortURL
+                ? _value.useShortURL
+                : useShortURL // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            trackClicks: null == trackClicks
+                ? _value.trackClicks
+                : trackClicks // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            blockedHours: null == blockedHours
+                ? _value.blockedHours
+                : blockedHours // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -1762,23 +1816,25 @@ class _$SMSConfigCopyWithImpl<$Res, $Val extends SMSConfig>
 abstract class _$$SMSConfigImplCopyWith<$Res>
     implements $SMSConfigCopyWith<$Res> {
   factory _$$SMSConfigImplCopyWith(
-          _$SMSConfigImpl value, $Res Function(_$SMSConfigImpl) then) =
-      __$$SMSConfigImplCopyWithImpl<$Res>;
+    _$SMSConfigImpl value,
+    $Res Function(_$SMSConfigImpl) then,
+  ) = __$$SMSConfigImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool isEnabled,
-      String? provider,
-      String? apiKey,
-      String? senderId,
-      String? otpTemplateId,
-      String? reminderTemplateId,
-      String? overdueTemplateId,
-      String? paymentLinkTemplateId,
-      String? receiptTemplateId,
-      bool useShortURL,
-      bool trackClicks,
-      List<String> blockedHours});
+  $Res call({
+    bool isEnabled,
+    String? provider,
+    String? apiKey,
+    String? senderId,
+    String? otpTemplateId,
+    String? reminderTemplateId,
+    String? overdueTemplateId,
+    String? paymentLinkTemplateId,
+    String? receiptTemplateId,
+    bool useShortURL,
+    bool trackClicks,
+    List<String> blockedHours,
+  });
 }
 
 /// @nodoc
@@ -1786,8 +1842,9 @@ class __$$SMSConfigImplCopyWithImpl<$Res>
     extends _$SMSConfigCopyWithImpl<$Res, _$SMSConfigImpl>
     implements _$$SMSConfigImplCopyWith<$Res> {
   __$$SMSConfigImplCopyWithImpl(
-      _$SMSConfigImpl _value, $Res Function(_$SMSConfigImpl) _then)
-      : super(_value, _then);
+    _$SMSConfigImpl _value,
+    $Res Function(_$SMSConfigImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of SMSConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -1807,76 +1864,78 @@ class __$$SMSConfigImplCopyWithImpl<$Res>
     Object? trackClicks = null,
     Object? blockedHours = null,
   }) {
-    return _then(_$SMSConfigImpl(
-      isEnabled: null == isEnabled
-          ? _value.isEnabled
-          : isEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      provider: freezed == provider
-          ? _value.provider
-          : provider // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apiKey: freezed == apiKey
-          ? _value.apiKey
-          : apiKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-      senderId: freezed == senderId
-          ? _value.senderId
-          : senderId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      otpTemplateId: freezed == otpTemplateId
-          ? _value.otpTemplateId
-          : otpTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      reminderTemplateId: freezed == reminderTemplateId
-          ? _value.reminderTemplateId
-          : reminderTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      overdueTemplateId: freezed == overdueTemplateId
-          ? _value.overdueTemplateId
-          : overdueTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentLinkTemplateId: freezed == paymentLinkTemplateId
-          ? _value.paymentLinkTemplateId
-          : paymentLinkTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      receiptTemplateId: freezed == receiptTemplateId
-          ? _value.receiptTemplateId
-          : receiptTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      useShortURL: null == useShortURL
-          ? _value.useShortURL
-          : useShortURL // ignore: cast_nullable_to_non_nullable
-              as bool,
-      trackClicks: null == trackClicks
-          ? _value.trackClicks
-          : trackClicks // ignore: cast_nullable_to_non_nullable
-              as bool,
-      blockedHours: null == blockedHours
-          ? _value._blockedHours
-          : blockedHours // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-    ));
+    return _then(
+      _$SMSConfigImpl(
+        isEnabled: null == isEnabled
+            ? _value.isEnabled
+            : isEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        provider: freezed == provider
+            ? _value.provider
+            : provider // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        apiKey: freezed == apiKey
+            ? _value.apiKey
+            : apiKey // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        senderId: freezed == senderId
+            ? _value.senderId
+            : senderId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        otpTemplateId: freezed == otpTemplateId
+            ? _value.otpTemplateId
+            : otpTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        reminderTemplateId: freezed == reminderTemplateId
+            ? _value.reminderTemplateId
+            : reminderTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        overdueTemplateId: freezed == overdueTemplateId
+            ? _value.overdueTemplateId
+            : overdueTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        paymentLinkTemplateId: freezed == paymentLinkTemplateId
+            ? _value.paymentLinkTemplateId
+            : paymentLinkTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        receiptTemplateId: freezed == receiptTemplateId
+            ? _value.receiptTemplateId
+            : receiptTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        useShortURL: null == useShortURL
+            ? _value.useShortURL
+            : useShortURL // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        trackClicks: null == trackClicks
+            ? _value.trackClicks
+            : trackClicks // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        blockedHours: null == blockedHours
+            ? _value._blockedHours
+            : blockedHours // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$SMSConfigImpl implements _SMSConfig {
-  const _$SMSConfigImpl(
-      {required this.isEnabled,
-      this.provider,
-      this.apiKey,
-      this.senderId,
-      this.otpTemplateId,
-      this.reminderTemplateId,
-      this.overdueTemplateId,
-      this.paymentLinkTemplateId,
-      this.receiptTemplateId,
-      this.useShortURL = true,
-      this.trackClicks = true,
-      final List<String> blockedHours = const []})
-      : _blockedHours = blockedHours;
+  const _$SMSConfigImpl({
+    required this.isEnabled,
+    this.provider,
+    this.apiKey,
+    this.senderId,
+    this.otpTemplateId,
+    this.reminderTemplateId,
+    this.overdueTemplateId,
+    this.paymentLinkTemplateId,
+    this.receiptTemplateId,
+    this.useShortURL = true,
+    this.trackClicks = true,
+    final List<String> blockedHours = const [],
+  }) : _blockedHours = blockedHours;
 
   factory _$SMSConfigImpl.fromJson(Map<String, dynamic> json) =>
       _$$SMSConfigImplFromJson(json);
@@ -1885,13 +1944,13 @@ class _$SMSConfigImpl implements _SMSConfig {
   final bool isEnabled;
   @override
   final String? provider;
-// Msg91, Twilio, ValueFirst
+  // Msg91, Twilio, ValueFirst
   @override
   final String? apiKey;
   @override
   final String? senderId;
-// APSDLRM
-// DLT Template IDs (India TRAI compliance)
+  // APSDLRM
+  // DLT Template IDs (India TRAI compliance)
   @override
   final String? otpTemplateId;
   @override
@@ -1902,7 +1961,7 @@ class _$SMSConfigImpl implements _SMSConfig {
   final String? paymentLinkTemplateId;
   @override
   final String? receiptTemplateId;
-// SMS settings
+  // SMS settings
   @override
   @JsonKey()
   final bool useShortURL;
@@ -1949,26 +2008,29 @@ class _$SMSConfigImpl implements _SMSConfig {
                 other.useShortURL == useShortURL) &&
             (identical(other.trackClicks, trackClicks) ||
                 other.trackClicks == trackClicks) &&
-            const DeepCollectionEquality()
-                .equals(other._blockedHours, _blockedHours));
+            const DeepCollectionEquality().equals(
+              other._blockedHours,
+              _blockedHours,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      isEnabled,
-      provider,
-      apiKey,
-      senderId,
-      otpTemplateId,
-      reminderTemplateId,
-      overdueTemplateId,
-      paymentLinkTemplateId,
-      receiptTemplateId,
-      useShortURL,
-      trackClicks,
-      const DeepCollectionEquality().hash(_blockedHours));
+    runtimeType,
+    isEnabled,
+    provider,
+    apiKey,
+    senderId,
+    otpTemplateId,
+    reminderTemplateId,
+    overdueTemplateId,
+    paymentLinkTemplateId,
+    receiptTemplateId,
+    useShortURL,
+    trackClicks,
+    const DeepCollectionEquality().hash(_blockedHours),
+  );
 
   /// Create a copy of SMSConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -1980,26 +2042,25 @@ class _$SMSConfigImpl implements _SMSConfig {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SMSConfigImplToJson(
-      this,
-    );
+    return _$$SMSConfigImplToJson(this);
   }
 }
 
 abstract class _SMSConfig implements SMSConfig {
-  const factory _SMSConfig(
-      {required final bool isEnabled,
-      final String? provider,
-      final String? apiKey,
-      final String? senderId,
-      final String? otpTemplateId,
-      final String? reminderTemplateId,
-      final String? overdueTemplateId,
-      final String? paymentLinkTemplateId,
-      final String? receiptTemplateId,
-      final bool useShortURL,
-      final bool trackClicks,
-      final List<String> blockedHours}) = _$SMSConfigImpl;
+  const factory _SMSConfig({
+    required final bool isEnabled,
+    final String? provider,
+    final String? apiKey,
+    final String? senderId,
+    final String? otpTemplateId,
+    final String? reminderTemplateId,
+    final String? overdueTemplateId,
+    final String? paymentLinkTemplateId,
+    final String? receiptTemplateId,
+    final bool useShortURL,
+    final bool trackClicks,
+    final List<String> blockedHours,
+  }) = _$SMSConfigImpl;
 
   factory _SMSConfig.fromJson(Map<String, dynamic> json) =
       _$SMSConfigImpl.fromJson;
@@ -2012,7 +2073,7 @@ abstract class _SMSConfig implements SMSConfig {
   String? get apiKey;
   @override
   String? get senderId; // APSDLRM
-// DLT Template IDs (India TRAI compliance)
+  // DLT Template IDs (India TRAI compliance)
   @override
   String? get otpTemplateId;
   @override
@@ -2076,25 +2137,27 @@ mixin _$EmailConfig {
 /// @nodoc
 abstract class $EmailConfigCopyWith<$Res> {
   factory $EmailConfigCopyWith(
-          EmailConfig value, $Res Function(EmailConfig) then) =
-      _$EmailConfigCopyWithImpl<$Res, EmailConfig>;
+    EmailConfig value,
+    $Res Function(EmailConfig) then,
+  ) = _$EmailConfigCopyWithImpl<$Res, EmailConfig>;
   @useResult
-  $Res call(
-      {bool isEnabled,
-      String? provider,
-      String? apiKey,
-      String? fromEmail,
-      String? fromName,
-      String? replyToEmail,
-      String? welcomeEmailTemplateId,
-      String? reminderEmailTemplateId,
-      String? invoiceEmailTemplateId,
-      String? receiptEmailTemplateId,
-      String? newsletterTemplateId,
-      bool sendHTML,
-      bool trackOpens,
-      bool trackClicks,
-      List<String> bccEmails});
+  $Res call({
+    bool isEnabled,
+    String? provider,
+    String? apiKey,
+    String? fromEmail,
+    String? fromName,
+    String? replyToEmail,
+    String? welcomeEmailTemplateId,
+    String? reminderEmailTemplateId,
+    String? invoiceEmailTemplateId,
+    String? receiptEmailTemplateId,
+    String? newsletterTemplateId,
+    bool sendHTML,
+    bool trackOpens,
+    bool trackClicks,
+    List<String> bccEmails,
+  });
 }
 
 /// @nodoc
@@ -2128,68 +2191,71 @@ class _$EmailConfigCopyWithImpl<$Res, $Val extends EmailConfig>
     Object? trackClicks = null,
     Object? bccEmails = null,
   }) {
-    return _then(_value.copyWith(
-      isEnabled: null == isEnabled
-          ? _value.isEnabled
-          : isEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      provider: freezed == provider
-          ? _value.provider
-          : provider // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apiKey: freezed == apiKey
-          ? _value.apiKey
-          : apiKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fromEmail: freezed == fromEmail
-          ? _value.fromEmail
-          : fromEmail // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fromName: freezed == fromName
-          ? _value.fromName
-          : fromName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      replyToEmail: freezed == replyToEmail
-          ? _value.replyToEmail
-          : replyToEmail // ignore: cast_nullable_to_non_nullable
-              as String?,
-      welcomeEmailTemplateId: freezed == welcomeEmailTemplateId
-          ? _value.welcomeEmailTemplateId
-          : welcomeEmailTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      reminderEmailTemplateId: freezed == reminderEmailTemplateId
-          ? _value.reminderEmailTemplateId
-          : reminderEmailTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      invoiceEmailTemplateId: freezed == invoiceEmailTemplateId
-          ? _value.invoiceEmailTemplateId
-          : invoiceEmailTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      receiptEmailTemplateId: freezed == receiptEmailTemplateId
-          ? _value.receiptEmailTemplateId
-          : receiptEmailTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      newsletterTemplateId: freezed == newsletterTemplateId
-          ? _value.newsletterTemplateId
-          : newsletterTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sendHTML: null == sendHTML
-          ? _value.sendHTML
-          : sendHTML // ignore: cast_nullable_to_non_nullable
-              as bool,
-      trackOpens: null == trackOpens
-          ? _value.trackOpens
-          : trackOpens // ignore: cast_nullable_to_non_nullable
-              as bool,
-      trackClicks: null == trackClicks
-          ? _value.trackClicks
-          : trackClicks // ignore: cast_nullable_to_non_nullable
-              as bool,
-      bccEmails: null == bccEmails
-          ? _value.bccEmails
-          : bccEmails // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            isEnabled: null == isEnabled
+                ? _value.isEnabled
+                : isEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            provider: freezed == provider
+                ? _value.provider
+                : provider // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            apiKey: freezed == apiKey
+                ? _value.apiKey
+                : apiKey // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            fromEmail: freezed == fromEmail
+                ? _value.fromEmail
+                : fromEmail // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            fromName: freezed == fromName
+                ? _value.fromName
+                : fromName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            replyToEmail: freezed == replyToEmail
+                ? _value.replyToEmail
+                : replyToEmail // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            welcomeEmailTemplateId: freezed == welcomeEmailTemplateId
+                ? _value.welcomeEmailTemplateId
+                : welcomeEmailTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            reminderEmailTemplateId: freezed == reminderEmailTemplateId
+                ? _value.reminderEmailTemplateId
+                : reminderEmailTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            invoiceEmailTemplateId: freezed == invoiceEmailTemplateId
+                ? _value.invoiceEmailTemplateId
+                : invoiceEmailTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            receiptEmailTemplateId: freezed == receiptEmailTemplateId
+                ? _value.receiptEmailTemplateId
+                : receiptEmailTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            newsletterTemplateId: freezed == newsletterTemplateId
+                ? _value.newsletterTemplateId
+                : newsletterTemplateId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            sendHTML: null == sendHTML
+                ? _value.sendHTML
+                : sendHTML // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            trackOpens: null == trackOpens
+                ? _value.trackOpens
+                : trackOpens // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            trackClicks: null == trackClicks
+                ? _value.trackClicks
+                : trackClicks // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            bccEmails: null == bccEmails
+                ? _value.bccEmails
+                : bccEmails // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -2197,26 +2263,28 @@ class _$EmailConfigCopyWithImpl<$Res, $Val extends EmailConfig>
 abstract class _$$EmailConfigImplCopyWith<$Res>
     implements $EmailConfigCopyWith<$Res> {
   factory _$$EmailConfigImplCopyWith(
-          _$EmailConfigImpl value, $Res Function(_$EmailConfigImpl) then) =
-      __$$EmailConfigImplCopyWithImpl<$Res>;
+    _$EmailConfigImpl value,
+    $Res Function(_$EmailConfigImpl) then,
+  ) = __$$EmailConfigImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool isEnabled,
-      String? provider,
-      String? apiKey,
-      String? fromEmail,
-      String? fromName,
-      String? replyToEmail,
-      String? welcomeEmailTemplateId,
-      String? reminderEmailTemplateId,
-      String? invoiceEmailTemplateId,
-      String? receiptEmailTemplateId,
-      String? newsletterTemplateId,
-      bool sendHTML,
-      bool trackOpens,
-      bool trackClicks,
-      List<String> bccEmails});
+  $Res call({
+    bool isEnabled,
+    String? provider,
+    String? apiKey,
+    String? fromEmail,
+    String? fromName,
+    String? replyToEmail,
+    String? welcomeEmailTemplateId,
+    String? reminderEmailTemplateId,
+    String? invoiceEmailTemplateId,
+    String? receiptEmailTemplateId,
+    String? newsletterTemplateId,
+    bool sendHTML,
+    bool trackOpens,
+    bool trackClicks,
+    List<String> bccEmails,
+  });
 }
 
 /// @nodoc
@@ -2224,8 +2292,9 @@ class __$$EmailConfigImplCopyWithImpl<$Res>
     extends _$EmailConfigCopyWithImpl<$Res, _$EmailConfigImpl>
     implements _$$EmailConfigImplCopyWith<$Res> {
   __$$EmailConfigImplCopyWithImpl(
-      _$EmailConfigImpl _value, $Res Function(_$EmailConfigImpl) _then)
-      : super(_value, _then);
+    _$EmailConfigImpl _value,
+    $Res Function(_$EmailConfigImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of EmailConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -2248,91 +2317,93 @@ class __$$EmailConfigImplCopyWithImpl<$Res>
     Object? trackClicks = null,
     Object? bccEmails = null,
   }) {
-    return _then(_$EmailConfigImpl(
-      isEnabled: null == isEnabled
-          ? _value.isEnabled
-          : isEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      provider: freezed == provider
-          ? _value.provider
-          : provider // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apiKey: freezed == apiKey
-          ? _value.apiKey
-          : apiKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fromEmail: freezed == fromEmail
-          ? _value.fromEmail
-          : fromEmail // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fromName: freezed == fromName
-          ? _value.fromName
-          : fromName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      replyToEmail: freezed == replyToEmail
-          ? _value.replyToEmail
-          : replyToEmail // ignore: cast_nullable_to_non_nullable
-              as String?,
-      welcomeEmailTemplateId: freezed == welcomeEmailTemplateId
-          ? _value.welcomeEmailTemplateId
-          : welcomeEmailTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      reminderEmailTemplateId: freezed == reminderEmailTemplateId
-          ? _value.reminderEmailTemplateId
-          : reminderEmailTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      invoiceEmailTemplateId: freezed == invoiceEmailTemplateId
-          ? _value.invoiceEmailTemplateId
-          : invoiceEmailTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      receiptEmailTemplateId: freezed == receiptEmailTemplateId
-          ? _value.receiptEmailTemplateId
-          : receiptEmailTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      newsletterTemplateId: freezed == newsletterTemplateId
-          ? _value.newsletterTemplateId
-          : newsletterTemplateId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sendHTML: null == sendHTML
-          ? _value.sendHTML
-          : sendHTML // ignore: cast_nullable_to_non_nullable
-              as bool,
-      trackOpens: null == trackOpens
-          ? _value.trackOpens
-          : trackOpens // ignore: cast_nullable_to_non_nullable
-              as bool,
-      trackClicks: null == trackClicks
-          ? _value.trackClicks
-          : trackClicks // ignore: cast_nullable_to_non_nullable
-              as bool,
-      bccEmails: null == bccEmails
-          ? _value._bccEmails
-          : bccEmails // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-    ));
+    return _then(
+      _$EmailConfigImpl(
+        isEnabled: null == isEnabled
+            ? _value.isEnabled
+            : isEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        provider: freezed == provider
+            ? _value.provider
+            : provider // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        apiKey: freezed == apiKey
+            ? _value.apiKey
+            : apiKey // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        fromEmail: freezed == fromEmail
+            ? _value.fromEmail
+            : fromEmail // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        fromName: freezed == fromName
+            ? _value.fromName
+            : fromName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        replyToEmail: freezed == replyToEmail
+            ? _value.replyToEmail
+            : replyToEmail // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        welcomeEmailTemplateId: freezed == welcomeEmailTemplateId
+            ? _value.welcomeEmailTemplateId
+            : welcomeEmailTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        reminderEmailTemplateId: freezed == reminderEmailTemplateId
+            ? _value.reminderEmailTemplateId
+            : reminderEmailTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        invoiceEmailTemplateId: freezed == invoiceEmailTemplateId
+            ? _value.invoiceEmailTemplateId
+            : invoiceEmailTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        receiptEmailTemplateId: freezed == receiptEmailTemplateId
+            ? _value.receiptEmailTemplateId
+            : receiptEmailTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        newsletterTemplateId: freezed == newsletterTemplateId
+            ? _value.newsletterTemplateId
+            : newsletterTemplateId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        sendHTML: null == sendHTML
+            ? _value.sendHTML
+            : sendHTML // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        trackOpens: null == trackOpens
+            ? _value.trackOpens
+            : trackOpens // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        trackClicks: null == trackClicks
+            ? _value.trackClicks
+            : trackClicks // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        bccEmails: null == bccEmails
+            ? _value._bccEmails
+            : bccEmails // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$EmailConfigImpl implements _EmailConfig {
-  const _$EmailConfigImpl(
-      {required this.isEnabled,
-      this.provider,
-      this.apiKey,
-      this.fromEmail,
-      this.fromName,
-      this.replyToEmail,
-      this.welcomeEmailTemplateId,
-      this.reminderEmailTemplateId,
-      this.invoiceEmailTemplateId,
-      this.receiptEmailTemplateId,
-      this.newsletterTemplateId,
-      this.sendHTML = true,
-      this.trackOpens = true,
-      this.trackClicks = true,
-      final List<String> bccEmails = const []})
-      : _bccEmails = bccEmails;
+  const _$EmailConfigImpl({
+    required this.isEnabled,
+    this.provider,
+    this.apiKey,
+    this.fromEmail,
+    this.fromName,
+    this.replyToEmail,
+    this.welcomeEmailTemplateId,
+    this.reminderEmailTemplateId,
+    this.invoiceEmailTemplateId,
+    this.receiptEmailTemplateId,
+    this.newsletterTemplateId,
+    this.sendHTML = true,
+    this.trackOpens = true,
+    this.trackClicks = true,
+    final List<String> bccEmails = const [],
+  }) : _bccEmails = bccEmails;
 
   factory _$EmailConfigImpl.fromJson(Map<String, dynamic> json) =>
       _$$EmailConfigImplFromJson(json);
@@ -2341,7 +2412,7 @@ class _$EmailConfigImpl implements _EmailConfig {
   final bool isEnabled;
   @override
   final String? provider;
-// SendGrid, AWS SES, Mailgun
+  // SendGrid, AWS SES, Mailgun
   @override
   final String? apiKey;
   @override
@@ -2350,7 +2421,7 @@ class _$EmailConfigImpl implements _EmailConfig {
   final String? fromName;
   @override
   final String? replyToEmail;
-// Email templates
+  // Email templates
   @override
   final String? welcomeEmailTemplateId;
   @override
@@ -2361,7 +2432,7 @@ class _$EmailConfigImpl implements _EmailConfig {
   final String? receiptEmailTemplateId;
   @override
   final String? newsletterTemplateId;
-// Settings
+  // Settings
   @override
   @JsonKey()
   final bool sendHTML;
@@ -2404,7 +2475,9 @@ class _$EmailConfigImpl implements _EmailConfig {
             (identical(other.welcomeEmailTemplateId, welcomeEmailTemplateId) ||
                 other.welcomeEmailTemplateId == welcomeEmailTemplateId) &&
             (identical(
-                    other.reminderEmailTemplateId, reminderEmailTemplateId) ||
+                  other.reminderEmailTemplateId,
+                  reminderEmailTemplateId,
+                ) ||
                 other.reminderEmailTemplateId == reminderEmailTemplateId) &&
             (identical(other.invoiceEmailTemplateId, invoiceEmailTemplateId) ||
                 other.invoiceEmailTemplateId == invoiceEmailTemplateId) &&
@@ -2418,29 +2491,32 @@ class _$EmailConfigImpl implements _EmailConfig {
                 other.trackOpens == trackOpens) &&
             (identical(other.trackClicks, trackClicks) ||
                 other.trackClicks == trackClicks) &&
-            const DeepCollectionEquality()
-                .equals(other._bccEmails, _bccEmails));
+            const DeepCollectionEquality().equals(
+              other._bccEmails,
+              _bccEmails,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      isEnabled,
-      provider,
-      apiKey,
-      fromEmail,
-      fromName,
-      replyToEmail,
-      welcomeEmailTemplateId,
-      reminderEmailTemplateId,
-      invoiceEmailTemplateId,
-      receiptEmailTemplateId,
-      newsletterTemplateId,
-      sendHTML,
-      trackOpens,
-      trackClicks,
-      const DeepCollectionEquality().hash(_bccEmails));
+    runtimeType,
+    isEnabled,
+    provider,
+    apiKey,
+    fromEmail,
+    fromName,
+    replyToEmail,
+    welcomeEmailTemplateId,
+    reminderEmailTemplateId,
+    invoiceEmailTemplateId,
+    receiptEmailTemplateId,
+    newsletterTemplateId,
+    sendHTML,
+    trackOpens,
+    trackClicks,
+    const DeepCollectionEquality().hash(_bccEmails),
+  );
 
   /// Create a copy of EmailConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -2452,29 +2528,28 @@ class _$EmailConfigImpl implements _EmailConfig {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$EmailConfigImplToJson(
-      this,
-    );
+    return _$$EmailConfigImplToJson(this);
   }
 }
 
 abstract class _EmailConfig implements EmailConfig {
-  const factory _EmailConfig(
-      {required final bool isEnabled,
-      final String? provider,
-      final String? apiKey,
-      final String? fromEmail,
-      final String? fromName,
-      final String? replyToEmail,
-      final String? welcomeEmailTemplateId,
-      final String? reminderEmailTemplateId,
-      final String? invoiceEmailTemplateId,
-      final String? receiptEmailTemplateId,
-      final String? newsletterTemplateId,
-      final bool sendHTML,
-      final bool trackOpens,
-      final bool trackClicks,
-      final List<String> bccEmails}) = _$EmailConfigImpl;
+  const factory _EmailConfig({
+    required final bool isEnabled,
+    final String? provider,
+    final String? apiKey,
+    final String? fromEmail,
+    final String? fromName,
+    final String? replyToEmail,
+    final String? welcomeEmailTemplateId,
+    final String? reminderEmailTemplateId,
+    final String? invoiceEmailTemplateId,
+    final String? receiptEmailTemplateId,
+    final String? newsletterTemplateId,
+    final bool sendHTML,
+    final bool trackOpens,
+    final bool trackClicks,
+    final List<String> bccEmails,
+  }) = _$EmailConfigImpl;
 
   factory _EmailConfig.fromJson(Map<String, dynamic> json) =
       _$EmailConfigImpl.fromJson;
@@ -2524,7 +2599,7 @@ FieldAgentConfig _$FieldAgentConfigFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$FieldAgentConfig {
-// Agent assignment settings
+  // Agent assignment settings
   String get assignmentMethod =>
       throw _privateConstructorUsedError; // round_robin, load_based, location_based, performance_based
   int get maxLeadsPerAgent => throw _privateConstructorUsedError;
@@ -2561,26 +2636,28 @@ mixin _$FieldAgentConfig {
 /// @nodoc
 abstract class $FieldAgentConfigCopyWith<$Res> {
   factory $FieldAgentConfigCopyWith(
-          FieldAgentConfig value, $Res Function(FieldAgentConfig) then) =
-      _$FieldAgentConfigCopyWithImpl<$Res, FieldAgentConfig>;
+    FieldAgentConfig value,
+    $Res Function(FieldAgentConfig) then,
+  ) = _$FieldAgentConfigCopyWithImpl<$Res, FieldAgentConfig>;
   @useResult
-  $Res call(
-      {String assignmentMethod,
-      int maxLeadsPerAgent,
-      int maxDailyVisits,
-      bool trackLocation,
-      int locationUpdateIntervalMinutes,
-      bool geoFencingEnabled,
-      int geoFenceRadiusMeters,
-      double collectionCommissionPercent,
-      double perCollectionFixedIncentive,
-      double targetAchievementBonus,
-      bool offlineModeEnabled,
-      bool autoSyncEnabled,
-      int syncIntervalMinutes,
-      bool notifyOnNewAssignment,
-      bool notifyOnDueListReady,
-      bool notifyOnCollectionConfirmation});
+  $Res call({
+    String assignmentMethod,
+    int maxLeadsPerAgent,
+    int maxDailyVisits,
+    bool trackLocation,
+    int locationUpdateIntervalMinutes,
+    bool geoFencingEnabled,
+    int geoFenceRadiusMeters,
+    double collectionCommissionPercent,
+    double perCollectionFixedIncentive,
+    double targetAchievementBonus,
+    bool offlineModeEnabled,
+    bool autoSyncEnabled,
+    int syncIntervalMinutes,
+    bool notifyOnNewAssignment,
+    bool notifyOnDueListReady,
+    bool notifyOnCollectionConfirmation,
+  });
 }
 
 /// @nodoc
@@ -2615,109 +2692,116 @@ class _$FieldAgentConfigCopyWithImpl<$Res, $Val extends FieldAgentConfig>
     Object? notifyOnDueListReady = null,
     Object? notifyOnCollectionConfirmation = null,
   }) {
-    return _then(_value.copyWith(
-      assignmentMethod: null == assignmentMethod
-          ? _value.assignmentMethod
-          : assignmentMethod // ignore: cast_nullable_to_non_nullable
-              as String,
-      maxLeadsPerAgent: null == maxLeadsPerAgent
-          ? _value.maxLeadsPerAgent
-          : maxLeadsPerAgent // ignore: cast_nullable_to_non_nullable
-              as int,
-      maxDailyVisits: null == maxDailyVisits
-          ? _value.maxDailyVisits
-          : maxDailyVisits // ignore: cast_nullable_to_non_nullable
-              as int,
-      trackLocation: null == trackLocation
-          ? _value.trackLocation
-          : trackLocation // ignore: cast_nullable_to_non_nullable
-              as bool,
-      locationUpdateIntervalMinutes: null == locationUpdateIntervalMinutes
-          ? _value.locationUpdateIntervalMinutes
-          : locationUpdateIntervalMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      geoFencingEnabled: null == geoFencingEnabled
-          ? _value.geoFencingEnabled
-          : geoFencingEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      geoFenceRadiusMeters: null == geoFenceRadiusMeters
-          ? _value.geoFenceRadiusMeters
-          : geoFenceRadiusMeters // ignore: cast_nullable_to_non_nullable
-              as int,
-      collectionCommissionPercent: null == collectionCommissionPercent
-          ? _value.collectionCommissionPercent
-          : collectionCommissionPercent // ignore: cast_nullable_to_non_nullable
-              as double,
-      perCollectionFixedIncentive: null == perCollectionFixedIncentive
-          ? _value.perCollectionFixedIncentive
-          : perCollectionFixedIncentive // ignore: cast_nullable_to_non_nullable
-              as double,
-      targetAchievementBonus: null == targetAchievementBonus
-          ? _value.targetAchievementBonus
-          : targetAchievementBonus // ignore: cast_nullable_to_non_nullable
-              as double,
-      offlineModeEnabled: null == offlineModeEnabled
-          ? _value.offlineModeEnabled
-          : offlineModeEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      autoSyncEnabled: null == autoSyncEnabled
-          ? _value.autoSyncEnabled
-          : autoSyncEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      syncIntervalMinutes: null == syncIntervalMinutes
-          ? _value.syncIntervalMinutes
-          : syncIntervalMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      notifyOnNewAssignment: null == notifyOnNewAssignment
-          ? _value.notifyOnNewAssignment
-          : notifyOnNewAssignment // ignore: cast_nullable_to_non_nullable
-              as bool,
-      notifyOnDueListReady: null == notifyOnDueListReady
-          ? _value.notifyOnDueListReady
-          : notifyOnDueListReady // ignore: cast_nullable_to_non_nullable
-              as bool,
-      notifyOnCollectionConfirmation: null == notifyOnCollectionConfirmation
-          ? _value.notifyOnCollectionConfirmation
-          : notifyOnCollectionConfirmation // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            assignmentMethod: null == assignmentMethod
+                ? _value.assignmentMethod
+                : assignmentMethod // ignore: cast_nullable_to_non_nullable
+                      as String,
+            maxLeadsPerAgent: null == maxLeadsPerAgent
+                ? _value.maxLeadsPerAgent
+                : maxLeadsPerAgent // ignore: cast_nullable_to_non_nullable
+                      as int,
+            maxDailyVisits: null == maxDailyVisits
+                ? _value.maxDailyVisits
+                : maxDailyVisits // ignore: cast_nullable_to_non_nullable
+                      as int,
+            trackLocation: null == trackLocation
+                ? _value.trackLocation
+                : trackLocation // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            locationUpdateIntervalMinutes: null == locationUpdateIntervalMinutes
+                ? _value.locationUpdateIntervalMinutes
+                : locationUpdateIntervalMinutes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            geoFencingEnabled: null == geoFencingEnabled
+                ? _value.geoFencingEnabled
+                : geoFencingEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            geoFenceRadiusMeters: null == geoFenceRadiusMeters
+                ? _value.geoFenceRadiusMeters
+                : geoFenceRadiusMeters // ignore: cast_nullable_to_non_nullable
+                      as int,
+            collectionCommissionPercent: null == collectionCommissionPercent
+                ? _value.collectionCommissionPercent
+                : collectionCommissionPercent // ignore: cast_nullable_to_non_nullable
+                      as double,
+            perCollectionFixedIncentive: null == perCollectionFixedIncentive
+                ? _value.perCollectionFixedIncentive
+                : perCollectionFixedIncentive // ignore: cast_nullable_to_non_nullable
+                      as double,
+            targetAchievementBonus: null == targetAchievementBonus
+                ? _value.targetAchievementBonus
+                : targetAchievementBonus // ignore: cast_nullable_to_non_nullable
+                      as double,
+            offlineModeEnabled: null == offlineModeEnabled
+                ? _value.offlineModeEnabled
+                : offlineModeEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            autoSyncEnabled: null == autoSyncEnabled
+                ? _value.autoSyncEnabled
+                : autoSyncEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            syncIntervalMinutes: null == syncIntervalMinutes
+                ? _value.syncIntervalMinutes
+                : syncIntervalMinutes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            notifyOnNewAssignment: null == notifyOnNewAssignment
+                ? _value.notifyOnNewAssignment
+                : notifyOnNewAssignment // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            notifyOnDueListReady: null == notifyOnDueListReady
+                ? _value.notifyOnDueListReady
+                : notifyOnDueListReady // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            notifyOnCollectionConfirmation:
+                null == notifyOnCollectionConfirmation
+                ? _value.notifyOnCollectionConfirmation
+                : notifyOnCollectionConfirmation // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$FieldAgentConfigImplCopyWith<$Res>
     implements $FieldAgentConfigCopyWith<$Res> {
-  factory _$$FieldAgentConfigImplCopyWith(_$FieldAgentConfigImpl value,
-          $Res Function(_$FieldAgentConfigImpl) then) =
-      __$$FieldAgentConfigImplCopyWithImpl<$Res>;
+  factory _$$FieldAgentConfigImplCopyWith(
+    _$FieldAgentConfigImpl value,
+    $Res Function(_$FieldAgentConfigImpl) then,
+  ) = __$$FieldAgentConfigImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String assignmentMethod,
-      int maxLeadsPerAgent,
-      int maxDailyVisits,
-      bool trackLocation,
-      int locationUpdateIntervalMinutes,
-      bool geoFencingEnabled,
-      int geoFenceRadiusMeters,
-      double collectionCommissionPercent,
-      double perCollectionFixedIncentive,
-      double targetAchievementBonus,
-      bool offlineModeEnabled,
-      bool autoSyncEnabled,
-      int syncIntervalMinutes,
-      bool notifyOnNewAssignment,
-      bool notifyOnDueListReady,
-      bool notifyOnCollectionConfirmation});
+  $Res call({
+    String assignmentMethod,
+    int maxLeadsPerAgent,
+    int maxDailyVisits,
+    bool trackLocation,
+    int locationUpdateIntervalMinutes,
+    bool geoFencingEnabled,
+    int geoFenceRadiusMeters,
+    double collectionCommissionPercent,
+    double perCollectionFixedIncentive,
+    double targetAchievementBonus,
+    bool offlineModeEnabled,
+    bool autoSyncEnabled,
+    int syncIntervalMinutes,
+    bool notifyOnNewAssignment,
+    bool notifyOnDueListReady,
+    bool notifyOnCollectionConfirmation,
+  });
 }
 
 /// @nodoc
 class __$$FieldAgentConfigImplCopyWithImpl<$Res>
     extends _$FieldAgentConfigCopyWithImpl<$Res, _$FieldAgentConfigImpl>
     implements _$$FieldAgentConfigImplCopyWith<$Res> {
-  __$$FieldAgentConfigImplCopyWithImpl(_$FieldAgentConfigImpl _value,
-      $Res Function(_$FieldAgentConfigImpl) _then)
-      : super(_value, _then);
+  __$$FieldAgentConfigImplCopyWithImpl(
+    _$FieldAgentConfigImpl _value,
+    $Res Function(_$FieldAgentConfigImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of FieldAgentConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -2741,111 +2825,114 @@ class __$$FieldAgentConfigImplCopyWithImpl<$Res>
     Object? notifyOnDueListReady = null,
     Object? notifyOnCollectionConfirmation = null,
   }) {
-    return _then(_$FieldAgentConfigImpl(
-      assignmentMethod: null == assignmentMethod
-          ? _value.assignmentMethod
-          : assignmentMethod // ignore: cast_nullable_to_non_nullable
-              as String,
-      maxLeadsPerAgent: null == maxLeadsPerAgent
-          ? _value.maxLeadsPerAgent
-          : maxLeadsPerAgent // ignore: cast_nullable_to_non_nullable
-              as int,
-      maxDailyVisits: null == maxDailyVisits
-          ? _value.maxDailyVisits
-          : maxDailyVisits // ignore: cast_nullable_to_non_nullable
-              as int,
-      trackLocation: null == trackLocation
-          ? _value.trackLocation
-          : trackLocation // ignore: cast_nullable_to_non_nullable
-              as bool,
-      locationUpdateIntervalMinutes: null == locationUpdateIntervalMinutes
-          ? _value.locationUpdateIntervalMinutes
-          : locationUpdateIntervalMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      geoFencingEnabled: null == geoFencingEnabled
-          ? _value.geoFencingEnabled
-          : geoFencingEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      geoFenceRadiusMeters: null == geoFenceRadiusMeters
-          ? _value.geoFenceRadiusMeters
-          : geoFenceRadiusMeters // ignore: cast_nullable_to_non_nullable
-              as int,
-      collectionCommissionPercent: null == collectionCommissionPercent
-          ? _value.collectionCommissionPercent
-          : collectionCommissionPercent // ignore: cast_nullable_to_non_nullable
-              as double,
-      perCollectionFixedIncentive: null == perCollectionFixedIncentive
-          ? _value.perCollectionFixedIncentive
-          : perCollectionFixedIncentive // ignore: cast_nullable_to_non_nullable
-              as double,
-      targetAchievementBonus: null == targetAchievementBonus
-          ? _value.targetAchievementBonus
-          : targetAchievementBonus // ignore: cast_nullable_to_non_nullable
-              as double,
-      offlineModeEnabled: null == offlineModeEnabled
-          ? _value.offlineModeEnabled
-          : offlineModeEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      autoSyncEnabled: null == autoSyncEnabled
-          ? _value.autoSyncEnabled
-          : autoSyncEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      syncIntervalMinutes: null == syncIntervalMinutes
-          ? _value.syncIntervalMinutes
-          : syncIntervalMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      notifyOnNewAssignment: null == notifyOnNewAssignment
-          ? _value.notifyOnNewAssignment
-          : notifyOnNewAssignment // ignore: cast_nullable_to_non_nullable
-              as bool,
-      notifyOnDueListReady: null == notifyOnDueListReady
-          ? _value.notifyOnDueListReady
-          : notifyOnDueListReady // ignore: cast_nullable_to_non_nullable
-              as bool,
-      notifyOnCollectionConfirmation: null == notifyOnCollectionConfirmation
-          ? _value.notifyOnCollectionConfirmation
-          : notifyOnCollectionConfirmation // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$FieldAgentConfigImpl(
+        assignmentMethod: null == assignmentMethod
+            ? _value.assignmentMethod
+            : assignmentMethod // ignore: cast_nullable_to_non_nullable
+                  as String,
+        maxLeadsPerAgent: null == maxLeadsPerAgent
+            ? _value.maxLeadsPerAgent
+            : maxLeadsPerAgent // ignore: cast_nullable_to_non_nullable
+                  as int,
+        maxDailyVisits: null == maxDailyVisits
+            ? _value.maxDailyVisits
+            : maxDailyVisits // ignore: cast_nullable_to_non_nullable
+                  as int,
+        trackLocation: null == trackLocation
+            ? _value.trackLocation
+            : trackLocation // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        locationUpdateIntervalMinutes: null == locationUpdateIntervalMinutes
+            ? _value.locationUpdateIntervalMinutes
+            : locationUpdateIntervalMinutes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        geoFencingEnabled: null == geoFencingEnabled
+            ? _value.geoFencingEnabled
+            : geoFencingEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        geoFenceRadiusMeters: null == geoFenceRadiusMeters
+            ? _value.geoFenceRadiusMeters
+            : geoFenceRadiusMeters // ignore: cast_nullable_to_non_nullable
+                  as int,
+        collectionCommissionPercent: null == collectionCommissionPercent
+            ? _value.collectionCommissionPercent
+            : collectionCommissionPercent // ignore: cast_nullable_to_non_nullable
+                  as double,
+        perCollectionFixedIncentive: null == perCollectionFixedIncentive
+            ? _value.perCollectionFixedIncentive
+            : perCollectionFixedIncentive // ignore: cast_nullable_to_non_nullable
+                  as double,
+        targetAchievementBonus: null == targetAchievementBonus
+            ? _value.targetAchievementBonus
+            : targetAchievementBonus // ignore: cast_nullable_to_non_nullable
+                  as double,
+        offlineModeEnabled: null == offlineModeEnabled
+            ? _value.offlineModeEnabled
+            : offlineModeEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        autoSyncEnabled: null == autoSyncEnabled
+            ? _value.autoSyncEnabled
+            : autoSyncEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        syncIntervalMinutes: null == syncIntervalMinutes
+            ? _value.syncIntervalMinutes
+            : syncIntervalMinutes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        notifyOnNewAssignment: null == notifyOnNewAssignment
+            ? _value.notifyOnNewAssignment
+            : notifyOnNewAssignment // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        notifyOnDueListReady: null == notifyOnDueListReady
+            ? _value.notifyOnDueListReady
+            : notifyOnDueListReady // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        notifyOnCollectionConfirmation: null == notifyOnCollectionConfirmation
+            ? _value.notifyOnCollectionConfirmation
+            : notifyOnCollectionConfirmation // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$FieldAgentConfigImpl implements _FieldAgentConfig {
-  const _$FieldAgentConfigImpl(
-      {this.assignmentMethod = 'round_robin',
-      this.maxLeadsPerAgent = 20,
-      this.maxDailyVisits = 50,
-      this.trackLocation = true,
-      this.locationUpdateIntervalMinutes = 5,
-      this.geoFencingEnabled = true,
-      this.geoFenceRadiusMeters = 500,
-      this.collectionCommissionPercent = 0.5,
-      this.perCollectionFixedIncentive = 50,
-      this.targetAchievementBonus = 500,
-      this.offlineModeEnabled = true,
-      this.autoSyncEnabled = true,
-      this.syncIntervalMinutes = 15,
-      this.notifyOnNewAssignment = true,
-      this.notifyOnDueListReady = true,
-      this.notifyOnCollectionConfirmation = true});
+  const _$FieldAgentConfigImpl({
+    this.assignmentMethod = 'round_robin',
+    this.maxLeadsPerAgent = 20,
+    this.maxDailyVisits = 50,
+    this.trackLocation = true,
+    this.locationUpdateIntervalMinutes = 5,
+    this.geoFencingEnabled = true,
+    this.geoFenceRadiusMeters = 500,
+    this.collectionCommissionPercent = 0.5,
+    this.perCollectionFixedIncentive = 50,
+    this.targetAchievementBonus = 500,
+    this.offlineModeEnabled = true,
+    this.autoSyncEnabled = true,
+    this.syncIntervalMinutes = 15,
+    this.notifyOnNewAssignment = true,
+    this.notifyOnDueListReady = true,
+    this.notifyOnCollectionConfirmation = true,
+  });
 
   factory _$FieldAgentConfigImpl.fromJson(Map<String, dynamic> json) =>
       _$$FieldAgentConfigImplFromJson(json);
 
-// Agent assignment settings
+  // Agent assignment settings
   @override
   @JsonKey()
   final String assignmentMethod;
-// round_robin, load_based, location_based, performance_based
+  // round_robin, load_based, location_based, performance_based
   @override
   @JsonKey()
   final int maxLeadsPerAgent;
   @override
   @JsonKey()
   final int maxDailyVisits;
-// Location tracking
+  // Location tracking
   @override
   @JsonKey()
   final bool trackLocation;
@@ -2858,18 +2945,18 @@ class _$FieldAgentConfigImpl implements _FieldAgentConfig {
   @override
   @JsonKey()
   final int geoFenceRadiusMeters;
-// Commission structure
+  // Commission structure
   @override
   @JsonKey()
   final double collectionCommissionPercent;
-// 0.5% of collected amount
+  // 0.5% of collected amount
   @override
   @JsonKey()
   final double perCollectionFixedIncentive;
   @override
   @JsonKey()
   final double targetAchievementBonus;
-// App settings
+  // App settings
   @override
   @JsonKey()
   final bool offlineModeEnabled;
@@ -2879,7 +2966,7 @@ class _$FieldAgentConfigImpl implements _FieldAgentConfig {
   @override
   @JsonKey()
   final int syncIntervalMinutes;
-// Notifications
+  // Notifications
   @override
   @JsonKey()
   final bool notifyOnNewAssignment;
@@ -2908,20 +2995,26 @@ class _$FieldAgentConfigImpl implements _FieldAgentConfig {
                 other.maxDailyVisits == maxDailyVisits) &&
             (identical(other.trackLocation, trackLocation) ||
                 other.trackLocation == trackLocation) &&
-            (identical(other.locationUpdateIntervalMinutes,
-                    locationUpdateIntervalMinutes) ||
+            (identical(
+                  other.locationUpdateIntervalMinutes,
+                  locationUpdateIntervalMinutes,
+                ) ||
                 other.locationUpdateIntervalMinutes ==
                     locationUpdateIntervalMinutes) &&
             (identical(other.geoFencingEnabled, geoFencingEnabled) ||
                 other.geoFencingEnabled == geoFencingEnabled) &&
             (identical(other.geoFenceRadiusMeters, geoFenceRadiusMeters) ||
                 other.geoFenceRadiusMeters == geoFenceRadiusMeters) &&
-            (identical(other.collectionCommissionPercent,
-                    collectionCommissionPercent) ||
+            (identical(
+                  other.collectionCommissionPercent,
+                  collectionCommissionPercent,
+                ) ||
                 other.collectionCommissionPercent ==
                     collectionCommissionPercent) &&
-            (identical(other.perCollectionFixedIncentive,
-                    perCollectionFixedIncentive) ||
+            (identical(
+                  other.perCollectionFixedIncentive,
+                  perCollectionFixedIncentive,
+                ) ||
                 other.perCollectionFixedIncentive ==
                     perCollectionFixedIncentive) &&
             (identical(other.targetAchievementBonus, targetAchievementBonus) ||
@@ -2936,8 +3029,10 @@ class _$FieldAgentConfigImpl implements _FieldAgentConfig {
                 other.notifyOnNewAssignment == notifyOnNewAssignment) &&
             (identical(other.notifyOnDueListReady, notifyOnDueListReady) ||
                 other.notifyOnDueListReady == notifyOnDueListReady) &&
-            (identical(other.notifyOnCollectionConfirmation,
-                    notifyOnCollectionConfirmation) ||
+            (identical(
+                  other.notifyOnCollectionConfirmation,
+                  notifyOnCollectionConfirmation,
+                ) ||
                 other.notifyOnCollectionConfirmation ==
                     notifyOnCollectionConfirmation));
   }
@@ -2945,23 +3040,24 @@ class _$FieldAgentConfigImpl implements _FieldAgentConfig {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      assignmentMethod,
-      maxLeadsPerAgent,
-      maxDailyVisits,
-      trackLocation,
-      locationUpdateIntervalMinutes,
-      geoFencingEnabled,
-      geoFenceRadiusMeters,
-      collectionCommissionPercent,
-      perCollectionFixedIncentive,
-      targetAchievementBonus,
-      offlineModeEnabled,
-      autoSyncEnabled,
-      syncIntervalMinutes,
-      notifyOnNewAssignment,
-      notifyOnDueListReady,
-      notifyOnCollectionConfirmation);
+    runtimeType,
+    assignmentMethod,
+    maxLeadsPerAgent,
+    maxDailyVisits,
+    trackLocation,
+    locationUpdateIntervalMinutes,
+    geoFencingEnabled,
+    geoFenceRadiusMeters,
+    collectionCommissionPercent,
+    perCollectionFixedIncentive,
+    targetAchievementBonus,
+    offlineModeEnabled,
+    autoSyncEnabled,
+    syncIntervalMinutes,
+    notifyOnNewAssignment,
+    notifyOnDueListReady,
+    notifyOnCollectionConfirmation,
+  );
 
   /// Create a copy of FieldAgentConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -2970,42 +3066,42 @@ class _$FieldAgentConfigImpl implements _FieldAgentConfig {
   @pragma('vm:prefer-inline')
   _$$FieldAgentConfigImplCopyWith<_$FieldAgentConfigImpl> get copyWith =>
       __$$FieldAgentConfigImplCopyWithImpl<_$FieldAgentConfigImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$FieldAgentConfigImplToJson(
-      this,
-    );
+    return _$$FieldAgentConfigImplToJson(this);
   }
 }
 
 abstract class _FieldAgentConfig implements FieldAgentConfig {
-  const factory _FieldAgentConfig(
-      {final String assignmentMethod,
-      final int maxLeadsPerAgent,
-      final int maxDailyVisits,
-      final bool trackLocation,
-      final int locationUpdateIntervalMinutes,
-      final bool geoFencingEnabled,
-      final int geoFenceRadiusMeters,
-      final double collectionCommissionPercent,
-      final double perCollectionFixedIncentive,
-      final double targetAchievementBonus,
-      final bool offlineModeEnabled,
-      final bool autoSyncEnabled,
-      final int syncIntervalMinutes,
-      final bool notifyOnNewAssignment,
-      final bool notifyOnDueListReady,
-      final bool notifyOnCollectionConfirmation}) = _$FieldAgentConfigImpl;
+  const factory _FieldAgentConfig({
+    final String assignmentMethod,
+    final int maxLeadsPerAgent,
+    final int maxDailyVisits,
+    final bool trackLocation,
+    final int locationUpdateIntervalMinutes,
+    final bool geoFencingEnabled,
+    final int geoFenceRadiusMeters,
+    final double collectionCommissionPercent,
+    final double perCollectionFixedIncentive,
+    final double targetAchievementBonus,
+    final bool offlineModeEnabled,
+    final bool autoSyncEnabled,
+    final int syncIntervalMinutes,
+    final bool notifyOnNewAssignment,
+    final bool notifyOnDueListReady,
+    final bool notifyOnCollectionConfirmation,
+  }) = _$FieldAgentConfigImpl;
 
   factory _FieldAgentConfig.fromJson(Map<String, dynamic> json) =
       _$FieldAgentConfigImpl.fromJson;
 
-// Agent assignment settings
+  // Agent assignment settings
   @override
-  String
-      get assignmentMethod; // round_robin, load_based, location_based, performance_based
+  String get assignmentMethod; // round_robin, load_based, location_based, performance_based
   @override
   int get maxLeadsPerAgent;
   @override
@@ -3051,7 +3147,7 @@ AIConfig _$AIConfigFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AIConfig {
-// AI Lead Scoring
+  // AI Lead Scoring
   bool get enableLeadScoring => throw _privateConstructorUsedError;
   bool get autoAssignLeads =>
       throw _privateConstructorUsedError; // AI Communication
@@ -3084,19 +3180,20 @@ abstract class $AIConfigCopyWith<$Res> {
   factory $AIConfigCopyWith(AIConfig value, $Res Function(AIConfig) then) =
       _$AIConfigCopyWithImpl<$Res, AIConfig>;
   @useResult
-  $Res call(
-      {bool enableLeadScoring,
-      bool autoAssignLeads,
-      bool enableAIVoiceCalls,
-      bool enableAIWhatsApp,
-      bool enableAIPersonalization,
-      bool predictDefaultRisk,
-      bool predictBestCollectionTime,
-      bool predictCustomerResponse,
-      bool enableOCR,
-      bool enableAutoReceiptGeneration,
-      bool enableFieldAgentAIAssistant,
-      bool enableCustomerAIChatbot});
+  $Res call({
+    bool enableLeadScoring,
+    bool autoAssignLeads,
+    bool enableAIVoiceCalls,
+    bool enableAIWhatsApp,
+    bool enableAIPersonalization,
+    bool predictDefaultRisk,
+    bool predictBestCollectionTime,
+    bool predictCustomerResponse,
+    bool enableOCR,
+    bool enableAutoReceiptGeneration,
+    bool enableFieldAgentAIAssistant,
+    bool enableCustomerAIChatbot,
+  });
 }
 
 /// @nodoc
@@ -3127,56 +3224,59 @@ class _$AIConfigCopyWithImpl<$Res, $Val extends AIConfig>
     Object? enableFieldAgentAIAssistant = null,
     Object? enableCustomerAIChatbot = null,
   }) {
-    return _then(_value.copyWith(
-      enableLeadScoring: null == enableLeadScoring
-          ? _value.enableLeadScoring
-          : enableLeadScoring // ignore: cast_nullable_to_non_nullable
-              as bool,
-      autoAssignLeads: null == autoAssignLeads
-          ? _value.autoAssignLeads
-          : autoAssignLeads // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableAIVoiceCalls: null == enableAIVoiceCalls
-          ? _value.enableAIVoiceCalls
-          : enableAIVoiceCalls // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableAIWhatsApp: null == enableAIWhatsApp
-          ? _value.enableAIWhatsApp
-          : enableAIWhatsApp // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableAIPersonalization: null == enableAIPersonalization
-          ? _value.enableAIPersonalization
-          : enableAIPersonalization // ignore: cast_nullable_to_non_nullable
-              as bool,
-      predictDefaultRisk: null == predictDefaultRisk
-          ? _value.predictDefaultRisk
-          : predictDefaultRisk // ignore: cast_nullable_to_non_nullable
-              as bool,
-      predictBestCollectionTime: null == predictBestCollectionTime
-          ? _value.predictBestCollectionTime
-          : predictBestCollectionTime // ignore: cast_nullable_to_non_nullable
-              as bool,
-      predictCustomerResponse: null == predictCustomerResponse
-          ? _value.predictCustomerResponse
-          : predictCustomerResponse // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableOCR: null == enableOCR
-          ? _value.enableOCR
-          : enableOCR // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableAutoReceiptGeneration: null == enableAutoReceiptGeneration
-          ? _value.enableAutoReceiptGeneration
-          : enableAutoReceiptGeneration // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableFieldAgentAIAssistant: null == enableFieldAgentAIAssistant
-          ? _value.enableFieldAgentAIAssistant
-          : enableFieldAgentAIAssistant // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableCustomerAIChatbot: null == enableCustomerAIChatbot
-          ? _value.enableCustomerAIChatbot
-          : enableCustomerAIChatbot // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            enableLeadScoring: null == enableLeadScoring
+                ? _value.enableLeadScoring
+                : enableLeadScoring // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            autoAssignLeads: null == autoAssignLeads
+                ? _value.autoAssignLeads
+                : autoAssignLeads // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            enableAIVoiceCalls: null == enableAIVoiceCalls
+                ? _value.enableAIVoiceCalls
+                : enableAIVoiceCalls // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            enableAIWhatsApp: null == enableAIWhatsApp
+                ? _value.enableAIWhatsApp
+                : enableAIWhatsApp // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            enableAIPersonalization: null == enableAIPersonalization
+                ? _value.enableAIPersonalization
+                : enableAIPersonalization // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            predictDefaultRisk: null == predictDefaultRisk
+                ? _value.predictDefaultRisk
+                : predictDefaultRisk // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            predictBestCollectionTime: null == predictBestCollectionTime
+                ? _value.predictBestCollectionTime
+                : predictBestCollectionTime // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            predictCustomerResponse: null == predictCustomerResponse
+                ? _value.predictCustomerResponse
+                : predictCustomerResponse // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            enableOCR: null == enableOCR
+                ? _value.enableOCR
+                : enableOCR // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            enableAutoReceiptGeneration: null == enableAutoReceiptGeneration
+                ? _value.enableAutoReceiptGeneration
+                : enableAutoReceiptGeneration // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            enableFieldAgentAIAssistant: null == enableFieldAgentAIAssistant
+                ? _value.enableFieldAgentAIAssistant
+                : enableFieldAgentAIAssistant // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            enableCustomerAIChatbot: null == enableCustomerAIChatbot
+                ? _value.enableCustomerAIChatbot
+                : enableCustomerAIChatbot // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -3184,23 +3284,25 @@ class _$AIConfigCopyWithImpl<$Res, $Val extends AIConfig>
 abstract class _$$AIConfigImplCopyWith<$Res>
     implements $AIConfigCopyWith<$Res> {
   factory _$$AIConfigImplCopyWith(
-          _$AIConfigImpl value, $Res Function(_$AIConfigImpl) then) =
-      __$$AIConfigImplCopyWithImpl<$Res>;
+    _$AIConfigImpl value,
+    $Res Function(_$AIConfigImpl) then,
+  ) = __$$AIConfigImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool enableLeadScoring,
-      bool autoAssignLeads,
-      bool enableAIVoiceCalls,
-      bool enableAIWhatsApp,
-      bool enableAIPersonalization,
-      bool predictDefaultRisk,
-      bool predictBestCollectionTime,
-      bool predictCustomerResponse,
-      bool enableOCR,
-      bool enableAutoReceiptGeneration,
-      bool enableFieldAgentAIAssistant,
-      bool enableCustomerAIChatbot});
+  $Res call({
+    bool enableLeadScoring,
+    bool autoAssignLeads,
+    bool enableAIVoiceCalls,
+    bool enableAIWhatsApp,
+    bool enableAIPersonalization,
+    bool predictDefaultRisk,
+    bool predictBestCollectionTime,
+    bool predictCustomerResponse,
+    bool enableOCR,
+    bool enableAutoReceiptGeneration,
+    bool enableFieldAgentAIAssistant,
+    bool enableCustomerAIChatbot,
+  });
 }
 
 /// @nodoc
@@ -3208,8 +3310,9 @@ class __$$AIConfigImplCopyWithImpl<$Res>
     extends _$AIConfigCopyWithImpl<$Res, _$AIConfigImpl>
     implements _$$AIConfigImplCopyWith<$Res> {
   __$$AIConfigImplCopyWithImpl(
-      _$AIConfigImpl _value, $Res Function(_$AIConfigImpl) _then)
-      : super(_value, _then);
+    _$AIConfigImpl _value,
+    $Res Function(_$AIConfigImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AIConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -3229,87 +3332,90 @@ class __$$AIConfigImplCopyWithImpl<$Res>
     Object? enableFieldAgentAIAssistant = null,
     Object? enableCustomerAIChatbot = null,
   }) {
-    return _then(_$AIConfigImpl(
-      enableLeadScoring: null == enableLeadScoring
-          ? _value.enableLeadScoring
-          : enableLeadScoring // ignore: cast_nullable_to_non_nullable
-              as bool,
-      autoAssignLeads: null == autoAssignLeads
-          ? _value.autoAssignLeads
-          : autoAssignLeads // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableAIVoiceCalls: null == enableAIVoiceCalls
-          ? _value.enableAIVoiceCalls
-          : enableAIVoiceCalls // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableAIWhatsApp: null == enableAIWhatsApp
-          ? _value.enableAIWhatsApp
-          : enableAIWhatsApp // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableAIPersonalization: null == enableAIPersonalization
-          ? _value.enableAIPersonalization
-          : enableAIPersonalization // ignore: cast_nullable_to_non_nullable
-              as bool,
-      predictDefaultRisk: null == predictDefaultRisk
-          ? _value.predictDefaultRisk
-          : predictDefaultRisk // ignore: cast_nullable_to_non_nullable
-              as bool,
-      predictBestCollectionTime: null == predictBestCollectionTime
-          ? _value.predictBestCollectionTime
-          : predictBestCollectionTime // ignore: cast_nullable_to_non_nullable
-              as bool,
-      predictCustomerResponse: null == predictCustomerResponse
-          ? _value.predictCustomerResponse
-          : predictCustomerResponse // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableOCR: null == enableOCR
-          ? _value.enableOCR
-          : enableOCR // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableAutoReceiptGeneration: null == enableAutoReceiptGeneration
-          ? _value.enableAutoReceiptGeneration
-          : enableAutoReceiptGeneration // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableFieldAgentAIAssistant: null == enableFieldAgentAIAssistant
-          ? _value.enableFieldAgentAIAssistant
-          : enableFieldAgentAIAssistant // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enableCustomerAIChatbot: null == enableCustomerAIChatbot
-          ? _value.enableCustomerAIChatbot
-          : enableCustomerAIChatbot // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$AIConfigImpl(
+        enableLeadScoring: null == enableLeadScoring
+            ? _value.enableLeadScoring
+            : enableLeadScoring // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        autoAssignLeads: null == autoAssignLeads
+            ? _value.autoAssignLeads
+            : autoAssignLeads // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        enableAIVoiceCalls: null == enableAIVoiceCalls
+            ? _value.enableAIVoiceCalls
+            : enableAIVoiceCalls // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        enableAIWhatsApp: null == enableAIWhatsApp
+            ? _value.enableAIWhatsApp
+            : enableAIWhatsApp // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        enableAIPersonalization: null == enableAIPersonalization
+            ? _value.enableAIPersonalization
+            : enableAIPersonalization // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        predictDefaultRisk: null == predictDefaultRisk
+            ? _value.predictDefaultRisk
+            : predictDefaultRisk // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        predictBestCollectionTime: null == predictBestCollectionTime
+            ? _value.predictBestCollectionTime
+            : predictBestCollectionTime // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        predictCustomerResponse: null == predictCustomerResponse
+            ? _value.predictCustomerResponse
+            : predictCustomerResponse // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        enableOCR: null == enableOCR
+            ? _value.enableOCR
+            : enableOCR // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        enableAutoReceiptGeneration: null == enableAutoReceiptGeneration
+            ? _value.enableAutoReceiptGeneration
+            : enableAutoReceiptGeneration // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        enableFieldAgentAIAssistant: null == enableFieldAgentAIAssistant
+            ? _value.enableFieldAgentAIAssistant
+            : enableFieldAgentAIAssistant // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        enableCustomerAIChatbot: null == enableCustomerAIChatbot
+            ? _value.enableCustomerAIChatbot
+            : enableCustomerAIChatbot // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$AIConfigImpl implements _AIConfig {
-  const _$AIConfigImpl(
-      {this.enableLeadScoring = true,
-      this.autoAssignLeads = true,
-      this.enableAIVoiceCalls = true,
-      this.enableAIWhatsApp = true,
-      this.enableAIPersonalization = true,
-      this.predictDefaultRisk = true,
-      this.predictBestCollectionTime = true,
-      this.predictCustomerResponse = true,
-      this.enableOCR = true,
-      this.enableAutoReceiptGeneration = true,
-      this.enableFieldAgentAIAssistant = true,
-      this.enableCustomerAIChatbot = true});
+  const _$AIConfigImpl({
+    this.enableLeadScoring = true,
+    this.autoAssignLeads = true,
+    this.enableAIVoiceCalls = true,
+    this.enableAIWhatsApp = true,
+    this.enableAIPersonalization = true,
+    this.predictDefaultRisk = true,
+    this.predictBestCollectionTime = true,
+    this.predictCustomerResponse = true,
+    this.enableOCR = true,
+    this.enableAutoReceiptGeneration = true,
+    this.enableFieldAgentAIAssistant = true,
+    this.enableCustomerAIChatbot = true,
+  });
 
   factory _$AIConfigImpl.fromJson(Map<String, dynamic> json) =>
       _$$AIConfigImplFromJson(json);
 
-// AI Lead Scoring
+  // AI Lead Scoring
   @override
   @JsonKey()
   final bool enableLeadScoring;
   @override
   @JsonKey()
   final bool autoAssignLeads;
-// AI Communication
+  // AI Communication
   @override
   @JsonKey()
   final bool enableAIVoiceCalls;
@@ -3319,7 +3425,7 @@ class _$AIConfigImpl implements _AIConfig {
   @override
   @JsonKey()
   final bool enableAIPersonalization;
-// AI Prediction
+  // AI Prediction
   @override
   @JsonKey()
   final bool predictDefaultRisk;
@@ -3329,14 +3435,14 @@ class _$AIConfigImpl implements _AIConfig {
   @override
   @JsonKey()
   final bool predictCustomerResponse;
-// AI Document Processing
+  // AI Document Processing
   @override
   @JsonKey()
   final bool enableOCR;
   @override
   @JsonKey()
   final bool enableAutoReceiptGeneration;
-// AI Assistant
+  // AI Assistant
   @override
   @JsonKey()
   final bool enableFieldAgentAIAssistant;
@@ -3363,47 +3469,60 @@ class _$AIConfigImpl implements _AIConfig {
             (identical(other.enableAIWhatsApp, enableAIWhatsApp) ||
                 other.enableAIWhatsApp == enableAIWhatsApp) &&
             (identical(
-                    other.enableAIPersonalization, enableAIPersonalization) ||
+                  other.enableAIPersonalization,
+                  enableAIPersonalization,
+                ) ||
                 other.enableAIPersonalization == enableAIPersonalization) &&
             (identical(other.predictDefaultRisk, predictDefaultRisk) ||
                 other.predictDefaultRisk == predictDefaultRisk) &&
-            (identical(other.predictBestCollectionTime,
-                    predictBestCollectionTime) ||
+            (identical(
+                  other.predictBestCollectionTime,
+                  predictBestCollectionTime,
+                ) ||
                 other.predictBestCollectionTime == predictBestCollectionTime) &&
             (identical(
-                    other.predictCustomerResponse, predictCustomerResponse) ||
+                  other.predictCustomerResponse,
+                  predictCustomerResponse,
+                ) ||
                 other.predictCustomerResponse == predictCustomerResponse) &&
             (identical(other.enableOCR, enableOCR) ||
                 other.enableOCR == enableOCR) &&
-            (identical(other.enableAutoReceiptGeneration,
-                    enableAutoReceiptGeneration) ||
+            (identical(
+                  other.enableAutoReceiptGeneration,
+                  enableAutoReceiptGeneration,
+                ) ||
                 other.enableAutoReceiptGeneration ==
                     enableAutoReceiptGeneration) &&
-            (identical(other.enableFieldAgentAIAssistant,
-                    enableFieldAgentAIAssistant) ||
+            (identical(
+                  other.enableFieldAgentAIAssistant,
+                  enableFieldAgentAIAssistant,
+                ) ||
                 other.enableFieldAgentAIAssistant ==
                     enableFieldAgentAIAssistant) &&
             (identical(
-                    other.enableCustomerAIChatbot, enableCustomerAIChatbot) ||
+                  other.enableCustomerAIChatbot,
+                  enableCustomerAIChatbot,
+                ) ||
                 other.enableCustomerAIChatbot == enableCustomerAIChatbot));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      enableLeadScoring,
-      autoAssignLeads,
-      enableAIVoiceCalls,
-      enableAIWhatsApp,
-      enableAIPersonalization,
-      predictDefaultRisk,
-      predictBestCollectionTime,
-      predictCustomerResponse,
-      enableOCR,
-      enableAutoReceiptGeneration,
-      enableFieldAgentAIAssistant,
-      enableCustomerAIChatbot);
+    runtimeType,
+    enableLeadScoring,
+    autoAssignLeads,
+    enableAIVoiceCalls,
+    enableAIWhatsApp,
+    enableAIPersonalization,
+    predictDefaultRisk,
+    predictBestCollectionTime,
+    predictCustomerResponse,
+    enableOCR,
+    enableAutoReceiptGeneration,
+    enableFieldAgentAIAssistant,
+    enableCustomerAIChatbot,
+  );
 
   /// Create a copy of AIConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -3415,31 +3534,30 @@ class _$AIConfigImpl implements _AIConfig {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AIConfigImplToJson(
-      this,
-    );
+    return _$$AIConfigImplToJson(this);
   }
 }
 
 abstract class _AIConfig implements AIConfig {
-  const factory _AIConfig(
-      {final bool enableLeadScoring,
-      final bool autoAssignLeads,
-      final bool enableAIVoiceCalls,
-      final bool enableAIWhatsApp,
-      final bool enableAIPersonalization,
-      final bool predictDefaultRisk,
-      final bool predictBestCollectionTime,
-      final bool predictCustomerResponse,
-      final bool enableOCR,
-      final bool enableAutoReceiptGeneration,
-      final bool enableFieldAgentAIAssistant,
-      final bool enableCustomerAIChatbot}) = _$AIConfigImpl;
+  const factory _AIConfig({
+    final bool enableLeadScoring,
+    final bool autoAssignLeads,
+    final bool enableAIVoiceCalls,
+    final bool enableAIWhatsApp,
+    final bool enableAIPersonalization,
+    final bool predictDefaultRisk,
+    final bool predictBestCollectionTime,
+    final bool predictCustomerResponse,
+    final bool enableOCR,
+    final bool enableAutoReceiptGeneration,
+    final bool enableFieldAgentAIAssistant,
+    final bool enableCustomerAIChatbot,
+  }) = _$AIConfigImpl;
 
   factory _AIConfig.fromJson(Map<String, dynamic> json) =
       _$AIConfigImpl.fromJson;
 
-// AI Lead Scoring
+  // AI Lead Scoring
   @override
   bool get enableLeadScoring;
   @override
@@ -3487,19 +3605,19 @@ mixin _$AutomationRule {
       throw _privateConstructorUsedError; // days_before_due, days_after_due, amount_threshold
   int get triggerValue =>
       throw _privateConstructorUsedError; // 3 (days), 5000 (amount)
-// Actions to take
+  // Actions to take
   List<String> get actions =>
       throw _privateConstructorUsedError; // whatsapp, sms, email, call, agent_notify
-// Timing
+  // Timing
   String get scheduleTime => throw _privateConstructorUsedError; // 09:00
   String? get scheduleDays =>
       throw _privateConstructorUsedError; // monday,tuesday,wednesday
-// Priority
+  // Priority
   int get priority => throw _privateConstructorUsedError; // Conditions
   String? get conditionAmount => throw _privateConstructorUsedError; // > 10000
   String? get conditionStatus =>
       throw _privateConstructorUsedError; // regular, irregular, defaulter
-// Message templates
+  // Message templates
   String? get whatsappTemplate => throw _privateConstructorUsedError;
   String? get smsTemplate => throw _privateConstructorUsedError;
   String? get emailTemplate => throw _privateConstructorUsedError;
@@ -3520,27 +3638,29 @@ mixin _$AutomationRule {
 /// @nodoc
 abstract class $AutomationRuleCopyWith<$Res> {
   factory $AutomationRuleCopyWith(
-          AutomationRule value, $Res Function(AutomationRule) then) =
-      _$AutomationRuleCopyWithImpl<$Res, AutomationRule>;
+    AutomationRule value,
+    $Res Function(AutomationRule) then,
+  ) = _$AutomationRuleCopyWithImpl<$Res, AutomationRule>;
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      String type,
-      String trigger,
-      int triggerValue,
-      List<String> actions,
-      String scheduleTime,
-      String? scheduleDays,
-      int priority,
-      String? conditionAmount,
-      String? conditionStatus,
-      String? whatsappTemplate,
-      String? smsTemplate,
-      String? emailTemplate,
-      String? voiceMessage,
-      bool isActive,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String name,
+    String type,
+    String trigger,
+    int triggerValue,
+    List<String> actions,
+    String scheduleTime,
+    String? scheduleDays,
+    int priority,
+    String? conditionAmount,
+    String? conditionStatus,
+    String? whatsappTemplate,
+    String? smsTemplate,
+    String? emailTemplate,
+    String? voiceMessage,
+    bool isActive,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -3576,105 +3696,110 @@ class _$AutomationRuleCopyWithImpl<$Res, $Val extends AutomationRule>
     Object? isActive = null,
     Object? createdAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      trigger: null == trigger
-          ? _value.trigger
-          : trigger // ignore: cast_nullable_to_non_nullable
-              as String,
-      triggerValue: null == triggerValue
-          ? _value.triggerValue
-          : triggerValue // ignore: cast_nullable_to_non_nullable
-              as int,
-      actions: null == actions
-          ? _value.actions
-          : actions // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      scheduleTime: null == scheduleTime
-          ? _value.scheduleTime
-          : scheduleTime // ignore: cast_nullable_to_non_nullable
-              as String,
-      scheduleDays: freezed == scheduleDays
-          ? _value.scheduleDays
-          : scheduleDays // ignore: cast_nullable_to_non_nullable
-              as String?,
-      priority: null == priority
-          ? _value.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as int,
-      conditionAmount: freezed == conditionAmount
-          ? _value.conditionAmount
-          : conditionAmount // ignore: cast_nullable_to_non_nullable
-              as String?,
-      conditionStatus: freezed == conditionStatus
-          ? _value.conditionStatus
-          : conditionStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
-      whatsappTemplate: freezed == whatsappTemplate
-          ? _value.whatsappTemplate
-          : whatsappTemplate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      smsTemplate: freezed == smsTemplate
-          ? _value.smsTemplate
-          : smsTemplate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      emailTemplate: freezed == emailTemplate
-          ? _value.emailTemplate
-          : emailTemplate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      voiceMessage: freezed == voiceMessage
-          ? _value.voiceMessage
-          : voiceMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as String,
+            trigger: null == trigger
+                ? _value.trigger
+                : trigger // ignore: cast_nullable_to_non_nullable
+                      as String,
+            triggerValue: null == triggerValue
+                ? _value.triggerValue
+                : triggerValue // ignore: cast_nullable_to_non_nullable
+                      as int,
+            actions: null == actions
+                ? _value.actions
+                : actions // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            scheduleTime: null == scheduleTime
+                ? _value.scheduleTime
+                : scheduleTime // ignore: cast_nullable_to_non_nullable
+                      as String,
+            scheduleDays: freezed == scheduleDays
+                ? _value.scheduleDays
+                : scheduleDays // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            priority: null == priority
+                ? _value.priority
+                : priority // ignore: cast_nullable_to_non_nullable
+                      as int,
+            conditionAmount: freezed == conditionAmount
+                ? _value.conditionAmount
+                : conditionAmount // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            conditionStatus: freezed == conditionStatus
+                ? _value.conditionStatus
+                : conditionStatus // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            whatsappTemplate: freezed == whatsappTemplate
+                ? _value.whatsappTemplate
+                : whatsappTemplate // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            smsTemplate: freezed == smsTemplate
+                ? _value.smsTemplate
+                : smsTemplate // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            emailTemplate: freezed == emailTemplate
+                ? _value.emailTemplate
+                : emailTemplate // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            voiceMessage: freezed == voiceMessage
+                ? _value.voiceMessage
+                : voiceMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            isActive: null == isActive
+                ? _value.isActive
+                : isActive // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$AutomationRuleImplCopyWith<$Res>
     implements $AutomationRuleCopyWith<$Res> {
-  factory _$$AutomationRuleImplCopyWith(_$AutomationRuleImpl value,
-          $Res Function(_$AutomationRuleImpl) then) =
-      __$$AutomationRuleImplCopyWithImpl<$Res>;
+  factory _$$AutomationRuleImplCopyWith(
+    _$AutomationRuleImpl value,
+    $Res Function(_$AutomationRuleImpl) then,
+  ) = __$$AutomationRuleImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      String type,
-      String trigger,
-      int triggerValue,
-      List<String> actions,
-      String scheduleTime,
-      String? scheduleDays,
-      int priority,
-      String? conditionAmount,
-      String? conditionStatus,
-      String? whatsappTemplate,
-      String? smsTemplate,
-      String? emailTemplate,
-      String? voiceMessage,
-      bool isActive,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String name,
+    String type,
+    String trigger,
+    int triggerValue,
+    List<String> actions,
+    String scheduleTime,
+    String? scheduleDays,
+    int priority,
+    String? conditionAmount,
+    String? conditionStatus,
+    String? whatsappTemplate,
+    String? smsTemplate,
+    String? emailTemplate,
+    String? voiceMessage,
+    bool isActive,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -3682,8 +3807,9 @@ class __$$AutomationRuleImplCopyWithImpl<$Res>
     extends _$AutomationRuleCopyWithImpl<$Res, _$AutomationRuleImpl>
     implements _$$AutomationRuleImplCopyWith<$Res> {
   __$$AutomationRuleImplCopyWithImpl(
-      _$AutomationRuleImpl _value, $Res Function(_$AutomationRuleImpl) _then)
-      : super(_value, _then);
+    _$AutomationRuleImpl _value,
+    $Res Function(_$AutomationRuleImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AutomationRule
   /// with the given fields replaced by the non-null parameter values.
@@ -3708,101 +3834,103 @@ class __$$AutomationRuleImplCopyWithImpl<$Res>
     Object? isActive = null,
     Object? createdAt = null,
   }) {
-    return _then(_$AutomationRuleImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      trigger: null == trigger
-          ? _value.trigger
-          : trigger // ignore: cast_nullable_to_non_nullable
-              as String,
-      triggerValue: null == triggerValue
-          ? _value.triggerValue
-          : triggerValue // ignore: cast_nullable_to_non_nullable
-              as int,
-      actions: null == actions
-          ? _value._actions
-          : actions // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      scheduleTime: null == scheduleTime
-          ? _value.scheduleTime
-          : scheduleTime // ignore: cast_nullable_to_non_nullable
-              as String,
-      scheduleDays: freezed == scheduleDays
-          ? _value.scheduleDays
-          : scheduleDays // ignore: cast_nullable_to_non_nullable
-              as String?,
-      priority: null == priority
-          ? _value.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as int,
-      conditionAmount: freezed == conditionAmount
-          ? _value.conditionAmount
-          : conditionAmount // ignore: cast_nullable_to_non_nullable
-              as String?,
-      conditionStatus: freezed == conditionStatus
-          ? _value.conditionStatus
-          : conditionStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
-      whatsappTemplate: freezed == whatsappTemplate
-          ? _value.whatsappTemplate
-          : whatsappTemplate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      smsTemplate: freezed == smsTemplate
-          ? _value.smsTemplate
-          : smsTemplate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      emailTemplate: freezed == emailTemplate
-          ? _value.emailTemplate
-          : emailTemplate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      voiceMessage: freezed == voiceMessage
-          ? _value.voiceMessage
-          : voiceMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$AutomationRuleImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as String,
+        trigger: null == trigger
+            ? _value.trigger
+            : trigger // ignore: cast_nullable_to_non_nullable
+                  as String,
+        triggerValue: null == triggerValue
+            ? _value.triggerValue
+            : triggerValue // ignore: cast_nullable_to_non_nullable
+                  as int,
+        actions: null == actions
+            ? _value._actions
+            : actions // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        scheduleTime: null == scheduleTime
+            ? _value.scheduleTime
+            : scheduleTime // ignore: cast_nullable_to_non_nullable
+                  as String,
+        scheduleDays: freezed == scheduleDays
+            ? _value.scheduleDays
+            : scheduleDays // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        priority: null == priority
+            ? _value.priority
+            : priority // ignore: cast_nullable_to_non_nullable
+                  as int,
+        conditionAmount: freezed == conditionAmount
+            ? _value.conditionAmount
+            : conditionAmount // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        conditionStatus: freezed == conditionStatus
+            ? _value.conditionStatus
+            : conditionStatus // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        whatsappTemplate: freezed == whatsappTemplate
+            ? _value.whatsappTemplate
+            : whatsappTemplate // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        smsTemplate: freezed == smsTemplate
+            ? _value.smsTemplate
+            : smsTemplate // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        emailTemplate: freezed == emailTemplate
+            ? _value.emailTemplate
+            : emailTemplate // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        voiceMessage: freezed == voiceMessage
+            ? _value.voiceMessage
+            : voiceMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        isActive: null == isActive
+            ? _value.isActive
+            : isActive // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$AutomationRuleImpl implements _AutomationRule {
-  const _$AutomationRuleImpl(
-      {required this.id,
-      required this.name,
-      required this.type,
-      required this.trigger,
-      required this.triggerValue,
-      final List<String> actions = const [],
-      required this.scheduleTime,
-      this.scheduleDays,
-      this.priority = 1,
-      this.conditionAmount,
-      this.conditionStatus,
-      this.whatsappTemplate,
-      this.smsTemplate,
-      this.emailTemplate,
-      this.voiceMessage,
-      this.isActive = true,
-      required this.createdAt})
-      : _actions = actions;
+  const _$AutomationRuleImpl({
+    required this.id,
+    required this.name,
+    required this.type,
+    required this.trigger,
+    required this.triggerValue,
+    final List<String> actions = const [],
+    required this.scheduleTime,
+    this.scheduleDays,
+    this.priority = 1,
+    this.conditionAmount,
+    this.conditionStatus,
+    this.whatsappTemplate,
+    this.smsTemplate,
+    this.emailTemplate,
+    this.voiceMessage,
+    this.isActive = true,
+    required this.createdAt,
+  }) : _actions = actions;
 
   factory _$AutomationRuleImpl.fromJson(Map<String, dynamic> json) =>
       _$$AutomationRuleImplFromJson(json);
@@ -3813,17 +3941,17 @@ class _$AutomationRuleImpl implements _AutomationRule {
   final String name;
   @override
   final String type;
-// reminder, escalation, collection
+  // reminder, escalation, collection
   @override
   final String trigger;
-// days_before_due, days_after_due, amount_threshold
+  // days_before_due, days_after_due, amount_threshold
   @override
   final int triggerValue;
-// 3 (days), 5000 (amount)
-// Actions to take
+  // 3 (days), 5000 (amount)
+  // Actions to take
   final List<String> _actions;
-// 3 (days), 5000 (amount)
-// Actions to take
+  // 3 (days), 5000 (amount)
+  // Actions to take
   @override
   @JsonKey()
   List<String> get actions {
@@ -3832,26 +3960,26 @@ class _$AutomationRuleImpl implements _AutomationRule {
     return EqualUnmodifiableListView(_actions);
   }
 
-// whatsapp, sms, email, call, agent_notify
-// Timing
+  // whatsapp, sms, email, call, agent_notify
+  // Timing
   @override
   final String scheduleTime;
-// 09:00
+  // 09:00
   @override
   final String? scheduleDays;
-// monday,tuesday,wednesday
-// Priority
+  // monday,tuesday,wednesday
+  // Priority
   @override
   @JsonKey()
   final int priority;
-// Conditions
+  // Conditions
   @override
   final String? conditionAmount;
-// > 10000
+  // > 10000
   @override
   final String? conditionStatus;
-// regular, irregular, defaulter
-// Message templates
+  // regular, irregular, defaulter
+  // Message templates
   @override
   final String? whatsappTemplate;
   @override
@@ -3860,7 +3988,7 @@ class _$AutomationRuleImpl implements _AutomationRule {
   final String? emailTemplate;
   @override
   final String? voiceMessage;
-// Status
+  // Status
   @override
   @JsonKey()
   final bool isActive;
@@ -3911,24 +4039,25 @@ class _$AutomationRuleImpl implements _AutomationRule {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      name,
-      type,
-      trigger,
-      triggerValue,
-      const DeepCollectionEquality().hash(_actions),
-      scheduleTime,
-      scheduleDays,
-      priority,
-      conditionAmount,
-      conditionStatus,
-      whatsappTemplate,
-      smsTemplate,
-      emailTemplate,
-      voiceMessage,
-      isActive,
-      createdAt);
+    runtimeType,
+    id,
+    name,
+    type,
+    trigger,
+    triggerValue,
+    const DeepCollectionEquality().hash(_actions),
+    scheduleTime,
+    scheduleDays,
+    priority,
+    conditionAmount,
+    conditionStatus,
+    whatsappTemplate,
+    smsTemplate,
+    emailTemplate,
+    voiceMessage,
+    isActive,
+    createdAt,
+  );
 
   /// Create a copy of AutomationRule
   /// with the given fields replaced by the non-null parameter values.
@@ -3937,35 +4066,36 @@ class _$AutomationRuleImpl implements _AutomationRule {
   @pragma('vm:prefer-inline')
   _$$AutomationRuleImplCopyWith<_$AutomationRuleImpl> get copyWith =>
       __$$AutomationRuleImplCopyWithImpl<_$AutomationRuleImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AutomationRuleImplToJson(
-      this,
-    );
+    return _$$AutomationRuleImplToJson(this);
   }
 }
 
 abstract class _AutomationRule implements AutomationRule {
-  const factory _AutomationRule(
-      {required final String id,
-      required final String name,
-      required final String type,
-      required final String trigger,
-      required final int triggerValue,
-      final List<String> actions,
-      required final String scheduleTime,
-      final String? scheduleDays,
-      final int priority,
-      final String? conditionAmount,
-      final String? conditionStatus,
-      final String? whatsappTemplate,
-      final String? smsTemplate,
-      final String? emailTemplate,
-      final String? voiceMessage,
-      final bool isActive,
-      required final DateTime createdAt}) = _$AutomationRuleImpl;
+  const factory _AutomationRule({
+    required final String id,
+    required final String name,
+    required final String type,
+    required final String trigger,
+    required final int triggerValue,
+    final List<String> actions,
+    required final String scheduleTime,
+    final String? scheduleDays,
+    final int priority,
+    final String? conditionAmount,
+    final String? conditionStatus,
+    final String? whatsappTemplate,
+    final String? smsTemplate,
+    final String? emailTemplate,
+    final String? voiceMessage,
+    final bool isActive,
+    required final DateTime createdAt,
+  }) = _$AutomationRuleImpl;
 
   factory _AutomationRule.fromJson(Map<String, dynamic> json) =
       _$AutomationRuleImpl.fromJson;
@@ -3980,22 +4110,22 @@ abstract class _AutomationRule implements AutomationRule {
   String get trigger; // days_before_due, days_after_due, amount_threshold
   @override
   int get triggerValue; // 3 (days), 5000 (amount)
-// Actions to take
+  // Actions to take
   @override
   List<String> get actions; // whatsapp, sms, email, call, agent_notify
-// Timing
+  // Timing
   @override
   String get scheduleTime; // 09:00
   @override
   String? get scheduleDays; // monday,tuesday,wednesday
-// Priority
+  // Priority
   @override
   int get priority; // Conditions
   @override
   String? get conditionAmount; // > 10000
   @override
   String? get conditionStatus; // regular, irregular, defaulter
-// Message templates
+  // Message templates
   @override
   String? get whatsappTemplate;
   @override
@@ -4035,7 +4165,7 @@ mixin _$AutomationExecution {
       throw _privateConstructorUsedError; // reminder_sent, call_made, agent_notified
   String get status =>
       throw _privateConstructorUsedError; // success, failed, pending, scheduled
-// Content
+  // Content
   String? get messageContent => throw _privateConstructorUsedError;
   String? get templateUsed => throw _privateConstructorUsedError;
   Map<String, dynamic>? get metadata =>
@@ -4047,7 +4177,7 @@ mixin _$AutomationExecution {
   DateTime? get responseAt => throw _privateConstructorUsedError;
   String? get responseType =>
       throw _privateConstructorUsedError; // will_pay, cannot_pay, asked_time, paid
-// Error
+  // Error
   String? get errorMessage => throw _privateConstructorUsedError;
   int? get retryCount => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
@@ -4065,31 +4195,33 @@ mixin _$AutomationExecution {
 /// @nodoc
 abstract class $AutomationExecutionCopyWith<$Res> {
   factory $AutomationExecutionCopyWith(
-          AutomationExecution value, $Res Function(AutomationExecution) then) =
-      _$AutomationExecutionCopyWithImpl<$Res, AutomationExecution>;
+    AutomationExecution value,
+    $Res Function(AutomationExecution) then,
+  ) = _$AutomationExecutionCopyWithImpl<$Res, AutomationExecution>;
   @useResult
-  $Res call(
-      {String id,
-      String ruleId,
-      String ruleName,
-      String customerId,
-      String bookingId,
-      String emiId,
-      String channel,
-      String action,
-      String status,
-      String? messageContent,
-      String? templateUsed,
-      Map<String, dynamic>? metadata,
-      DateTime scheduledAt,
-      DateTime? executedAt,
-      DateTime? deliveredAt,
-      String? customerResponse,
-      DateTime? responseAt,
-      String? responseType,
-      String? errorMessage,
-      int? retryCount,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String ruleId,
+    String ruleName,
+    String customerId,
+    String bookingId,
+    String emiId,
+    String channel,
+    String action,
+    String status,
+    String? messageContent,
+    String? templateUsed,
+    Map<String, dynamic>? metadata,
+    DateTime scheduledAt,
+    DateTime? executedAt,
+    DateTime? deliveredAt,
+    String? customerResponse,
+    DateTime? responseAt,
+    String? responseType,
+    String? errorMessage,
+    int? retryCount,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -4129,134 +4261,140 @@ class _$AutomationExecutionCopyWithImpl<$Res, $Val extends AutomationExecution>
     Object? retryCount = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      ruleId: null == ruleId
-          ? _value.ruleId
-          : ruleId // ignore: cast_nullable_to_non_nullable
-              as String,
-      ruleName: null == ruleName
-          ? _value.ruleName
-          : ruleName // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      emiId: null == emiId
-          ? _value.emiId
-          : emiId // ignore: cast_nullable_to_non_nullable
-              as String,
-      channel: null == channel
-          ? _value.channel
-          : channel // ignore: cast_nullable_to_non_nullable
-              as String,
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      messageContent: freezed == messageContent
-          ? _value.messageContent
-          : messageContent // ignore: cast_nullable_to_non_nullable
-              as String?,
-      templateUsed: freezed == templateUsed
-          ? _value.templateUsed
-          : templateUsed // ignore: cast_nullable_to_non_nullable
-              as String?,
-      metadata: freezed == metadata
-          ? _value.metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-      scheduledAt: null == scheduledAt
-          ? _value.scheduledAt
-          : scheduledAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      executedAt: freezed == executedAt
-          ? _value.executedAt
-          : executedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      deliveredAt: freezed == deliveredAt
-          ? _value.deliveredAt
-          : deliveredAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      customerResponse: freezed == customerResponse
-          ? _value.customerResponse
-          : customerResponse // ignore: cast_nullable_to_non_nullable
-              as String?,
-      responseAt: freezed == responseAt
-          ? _value.responseAt
-          : responseAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      responseType: freezed == responseType
-          ? _value.responseType
-          : responseType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      retryCount: freezed == retryCount
-          ? _value.retryCount
-          : retryCount // ignore: cast_nullable_to_non_nullable
-              as int?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            ruleId: null == ruleId
+                ? _value.ruleId
+                : ruleId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            ruleName: null == ruleName
+                ? _value.ruleName
+                : ruleName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerId: null == customerId
+                ? _value.customerId
+                : customerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            bookingId: null == bookingId
+                ? _value.bookingId
+                : bookingId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            emiId: null == emiId
+                ? _value.emiId
+                : emiId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            channel: null == channel
+                ? _value.channel
+                : channel // ignore: cast_nullable_to_non_nullable
+                      as String,
+            action: null == action
+                ? _value.action
+                : action // ignore: cast_nullable_to_non_nullable
+                      as String,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            messageContent: freezed == messageContent
+                ? _value.messageContent
+                : messageContent // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            templateUsed: freezed == templateUsed
+                ? _value.templateUsed
+                : templateUsed // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            metadata: freezed == metadata
+                ? _value.metadata
+                : metadata // ignore: cast_nullable_to_non_nullable
+                      as Map<String, dynamic>?,
+            scheduledAt: null == scheduledAt
+                ? _value.scheduledAt
+                : scheduledAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            executedAt: freezed == executedAt
+                ? _value.executedAt
+                : executedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            deliveredAt: freezed == deliveredAt
+                ? _value.deliveredAt
+                : deliveredAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            customerResponse: freezed == customerResponse
+                ? _value.customerResponse
+                : customerResponse // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            responseAt: freezed == responseAt
+                ? _value.responseAt
+                : responseAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            responseType: freezed == responseType
+                ? _value.responseType
+                : responseType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            errorMessage: freezed == errorMessage
+                ? _value.errorMessage
+                : errorMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            retryCount: freezed == retryCount
+                ? _value.retryCount
+                : retryCount // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$AutomationExecutionImplCopyWith<$Res>
     implements $AutomationExecutionCopyWith<$Res> {
-  factory _$$AutomationExecutionImplCopyWith(_$AutomationExecutionImpl value,
-          $Res Function(_$AutomationExecutionImpl) then) =
-      __$$AutomationExecutionImplCopyWithImpl<$Res>;
+  factory _$$AutomationExecutionImplCopyWith(
+    _$AutomationExecutionImpl value,
+    $Res Function(_$AutomationExecutionImpl) then,
+  ) = __$$AutomationExecutionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String ruleId,
-      String ruleName,
-      String customerId,
-      String bookingId,
-      String emiId,
-      String channel,
-      String action,
-      String status,
-      String? messageContent,
-      String? templateUsed,
-      Map<String, dynamic>? metadata,
-      DateTime scheduledAt,
-      DateTime? executedAt,
-      DateTime? deliveredAt,
-      String? customerResponse,
-      DateTime? responseAt,
-      String? responseType,
-      String? errorMessage,
-      int? retryCount,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String ruleId,
+    String ruleName,
+    String customerId,
+    String bookingId,
+    String emiId,
+    String channel,
+    String action,
+    String status,
+    String? messageContent,
+    String? templateUsed,
+    Map<String, dynamic>? metadata,
+    DateTime scheduledAt,
+    DateTime? executedAt,
+    DateTime? deliveredAt,
+    String? customerResponse,
+    DateTime? responseAt,
+    String? responseType,
+    String? errorMessage,
+    int? retryCount,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
 class __$$AutomationExecutionImplCopyWithImpl<$Res>
     extends _$AutomationExecutionCopyWithImpl<$Res, _$AutomationExecutionImpl>
     implements _$$AutomationExecutionImplCopyWith<$Res> {
-  __$$AutomationExecutionImplCopyWithImpl(_$AutomationExecutionImpl _value,
-      $Res Function(_$AutomationExecutionImpl) _then)
-      : super(_value, _then);
+  __$$AutomationExecutionImplCopyWithImpl(
+    _$AutomationExecutionImpl _value,
+    $Res Function(_$AutomationExecutionImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AutomationExecution
   /// with the given fields replaced by the non-null parameter values.
@@ -4285,121 +4423,123 @@ class __$$AutomationExecutionImplCopyWithImpl<$Res>
     Object? retryCount = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_$AutomationExecutionImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      ruleId: null == ruleId
-          ? _value.ruleId
-          : ruleId // ignore: cast_nullable_to_non_nullable
-              as String,
-      ruleName: null == ruleName
-          ? _value.ruleName
-          : ruleName // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      emiId: null == emiId
-          ? _value.emiId
-          : emiId // ignore: cast_nullable_to_non_nullable
-              as String,
-      channel: null == channel
-          ? _value.channel
-          : channel // ignore: cast_nullable_to_non_nullable
-              as String,
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      messageContent: freezed == messageContent
-          ? _value.messageContent
-          : messageContent // ignore: cast_nullable_to_non_nullable
-              as String?,
-      templateUsed: freezed == templateUsed
-          ? _value.templateUsed
-          : templateUsed // ignore: cast_nullable_to_non_nullable
-              as String?,
-      metadata: freezed == metadata
-          ? _value._metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-      scheduledAt: null == scheduledAt
-          ? _value.scheduledAt
-          : scheduledAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      executedAt: freezed == executedAt
-          ? _value.executedAt
-          : executedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      deliveredAt: freezed == deliveredAt
-          ? _value.deliveredAt
-          : deliveredAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      customerResponse: freezed == customerResponse
-          ? _value.customerResponse
-          : customerResponse // ignore: cast_nullable_to_non_nullable
-              as String?,
-      responseAt: freezed == responseAt
-          ? _value.responseAt
-          : responseAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      responseType: freezed == responseType
-          ? _value.responseType
-          : responseType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      retryCount: freezed == retryCount
-          ? _value.retryCount
-          : retryCount // ignore: cast_nullable_to_non_nullable
-              as int?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$AutomationExecutionImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        ruleId: null == ruleId
+            ? _value.ruleId
+            : ruleId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        ruleName: null == ruleName
+            ? _value.ruleName
+            : ruleName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerId: null == customerId
+            ? _value.customerId
+            : customerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        bookingId: null == bookingId
+            ? _value.bookingId
+            : bookingId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        emiId: null == emiId
+            ? _value.emiId
+            : emiId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        channel: null == channel
+            ? _value.channel
+            : channel // ignore: cast_nullable_to_non_nullable
+                  as String,
+        action: null == action
+            ? _value.action
+            : action // ignore: cast_nullable_to_non_nullable
+                  as String,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        messageContent: freezed == messageContent
+            ? _value.messageContent
+            : messageContent // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        templateUsed: freezed == templateUsed
+            ? _value.templateUsed
+            : templateUsed // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        metadata: freezed == metadata
+            ? _value._metadata
+            : metadata // ignore: cast_nullable_to_non_nullable
+                  as Map<String, dynamic>?,
+        scheduledAt: null == scheduledAt
+            ? _value.scheduledAt
+            : scheduledAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        executedAt: freezed == executedAt
+            ? _value.executedAt
+            : executedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        deliveredAt: freezed == deliveredAt
+            ? _value.deliveredAt
+            : deliveredAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        customerResponse: freezed == customerResponse
+            ? _value.customerResponse
+            : customerResponse // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        responseAt: freezed == responseAt
+            ? _value.responseAt
+            : responseAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        responseType: freezed == responseType
+            ? _value.responseType
+            : responseType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        errorMessage: freezed == errorMessage
+            ? _value.errorMessage
+            : errorMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        retryCount: freezed == retryCount
+            ? _value.retryCount
+            : retryCount // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$AutomationExecutionImpl implements _AutomationExecution {
-  const _$AutomationExecutionImpl(
-      {required this.id,
-      required this.ruleId,
-      required this.ruleName,
-      required this.customerId,
-      required this.bookingId,
-      required this.emiId,
-      required this.channel,
-      required this.action,
-      required this.status,
-      this.messageContent,
-      this.templateUsed,
-      final Map<String, dynamic>? metadata,
-      required this.scheduledAt,
-      this.executedAt,
-      this.deliveredAt,
-      this.customerResponse,
-      this.responseAt,
-      this.responseType,
-      this.errorMessage,
-      this.retryCount,
-      required this.createdAt})
-      : _metadata = metadata;
+  const _$AutomationExecutionImpl({
+    required this.id,
+    required this.ruleId,
+    required this.ruleName,
+    required this.customerId,
+    required this.bookingId,
+    required this.emiId,
+    required this.channel,
+    required this.action,
+    required this.status,
+    this.messageContent,
+    this.templateUsed,
+    final Map<String, dynamic>? metadata,
+    required this.scheduledAt,
+    this.executedAt,
+    this.deliveredAt,
+    this.customerResponse,
+    this.responseAt,
+    this.responseType,
+    this.errorMessage,
+    this.retryCount,
+    required this.createdAt,
+  }) : _metadata = metadata;
 
   factory _$AutomationExecutionImpl.fromJson(Map<String, dynamic> json) =>
       _$$AutomationExecutionImplFromJson(json);
@@ -4416,17 +4556,17 @@ class _$AutomationExecutionImpl implements _AutomationExecution {
   final String bookingId;
   @override
   final String emiId;
-// Execution details
+  // Execution details
   @override
   final String channel;
-// whatsapp, sms, email, call, agent_app
+  // whatsapp, sms, email, call, agent_app
   @override
   final String action;
-// reminder_sent, call_made, agent_notified
+  // reminder_sent, call_made, agent_notified
   @override
   final String status;
-// success, failed, pending, scheduled
-// Content
+  // success, failed, pending, scheduled
+  // Content
   @override
   final String? messageContent;
   @override
@@ -4441,22 +4581,22 @@ class _$AutomationExecutionImpl implements _AutomationExecution {
     return EqualUnmodifiableMapView(value);
   }
 
-// Timing
+  // Timing
   @override
   final DateTime scheduledAt;
   @override
   final DateTime? executedAt;
   @override
   final DateTime? deliveredAt;
-// Response
+  // Response
   @override
   final String? customerResponse;
   @override
   final DateTime? responseAt;
   @override
   final String? responseType;
-// will_pay, cannot_pay, asked_time, paid
-// Error
+  // will_pay, cannot_pay, asked_time, paid
+  // Error
   @override
   final String? errorMessage;
   @override
@@ -4514,29 +4654,29 @@ class _$AutomationExecutionImpl implements _AutomationExecution {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        ruleId,
-        ruleName,
-        customerId,
-        bookingId,
-        emiId,
-        channel,
-        action,
-        status,
-        messageContent,
-        templateUsed,
-        const DeepCollectionEquality().hash(_metadata),
-        scheduledAt,
-        executedAt,
-        deliveredAt,
-        customerResponse,
-        responseAt,
-        responseType,
-        errorMessage,
-        retryCount,
-        createdAt
-      ]);
+    runtimeType,
+    id,
+    ruleId,
+    ruleName,
+    customerId,
+    bookingId,
+    emiId,
+    channel,
+    action,
+    status,
+    messageContent,
+    templateUsed,
+    const DeepCollectionEquality().hash(_metadata),
+    scheduledAt,
+    executedAt,
+    deliveredAt,
+    customerResponse,
+    responseAt,
+    responseType,
+    errorMessage,
+    retryCount,
+    createdAt,
+  ]);
 
   /// Create a copy of AutomationExecution
   /// with the given fields replaced by the non-null parameter values.
@@ -4545,39 +4685,40 @@ class _$AutomationExecutionImpl implements _AutomationExecution {
   @pragma('vm:prefer-inline')
   _$$AutomationExecutionImplCopyWith<_$AutomationExecutionImpl> get copyWith =>
       __$$AutomationExecutionImplCopyWithImpl<_$AutomationExecutionImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AutomationExecutionImplToJson(
-      this,
-    );
+    return _$$AutomationExecutionImplToJson(this);
   }
 }
 
 abstract class _AutomationExecution implements AutomationExecution {
-  const factory _AutomationExecution(
-      {required final String id,
-      required final String ruleId,
-      required final String ruleName,
-      required final String customerId,
-      required final String bookingId,
-      required final String emiId,
-      required final String channel,
-      required final String action,
-      required final String status,
-      final String? messageContent,
-      final String? templateUsed,
-      final Map<String, dynamic>? metadata,
-      required final DateTime scheduledAt,
-      final DateTime? executedAt,
-      final DateTime? deliveredAt,
-      final String? customerResponse,
-      final DateTime? responseAt,
-      final String? responseType,
-      final String? errorMessage,
-      final int? retryCount,
-      required final DateTime createdAt}) = _$AutomationExecutionImpl;
+  const factory _AutomationExecution({
+    required final String id,
+    required final String ruleId,
+    required final String ruleName,
+    required final String customerId,
+    required final String bookingId,
+    required final String emiId,
+    required final String channel,
+    required final String action,
+    required final String status,
+    final String? messageContent,
+    final String? templateUsed,
+    final Map<String, dynamic>? metadata,
+    required final DateTime scheduledAt,
+    final DateTime? executedAt,
+    final DateTime? deliveredAt,
+    final String? customerResponse,
+    final DateTime? responseAt,
+    final String? responseType,
+    final String? errorMessage,
+    final int? retryCount,
+    required final DateTime createdAt,
+  }) = _$AutomationExecutionImpl;
 
   factory _AutomationExecution.fromJson(Map<String, dynamic> json) =
       _$AutomationExecutionImpl.fromJson;
@@ -4600,7 +4741,7 @@ abstract class _AutomationExecution implements AutomationExecution {
   String get action; // reminder_sent, call_made, agent_notified
   @override
   String get status; // success, failed, pending, scheduled
-// Content
+  // Content
   @override
   String? get messageContent;
   @override
@@ -4619,7 +4760,7 @@ abstract class _AutomationExecution implements AutomationExecution {
   DateTime? get responseAt;
   @override
   String? get responseType; // will_pay, cannot_pay, asked_time, paid
-// Error
+  // Error
   @override
   String? get errorMessage;
   @override
@@ -4636,7 +4777,8 @@ abstract class _AutomationExecution implements AutomationExecution {
 }
 
 CustomerCommunicationLog _$CustomerCommunicationLogFromJson(
-    Map<String, dynamic> json) {
+  Map<String, dynamic> json,
+) {
   return _CustomerCommunicationLog.fromJson(json);
 }
 
@@ -4652,7 +4794,7 @@ mixin _$CustomerCommunicationLog {
       throw _privateConstructorUsedError; // outgoing, incoming
   String get type =>
       throw _privateConstructorUsedError; // reminder, follow_up, payment_confirmation, enquiry
-// Content
+  // Content
   String? get message => throw _privateConstructorUsedError;
   String? get attachmentUrl => throw _privateConstructorUsedError;
   String? get callRecordingUrl => throw _privateConstructorUsedError;
@@ -4686,38 +4828,42 @@ mixin _$CustomerCommunicationLog {
 
 /// @nodoc
 abstract class $CustomerCommunicationLogCopyWith<$Res> {
-  factory $CustomerCommunicationLogCopyWith(CustomerCommunicationLog value,
-          $Res Function(CustomerCommunicationLog) then) =
-      _$CustomerCommunicationLogCopyWithImpl<$Res, CustomerCommunicationLog>;
+  factory $CustomerCommunicationLogCopyWith(
+    CustomerCommunicationLog value,
+    $Res Function(CustomerCommunicationLog) then,
+  ) = _$CustomerCommunicationLogCopyWithImpl<$Res, CustomerCommunicationLog>;
   @useResult
-  $Res call(
-      {String id,
-      String customerId,
-      String bookingId,
-      String channel,
-      String direction,
-      String type,
-      String? message,
-      String? attachmentUrl,
-      String? callRecordingUrl,
-      int? callDurationSeconds,
-      String status,
-      DateTime? sentAt,
-      DateTime? deliveredAt,
-      DateTime? readAt,
-      String? agentId,
-      String? agentName,
-      bool wasAutomated,
-      String? automationRuleId,
-      String? customerReply,
-      DateTime? repliedAt,
-      String? adminNotes,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String customerId,
+    String bookingId,
+    String channel,
+    String direction,
+    String type,
+    String? message,
+    String? attachmentUrl,
+    String? callRecordingUrl,
+    int? callDurationSeconds,
+    String status,
+    DateTime? sentAt,
+    DateTime? deliveredAt,
+    DateTime? readAt,
+    String? agentId,
+    String? agentName,
+    bool wasAutomated,
+    String? automationRuleId,
+    String? customerReply,
+    DateTime? repliedAt,
+    String? adminNotes,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
-class _$CustomerCommunicationLogCopyWithImpl<$Res,
-        $Val extends CustomerCommunicationLog>
+class _$CustomerCommunicationLogCopyWithImpl<
+  $Res,
+  $Val extends CustomerCommunicationLog
+>
     implements $CustomerCommunicationLogCopyWith<$Res> {
   _$CustomerCommunicationLogCopyWithImpl(this._value, this._then);
 
@@ -4754,96 +4900,99 @@ class _$CustomerCommunicationLogCopyWithImpl<$Res,
     Object? adminNotes = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      channel: null == channel
-          ? _value.channel
-          : channel // ignore: cast_nullable_to_non_nullable
-              as String,
-      direction: null == direction
-          ? _value.direction
-          : direction // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-      attachmentUrl: freezed == attachmentUrl
-          ? _value.attachmentUrl
-          : attachmentUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      callRecordingUrl: freezed == callRecordingUrl
-          ? _value.callRecordingUrl
-          : callRecordingUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      callDurationSeconds: freezed == callDurationSeconds
-          ? _value.callDurationSeconds
-          : callDurationSeconds // ignore: cast_nullable_to_non_nullable
-              as int?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      sentAt: freezed == sentAt
-          ? _value.sentAt
-          : sentAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      deliveredAt: freezed == deliveredAt
-          ? _value.deliveredAt
-          : deliveredAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      readAt: freezed == readAt
-          ? _value.readAt
-          : readAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      agentId: freezed == agentId
-          ? _value.agentId
-          : agentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agentName: freezed == agentName
-          ? _value.agentName
-          : agentName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      wasAutomated: null == wasAutomated
-          ? _value.wasAutomated
-          : wasAutomated // ignore: cast_nullable_to_non_nullable
-              as bool,
-      automationRuleId: freezed == automationRuleId
-          ? _value.automationRuleId
-          : automationRuleId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerReply: freezed == customerReply
-          ? _value.customerReply
-          : customerReply // ignore: cast_nullable_to_non_nullable
-              as String?,
-      repliedAt: freezed == repliedAt
-          ? _value.repliedAt
-          : repliedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      adminNotes: freezed == adminNotes
-          ? _value.adminNotes
-          : adminNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerId: null == customerId
+                ? _value.customerId
+                : customerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            bookingId: null == bookingId
+                ? _value.bookingId
+                : bookingId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            channel: null == channel
+                ? _value.channel
+                : channel // ignore: cast_nullable_to_non_nullable
+                      as String,
+            direction: null == direction
+                ? _value.direction
+                : direction // ignore: cast_nullable_to_non_nullable
+                      as String,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as String,
+            message: freezed == message
+                ? _value.message
+                : message // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            attachmentUrl: freezed == attachmentUrl
+                ? _value.attachmentUrl
+                : attachmentUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            callRecordingUrl: freezed == callRecordingUrl
+                ? _value.callRecordingUrl
+                : callRecordingUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            callDurationSeconds: freezed == callDurationSeconds
+                ? _value.callDurationSeconds
+                : callDurationSeconds // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            sentAt: freezed == sentAt
+                ? _value.sentAt
+                : sentAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            deliveredAt: freezed == deliveredAt
+                ? _value.deliveredAt
+                : deliveredAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            readAt: freezed == readAt
+                ? _value.readAt
+                : readAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            agentId: freezed == agentId
+                ? _value.agentId
+                : agentId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            agentName: freezed == agentName
+                ? _value.agentName
+                : agentName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            wasAutomated: null == wasAutomated
+                ? _value.wasAutomated
+                : wasAutomated // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            automationRuleId: freezed == automationRuleId
+                ? _value.automationRuleId
+                : automationRuleId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            customerReply: freezed == customerReply
+                ? _value.customerReply
+                : customerReply // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            repliedAt: freezed == repliedAt
+                ? _value.repliedAt
+                : repliedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            adminNotes: freezed == adminNotes
+                ? _value.adminNotes
+                : adminNotes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -4851,45 +5000,49 @@ class _$CustomerCommunicationLogCopyWithImpl<$Res,
 abstract class _$$CustomerCommunicationLogImplCopyWith<$Res>
     implements $CustomerCommunicationLogCopyWith<$Res> {
   factory _$$CustomerCommunicationLogImplCopyWith(
-          _$CustomerCommunicationLogImpl value,
-          $Res Function(_$CustomerCommunicationLogImpl) then) =
-      __$$CustomerCommunicationLogImplCopyWithImpl<$Res>;
+    _$CustomerCommunicationLogImpl value,
+    $Res Function(_$CustomerCommunicationLogImpl) then,
+  ) = __$$CustomerCommunicationLogImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String customerId,
-      String bookingId,
-      String channel,
-      String direction,
-      String type,
-      String? message,
-      String? attachmentUrl,
-      String? callRecordingUrl,
-      int? callDurationSeconds,
-      String status,
-      DateTime? sentAt,
-      DateTime? deliveredAt,
-      DateTime? readAt,
-      String? agentId,
-      String? agentName,
-      bool wasAutomated,
-      String? automationRuleId,
-      String? customerReply,
-      DateTime? repliedAt,
-      String? adminNotes,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String customerId,
+    String bookingId,
+    String channel,
+    String direction,
+    String type,
+    String? message,
+    String? attachmentUrl,
+    String? callRecordingUrl,
+    int? callDurationSeconds,
+    String status,
+    DateTime? sentAt,
+    DateTime? deliveredAt,
+    DateTime? readAt,
+    String? agentId,
+    String? agentName,
+    bool wasAutomated,
+    String? automationRuleId,
+    String? customerReply,
+    DateTime? repliedAt,
+    String? adminNotes,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
 class __$$CustomerCommunicationLogImplCopyWithImpl<$Res>
-    extends _$CustomerCommunicationLogCopyWithImpl<$Res,
-        _$CustomerCommunicationLogImpl>
+    extends
+        _$CustomerCommunicationLogCopyWithImpl<
+          $Res,
+          _$CustomerCommunicationLogImpl
+        >
     implements _$$CustomerCommunicationLogImplCopyWith<$Res> {
   __$$CustomerCommunicationLogImplCopyWithImpl(
-      _$CustomerCommunicationLogImpl _value,
-      $Res Function(_$CustomerCommunicationLogImpl) _then)
-      : super(_value, _then);
+    _$CustomerCommunicationLogImpl _value,
+    $Res Function(_$CustomerCommunicationLogImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of CustomerCommunicationLog
   /// with the given fields replaced by the non-null parameter values.
@@ -4919,125 +5072,128 @@ class __$$CustomerCommunicationLogImplCopyWithImpl<$Res>
     Object? adminNotes = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_$CustomerCommunicationLogImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      channel: null == channel
-          ? _value.channel
-          : channel // ignore: cast_nullable_to_non_nullable
-              as String,
-      direction: null == direction
-          ? _value.direction
-          : direction // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-      attachmentUrl: freezed == attachmentUrl
-          ? _value.attachmentUrl
-          : attachmentUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      callRecordingUrl: freezed == callRecordingUrl
-          ? _value.callRecordingUrl
-          : callRecordingUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      callDurationSeconds: freezed == callDurationSeconds
-          ? _value.callDurationSeconds
-          : callDurationSeconds // ignore: cast_nullable_to_non_nullable
-              as int?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      sentAt: freezed == sentAt
-          ? _value.sentAt
-          : sentAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      deliveredAt: freezed == deliveredAt
-          ? _value.deliveredAt
-          : deliveredAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      readAt: freezed == readAt
-          ? _value.readAt
-          : readAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      agentId: freezed == agentId
-          ? _value.agentId
-          : agentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agentName: freezed == agentName
-          ? _value.agentName
-          : agentName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      wasAutomated: null == wasAutomated
-          ? _value.wasAutomated
-          : wasAutomated // ignore: cast_nullable_to_non_nullable
-              as bool,
-      automationRuleId: freezed == automationRuleId
-          ? _value.automationRuleId
-          : automationRuleId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerReply: freezed == customerReply
-          ? _value.customerReply
-          : customerReply // ignore: cast_nullable_to_non_nullable
-              as String?,
-      repliedAt: freezed == repliedAt
-          ? _value.repliedAt
-          : repliedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      adminNotes: freezed == adminNotes
-          ? _value.adminNotes
-          : adminNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$CustomerCommunicationLogImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerId: null == customerId
+            ? _value.customerId
+            : customerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        bookingId: null == bookingId
+            ? _value.bookingId
+            : bookingId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        channel: null == channel
+            ? _value.channel
+            : channel // ignore: cast_nullable_to_non_nullable
+                  as String,
+        direction: null == direction
+            ? _value.direction
+            : direction // ignore: cast_nullable_to_non_nullable
+                  as String,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as String,
+        message: freezed == message
+            ? _value.message
+            : message // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        attachmentUrl: freezed == attachmentUrl
+            ? _value.attachmentUrl
+            : attachmentUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        callRecordingUrl: freezed == callRecordingUrl
+            ? _value.callRecordingUrl
+            : callRecordingUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        callDurationSeconds: freezed == callDurationSeconds
+            ? _value.callDurationSeconds
+            : callDurationSeconds // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        sentAt: freezed == sentAt
+            ? _value.sentAt
+            : sentAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        deliveredAt: freezed == deliveredAt
+            ? _value.deliveredAt
+            : deliveredAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        readAt: freezed == readAt
+            ? _value.readAt
+            : readAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        agentId: freezed == agentId
+            ? _value.agentId
+            : agentId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        agentName: freezed == agentName
+            ? _value.agentName
+            : agentName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        wasAutomated: null == wasAutomated
+            ? _value.wasAutomated
+            : wasAutomated // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        automationRuleId: freezed == automationRuleId
+            ? _value.automationRuleId
+            : automationRuleId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        customerReply: freezed == customerReply
+            ? _value.customerReply
+            : customerReply // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        repliedAt: freezed == repliedAt
+            ? _value.repliedAt
+            : repliedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        adminNotes: freezed == adminNotes
+            ? _value.adminNotes
+            : adminNotes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CustomerCommunicationLogImpl implements _CustomerCommunicationLog {
-  const _$CustomerCommunicationLogImpl(
-      {required this.id,
-      required this.customerId,
-      required this.bookingId,
-      required this.channel,
-      required this.direction,
-      required this.type,
-      this.message,
-      this.attachmentUrl,
-      this.callRecordingUrl,
-      this.callDurationSeconds,
-      required this.status,
-      this.sentAt,
-      this.deliveredAt,
-      this.readAt,
-      this.agentId,
-      this.agentName,
-      this.wasAutomated = false,
-      this.automationRuleId,
-      this.customerReply,
-      this.repliedAt,
-      this.adminNotes,
-      required this.createdAt});
+  const _$CustomerCommunicationLogImpl({
+    required this.id,
+    required this.customerId,
+    required this.bookingId,
+    required this.channel,
+    required this.direction,
+    required this.type,
+    this.message,
+    this.attachmentUrl,
+    this.callRecordingUrl,
+    this.callDurationSeconds,
+    required this.status,
+    this.sentAt,
+    this.deliveredAt,
+    this.readAt,
+    this.agentId,
+    this.agentName,
+    this.wasAutomated = false,
+    this.automationRuleId,
+    this.customerReply,
+    this.repliedAt,
+    this.adminNotes,
+    required this.createdAt,
+  });
 
   factory _$CustomerCommunicationLogImpl.fromJson(Map<String, dynamic> json) =>
       _$$CustomerCommunicationLogImplFromJson(json);
@@ -5048,17 +5204,17 @@ class _$CustomerCommunicationLogImpl implements _CustomerCommunicationLog {
   final String customerId;
   @override
   final String bookingId;
-// Communication details
+  // Communication details
   @override
   final String channel;
-// whatsapp, sms, email, call, agent_visit
+  // whatsapp, sms, email, call, agent_visit
   @override
   final String direction;
-// outgoing, incoming
+  // outgoing, incoming
   @override
   final String type;
-// reminder, follow_up, payment_confirmation, enquiry
-// Content
+  // reminder, follow_up, payment_confirmation, enquiry
+  // Content
   @override
   final String? message;
   @override
@@ -5067,33 +5223,33 @@ class _$CustomerCommunicationLogImpl implements _CustomerCommunicationLog {
   final String? callRecordingUrl;
   @override
   final int? callDurationSeconds;
-// Status
+  // Status
   @override
   final String status;
-// sent, delivered, read, failed
+  // sent, delivered, read, failed
   @override
   final DateTime? sentAt;
   @override
   final DateTime? deliveredAt;
   @override
   final DateTime? readAt;
-// Agent info (if agent initiated)
+  // Agent info (if agent initiated)
   @override
   final String? agentId;
   @override
   final String? agentName;
-// AI/Automation info
+  // AI/Automation info
   @override
   @JsonKey()
   final bool wasAutomated;
   @override
   final String? automationRuleId;
-// Customer response
+  // Customer response
   @override
   final String? customerReply;
   @override
   final DateTime? repliedAt;
-// Notes
+  // Notes
   @override
   final String? adminNotes;
   @override
@@ -5150,30 +5306,30 @@ class _$CustomerCommunicationLogImpl implements _CustomerCommunicationLog {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        customerId,
-        bookingId,
-        channel,
-        direction,
-        type,
-        message,
-        attachmentUrl,
-        callRecordingUrl,
-        callDurationSeconds,
-        status,
-        sentAt,
-        deliveredAt,
-        readAt,
-        agentId,
-        agentName,
-        wasAutomated,
-        automationRuleId,
-        customerReply,
-        repliedAt,
-        adminNotes,
-        createdAt
-      ]);
+    runtimeType,
+    id,
+    customerId,
+    bookingId,
+    channel,
+    direction,
+    type,
+    message,
+    attachmentUrl,
+    callRecordingUrl,
+    callDurationSeconds,
+    status,
+    sentAt,
+    deliveredAt,
+    readAt,
+    agentId,
+    agentName,
+    wasAutomated,
+    automationRuleId,
+    customerReply,
+    repliedAt,
+    adminNotes,
+    createdAt,
+  ]);
 
   /// Create a copy of CustomerCommunicationLog
   /// with the given fields replaced by the non-null parameter values.
@@ -5181,41 +5337,42 @@ class _$CustomerCommunicationLogImpl implements _CustomerCommunicationLog {
   @override
   @pragma('vm:prefer-inline')
   _$$CustomerCommunicationLogImplCopyWith<_$CustomerCommunicationLogImpl>
-      get copyWith => __$$CustomerCommunicationLogImplCopyWithImpl<
-          _$CustomerCommunicationLogImpl>(this, _$identity);
+  get copyWith =>
+      __$$CustomerCommunicationLogImplCopyWithImpl<
+        _$CustomerCommunicationLogImpl
+      >(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CustomerCommunicationLogImplToJson(
-      this,
-    );
+    return _$$CustomerCommunicationLogImplToJson(this);
   }
 }
 
 abstract class _CustomerCommunicationLog implements CustomerCommunicationLog {
-  const factory _CustomerCommunicationLog(
-      {required final String id,
-      required final String customerId,
-      required final String bookingId,
-      required final String channel,
-      required final String direction,
-      required final String type,
-      final String? message,
-      final String? attachmentUrl,
-      final String? callRecordingUrl,
-      final int? callDurationSeconds,
-      required final String status,
-      final DateTime? sentAt,
-      final DateTime? deliveredAt,
-      final DateTime? readAt,
-      final String? agentId,
-      final String? agentName,
-      final bool wasAutomated,
-      final String? automationRuleId,
-      final String? customerReply,
-      final DateTime? repliedAt,
-      final String? adminNotes,
-      required final DateTime createdAt}) = _$CustomerCommunicationLogImpl;
+  const factory _CustomerCommunicationLog({
+    required final String id,
+    required final String customerId,
+    required final String bookingId,
+    required final String channel,
+    required final String direction,
+    required final String type,
+    final String? message,
+    final String? attachmentUrl,
+    final String? callRecordingUrl,
+    final int? callDurationSeconds,
+    required final String status,
+    final DateTime? sentAt,
+    final DateTime? deliveredAt,
+    final DateTime? readAt,
+    final String? agentId,
+    final String? agentName,
+    final bool wasAutomated,
+    final String? automationRuleId,
+    final String? customerReply,
+    final DateTime? repliedAt,
+    final String? adminNotes,
+    required final DateTime createdAt,
+  }) = _$CustomerCommunicationLogImpl;
 
   factory _CustomerCommunicationLog.fromJson(Map<String, dynamic> json) =
       _$CustomerCommunicationLogImpl.fromJson;
@@ -5232,7 +5389,7 @@ abstract class _CustomerCommunicationLog implements CustomerCommunicationLog {
   String get direction; // outgoing, incoming
   @override
   String get type; // reminder, follow_up, payment_confirmation, enquiry
-// Content
+  // Content
   @override
   String? get message;
   @override
@@ -5271,5 +5428,5 @@ abstract class _CustomerCommunicationLog implements CustomerCommunicationLog {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CustomerCommunicationLogImplCopyWith<_$CustomerCommunicationLogImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }

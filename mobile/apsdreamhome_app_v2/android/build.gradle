@@ -1,15 +1,8 @@
 buildscript {
-    ext.kotlin_version = '2.1.0'
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.4.2'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
     }
 }
 
@@ -21,26 +14,15 @@ allprojects {
 }
 
 subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-
-subprojects {
-    afterEvaluate { project ->
+    afterEvaluate {
         if (project.hasProperty('android')) {
-            project.android {
-                compileSdk 34
-                if (it.hasProperty('defaultConfig')) {
-                    defaultConfig {
-                        targetSdk 34
-                    }
+            android {
+                if (namespace == null || namespace == '') {
+                    namespace project.group
                 }
             }
         }
     }
-}
-
-subprojects {
-    project.evaluationDependsOn(':app')
 }
 
 tasks.register("clean", Delete) {

@@ -1,29 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'geo_location.dart';
 
 part 'emi_collection_model.freezed.dart';
 part 'emi_collection_model.g.dart';
-
-/// GeoPoint JSON Converter for Firestore
-class GeoPointJsonConverter implements JsonConverter<GeoPoint, Map<String, dynamic>> {
-  const GeoPointJsonConverter();
-
-  @override
-  GeoPoint fromJson(Map<String, dynamic> json) {
-    return GeoPoint(
-      (json['latitude'] as num).toDouble(),
-      (json['longitude'] as num).toDouble(),
-    );
-  }
-
-  @override
-  Map<String, dynamic> toJson(GeoPoint geoPoint) {
-    return {
-      'latitude': geoPoint.latitude,
-      'longitude': geoPoint.longitude,
-    };
-  }
-}
 
 /// EMI Collection Agent Model
 /// For field agents who collect EMI payments door-to-door
@@ -68,7 +47,7 @@ class EMICollectionAgent with _$EMICollectionAgent {
     // Location Tracking
     @Default([]) List<LocationTracking> locationHistory,
     bool? isCurrentlyActive,
-    @GeoPointJsonConverter() GeoPoint? lastLocation,
+    GeoLocation? lastLocation,
     DateTime? lastLocationUpdate,
     
     // Status
@@ -135,7 +114,7 @@ class EMICustomerAssignment with _$EMICustomerAssignment {
     // Collection Info
     String? preferredCollectionTime, // Morning, Afternoon, Evening
     String? landmark,
-    @GeoPointJsonConverter() GeoPoint? location,
+    GeoLocation? location,
     
     // History
     @Default([]) List<PreviousVisit> visitHistory,
@@ -231,7 +210,7 @@ class CollectionRecord with _$CollectionRecord {
     String? receiptNumber,
     
     // Location
-    @GeoPointJsonConverter() GeoPoint? location,
+    GeoLocation? location,
     String? addressAtCollection,
     
     // Proof
@@ -304,7 +283,7 @@ class MonthlyCollectionPerformance with _$MonthlyCollectionPerformance {
 class LocationTracking with _$LocationTracking {
   const factory LocationTracking({
     required DateTime timestamp,
-    @GeoPointJsonConverter() required GeoPoint location,
+    required GeoLocation location,
     String? activity, // traveling, visiting, collecting, break
     String? customerId, // If visiting specific customer
   }) = _LocationTracking;
@@ -374,7 +353,7 @@ class EMIDueItem with _$EMIDueItem {
     DateTime? collectedAt,
     
     // Location
-    @GeoPointJsonConverter() GeoPoint? location,
+    GeoLocation? location,
     String? landmark,
     String? preferredTime,
   }) = _EMIDueItem;

@@ -12,7 +12,8 @@ part of 'property_listing_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 PropertyListing _$PropertyListingFromJson(Map<String, dynamic> json) {
   return _PropertyListing.fromJson(json);
@@ -27,21 +28,20 @@ mixin _$PropertyListing {
       throw _privateConstructorUsedError; // Plot, House, Flat, Shop, Farmhouse
   ListingPurpose get purpose =>
       throw _privateConstructorUsedError; // Sell, Rent, Lease
-// Owner Details
+  // Owner Details
   String get ownerId => throw _privateConstructorUsedError;
   String get ownerName => throw _privateConstructorUsedError;
   String get ownerPhone => throw _privateConstructorUsedError;
   String get ownerEmail => throw _privateConstructorUsedError;
   OwnerType get ownerType =>
       throw _privateConstructorUsedError; // Customer, Associate, Agent, Employee
-// Location
+  // Location
   String get state => throw _privateConstructorUsedError;
   String get district => throw _privateConstructorUsedError;
   String get city => throw _privateConstructorUsedError;
   String get locality => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
-  @GeoPointJsonConverter()
-  GeoPoint get location => throw _privateConstructorUsedError;
+  GeoLocation get location => throw _privateConstructorUsedError;
   String get landmark => throw _privateConstructorUsedError; // Property Details
   double get areaSqft => throw _privateConstructorUsedError;
   String? get areaUnit =>
@@ -50,14 +50,14 @@ mixin _$PropertyListing {
   PriceNegotiable? get negotiable => throw _privateConstructorUsedError;
   String get priceType =>
       throw _privateConstructorUsedError; // Fixed, Negotiable, Best Offer
-// Features
+  // Features
   List<String> get images => throw _privateConstructorUsedError;
   List<String> get videos => throw _privateConstructorUsedError;
   List<String> get documents =>
       throw _privateConstructorUsedError; // Legal papers, registry
   Map<String, dynamic>? get features =>
       throw _privateConstructorUsedError; // Bedrooms, bathrooms, parking, etc.
-// Status & Verification
+  // Status & Verification
   ListingStatus get status =>
       throw _privateConstructorUsedError; // Pending, Verified, Active, Sold, Rejected
   String? get verifiedBy => throw _privateConstructorUsedError;
@@ -65,7 +65,7 @@ mixin _$PropertyListing {
   String? get rejectionReason => throw _privateConstructorUsedError;
   int? get verificationFee =>
       throw _privateConstructorUsedError; // Admin charges for verification
-// Statistics
+  // Statistics
   int get viewCount => throw _privateConstructorUsedError;
   int get inquiryCount => throw _privateConstructorUsedError;
   int get callCount => throw _privateConstructorUsedError;
@@ -100,57 +100,59 @@ mixin _$PropertyListing {
 /// @nodoc
 abstract class $PropertyListingCopyWith<$Res> {
   factory $PropertyListingCopyWith(
-          PropertyListing value, $Res Function(PropertyListing) then) =
-      _$PropertyListingCopyWithImpl<$Res, PropertyListing>;
+    PropertyListing value,
+    $Res Function(PropertyListing) then,
+  ) = _$PropertyListingCopyWithImpl<$Res, PropertyListing>;
   @useResult
-  $Res call(
-      {String id,
-      String title,
-      String description,
-      PropertyType propertyType,
-      ListingPurpose purpose,
-      String ownerId,
-      String ownerName,
-      String ownerPhone,
-      String ownerEmail,
-      OwnerType ownerType,
-      String state,
-      String district,
-      String city,
-      String locality,
-      String address,
-      @GeoPointJsonConverter() GeoPoint location,
-      String landmark,
-      double areaSqft,
-      String? areaUnit,
-      double expectedPrice,
-      PriceNegotiable? negotiable,
-      String priceType,
-      List<String> images,
-      List<String> videos,
-      List<String> documents,
-      Map<String, dynamic>? features,
-      ListingStatus status,
-      String? verifiedBy,
-      DateTime? verifiedAt,
-      String? rejectionReason,
-      int? verificationFee,
-      int viewCount,
-      int inquiryCount,
-      int callCount,
-      int whatsappCount,
-      DateTime? lastInquiryAt,
-      ListingPlan? listingPlan,
-      DateTime? planExpiryDate,
-      bool isFeatured,
-      bool isPremium,
-      bool isSpotlight,
-      List<String> interestedBuyers,
-      List<PropertyInquiry> inquiries,
-      String? adminNotes,
-      List<String> tags,
-      DateTime createdAt,
-      DateTime updatedAt});
+  $Res call({
+    String id,
+    String title,
+    String description,
+    PropertyType propertyType,
+    ListingPurpose purpose,
+    String ownerId,
+    String ownerName,
+    String ownerPhone,
+    String ownerEmail,
+    OwnerType ownerType,
+    String state,
+    String district,
+    String city,
+    String locality,
+    String address,
+    GeoLocation location,
+    String landmark,
+    double areaSqft,
+    String? areaUnit,
+    double expectedPrice,
+    PriceNegotiable? negotiable,
+    String priceType,
+    List<String> images,
+    List<String> videos,
+    List<String> documents,
+    Map<String, dynamic>? features,
+    ListingStatus status,
+    String? verifiedBy,
+    DateTime? verifiedAt,
+    String? rejectionReason,
+    int? verificationFee,
+    int viewCount,
+    int inquiryCount,
+    int callCount,
+    int whatsappCount,
+    DateTime? lastInquiryAt,
+    ListingPlan? listingPlan,
+    DateTime? planExpiryDate,
+    bool isFeatured,
+    bool isPremium,
+    bool isSpotlight,
+    List<String> interestedBuyers,
+    List<PropertyInquiry> inquiries,
+    String? adminNotes,
+    List<String> tags,
+    DateTime createdAt,
+    DateTime updatedAt,
+  });
 }
 
 /// @nodoc
@@ -216,255 +218,260 @@ class _$PropertyListingCopyWithImpl<$Res, $Val extends PropertyListing>
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      propertyType: null == propertyType
-          ? _value.propertyType
-          : propertyType // ignore: cast_nullable_to_non_nullable
-              as PropertyType,
-      purpose: null == purpose
-          ? _value.purpose
-          : purpose // ignore: cast_nullable_to_non_nullable
-              as ListingPurpose,
-      ownerId: null == ownerId
-          ? _value.ownerId
-          : ownerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      ownerName: null == ownerName
-          ? _value.ownerName
-          : ownerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      ownerPhone: null == ownerPhone
-          ? _value.ownerPhone
-          : ownerPhone // ignore: cast_nullable_to_non_nullable
-              as String,
-      ownerEmail: null == ownerEmail
-          ? _value.ownerEmail
-          : ownerEmail // ignore: cast_nullable_to_non_nullable
-              as String,
-      ownerType: null == ownerType
-          ? _value.ownerType
-          : ownerType // ignore: cast_nullable_to_non_nullable
-              as OwnerType,
-      state: null == state
-          ? _value.state
-          : state // ignore: cast_nullable_to_non_nullable
-              as String,
-      district: null == district
-          ? _value.district
-          : district // ignore: cast_nullable_to_non_nullable
-              as String,
-      city: null == city
-          ? _value.city
-          : city // ignore: cast_nullable_to_non_nullable
-              as String,
-      locality: null == locality
-          ? _value.locality
-          : locality // ignore: cast_nullable_to_non_nullable
-              as String,
-      address: null == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String,
-      location: null == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoPoint,
-      landmark: null == landmark
-          ? _value.landmark
-          : landmark // ignore: cast_nullable_to_non_nullable
-              as String,
-      areaSqft: null == areaSqft
-          ? _value.areaSqft
-          : areaSqft // ignore: cast_nullable_to_non_nullable
-              as double,
-      areaUnit: freezed == areaUnit
-          ? _value.areaUnit
-          : areaUnit // ignore: cast_nullable_to_non_nullable
-              as String?,
-      expectedPrice: null == expectedPrice
-          ? _value.expectedPrice
-          : expectedPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      negotiable: freezed == negotiable
-          ? _value.negotiable
-          : negotiable // ignore: cast_nullable_to_non_nullable
-              as PriceNegotiable?,
-      priceType: null == priceType
-          ? _value.priceType
-          : priceType // ignore: cast_nullable_to_non_nullable
-              as String,
-      images: null == images
-          ? _value.images
-          : images // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      videos: null == videos
-          ? _value.videos
-          : videos // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      documents: null == documents
-          ? _value.documents
-          : documents // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      features: freezed == features
-          ? _value.features
-          : features // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as ListingStatus,
-      verifiedBy: freezed == verifiedBy
-          ? _value.verifiedBy
-          : verifiedBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      verifiedAt: freezed == verifiedAt
-          ? _value.verifiedAt
-          : verifiedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      rejectionReason: freezed == rejectionReason
-          ? _value.rejectionReason
-          : rejectionReason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      verificationFee: freezed == verificationFee
-          ? _value.verificationFee
-          : verificationFee // ignore: cast_nullable_to_non_nullable
-              as int?,
-      viewCount: null == viewCount
-          ? _value.viewCount
-          : viewCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      inquiryCount: null == inquiryCount
-          ? _value.inquiryCount
-          : inquiryCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      callCount: null == callCount
-          ? _value.callCount
-          : callCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      whatsappCount: null == whatsappCount
-          ? _value.whatsappCount
-          : whatsappCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      lastInquiryAt: freezed == lastInquiryAt
-          ? _value.lastInquiryAt
-          : lastInquiryAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      listingPlan: freezed == listingPlan
-          ? _value.listingPlan
-          : listingPlan // ignore: cast_nullable_to_non_nullable
-              as ListingPlan?,
-      planExpiryDate: freezed == planExpiryDate
-          ? _value.planExpiryDate
-          : planExpiryDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      isFeatured: null == isFeatured
-          ? _value.isFeatured
-          : isFeatured // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isPremium: null == isPremium
-          ? _value.isPremium
-          : isPremium // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isSpotlight: null == isSpotlight
-          ? _value.isSpotlight
-          : isSpotlight // ignore: cast_nullable_to_non_nullable
-              as bool,
-      interestedBuyers: null == interestedBuyers
-          ? _value.interestedBuyers
-          : interestedBuyers // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      inquiries: null == inquiries
-          ? _value.inquiries
-          : inquiries // ignore: cast_nullable_to_non_nullable
-              as List<PropertyInquiry>,
-      adminNotes: freezed == adminNotes
-          ? _value.adminNotes
-          : adminNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      tags: null == tags
-          ? _value.tags
-          : tags // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            title: null == title
+                ? _value.title
+                : title // ignore: cast_nullable_to_non_nullable
+                      as String,
+            description: null == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String,
+            propertyType: null == propertyType
+                ? _value.propertyType
+                : propertyType // ignore: cast_nullable_to_non_nullable
+                      as PropertyType,
+            purpose: null == purpose
+                ? _value.purpose
+                : purpose // ignore: cast_nullable_to_non_nullable
+                      as ListingPurpose,
+            ownerId: null == ownerId
+                ? _value.ownerId
+                : ownerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            ownerName: null == ownerName
+                ? _value.ownerName
+                : ownerName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            ownerPhone: null == ownerPhone
+                ? _value.ownerPhone
+                : ownerPhone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            ownerEmail: null == ownerEmail
+                ? _value.ownerEmail
+                : ownerEmail // ignore: cast_nullable_to_non_nullable
+                      as String,
+            ownerType: null == ownerType
+                ? _value.ownerType
+                : ownerType // ignore: cast_nullable_to_non_nullable
+                      as OwnerType,
+            state: null == state
+                ? _value.state
+                : state // ignore: cast_nullable_to_non_nullable
+                      as String,
+            district: null == district
+                ? _value.district
+                : district // ignore: cast_nullable_to_non_nullable
+                      as String,
+            city: null == city
+                ? _value.city
+                : city // ignore: cast_nullable_to_non_nullable
+                      as String,
+            locality: null == locality
+                ? _value.locality
+                : locality // ignore: cast_nullable_to_non_nullable
+                      as String,
+            address: null == address
+                ? _value.address
+                : address // ignore: cast_nullable_to_non_nullable
+                      as String,
+            location: null == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as GeoLocation,
+            landmark: null == landmark
+                ? _value.landmark
+                : landmark // ignore: cast_nullable_to_non_nullable
+                      as String,
+            areaSqft: null == areaSqft
+                ? _value.areaSqft
+                : areaSqft // ignore: cast_nullable_to_non_nullable
+                      as double,
+            areaUnit: freezed == areaUnit
+                ? _value.areaUnit
+                : areaUnit // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            expectedPrice: null == expectedPrice
+                ? _value.expectedPrice
+                : expectedPrice // ignore: cast_nullable_to_non_nullable
+                      as double,
+            negotiable: freezed == negotiable
+                ? _value.negotiable
+                : negotiable // ignore: cast_nullable_to_non_nullable
+                      as PriceNegotiable?,
+            priceType: null == priceType
+                ? _value.priceType
+                : priceType // ignore: cast_nullable_to_non_nullable
+                      as String,
+            images: null == images
+                ? _value.images
+                : images // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            videos: null == videos
+                ? _value.videos
+                : videos // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            documents: null == documents
+                ? _value.documents
+                : documents // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            features: freezed == features
+                ? _value.features
+                : features // ignore: cast_nullable_to_non_nullable
+                      as Map<String, dynamic>?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as ListingStatus,
+            verifiedBy: freezed == verifiedBy
+                ? _value.verifiedBy
+                : verifiedBy // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            verifiedAt: freezed == verifiedAt
+                ? _value.verifiedAt
+                : verifiedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            rejectionReason: freezed == rejectionReason
+                ? _value.rejectionReason
+                : rejectionReason // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            verificationFee: freezed == verificationFee
+                ? _value.verificationFee
+                : verificationFee // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            viewCount: null == viewCount
+                ? _value.viewCount
+                : viewCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            inquiryCount: null == inquiryCount
+                ? _value.inquiryCount
+                : inquiryCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            callCount: null == callCount
+                ? _value.callCount
+                : callCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            whatsappCount: null == whatsappCount
+                ? _value.whatsappCount
+                : whatsappCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            lastInquiryAt: freezed == lastInquiryAt
+                ? _value.lastInquiryAt
+                : lastInquiryAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            listingPlan: freezed == listingPlan
+                ? _value.listingPlan
+                : listingPlan // ignore: cast_nullable_to_non_nullable
+                      as ListingPlan?,
+            planExpiryDate: freezed == planExpiryDate
+                ? _value.planExpiryDate
+                : planExpiryDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            isFeatured: null == isFeatured
+                ? _value.isFeatured
+                : isFeatured // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isPremium: null == isPremium
+                ? _value.isPremium
+                : isPremium // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isSpotlight: null == isSpotlight
+                ? _value.isSpotlight
+                : isSpotlight // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            interestedBuyers: null == interestedBuyers
+                ? _value.interestedBuyers
+                : interestedBuyers // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            inquiries: null == inquiries
+                ? _value.inquiries
+                : inquiries // ignore: cast_nullable_to_non_nullable
+                      as List<PropertyInquiry>,
+            adminNotes: freezed == adminNotes
+                ? _value.adminNotes
+                : adminNotes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            tags: null == tags
+                ? _value.tags
+                : tags // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            updatedAt: null == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$PropertyListingImplCopyWith<$Res>
     implements $PropertyListingCopyWith<$Res> {
-  factory _$$PropertyListingImplCopyWith(_$PropertyListingImpl value,
-          $Res Function(_$PropertyListingImpl) then) =
-      __$$PropertyListingImplCopyWithImpl<$Res>;
+  factory _$$PropertyListingImplCopyWith(
+    _$PropertyListingImpl value,
+    $Res Function(_$PropertyListingImpl) then,
+  ) = __$$PropertyListingImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String title,
-      String description,
-      PropertyType propertyType,
-      ListingPurpose purpose,
-      String ownerId,
-      String ownerName,
-      String ownerPhone,
-      String ownerEmail,
-      OwnerType ownerType,
-      String state,
-      String district,
-      String city,
-      String locality,
-      String address,
-      @GeoPointJsonConverter() GeoPoint location,
-      String landmark,
-      double areaSqft,
-      String? areaUnit,
-      double expectedPrice,
-      PriceNegotiable? negotiable,
-      String priceType,
-      List<String> images,
-      List<String> videos,
-      List<String> documents,
-      Map<String, dynamic>? features,
-      ListingStatus status,
-      String? verifiedBy,
-      DateTime? verifiedAt,
-      String? rejectionReason,
-      int? verificationFee,
-      int viewCount,
-      int inquiryCount,
-      int callCount,
-      int whatsappCount,
-      DateTime? lastInquiryAt,
-      ListingPlan? listingPlan,
-      DateTime? planExpiryDate,
-      bool isFeatured,
-      bool isPremium,
-      bool isSpotlight,
-      List<String> interestedBuyers,
-      List<PropertyInquiry> inquiries,
-      String? adminNotes,
-      List<String> tags,
-      DateTime createdAt,
-      DateTime updatedAt});
+  $Res call({
+    String id,
+    String title,
+    String description,
+    PropertyType propertyType,
+    ListingPurpose purpose,
+    String ownerId,
+    String ownerName,
+    String ownerPhone,
+    String ownerEmail,
+    OwnerType ownerType,
+    String state,
+    String district,
+    String city,
+    String locality,
+    String address,
+    GeoLocation location,
+    String landmark,
+    double areaSqft,
+    String? areaUnit,
+    double expectedPrice,
+    PriceNegotiable? negotiable,
+    String priceType,
+    List<String> images,
+    List<String> videos,
+    List<String> documents,
+    Map<String, dynamic>? features,
+    ListingStatus status,
+    String? verifiedBy,
+    DateTime? verifiedAt,
+    String? rejectionReason,
+    int? verificationFee,
+    int viewCount,
+    int inquiryCount,
+    int callCount,
+    int whatsappCount,
+    DateTime? lastInquiryAt,
+    ListingPlan? listingPlan,
+    DateTime? planExpiryDate,
+    bool isFeatured,
+    bool isPremium,
+    bool isSpotlight,
+    List<String> interestedBuyers,
+    List<PropertyInquiry> inquiries,
+    String? adminNotes,
+    List<String> tags,
+    DateTime createdAt,
+    DateTime updatedAt,
+  });
 }
 
 /// @nodoc
@@ -472,8 +479,9 @@ class __$$PropertyListingImplCopyWithImpl<$Res>
     extends _$PropertyListingCopyWithImpl<$Res, _$PropertyListingImpl>
     implements _$$PropertyListingImplCopyWith<$Res> {
   __$$PropertyListingImplCopyWithImpl(
-      _$PropertyListingImpl _value, $Res Function(_$PropertyListingImpl) _then)
-      : super(_value, _then);
+    _$PropertyListingImpl _value,
+    $Res Function(_$PropertyListingImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PropertyListing
   /// with the given fields replaced by the non-null parameter values.
@@ -528,258 +536,260 @@ class __$$PropertyListingImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
-    return _then(_$PropertyListingImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      propertyType: null == propertyType
-          ? _value.propertyType
-          : propertyType // ignore: cast_nullable_to_non_nullable
-              as PropertyType,
-      purpose: null == purpose
-          ? _value.purpose
-          : purpose // ignore: cast_nullable_to_non_nullable
-              as ListingPurpose,
-      ownerId: null == ownerId
-          ? _value.ownerId
-          : ownerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      ownerName: null == ownerName
-          ? _value.ownerName
-          : ownerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      ownerPhone: null == ownerPhone
-          ? _value.ownerPhone
-          : ownerPhone // ignore: cast_nullable_to_non_nullable
-              as String,
-      ownerEmail: null == ownerEmail
-          ? _value.ownerEmail
-          : ownerEmail // ignore: cast_nullable_to_non_nullable
-              as String,
-      ownerType: null == ownerType
-          ? _value.ownerType
-          : ownerType // ignore: cast_nullable_to_non_nullable
-              as OwnerType,
-      state: null == state
-          ? _value.state
-          : state // ignore: cast_nullable_to_non_nullable
-              as String,
-      district: null == district
-          ? _value.district
-          : district // ignore: cast_nullable_to_non_nullable
-              as String,
-      city: null == city
-          ? _value.city
-          : city // ignore: cast_nullable_to_non_nullable
-              as String,
-      locality: null == locality
-          ? _value.locality
-          : locality // ignore: cast_nullable_to_non_nullable
-              as String,
-      address: null == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String,
-      location: null == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoPoint,
-      landmark: null == landmark
-          ? _value.landmark
-          : landmark // ignore: cast_nullable_to_non_nullable
-              as String,
-      areaSqft: null == areaSqft
-          ? _value.areaSqft
-          : areaSqft // ignore: cast_nullable_to_non_nullable
-              as double,
-      areaUnit: freezed == areaUnit
-          ? _value.areaUnit
-          : areaUnit // ignore: cast_nullable_to_non_nullable
-              as String?,
-      expectedPrice: null == expectedPrice
-          ? _value.expectedPrice
-          : expectedPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      negotiable: freezed == negotiable
-          ? _value.negotiable
-          : negotiable // ignore: cast_nullable_to_non_nullable
-              as PriceNegotiable?,
-      priceType: null == priceType
-          ? _value.priceType
-          : priceType // ignore: cast_nullable_to_non_nullable
-              as String,
-      images: null == images
-          ? _value._images
-          : images // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      videos: null == videos
-          ? _value._videos
-          : videos // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      documents: null == documents
-          ? _value._documents
-          : documents // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      features: freezed == features
-          ? _value._features
-          : features // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as ListingStatus,
-      verifiedBy: freezed == verifiedBy
-          ? _value.verifiedBy
-          : verifiedBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      verifiedAt: freezed == verifiedAt
-          ? _value.verifiedAt
-          : verifiedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      rejectionReason: freezed == rejectionReason
-          ? _value.rejectionReason
-          : rejectionReason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      verificationFee: freezed == verificationFee
-          ? _value.verificationFee
-          : verificationFee // ignore: cast_nullable_to_non_nullable
-              as int?,
-      viewCount: null == viewCount
-          ? _value.viewCount
-          : viewCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      inquiryCount: null == inquiryCount
-          ? _value.inquiryCount
-          : inquiryCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      callCount: null == callCount
-          ? _value.callCount
-          : callCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      whatsappCount: null == whatsappCount
-          ? _value.whatsappCount
-          : whatsappCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      lastInquiryAt: freezed == lastInquiryAt
-          ? _value.lastInquiryAt
-          : lastInquiryAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      listingPlan: freezed == listingPlan
-          ? _value.listingPlan
-          : listingPlan // ignore: cast_nullable_to_non_nullable
-              as ListingPlan?,
-      planExpiryDate: freezed == planExpiryDate
-          ? _value.planExpiryDate
-          : planExpiryDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      isFeatured: null == isFeatured
-          ? _value.isFeatured
-          : isFeatured // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isPremium: null == isPremium
-          ? _value.isPremium
-          : isPremium // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isSpotlight: null == isSpotlight
-          ? _value.isSpotlight
-          : isSpotlight // ignore: cast_nullable_to_non_nullable
-              as bool,
-      interestedBuyers: null == interestedBuyers
-          ? _value._interestedBuyers
-          : interestedBuyers // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      inquiries: null == inquiries
-          ? _value._inquiries
-          : inquiries // ignore: cast_nullable_to_non_nullable
-              as List<PropertyInquiry>,
-      adminNotes: freezed == adminNotes
-          ? _value.adminNotes
-          : adminNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      tags: null == tags
-          ? _value._tags
-          : tags // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$PropertyListingImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        title: null == title
+            ? _value.title
+            : title // ignore: cast_nullable_to_non_nullable
+                  as String,
+        description: null == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String,
+        propertyType: null == propertyType
+            ? _value.propertyType
+            : propertyType // ignore: cast_nullable_to_non_nullable
+                  as PropertyType,
+        purpose: null == purpose
+            ? _value.purpose
+            : purpose // ignore: cast_nullable_to_non_nullable
+                  as ListingPurpose,
+        ownerId: null == ownerId
+            ? _value.ownerId
+            : ownerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        ownerName: null == ownerName
+            ? _value.ownerName
+            : ownerName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        ownerPhone: null == ownerPhone
+            ? _value.ownerPhone
+            : ownerPhone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        ownerEmail: null == ownerEmail
+            ? _value.ownerEmail
+            : ownerEmail // ignore: cast_nullable_to_non_nullable
+                  as String,
+        ownerType: null == ownerType
+            ? _value.ownerType
+            : ownerType // ignore: cast_nullable_to_non_nullable
+                  as OwnerType,
+        state: null == state
+            ? _value.state
+            : state // ignore: cast_nullable_to_non_nullable
+                  as String,
+        district: null == district
+            ? _value.district
+            : district // ignore: cast_nullable_to_non_nullable
+                  as String,
+        city: null == city
+            ? _value.city
+            : city // ignore: cast_nullable_to_non_nullable
+                  as String,
+        locality: null == locality
+            ? _value.locality
+            : locality // ignore: cast_nullable_to_non_nullable
+                  as String,
+        address: null == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
+                  as String,
+        location: null == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as GeoLocation,
+        landmark: null == landmark
+            ? _value.landmark
+            : landmark // ignore: cast_nullable_to_non_nullable
+                  as String,
+        areaSqft: null == areaSqft
+            ? _value.areaSqft
+            : areaSqft // ignore: cast_nullable_to_non_nullable
+                  as double,
+        areaUnit: freezed == areaUnit
+            ? _value.areaUnit
+            : areaUnit // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        expectedPrice: null == expectedPrice
+            ? _value.expectedPrice
+            : expectedPrice // ignore: cast_nullable_to_non_nullable
+                  as double,
+        negotiable: freezed == negotiable
+            ? _value.negotiable
+            : negotiable // ignore: cast_nullable_to_non_nullable
+                  as PriceNegotiable?,
+        priceType: null == priceType
+            ? _value.priceType
+            : priceType // ignore: cast_nullable_to_non_nullable
+                  as String,
+        images: null == images
+            ? _value._images
+            : images // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        videos: null == videos
+            ? _value._videos
+            : videos // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        documents: null == documents
+            ? _value._documents
+            : documents // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        features: freezed == features
+            ? _value._features
+            : features // ignore: cast_nullable_to_non_nullable
+                  as Map<String, dynamic>?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as ListingStatus,
+        verifiedBy: freezed == verifiedBy
+            ? _value.verifiedBy
+            : verifiedBy // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        verifiedAt: freezed == verifiedAt
+            ? _value.verifiedAt
+            : verifiedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        rejectionReason: freezed == rejectionReason
+            ? _value.rejectionReason
+            : rejectionReason // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        verificationFee: freezed == verificationFee
+            ? _value.verificationFee
+            : verificationFee // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        viewCount: null == viewCount
+            ? _value.viewCount
+            : viewCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        inquiryCount: null == inquiryCount
+            ? _value.inquiryCount
+            : inquiryCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        callCount: null == callCount
+            ? _value.callCount
+            : callCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        whatsappCount: null == whatsappCount
+            ? _value.whatsappCount
+            : whatsappCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        lastInquiryAt: freezed == lastInquiryAt
+            ? _value.lastInquiryAt
+            : lastInquiryAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        listingPlan: freezed == listingPlan
+            ? _value.listingPlan
+            : listingPlan // ignore: cast_nullable_to_non_nullable
+                  as ListingPlan?,
+        planExpiryDate: freezed == planExpiryDate
+            ? _value.planExpiryDate
+            : planExpiryDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        isFeatured: null == isFeatured
+            ? _value.isFeatured
+            : isFeatured // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isPremium: null == isPremium
+            ? _value.isPremium
+            : isPremium // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isSpotlight: null == isSpotlight
+            ? _value.isSpotlight
+            : isSpotlight // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        interestedBuyers: null == interestedBuyers
+            ? _value._interestedBuyers
+            : interestedBuyers // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        inquiries: null == inquiries
+            ? _value._inquiries
+            : inquiries // ignore: cast_nullable_to_non_nullable
+                  as List<PropertyInquiry>,
+        adminNotes: freezed == adminNotes
+            ? _value.adminNotes
+            : adminNotes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        tags: null == tags
+            ? _value._tags
+            : tags // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        updatedAt: null == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PropertyListingImpl extends _PropertyListing {
-  const _$PropertyListingImpl(
-      {required this.id,
-      required this.title,
-      required this.description,
-      required this.propertyType,
-      required this.purpose,
-      required this.ownerId,
-      required this.ownerName,
-      required this.ownerPhone,
-      required this.ownerEmail,
-      required this.ownerType,
-      required this.state,
-      required this.district,
-      required this.city,
-      required this.locality,
-      required this.address,
-      @GeoPointJsonConverter() required this.location,
-      required this.landmark,
-      required this.areaSqft,
-      this.areaUnit,
-      required this.expectedPrice,
-      this.negotiable,
-      required this.priceType,
-      final List<String> images = const [],
-      final List<String> videos = const [],
-      final List<String> documents = const [],
-      final Map<String, dynamic>? features,
-      required this.status,
-      this.verifiedBy,
-      this.verifiedAt,
-      this.rejectionReason,
-      this.verificationFee,
-      this.viewCount = 0,
-      this.inquiryCount = 0,
-      this.callCount = 0,
-      this.whatsappCount = 0,
-      this.lastInquiryAt,
-      this.listingPlan,
-      this.planExpiryDate,
-      this.isFeatured = false,
-      this.isPremium = false,
-      this.isSpotlight = false,
-      final List<String> interestedBuyers = const [],
-      final List<PropertyInquiry> inquiries = const [],
-      this.adminNotes,
-      final List<String> tags = const [],
-      required this.createdAt,
-      required this.updatedAt})
-      : _images = images,
-        _videos = videos,
-        _documents = documents,
-        _features = features,
-        _interestedBuyers = interestedBuyers,
-        _inquiries = inquiries,
-        _tags = tags,
-        super._();
+  const _$PropertyListingImpl({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.propertyType,
+    required this.purpose,
+    required this.ownerId,
+    required this.ownerName,
+    required this.ownerPhone,
+    required this.ownerEmail,
+    required this.ownerType,
+    required this.state,
+    required this.district,
+    required this.city,
+    required this.locality,
+    required this.address,
+    required this.location,
+    required this.landmark,
+    required this.areaSqft,
+    this.areaUnit,
+    required this.expectedPrice,
+    this.negotiable,
+    required this.priceType,
+    final List<String> images = const [],
+    final List<String> videos = const [],
+    final List<String> documents = const [],
+    final Map<String, dynamic>? features,
+    required this.status,
+    this.verifiedBy,
+    this.verifiedAt,
+    this.rejectionReason,
+    this.verificationFee,
+    this.viewCount = 0,
+    this.inquiryCount = 0,
+    this.callCount = 0,
+    this.whatsappCount = 0,
+    this.lastInquiryAt,
+    this.listingPlan,
+    this.planExpiryDate,
+    this.isFeatured = false,
+    this.isPremium = false,
+    this.isSpotlight = false,
+    final List<String> interestedBuyers = const [],
+    final List<PropertyInquiry> inquiries = const [],
+    this.adminNotes,
+    final List<String> tags = const [],
+    required this.createdAt,
+    required this.updatedAt,
+  }) : _images = images,
+       _videos = videos,
+       _documents = documents,
+       _features = features,
+       _interestedBuyers = interestedBuyers,
+       _inquiries = inquiries,
+       _tags = tags,
+       super._();
 
   factory _$PropertyListingImpl.fromJson(Map<String, dynamic> json) =>
       _$$PropertyListingImplFromJson(json);
@@ -792,11 +802,11 @@ class _$PropertyListingImpl extends _PropertyListing {
   final String description;
   @override
   final PropertyType propertyType;
-// Plot, House, Flat, Shop, Farmhouse
+  // Plot, House, Flat, Shop, Farmhouse
   @override
   final ListingPurpose purpose;
-// Sell, Rent, Lease
-// Owner Details
+  // Sell, Rent, Lease
+  // Owner Details
   @override
   final String ownerId;
   @override
@@ -807,8 +817,8 @@ class _$PropertyListingImpl extends _PropertyListing {
   final String ownerEmail;
   @override
   final OwnerType ownerType;
-// Customer, Associate, Agent, Employee
-// Location
+  // Customer, Associate, Agent, Employee
+  // Location
   @override
   final String state;
   @override
@@ -820,27 +830,26 @@ class _$PropertyListingImpl extends _PropertyListing {
   @override
   final String address;
   @override
-  @GeoPointJsonConverter()
-  final GeoPoint location;
+  final GeoLocation location;
   @override
   final String landmark;
-// Property Details
+  // Property Details
   @override
   final double areaSqft;
   @override
   final String? areaUnit;
-// sqft, acre, guntha
+  // sqft, acre, guntha
   @override
   final double expectedPrice;
   @override
   final PriceNegotiable? negotiable;
   @override
   final String priceType;
-// Fixed, Negotiable, Best Offer
-// Features
+  // Fixed, Negotiable, Best Offer
+  // Features
   final List<String> _images;
-// Fixed, Negotiable, Best Offer
-// Features
+  // Fixed, Negotiable, Best Offer
+  // Features
   @override
   @JsonKey()
   List<String> get images {
@@ -867,9 +876,9 @@ class _$PropertyListingImpl extends _PropertyListing {
     return EqualUnmodifiableListView(_documents);
   }
 
-// Legal papers, registry
+  // Legal papers, registry
   final Map<String, dynamic>? _features;
-// Legal papers, registry
+  // Legal papers, registry
   @override
   Map<String, dynamic>? get features {
     final value = _features;
@@ -879,11 +888,11 @@ class _$PropertyListingImpl extends _PropertyListing {
     return EqualUnmodifiableMapView(value);
   }
 
-// Bedrooms, bathrooms, parking, etc.
-// Status & Verification
+  // Bedrooms, bathrooms, parking, etc.
+  // Status & Verification
   @override
   final ListingStatus status;
-// Pending, Verified, Active, Sold, Rejected
+  // Pending, Verified, Active, Sold, Rejected
   @override
   final String? verifiedBy;
   @override
@@ -892,8 +901,8 @@ class _$PropertyListingImpl extends _PropertyListing {
   final String? rejectionReason;
   @override
   final int? verificationFee;
-// Admin charges for verification
-// Statistics
+  // Admin charges for verification
+  // Statistics
   @override
   @JsonKey()
   final int viewCount;
@@ -908,10 +917,10 @@ class _$PropertyListingImpl extends _PropertyListing {
   final int whatsappCount;
   @override
   final DateTime? lastInquiryAt;
-// Listing Plan (Monetization)
+  // Listing Plan (Monetization)
   @override
   final ListingPlan? listingPlan;
-// Free, Featured, Premium, Spotlight
+  // Free, Featured, Premium, Spotlight
   @override
   final DateTime? planExpiryDate;
   @override
@@ -923,9 +932,9 @@ class _$PropertyListingImpl extends _PropertyListing {
   @override
   @JsonKey()
   final bool isSpotlight;
-// Lead Generation
+  // Lead Generation
   final List<String> _interestedBuyers;
-// Lead Generation
+  // Lead Generation
   @override
   @JsonKey()
   List<String> get interestedBuyers {
@@ -935,9 +944,9 @@ class _$PropertyListingImpl extends _PropertyListing {
     return EqualUnmodifiableListView(_interestedBuyers);
   }
 
-// User IDs
+  // User IDs
   final List<PropertyInquiry> _inquiries;
-// User IDs
+  // User IDs
   @override
   @JsonKey()
   List<PropertyInquiry> get inquiries {
@@ -946,7 +955,7 @@ class _$PropertyListingImpl extends _PropertyListing {
     return EqualUnmodifiableListView(_inquiries);
   }
 
-// Admin Notes
+  // Admin Notes
   @override
   final String? adminNotes;
   final List<String> _tags;
@@ -1012,8 +1021,10 @@ class _$PropertyListingImpl extends _PropertyListing {
                 other.priceType == priceType) &&
             const DeepCollectionEquality().equals(other._images, _images) &&
             const DeepCollectionEquality().equals(other._videos, _videos) &&
-            const DeepCollectionEquality()
-                .equals(other._documents, _documents) &&
+            const DeepCollectionEquality().equals(
+              other._documents,
+              _documents,
+            ) &&
             const DeepCollectionEquality().equals(other._features, _features) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.verifiedBy, verifiedBy) ||
@@ -1044,10 +1055,14 @@ class _$PropertyListingImpl extends _PropertyListing {
                 other.isPremium == isPremium) &&
             (identical(other.isSpotlight, isSpotlight) ||
                 other.isSpotlight == isSpotlight) &&
-            const DeepCollectionEquality()
-                .equals(other._interestedBuyers, _interestedBuyers) &&
-            const DeepCollectionEquality()
-                .equals(other._inquiries, _inquiries) &&
+            const DeepCollectionEquality().equals(
+              other._interestedBuyers,
+              _interestedBuyers,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._inquiries,
+              _inquiries,
+            ) &&
             (identical(other.adminNotes, adminNotes) ||
                 other.adminNotes == adminNotes) &&
             const DeepCollectionEquality().equals(other._tags, _tags) &&
@@ -1060,55 +1075,55 @@ class _$PropertyListingImpl extends _PropertyListing {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        title,
-        description,
-        propertyType,
-        purpose,
-        ownerId,
-        ownerName,
-        ownerPhone,
-        ownerEmail,
-        ownerType,
-        state,
-        district,
-        city,
-        locality,
-        address,
-        location,
-        landmark,
-        areaSqft,
-        areaUnit,
-        expectedPrice,
-        negotiable,
-        priceType,
-        const DeepCollectionEquality().hash(_images),
-        const DeepCollectionEquality().hash(_videos),
-        const DeepCollectionEquality().hash(_documents),
-        const DeepCollectionEquality().hash(_features),
-        status,
-        verifiedBy,
-        verifiedAt,
-        rejectionReason,
-        verificationFee,
-        viewCount,
-        inquiryCount,
-        callCount,
-        whatsappCount,
-        lastInquiryAt,
-        listingPlan,
-        planExpiryDate,
-        isFeatured,
-        isPremium,
-        isSpotlight,
-        const DeepCollectionEquality().hash(_interestedBuyers),
-        const DeepCollectionEquality().hash(_inquiries),
-        adminNotes,
-        const DeepCollectionEquality().hash(_tags),
-        createdAt,
-        updatedAt
-      ]);
+    runtimeType,
+    id,
+    title,
+    description,
+    propertyType,
+    purpose,
+    ownerId,
+    ownerName,
+    ownerPhone,
+    ownerEmail,
+    ownerType,
+    state,
+    district,
+    city,
+    locality,
+    address,
+    location,
+    landmark,
+    areaSqft,
+    areaUnit,
+    expectedPrice,
+    negotiable,
+    priceType,
+    const DeepCollectionEquality().hash(_images),
+    const DeepCollectionEquality().hash(_videos),
+    const DeepCollectionEquality().hash(_documents),
+    const DeepCollectionEquality().hash(_features),
+    status,
+    verifiedBy,
+    verifiedAt,
+    rejectionReason,
+    verificationFee,
+    viewCount,
+    inquiryCount,
+    callCount,
+    whatsappCount,
+    lastInquiryAt,
+    listingPlan,
+    planExpiryDate,
+    isFeatured,
+    isPremium,
+    isSpotlight,
+    const DeepCollectionEquality().hash(_interestedBuyers),
+    const DeepCollectionEquality().hash(_inquiries),
+    adminNotes,
+    const DeepCollectionEquality().hash(_tags),
+    createdAt,
+    updatedAt,
+  ]);
 
   /// Create a copy of PropertyListing
   /// with the given fields replaced by the non-null parameter values.
@@ -1117,65 +1132,66 @@ class _$PropertyListingImpl extends _PropertyListing {
   @pragma('vm:prefer-inline')
   _$$PropertyListingImplCopyWith<_$PropertyListingImpl> get copyWith =>
       __$$PropertyListingImplCopyWithImpl<_$PropertyListingImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PropertyListingImplToJson(
-      this,
-    );
+    return _$$PropertyListingImplToJson(this);
   }
 }
 
 abstract class _PropertyListing extends PropertyListing {
-  const factory _PropertyListing(
-      {required final String id,
-      required final String title,
-      required final String description,
-      required final PropertyType propertyType,
-      required final ListingPurpose purpose,
-      required final String ownerId,
-      required final String ownerName,
-      required final String ownerPhone,
-      required final String ownerEmail,
-      required final OwnerType ownerType,
-      required final String state,
-      required final String district,
-      required final String city,
-      required final String locality,
-      required final String address,
-      @GeoPointJsonConverter() required final GeoPoint location,
-      required final String landmark,
-      required final double areaSqft,
-      final String? areaUnit,
-      required final double expectedPrice,
-      final PriceNegotiable? negotiable,
-      required final String priceType,
-      final List<String> images,
-      final List<String> videos,
-      final List<String> documents,
-      final Map<String, dynamic>? features,
-      required final ListingStatus status,
-      final String? verifiedBy,
-      final DateTime? verifiedAt,
-      final String? rejectionReason,
-      final int? verificationFee,
-      final int viewCount,
-      final int inquiryCount,
-      final int callCount,
-      final int whatsappCount,
-      final DateTime? lastInquiryAt,
-      final ListingPlan? listingPlan,
-      final DateTime? planExpiryDate,
-      final bool isFeatured,
-      final bool isPremium,
-      final bool isSpotlight,
-      final List<String> interestedBuyers,
-      final List<PropertyInquiry> inquiries,
-      final String? adminNotes,
-      final List<String> tags,
-      required final DateTime createdAt,
-      required final DateTime updatedAt}) = _$PropertyListingImpl;
+  const factory _PropertyListing({
+    required final String id,
+    required final String title,
+    required final String description,
+    required final PropertyType propertyType,
+    required final ListingPurpose purpose,
+    required final String ownerId,
+    required final String ownerName,
+    required final String ownerPhone,
+    required final String ownerEmail,
+    required final OwnerType ownerType,
+    required final String state,
+    required final String district,
+    required final String city,
+    required final String locality,
+    required final String address,
+    required final GeoLocation location,
+    required final String landmark,
+    required final double areaSqft,
+    final String? areaUnit,
+    required final double expectedPrice,
+    final PriceNegotiable? negotiable,
+    required final String priceType,
+    final List<String> images,
+    final List<String> videos,
+    final List<String> documents,
+    final Map<String, dynamic>? features,
+    required final ListingStatus status,
+    final String? verifiedBy,
+    final DateTime? verifiedAt,
+    final String? rejectionReason,
+    final int? verificationFee,
+    final int viewCount,
+    final int inquiryCount,
+    final int callCount,
+    final int whatsappCount,
+    final DateTime? lastInquiryAt,
+    final ListingPlan? listingPlan,
+    final DateTime? planExpiryDate,
+    final bool isFeatured,
+    final bool isPremium,
+    final bool isSpotlight,
+    final List<String> interestedBuyers,
+    final List<PropertyInquiry> inquiries,
+    final String? adminNotes,
+    final List<String> tags,
+    required final DateTime createdAt,
+    required final DateTime updatedAt,
+  }) = _$PropertyListingImpl;
   const _PropertyListing._() : super._();
 
   factory _PropertyListing.fromJson(Map<String, dynamic> json) =
@@ -1191,7 +1207,7 @@ abstract class _PropertyListing extends PropertyListing {
   PropertyType get propertyType; // Plot, House, Flat, Shop, Farmhouse
   @override
   ListingPurpose get purpose; // Sell, Rent, Lease
-// Owner Details
+  // Owner Details
   @override
   String get ownerId;
   @override
@@ -1202,7 +1218,7 @@ abstract class _PropertyListing extends PropertyListing {
   String get ownerEmail;
   @override
   OwnerType get ownerType; // Customer, Associate, Agent, Employee
-// Location
+  // Location
   @override
   String get state;
   @override
@@ -1214,8 +1230,7 @@ abstract class _PropertyListing extends PropertyListing {
   @override
   String get address;
   @override
-  @GeoPointJsonConverter()
-  GeoPoint get location;
+  GeoLocation get location;
   @override
   String get landmark; // Property Details
   @override
@@ -1228,7 +1243,7 @@ abstract class _PropertyListing extends PropertyListing {
   PriceNegotiable? get negotiable;
   @override
   String get priceType; // Fixed, Negotiable, Best Offer
-// Features
+  // Features
   @override
   List<String> get images;
   @override
@@ -1237,7 +1252,7 @@ abstract class _PropertyListing extends PropertyListing {
   List<String> get documents; // Legal papers, registry
   @override
   Map<String, dynamic>? get features; // Bedrooms, bathrooms, parking, etc.
-// Status & Verification
+  // Status & Verification
   @override
   ListingStatus get status; // Pending, Verified, Active, Sold, Rejected
   @override
@@ -1248,7 +1263,7 @@ abstract class _PropertyListing extends PropertyListing {
   String? get rejectionReason;
   @override
   int? get verificationFee; // Admin charges for verification
-// Statistics
+  // Statistics
   @override
   int get viewCount;
   @override
@@ -1324,22 +1339,24 @@ mixin _$PropertyInquiry {
 /// @nodoc
 abstract class $PropertyInquiryCopyWith<$Res> {
   factory $PropertyInquiryCopyWith(
-          PropertyInquiry value, $Res Function(PropertyInquiry) then) =
-      _$PropertyInquiryCopyWithImpl<$Res, PropertyInquiry>;
+    PropertyInquiry value,
+    $Res Function(PropertyInquiry) then,
+  ) = _$PropertyInquiryCopyWithImpl<$Res, PropertyInquiry>;
   @useResult
-  $Res call(
-      {String id,
-      String buyerId,
-      String buyerName,
-      String buyerPhone,
-      String? buyerEmail,
-      InquiryType type,
-      String? message,
-      DateTime? scheduledVisitDate,
-      InquiryStatus status,
-      DateTime? createdAt,
-      DateTime? respondedAt,
-      String? responseNotes});
+  $Res call({
+    String id,
+    String buyerId,
+    String buyerName,
+    String buyerPhone,
+    String? buyerEmail,
+    InquiryType type,
+    String? message,
+    DateTime? scheduledVisitDate,
+    InquiryStatus status,
+    DateTime? createdAt,
+    DateTime? respondedAt,
+    String? responseNotes,
+  });
 }
 
 /// @nodoc
@@ -1370,80 +1387,85 @@ class _$PropertyInquiryCopyWithImpl<$Res, $Val extends PropertyInquiry>
     Object? respondedAt = freezed,
     Object? responseNotes = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerId: null == buyerId
-          ? _value.buyerId
-          : buyerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerName: null == buyerName
-          ? _value.buyerName
-          : buyerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerPhone: null == buyerPhone
-          ? _value.buyerPhone
-          : buyerPhone // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerEmail: freezed == buyerEmail
-          ? _value.buyerEmail
-          : buyerEmail // ignore: cast_nullable_to_non_nullable
-              as String?,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as InquiryType,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-      scheduledVisitDate: freezed == scheduledVisitDate
-          ? _value.scheduledVisitDate
-          : scheduledVisitDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as InquiryStatus,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      respondedAt: freezed == respondedAt
-          ? _value.respondedAt
-          : respondedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      responseNotes: freezed == responseNotes
-          ? _value.responseNotes
-          : responseNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            buyerId: null == buyerId
+                ? _value.buyerId
+                : buyerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            buyerName: null == buyerName
+                ? _value.buyerName
+                : buyerName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            buyerPhone: null == buyerPhone
+                ? _value.buyerPhone
+                : buyerPhone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            buyerEmail: freezed == buyerEmail
+                ? _value.buyerEmail
+                : buyerEmail // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as InquiryType,
+            message: freezed == message
+                ? _value.message
+                : message // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            scheduledVisitDate: freezed == scheduledVisitDate
+                ? _value.scheduledVisitDate
+                : scheduledVisitDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as InquiryStatus,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            respondedAt: freezed == respondedAt
+                ? _value.respondedAt
+                : respondedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            responseNotes: freezed == responseNotes
+                ? _value.responseNotes
+                : responseNotes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$PropertyInquiryImplCopyWith<$Res>
     implements $PropertyInquiryCopyWith<$Res> {
-  factory _$$PropertyInquiryImplCopyWith(_$PropertyInquiryImpl value,
-          $Res Function(_$PropertyInquiryImpl) then) =
-      __$$PropertyInquiryImplCopyWithImpl<$Res>;
+  factory _$$PropertyInquiryImplCopyWith(
+    _$PropertyInquiryImpl value,
+    $Res Function(_$PropertyInquiryImpl) then,
+  ) = __$$PropertyInquiryImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String buyerId,
-      String buyerName,
-      String buyerPhone,
-      String? buyerEmail,
-      InquiryType type,
-      String? message,
-      DateTime? scheduledVisitDate,
-      InquiryStatus status,
-      DateTime? createdAt,
-      DateTime? respondedAt,
-      String? responseNotes});
+  $Res call({
+    String id,
+    String buyerId,
+    String buyerName,
+    String buyerPhone,
+    String? buyerEmail,
+    InquiryType type,
+    String? message,
+    DateTime? scheduledVisitDate,
+    InquiryStatus status,
+    DateTime? createdAt,
+    DateTime? respondedAt,
+    String? responseNotes,
+  });
 }
 
 /// @nodoc
@@ -1451,8 +1473,9 @@ class __$$PropertyInquiryImplCopyWithImpl<$Res>
     extends _$PropertyInquiryCopyWithImpl<$Res, _$PropertyInquiryImpl>
     implements _$$PropertyInquiryImplCopyWith<$Res> {
   __$$PropertyInquiryImplCopyWithImpl(
-      _$PropertyInquiryImpl _value, $Res Function(_$PropertyInquiryImpl) _then)
-      : super(_value, _then);
+    _$PropertyInquiryImpl _value,
+    $Res Function(_$PropertyInquiryImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PropertyInquiry
   /// with the given fields replaced by the non-null parameter values.
@@ -1472,75 +1495,78 @@ class __$$PropertyInquiryImplCopyWithImpl<$Res>
     Object? respondedAt = freezed,
     Object? responseNotes = freezed,
   }) {
-    return _then(_$PropertyInquiryImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerId: null == buyerId
-          ? _value.buyerId
-          : buyerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerName: null == buyerName
-          ? _value.buyerName
-          : buyerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerPhone: null == buyerPhone
-          ? _value.buyerPhone
-          : buyerPhone // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerEmail: freezed == buyerEmail
-          ? _value.buyerEmail
-          : buyerEmail // ignore: cast_nullable_to_non_nullable
-              as String?,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as InquiryType,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-      scheduledVisitDate: freezed == scheduledVisitDate
-          ? _value.scheduledVisitDate
-          : scheduledVisitDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as InquiryStatus,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      respondedAt: freezed == respondedAt
-          ? _value.respondedAt
-          : respondedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      responseNotes: freezed == responseNotes
-          ? _value.responseNotes
-          : responseNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$PropertyInquiryImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        buyerId: null == buyerId
+            ? _value.buyerId
+            : buyerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        buyerName: null == buyerName
+            ? _value.buyerName
+            : buyerName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        buyerPhone: null == buyerPhone
+            ? _value.buyerPhone
+            : buyerPhone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        buyerEmail: freezed == buyerEmail
+            ? _value.buyerEmail
+            : buyerEmail // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as InquiryType,
+        message: freezed == message
+            ? _value.message
+            : message // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        scheduledVisitDate: freezed == scheduledVisitDate
+            ? _value.scheduledVisitDate
+            : scheduledVisitDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as InquiryStatus,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        respondedAt: freezed == respondedAt
+            ? _value.respondedAt
+            : respondedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        responseNotes: freezed == responseNotes
+            ? _value.responseNotes
+            : responseNotes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PropertyInquiryImpl implements _PropertyInquiry {
-  const _$PropertyInquiryImpl(
-      {required this.id,
-      required this.buyerId,
-      required this.buyerName,
-      required this.buyerPhone,
-      this.buyerEmail,
-      required this.type,
-      this.message,
-      this.scheduledVisitDate,
-      required this.status,
-      this.createdAt,
-      this.respondedAt,
-      this.responseNotes});
+  const _$PropertyInquiryImpl({
+    required this.id,
+    required this.buyerId,
+    required this.buyerName,
+    required this.buyerPhone,
+    this.buyerEmail,
+    required this.type,
+    this.message,
+    this.scheduledVisitDate,
+    required this.status,
+    this.createdAt,
+    this.respondedAt,
+    this.responseNotes,
+  });
 
   factory _$PropertyInquiryImpl.fromJson(Map<String, dynamic> json) =>
       _$$PropertyInquiryImplFromJson(json);
@@ -1557,14 +1583,14 @@ class _$PropertyInquiryImpl implements _PropertyInquiry {
   final String? buyerEmail;
   @override
   final InquiryType type;
-// Call, WhatsApp, Email, Visit
+  // Call, WhatsApp, Email, Visit
   @override
   final String? message;
   @override
   final DateTime? scheduledVisitDate;
   @override
   final InquiryStatus status;
-// New, Contacted, InDiscussion, Negotiating, Closed
+  // New, Contacted, InDiscussion, Negotiating, Closed
   @override
   final DateTime? createdAt;
   @override
@@ -1606,19 +1632,20 @@ class _$PropertyInquiryImpl implements _PropertyInquiry {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      buyerId,
-      buyerName,
-      buyerPhone,
-      buyerEmail,
-      type,
-      message,
-      scheduledVisitDate,
-      status,
-      createdAt,
-      respondedAt,
-      responseNotes);
+    runtimeType,
+    id,
+    buyerId,
+    buyerName,
+    buyerPhone,
+    buyerEmail,
+    type,
+    message,
+    scheduledVisitDate,
+    status,
+    createdAt,
+    respondedAt,
+    responseNotes,
+  );
 
   /// Create a copy of PropertyInquiry
   /// with the given fields replaced by the non-null parameter values.
@@ -1627,30 +1654,31 @@ class _$PropertyInquiryImpl implements _PropertyInquiry {
   @pragma('vm:prefer-inline')
   _$$PropertyInquiryImplCopyWith<_$PropertyInquiryImpl> get copyWith =>
       __$$PropertyInquiryImplCopyWithImpl<_$PropertyInquiryImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PropertyInquiryImplToJson(
-      this,
-    );
+    return _$$PropertyInquiryImplToJson(this);
   }
 }
 
 abstract class _PropertyInquiry implements PropertyInquiry {
-  const factory _PropertyInquiry(
-      {required final String id,
-      required final String buyerId,
-      required final String buyerName,
-      required final String buyerPhone,
-      final String? buyerEmail,
-      required final InquiryType type,
-      final String? message,
-      final DateTime? scheduledVisitDate,
-      required final InquiryStatus status,
-      final DateTime? createdAt,
-      final DateTime? respondedAt,
-      final String? responseNotes}) = _$PropertyInquiryImpl;
+  const factory _PropertyInquiry({
+    required final String id,
+    required final String buyerId,
+    required final String buyerName,
+    required final String buyerPhone,
+    final String? buyerEmail,
+    required final InquiryType type,
+    final String? message,
+    final DateTime? scheduledVisitDate,
+    required final InquiryStatus status,
+    final DateTime? createdAt,
+    final DateTime? respondedAt,
+    final String? responseNotes,
+  }) = _$PropertyInquiryImpl;
 
   factory _PropertyInquiry.fromJson(Map<String, dynamic> json) =
       _$PropertyInquiryImpl.fromJson;

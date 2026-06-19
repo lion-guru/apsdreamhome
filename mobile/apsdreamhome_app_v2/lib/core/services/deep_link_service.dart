@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:developer' as developer;
-import 'package:flutter/services.dart';
-import 'package:app_links/app_links.dart';
+// app_links removed — AGP 8.7 incompatibility; re-enable when building for release
+// import 'package:app_links/app_links.dart';
 
 /// Deep Linking Service
 /// Handles app links from external sources
+/// NOTE: app_links dependency removed temporarily. Re-add when AGP 8.7+ is compatible.
 class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
   factory DeepLinkService() => _instance;
   DeepLinkService._internal();
 
-  final AppLinks _appLinks = AppLinks();
   StreamSubscription? _linkSubscription;
   Function(DeepLinkData)? _onLinkReceived;
 
@@ -19,30 +19,7 @@ class DeepLinkService {
     required Function(DeepLinkData) onLinkReceived,
   }) async {
     _onLinkReceived = onLinkReceived;
-
-    try {
-      // Handle initial link (app opened from link)
-      final initialLink = await _appLinks.getInitialLink();
-      if (initialLink != null) {
-        _handleLink(initialLink.toString());
-      }
-
-      // Listen for links while app is running
-      _linkSubscription = _appLinks.uriLinkStream.listen(
-        (Uri? link) {
-          if (link != null) {
-            _handleLink(link.toString());
-          }
-        },
-        onError: (err) {
-          developer.log('Deep link error: $err', name: 'DeepLinkService');
-        },
-      );
-
-      developer.log('Deep link service initialized', name: 'DeepLinkService');
-    } on PlatformException catch (e) {
-      developer.log('Deep link init error: $e', name: 'DeepLinkService');
-    }
+    developer.log('Deep link service initialized (stub mode)', name: 'DeepLinkService');
   }
 
   /// Handle incoming link
@@ -59,70 +36,33 @@ class DeepLinkService {
   DeepLinkData? _parseLink(String link) {
     try {
       final uri = Uri.parse(link);
-
-      // Handle different URL schemes
-      // apsdreamhome://property/123
-      // https://apsdreamhome.com/property/123
-      // https://apsdreamhome.com/invite?code=ABC123
-
       final path = uri.path;
       final queryParams = uri.queryParameters;
 
-      // Property link
       if (path.contains('/property/') || path.contains('/plot/')) {
         final id = path.split('/').last;
-        return DeepLinkData(
-          type: DeepLinkType.property,
-          id: id,
-          parameters: queryParams,
-        );
+        return DeepLinkData(type: DeepLinkType.property, id: id, parameters: queryParams);
       }
 
-      // Colony link
       if (path.contains('/colony/')) {
         final id = path.split('/').last;
-        return DeepLinkData(
-          type: DeepLinkType.colony,
-          id: id,
-          parameters: queryParams,
-        );
+        return DeepLinkData(type: DeepLinkType.colony, id: id, parameters: queryParams);
       }
 
-      // Referral link
       if (path.contains('/invite') || path.contains('/refer')) {
-        return DeepLinkData(
-          type: DeepLinkType.referral,
-          id: queryParams['code'] ?? '',
-          parameters: queryParams,
-        );
+        return DeepLinkData(type: DeepLinkType.referral, id: queryParams['code'] ?? '', parameters: queryParams);
       }
 
-      // Payment link
       if (path.contains('/payment')) {
-        return DeepLinkData(
-          type: DeepLinkType.payment,
-          id: queryParams['order_id'] ?? '',
-          parameters: queryParams,
-        );
+        return DeepLinkData(type: DeepLinkType.payment, id: queryParams['order_id'] ?? '', parameters: queryParams);
       }
 
-      // Lead link
       if (path.contains('/lead/')) {
         final id = path.split('/').last;
-        return DeepLinkData(
-          type: DeepLinkType.lead,
-          id: id,
-          parameters: queryParams,
-        );
+        return DeepLinkData(type: DeepLinkType.lead, id: id, parameters: queryParams);
       }
 
-      // Generic link
-      return DeepLinkData(
-        type: DeepLinkType.unknown,
-        id: '',
-        parameters: queryParams,
-        rawUrl: link,
-      );
+      return DeepLinkData(type: DeepLinkType.unknown, id: '', parameters: queryParams, rawUrl: link);
     } catch (e) {
       developer.log('Parse link error: $e', name: 'DeepLinkService');
       return null;
@@ -136,8 +76,6 @@ class DeepLinkService {
     Map<String, String>? parameters,
   }) {
     final buffer = StringBuffer();
-
-    // Use https for sharing
     buffer.write('https://apsdreamhome.com');
 
     switch (type) {
@@ -160,11 +98,9 @@ class DeepLinkService {
         buffer.write('/');
     }
 
-    // Add query parameters
     if (parameters != null && parameters.isNotEmpty) {
       final queryString = parameters.entries
-          .map((e) =>
-              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+          .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
           .join('&');
       buffer.write('?$queryString');
     }
@@ -172,38 +108,21 @@ class DeepLinkService {
     return buffer.toString();
   }
 
-  /// Dispose
   void dispose() {
     _linkSubscription?.cancel();
   }
 }
 
-/// Deep link types
-enum DeepLinkType {
-  property,
-  colony,
-  referral,
-  payment,
-  lead,
-  unknown,
-}
+enum DeepLinkType { property, colony, referral, payment, lead, unknown }
 
-/// Deep link data
 class DeepLinkData {
   final DeepLinkType type;
   final String id;
   final Map<String, String> parameters;
   final String? rawUrl;
 
-  DeepLinkData({
-    required this.type,
-    required this.id,
-    required this.parameters,
-    this.rawUrl,
-  });
+  DeepLinkData({required this.type, required this.id, required this.parameters, this.rawUrl});
 
   @override
-  String toString() {
-    return 'DeepLinkData(type: $type, id: $id, params: $parameters)';
-  }
+  String toString() => 'DeepLinkData(type: $type, id: $id, params: $parameters)';
 }

@@ -12,7 +12,8 @@ part of 'site_visit_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 SiteVisitModel _$SiteVisitModelFromJson(Map<String, dynamic> json) {
   return _SiteVisitModel.fromJson(json);
@@ -40,12 +41,12 @@ mixin _$SiteVisitModel {
   Duration? get duration => throw _privateConstructorUsedError;
   String? get purpose =>
       throw _privateConstructorUsedError; // initial_visit, follow_up, document_collection, etc.
-// Feedback
+  // Feedback
   String? get customerFeedback => throw _privateConstructorUsedError;
   String? get agentNotes => throw _privateConstructorUsedError;
   String? get outcome =>
       throw _privateConstructorUsedError; // interested, not_interested, thinking, booking_done
-// Follow-up
+  // Follow-up
   bool? get followUpRequired => throw _privateConstructorUsedError;
   DateTime? get followUpDate => throw _privateConstructorUsedError;
   String? get followUpType => throw _privateConstructorUsedError; // Media
@@ -71,41 +72,43 @@ mixin _$SiteVisitModel {
 /// @nodoc
 abstract class $SiteVisitModelCopyWith<$Res> {
   factory $SiteVisitModelCopyWith(
-          SiteVisitModel value, $Res Function(SiteVisitModel) then) =
-      _$SiteVisitModelCopyWithImpl<$Res, SiteVisitModel>;
+    SiteVisitModel value,
+    $Res Function(SiteVisitModel) then,
+  ) = _$SiteVisitModelCopyWithImpl<$Res, SiteVisitModel>;
   @useResult
-  $Res call(
-      {String id,
-      String agentId,
-      String agentName,
-      String? customerId,
-      String? customerName,
-      String? customerPhone,
-      String colonyId,
-      String colonyName,
-      List<String>? plotIdsShown,
-      List<String>? plotNumbersShown,
-      double latitude,
-      double longitude,
-      String? address,
-      double? accuracy,
-      DateTime visitStartTime,
-      DateTime? visitEndTime,
-      Duration? duration,
-      String? purpose,
-      String? customerFeedback,
-      String? agentNotes,
-      String? outcome,
-      bool? followUpRequired,
-      DateTime? followUpDate,
-      String? followUpType,
-      List<String>? photos,
-      List<String>? videos,
-      String? voiceNoteUrl,
-      bool? isOfflineCreated,
-      DateTime? syncedAt,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String agentId,
+    String agentName,
+    String? customerId,
+    String? customerName,
+    String? customerPhone,
+    String colonyId,
+    String colonyName,
+    List<String>? plotIdsShown,
+    List<String>? plotNumbersShown,
+    double latitude,
+    double longitude,
+    String? address,
+    double? accuracy,
+    DateTime visitStartTime,
+    DateTime? visitEndTime,
+    Duration? duration,
+    String? purpose,
+    String? customerFeedback,
+    String? agentNotes,
+    String? outcome,
+    bool? followUpRequired,
+    DateTime? followUpDate,
+    String? followUpType,
+    List<String>? photos,
+    List<String>? videos,
+    String? voiceNoteUrl,
+    bool? isOfflineCreated,
+    DateTime? syncedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -155,175 +158,180 @@ class _$SiteVisitModelCopyWithImpl<$Res, $Val extends SiteVisitModel>
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      agentId: null == agentId
-          ? _value.agentId
-          : agentId // ignore: cast_nullable_to_non_nullable
-              as String,
-      agentName: null == agentName
-          ? _value.agentName
-          : agentName // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerId: freezed == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerName: freezed == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerPhone: freezed == customerPhone
-          ? _value.customerPhone
-          : customerPhone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      colonyId: null == colonyId
-          ? _value.colonyId
-          : colonyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      colonyName: null == colonyName
-          ? _value.colonyName
-          : colonyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      plotIdsShown: freezed == plotIdsShown
-          ? _value.plotIdsShown
-          : plotIdsShown // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      plotNumbersShown: freezed == plotNumbersShown
-          ? _value.plotNumbersShown
-          : plotNumbersShown // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      latitude: null == latitude
-          ? _value.latitude
-          : latitude // ignore: cast_nullable_to_non_nullable
-              as double,
-      longitude: null == longitude
-          ? _value.longitude
-          : longitude // ignore: cast_nullable_to_non_nullable
-              as double,
-      address: freezed == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      accuracy: freezed == accuracy
-          ? _value.accuracy
-          : accuracy // ignore: cast_nullable_to_non_nullable
-              as double?,
-      visitStartTime: null == visitStartTime
-          ? _value.visitStartTime
-          : visitStartTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      visitEndTime: freezed == visitEndTime
-          ? _value.visitEndTime
-          : visitEndTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      duration: freezed == duration
-          ? _value.duration
-          : duration // ignore: cast_nullable_to_non_nullable
-              as Duration?,
-      purpose: freezed == purpose
-          ? _value.purpose
-          : purpose // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerFeedback: freezed == customerFeedback
-          ? _value.customerFeedback
-          : customerFeedback // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agentNotes: freezed == agentNotes
-          ? _value.agentNotes
-          : agentNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      outcome: freezed == outcome
-          ? _value.outcome
-          : outcome // ignore: cast_nullable_to_non_nullable
-              as String?,
-      followUpRequired: freezed == followUpRequired
-          ? _value.followUpRequired
-          : followUpRequired // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      followUpDate: freezed == followUpDate
-          ? _value.followUpDate
-          : followUpDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      followUpType: freezed == followUpType
-          ? _value.followUpType
-          : followUpType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      photos: freezed == photos
-          ? _value.photos
-          : photos // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      videos: freezed == videos
-          ? _value.videos
-          : videos // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      voiceNoteUrl: freezed == voiceNoteUrl
-          ? _value.voiceNoteUrl
-          : voiceNoteUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isOfflineCreated: freezed == isOfflineCreated
-          ? _value.isOfflineCreated
-          : isOfflineCreated // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      syncedAt: freezed == syncedAt
-          ? _value.syncedAt
-          : syncedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            agentId: null == agentId
+                ? _value.agentId
+                : agentId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            agentName: null == agentName
+                ? _value.agentName
+                : agentName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerId: freezed == customerId
+                ? _value.customerId
+                : customerId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            customerName: freezed == customerName
+                ? _value.customerName
+                : customerName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            customerPhone: freezed == customerPhone
+                ? _value.customerPhone
+                : customerPhone // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            colonyId: null == colonyId
+                ? _value.colonyId
+                : colonyId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            colonyName: null == colonyName
+                ? _value.colonyName
+                : colonyName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            plotIdsShown: freezed == plotIdsShown
+                ? _value.plotIdsShown
+                : plotIdsShown // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            plotNumbersShown: freezed == plotNumbersShown
+                ? _value.plotNumbersShown
+                : plotNumbersShown // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            latitude: null == latitude
+                ? _value.latitude
+                : latitude // ignore: cast_nullable_to_non_nullable
+                      as double,
+            longitude: null == longitude
+                ? _value.longitude
+                : longitude // ignore: cast_nullable_to_non_nullable
+                      as double,
+            address: freezed == address
+                ? _value.address
+                : address // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            accuracy: freezed == accuracy
+                ? _value.accuracy
+                : accuracy // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            visitStartTime: null == visitStartTime
+                ? _value.visitStartTime
+                : visitStartTime // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            visitEndTime: freezed == visitEndTime
+                ? _value.visitEndTime
+                : visitEndTime // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            duration: freezed == duration
+                ? _value.duration
+                : duration // ignore: cast_nullable_to_non_nullable
+                      as Duration?,
+            purpose: freezed == purpose
+                ? _value.purpose
+                : purpose // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            customerFeedback: freezed == customerFeedback
+                ? _value.customerFeedback
+                : customerFeedback // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            agentNotes: freezed == agentNotes
+                ? _value.agentNotes
+                : agentNotes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            outcome: freezed == outcome
+                ? _value.outcome
+                : outcome // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            followUpRequired: freezed == followUpRequired
+                ? _value.followUpRequired
+                : followUpRequired // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            followUpDate: freezed == followUpDate
+                ? _value.followUpDate
+                : followUpDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            followUpType: freezed == followUpType
+                ? _value.followUpType
+                : followUpType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            photos: freezed == photos
+                ? _value.photos
+                : photos // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            videos: freezed == videos
+                ? _value.videos
+                : videos // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            voiceNoteUrl: freezed == voiceNoteUrl
+                ? _value.voiceNoteUrl
+                : voiceNoteUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            isOfflineCreated: freezed == isOfflineCreated
+                ? _value.isOfflineCreated
+                : isOfflineCreated // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            syncedAt: freezed == syncedAt
+                ? _value.syncedAt
+                : syncedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$SiteVisitModelImplCopyWith<$Res>
     implements $SiteVisitModelCopyWith<$Res> {
-  factory _$$SiteVisitModelImplCopyWith(_$SiteVisitModelImpl value,
-          $Res Function(_$SiteVisitModelImpl) then) =
-      __$$SiteVisitModelImplCopyWithImpl<$Res>;
+  factory _$$SiteVisitModelImplCopyWith(
+    _$SiteVisitModelImpl value,
+    $Res Function(_$SiteVisitModelImpl) then,
+  ) = __$$SiteVisitModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String agentId,
-      String agentName,
-      String? customerId,
-      String? customerName,
-      String? customerPhone,
-      String colonyId,
-      String colonyName,
-      List<String>? plotIdsShown,
-      List<String>? plotNumbersShown,
-      double latitude,
-      double longitude,
-      String? address,
-      double? accuracy,
-      DateTime visitStartTime,
-      DateTime? visitEndTime,
-      Duration? duration,
-      String? purpose,
-      String? customerFeedback,
-      String? agentNotes,
-      String? outcome,
-      bool? followUpRequired,
-      DateTime? followUpDate,
-      String? followUpType,
-      List<String>? photos,
-      List<String>? videos,
-      String? voiceNoteUrl,
-      bool? isOfflineCreated,
-      DateTime? syncedAt,
-      DateTime? createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String agentId,
+    String agentName,
+    String? customerId,
+    String? customerName,
+    String? customerPhone,
+    String colonyId,
+    String colonyName,
+    List<String>? plotIdsShown,
+    List<String>? plotNumbersShown,
+    double latitude,
+    double longitude,
+    String? address,
+    double? accuracy,
+    DateTime visitStartTime,
+    DateTime? visitEndTime,
+    Duration? duration,
+    String? purpose,
+    String? customerFeedback,
+    String? agentNotes,
+    String? outcome,
+    bool? followUpRequired,
+    DateTime? followUpDate,
+    String? followUpType,
+    List<String>? photos,
+    List<String>? videos,
+    String? voiceNoteUrl,
+    bool? isOfflineCreated,
+    DateTime? syncedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -331,8 +339,9 @@ class __$$SiteVisitModelImplCopyWithImpl<$Res>
     extends _$SiteVisitModelCopyWithImpl<$Res, _$SiteVisitModelImpl>
     implements _$$SiteVisitModelImplCopyWith<$Res> {
   __$$SiteVisitModelImplCopyWithImpl(
-      _$SiteVisitModelImpl _value, $Res Function(_$SiteVisitModelImpl) _then)
-      : super(_value, _then);
+    _$SiteVisitModelImpl _value,
+    $Res Function(_$SiteVisitModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of SiteVisitModel
   /// with the given fields replaced by the non-null parameter values.
@@ -371,174 +380,176 @@ class __$$SiteVisitModelImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$SiteVisitModelImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      agentId: null == agentId
-          ? _value.agentId
-          : agentId // ignore: cast_nullable_to_non_nullable
-              as String,
-      agentName: null == agentName
-          ? _value.agentName
-          : agentName // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerId: freezed == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerName: freezed == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerPhone: freezed == customerPhone
-          ? _value.customerPhone
-          : customerPhone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      colonyId: null == colonyId
-          ? _value.colonyId
-          : colonyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      colonyName: null == colonyName
-          ? _value.colonyName
-          : colonyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      plotIdsShown: freezed == plotIdsShown
-          ? _value._plotIdsShown
-          : plotIdsShown // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      plotNumbersShown: freezed == plotNumbersShown
-          ? _value._plotNumbersShown
-          : plotNumbersShown // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      latitude: null == latitude
-          ? _value.latitude
-          : latitude // ignore: cast_nullable_to_non_nullable
-              as double,
-      longitude: null == longitude
-          ? _value.longitude
-          : longitude // ignore: cast_nullable_to_non_nullable
-              as double,
-      address: freezed == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      accuracy: freezed == accuracy
-          ? _value.accuracy
-          : accuracy // ignore: cast_nullable_to_non_nullable
-              as double?,
-      visitStartTime: null == visitStartTime
-          ? _value.visitStartTime
-          : visitStartTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      visitEndTime: freezed == visitEndTime
-          ? _value.visitEndTime
-          : visitEndTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      duration: freezed == duration
-          ? _value.duration
-          : duration // ignore: cast_nullable_to_non_nullable
-              as Duration?,
-      purpose: freezed == purpose
-          ? _value.purpose
-          : purpose // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerFeedback: freezed == customerFeedback
-          ? _value.customerFeedback
-          : customerFeedback // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agentNotes: freezed == agentNotes
-          ? _value.agentNotes
-          : agentNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      outcome: freezed == outcome
-          ? _value.outcome
-          : outcome // ignore: cast_nullable_to_non_nullable
-              as String?,
-      followUpRequired: freezed == followUpRequired
-          ? _value.followUpRequired
-          : followUpRequired // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      followUpDate: freezed == followUpDate
-          ? _value.followUpDate
-          : followUpDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      followUpType: freezed == followUpType
-          ? _value.followUpType
-          : followUpType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      photos: freezed == photos
-          ? _value._photos
-          : photos // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      videos: freezed == videos
-          ? _value._videos
-          : videos // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      voiceNoteUrl: freezed == voiceNoteUrl
-          ? _value.voiceNoteUrl
-          : voiceNoteUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isOfflineCreated: freezed == isOfflineCreated
-          ? _value.isOfflineCreated
-          : isOfflineCreated // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      syncedAt: freezed == syncedAt
-          ? _value.syncedAt
-          : syncedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$SiteVisitModelImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        agentId: null == agentId
+            ? _value.agentId
+            : agentId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        agentName: null == agentName
+            ? _value.agentName
+            : agentName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerId: freezed == customerId
+            ? _value.customerId
+            : customerId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        customerName: freezed == customerName
+            ? _value.customerName
+            : customerName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        customerPhone: freezed == customerPhone
+            ? _value.customerPhone
+            : customerPhone // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        colonyId: null == colonyId
+            ? _value.colonyId
+            : colonyId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        colonyName: null == colonyName
+            ? _value.colonyName
+            : colonyName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        plotIdsShown: freezed == plotIdsShown
+            ? _value._plotIdsShown
+            : plotIdsShown // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        plotNumbersShown: freezed == plotNumbersShown
+            ? _value._plotNumbersShown
+            : plotNumbersShown // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        latitude: null == latitude
+            ? _value.latitude
+            : latitude // ignore: cast_nullable_to_non_nullable
+                  as double,
+        longitude: null == longitude
+            ? _value.longitude
+            : longitude // ignore: cast_nullable_to_non_nullable
+                  as double,
+        address: freezed == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        accuracy: freezed == accuracy
+            ? _value.accuracy
+            : accuracy // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        visitStartTime: null == visitStartTime
+            ? _value.visitStartTime
+            : visitStartTime // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        visitEndTime: freezed == visitEndTime
+            ? _value.visitEndTime
+            : visitEndTime // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        duration: freezed == duration
+            ? _value.duration
+            : duration // ignore: cast_nullable_to_non_nullable
+                  as Duration?,
+        purpose: freezed == purpose
+            ? _value.purpose
+            : purpose // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        customerFeedback: freezed == customerFeedback
+            ? _value.customerFeedback
+            : customerFeedback // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        agentNotes: freezed == agentNotes
+            ? _value.agentNotes
+            : agentNotes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        outcome: freezed == outcome
+            ? _value.outcome
+            : outcome // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        followUpRequired: freezed == followUpRequired
+            ? _value.followUpRequired
+            : followUpRequired // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        followUpDate: freezed == followUpDate
+            ? _value.followUpDate
+            : followUpDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        followUpType: freezed == followUpType
+            ? _value.followUpType
+            : followUpType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        photos: freezed == photos
+            ? _value._photos
+            : photos // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        videos: freezed == videos
+            ? _value._videos
+            : videos // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        voiceNoteUrl: freezed == voiceNoteUrl
+            ? _value.voiceNoteUrl
+            : voiceNoteUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        isOfflineCreated: freezed == isOfflineCreated
+            ? _value.isOfflineCreated
+            : isOfflineCreated // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        syncedAt: freezed == syncedAt
+            ? _value.syncedAt
+            : syncedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$SiteVisitModelImpl implements _SiteVisitModel {
-  const _$SiteVisitModelImpl(
-      {required this.id,
-      required this.agentId,
-      required this.agentName,
-      this.customerId,
-      this.customerName,
-      this.customerPhone,
-      required this.colonyId,
-      required this.colonyName,
-      final List<String>? plotIdsShown,
-      final List<String>? plotNumbersShown,
-      required this.latitude,
-      required this.longitude,
-      this.address,
-      this.accuracy,
-      required this.visitStartTime,
-      this.visitEndTime,
-      this.duration,
-      this.purpose,
-      this.customerFeedback,
-      this.agentNotes,
-      this.outcome,
-      this.followUpRequired,
-      this.followUpDate,
-      this.followUpType,
-      final List<String>? photos,
-      final List<String>? videos,
-      this.voiceNoteUrl,
-      this.isOfflineCreated,
-      this.syncedAt,
-      this.createdAt,
-      this.updatedAt})
-      : _plotIdsShown = plotIdsShown,
-        _plotNumbersShown = plotNumbersShown,
-        _photos = photos,
-        _videos = videos;
+  const _$SiteVisitModelImpl({
+    required this.id,
+    required this.agentId,
+    required this.agentName,
+    this.customerId,
+    this.customerName,
+    this.customerPhone,
+    required this.colonyId,
+    required this.colonyName,
+    final List<String>? plotIdsShown,
+    final List<String>? plotNumbersShown,
+    required this.latitude,
+    required this.longitude,
+    this.address,
+    this.accuracy,
+    required this.visitStartTime,
+    this.visitEndTime,
+    this.duration,
+    this.purpose,
+    this.customerFeedback,
+    this.agentNotes,
+    this.outcome,
+    this.followUpRequired,
+    this.followUpDate,
+    this.followUpType,
+    final List<String>? photos,
+    final List<String>? videos,
+    this.voiceNoteUrl,
+    this.isOfflineCreated,
+    this.syncedAt,
+    this.createdAt,
+    this.updatedAt,
+  }) : _plotIdsShown = plotIdsShown,
+       _plotNumbersShown = plotNumbersShown,
+       _photos = photos,
+       _videos = videos;
 
   factory _$SiteVisitModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$SiteVisitModelImplFromJson(json);
@@ -549,14 +560,14 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
   final String agentId;
   @override
   final String agentName;
-// Customer Info
+  // Customer Info
   @override
   final String? customerId;
   @override
   final String? customerName;
   @override
   final String? customerPhone;
-// Location
+  // Location
   @override
   final String colonyId;
   @override
@@ -582,7 +593,7 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
     return EqualUnmodifiableListView(value);
   }
 
-// GPS Coordinates
+  // GPS Coordinates
   @override
   final double latitude;
   @override
@@ -591,7 +602,7 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
   final String? address;
   @override
   final double? accuracy;
-// Visit Details
+  // Visit Details
   @override
   final DateTime visitStartTime;
   @override
@@ -600,25 +611,25 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
   final Duration? duration;
   @override
   final String? purpose;
-// initial_visit, follow_up, document_collection, etc.
-// Feedback
+  // initial_visit, follow_up, document_collection, etc.
+  // Feedback
   @override
   final String? customerFeedback;
   @override
   final String? agentNotes;
   @override
   final String? outcome;
-// interested, not_interested, thinking, booking_done
-// Follow-up
+  // interested, not_interested, thinking, booking_done
+  // Follow-up
   @override
   final bool? followUpRequired;
   @override
   final DateTime? followUpDate;
   @override
   final String? followUpType;
-// Media
+  // Media
   final List<String>? _photos;
-// Media
+  // Media
   @override
   List<String>? get photos {
     final value = _photos;
@@ -640,12 +651,12 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
 
   @override
   final String? voiceNoteUrl;
-// Offline Sync
+  // Offline Sync
   @override
   final bool? isOfflineCreated;
   @override
   final DateTime? syncedAt;
-// Timestamps
+  // Timestamps
   @override
   final DateTime? createdAt;
   @override
@@ -675,10 +686,14 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
                 other.colonyId == colonyId) &&
             (identical(other.colonyName, colonyName) ||
                 other.colonyName == colonyName) &&
-            const DeepCollectionEquality()
-                .equals(other._plotIdsShown, _plotIdsShown) &&
-            const DeepCollectionEquality()
-                .equals(other._plotNumbersShown, _plotNumbersShown) &&
+            const DeepCollectionEquality().equals(
+              other._plotIdsShown,
+              _plotIdsShown,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._plotNumbersShown,
+              _plotNumbersShown,
+            ) &&
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
@@ -721,39 +736,39 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        agentId,
-        agentName,
-        customerId,
-        customerName,
-        customerPhone,
-        colonyId,
-        colonyName,
-        const DeepCollectionEquality().hash(_plotIdsShown),
-        const DeepCollectionEquality().hash(_plotNumbersShown),
-        latitude,
-        longitude,
-        address,
-        accuracy,
-        visitStartTime,
-        visitEndTime,
-        duration,
-        purpose,
-        customerFeedback,
-        agentNotes,
-        outcome,
-        followUpRequired,
-        followUpDate,
-        followUpType,
-        const DeepCollectionEquality().hash(_photos),
-        const DeepCollectionEquality().hash(_videos),
-        voiceNoteUrl,
-        isOfflineCreated,
-        syncedAt,
-        createdAt,
-        updatedAt
-      ]);
+    runtimeType,
+    id,
+    agentId,
+    agentName,
+    customerId,
+    customerName,
+    customerPhone,
+    colonyId,
+    colonyName,
+    const DeepCollectionEquality().hash(_plotIdsShown),
+    const DeepCollectionEquality().hash(_plotNumbersShown),
+    latitude,
+    longitude,
+    address,
+    accuracy,
+    visitStartTime,
+    visitEndTime,
+    duration,
+    purpose,
+    customerFeedback,
+    agentNotes,
+    outcome,
+    followUpRequired,
+    followUpDate,
+    followUpType,
+    const DeepCollectionEquality().hash(_photos),
+    const DeepCollectionEquality().hash(_videos),
+    voiceNoteUrl,
+    isOfflineCreated,
+    syncedAt,
+    createdAt,
+    updatedAt,
+  ]);
 
   /// Create a copy of SiteVisitModel
   /// with the given fields replaced by the non-null parameter values.
@@ -762,49 +777,50 @@ class _$SiteVisitModelImpl implements _SiteVisitModel {
   @pragma('vm:prefer-inline')
   _$$SiteVisitModelImplCopyWith<_$SiteVisitModelImpl> get copyWith =>
       __$$SiteVisitModelImplCopyWithImpl<_$SiteVisitModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SiteVisitModelImplToJson(
-      this,
-    );
+    return _$$SiteVisitModelImplToJson(this);
   }
 }
 
 abstract class _SiteVisitModel implements SiteVisitModel {
-  const factory _SiteVisitModel(
-      {required final String id,
-      required final String agentId,
-      required final String agentName,
-      final String? customerId,
-      final String? customerName,
-      final String? customerPhone,
-      required final String colonyId,
-      required final String colonyName,
-      final List<String>? plotIdsShown,
-      final List<String>? plotNumbersShown,
-      required final double latitude,
-      required final double longitude,
-      final String? address,
-      final double? accuracy,
-      required final DateTime visitStartTime,
-      final DateTime? visitEndTime,
-      final Duration? duration,
-      final String? purpose,
-      final String? customerFeedback,
-      final String? agentNotes,
-      final String? outcome,
-      final bool? followUpRequired,
-      final DateTime? followUpDate,
-      final String? followUpType,
-      final List<String>? photos,
-      final List<String>? videos,
-      final String? voiceNoteUrl,
-      final bool? isOfflineCreated,
-      final DateTime? syncedAt,
-      final DateTime? createdAt,
-      final DateTime? updatedAt}) = _$SiteVisitModelImpl;
+  const factory _SiteVisitModel({
+    required final String id,
+    required final String agentId,
+    required final String agentName,
+    final String? customerId,
+    final String? customerName,
+    final String? customerPhone,
+    required final String colonyId,
+    required final String colonyName,
+    final List<String>? plotIdsShown,
+    final List<String>? plotNumbersShown,
+    required final double latitude,
+    required final double longitude,
+    final String? address,
+    final double? accuracy,
+    required final DateTime visitStartTime,
+    final DateTime? visitEndTime,
+    final Duration? duration,
+    final String? purpose,
+    final String? customerFeedback,
+    final String? agentNotes,
+    final String? outcome,
+    final bool? followUpRequired,
+    final DateTime? followUpDate,
+    final String? followUpType,
+    final List<String>? photos,
+    final List<String>? videos,
+    final String? voiceNoteUrl,
+    final bool? isOfflineCreated,
+    final DateTime? syncedAt,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
+  }) = _$SiteVisitModelImpl;
 
   factory _SiteVisitModel.fromJson(Map<String, dynamic> json) =
       _$SiteVisitModelImpl.fromJson;
@@ -845,14 +861,14 @@ abstract class _SiteVisitModel implements SiteVisitModel {
   Duration? get duration;
   @override
   String? get purpose; // initial_visit, follow_up, document_collection, etc.
-// Feedback
+  // Feedback
   @override
   String? get customerFeedback;
   @override
   String? get agentNotes;
   @override
   String? get outcome; // interested, not_interested, thinking, booking_done
-// Follow-up
+  // Follow-up
   @override
   bool? get followUpRequired;
   @override
@@ -915,23 +931,25 @@ mixin _$LiveLocationModel {
 /// @nodoc
 abstract class $LiveLocationModelCopyWith<$Res> {
   factory $LiveLocationModelCopyWith(
-          LiveLocationModel value, $Res Function(LiveLocationModel) then) =
-      _$LiveLocationModelCopyWithImpl<$Res, LiveLocationModel>;
+    LiveLocationModel value,
+    $Res Function(LiveLocationModel) then,
+  ) = _$LiveLocationModelCopyWithImpl<$Res, LiveLocationModel>;
   @useResult
-  $Res call(
-      {String userId,
-      String userName,
-      String userType,
-      double latitude,
-      double longitude,
-      DateTime timestamp,
-      double? speed,
-      double? heading,
-      double? accuracy,
-      bool? isSharingEnabled,
-      DateTime? sharingStartedAt,
-      DateTime? sharingExpiresAt,
-      String? sharedWith});
+  $Res call({
+    String userId,
+    String userName,
+    String userType,
+    double latitude,
+    double longitude,
+    DateTime timestamp,
+    double? speed,
+    double? heading,
+    double? accuracy,
+    bool? isSharingEnabled,
+    DateTime? sharingStartedAt,
+    DateTime? sharingExpiresAt,
+    String? sharedWith,
+  });
 }
 
 /// @nodoc
@@ -963,94 +981,100 @@ class _$LiveLocationModelCopyWithImpl<$Res, $Val extends LiveLocationModel>
     Object? sharingExpiresAt = freezed,
     Object? sharedWith = freezed,
   }) {
-    return _then(_value.copyWith(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      userName: null == userName
-          ? _value.userName
-          : userName // ignore: cast_nullable_to_non_nullable
-              as String,
-      userType: null == userType
-          ? _value.userType
-          : userType // ignore: cast_nullable_to_non_nullable
-              as String,
-      latitude: null == latitude
-          ? _value.latitude
-          : latitude // ignore: cast_nullable_to_non_nullable
-              as double,
-      longitude: null == longitude
-          ? _value.longitude
-          : longitude // ignore: cast_nullable_to_non_nullable
-              as double,
-      timestamp: null == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      speed: freezed == speed
-          ? _value.speed
-          : speed // ignore: cast_nullable_to_non_nullable
-              as double?,
-      heading: freezed == heading
-          ? _value.heading
-          : heading // ignore: cast_nullable_to_non_nullable
-              as double?,
-      accuracy: freezed == accuracy
-          ? _value.accuracy
-          : accuracy // ignore: cast_nullable_to_non_nullable
-              as double?,
-      isSharingEnabled: freezed == isSharingEnabled
-          ? _value.isSharingEnabled
-          : isSharingEnabled // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      sharingStartedAt: freezed == sharingStartedAt
-          ? _value.sharingStartedAt
-          : sharingStartedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      sharingExpiresAt: freezed == sharingExpiresAt
-          ? _value.sharingExpiresAt
-          : sharingExpiresAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      sharedWith: freezed == sharedWith
-          ? _value.sharedWith
-          : sharedWith // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            userId: null == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            userName: null == userName
+                ? _value.userName
+                : userName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            userType: null == userType
+                ? _value.userType
+                : userType // ignore: cast_nullable_to_non_nullable
+                      as String,
+            latitude: null == latitude
+                ? _value.latitude
+                : latitude // ignore: cast_nullable_to_non_nullable
+                      as double,
+            longitude: null == longitude
+                ? _value.longitude
+                : longitude // ignore: cast_nullable_to_non_nullable
+                      as double,
+            timestamp: null == timestamp
+                ? _value.timestamp
+                : timestamp // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            speed: freezed == speed
+                ? _value.speed
+                : speed // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            heading: freezed == heading
+                ? _value.heading
+                : heading // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            accuracy: freezed == accuracy
+                ? _value.accuracy
+                : accuracy // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            isSharingEnabled: freezed == isSharingEnabled
+                ? _value.isSharingEnabled
+                : isSharingEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            sharingStartedAt: freezed == sharingStartedAt
+                ? _value.sharingStartedAt
+                : sharingStartedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            sharingExpiresAt: freezed == sharingExpiresAt
+                ? _value.sharingExpiresAt
+                : sharingExpiresAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            sharedWith: freezed == sharedWith
+                ? _value.sharedWith
+                : sharedWith // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$LiveLocationModelImplCopyWith<$Res>
     implements $LiveLocationModelCopyWith<$Res> {
-  factory _$$LiveLocationModelImplCopyWith(_$LiveLocationModelImpl value,
-          $Res Function(_$LiveLocationModelImpl) then) =
-      __$$LiveLocationModelImplCopyWithImpl<$Res>;
+  factory _$$LiveLocationModelImplCopyWith(
+    _$LiveLocationModelImpl value,
+    $Res Function(_$LiveLocationModelImpl) then,
+  ) = __$$LiveLocationModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String userId,
-      String userName,
-      String userType,
-      double latitude,
-      double longitude,
-      DateTime timestamp,
-      double? speed,
-      double? heading,
-      double? accuracy,
-      bool? isSharingEnabled,
-      DateTime? sharingStartedAt,
-      DateTime? sharingExpiresAt,
-      String? sharedWith});
+  $Res call({
+    String userId,
+    String userName,
+    String userType,
+    double latitude,
+    double longitude,
+    DateTime timestamp,
+    double? speed,
+    double? heading,
+    double? accuracy,
+    bool? isSharingEnabled,
+    DateTime? sharingStartedAt,
+    DateTime? sharingExpiresAt,
+    String? sharedWith,
+  });
 }
 
 /// @nodoc
 class __$$LiveLocationModelImplCopyWithImpl<$Res>
     extends _$LiveLocationModelCopyWithImpl<$Res, _$LiveLocationModelImpl>
     implements _$$LiveLocationModelImplCopyWith<$Res> {
-  __$$LiveLocationModelImplCopyWithImpl(_$LiveLocationModelImpl _value,
-      $Res Function(_$LiveLocationModelImpl) _then)
-      : super(_value, _then);
+  __$$LiveLocationModelImplCopyWithImpl(
+    _$LiveLocationModelImpl _value,
+    $Res Function(_$LiveLocationModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of LiveLocationModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1071,80 +1095,83 @@ class __$$LiveLocationModelImplCopyWithImpl<$Res>
     Object? sharingExpiresAt = freezed,
     Object? sharedWith = freezed,
   }) {
-    return _then(_$LiveLocationModelImpl(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      userName: null == userName
-          ? _value.userName
-          : userName // ignore: cast_nullable_to_non_nullable
-              as String,
-      userType: null == userType
-          ? _value.userType
-          : userType // ignore: cast_nullable_to_non_nullable
-              as String,
-      latitude: null == latitude
-          ? _value.latitude
-          : latitude // ignore: cast_nullable_to_non_nullable
-              as double,
-      longitude: null == longitude
-          ? _value.longitude
-          : longitude // ignore: cast_nullable_to_non_nullable
-              as double,
-      timestamp: null == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      speed: freezed == speed
-          ? _value.speed
-          : speed // ignore: cast_nullable_to_non_nullable
-              as double?,
-      heading: freezed == heading
-          ? _value.heading
-          : heading // ignore: cast_nullable_to_non_nullable
-              as double?,
-      accuracy: freezed == accuracy
-          ? _value.accuracy
-          : accuracy // ignore: cast_nullable_to_non_nullable
-              as double?,
-      isSharingEnabled: freezed == isSharingEnabled
-          ? _value.isSharingEnabled
-          : isSharingEnabled // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      sharingStartedAt: freezed == sharingStartedAt
-          ? _value.sharingStartedAt
-          : sharingStartedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      sharingExpiresAt: freezed == sharingExpiresAt
-          ? _value.sharingExpiresAt
-          : sharingExpiresAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      sharedWith: freezed == sharedWith
-          ? _value.sharedWith
-          : sharedWith // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$LiveLocationModelImpl(
+        userId: null == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        userName: null == userName
+            ? _value.userName
+            : userName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        userType: null == userType
+            ? _value.userType
+            : userType // ignore: cast_nullable_to_non_nullable
+                  as String,
+        latitude: null == latitude
+            ? _value.latitude
+            : latitude // ignore: cast_nullable_to_non_nullable
+                  as double,
+        longitude: null == longitude
+            ? _value.longitude
+            : longitude // ignore: cast_nullable_to_non_nullable
+                  as double,
+        timestamp: null == timestamp
+            ? _value.timestamp
+            : timestamp // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        speed: freezed == speed
+            ? _value.speed
+            : speed // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        heading: freezed == heading
+            ? _value.heading
+            : heading // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        accuracy: freezed == accuracy
+            ? _value.accuracy
+            : accuracy // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        isSharingEnabled: freezed == isSharingEnabled
+            ? _value.isSharingEnabled
+            : isSharingEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        sharingStartedAt: freezed == sharingStartedAt
+            ? _value.sharingStartedAt
+            : sharingStartedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        sharingExpiresAt: freezed == sharingExpiresAt
+            ? _value.sharingExpiresAt
+            : sharingExpiresAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        sharedWith: freezed == sharedWith
+            ? _value.sharedWith
+            : sharedWith // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$LiveLocationModelImpl implements _LiveLocationModel {
-  const _$LiveLocationModelImpl(
-      {required this.userId,
-      required this.userName,
-      required this.userType,
-      required this.latitude,
-      required this.longitude,
-      required this.timestamp,
-      this.speed,
-      this.heading,
-      this.accuracy,
-      this.isSharingEnabled,
-      this.sharingStartedAt,
-      this.sharingExpiresAt,
-      this.sharedWith});
+  const _$LiveLocationModelImpl({
+    required this.userId,
+    required this.userName,
+    required this.userType,
+    required this.latitude,
+    required this.longitude,
+    required this.timestamp,
+    this.speed,
+    this.heading,
+    this.accuracy,
+    this.isSharingEnabled,
+    this.sharingStartedAt,
+    this.sharingExpiresAt,
+    this.sharedWith,
+  });
 
   factory _$LiveLocationModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$LiveLocationModelImplFromJson(json);
@@ -1155,7 +1182,7 @@ class _$LiveLocationModelImpl implements _LiveLocationModel {
   final String userName;
   @override
   final String userType;
-// agent, customer
+  // agent, customer
   @override
   final double latitude;
   @override
@@ -1215,20 +1242,21 @@ class _$LiveLocationModelImpl implements _LiveLocationModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      userId,
-      userName,
-      userType,
-      latitude,
-      longitude,
-      timestamp,
-      speed,
-      heading,
-      accuracy,
-      isSharingEnabled,
-      sharingStartedAt,
-      sharingExpiresAt,
-      sharedWith);
+    runtimeType,
+    userId,
+    userName,
+    userType,
+    latitude,
+    longitude,
+    timestamp,
+    speed,
+    heading,
+    accuracy,
+    isSharingEnabled,
+    sharingStartedAt,
+    sharingExpiresAt,
+    sharedWith,
+  );
 
   /// Create a copy of LiveLocationModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1237,31 +1265,32 @@ class _$LiveLocationModelImpl implements _LiveLocationModel {
   @pragma('vm:prefer-inline')
   _$$LiveLocationModelImplCopyWith<_$LiveLocationModelImpl> get copyWith =>
       __$$LiveLocationModelImplCopyWithImpl<_$LiveLocationModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$LiveLocationModelImplToJson(
-      this,
-    );
+    return _$$LiveLocationModelImplToJson(this);
   }
 }
 
 abstract class _LiveLocationModel implements LiveLocationModel {
-  const factory _LiveLocationModel(
-      {required final String userId,
-      required final String userName,
-      required final String userType,
-      required final double latitude,
-      required final double longitude,
-      required final DateTime timestamp,
-      final double? speed,
-      final double? heading,
-      final double? accuracy,
-      final bool? isSharingEnabled,
-      final DateTime? sharingStartedAt,
-      final DateTime? sharingExpiresAt,
-      final String? sharedWith}) = _$LiveLocationModelImpl;
+  const factory _LiveLocationModel({
+    required final String userId,
+    required final String userName,
+    required final String userType,
+    required final double latitude,
+    required final double longitude,
+    required final DateTime timestamp,
+    final double? speed,
+    final double? heading,
+    final double? accuracy,
+    final bool? isSharingEnabled,
+    final DateTime? sharingStartedAt,
+    final DateTime? sharingExpiresAt,
+    final String? sharedWith,
+  }) = _$LiveLocationModelImpl;
 
   factory _LiveLocationModel.fromJson(Map<String, dynamic> json) =
       _$LiveLocationModelImpl.fromJson;

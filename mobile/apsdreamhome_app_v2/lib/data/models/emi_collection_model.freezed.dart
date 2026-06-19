@@ -12,7 +12,8 @@ part of 'emi_collection_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 EMICollectionAgent _$EMICollectionAgentFromJson(Map<String, dynamic> json) {
   return _EMICollectionAgent.fromJson(json);
@@ -40,7 +41,7 @@ mixin _$EMICollectionAgent {
       throw _privateConstructorUsedError; // % of collected amount
   double? get incentivePerTarget =>
       throw _privateConstructorUsedError; // Bonus for target achievement
-// Assigned Customers
+  // Assigned Customers
   List<String> get assignedCustomerIds => throw _privateConstructorUsedError;
   List<EMICustomerAssignment> get customerAssignments =>
       throw _privateConstructorUsedError; // Performance
@@ -57,8 +58,7 @@ mixin _$EMICollectionAgent {
   List<LocationTracking> get locationHistory =>
       throw _privateConstructorUsedError;
   bool? get isCurrentlyActive => throw _privateConstructorUsedError;
-  @GeoPointJsonConverter()
-  GeoPoint? get lastLocation => throw _privateConstructorUsedError;
+  GeoLocation? get lastLocation => throw _privateConstructorUsedError;
   DateTime? get lastLocationUpdate =>
       throw _privateConstructorUsedError; // Status
   AgentStatus get status => throw _privateConstructorUsedError;
@@ -80,43 +80,45 @@ mixin _$EMICollectionAgent {
 /// @nodoc
 abstract class $EMICollectionAgentCopyWith<$Res> {
   factory $EMICollectionAgentCopyWith(
-          EMICollectionAgent value, $Res Function(EMICollectionAgent) then) =
-      _$EMICollectionAgentCopyWithImpl<$Res, EMICollectionAgent>;
+    EMICollectionAgent value,
+    $Res Function(EMICollectionAgent) then,
+  ) = _$EMICollectionAgentCopyWithImpl<$Res, EMICollectionAgent>;
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      String phone,
-      String email,
-      String? photoUrl,
-      String? aadharNumber,
-      String? address,
-      String employeeId,
-      DateTime joiningDate,
-      CollectionAgentType agentType,
-      CollectionArea assignedArea,
-      double monthlySalary,
-      double? commissionPerCollection,
-      double? commissionPercentage,
-      double? incentivePerTarget,
-      List<String> assignedCustomerIds,
-      List<EMICustomerAssignment> customerAssignments,
-      List<DailyCollectionReport> dailyReports,
-      List<MonthlyCollectionPerformance> monthlyReports,
-      int currentMonthCollections,
-      double currentMonthAmount,
-      double currentMonthCommission,
-      int currentMonthTarget,
-      double targetAchievement,
-      List<LocationTracking> locationHistory,
-      bool? isCurrentlyActive,
-      @GeoPointJsonConverter() GeoPoint? lastLocation,
-      DateTime? lastLocationUpdate,
-      AgentStatus status,
-      DateTime? lastActiveAt,
-      List<String> documentUrls,
-      DateTime createdAt,
-      DateTime updatedAt});
+  $Res call({
+    String id,
+    String name,
+    String phone,
+    String email,
+    String? photoUrl,
+    String? aadharNumber,
+    String? address,
+    String employeeId,
+    DateTime joiningDate,
+    CollectionAgentType agentType,
+    CollectionArea assignedArea,
+    double monthlySalary,
+    double? commissionPerCollection,
+    double? commissionPercentage,
+    double? incentivePerTarget,
+    List<String> assignedCustomerIds,
+    List<EMICustomerAssignment> customerAssignments,
+    List<DailyCollectionReport> dailyReports,
+    List<MonthlyCollectionPerformance> monthlyReports,
+    int currentMonthCollections,
+    double currentMonthAmount,
+    double currentMonthCommission,
+    int currentMonthTarget,
+    double targetAchievement,
+    List<LocationTracking> locationHistory,
+    bool? isCurrentlyActive,
+    GeoLocation? lastLocation,
+    DateTime? lastLocationUpdate,
+    AgentStatus status,
+    DateTime? lastActiveAt,
+    List<String> documentUrls,
+    DateTime createdAt,
+    DateTime updatedAt,
+  });
 
   $CollectionAreaCopyWith<$Res> get assignedArea;
 }
@@ -170,140 +172,143 @@ class _$EMICollectionAgentCopyWithImpl<$Res, $Val extends EMICollectionAgent>
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      photoUrl: freezed == photoUrl
-          ? _value.photoUrl
-          : photoUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      aadharNumber: freezed == aadharNumber
-          ? _value.aadharNumber
-          : aadharNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      address: freezed == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      employeeId: null == employeeId
-          ? _value.employeeId
-          : employeeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      joiningDate: null == joiningDate
-          ? _value.joiningDate
-          : joiningDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      agentType: null == agentType
-          ? _value.agentType
-          : agentType // ignore: cast_nullable_to_non_nullable
-              as CollectionAgentType,
-      assignedArea: null == assignedArea
-          ? _value.assignedArea
-          : assignedArea // ignore: cast_nullable_to_non_nullable
-              as CollectionArea,
-      monthlySalary: null == monthlySalary
-          ? _value.monthlySalary
-          : monthlySalary // ignore: cast_nullable_to_non_nullable
-              as double,
-      commissionPerCollection: freezed == commissionPerCollection
-          ? _value.commissionPerCollection
-          : commissionPerCollection // ignore: cast_nullable_to_non_nullable
-              as double?,
-      commissionPercentage: freezed == commissionPercentage
-          ? _value.commissionPercentage
-          : commissionPercentage // ignore: cast_nullable_to_non_nullable
-              as double?,
-      incentivePerTarget: freezed == incentivePerTarget
-          ? _value.incentivePerTarget
-          : incentivePerTarget // ignore: cast_nullable_to_non_nullable
-              as double?,
-      assignedCustomerIds: null == assignedCustomerIds
-          ? _value.assignedCustomerIds
-          : assignedCustomerIds // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      customerAssignments: null == customerAssignments
-          ? _value.customerAssignments
-          : customerAssignments // ignore: cast_nullable_to_non_nullable
-              as List<EMICustomerAssignment>,
-      dailyReports: null == dailyReports
-          ? _value.dailyReports
-          : dailyReports // ignore: cast_nullable_to_non_nullable
-              as List<DailyCollectionReport>,
-      monthlyReports: null == monthlyReports
-          ? _value.monthlyReports
-          : monthlyReports // ignore: cast_nullable_to_non_nullable
-              as List<MonthlyCollectionPerformance>,
-      currentMonthCollections: null == currentMonthCollections
-          ? _value.currentMonthCollections
-          : currentMonthCollections // ignore: cast_nullable_to_non_nullable
-              as int,
-      currentMonthAmount: null == currentMonthAmount
-          ? _value.currentMonthAmount
-          : currentMonthAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      currentMonthCommission: null == currentMonthCommission
-          ? _value.currentMonthCommission
-          : currentMonthCommission // ignore: cast_nullable_to_non_nullable
-              as double,
-      currentMonthTarget: null == currentMonthTarget
-          ? _value.currentMonthTarget
-          : currentMonthTarget // ignore: cast_nullable_to_non_nullable
-              as int,
-      targetAchievement: null == targetAchievement
-          ? _value.targetAchievement
-          : targetAchievement // ignore: cast_nullable_to_non_nullable
-              as double,
-      locationHistory: null == locationHistory
-          ? _value.locationHistory
-          : locationHistory // ignore: cast_nullable_to_non_nullable
-              as List<LocationTracking>,
-      isCurrentlyActive: freezed == isCurrentlyActive
-          ? _value.isCurrentlyActive
-          : isCurrentlyActive // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      lastLocation: freezed == lastLocation
-          ? _value.lastLocation
-          : lastLocation // ignore: cast_nullable_to_non_nullable
-              as GeoPoint?,
-      lastLocationUpdate: freezed == lastLocationUpdate
-          ? _value.lastLocationUpdate
-          : lastLocationUpdate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as AgentStatus,
-      lastActiveAt: freezed == lastActiveAt
-          ? _value.lastActiveAt
-          : lastActiveAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      documentUrls: null == documentUrls
-          ? _value.documentUrls
-          : documentUrls // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            phone: null == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            email: null == email
+                ? _value.email
+                : email // ignore: cast_nullable_to_non_nullable
+                      as String,
+            photoUrl: freezed == photoUrl
+                ? _value.photoUrl
+                : photoUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            aadharNumber: freezed == aadharNumber
+                ? _value.aadharNumber
+                : aadharNumber // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            address: freezed == address
+                ? _value.address
+                : address // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            employeeId: null == employeeId
+                ? _value.employeeId
+                : employeeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            joiningDate: null == joiningDate
+                ? _value.joiningDate
+                : joiningDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            agentType: null == agentType
+                ? _value.agentType
+                : agentType // ignore: cast_nullable_to_non_nullable
+                      as CollectionAgentType,
+            assignedArea: null == assignedArea
+                ? _value.assignedArea
+                : assignedArea // ignore: cast_nullable_to_non_nullable
+                      as CollectionArea,
+            monthlySalary: null == monthlySalary
+                ? _value.monthlySalary
+                : monthlySalary // ignore: cast_nullable_to_non_nullable
+                      as double,
+            commissionPerCollection: freezed == commissionPerCollection
+                ? _value.commissionPerCollection
+                : commissionPerCollection // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            commissionPercentage: freezed == commissionPercentage
+                ? _value.commissionPercentage
+                : commissionPercentage // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            incentivePerTarget: freezed == incentivePerTarget
+                ? _value.incentivePerTarget
+                : incentivePerTarget // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            assignedCustomerIds: null == assignedCustomerIds
+                ? _value.assignedCustomerIds
+                : assignedCustomerIds // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            customerAssignments: null == customerAssignments
+                ? _value.customerAssignments
+                : customerAssignments // ignore: cast_nullable_to_non_nullable
+                      as List<EMICustomerAssignment>,
+            dailyReports: null == dailyReports
+                ? _value.dailyReports
+                : dailyReports // ignore: cast_nullable_to_non_nullable
+                      as List<DailyCollectionReport>,
+            monthlyReports: null == monthlyReports
+                ? _value.monthlyReports
+                : monthlyReports // ignore: cast_nullable_to_non_nullable
+                      as List<MonthlyCollectionPerformance>,
+            currentMonthCollections: null == currentMonthCollections
+                ? _value.currentMonthCollections
+                : currentMonthCollections // ignore: cast_nullable_to_non_nullable
+                      as int,
+            currentMonthAmount: null == currentMonthAmount
+                ? _value.currentMonthAmount
+                : currentMonthAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            currentMonthCommission: null == currentMonthCommission
+                ? _value.currentMonthCommission
+                : currentMonthCommission // ignore: cast_nullable_to_non_nullable
+                      as double,
+            currentMonthTarget: null == currentMonthTarget
+                ? _value.currentMonthTarget
+                : currentMonthTarget // ignore: cast_nullable_to_non_nullable
+                      as int,
+            targetAchievement: null == targetAchievement
+                ? _value.targetAchievement
+                : targetAchievement // ignore: cast_nullable_to_non_nullable
+                      as double,
+            locationHistory: null == locationHistory
+                ? _value.locationHistory
+                : locationHistory // ignore: cast_nullable_to_non_nullable
+                      as List<LocationTracking>,
+            isCurrentlyActive: freezed == isCurrentlyActive
+                ? _value.isCurrentlyActive
+                : isCurrentlyActive // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            lastLocation: freezed == lastLocation
+                ? _value.lastLocation
+                : lastLocation // ignore: cast_nullable_to_non_nullable
+                      as GeoLocation?,
+            lastLocationUpdate: freezed == lastLocationUpdate
+                ? _value.lastLocationUpdate
+                : lastLocationUpdate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as AgentStatus,
+            lastActiveAt: freezed == lastActiveAt
+                ? _value.lastActiveAt
+                : lastActiveAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            documentUrls: null == documentUrls
+                ? _value.documentUrls
+                : documentUrls // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            updatedAt: null == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of EMICollectionAgent
@@ -320,45 +325,47 @@ class _$EMICollectionAgentCopyWithImpl<$Res, $Val extends EMICollectionAgent>
 /// @nodoc
 abstract class _$$EMICollectionAgentImplCopyWith<$Res>
     implements $EMICollectionAgentCopyWith<$Res> {
-  factory _$$EMICollectionAgentImplCopyWith(_$EMICollectionAgentImpl value,
-          $Res Function(_$EMICollectionAgentImpl) then) =
-      __$$EMICollectionAgentImplCopyWithImpl<$Res>;
+  factory _$$EMICollectionAgentImplCopyWith(
+    _$EMICollectionAgentImpl value,
+    $Res Function(_$EMICollectionAgentImpl) then,
+  ) = __$$EMICollectionAgentImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      String phone,
-      String email,
-      String? photoUrl,
-      String? aadharNumber,
-      String? address,
-      String employeeId,
-      DateTime joiningDate,
-      CollectionAgentType agentType,
-      CollectionArea assignedArea,
-      double monthlySalary,
-      double? commissionPerCollection,
-      double? commissionPercentage,
-      double? incentivePerTarget,
-      List<String> assignedCustomerIds,
-      List<EMICustomerAssignment> customerAssignments,
-      List<DailyCollectionReport> dailyReports,
-      List<MonthlyCollectionPerformance> monthlyReports,
-      int currentMonthCollections,
-      double currentMonthAmount,
-      double currentMonthCommission,
-      int currentMonthTarget,
-      double targetAchievement,
-      List<LocationTracking> locationHistory,
-      bool? isCurrentlyActive,
-      @GeoPointJsonConverter() GeoPoint? lastLocation,
-      DateTime? lastLocationUpdate,
-      AgentStatus status,
-      DateTime? lastActiveAt,
-      List<String> documentUrls,
-      DateTime createdAt,
-      DateTime updatedAt});
+  $Res call({
+    String id,
+    String name,
+    String phone,
+    String email,
+    String? photoUrl,
+    String? aadharNumber,
+    String? address,
+    String employeeId,
+    DateTime joiningDate,
+    CollectionAgentType agentType,
+    CollectionArea assignedArea,
+    double monthlySalary,
+    double? commissionPerCollection,
+    double? commissionPercentage,
+    double? incentivePerTarget,
+    List<String> assignedCustomerIds,
+    List<EMICustomerAssignment> customerAssignments,
+    List<DailyCollectionReport> dailyReports,
+    List<MonthlyCollectionPerformance> monthlyReports,
+    int currentMonthCollections,
+    double currentMonthAmount,
+    double currentMonthCommission,
+    int currentMonthTarget,
+    double targetAchievement,
+    List<LocationTracking> locationHistory,
+    bool? isCurrentlyActive,
+    GeoLocation? lastLocation,
+    DateTime? lastLocationUpdate,
+    AgentStatus status,
+    DateTime? lastActiveAt,
+    List<String> documentUrls,
+    DateTime createdAt,
+    DateTime updatedAt,
+  });
 
   @override
   $CollectionAreaCopyWith<$Res> get assignedArea;
@@ -368,9 +375,10 @@ abstract class _$$EMICollectionAgentImplCopyWith<$Res>
 class __$$EMICollectionAgentImplCopyWithImpl<$Res>
     extends _$EMICollectionAgentCopyWithImpl<$Res, _$EMICollectionAgentImpl>
     implements _$$EMICollectionAgentImplCopyWith<$Res> {
-  __$$EMICollectionAgentImplCopyWithImpl(_$EMICollectionAgentImpl _value,
-      $Res Function(_$EMICollectionAgentImpl) _then)
-      : super(_value, _then);
+  __$$EMICollectionAgentImplCopyWithImpl(
+    _$EMICollectionAgentImpl _value,
+    $Res Function(_$EMICollectionAgentImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of EMICollectionAgent
   /// with the given fields replaced by the non-null parameter values.
@@ -411,186 +419,188 @@ class __$$EMICollectionAgentImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
-    return _then(_$EMICollectionAgentImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      photoUrl: freezed == photoUrl
-          ? _value.photoUrl
-          : photoUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      aadharNumber: freezed == aadharNumber
-          ? _value.aadharNumber
-          : aadharNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      address: freezed == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      employeeId: null == employeeId
-          ? _value.employeeId
-          : employeeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      joiningDate: null == joiningDate
-          ? _value.joiningDate
-          : joiningDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      agentType: null == agentType
-          ? _value.agentType
-          : agentType // ignore: cast_nullable_to_non_nullable
-              as CollectionAgentType,
-      assignedArea: null == assignedArea
-          ? _value.assignedArea
-          : assignedArea // ignore: cast_nullable_to_non_nullable
-              as CollectionArea,
-      monthlySalary: null == monthlySalary
-          ? _value.monthlySalary
-          : monthlySalary // ignore: cast_nullable_to_non_nullable
-              as double,
-      commissionPerCollection: freezed == commissionPerCollection
-          ? _value.commissionPerCollection
-          : commissionPerCollection // ignore: cast_nullable_to_non_nullable
-              as double?,
-      commissionPercentage: freezed == commissionPercentage
-          ? _value.commissionPercentage
-          : commissionPercentage // ignore: cast_nullable_to_non_nullable
-              as double?,
-      incentivePerTarget: freezed == incentivePerTarget
-          ? _value.incentivePerTarget
-          : incentivePerTarget // ignore: cast_nullable_to_non_nullable
-              as double?,
-      assignedCustomerIds: null == assignedCustomerIds
-          ? _value._assignedCustomerIds
-          : assignedCustomerIds // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      customerAssignments: null == customerAssignments
-          ? _value._customerAssignments
-          : customerAssignments // ignore: cast_nullable_to_non_nullable
-              as List<EMICustomerAssignment>,
-      dailyReports: null == dailyReports
-          ? _value._dailyReports
-          : dailyReports // ignore: cast_nullable_to_non_nullable
-              as List<DailyCollectionReport>,
-      monthlyReports: null == monthlyReports
-          ? _value._monthlyReports
-          : monthlyReports // ignore: cast_nullable_to_non_nullable
-              as List<MonthlyCollectionPerformance>,
-      currentMonthCollections: null == currentMonthCollections
-          ? _value.currentMonthCollections
-          : currentMonthCollections // ignore: cast_nullable_to_non_nullable
-              as int,
-      currentMonthAmount: null == currentMonthAmount
-          ? _value.currentMonthAmount
-          : currentMonthAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      currentMonthCommission: null == currentMonthCommission
-          ? _value.currentMonthCommission
-          : currentMonthCommission // ignore: cast_nullable_to_non_nullable
-              as double,
-      currentMonthTarget: null == currentMonthTarget
-          ? _value.currentMonthTarget
-          : currentMonthTarget // ignore: cast_nullable_to_non_nullable
-              as int,
-      targetAchievement: null == targetAchievement
-          ? _value.targetAchievement
-          : targetAchievement // ignore: cast_nullable_to_non_nullable
-              as double,
-      locationHistory: null == locationHistory
-          ? _value._locationHistory
-          : locationHistory // ignore: cast_nullable_to_non_nullable
-              as List<LocationTracking>,
-      isCurrentlyActive: freezed == isCurrentlyActive
-          ? _value.isCurrentlyActive
-          : isCurrentlyActive // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      lastLocation: freezed == lastLocation
-          ? _value.lastLocation
-          : lastLocation // ignore: cast_nullable_to_non_nullable
-              as GeoPoint?,
-      lastLocationUpdate: freezed == lastLocationUpdate
-          ? _value.lastLocationUpdate
-          : lastLocationUpdate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as AgentStatus,
-      lastActiveAt: freezed == lastActiveAt
-          ? _value.lastActiveAt
-          : lastActiveAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      documentUrls: null == documentUrls
-          ? _value._documentUrls
-          : documentUrls // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$EMICollectionAgentImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        phone: null == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        email: null == email
+            ? _value.email
+            : email // ignore: cast_nullable_to_non_nullable
+                  as String,
+        photoUrl: freezed == photoUrl
+            ? _value.photoUrl
+            : photoUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        aadharNumber: freezed == aadharNumber
+            ? _value.aadharNumber
+            : aadharNumber // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        address: freezed == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        employeeId: null == employeeId
+            ? _value.employeeId
+            : employeeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        joiningDate: null == joiningDate
+            ? _value.joiningDate
+            : joiningDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        agentType: null == agentType
+            ? _value.agentType
+            : agentType // ignore: cast_nullable_to_non_nullable
+                  as CollectionAgentType,
+        assignedArea: null == assignedArea
+            ? _value.assignedArea
+            : assignedArea // ignore: cast_nullable_to_non_nullable
+                  as CollectionArea,
+        monthlySalary: null == monthlySalary
+            ? _value.monthlySalary
+            : monthlySalary // ignore: cast_nullable_to_non_nullable
+                  as double,
+        commissionPerCollection: freezed == commissionPerCollection
+            ? _value.commissionPerCollection
+            : commissionPerCollection // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        commissionPercentage: freezed == commissionPercentage
+            ? _value.commissionPercentage
+            : commissionPercentage // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        incentivePerTarget: freezed == incentivePerTarget
+            ? _value.incentivePerTarget
+            : incentivePerTarget // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        assignedCustomerIds: null == assignedCustomerIds
+            ? _value._assignedCustomerIds
+            : assignedCustomerIds // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        customerAssignments: null == customerAssignments
+            ? _value._customerAssignments
+            : customerAssignments // ignore: cast_nullable_to_non_nullable
+                  as List<EMICustomerAssignment>,
+        dailyReports: null == dailyReports
+            ? _value._dailyReports
+            : dailyReports // ignore: cast_nullable_to_non_nullable
+                  as List<DailyCollectionReport>,
+        monthlyReports: null == monthlyReports
+            ? _value._monthlyReports
+            : monthlyReports // ignore: cast_nullable_to_non_nullable
+                  as List<MonthlyCollectionPerformance>,
+        currentMonthCollections: null == currentMonthCollections
+            ? _value.currentMonthCollections
+            : currentMonthCollections // ignore: cast_nullable_to_non_nullable
+                  as int,
+        currentMonthAmount: null == currentMonthAmount
+            ? _value.currentMonthAmount
+            : currentMonthAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        currentMonthCommission: null == currentMonthCommission
+            ? _value.currentMonthCommission
+            : currentMonthCommission // ignore: cast_nullable_to_non_nullable
+                  as double,
+        currentMonthTarget: null == currentMonthTarget
+            ? _value.currentMonthTarget
+            : currentMonthTarget // ignore: cast_nullable_to_non_nullable
+                  as int,
+        targetAchievement: null == targetAchievement
+            ? _value.targetAchievement
+            : targetAchievement // ignore: cast_nullable_to_non_nullable
+                  as double,
+        locationHistory: null == locationHistory
+            ? _value._locationHistory
+            : locationHistory // ignore: cast_nullable_to_non_nullable
+                  as List<LocationTracking>,
+        isCurrentlyActive: freezed == isCurrentlyActive
+            ? _value.isCurrentlyActive
+            : isCurrentlyActive // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        lastLocation: freezed == lastLocation
+            ? _value.lastLocation
+            : lastLocation // ignore: cast_nullable_to_non_nullable
+                  as GeoLocation?,
+        lastLocationUpdate: freezed == lastLocationUpdate
+            ? _value.lastLocationUpdate
+            : lastLocationUpdate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as AgentStatus,
+        lastActiveAt: freezed == lastActiveAt
+            ? _value.lastActiveAt
+            : lastActiveAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        documentUrls: null == documentUrls
+            ? _value._documentUrls
+            : documentUrls // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        updatedAt: null == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$EMICollectionAgentImpl implements _EMICollectionAgent {
-  const _$EMICollectionAgentImpl(
-      {required this.id,
-      required this.name,
-      required this.phone,
-      required this.email,
-      this.photoUrl,
-      this.aadharNumber,
-      this.address,
-      required this.employeeId,
-      required this.joiningDate,
-      required this.agentType,
-      required this.assignedArea,
-      required this.monthlySalary,
-      this.commissionPerCollection,
-      this.commissionPercentage,
-      this.incentivePerTarget,
-      final List<String> assignedCustomerIds = const [],
-      final List<EMICustomerAssignment> customerAssignments = const [],
-      final List<DailyCollectionReport> dailyReports = const [],
-      final List<MonthlyCollectionPerformance> monthlyReports = const [],
-      this.currentMonthCollections = 0,
-      this.currentMonthAmount = 0,
-      this.currentMonthCommission = 0,
-      this.currentMonthTarget = 0,
-      this.targetAchievement = 0,
-      final List<LocationTracking> locationHistory = const [],
-      this.isCurrentlyActive,
-      @GeoPointJsonConverter() this.lastLocation,
-      this.lastLocationUpdate,
-      required this.status,
-      this.lastActiveAt,
-      final List<String> documentUrls = const [],
-      required this.createdAt,
-      required this.updatedAt})
-      : _assignedCustomerIds = assignedCustomerIds,
-        _customerAssignments = customerAssignments,
-        _dailyReports = dailyReports,
-        _monthlyReports = monthlyReports,
-        _locationHistory = locationHistory,
-        _documentUrls = documentUrls;
+  const _$EMICollectionAgentImpl({
+    required this.id,
+    required this.name,
+    required this.phone,
+    required this.email,
+    this.photoUrl,
+    this.aadharNumber,
+    this.address,
+    required this.employeeId,
+    required this.joiningDate,
+    required this.agentType,
+    required this.assignedArea,
+    required this.monthlySalary,
+    this.commissionPerCollection,
+    this.commissionPercentage,
+    this.incentivePerTarget,
+    final List<String> assignedCustomerIds = const [],
+    final List<EMICustomerAssignment> customerAssignments = const [],
+    final List<DailyCollectionReport> dailyReports = const [],
+    final List<MonthlyCollectionPerformance> monthlyReports = const [],
+    this.currentMonthCollections = 0,
+    this.currentMonthAmount = 0,
+    this.currentMonthCommission = 0,
+    this.currentMonthTarget = 0,
+    this.targetAchievement = 0,
+    final List<LocationTracking> locationHistory = const [],
+    this.isCurrentlyActive,
+    this.lastLocation,
+    this.lastLocationUpdate,
+    required this.status,
+    this.lastActiveAt,
+    final List<String> documentUrls = const [],
+    required this.createdAt,
+    required this.updatedAt,
+  }) : _assignedCustomerIds = assignedCustomerIds,
+       _customerAssignments = customerAssignments,
+       _dailyReports = dailyReports,
+       _monthlyReports = monthlyReports,
+       _locationHistory = locationHistory,
+       _documentUrls = documentUrls;
 
   factory _$EMICollectionAgentImpl.fromJson(Map<String, dynamic> json) =>
       _$$EMICollectionAgentImplFromJson(json);
@@ -609,32 +619,32 @@ class _$EMICollectionAgentImpl implements _EMICollectionAgent {
   final String? aadharNumber;
   @override
   final String? address;
-// Employment
+  // Employment
   @override
   final String employeeId;
   @override
   final DateTime joiningDate;
   @override
   final CollectionAgentType agentType;
-// FullTime, PartTime, Freelance
+  // FullTime, PartTime, Freelance
   @override
   final CollectionArea assignedArea;
-// Salary Structure
+  // Salary Structure
   @override
   final double monthlySalary;
   @override
   final double? commissionPerCollection;
-// Per EMI collected
+  // Per EMI collected
   @override
   final double? commissionPercentage;
-// % of collected amount
+  // % of collected amount
   @override
   final double? incentivePerTarget;
-// Bonus for target achievement
-// Assigned Customers
+  // Bonus for target achievement
+  // Assigned Customers
   final List<String> _assignedCustomerIds;
-// Bonus for target achievement
-// Assigned Customers
+  // Bonus for target achievement
+  // Assigned Customers
   @override
   @JsonKey()
   List<String> get assignedCustomerIds {
@@ -654,9 +664,9 @@ class _$EMICollectionAgentImpl implements _EMICollectionAgent {
     return EqualUnmodifiableListView(_customerAssignments);
   }
 
-// Performance
+  // Performance
   final List<DailyCollectionReport> _dailyReports;
-// Performance
+  // Performance
   @override
   @JsonKey()
   List<DailyCollectionReport> get dailyReports {
@@ -674,7 +684,7 @@ class _$EMICollectionAgentImpl implements _EMICollectionAgent {
     return EqualUnmodifiableListView(_monthlyReports);
   }
 
-// Current Month Stats
+  // Current Month Stats
   @override
   @JsonKey()
   final int currentMonthCollections;
@@ -690,9 +700,9 @@ class _$EMICollectionAgentImpl implements _EMICollectionAgent {
   @override
   @JsonKey()
   final double targetAchievement;
-// Location Tracking
+  // Location Tracking
   final List<LocationTracking> _locationHistory;
-// Location Tracking
+  // Location Tracking
   @override
   @JsonKey()
   List<LocationTracking> get locationHistory {
@@ -704,18 +714,17 @@ class _$EMICollectionAgentImpl implements _EMICollectionAgent {
   @override
   final bool? isCurrentlyActive;
   @override
-  @GeoPointJsonConverter()
-  final GeoPoint? lastLocation;
+  final GeoLocation? lastLocation;
   @override
   final DateTime? lastLocationUpdate;
-// Status
+  // Status
   @override
   final AgentStatus status;
   @override
   final DateTime? lastActiveAt;
-// Documents
+  // Documents
   final List<String> _documentUrls;
-// Documents
+  // Documents
   @override
   @JsonKey()
   List<String> get documentUrls {
@@ -759,22 +768,34 @@ class _$EMICollectionAgentImpl implements _EMICollectionAgent {
             (identical(other.monthlySalary, monthlySalary) ||
                 other.monthlySalary == monthlySalary) &&
             (identical(
-                    other.commissionPerCollection, commissionPerCollection) ||
+                  other.commissionPerCollection,
+                  commissionPerCollection,
+                ) ||
                 other.commissionPerCollection == commissionPerCollection) &&
             (identical(other.commissionPercentage, commissionPercentage) ||
                 other.commissionPercentage == commissionPercentage) &&
             (identical(other.incentivePerTarget, incentivePerTarget) ||
                 other.incentivePerTarget == incentivePerTarget) &&
-            const DeepCollectionEquality()
-                .equals(other._assignedCustomerIds, _assignedCustomerIds) &&
-            const DeepCollectionEquality()
-                .equals(other._customerAssignments, _customerAssignments) &&
-            const DeepCollectionEquality()
-                .equals(other._dailyReports, _dailyReports) &&
-            const DeepCollectionEquality()
-                .equals(other._monthlyReports, _monthlyReports) &&
+            const DeepCollectionEquality().equals(
+              other._assignedCustomerIds,
+              _assignedCustomerIds,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._customerAssignments,
+              _customerAssignments,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._dailyReports,
+              _dailyReports,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._monthlyReports,
+              _monthlyReports,
+            ) &&
             (identical(
-                    other.currentMonthCollections, currentMonthCollections) ||
+                  other.currentMonthCollections,
+                  currentMonthCollections,
+                ) ||
                 other.currentMonthCollections == currentMonthCollections) &&
             (identical(other.currentMonthAmount, currentMonthAmount) ||
                 other.currentMonthAmount == currentMonthAmount) &&
@@ -784,8 +805,10 @@ class _$EMICollectionAgentImpl implements _EMICollectionAgent {
                 other.currentMonthTarget == currentMonthTarget) &&
             (identical(other.targetAchievement, targetAchievement) ||
                 other.targetAchievement == targetAchievement) &&
-            const DeepCollectionEquality()
-                .equals(other._locationHistory, _locationHistory) &&
+            const DeepCollectionEquality().equals(
+              other._locationHistory,
+              _locationHistory,
+            ) &&
             (identical(other.isCurrentlyActive, isCurrentlyActive) ||
                 other.isCurrentlyActive == isCurrentlyActive) &&
             (identical(other.lastLocation, lastLocation) ||
@@ -795,8 +818,10 @@ class _$EMICollectionAgentImpl implements _EMICollectionAgent {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.lastActiveAt, lastActiveAt) ||
                 other.lastActiveAt == lastActiveAt) &&
-            const DeepCollectionEquality()
-                .equals(other._documentUrls, _documentUrls) &&
+            const DeepCollectionEquality().equals(
+              other._documentUrls,
+              _documentUrls,
+            ) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -806,41 +831,41 @@ class _$EMICollectionAgentImpl implements _EMICollectionAgent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        name,
-        phone,
-        email,
-        photoUrl,
-        aadharNumber,
-        address,
-        employeeId,
-        joiningDate,
-        agentType,
-        assignedArea,
-        monthlySalary,
-        commissionPerCollection,
-        commissionPercentage,
-        incentivePerTarget,
-        const DeepCollectionEquality().hash(_assignedCustomerIds),
-        const DeepCollectionEquality().hash(_customerAssignments),
-        const DeepCollectionEquality().hash(_dailyReports),
-        const DeepCollectionEquality().hash(_monthlyReports),
-        currentMonthCollections,
-        currentMonthAmount,
-        currentMonthCommission,
-        currentMonthTarget,
-        targetAchievement,
-        const DeepCollectionEquality().hash(_locationHistory),
-        isCurrentlyActive,
-        lastLocation,
-        lastLocationUpdate,
-        status,
-        lastActiveAt,
-        const DeepCollectionEquality().hash(_documentUrls),
-        createdAt,
-        updatedAt
-      ]);
+    runtimeType,
+    id,
+    name,
+    phone,
+    email,
+    photoUrl,
+    aadharNumber,
+    address,
+    employeeId,
+    joiningDate,
+    agentType,
+    assignedArea,
+    monthlySalary,
+    commissionPerCollection,
+    commissionPercentage,
+    incentivePerTarget,
+    const DeepCollectionEquality().hash(_assignedCustomerIds),
+    const DeepCollectionEquality().hash(_customerAssignments),
+    const DeepCollectionEquality().hash(_dailyReports),
+    const DeepCollectionEquality().hash(_monthlyReports),
+    currentMonthCollections,
+    currentMonthAmount,
+    currentMonthCommission,
+    currentMonthTarget,
+    targetAchievement,
+    const DeepCollectionEquality().hash(_locationHistory),
+    isCurrentlyActive,
+    lastLocation,
+    lastLocationUpdate,
+    status,
+    lastActiveAt,
+    const DeepCollectionEquality().hash(_documentUrls),
+    createdAt,
+    updatedAt,
+  ]);
 
   /// Create a copy of EMICollectionAgent
   /// with the given fields replaced by the non-null parameter values.
@@ -849,51 +874,52 @@ class _$EMICollectionAgentImpl implements _EMICollectionAgent {
   @pragma('vm:prefer-inline')
   _$$EMICollectionAgentImplCopyWith<_$EMICollectionAgentImpl> get copyWith =>
       __$$EMICollectionAgentImplCopyWithImpl<_$EMICollectionAgentImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$EMICollectionAgentImplToJson(
-      this,
-    );
+    return _$$EMICollectionAgentImplToJson(this);
   }
 }
 
 abstract class _EMICollectionAgent implements EMICollectionAgent {
-  const factory _EMICollectionAgent(
-      {required final String id,
-      required final String name,
-      required final String phone,
-      required final String email,
-      final String? photoUrl,
-      final String? aadharNumber,
-      final String? address,
-      required final String employeeId,
-      required final DateTime joiningDate,
-      required final CollectionAgentType agentType,
-      required final CollectionArea assignedArea,
-      required final double monthlySalary,
-      final double? commissionPerCollection,
-      final double? commissionPercentage,
-      final double? incentivePerTarget,
-      final List<String> assignedCustomerIds,
-      final List<EMICustomerAssignment> customerAssignments,
-      final List<DailyCollectionReport> dailyReports,
-      final List<MonthlyCollectionPerformance> monthlyReports,
-      final int currentMonthCollections,
-      final double currentMonthAmount,
-      final double currentMonthCommission,
-      final int currentMonthTarget,
-      final double targetAchievement,
-      final List<LocationTracking> locationHistory,
-      final bool? isCurrentlyActive,
-      @GeoPointJsonConverter() final GeoPoint? lastLocation,
-      final DateTime? lastLocationUpdate,
-      required final AgentStatus status,
-      final DateTime? lastActiveAt,
-      final List<String> documentUrls,
-      required final DateTime createdAt,
-      required final DateTime updatedAt}) = _$EMICollectionAgentImpl;
+  const factory _EMICollectionAgent({
+    required final String id,
+    required final String name,
+    required final String phone,
+    required final String email,
+    final String? photoUrl,
+    final String? aadharNumber,
+    final String? address,
+    required final String employeeId,
+    required final DateTime joiningDate,
+    required final CollectionAgentType agentType,
+    required final CollectionArea assignedArea,
+    required final double monthlySalary,
+    final double? commissionPerCollection,
+    final double? commissionPercentage,
+    final double? incentivePerTarget,
+    final List<String> assignedCustomerIds,
+    final List<EMICustomerAssignment> customerAssignments,
+    final List<DailyCollectionReport> dailyReports,
+    final List<MonthlyCollectionPerformance> monthlyReports,
+    final int currentMonthCollections,
+    final double currentMonthAmount,
+    final double currentMonthCommission,
+    final int currentMonthTarget,
+    final double targetAchievement,
+    final List<LocationTracking> locationHistory,
+    final bool? isCurrentlyActive,
+    final GeoLocation? lastLocation,
+    final DateTime? lastLocationUpdate,
+    required final AgentStatus status,
+    final DateTime? lastActiveAt,
+    final List<String> documentUrls,
+    required final DateTime createdAt,
+    required final DateTime updatedAt,
+  }) = _$EMICollectionAgentImpl;
 
   factory _EMICollectionAgent.fromJson(Map<String, dynamic> json) =
       _$EMICollectionAgentImpl.fromJson;
@@ -928,7 +954,7 @@ abstract class _EMICollectionAgent implements EMICollectionAgent {
   double? get commissionPercentage; // % of collected amount
   @override
   double? get incentivePerTarget; // Bonus for target achievement
-// Assigned Customers
+  // Assigned Customers
   @override
   List<String> get assignedCustomerIds;
   @override
@@ -952,8 +978,7 @@ abstract class _EMICollectionAgent implements EMICollectionAgent {
   @override
   bool? get isCurrentlyActive;
   @override
-  @GeoPointJsonConverter()
-  GeoPoint? get lastLocation;
+  GeoLocation? get lastLocation;
   @override
   DateTime? get lastLocationUpdate; // Status
   @override
@@ -1002,17 +1027,19 @@ mixin _$CollectionArea {
 /// @nodoc
 abstract class $CollectionAreaCopyWith<$Res> {
   factory $CollectionAreaCopyWith(
-          CollectionArea value, $Res Function(CollectionArea) then) =
-      _$CollectionAreaCopyWithImpl<$Res, CollectionArea>;
+    CollectionArea value,
+    $Res Function(CollectionArea) then,
+  ) = _$CollectionAreaCopyWithImpl<$Res, CollectionArea>;
   @useResult
-  $Res call(
-      {String areaName,
-      String state,
-      String district,
-      String city,
-      List<String> colonies,
-      List<String> pincodes,
-      String? areaManagerId});
+  $Res call({
+    String areaName,
+    String state,
+    String district,
+    String city,
+    List<String> colonies,
+    List<String> pincodes,
+    String? areaManagerId,
+  });
 }
 
 /// @nodoc
@@ -1038,55 +1065,60 @@ class _$CollectionAreaCopyWithImpl<$Res, $Val extends CollectionArea>
     Object? pincodes = null,
     Object? areaManagerId = freezed,
   }) {
-    return _then(_value.copyWith(
-      areaName: null == areaName
-          ? _value.areaName
-          : areaName // ignore: cast_nullable_to_non_nullable
-              as String,
-      state: null == state
-          ? _value.state
-          : state // ignore: cast_nullable_to_non_nullable
-              as String,
-      district: null == district
-          ? _value.district
-          : district // ignore: cast_nullable_to_non_nullable
-              as String,
-      city: null == city
-          ? _value.city
-          : city // ignore: cast_nullable_to_non_nullable
-              as String,
-      colonies: null == colonies
-          ? _value.colonies
-          : colonies // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      pincodes: null == pincodes
-          ? _value.pincodes
-          : pincodes // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      areaManagerId: freezed == areaManagerId
-          ? _value.areaManagerId
-          : areaManagerId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            areaName: null == areaName
+                ? _value.areaName
+                : areaName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            state: null == state
+                ? _value.state
+                : state // ignore: cast_nullable_to_non_nullable
+                      as String,
+            district: null == district
+                ? _value.district
+                : district // ignore: cast_nullable_to_non_nullable
+                      as String,
+            city: null == city
+                ? _value.city
+                : city // ignore: cast_nullable_to_non_nullable
+                      as String,
+            colonies: null == colonies
+                ? _value.colonies
+                : colonies // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            pincodes: null == pincodes
+                ? _value.pincodes
+                : pincodes // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            areaManagerId: freezed == areaManagerId
+                ? _value.areaManagerId
+                : areaManagerId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$CollectionAreaImplCopyWith<$Res>
     implements $CollectionAreaCopyWith<$Res> {
-  factory _$$CollectionAreaImplCopyWith(_$CollectionAreaImpl value,
-          $Res Function(_$CollectionAreaImpl) then) =
-      __$$CollectionAreaImplCopyWithImpl<$Res>;
+  factory _$$CollectionAreaImplCopyWith(
+    _$CollectionAreaImpl value,
+    $Res Function(_$CollectionAreaImpl) then,
+  ) = __$$CollectionAreaImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String areaName,
-      String state,
-      String district,
-      String city,
-      List<String> colonies,
-      List<String> pincodes,
-      String? areaManagerId});
+  $Res call({
+    String areaName,
+    String state,
+    String district,
+    String city,
+    List<String> colonies,
+    List<String> pincodes,
+    String? areaManagerId,
+  });
 }
 
 /// @nodoc
@@ -1094,8 +1126,9 @@ class __$$CollectionAreaImplCopyWithImpl<$Res>
     extends _$CollectionAreaCopyWithImpl<$Res, _$CollectionAreaImpl>
     implements _$$CollectionAreaImplCopyWith<$Res> {
   __$$CollectionAreaImplCopyWithImpl(
-      _$CollectionAreaImpl _value, $Res Function(_$CollectionAreaImpl) _then)
-      : super(_value, _then);
+    _$CollectionAreaImpl _value,
+    $Res Function(_$CollectionAreaImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of CollectionArea
   /// with the given fields replaced by the non-null parameter values.
@@ -1110,52 +1143,54 @@ class __$$CollectionAreaImplCopyWithImpl<$Res>
     Object? pincodes = null,
     Object? areaManagerId = freezed,
   }) {
-    return _then(_$CollectionAreaImpl(
-      areaName: null == areaName
-          ? _value.areaName
-          : areaName // ignore: cast_nullable_to_non_nullable
-              as String,
-      state: null == state
-          ? _value.state
-          : state // ignore: cast_nullable_to_non_nullable
-              as String,
-      district: null == district
-          ? _value.district
-          : district // ignore: cast_nullable_to_non_nullable
-              as String,
-      city: null == city
-          ? _value.city
-          : city // ignore: cast_nullable_to_non_nullable
-              as String,
-      colonies: null == colonies
-          ? _value._colonies
-          : colonies // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      pincodes: null == pincodes
-          ? _value._pincodes
-          : pincodes // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      areaManagerId: freezed == areaManagerId
-          ? _value.areaManagerId
-          : areaManagerId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$CollectionAreaImpl(
+        areaName: null == areaName
+            ? _value.areaName
+            : areaName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        state: null == state
+            ? _value.state
+            : state // ignore: cast_nullable_to_non_nullable
+                  as String,
+        district: null == district
+            ? _value.district
+            : district // ignore: cast_nullable_to_non_nullable
+                  as String,
+        city: null == city
+            ? _value.city
+            : city // ignore: cast_nullable_to_non_nullable
+                  as String,
+        colonies: null == colonies
+            ? _value._colonies
+            : colonies // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        pincodes: null == pincodes
+            ? _value._pincodes
+            : pincodes // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        areaManagerId: freezed == areaManagerId
+            ? _value.areaManagerId
+            : areaManagerId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CollectionAreaImpl implements _CollectionArea {
-  const _$CollectionAreaImpl(
-      {required this.areaName,
-      required this.state,
-      required this.district,
-      required this.city,
-      final List<String> colonies = const [],
-      final List<String> pincodes = const [],
-      this.areaManagerId})
-      : _colonies = colonies,
-        _pincodes = pincodes;
+  const _$CollectionAreaImpl({
+    required this.areaName,
+    required this.state,
+    required this.district,
+    required this.city,
+    final List<String> colonies = const [],
+    final List<String> pincodes = const [],
+    this.areaManagerId,
+  }) : _colonies = colonies,
+       _pincodes = pincodes;
 
   factory _$CollectionAreaImpl.fromJson(Map<String, dynamic> json) =>
       _$$CollectionAreaImplFromJson(json);
@@ -1214,14 +1249,15 @@ class _$CollectionAreaImpl implements _CollectionArea {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      areaName,
-      state,
-      district,
-      city,
-      const DeepCollectionEquality().hash(_colonies),
-      const DeepCollectionEquality().hash(_pincodes),
-      areaManagerId);
+    runtimeType,
+    areaName,
+    state,
+    district,
+    city,
+    const DeepCollectionEquality().hash(_colonies),
+    const DeepCollectionEquality().hash(_pincodes),
+    areaManagerId,
+  );
 
   /// Create a copy of CollectionArea
   /// with the given fields replaced by the non-null parameter values.
@@ -1230,25 +1266,26 @@ class _$CollectionAreaImpl implements _CollectionArea {
   @pragma('vm:prefer-inline')
   _$$CollectionAreaImplCopyWith<_$CollectionAreaImpl> get copyWith =>
       __$$CollectionAreaImplCopyWithImpl<_$CollectionAreaImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CollectionAreaImplToJson(
-      this,
-    );
+    return _$$CollectionAreaImplToJson(this);
   }
 }
 
 abstract class _CollectionArea implements CollectionArea {
-  const factory _CollectionArea(
-      {required final String areaName,
-      required final String state,
-      required final String district,
-      required final String city,
-      final List<String> colonies,
-      final List<String> pincodes,
-      final String? areaManagerId}) = _$CollectionAreaImpl;
+  const factory _CollectionArea({
+    required final String areaName,
+    required final String state,
+    required final String district,
+    required final String city,
+    final List<String> colonies,
+    final List<String> pincodes,
+    final String? areaManagerId,
+  }) = _$CollectionAreaImpl;
 
   factory _CollectionArea.fromJson(Map<String, dynamic> json) =
       _$CollectionAreaImpl.fromJson;
@@ -1277,7 +1314,8 @@ abstract class _CollectionArea implements CollectionArea {
 }
 
 EMICustomerAssignment _$EMICustomerAssignmentFromJson(
-    Map<String, dynamic> json) {
+  Map<String, dynamic> json,
+) {
   return _EMICustomerAssignment.fromJson(json);
 }
 
@@ -1301,12 +1339,11 @@ mixin _$EMICustomerAssignment {
   PaymentStatus get paymentStatus =>
       throw _privateConstructorUsedError; // Regular, Irregular, Defaulter
   bool get isHighPriority => throw _privateConstructorUsedError; // For overdue
-// Collection Info
+  // Collection Info
   String? get preferredCollectionTime =>
       throw _privateConstructorUsedError; // Morning, Afternoon, Evening
   String? get landmark => throw _privateConstructorUsedError;
-  @GeoPointJsonConverter()
-  GeoPoint? get location => throw _privateConstructorUsedError; // History
+  GeoLocation? get location => throw _privateConstructorUsedError; // History
   List<PreviousVisit> get visitHistory => throw _privateConstructorUsedError;
   String? get specialInstructions => throw _privateConstructorUsedError;
   DateTime? get assignedAt => throw _privateConstructorUsedError;
@@ -1324,39 +1361,43 @@ mixin _$EMICustomerAssignment {
 
 /// @nodoc
 abstract class $EMICustomerAssignmentCopyWith<$Res> {
-  factory $EMICustomerAssignmentCopyWith(EMICustomerAssignment value,
-          $Res Function(EMICustomerAssignment) then) =
-      _$EMICustomerAssignmentCopyWithImpl<$Res, EMICustomerAssignment>;
+  factory $EMICustomerAssignmentCopyWith(
+    EMICustomerAssignment value,
+    $Res Function(EMICustomerAssignment) then,
+  ) = _$EMICustomerAssignmentCopyWithImpl<$Res, EMICustomerAssignment>;
   @useResult
-  $Res call(
-      {String customerId,
-      String customerName,
-      String customerPhone,
-      String customerAddress,
-      String bookingId,
-      String plotNumber,
-      String colonyName,
-      double monthlyEMI,
-      int totalEMIs,
-      int paidEMIs,
-      int pendingEMIs,
-      double totalDue,
-      int dueDay,
-      DateTime? nextDueDate,
-      PaymentStatus paymentStatus,
-      bool isHighPriority,
-      String? preferredCollectionTime,
-      String? landmark,
-      @GeoPointJsonConverter() GeoPoint? location,
-      List<PreviousVisit> visitHistory,
-      String? specialInstructions,
-      DateTime? assignedAt,
-      DateTime? lastCollectedAt});
+  $Res call({
+    String customerId,
+    String customerName,
+    String customerPhone,
+    String customerAddress,
+    String bookingId,
+    String plotNumber,
+    String colonyName,
+    double monthlyEMI,
+    int totalEMIs,
+    int paidEMIs,
+    int pendingEMIs,
+    double totalDue,
+    int dueDay,
+    DateTime? nextDueDate,
+    PaymentStatus paymentStatus,
+    bool isHighPriority,
+    String? preferredCollectionTime,
+    String? landmark,
+    GeoLocation? location,
+    List<PreviousVisit> visitHistory,
+    String? specialInstructions,
+    DateTime? assignedAt,
+    DateTime? lastCollectedAt,
+  });
 }
 
 /// @nodoc
-class _$EMICustomerAssignmentCopyWithImpl<$Res,
-        $Val extends EMICustomerAssignment>
+class _$EMICustomerAssignmentCopyWithImpl<
+  $Res,
+  $Val extends EMICustomerAssignment
+>
     implements $EMICustomerAssignmentCopyWith<$Res> {
   _$EMICustomerAssignmentCopyWithImpl(this._value, this._then);
 
@@ -1394,100 +1435,103 @@ class _$EMICustomerAssignmentCopyWithImpl<$Res,
     Object? assignedAt = freezed,
     Object? lastCollectedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerName: null == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerPhone: null == customerPhone
-          ? _value.customerPhone
-          : customerPhone // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerAddress: null == customerAddress
-          ? _value.customerAddress
-          : customerAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      plotNumber: null == plotNumber
-          ? _value.plotNumber
-          : plotNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      colonyName: null == colonyName
-          ? _value.colonyName
-          : colonyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      monthlyEMI: null == monthlyEMI
-          ? _value.monthlyEMI
-          : monthlyEMI // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalEMIs: null == totalEMIs
-          ? _value.totalEMIs
-          : totalEMIs // ignore: cast_nullable_to_non_nullable
-              as int,
-      paidEMIs: null == paidEMIs
-          ? _value.paidEMIs
-          : paidEMIs // ignore: cast_nullable_to_non_nullable
-              as int,
-      pendingEMIs: null == pendingEMIs
-          ? _value.pendingEMIs
-          : pendingEMIs // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalDue: null == totalDue
-          ? _value.totalDue
-          : totalDue // ignore: cast_nullable_to_non_nullable
-              as double,
-      dueDay: null == dueDay
-          ? _value.dueDay
-          : dueDay // ignore: cast_nullable_to_non_nullable
-              as int,
-      nextDueDate: freezed == nextDueDate
-          ? _value.nextDueDate
-          : nextDueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      paymentStatus: null == paymentStatus
-          ? _value.paymentStatus
-          : paymentStatus // ignore: cast_nullable_to_non_nullable
-              as PaymentStatus,
-      isHighPriority: null == isHighPriority
-          ? _value.isHighPriority
-          : isHighPriority // ignore: cast_nullable_to_non_nullable
-              as bool,
-      preferredCollectionTime: freezed == preferredCollectionTime
-          ? _value.preferredCollectionTime
-          : preferredCollectionTime // ignore: cast_nullable_to_non_nullable
-              as String?,
-      landmark: freezed == landmark
-          ? _value.landmark
-          : landmark // ignore: cast_nullable_to_non_nullable
-              as String?,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoPoint?,
-      visitHistory: null == visitHistory
-          ? _value.visitHistory
-          : visitHistory // ignore: cast_nullable_to_non_nullable
-              as List<PreviousVisit>,
-      specialInstructions: freezed == specialInstructions
-          ? _value.specialInstructions
-          : specialInstructions // ignore: cast_nullable_to_non_nullable
-              as String?,
-      assignedAt: freezed == assignedAt
-          ? _value.assignedAt
-          : assignedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      lastCollectedAt: freezed == lastCollectedAt
-          ? _value.lastCollectedAt
-          : lastCollectedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            customerId: null == customerId
+                ? _value.customerId
+                : customerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerName: null == customerName
+                ? _value.customerName
+                : customerName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerPhone: null == customerPhone
+                ? _value.customerPhone
+                : customerPhone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerAddress: null == customerAddress
+                ? _value.customerAddress
+                : customerAddress // ignore: cast_nullable_to_non_nullable
+                      as String,
+            bookingId: null == bookingId
+                ? _value.bookingId
+                : bookingId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            plotNumber: null == plotNumber
+                ? _value.plotNumber
+                : plotNumber // ignore: cast_nullable_to_non_nullable
+                      as String,
+            colonyName: null == colonyName
+                ? _value.colonyName
+                : colonyName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            monthlyEMI: null == monthlyEMI
+                ? _value.monthlyEMI
+                : monthlyEMI // ignore: cast_nullable_to_non_nullable
+                      as double,
+            totalEMIs: null == totalEMIs
+                ? _value.totalEMIs
+                : totalEMIs // ignore: cast_nullable_to_non_nullable
+                      as int,
+            paidEMIs: null == paidEMIs
+                ? _value.paidEMIs
+                : paidEMIs // ignore: cast_nullable_to_non_nullable
+                      as int,
+            pendingEMIs: null == pendingEMIs
+                ? _value.pendingEMIs
+                : pendingEMIs // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalDue: null == totalDue
+                ? _value.totalDue
+                : totalDue // ignore: cast_nullable_to_non_nullable
+                      as double,
+            dueDay: null == dueDay
+                ? _value.dueDay
+                : dueDay // ignore: cast_nullable_to_non_nullable
+                      as int,
+            nextDueDate: freezed == nextDueDate
+                ? _value.nextDueDate
+                : nextDueDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            paymentStatus: null == paymentStatus
+                ? _value.paymentStatus
+                : paymentStatus // ignore: cast_nullable_to_non_nullable
+                      as PaymentStatus,
+            isHighPriority: null == isHighPriority
+                ? _value.isHighPriority
+                : isHighPriority // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            preferredCollectionTime: freezed == preferredCollectionTime
+                ? _value.preferredCollectionTime
+                : preferredCollectionTime // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            landmark: freezed == landmark
+                ? _value.landmark
+                : landmark // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            location: freezed == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as GeoLocation?,
+            visitHistory: null == visitHistory
+                ? _value.visitHistory
+                : visitHistory // ignore: cast_nullable_to_non_nullable
+                      as List<PreviousVisit>,
+            specialInstructions: freezed == specialInstructions
+                ? _value.specialInstructions
+                : specialInstructions // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            assignedAt: freezed == assignedAt
+                ? _value.assignedAt
+                : assignedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            lastCollectedAt: freezed == lastCollectedAt
+                ? _value.lastCollectedAt
+                : lastCollectedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -1495,45 +1539,47 @@ class _$EMICustomerAssignmentCopyWithImpl<$Res,
 abstract class _$$EMICustomerAssignmentImplCopyWith<$Res>
     implements $EMICustomerAssignmentCopyWith<$Res> {
   factory _$$EMICustomerAssignmentImplCopyWith(
-          _$EMICustomerAssignmentImpl value,
-          $Res Function(_$EMICustomerAssignmentImpl) then) =
-      __$$EMICustomerAssignmentImplCopyWithImpl<$Res>;
+    _$EMICustomerAssignmentImpl value,
+    $Res Function(_$EMICustomerAssignmentImpl) then,
+  ) = __$$EMICustomerAssignmentImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String customerId,
-      String customerName,
-      String customerPhone,
-      String customerAddress,
-      String bookingId,
-      String plotNumber,
-      String colonyName,
-      double monthlyEMI,
-      int totalEMIs,
-      int paidEMIs,
-      int pendingEMIs,
-      double totalDue,
-      int dueDay,
-      DateTime? nextDueDate,
-      PaymentStatus paymentStatus,
-      bool isHighPriority,
-      String? preferredCollectionTime,
-      String? landmark,
-      @GeoPointJsonConverter() GeoPoint? location,
-      List<PreviousVisit> visitHistory,
-      String? specialInstructions,
-      DateTime? assignedAt,
-      DateTime? lastCollectedAt});
+  $Res call({
+    String customerId,
+    String customerName,
+    String customerPhone,
+    String customerAddress,
+    String bookingId,
+    String plotNumber,
+    String colonyName,
+    double monthlyEMI,
+    int totalEMIs,
+    int paidEMIs,
+    int pendingEMIs,
+    double totalDue,
+    int dueDay,
+    DateTime? nextDueDate,
+    PaymentStatus paymentStatus,
+    bool isHighPriority,
+    String? preferredCollectionTime,
+    String? landmark,
+    GeoLocation? location,
+    List<PreviousVisit> visitHistory,
+    String? specialInstructions,
+    DateTime? assignedAt,
+    DateTime? lastCollectedAt,
+  });
 }
 
 /// @nodoc
 class __$$EMICustomerAssignmentImplCopyWithImpl<$Res>
-    extends _$EMICustomerAssignmentCopyWithImpl<$Res,
-        _$EMICustomerAssignmentImpl>
+    extends
+        _$EMICustomerAssignmentCopyWithImpl<$Res, _$EMICustomerAssignmentImpl>
     implements _$$EMICustomerAssignmentImplCopyWith<$Res> {
-  __$$EMICustomerAssignmentImplCopyWithImpl(_$EMICustomerAssignmentImpl _value,
-      $Res Function(_$EMICustomerAssignmentImpl) _then)
-      : super(_value, _then);
+  __$$EMICustomerAssignmentImplCopyWithImpl(
+    _$EMICustomerAssignmentImpl _value,
+    $Res Function(_$EMICustomerAssignmentImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of EMICustomerAssignment
   /// with the given fields replaced by the non-null parameter values.
@@ -1564,131 +1610,133 @@ class __$$EMICustomerAssignmentImplCopyWithImpl<$Res>
     Object? assignedAt = freezed,
     Object? lastCollectedAt = freezed,
   }) {
-    return _then(_$EMICustomerAssignmentImpl(
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerName: null == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerPhone: null == customerPhone
-          ? _value.customerPhone
-          : customerPhone // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerAddress: null == customerAddress
-          ? _value.customerAddress
-          : customerAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      plotNumber: null == plotNumber
-          ? _value.plotNumber
-          : plotNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      colonyName: null == colonyName
-          ? _value.colonyName
-          : colonyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      monthlyEMI: null == monthlyEMI
-          ? _value.monthlyEMI
-          : monthlyEMI // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalEMIs: null == totalEMIs
-          ? _value.totalEMIs
-          : totalEMIs // ignore: cast_nullable_to_non_nullable
-              as int,
-      paidEMIs: null == paidEMIs
-          ? _value.paidEMIs
-          : paidEMIs // ignore: cast_nullable_to_non_nullable
-              as int,
-      pendingEMIs: null == pendingEMIs
-          ? _value.pendingEMIs
-          : pendingEMIs // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalDue: null == totalDue
-          ? _value.totalDue
-          : totalDue // ignore: cast_nullable_to_non_nullable
-              as double,
-      dueDay: null == dueDay
-          ? _value.dueDay
-          : dueDay // ignore: cast_nullable_to_non_nullable
-              as int,
-      nextDueDate: freezed == nextDueDate
-          ? _value.nextDueDate
-          : nextDueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      paymentStatus: null == paymentStatus
-          ? _value.paymentStatus
-          : paymentStatus // ignore: cast_nullable_to_non_nullable
-              as PaymentStatus,
-      isHighPriority: null == isHighPriority
-          ? _value.isHighPriority
-          : isHighPriority // ignore: cast_nullable_to_non_nullable
-              as bool,
-      preferredCollectionTime: freezed == preferredCollectionTime
-          ? _value.preferredCollectionTime
-          : preferredCollectionTime // ignore: cast_nullable_to_non_nullable
-              as String?,
-      landmark: freezed == landmark
-          ? _value.landmark
-          : landmark // ignore: cast_nullable_to_non_nullable
-              as String?,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoPoint?,
-      visitHistory: null == visitHistory
-          ? _value._visitHistory
-          : visitHistory // ignore: cast_nullable_to_non_nullable
-              as List<PreviousVisit>,
-      specialInstructions: freezed == specialInstructions
-          ? _value.specialInstructions
-          : specialInstructions // ignore: cast_nullable_to_non_nullable
-              as String?,
-      assignedAt: freezed == assignedAt
-          ? _value.assignedAt
-          : assignedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      lastCollectedAt: freezed == lastCollectedAt
-          ? _value.lastCollectedAt
-          : lastCollectedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$EMICustomerAssignmentImpl(
+        customerId: null == customerId
+            ? _value.customerId
+            : customerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerName: null == customerName
+            ? _value.customerName
+            : customerName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerPhone: null == customerPhone
+            ? _value.customerPhone
+            : customerPhone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerAddress: null == customerAddress
+            ? _value.customerAddress
+            : customerAddress // ignore: cast_nullable_to_non_nullable
+                  as String,
+        bookingId: null == bookingId
+            ? _value.bookingId
+            : bookingId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        plotNumber: null == plotNumber
+            ? _value.plotNumber
+            : plotNumber // ignore: cast_nullable_to_non_nullable
+                  as String,
+        colonyName: null == colonyName
+            ? _value.colonyName
+            : colonyName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        monthlyEMI: null == monthlyEMI
+            ? _value.monthlyEMI
+            : monthlyEMI // ignore: cast_nullable_to_non_nullable
+                  as double,
+        totalEMIs: null == totalEMIs
+            ? _value.totalEMIs
+            : totalEMIs // ignore: cast_nullable_to_non_nullable
+                  as int,
+        paidEMIs: null == paidEMIs
+            ? _value.paidEMIs
+            : paidEMIs // ignore: cast_nullable_to_non_nullable
+                  as int,
+        pendingEMIs: null == pendingEMIs
+            ? _value.pendingEMIs
+            : pendingEMIs // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalDue: null == totalDue
+            ? _value.totalDue
+            : totalDue // ignore: cast_nullable_to_non_nullable
+                  as double,
+        dueDay: null == dueDay
+            ? _value.dueDay
+            : dueDay // ignore: cast_nullable_to_non_nullable
+                  as int,
+        nextDueDate: freezed == nextDueDate
+            ? _value.nextDueDate
+            : nextDueDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        paymentStatus: null == paymentStatus
+            ? _value.paymentStatus
+            : paymentStatus // ignore: cast_nullable_to_non_nullable
+                  as PaymentStatus,
+        isHighPriority: null == isHighPriority
+            ? _value.isHighPriority
+            : isHighPriority // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        preferredCollectionTime: freezed == preferredCollectionTime
+            ? _value.preferredCollectionTime
+            : preferredCollectionTime // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        landmark: freezed == landmark
+            ? _value.landmark
+            : landmark // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        location: freezed == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as GeoLocation?,
+        visitHistory: null == visitHistory
+            ? _value._visitHistory
+            : visitHistory // ignore: cast_nullable_to_non_nullable
+                  as List<PreviousVisit>,
+        specialInstructions: freezed == specialInstructions
+            ? _value.specialInstructions
+            : specialInstructions // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        assignedAt: freezed == assignedAt
+            ? _value.assignedAt
+            : assignedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        lastCollectedAt: freezed == lastCollectedAt
+            ? _value.lastCollectedAt
+            : lastCollectedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$EMICustomerAssignmentImpl implements _EMICustomerAssignment {
-  const _$EMICustomerAssignmentImpl(
-      {required this.customerId,
-      required this.customerName,
-      required this.customerPhone,
-      required this.customerAddress,
-      required this.bookingId,
-      required this.plotNumber,
-      required this.colonyName,
-      required this.monthlyEMI,
-      required this.totalEMIs,
-      required this.paidEMIs,
-      required this.pendingEMIs,
-      required this.totalDue,
-      required this.dueDay,
-      this.nextDueDate,
-      this.paymentStatus = PaymentStatus.regular,
-      this.isHighPriority = false,
-      this.preferredCollectionTime,
-      this.landmark,
-      @GeoPointJsonConverter() this.location,
-      final List<PreviousVisit> visitHistory = const [],
-      this.specialInstructions,
-      this.assignedAt,
-      this.lastCollectedAt})
-      : _visitHistory = visitHistory;
+  const _$EMICustomerAssignmentImpl({
+    required this.customerId,
+    required this.customerName,
+    required this.customerPhone,
+    required this.customerAddress,
+    required this.bookingId,
+    required this.plotNumber,
+    required this.colonyName,
+    required this.monthlyEMI,
+    required this.totalEMIs,
+    required this.paidEMIs,
+    required this.pendingEMIs,
+    required this.totalDue,
+    required this.dueDay,
+    this.nextDueDate,
+    this.paymentStatus = PaymentStatus.regular,
+    this.isHighPriority = false,
+    this.preferredCollectionTime,
+    this.landmark,
+    this.location,
+    final List<PreviousVisit> visitHistory = const [],
+    this.specialInstructions,
+    this.assignedAt,
+    this.lastCollectedAt,
+  }) : _visitHistory = visitHistory;
 
   factory _$EMICustomerAssignmentImpl.fromJson(Map<String, dynamic> json) =>
       _$$EMICustomerAssignmentImplFromJson(json);
@@ -1707,7 +1755,7 @@ class _$EMICustomerAssignmentImpl implements _EMICustomerAssignment {
   final String plotNumber;
   @override
   final String colonyName;
-// EMI Details
+  // EMI Details
   @override
   final double monthlyEMI;
   @override
@@ -1718,33 +1766,32 @@ class _$EMICustomerAssignmentImpl implements _EMICustomerAssignment {
   final int pendingEMIs;
   @override
   final double totalDue;
-// Due Date
+  // Due Date
   @override
   final int dueDay;
-// 5th, 10th, 15th of month
+  // 5th, 10th, 15th of month
   @override
   final DateTime? nextDueDate;
-// Status
+  // Status
   @override
   @JsonKey()
   final PaymentStatus paymentStatus;
-// Regular, Irregular, Defaulter
+  // Regular, Irregular, Defaulter
   @override
   @JsonKey()
   final bool isHighPriority;
-// For overdue
-// Collection Info
+  // For overdue
+  // Collection Info
   @override
   final String? preferredCollectionTime;
-// Morning, Afternoon, Evening
+  // Morning, Afternoon, Evening
   @override
   final String? landmark;
   @override
-  @GeoPointJsonConverter()
-  final GeoPoint? location;
-// History
+  final GeoLocation? location;
+  // History
   final List<PreviousVisit> _visitHistory;
-// History
+  // History
   @override
   @JsonKey()
   List<PreviousVisit> get visitHistory {
@@ -1802,14 +1849,18 @@ class _$EMICustomerAssignmentImpl implements _EMICustomerAssignment {
             (identical(other.isHighPriority, isHighPriority) ||
                 other.isHighPriority == isHighPriority) &&
             (identical(
-                    other.preferredCollectionTime, preferredCollectionTime) ||
+                  other.preferredCollectionTime,
+                  preferredCollectionTime,
+                ) ||
                 other.preferredCollectionTime == preferredCollectionTime) &&
             (identical(other.landmark, landmark) ||
                 other.landmark == landmark) &&
             (identical(other.location, location) ||
                 other.location == location) &&
-            const DeepCollectionEquality()
-                .equals(other._visitHistory, _visitHistory) &&
+            const DeepCollectionEquality().equals(
+              other._visitHistory,
+              _visitHistory,
+            ) &&
             (identical(other.specialInstructions, specialInstructions) ||
                 other.specialInstructions == specialInstructions) &&
             (identical(other.assignedAt, assignedAt) ||
@@ -1821,31 +1872,31 @@ class _$EMICustomerAssignmentImpl implements _EMICustomerAssignment {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        customerId,
-        customerName,
-        customerPhone,
-        customerAddress,
-        bookingId,
-        plotNumber,
-        colonyName,
-        monthlyEMI,
-        totalEMIs,
-        paidEMIs,
-        pendingEMIs,
-        totalDue,
-        dueDay,
-        nextDueDate,
-        paymentStatus,
-        isHighPriority,
-        preferredCollectionTime,
-        landmark,
-        location,
-        const DeepCollectionEquality().hash(_visitHistory),
-        specialInstructions,
-        assignedAt,
-        lastCollectedAt
-      ]);
+    runtimeType,
+    customerId,
+    customerName,
+    customerPhone,
+    customerAddress,
+    bookingId,
+    plotNumber,
+    colonyName,
+    monthlyEMI,
+    totalEMIs,
+    paidEMIs,
+    pendingEMIs,
+    totalDue,
+    dueDay,
+    nextDueDate,
+    paymentStatus,
+    isHighPriority,
+    preferredCollectionTime,
+    landmark,
+    location,
+    const DeepCollectionEquality().hash(_visitHistory),
+    specialInstructions,
+    assignedAt,
+    lastCollectedAt,
+  ]);
 
   /// Create a copy of EMICustomerAssignment
   /// with the given fields replaced by the non-null parameter values.
@@ -1853,42 +1904,44 @@ class _$EMICustomerAssignmentImpl implements _EMICustomerAssignment {
   @override
   @pragma('vm:prefer-inline')
   _$$EMICustomerAssignmentImplCopyWith<_$EMICustomerAssignmentImpl>
-      get copyWith => __$$EMICustomerAssignmentImplCopyWithImpl<
-          _$EMICustomerAssignmentImpl>(this, _$identity);
+  get copyWith =>
+      __$$EMICustomerAssignmentImplCopyWithImpl<_$EMICustomerAssignmentImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$EMICustomerAssignmentImplToJson(
-      this,
-    );
+    return _$$EMICustomerAssignmentImplToJson(this);
   }
 }
 
 abstract class _EMICustomerAssignment implements EMICustomerAssignment {
-  const factory _EMICustomerAssignment(
-      {required final String customerId,
-      required final String customerName,
-      required final String customerPhone,
-      required final String customerAddress,
-      required final String bookingId,
-      required final String plotNumber,
-      required final String colonyName,
-      required final double monthlyEMI,
-      required final int totalEMIs,
-      required final int paidEMIs,
-      required final int pendingEMIs,
-      required final double totalDue,
-      required final int dueDay,
-      final DateTime? nextDueDate,
-      final PaymentStatus paymentStatus,
-      final bool isHighPriority,
-      final String? preferredCollectionTime,
-      final String? landmark,
-      @GeoPointJsonConverter() final GeoPoint? location,
-      final List<PreviousVisit> visitHistory,
-      final String? specialInstructions,
-      final DateTime? assignedAt,
-      final DateTime? lastCollectedAt}) = _$EMICustomerAssignmentImpl;
+  const factory _EMICustomerAssignment({
+    required final String customerId,
+    required final String customerName,
+    required final String customerPhone,
+    required final String customerAddress,
+    required final String bookingId,
+    required final String plotNumber,
+    required final String colonyName,
+    required final double monthlyEMI,
+    required final int totalEMIs,
+    required final int paidEMIs,
+    required final int pendingEMIs,
+    required final double totalDue,
+    required final int dueDay,
+    final DateTime? nextDueDate,
+    final PaymentStatus paymentStatus,
+    final bool isHighPriority,
+    final String? preferredCollectionTime,
+    final String? landmark,
+    final GeoLocation? location,
+    final List<PreviousVisit> visitHistory,
+    final String? specialInstructions,
+    final DateTime? assignedAt,
+    final DateTime? lastCollectedAt,
+  }) = _$EMICustomerAssignmentImpl;
 
   factory _EMICustomerAssignment.fromJson(Map<String, dynamic> json) =
       _$EMICustomerAssignmentImpl.fromJson;
@@ -1925,14 +1978,13 @@ abstract class _EMICustomerAssignment implements EMICustomerAssignment {
   PaymentStatus get paymentStatus; // Regular, Irregular, Defaulter
   @override
   bool get isHighPriority; // For overdue
-// Collection Info
+  // Collection Info
   @override
   String? get preferredCollectionTime; // Morning, Afternoon, Evening
   @override
   String? get landmark;
   @override
-  @GeoPointJsonConverter()
-  GeoPoint? get location; // History
+  GeoLocation? get location; // History
   @override
   List<PreviousVisit> get visitHistory;
   @override
@@ -1947,7 +1999,7 @@ abstract class _EMICustomerAssignment implements EMICustomerAssignment {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$EMICustomerAssignmentImplCopyWith<_$EMICustomerAssignmentImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 PreviousVisit _$PreviousVisitFromJson(Map<String, dynamic> json) {
@@ -1975,15 +2027,17 @@ mixin _$PreviousVisit {
 /// @nodoc
 abstract class $PreviousVisitCopyWith<$Res> {
   factory $PreviousVisitCopyWith(
-          PreviousVisit value, $Res Function(PreviousVisit) then) =
-      _$PreviousVisitCopyWithImpl<$Res, PreviousVisit>;
+    PreviousVisit value,
+    $Res Function(PreviousVisit) then,
+  ) = _$PreviousVisitCopyWithImpl<$Res, PreviousVisit>;
   @useResult
-  $Res call(
-      {DateTime visitDate,
-      VisitOutcome outcome,
-      double? amountCollected,
-      String? notes,
-      String? customerFeedback});
+  $Res call({
+    DateTime visitDate,
+    VisitOutcome outcome,
+    double? amountCollected,
+    String? notes,
+    String? customerFeedback,
+  });
 }
 
 /// @nodoc
@@ -2007,28 +2061,31 @@ class _$PreviousVisitCopyWithImpl<$Res, $Val extends PreviousVisit>
     Object? notes = freezed,
     Object? customerFeedback = freezed,
   }) {
-    return _then(_value.copyWith(
-      visitDate: null == visitDate
-          ? _value.visitDate
-          : visitDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      outcome: null == outcome
-          ? _value.outcome
-          : outcome // ignore: cast_nullable_to_non_nullable
-              as VisitOutcome,
-      amountCollected: freezed == amountCollected
-          ? _value.amountCollected
-          : amountCollected // ignore: cast_nullable_to_non_nullable
-              as double?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerFeedback: freezed == customerFeedback
-          ? _value.customerFeedback
-          : customerFeedback // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            visitDate: null == visitDate
+                ? _value.visitDate
+                : visitDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            outcome: null == outcome
+                ? _value.outcome
+                : outcome // ignore: cast_nullable_to_non_nullable
+                      as VisitOutcome,
+            amountCollected: freezed == amountCollected
+                ? _value.amountCollected
+                : amountCollected // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            customerFeedback: freezed == customerFeedback
+                ? _value.customerFeedback
+                : customerFeedback // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -2036,16 +2093,18 @@ class _$PreviousVisitCopyWithImpl<$Res, $Val extends PreviousVisit>
 abstract class _$$PreviousVisitImplCopyWith<$Res>
     implements $PreviousVisitCopyWith<$Res> {
   factory _$$PreviousVisitImplCopyWith(
-          _$PreviousVisitImpl value, $Res Function(_$PreviousVisitImpl) then) =
-      __$$PreviousVisitImplCopyWithImpl<$Res>;
+    _$PreviousVisitImpl value,
+    $Res Function(_$PreviousVisitImpl) then,
+  ) = __$$PreviousVisitImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {DateTime visitDate,
-      VisitOutcome outcome,
-      double? amountCollected,
-      String? notes,
-      String? customerFeedback});
+  $Res call({
+    DateTime visitDate,
+    VisitOutcome outcome,
+    double? amountCollected,
+    String? notes,
+    String? customerFeedback,
+  });
 }
 
 /// @nodoc
@@ -2053,8 +2112,9 @@ class __$$PreviousVisitImplCopyWithImpl<$Res>
     extends _$PreviousVisitCopyWithImpl<$Res, _$PreviousVisitImpl>
     implements _$$PreviousVisitImplCopyWith<$Res> {
   __$$PreviousVisitImplCopyWithImpl(
-      _$PreviousVisitImpl _value, $Res Function(_$PreviousVisitImpl) _then)
-      : super(_value, _then);
+    _$PreviousVisitImpl _value,
+    $Res Function(_$PreviousVisitImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PreviousVisit
   /// with the given fields replaced by the non-null parameter values.
@@ -2067,40 +2127,43 @@ class __$$PreviousVisitImplCopyWithImpl<$Res>
     Object? notes = freezed,
     Object? customerFeedback = freezed,
   }) {
-    return _then(_$PreviousVisitImpl(
-      visitDate: null == visitDate
-          ? _value.visitDate
-          : visitDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      outcome: null == outcome
-          ? _value.outcome
-          : outcome // ignore: cast_nullable_to_non_nullable
-              as VisitOutcome,
-      amountCollected: freezed == amountCollected
-          ? _value.amountCollected
-          : amountCollected // ignore: cast_nullable_to_non_nullable
-              as double?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerFeedback: freezed == customerFeedback
-          ? _value.customerFeedback
-          : customerFeedback // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$PreviousVisitImpl(
+        visitDate: null == visitDate
+            ? _value.visitDate
+            : visitDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        outcome: null == outcome
+            ? _value.outcome
+            : outcome // ignore: cast_nullable_to_non_nullable
+                  as VisitOutcome,
+        amountCollected: freezed == amountCollected
+            ? _value.amountCollected
+            : amountCollected // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        customerFeedback: freezed == customerFeedback
+            ? _value.customerFeedback
+            : customerFeedback // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PreviousVisitImpl implements _PreviousVisit {
-  const _$PreviousVisitImpl(
-      {required this.visitDate,
-      required this.outcome,
-      this.amountCollected,
-      this.notes,
-      this.customerFeedback});
+  const _$PreviousVisitImpl({
+    required this.visitDate,
+    required this.outcome,
+    this.amountCollected,
+    this.notes,
+    this.customerFeedback,
+  });
 
   factory _$PreviousVisitImpl.fromJson(Map<String, dynamic> json) =>
       _$$PreviousVisitImplFromJson(json);
@@ -2138,8 +2201,14 @@ class _$PreviousVisitImpl implements _PreviousVisit {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, visitDate, outcome,
-      amountCollected, notes, customerFeedback);
+  int get hashCode => Object.hash(
+    runtimeType,
+    visitDate,
+    outcome,
+    amountCollected,
+    notes,
+    customerFeedback,
+  );
 
   /// Create a copy of PreviousVisit
   /// with the given fields replaced by the non-null parameter values.
@@ -2151,19 +2220,18 @@ class _$PreviousVisitImpl implements _PreviousVisit {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PreviousVisitImplToJson(
-      this,
-    );
+    return _$$PreviousVisitImplToJson(this);
   }
 }
 
 abstract class _PreviousVisit implements PreviousVisit {
-  const factory _PreviousVisit(
-      {required final DateTime visitDate,
-      required final VisitOutcome outcome,
-      final double? amountCollected,
-      final String? notes,
-      final String? customerFeedback}) = _$PreviousVisitImpl;
+  const factory _PreviousVisit({
+    required final DateTime visitDate,
+    required final VisitOutcome outcome,
+    final double? amountCollected,
+    final String? notes,
+    final String? customerFeedback,
+  }) = _$PreviousVisitImpl;
 
   factory _PreviousVisit.fromJson(Map<String, dynamic> json) =
       _$PreviousVisitImpl.fromJson;
@@ -2188,7 +2256,8 @@ abstract class _PreviousVisit implements PreviousVisit {
 }
 
 DailyCollectionReport _$DailyCollectionReportFromJson(
-    Map<String, dynamic> json) {
+  Map<String, dynamic> json,
+) {
   return _DailyCollectionReport.fromJson(json);
 }
 
@@ -2234,39 +2303,43 @@ mixin _$DailyCollectionReport {
 
 /// @nodoc
 abstract class $DailyCollectionReportCopyWith<$Res> {
-  factory $DailyCollectionReportCopyWith(DailyCollectionReport value,
-          $Res Function(DailyCollectionReport) then) =
-      _$DailyCollectionReportCopyWithImpl<$Res, DailyCollectionReport>;
+  factory $DailyCollectionReportCopyWith(
+    DailyCollectionReport value,
+    $Res Function(DailyCollectionReport) then,
+  ) = _$DailyCollectionReportCopyWithImpl<$Res, DailyCollectionReport>;
   @useResult
-  $Res call(
-      {String id,
-      DateTime date,
-      String agentId,
-      int totalVisits,
-      int successfulCollections,
-      int partialCollections,
-      int failedVisits,
-      int rescheduled,
-      int customersNotHome,
-      double totalCollected,
-      double cashCollected,
-      double chequeCollected,
-      double onlineCollected,
-      double upiCollected,
-      List<CollectionRecord> collections,
-      DateTime? startTime,
-      DateTime? endTime,
-      int workingHours,
-      List<LocationTracking> routeTaken,
-      double totalDistanceKm,
-      ReportSubmissionStatus submissionStatus,
-      DateTime? submittedAt,
-      String? adminNotes});
+  $Res call({
+    String id,
+    DateTime date,
+    String agentId,
+    int totalVisits,
+    int successfulCollections,
+    int partialCollections,
+    int failedVisits,
+    int rescheduled,
+    int customersNotHome,
+    double totalCollected,
+    double cashCollected,
+    double chequeCollected,
+    double onlineCollected,
+    double upiCollected,
+    List<CollectionRecord> collections,
+    DateTime? startTime,
+    DateTime? endTime,
+    int workingHours,
+    List<LocationTracking> routeTaken,
+    double totalDistanceKm,
+    ReportSubmissionStatus submissionStatus,
+    DateTime? submittedAt,
+    String? adminNotes,
+  });
 }
 
 /// @nodoc
-class _$DailyCollectionReportCopyWithImpl<$Res,
-        $Val extends DailyCollectionReport>
+class _$DailyCollectionReportCopyWithImpl<
+  $Res,
+  $Val extends DailyCollectionReport
+>
     implements $DailyCollectionReportCopyWith<$Res> {
   _$DailyCollectionReportCopyWithImpl(this._value, this._then);
 
@@ -2304,100 +2377,103 @@ class _$DailyCollectionReportCopyWithImpl<$Res,
     Object? submittedAt = freezed,
     Object? adminNotes = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      agentId: null == agentId
-          ? _value.agentId
-          : agentId // ignore: cast_nullable_to_non_nullable
-              as String,
-      totalVisits: null == totalVisits
-          ? _value.totalVisits
-          : totalVisits // ignore: cast_nullable_to_non_nullable
-              as int,
-      successfulCollections: null == successfulCollections
-          ? _value.successfulCollections
-          : successfulCollections // ignore: cast_nullable_to_non_nullable
-              as int,
-      partialCollections: null == partialCollections
-          ? _value.partialCollections
-          : partialCollections // ignore: cast_nullable_to_non_nullable
-              as int,
-      failedVisits: null == failedVisits
-          ? _value.failedVisits
-          : failedVisits // ignore: cast_nullable_to_non_nullable
-              as int,
-      rescheduled: null == rescheduled
-          ? _value.rescheduled
-          : rescheduled // ignore: cast_nullable_to_non_nullable
-              as int,
-      customersNotHome: null == customersNotHome
-          ? _value.customersNotHome
-          : customersNotHome // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalCollected: null == totalCollected
-          ? _value.totalCollected
-          : totalCollected // ignore: cast_nullable_to_non_nullable
-              as double,
-      cashCollected: null == cashCollected
-          ? _value.cashCollected
-          : cashCollected // ignore: cast_nullable_to_non_nullable
-              as double,
-      chequeCollected: null == chequeCollected
-          ? _value.chequeCollected
-          : chequeCollected // ignore: cast_nullable_to_non_nullable
-              as double,
-      onlineCollected: null == onlineCollected
-          ? _value.onlineCollected
-          : onlineCollected // ignore: cast_nullable_to_non_nullable
-              as double,
-      upiCollected: null == upiCollected
-          ? _value.upiCollected
-          : upiCollected // ignore: cast_nullable_to_non_nullable
-              as double,
-      collections: null == collections
-          ? _value.collections
-          : collections // ignore: cast_nullable_to_non_nullable
-              as List<CollectionRecord>,
-      startTime: freezed == startTime
-          ? _value.startTime
-          : startTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      endTime: freezed == endTime
-          ? _value.endTime
-          : endTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      workingHours: null == workingHours
-          ? _value.workingHours
-          : workingHours // ignore: cast_nullable_to_non_nullable
-              as int,
-      routeTaken: null == routeTaken
-          ? _value.routeTaken
-          : routeTaken // ignore: cast_nullable_to_non_nullable
-              as List<LocationTracking>,
-      totalDistanceKm: null == totalDistanceKm
-          ? _value.totalDistanceKm
-          : totalDistanceKm // ignore: cast_nullable_to_non_nullable
-              as double,
-      submissionStatus: null == submissionStatus
-          ? _value.submissionStatus
-          : submissionStatus // ignore: cast_nullable_to_non_nullable
-              as ReportSubmissionStatus,
-      submittedAt: freezed == submittedAt
-          ? _value.submittedAt
-          : submittedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      adminNotes: freezed == adminNotes
-          ? _value.adminNotes
-          : adminNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            date: null == date
+                ? _value.date
+                : date // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            agentId: null == agentId
+                ? _value.agentId
+                : agentId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            totalVisits: null == totalVisits
+                ? _value.totalVisits
+                : totalVisits // ignore: cast_nullable_to_non_nullable
+                      as int,
+            successfulCollections: null == successfulCollections
+                ? _value.successfulCollections
+                : successfulCollections // ignore: cast_nullable_to_non_nullable
+                      as int,
+            partialCollections: null == partialCollections
+                ? _value.partialCollections
+                : partialCollections // ignore: cast_nullable_to_non_nullable
+                      as int,
+            failedVisits: null == failedVisits
+                ? _value.failedVisits
+                : failedVisits // ignore: cast_nullable_to_non_nullable
+                      as int,
+            rescheduled: null == rescheduled
+                ? _value.rescheduled
+                : rescheduled // ignore: cast_nullable_to_non_nullable
+                      as int,
+            customersNotHome: null == customersNotHome
+                ? _value.customersNotHome
+                : customersNotHome // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalCollected: null == totalCollected
+                ? _value.totalCollected
+                : totalCollected // ignore: cast_nullable_to_non_nullable
+                      as double,
+            cashCollected: null == cashCollected
+                ? _value.cashCollected
+                : cashCollected // ignore: cast_nullable_to_non_nullable
+                      as double,
+            chequeCollected: null == chequeCollected
+                ? _value.chequeCollected
+                : chequeCollected // ignore: cast_nullable_to_non_nullable
+                      as double,
+            onlineCollected: null == onlineCollected
+                ? _value.onlineCollected
+                : onlineCollected // ignore: cast_nullable_to_non_nullable
+                      as double,
+            upiCollected: null == upiCollected
+                ? _value.upiCollected
+                : upiCollected // ignore: cast_nullable_to_non_nullable
+                      as double,
+            collections: null == collections
+                ? _value.collections
+                : collections // ignore: cast_nullable_to_non_nullable
+                      as List<CollectionRecord>,
+            startTime: freezed == startTime
+                ? _value.startTime
+                : startTime // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            endTime: freezed == endTime
+                ? _value.endTime
+                : endTime // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            workingHours: null == workingHours
+                ? _value.workingHours
+                : workingHours // ignore: cast_nullable_to_non_nullable
+                      as int,
+            routeTaken: null == routeTaken
+                ? _value.routeTaken
+                : routeTaken // ignore: cast_nullable_to_non_nullable
+                      as List<LocationTracking>,
+            totalDistanceKm: null == totalDistanceKm
+                ? _value.totalDistanceKm
+                : totalDistanceKm // ignore: cast_nullable_to_non_nullable
+                      as double,
+            submissionStatus: null == submissionStatus
+                ? _value.submissionStatus
+                : submissionStatus // ignore: cast_nullable_to_non_nullable
+                      as ReportSubmissionStatus,
+            submittedAt: freezed == submittedAt
+                ? _value.submittedAt
+                : submittedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            adminNotes: freezed == adminNotes
+                ? _value.adminNotes
+                : adminNotes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -2405,45 +2481,47 @@ class _$DailyCollectionReportCopyWithImpl<$Res,
 abstract class _$$DailyCollectionReportImplCopyWith<$Res>
     implements $DailyCollectionReportCopyWith<$Res> {
   factory _$$DailyCollectionReportImplCopyWith(
-          _$DailyCollectionReportImpl value,
-          $Res Function(_$DailyCollectionReportImpl) then) =
-      __$$DailyCollectionReportImplCopyWithImpl<$Res>;
+    _$DailyCollectionReportImpl value,
+    $Res Function(_$DailyCollectionReportImpl) then,
+  ) = __$$DailyCollectionReportImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      DateTime date,
-      String agentId,
-      int totalVisits,
-      int successfulCollections,
-      int partialCollections,
-      int failedVisits,
-      int rescheduled,
-      int customersNotHome,
-      double totalCollected,
-      double cashCollected,
-      double chequeCollected,
-      double onlineCollected,
-      double upiCollected,
-      List<CollectionRecord> collections,
-      DateTime? startTime,
-      DateTime? endTime,
-      int workingHours,
-      List<LocationTracking> routeTaken,
-      double totalDistanceKm,
-      ReportSubmissionStatus submissionStatus,
-      DateTime? submittedAt,
-      String? adminNotes});
+  $Res call({
+    String id,
+    DateTime date,
+    String agentId,
+    int totalVisits,
+    int successfulCollections,
+    int partialCollections,
+    int failedVisits,
+    int rescheduled,
+    int customersNotHome,
+    double totalCollected,
+    double cashCollected,
+    double chequeCollected,
+    double onlineCollected,
+    double upiCollected,
+    List<CollectionRecord> collections,
+    DateTime? startTime,
+    DateTime? endTime,
+    int workingHours,
+    List<LocationTracking> routeTaken,
+    double totalDistanceKm,
+    ReportSubmissionStatus submissionStatus,
+    DateTime? submittedAt,
+    String? adminNotes,
+  });
 }
 
 /// @nodoc
 class __$$DailyCollectionReportImplCopyWithImpl<$Res>
-    extends _$DailyCollectionReportCopyWithImpl<$Res,
-        _$DailyCollectionReportImpl>
+    extends
+        _$DailyCollectionReportCopyWithImpl<$Res, _$DailyCollectionReportImpl>
     implements _$$DailyCollectionReportImplCopyWith<$Res> {
-  __$$DailyCollectionReportImplCopyWithImpl(_$DailyCollectionReportImpl _value,
-      $Res Function(_$DailyCollectionReportImpl) _then)
-      : super(_value, _then);
+  __$$DailyCollectionReportImplCopyWithImpl(
+    _$DailyCollectionReportImpl _value,
+    $Res Function(_$DailyCollectionReportImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of DailyCollectionReport
   /// with the given fields replaced by the non-null parameter values.
@@ -2474,132 +2552,134 @@ class __$$DailyCollectionReportImplCopyWithImpl<$Res>
     Object? submittedAt = freezed,
     Object? adminNotes = freezed,
   }) {
-    return _then(_$DailyCollectionReportImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      agentId: null == agentId
-          ? _value.agentId
-          : agentId // ignore: cast_nullable_to_non_nullable
-              as String,
-      totalVisits: null == totalVisits
-          ? _value.totalVisits
-          : totalVisits // ignore: cast_nullable_to_non_nullable
-              as int,
-      successfulCollections: null == successfulCollections
-          ? _value.successfulCollections
-          : successfulCollections // ignore: cast_nullable_to_non_nullable
-              as int,
-      partialCollections: null == partialCollections
-          ? _value.partialCollections
-          : partialCollections // ignore: cast_nullable_to_non_nullable
-              as int,
-      failedVisits: null == failedVisits
-          ? _value.failedVisits
-          : failedVisits // ignore: cast_nullable_to_non_nullable
-              as int,
-      rescheduled: null == rescheduled
-          ? _value.rescheduled
-          : rescheduled // ignore: cast_nullable_to_non_nullable
-              as int,
-      customersNotHome: null == customersNotHome
-          ? _value.customersNotHome
-          : customersNotHome // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalCollected: null == totalCollected
-          ? _value.totalCollected
-          : totalCollected // ignore: cast_nullable_to_non_nullable
-              as double,
-      cashCollected: null == cashCollected
-          ? _value.cashCollected
-          : cashCollected // ignore: cast_nullable_to_non_nullable
-              as double,
-      chequeCollected: null == chequeCollected
-          ? _value.chequeCollected
-          : chequeCollected // ignore: cast_nullable_to_non_nullable
-              as double,
-      onlineCollected: null == onlineCollected
-          ? _value.onlineCollected
-          : onlineCollected // ignore: cast_nullable_to_non_nullable
-              as double,
-      upiCollected: null == upiCollected
-          ? _value.upiCollected
-          : upiCollected // ignore: cast_nullable_to_non_nullable
-              as double,
-      collections: null == collections
-          ? _value._collections
-          : collections // ignore: cast_nullable_to_non_nullable
-              as List<CollectionRecord>,
-      startTime: freezed == startTime
-          ? _value.startTime
-          : startTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      endTime: freezed == endTime
-          ? _value.endTime
-          : endTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      workingHours: null == workingHours
-          ? _value.workingHours
-          : workingHours // ignore: cast_nullable_to_non_nullable
-              as int,
-      routeTaken: null == routeTaken
-          ? _value._routeTaken
-          : routeTaken // ignore: cast_nullable_to_non_nullable
-              as List<LocationTracking>,
-      totalDistanceKm: null == totalDistanceKm
-          ? _value.totalDistanceKm
-          : totalDistanceKm // ignore: cast_nullable_to_non_nullable
-              as double,
-      submissionStatus: null == submissionStatus
-          ? _value.submissionStatus
-          : submissionStatus // ignore: cast_nullable_to_non_nullable
-              as ReportSubmissionStatus,
-      submittedAt: freezed == submittedAt
-          ? _value.submittedAt
-          : submittedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      adminNotes: freezed == adminNotes
-          ? _value.adminNotes
-          : adminNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$DailyCollectionReportImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        date: null == date
+            ? _value.date
+            : date // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        agentId: null == agentId
+            ? _value.agentId
+            : agentId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        totalVisits: null == totalVisits
+            ? _value.totalVisits
+            : totalVisits // ignore: cast_nullable_to_non_nullable
+                  as int,
+        successfulCollections: null == successfulCollections
+            ? _value.successfulCollections
+            : successfulCollections // ignore: cast_nullable_to_non_nullable
+                  as int,
+        partialCollections: null == partialCollections
+            ? _value.partialCollections
+            : partialCollections // ignore: cast_nullable_to_non_nullable
+                  as int,
+        failedVisits: null == failedVisits
+            ? _value.failedVisits
+            : failedVisits // ignore: cast_nullable_to_non_nullable
+                  as int,
+        rescheduled: null == rescheduled
+            ? _value.rescheduled
+            : rescheduled // ignore: cast_nullable_to_non_nullable
+                  as int,
+        customersNotHome: null == customersNotHome
+            ? _value.customersNotHome
+            : customersNotHome // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalCollected: null == totalCollected
+            ? _value.totalCollected
+            : totalCollected // ignore: cast_nullable_to_non_nullable
+                  as double,
+        cashCollected: null == cashCollected
+            ? _value.cashCollected
+            : cashCollected // ignore: cast_nullable_to_non_nullable
+                  as double,
+        chequeCollected: null == chequeCollected
+            ? _value.chequeCollected
+            : chequeCollected // ignore: cast_nullable_to_non_nullable
+                  as double,
+        onlineCollected: null == onlineCollected
+            ? _value.onlineCollected
+            : onlineCollected // ignore: cast_nullable_to_non_nullable
+                  as double,
+        upiCollected: null == upiCollected
+            ? _value.upiCollected
+            : upiCollected // ignore: cast_nullable_to_non_nullable
+                  as double,
+        collections: null == collections
+            ? _value._collections
+            : collections // ignore: cast_nullable_to_non_nullable
+                  as List<CollectionRecord>,
+        startTime: freezed == startTime
+            ? _value.startTime
+            : startTime // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        endTime: freezed == endTime
+            ? _value.endTime
+            : endTime // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        workingHours: null == workingHours
+            ? _value.workingHours
+            : workingHours // ignore: cast_nullable_to_non_nullable
+                  as int,
+        routeTaken: null == routeTaken
+            ? _value._routeTaken
+            : routeTaken // ignore: cast_nullable_to_non_nullable
+                  as List<LocationTracking>,
+        totalDistanceKm: null == totalDistanceKm
+            ? _value.totalDistanceKm
+            : totalDistanceKm // ignore: cast_nullable_to_non_nullable
+                  as double,
+        submissionStatus: null == submissionStatus
+            ? _value.submissionStatus
+            : submissionStatus // ignore: cast_nullable_to_non_nullable
+                  as ReportSubmissionStatus,
+        submittedAt: freezed == submittedAt
+            ? _value.submittedAt
+            : submittedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        adminNotes: freezed == adminNotes
+            ? _value.adminNotes
+            : adminNotes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$DailyCollectionReportImpl implements _DailyCollectionReport {
-  const _$DailyCollectionReportImpl(
-      {required this.id,
-      required this.date,
-      required this.agentId,
-      this.totalVisits = 0,
-      this.successfulCollections = 0,
-      this.partialCollections = 0,
-      this.failedVisits = 0,
-      this.rescheduled = 0,
-      this.customersNotHome = 0,
-      this.totalCollected = 0,
-      this.cashCollected = 0,
-      this.chequeCollected = 0,
-      this.onlineCollected = 0,
-      this.upiCollected = 0,
-      final List<CollectionRecord> collections = const [],
-      this.startTime,
-      this.endTime,
-      this.workingHours = 0,
-      final List<LocationTracking> routeTaken = const [],
-      this.totalDistanceKm = 0,
-      required this.submissionStatus,
-      this.submittedAt,
-      this.adminNotes})
-      : _collections = collections,
-        _routeTaken = routeTaken;
+  const _$DailyCollectionReportImpl({
+    required this.id,
+    required this.date,
+    required this.agentId,
+    this.totalVisits = 0,
+    this.successfulCollections = 0,
+    this.partialCollections = 0,
+    this.failedVisits = 0,
+    this.rescheduled = 0,
+    this.customersNotHome = 0,
+    this.totalCollected = 0,
+    this.cashCollected = 0,
+    this.chequeCollected = 0,
+    this.onlineCollected = 0,
+    this.upiCollected = 0,
+    final List<CollectionRecord> collections = const [],
+    this.startTime,
+    this.endTime,
+    this.workingHours = 0,
+    final List<LocationTracking> routeTaken = const [],
+    this.totalDistanceKm = 0,
+    required this.submissionStatus,
+    this.submittedAt,
+    this.adminNotes,
+  }) : _collections = collections,
+       _routeTaken = routeTaken;
 
   factory _$DailyCollectionReportImpl.fromJson(Map<String, dynamic> json) =>
       _$$DailyCollectionReportImplFromJson(json);
@@ -2610,7 +2690,7 @@ class _$DailyCollectionReportImpl implements _DailyCollectionReport {
   final DateTime date;
   @override
   final String agentId;
-// Collection Summary
+  // Collection Summary
   @override
   @JsonKey()
   final int totalVisits;
@@ -2629,7 +2709,7 @@ class _$DailyCollectionReportImpl implements _DailyCollectionReport {
   @override
   @JsonKey()
   final int customersNotHome;
-// Financial
+  // Financial
   @override
   @JsonKey()
   final double totalCollected;
@@ -2645,9 +2725,9 @@ class _$DailyCollectionReportImpl implements _DailyCollectionReport {
   @override
   @JsonKey()
   final double upiCollected;
-// Individual Collections
+  // Individual Collections
   final List<CollectionRecord> _collections;
-// Individual Collections
+  // Individual Collections
   @override
   @JsonKey()
   List<CollectionRecord> get collections {
@@ -2656,7 +2736,7 @@ class _$DailyCollectionReportImpl implements _DailyCollectionReport {
     return EqualUnmodifiableListView(_collections);
   }
 
-// Time Tracking
+  // Time Tracking
   @override
   final DateTime? startTime;
   @override
@@ -2664,9 +2744,9 @@ class _$DailyCollectionReportImpl implements _DailyCollectionReport {
   @override
   @JsonKey()
   final int workingHours;
-// Location Data
+  // Location Data
   final List<LocationTracking> _routeTaken;
-// Location Data
+  // Location Data
   @override
   @JsonKey()
   List<LocationTracking> get routeTaken {
@@ -2678,7 +2758,7 @@ class _$DailyCollectionReportImpl implements _DailyCollectionReport {
   @override
   @JsonKey()
   final double totalDistanceKm;
-// Status
+  // Status
   @override
   final ReportSubmissionStatus submissionStatus;
   @override
@@ -2721,15 +2801,19 @@ class _$DailyCollectionReportImpl implements _DailyCollectionReport {
                 other.onlineCollected == onlineCollected) &&
             (identical(other.upiCollected, upiCollected) ||
                 other.upiCollected == upiCollected) &&
-            const DeepCollectionEquality()
-                .equals(other._collections, _collections) &&
+            const DeepCollectionEquality().equals(
+              other._collections,
+              _collections,
+            ) &&
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
             (identical(other.endTime, endTime) || other.endTime == endTime) &&
             (identical(other.workingHours, workingHours) ||
                 other.workingHours == workingHours) &&
-            const DeepCollectionEquality()
-                .equals(other._routeTaken, _routeTaken) &&
+            const DeepCollectionEquality().equals(
+              other._routeTaken,
+              _routeTaken,
+            ) &&
             (identical(other.totalDistanceKm, totalDistanceKm) ||
                 other.totalDistanceKm == totalDistanceKm) &&
             (identical(other.submissionStatus, submissionStatus) ||
@@ -2743,31 +2827,31 @@ class _$DailyCollectionReportImpl implements _DailyCollectionReport {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        date,
-        agentId,
-        totalVisits,
-        successfulCollections,
-        partialCollections,
-        failedVisits,
-        rescheduled,
-        customersNotHome,
-        totalCollected,
-        cashCollected,
-        chequeCollected,
-        onlineCollected,
-        upiCollected,
-        const DeepCollectionEquality().hash(_collections),
-        startTime,
-        endTime,
-        workingHours,
-        const DeepCollectionEquality().hash(_routeTaken),
-        totalDistanceKm,
-        submissionStatus,
-        submittedAt,
-        adminNotes
-      ]);
+    runtimeType,
+    id,
+    date,
+    agentId,
+    totalVisits,
+    successfulCollections,
+    partialCollections,
+    failedVisits,
+    rescheduled,
+    customersNotHome,
+    totalCollected,
+    cashCollected,
+    chequeCollected,
+    onlineCollected,
+    upiCollected,
+    const DeepCollectionEquality().hash(_collections),
+    startTime,
+    endTime,
+    workingHours,
+    const DeepCollectionEquality().hash(_routeTaken),
+    totalDistanceKm,
+    submissionStatus,
+    submittedAt,
+    adminNotes,
+  ]);
 
   /// Create a copy of DailyCollectionReport
   /// with the given fields replaced by the non-null parameter values.
@@ -2775,42 +2859,44 @@ class _$DailyCollectionReportImpl implements _DailyCollectionReport {
   @override
   @pragma('vm:prefer-inline')
   _$$DailyCollectionReportImplCopyWith<_$DailyCollectionReportImpl>
-      get copyWith => __$$DailyCollectionReportImplCopyWithImpl<
-          _$DailyCollectionReportImpl>(this, _$identity);
+  get copyWith =>
+      __$$DailyCollectionReportImplCopyWithImpl<_$DailyCollectionReportImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DailyCollectionReportImplToJson(
-      this,
-    );
+    return _$$DailyCollectionReportImplToJson(this);
   }
 }
 
 abstract class _DailyCollectionReport implements DailyCollectionReport {
-  const factory _DailyCollectionReport(
-      {required final String id,
-      required final DateTime date,
-      required final String agentId,
-      final int totalVisits,
-      final int successfulCollections,
-      final int partialCollections,
-      final int failedVisits,
-      final int rescheduled,
-      final int customersNotHome,
-      final double totalCollected,
-      final double cashCollected,
-      final double chequeCollected,
-      final double onlineCollected,
-      final double upiCollected,
-      final List<CollectionRecord> collections,
-      final DateTime? startTime,
-      final DateTime? endTime,
-      final int workingHours,
-      final List<LocationTracking> routeTaken,
-      final double totalDistanceKm,
-      required final ReportSubmissionStatus submissionStatus,
-      final DateTime? submittedAt,
-      final String? adminNotes}) = _$DailyCollectionReportImpl;
+  const factory _DailyCollectionReport({
+    required final String id,
+    required final DateTime date,
+    required final String agentId,
+    final int totalVisits,
+    final int successfulCollections,
+    final int partialCollections,
+    final int failedVisits,
+    final int rescheduled,
+    final int customersNotHome,
+    final double totalCollected,
+    final double cashCollected,
+    final double chequeCollected,
+    final double onlineCollected,
+    final double upiCollected,
+    final List<CollectionRecord> collections,
+    final DateTime? startTime,
+    final DateTime? endTime,
+    final int workingHours,
+    final List<LocationTracking> routeTaken,
+    final double totalDistanceKm,
+    required final ReportSubmissionStatus submissionStatus,
+    final DateTime? submittedAt,
+    final String? adminNotes,
+  }) = _$DailyCollectionReportImpl;
 
   factory _DailyCollectionReport.fromJson(Map<String, dynamic> json) =
       _$DailyCollectionReportImpl.fromJson;
@@ -2867,7 +2953,7 @@ abstract class _DailyCollectionReport implements DailyCollectionReport {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DailyCollectionReportImplCopyWith<_$DailyCollectionReportImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 CollectionRecord _$CollectionRecordFromJson(Map<String, dynamic> json) {
@@ -2887,8 +2973,7 @@ mixin _$CollectionRecord {
   String? get chequeNumber => throw _privateConstructorUsedError;
   String? get transactionId => throw _privateConstructorUsedError;
   String? get receiptNumber => throw _privateConstructorUsedError; // Location
-  @GeoPointJsonConverter()
-  GeoPoint? get location => throw _privateConstructorUsedError;
+  GeoLocation? get location => throw _privateConstructorUsedError;
   String? get addressAtCollection =>
       throw _privateConstructorUsedError; // Proof
   List<String> get photoUrls =>
@@ -2913,30 +2998,32 @@ mixin _$CollectionRecord {
 /// @nodoc
 abstract class $CollectionRecordCopyWith<$Res> {
   factory $CollectionRecordCopyWith(
-          CollectionRecord value, $Res Function(CollectionRecord) then) =
-      _$CollectionRecordCopyWithImpl<$Res, CollectionRecord>;
+    CollectionRecord value,
+    $Res Function(CollectionRecord) then,
+  ) = _$CollectionRecordCopyWithImpl<$Res, CollectionRecord>;
   @useResult
-  $Res call(
-      {String customerId,
-      String customerName,
-      String bookingId,
-      DateTime collectionTime,
-      double amount,
-      PaymentMode mode,
-      int? emiNumber,
-      double? lateFee,
-      String? chequeNumber,
-      String? transactionId,
-      String? receiptNumber,
-      @GeoPointJsonConverter() GeoPoint? location,
-      String? addressAtCollection,
-      List<String> photoUrls,
-      String? signatureUrl,
-      String? notes,
-      bool? isVerified,
-      DateTime? verifiedAt,
-      String? verifiedBy,
-      String? disputeReason});
+  $Res call({
+    String customerId,
+    String customerName,
+    String bookingId,
+    DateTime collectionTime,
+    double amount,
+    PaymentMode mode,
+    int? emiNumber,
+    double? lateFee,
+    String? chequeNumber,
+    String? transactionId,
+    String? receiptNumber,
+    GeoLocation? location,
+    String? addressAtCollection,
+    List<String> photoUrls,
+    String? signatureUrl,
+    String? notes,
+    bool? isVerified,
+    DateTime? verifiedAt,
+    String? verifiedBy,
+    String? disputeReason,
+  });
 }
 
 /// @nodoc
@@ -2975,129 +3062,135 @@ class _$CollectionRecordCopyWithImpl<$Res, $Val extends CollectionRecord>
     Object? verifiedBy = freezed,
     Object? disputeReason = freezed,
   }) {
-    return _then(_value.copyWith(
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerName: null == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      collectionTime: null == collectionTime
-          ? _value.collectionTime
-          : collectionTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      mode: null == mode
-          ? _value.mode
-          : mode // ignore: cast_nullable_to_non_nullable
-              as PaymentMode,
-      emiNumber: freezed == emiNumber
-          ? _value.emiNumber
-          : emiNumber // ignore: cast_nullable_to_non_nullable
-              as int?,
-      lateFee: freezed == lateFee
-          ? _value.lateFee
-          : lateFee // ignore: cast_nullable_to_non_nullable
-              as double?,
-      chequeNumber: freezed == chequeNumber
-          ? _value.chequeNumber
-          : chequeNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      transactionId: freezed == transactionId
-          ? _value.transactionId
-          : transactionId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      receiptNumber: freezed == receiptNumber
-          ? _value.receiptNumber
-          : receiptNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoPoint?,
-      addressAtCollection: freezed == addressAtCollection
-          ? _value.addressAtCollection
-          : addressAtCollection // ignore: cast_nullable_to_non_nullable
-              as String?,
-      photoUrls: null == photoUrls
-          ? _value.photoUrls
-          : photoUrls // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      signatureUrl: freezed == signatureUrl
-          ? _value.signatureUrl
-          : signatureUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isVerified: freezed == isVerified
-          ? _value.isVerified
-          : isVerified // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      verifiedAt: freezed == verifiedAt
-          ? _value.verifiedAt
-          : verifiedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      verifiedBy: freezed == verifiedBy
-          ? _value.verifiedBy
-          : verifiedBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      disputeReason: freezed == disputeReason
-          ? _value.disputeReason
-          : disputeReason // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            customerId: null == customerId
+                ? _value.customerId
+                : customerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerName: null == customerName
+                ? _value.customerName
+                : customerName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            bookingId: null == bookingId
+                ? _value.bookingId
+                : bookingId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            collectionTime: null == collectionTime
+                ? _value.collectionTime
+                : collectionTime // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            amount: null == amount
+                ? _value.amount
+                : amount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            mode: null == mode
+                ? _value.mode
+                : mode // ignore: cast_nullable_to_non_nullable
+                      as PaymentMode,
+            emiNumber: freezed == emiNumber
+                ? _value.emiNumber
+                : emiNumber // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            lateFee: freezed == lateFee
+                ? _value.lateFee
+                : lateFee // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            chequeNumber: freezed == chequeNumber
+                ? _value.chequeNumber
+                : chequeNumber // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            transactionId: freezed == transactionId
+                ? _value.transactionId
+                : transactionId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            receiptNumber: freezed == receiptNumber
+                ? _value.receiptNumber
+                : receiptNumber // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            location: freezed == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as GeoLocation?,
+            addressAtCollection: freezed == addressAtCollection
+                ? _value.addressAtCollection
+                : addressAtCollection // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            photoUrls: null == photoUrls
+                ? _value.photoUrls
+                : photoUrls // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            signatureUrl: freezed == signatureUrl
+                ? _value.signatureUrl
+                : signatureUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            isVerified: freezed == isVerified
+                ? _value.isVerified
+                : isVerified // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            verifiedAt: freezed == verifiedAt
+                ? _value.verifiedAt
+                : verifiedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            verifiedBy: freezed == verifiedBy
+                ? _value.verifiedBy
+                : verifiedBy // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            disputeReason: freezed == disputeReason
+                ? _value.disputeReason
+                : disputeReason // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$CollectionRecordImplCopyWith<$Res>
     implements $CollectionRecordCopyWith<$Res> {
-  factory _$$CollectionRecordImplCopyWith(_$CollectionRecordImpl value,
-          $Res Function(_$CollectionRecordImpl) then) =
-      __$$CollectionRecordImplCopyWithImpl<$Res>;
+  factory _$$CollectionRecordImplCopyWith(
+    _$CollectionRecordImpl value,
+    $Res Function(_$CollectionRecordImpl) then,
+  ) = __$$CollectionRecordImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String customerId,
-      String customerName,
-      String bookingId,
-      DateTime collectionTime,
-      double amount,
-      PaymentMode mode,
-      int? emiNumber,
-      double? lateFee,
-      String? chequeNumber,
-      String? transactionId,
-      String? receiptNumber,
-      @GeoPointJsonConverter() GeoPoint? location,
-      String? addressAtCollection,
-      List<String> photoUrls,
-      String? signatureUrl,
-      String? notes,
-      bool? isVerified,
-      DateTime? verifiedAt,
-      String? verifiedBy,
-      String? disputeReason});
+  $Res call({
+    String customerId,
+    String customerName,
+    String bookingId,
+    DateTime collectionTime,
+    double amount,
+    PaymentMode mode,
+    int? emiNumber,
+    double? lateFee,
+    String? chequeNumber,
+    String? transactionId,
+    String? receiptNumber,
+    GeoLocation? location,
+    String? addressAtCollection,
+    List<String> photoUrls,
+    String? signatureUrl,
+    String? notes,
+    bool? isVerified,
+    DateTime? verifiedAt,
+    String? verifiedBy,
+    String? disputeReason,
+  });
 }
 
 /// @nodoc
 class __$$CollectionRecordImplCopyWithImpl<$Res>
     extends _$CollectionRecordCopyWithImpl<$Res, _$CollectionRecordImpl>
     implements _$$CollectionRecordImplCopyWith<$Res> {
-  __$$CollectionRecordImplCopyWithImpl(_$CollectionRecordImpl _value,
-      $Res Function(_$CollectionRecordImpl) _then)
-      : super(_value, _then);
+  __$$CollectionRecordImplCopyWithImpl(
+    _$CollectionRecordImpl _value,
+    $Res Function(_$CollectionRecordImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of CollectionRecord
   /// with the given fields replaced by the non-null parameter values.
@@ -3125,116 +3218,118 @@ class __$$CollectionRecordImplCopyWithImpl<$Res>
     Object? verifiedBy = freezed,
     Object? disputeReason = freezed,
   }) {
-    return _then(_$CollectionRecordImpl(
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerName: null == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      collectionTime: null == collectionTime
-          ? _value.collectionTime
-          : collectionTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      mode: null == mode
-          ? _value.mode
-          : mode // ignore: cast_nullable_to_non_nullable
-              as PaymentMode,
-      emiNumber: freezed == emiNumber
-          ? _value.emiNumber
-          : emiNumber // ignore: cast_nullable_to_non_nullable
-              as int?,
-      lateFee: freezed == lateFee
-          ? _value.lateFee
-          : lateFee // ignore: cast_nullable_to_non_nullable
-              as double?,
-      chequeNumber: freezed == chequeNumber
-          ? _value.chequeNumber
-          : chequeNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      transactionId: freezed == transactionId
-          ? _value.transactionId
-          : transactionId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      receiptNumber: freezed == receiptNumber
-          ? _value.receiptNumber
-          : receiptNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoPoint?,
-      addressAtCollection: freezed == addressAtCollection
-          ? _value.addressAtCollection
-          : addressAtCollection // ignore: cast_nullable_to_non_nullable
-              as String?,
-      photoUrls: null == photoUrls
-          ? _value._photoUrls
-          : photoUrls // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      signatureUrl: freezed == signatureUrl
-          ? _value.signatureUrl
-          : signatureUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isVerified: freezed == isVerified
-          ? _value.isVerified
-          : isVerified // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      verifiedAt: freezed == verifiedAt
-          ? _value.verifiedAt
-          : verifiedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      verifiedBy: freezed == verifiedBy
-          ? _value.verifiedBy
-          : verifiedBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      disputeReason: freezed == disputeReason
-          ? _value.disputeReason
-          : disputeReason // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$CollectionRecordImpl(
+        customerId: null == customerId
+            ? _value.customerId
+            : customerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerName: null == customerName
+            ? _value.customerName
+            : customerName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        bookingId: null == bookingId
+            ? _value.bookingId
+            : bookingId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        collectionTime: null == collectionTime
+            ? _value.collectionTime
+            : collectionTime // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        amount: null == amount
+            ? _value.amount
+            : amount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        mode: null == mode
+            ? _value.mode
+            : mode // ignore: cast_nullable_to_non_nullable
+                  as PaymentMode,
+        emiNumber: freezed == emiNumber
+            ? _value.emiNumber
+            : emiNumber // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        lateFee: freezed == lateFee
+            ? _value.lateFee
+            : lateFee // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        chequeNumber: freezed == chequeNumber
+            ? _value.chequeNumber
+            : chequeNumber // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        transactionId: freezed == transactionId
+            ? _value.transactionId
+            : transactionId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        receiptNumber: freezed == receiptNumber
+            ? _value.receiptNumber
+            : receiptNumber // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        location: freezed == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as GeoLocation?,
+        addressAtCollection: freezed == addressAtCollection
+            ? _value.addressAtCollection
+            : addressAtCollection // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        photoUrls: null == photoUrls
+            ? _value._photoUrls
+            : photoUrls // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        signatureUrl: freezed == signatureUrl
+            ? _value.signatureUrl
+            : signatureUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        isVerified: freezed == isVerified
+            ? _value.isVerified
+            : isVerified // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        verifiedAt: freezed == verifiedAt
+            ? _value.verifiedAt
+            : verifiedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        verifiedBy: freezed == verifiedBy
+            ? _value.verifiedBy
+            : verifiedBy // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        disputeReason: freezed == disputeReason
+            ? _value.disputeReason
+            : disputeReason // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CollectionRecordImpl implements _CollectionRecord {
-  const _$CollectionRecordImpl(
-      {required this.customerId,
-      required this.customerName,
-      required this.bookingId,
-      required this.collectionTime,
-      required this.amount,
-      required this.mode,
-      this.emiNumber,
-      this.lateFee,
-      this.chequeNumber,
-      this.transactionId,
-      this.receiptNumber,
-      @GeoPointJsonConverter() this.location,
-      this.addressAtCollection,
-      final List<String> photoUrls = const [],
-      this.signatureUrl,
-      this.notes,
-      this.isVerified,
-      this.verifiedAt,
-      this.verifiedBy,
-      this.disputeReason})
-      : _photoUrls = photoUrls;
+  const _$CollectionRecordImpl({
+    required this.customerId,
+    required this.customerName,
+    required this.bookingId,
+    required this.collectionTime,
+    required this.amount,
+    required this.mode,
+    this.emiNumber,
+    this.lateFee,
+    this.chequeNumber,
+    this.transactionId,
+    this.receiptNumber,
+    this.location,
+    this.addressAtCollection,
+    final List<String> photoUrls = const [],
+    this.signatureUrl,
+    this.notes,
+    this.isVerified,
+    this.verifiedAt,
+    this.verifiedBy,
+    this.disputeReason,
+  }) : _photoUrls = photoUrls;
 
   factory _$CollectionRecordImpl.fromJson(Map<String, dynamic> json) =>
       _$$CollectionRecordImplFromJson(json);
@@ -3251,7 +3346,7 @@ class _$CollectionRecordImpl implements _CollectionRecord {
   final double amount;
   @override
   final PaymentMode mode;
-// Details
+  // Details
   @override
   final int? emiNumber;
   @override
@@ -3262,15 +3357,14 @@ class _$CollectionRecordImpl implements _CollectionRecord {
   final String? transactionId;
   @override
   final String? receiptNumber;
-// Location
+  // Location
   @override
-  @GeoPointJsonConverter()
-  final GeoPoint? location;
+  final GeoLocation? location;
   @override
   final String? addressAtCollection;
-// Proof
+  // Proof
   final List<String> _photoUrls;
-// Proof
+  // Proof
   @override
   @JsonKey()
   List<String> get photoUrls {
@@ -3279,12 +3373,12 @@ class _$CollectionRecordImpl implements _CollectionRecord {
     return EqualUnmodifiableListView(_photoUrls);
   }
 
-// Payment proof photos
+  // Payment proof photos
   @override
   final String? signatureUrl;
   @override
   final String? notes;
-// Verification
+  // Verification
   @override
   final bool? isVerified;
   @override
@@ -3327,8 +3421,10 @@ class _$CollectionRecordImpl implements _CollectionRecord {
                 other.location == location) &&
             (identical(other.addressAtCollection, addressAtCollection) ||
                 other.addressAtCollection == addressAtCollection) &&
-            const DeepCollectionEquality()
-                .equals(other._photoUrls, _photoUrls) &&
+            const DeepCollectionEquality().equals(
+              other._photoUrls,
+              _photoUrls,
+            ) &&
             (identical(other.signatureUrl, signatureUrl) ||
                 other.signatureUrl == signatureUrl) &&
             (identical(other.notes, notes) || other.notes == notes) &&
@@ -3345,28 +3441,28 @@ class _$CollectionRecordImpl implements _CollectionRecord {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        customerId,
-        customerName,
-        bookingId,
-        collectionTime,
-        amount,
-        mode,
-        emiNumber,
-        lateFee,
-        chequeNumber,
-        transactionId,
-        receiptNumber,
-        location,
-        addressAtCollection,
-        const DeepCollectionEquality().hash(_photoUrls),
-        signatureUrl,
-        notes,
-        isVerified,
-        verifiedAt,
-        verifiedBy,
-        disputeReason
-      ]);
+    runtimeType,
+    customerId,
+    customerName,
+    bookingId,
+    collectionTime,
+    amount,
+    mode,
+    emiNumber,
+    lateFee,
+    chequeNumber,
+    transactionId,
+    receiptNumber,
+    location,
+    addressAtCollection,
+    const DeepCollectionEquality().hash(_photoUrls),
+    signatureUrl,
+    notes,
+    isVerified,
+    verifiedAt,
+    verifiedBy,
+    disputeReason,
+  ]);
 
   /// Create a copy of CollectionRecord
   /// with the given fields replaced by the non-null parameter values.
@@ -3375,38 +3471,39 @@ class _$CollectionRecordImpl implements _CollectionRecord {
   @pragma('vm:prefer-inline')
   _$$CollectionRecordImplCopyWith<_$CollectionRecordImpl> get copyWith =>
       __$$CollectionRecordImplCopyWithImpl<_$CollectionRecordImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CollectionRecordImplToJson(
-      this,
-    );
+    return _$$CollectionRecordImplToJson(this);
   }
 }
 
 abstract class _CollectionRecord implements CollectionRecord {
-  const factory _CollectionRecord(
-      {required final String customerId,
-      required final String customerName,
-      required final String bookingId,
-      required final DateTime collectionTime,
-      required final double amount,
-      required final PaymentMode mode,
-      final int? emiNumber,
-      final double? lateFee,
-      final String? chequeNumber,
-      final String? transactionId,
-      final String? receiptNumber,
-      @GeoPointJsonConverter() final GeoPoint? location,
-      final String? addressAtCollection,
-      final List<String> photoUrls,
-      final String? signatureUrl,
-      final String? notes,
-      final bool? isVerified,
-      final DateTime? verifiedAt,
-      final String? verifiedBy,
-      final String? disputeReason}) = _$CollectionRecordImpl;
+  const factory _CollectionRecord({
+    required final String customerId,
+    required final String customerName,
+    required final String bookingId,
+    required final DateTime collectionTime,
+    required final double amount,
+    required final PaymentMode mode,
+    final int? emiNumber,
+    final double? lateFee,
+    final String? chequeNumber,
+    final String? transactionId,
+    final String? receiptNumber,
+    final GeoLocation? location,
+    final String? addressAtCollection,
+    final List<String> photoUrls,
+    final String? signatureUrl,
+    final String? notes,
+    final bool? isVerified,
+    final DateTime? verifiedAt,
+    final String? verifiedBy,
+    final String? disputeReason,
+  }) = _$CollectionRecordImpl;
 
   factory _CollectionRecord.fromJson(Map<String, dynamic> json) =
       _$CollectionRecordImpl.fromJson;
@@ -3434,8 +3531,7 @@ abstract class _CollectionRecord implements CollectionRecord {
   @override
   String? get receiptNumber; // Location
   @override
-  @GeoPointJsonConverter()
-  GeoPoint? get location;
+  GeoLocation? get location;
   @override
   String? get addressAtCollection; // Proof
   @override
@@ -3462,7 +3558,8 @@ abstract class _CollectionRecord implements CollectionRecord {
 }
 
 MonthlyCollectionPerformance _$MonthlyCollectionPerformanceFromJson(
-    Map<String, dynamic> json) {
+  Map<String, dynamic> json,
+) {
   return _MonthlyCollectionPerformance.fromJson(json);
 }
 
@@ -3482,7 +3579,7 @@ mixin _$MonthlyCollectionPerformance {
   double get successRate =>
       throw _privateConstructorUsedError; // % of visits successful
   int get ranking => throw _privateConstructorUsedError; // Among all agents
-// Financial
+  // Financial
   double get baseSalary => throw _privateConstructorUsedError;
   double get commissionEarned => throw _privateConstructorUsedError;
   double get incentives => throw _privateConstructorUsedError;
@@ -3507,49 +3604,55 @@ mixin _$MonthlyCollectionPerformance {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   $MonthlyCollectionPerformanceCopyWith<MonthlyCollectionPerformance>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $MonthlyCollectionPerformanceCopyWith<$Res> {
   factory $MonthlyCollectionPerformanceCopyWith(
-          MonthlyCollectionPerformance value,
-          $Res Function(MonthlyCollectionPerformance) then) =
-      _$MonthlyCollectionPerformanceCopyWithImpl<$Res,
-          MonthlyCollectionPerformance>;
+    MonthlyCollectionPerformance value,
+    $Res Function(MonthlyCollectionPerformance) then,
+  ) =
+      _$MonthlyCollectionPerformanceCopyWithImpl<
+        $Res,
+        MonthlyCollectionPerformance
+      >;
   @useResult
-  $Res call(
-      {String id,
-      int year,
-      int month,
-      String agentId,
-      int totalCollections,
-      double totalAmount,
-      int totalCustomers,
-      int newCustomersAdded,
-      double collectionRate,
-      double successRate,
-      int ranking,
-      double baseSalary,
-      double commissionEarned,
-      double incentives,
-      double deductions,
-      double totalEarnings,
-      double customerSatisfaction,
-      int complaints,
-      int commendations,
-      double avgCollectionsPerDay,
-      double avgAmountPerDay,
-      double avgDistancePerDay,
-      double targetAmount,
-      double targetAchievement,
-      PaymentStatus paymentStatus,
-      DateTime? paidAt});
+  $Res call({
+    String id,
+    int year,
+    int month,
+    String agentId,
+    int totalCollections,
+    double totalAmount,
+    int totalCustomers,
+    int newCustomersAdded,
+    double collectionRate,
+    double successRate,
+    int ranking,
+    double baseSalary,
+    double commissionEarned,
+    double incentives,
+    double deductions,
+    double totalEarnings,
+    double customerSatisfaction,
+    int complaints,
+    int commendations,
+    double avgCollectionsPerDay,
+    double avgAmountPerDay,
+    double avgDistancePerDay,
+    double targetAmount,
+    double targetAchievement,
+    PaymentStatus paymentStatus,
+    DateTime? paidAt,
+  });
 }
 
 /// @nodoc
-class _$MonthlyCollectionPerformanceCopyWithImpl<$Res,
-        $Val extends MonthlyCollectionPerformance>
+class _$MonthlyCollectionPerformanceCopyWithImpl<
+  $Res,
+  $Val extends MonthlyCollectionPerformance
+>
     implements $MonthlyCollectionPerformanceCopyWith<$Res> {
   _$MonthlyCollectionPerformanceCopyWithImpl(this._value, this._then);
 
@@ -3590,112 +3693,115 @@ class _$MonthlyCollectionPerformanceCopyWithImpl<$Res,
     Object? paymentStatus = null,
     Object? paidAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      year: null == year
-          ? _value.year
-          : year // ignore: cast_nullable_to_non_nullable
-              as int,
-      month: null == month
-          ? _value.month
-          : month // ignore: cast_nullable_to_non_nullable
-              as int,
-      agentId: null == agentId
-          ? _value.agentId
-          : agentId // ignore: cast_nullable_to_non_nullable
-              as String,
-      totalCollections: null == totalCollections
-          ? _value.totalCollections
-          : totalCollections // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalCustomers: null == totalCustomers
-          ? _value.totalCustomers
-          : totalCustomers // ignore: cast_nullable_to_non_nullable
-              as int,
-      newCustomersAdded: null == newCustomersAdded
-          ? _value.newCustomersAdded
-          : newCustomersAdded // ignore: cast_nullable_to_non_nullable
-              as int,
-      collectionRate: null == collectionRate
-          ? _value.collectionRate
-          : collectionRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      successRate: null == successRate
-          ? _value.successRate
-          : successRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      ranking: null == ranking
-          ? _value.ranking
-          : ranking // ignore: cast_nullable_to_non_nullable
-              as int,
-      baseSalary: null == baseSalary
-          ? _value.baseSalary
-          : baseSalary // ignore: cast_nullable_to_non_nullable
-              as double,
-      commissionEarned: null == commissionEarned
-          ? _value.commissionEarned
-          : commissionEarned // ignore: cast_nullable_to_non_nullable
-              as double,
-      incentives: null == incentives
-          ? _value.incentives
-          : incentives // ignore: cast_nullable_to_non_nullable
-              as double,
-      deductions: null == deductions
-          ? _value.deductions
-          : deductions // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalEarnings: null == totalEarnings
-          ? _value.totalEarnings
-          : totalEarnings // ignore: cast_nullable_to_non_nullable
-              as double,
-      customerSatisfaction: null == customerSatisfaction
-          ? _value.customerSatisfaction
-          : customerSatisfaction // ignore: cast_nullable_to_non_nullable
-              as double,
-      complaints: null == complaints
-          ? _value.complaints
-          : complaints // ignore: cast_nullable_to_non_nullable
-              as int,
-      commendations: null == commendations
-          ? _value.commendations
-          : commendations // ignore: cast_nullable_to_non_nullable
-              as int,
-      avgCollectionsPerDay: null == avgCollectionsPerDay
-          ? _value.avgCollectionsPerDay
-          : avgCollectionsPerDay // ignore: cast_nullable_to_non_nullable
-              as double,
-      avgAmountPerDay: null == avgAmountPerDay
-          ? _value.avgAmountPerDay
-          : avgAmountPerDay // ignore: cast_nullable_to_non_nullable
-              as double,
-      avgDistancePerDay: null == avgDistancePerDay
-          ? _value.avgDistancePerDay
-          : avgDistancePerDay // ignore: cast_nullable_to_non_nullable
-              as double,
-      targetAmount: null == targetAmount
-          ? _value.targetAmount
-          : targetAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      targetAchievement: null == targetAchievement
-          ? _value.targetAchievement
-          : targetAchievement // ignore: cast_nullable_to_non_nullable
-              as double,
-      paymentStatus: null == paymentStatus
-          ? _value.paymentStatus
-          : paymentStatus // ignore: cast_nullable_to_non_nullable
-              as PaymentStatus,
-      paidAt: freezed == paidAt
-          ? _value.paidAt
-          : paidAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            year: null == year
+                ? _value.year
+                : year // ignore: cast_nullable_to_non_nullable
+                      as int,
+            month: null == month
+                ? _value.month
+                : month // ignore: cast_nullable_to_non_nullable
+                      as int,
+            agentId: null == agentId
+                ? _value.agentId
+                : agentId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            totalCollections: null == totalCollections
+                ? _value.totalCollections
+                : totalCollections // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalAmount: null == totalAmount
+                ? _value.totalAmount
+                : totalAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            totalCustomers: null == totalCustomers
+                ? _value.totalCustomers
+                : totalCustomers // ignore: cast_nullable_to_non_nullable
+                      as int,
+            newCustomersAdded: null == newCustomersAdded
+                ? _value.newCustomersAdded
+                : newCustomersAdded // ignore: cast_nullable_to_non_nullable
+                      as int,
+            collectionRate: null == collectionRate
+                ? _value.collectionRate
+                : collectionRate // ignore: cast_nullable_to_non_nullable
+                      as double,
+            successRate: null == successRate
+                ? _value.successRate
+                : successRate // ignore: cast_nullable_to_non_nullable
+                      as double,
+            ranking: null == ranking
+                ? _value.ranking
+                : ranking // ignore: cast_nullable_to_non_nullable
+                      as int,
+            baseSalary: null == baseSalary
+                ? _value.baseSalary
+                : baseSalary // ignore: cast_nullable_to_non_nullable
+                      as double,
+            commissionEarned: null == commissionEarned
+                ? _value.commissionEarned
+                : commissionEarned // ignore: cast_nullable_to_non_nullable
+                      as double,
+            incentives: null == incentives
+                ? _value.incentives
+                : incentives // ignore: cast_nullable_to_non_nullable
+                      as double,
+            deductions: null == deductions
+                ? _value.deductions
+                : deductions // ignore: cast_nullable_to_non_nullable
+                      as double,
+            totalEarnings: null == totalEarnings
+                ? _value.totalEarnings
+                : totalEarnings // ignore: cast_nullable_to_non_nullable
+                      as double,
+            customerSatisfaction: null == customerSatisfaction
+                ? _value.customerSatisfaction
+                : customerSatisfaction // ignore: cast_nullable_to_non_nullable
+                      as double,
+            complaints: null == complaints
+                ? _value.complaints
+                : complaints // ignore: cast_nullable_to_non_nullable
+                      as int,
+            commendations: null == commendations
+                ? _value.commendations
+                : commendations // ignore: cast_nullable_to_non_nullable
+                      as int,
+            avgCollectionsPerDay: null == avgCollectionsPerDay
+                ? _value.avgCollectionsPerDay
+                : avgCollectionsPerDay // ignore: cast_nullable_to_non_nullable
+                      as double,
+            avgAmountPerDay: null == avgAmountPerDay
+                ? _value.avgAmountPerDay
+                : avgAmountPerDay // ignore: cast_nullable_to_non_nullable
+                      as double,
+            avgDistancePerDay: null == avgDistancePerDay
+                ? _value.avgDistancePerDay
+                : avgDistancePerDay // ignore: cast_nullable_to_non_nullable
+                      as double,
+            targetAmount: null == targetAmount
+                ? _value.targetAmount
+                : targetAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            targetAchievement: null == targetAchievement
+                ? _value.targetAchievement
+                : targetAchievement // ignore: cast_nullable_to_non_nullable
+                      as double,
+            paymentStatus: null == paymentStatus
+                ? _value.paymentStatus
+                : paymentStatus // ignore: cast_nullable_to_non_nullable
+                      as PaymentStatus,
+            paidAt: freezed == paidAt
+                ? _value.paidAt
+                : paidAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -3703,49 +3809,53 @@ class _$MonthlyCollectionPerformanceCopyWithImpl<$Res,
 abstract class _$$MonthlyCollectionPerformanceImplCopyWith<$Res>
     implements $MonthlyCollectionPerformanceCopyWith<$Res> {
   factory _$$MonthlyCollectionPerformanceImplCopyWith(
-          _$MonthlyCollectionPerformanceImpl value,
-          $Res Function(_$MonthlyCollectionPerformanceImpl) then) =
-      __$$MonthlyCollectionPerformanceImplCopyWithImpl<$Res>;
+    _$MonthlyCollectionPerformanceImpl value,
+    $Res Function(_$MonthlyCollectionPerformanceImpl) then,
+  ) = __$$MonthlyCollectionPerformanceImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      int year,
-      int month,
-      String agentId,
-      int totalCollections,
-      double totalAmount,
-      int totalCustomers,
-      int newCustomersAdded,
-      double collectionRate,
-      double successRate,
-      int ranking,
-      double baseSalary,
-      double commissionEarned,
-      double incentives,
-      double deductions,
-      double totalEarnings,
-      double customerSatisfaction,
-      int complaints,
-      int commendations,
-      double avgCollectionsPerDay,
-      double avgAmountPerDay,
-      double avgDistancePerDay,
-      double targetAmount,
-      double targetAchievement,
-      PaymentStatus paymentStatus,
-      DateTime? paidAt});
+  $Res call({
+    String id,
+    int year,
+    int month,
+    String agentId,
+    int totalCollections,
+    double totalAmount,
+    int totalCustomers,
+    int newCustomersAdded,
+    double collectionRate,
+    double successRate,
+    int ranking,
+    double baseSalary,
+    double commissionEarned,
+    double incentives,
+    double deductions,
+    double totalEarnings,
+    double customerSatisfaction,
+    int complaints,
+    int commendations,
+    double avgCollectionsPerDay,
+    double avgAmountPerDay,
+    double avgDistancePerDay,
+    double targetAmount,
+    double targetAchievement,
+    PaymentStatus paymentStatus,
+    DateTime? paidAt,
+  });
 }
 
 /// @nodoc
 class __$$MonthlyCollectionPerformanceImplCopyWithImpl<$Res>
-    extends _$MonthlyCollectionPerformanceCopyWithImpl<$Res,
-        _$MonthlyCollectionPerformanceImpl>
+    extends
+        _$MonthlyCollectionPerformanceCopyWithImpl<
+          $Res,
+          _$MonthlyCollectionPerformanceImpl
+        >
     implements _$$MonthlyCollectionPerformanceImplCopyWith<$Res> {
   __$$MonthlyCollectionPerformanceImplCopyWithImpl(
-      _$MonthlyCollectionPerformanceImpl _value,
-      $Res Function(_$MonthlyCollectionPerformanceImpl) _then)
-      : super(_value, _then);
+    _$MonthlyCollectionPerformanceImpl _value,
+    $Res Function(_$MonthlyCollectionPerformanceImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of MonthlyCollectionPerformance
   /// with the given fields replaced by the non-null parameter values.
@@ -3779,112 +3889,114 @@ class __$$MonthlyCollectionPerformanceImplCopyWithImpl<$Res>
     Object? paymentStatus = null,
     Object? paidAt = freezed,
   }) {
-    return _then(_$MonthlyCollectionPerformanceImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      year: null == year
-          ? _value.year
-          : year // ignore: cast_nullable_to_non_nullable
-              as int,
-      month: null == month
-          ? _value.month
-          : month // ignore: cast_nullable_to_non_nullable
-              as int,
-      agentId: null == agentId
-          ? _value.agentId
-          : agentId // ignore: cast_nullable_to_non_nullable
-              as String,
-      totalCollections: null == totalCollections
-          ? _value.totalCollections
-          : totalCollections // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalCustomers: null == totalCustomers
-          ? _value.totalCustomers
-          : totalCustomers // ignore: cast_nullable_to_non_nullable
-              as int,
-      newCustomersAdded: null == newCustomersAdded
-          ? _value.newCustomersAdded
-          : newCustomersAdded // ignore: cast_nullable_to_non_nullable
-              as int,
-      collectionRate: null == collectionRate
-          ? _value.collectionRate
-          : collectionRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      successRate: null == successRate
-          ? _value.successRate
-          : successRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      ranking: null == ranking
-          ? _value.ranking
-          : ranking // ignore: cast_nullable_to_non_nullable
-              as int,
-      baseSalary: null == baseSalary
-          ? _value.baseSalary
-          : baseSalary // ignore: cast_nullable_to_non_nullable
-              as double,
-      commissionEarned: null == commissionEarned
-          ? _value.commissionEarned
-          : commissionEarned // ignore: cast_nullable_to_non_nullable
-              as double,
-      incentives: null == incentives
-          ? _value.incentives
-          : incentives // ignore: cast_nullable_to_non_nullable
-              as double,
-      deductions: null == deductions
-          ? _value.deductions
-          : deductions // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalEarnings: null == totalEarnings
-          ? _value.totalEarnings
-          : totalEarnings // ignore: cast_nullable_to_non_nullable
-              as double,
-      customerSatisfaction: null == customerSatisfaction
-          ? _value.customerSatisfaction
-          : customerSatisfaction // ignore: cast_nullable_to_non_nullable
-              as double,
-      complaints: null == complaints
-          ? _value.complaints
-          : complaints // ignore: cast_nullable_to_non_nullable
-              as int,
-      commendations: null == commendations
-          ? _value.commendations
-          : commendations // ignore: cast_nullable_to_non_nullable
-              as int,
-      avgCollectionsPerDay: null == avgCollectionsPerDay
-          ? _value.avgCollectionsPerDay
-          : avgCollectionsPerDay // ignore: cast_nullable_to_non_nullable
-              as double,
-      avgAmountPerDay: null == avgAmountPerDay
-          ? _value.avgAmountPerDay
-          : avgAmountPerDay // ignore: cast_nullable_to_non_nullable
-              as double,
-      avgDistancePerDay: null == avgDistancePerDay
-          ? _value.avgDistancePerDay
-          : avgDistancePerDay // ignore: cast_nullable_to_non_nullable
-              as double,
-      targetAmount: null == targetAmount
-          ? _value.targetAmount
-          : targetAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      targetAchievement: null == targetAchievement
-          ? _value.targetAchievement
-          : targetAchievement // ignore: cast_nullable_to_non_nullable
-              as double,
-      paymentStatus: null == paymentStatus
-          ? _value.paymentStatus
-          : paymentStatus // ignore: cast_nullable_to_non_nullable
-              as PaymentStatus,
-      paidAt: freezed == paidAt
-          ? _value.paidAt
-          : paidAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$MonthlyCollectionPerformanceImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        year: null == year
+            ? _value.year
+            : year // ignore: cast_nullable_to_non_nullable
+                  as int,
+        month: null == month
+            ? _value.month
+            : month // ignore: cast_nullable_to_non_nullable
+                  as int,
+        agentId: null == agentId
+            ? _value.agentId
+            : agentId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        totalCollections: null == totalCollections
+            ? _value.totalCollections
+            : totalCollections // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalAmount: null == totalAmount
+            ? _value.totalAmount
+            : totalAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        totalCustomers: null == totalCustomers
+            ? _value.totalCustomers
+            : totalCustomers // ignore: cast_nullable_to_non_nullable
+                  as int,
+        newCustomersAdded: null == newCustomersAdded
+            ? _value.newCustomersAdded
+            : newCustomersAdded // ignore: cast_nullable_to_non_nullable
+                  as int,
+        collectionRate: null == collectionRate
+            ? _value.collectionRate
+            : collectionRate // ignore: cast_nullable_to_non_nullable
+                  as double,
+        successRate: null == successRate
+            ? _value.successRate
+            : successRate // ignore: cast_nullable_to_non_nullable
+                  as double,
+        ranking: null == ranking
+            ? _value.ranking
+            : ranking // ignore: cast_nullable_to_non_nullable
+                  as int,
+        baseSalary: null == baseSalary
+            ? _value.baseSalary
+            : baseSalary // ignore: cast_nullable_to_non_nullable
+                  as double,
+        commissionEarned: null == commissionEarned
+            ? _value.commissionEarned
+            : commissionEarned // ignore: cast_nullable_to_non_nullable
+                  as double,
+        incentives: null == incentives
+            ? _value.incentives
+            : incentives // ignore: cast_nullable_to_non_nullable
+                  as double,
+        deductions: null == deductions
+            ? _value.deductions
+            : deductions // ignore: cast_nullable_to_non_nullable
+                  as double,
+        totalEarnings: null == totalEarnings
+            ? _value.totalEarnings
+            : totalEarnings // ignore: cast_nullable_to_non_nullable
+                  as double,
+        customerSatisfaction: null == customerSatisfaction
+            ? _value.customerSatisfaction
+            : customerSatisfaction // ignore: cast_nullable_to_non_nullable
+                  as double,
+        complaints: null == complaints
+            ? _value.complaints
+            : complaints // ignore: cast_nullable_to_non_nullable
+                  as int,
+        commendations: null == commendations
+            ? _value.commendations
+            : commendations // ignore: cast_nullable_to_non_nullable
+                  as int,
+        avgCollectionsPerDay: null == avgCollectionsPerDay
+            ? _value.avgCollectionsPerDay
+            : avgCollectionsPerDay // ignore: cast_nullable_to_non_nullable
+                  as double,
+        avgAmountPerDay: null == avgAmountPerDay
+            ? _value.avgAmountPerDay
+            : avgAmountPerDay // ignore: cast_nullable_to_non_nullable
+                  as double,
+        avgDistancePerDay: null == avgDistancePerDay
+            ? _value.avgDistancePerDay
+            : avgDistancePerDay // ignore: cast_nullable_to_non_nullable
+                  as double,
+        targetAmount: null == targetAmount
+            ? _value.targetAmount
+            : targetAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        targetAchievement: null == targetAchievement
+            ? _value.targetAchievement
+            : targetAchievement // ignore: cast_nullable_to_non_nullable
+                  as double,
+        paymentStatus: null == paymentStatus
+            ? _value.paymentStatus
+            : paymentStatus // ignore: cast_nullable_to_non_nullable
+                  as PaymentStatus,
+        paidAt: freezed == paidAt
+            ? _value.paidAt
+            : paidAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
@@ -3892,37 +4004,38 @@ class __$$MonthlyCollectionPerformanceImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MonthlyCollectionPerformanceImpl
     implements _MonthlyCollectionPerformance {
-  const _$MonthlyCollectionPerformanceImpl(
-      {required this.id,
-      required this.year,
-      required this.month,
-      required this.agentId,
-      this.totalCollections = 0,
-      this.totalAmount = 0,
-      this.totalCustomers = 0,
-      this.newCustomersAdded = 0,
-      this.collectionRate = 0,
-      this.successRate = 0,
-      this.ranking = 0,
-      this.baseSalary = 0,
-      this.commissionEarned = 0,
-      this.incentives = 0,
-      this.deductions = 0,
-      this.totalEarnings = 0,
-      this.customerSatisfaction = 0,
-      this.complaints = 0,
-      this.commendations = 0,
-      this.avgCollectionsPerDay = 0,
-      this.avgAmountPerDay = 0,
-      this.avgDistancePerDay = 0,
-      this.targetAmount = 0,
-      this.targetAchievement = 0,
-      required this.paymentStatus,
-      this.paidAt});
+  const _$MonthlyCollectionPerformanceImpl({
+    required this.id,
+    required this.year,
+    required this.month,
+    required this.agentId,
+    this.totalCollections = 0,
+    this.totalAmount = 0,
+    this.totalCustomers = 0,
+    this.newCustomersAdded = 0,
+    this.collectionRate = 0,
+    this.successRate = 0,
+    this.ranking = 0,
+    this.baseSalary = 0,
+    this.commissionEarned = 0,
+    this.incentives = 0,
+    this.deductions = 0,
+    this.totalEarnings = 0,
+    this.customerSatisfaction = 0,
+    this.complaints = 0,
+    this.commendations = 0,
+    this.avgCollectionsPerDay = 0,
+    this.avgAmountPerDay = 0,
+    this.avgDistancePerDay = 0,
+    this.targetAmount = 0,
+    this.targetAchievement = 0,
+    required this.paymentStatus,
+    this.paidAt,
+  });
 
   factory _$MonthlyCollectionPerformanceImpl.fromJson(
-          Map<String, dynamic> json) =>
-      _$$MonthlyCollectionPerformanceImplFromJson(json);
+    Map<String, dynamic> json,
+  ) => _$$MonthlyCollectionPerformanceImplFromJson(json);
 
   @override
   final String id;
@@ -3932,7 +4045,7 @@ class _$MonthlyCollectionPerformanceImpl
   final int month;
   @override
   final String agentId;
-// Collections
+  // Collections
   @override
   @JsonKey()
   final int totalCollections;
@@ -3945,20 +4058,20 @@ class _$MonthlyCollectionPerformanceImpl
   @override
   @JsonKey()
   final int newCustomersAdded;
-// Performance Metrics
+  // Performance Metrics
   @override
   @JsonKey()
   final double collectionRate;
-// % of target
+  // % of target
   @override
   @JsonKey()
   final double successRate;
-// % of visits successful
+  // % of visits successful
   @override
   @JsonKey()
   final int ranking;
-// Among all agents
-// Financial
+  // Among all agents
+  // Financial
   @override
   @JsonKey()
   final double baseSalary;
@@ -3974,18 +4087,18 @@ class _$MonthlyCollectionPerformanceImpl
   @override
   @JsonKey()
   final double totalEarnings;
-// Quality
+  // Quality
   @override
   @JsonKey()
   final double customerSatisfaction;
-// 0-100
+  // 0-100
   @override
   @JsonKey()
   final int complaints;
   @override
   @JsonKey()
   final int commendations;
-// Daily average
+  // Daily average
   @override
   @JsonKey()
   final double avgCollectionsPerDay;
@@ -3995,7 +4108,7 @@ class _$MonthlyCollectionPerformanceImpl
   @override
   @JsonKey()
   final double avgDistancePerDay;
-// Target
+  // Target
   @override
   @JsonKey()
   final double targetAmount;
@@ -4068,34 +4181,34 @@ class _$MonthlyCollectionPerformanceImpl
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        year,
-        month,
-        agentId,
-        totalCollections,
-        totalAmount,
-        totalCustomers,
-        newCustomersAdded,
-        collectionRate,
-        successRate,
-        ranking,
-        baseSalary,
-        commissionEarned,
-        incentives,
-        deductions,
-        totalEarnings,
-        customerSatisfaction,
-        complaints,
-        commendations,
-        avgCollectionsPerDay,
-        avgAmountPerDay,
-        avgDistancePerDay,
-        targetAmount,
-        targetAchievement,
-        paymentStatus,
-        paidAt
-      ]);
+    runtimeType,
+    id,
+    year,
+    month,
+    agentId,
+    totalCollections,
+    totalAmount,
+    totalCustomers,
+    newCustomersAdded,
+    collectionRate,
+    successRate,
+    ranking,
+    baseSalary,
+    commissionEarned,
+    incentives,
+    deductions,
+    totalEarnings,
+    customerSatisfaction,
+    complaints,
+    commendations,
+    avgCollectionsPerDay,
+    avgAmountPerDay,
+    avgDistancePerDay,
+    targetAmount,
+    targetAchievement,
+    paymentStatus,
+    paidAt,
+  ]);
 
   /// Create a copy of MonthlyCollectionPerformance
   /// with the given fields replaced by the non-null parameter values.
@@ -4103,47 +4216,49 @@ class _$MonthlyCollectionPerformanceImpl
   @override
   @pragma('vm:prefer-inline')
   _$$MonthlyCollectionPerformanceImplCopyWith<
-          _$MonthlyCollectionPerformanceImpl>
-      get copyWith => __$$MonthlyCollectionPerformanceImplCopyWithImpl<
-          _$MonthlyCollectionPerformanceImpl>(this, _$identity);
+    _$MonthlyCollectionPerformanceImpl
+  >
+  get copyWith =>
+      __$$MonthlyCollectionPerformanceImplCopyWithImpl<
+        _$MonthlyCollectionPerformanceImpl
+      >(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$MonthlyCollectionPerformanceImplToJson(
-      this,
-    );
+    return _$$MonthlyCollectionPerformanceImplToJson(this);
   }
 }
 
 abstract class _MonthlyCollectionPerformance
     implements MonthlyCollectionPerformance {
-  const factory _MonthlyCollectionPerformance(
-      {required final String id,
-      required final int year,
-      required final int month,
-      required final String agentId,
-      final int totalCollections,
-      final double totalAmount,
-      final int totalCustomers,
-      final int newCustomersAdded,
-      final double collectionRate,
-      final double successRate,
-      final int ranking,
-      final double baseSalary,
-      final double commissionEarned,
-      final double incentives,
-      final double deductions,
-      final double totalEarnings,
-      final double customerSatisfaction,
-      final int complaints,
-      final int commendations,
-      final double avgCollectionsPerDay,
-      final double avgAmountPerDay,
-      final double avgDistancePerDay,
-      final double targetAmount,
-      final double targetAchievement,
-      required final PaymentStatus paymentStatus,
-      final DateTime? paidAt}) = _$MonthlyCollectionPerformanceImpl;
+  const factory _MonthlyCollectionPerformance({
+    required final String id,
+    required final int year,
+    required final int month,
+    required final String agentId,
+    final int totalCollections,
+    final double totalAmount,
+    final int totalCustomers,
+    final int newCustomersAdded,
+    final double collectionRate,
+    final double successRate,
+    final int ranking,
+    final double baseSalary,
+    final double commissionEarned,
+    final double incentives,
+    final double deductions,
+    final double totalEarnings,
+    final double customerSatisfaction,
+    final int complaints,
+    final int commendations,
+    final double avgCollectionsPerDay,
+    final double avgAmountPerDay,
+    final double avgDistancePerDay,
+    final double targetAmount,
+    final double targetAchievement,
+    required final PaymentStatus paymentStatus,
+    final DateTime? paidAt,
+  }) = _$MonthlyCollectionPerformanceImpl;
 
   factory _MonthlyCollectionPerformance.fromJson(Map<String, dynamic> json) =
       _$MonthlyCollectionPerformanceImpl.fromJson;
@@ -4170,7 +4285,7 @@ abstract class _MonthlyCollectionPerformance
   double get successRate; // % of visits successful
   @override
   int get ranking; // Among all agents
-// Financial
+  // Financial
   @override
   double get baseSalary;
   @override
@@ -4207,8 +4322,9 @@ abstract class _MonthlyCollectionPerformance
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MonthlyCollectionPerformanceImplCopyWith<
-          _$MonthlyCollectionPerformanceImpl>
-      get copyWith => throw _privateConstructorUsedError;
+    _$MonthlyCollectionPerformanceImpl
+  >
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 LocationTracking _$LocationTrackingFromJson(Map<String, dynamic> json) {
@@ -4218,8 +4334,7 @@ LocationTracking _$LocationTrackingFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$LocationTracking {
   DateTime get timestamp => throw _privateConstructorUsedError;
-  @GeoPointJsonConverter()
-  GeoPoint get location => throw _privateConstructorUsedError;
+  GeoLocation get location => throw _privateConstructorUsedError;
   String? get activity =>
       throw _privateConstructorUsedError; // traveling, visiting, collecting, break
   String? get customerId => throw _privateConstructorUsedError;
@@ -4237,14 +4352,16 @@ mixin _$LocationTracking {
 /// @nodoc
 abstract class $LocationTrackingCopyWith<$Res> {
   factory $LocationTrackingCopyWith(
-          LocationTracking value, $Res Function(LocationTracking) then) =
-      _$LocationTrackingCopyWithImpl<$Res, LocationTracking>;
+    LocationTracking value,
+    $Res Function(LocationTracking) then,
+  ) = _$LocationTrackingCopyWithImpl<$Res, LocationTracking>;
   @useResult
-  $Res call(
-      {DateTime timestamp,
-      @GeoPointJsonConverter() GeoPoint location,
-      String? activity,
-      String? customerId});
+  $Res call({
+    DateTime timestamp,
+    GeoLocation location,
+    String? activity,
+    String? customerId,
+  });
 }
 
 /// @nodoc
@@ -4267,49 +4384,55 @@ class _$LocationTrackingCopyWithImpl<$Res, $Val extends LocationTracking>
     Object? activity = freezed,
     Object? customerId = freezed,
   }) {
-    return _then(_value.copyWith(
-      timestamp: null == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      location: null == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoPoint,
-      activity: freezed == activity
-          ? _value.activity
-          : activity // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerId: freezed == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            timestamp: null == timestamp
+                ? _value.timestamp
+                : timestamp // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            location: null == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as GeoLocation,
+            activity: freezed == activity
+                ? _value.activity
+                : activity // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            customerId: freezed == customerId
+                ? _value.customerId
+                : customerId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$LocationTrackingImplCopyWith<$Res>
     implements $LocationTrackingCopyWith<$Res> {
-  factory _$$LocationTrackingImplCopyWith(_$LocationTrackingImpl value,
-          $Res Function(_$LocationTrackingImpl) then) =
-      __$$LocationTrackingImplCopyWithImpl<$Res>;
+  factory _$$LocationTrackingImplCopyWith(
+    _$LocationTrackingImpl value,
+    $Res Function(_$LocationTrackingImpl) then,
+  ) = __$$LocationTrackingImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {DateTime timestamp,
-      @GeoPointJsonConverter() GeoPoint location,
-      String? activity,
-      String? customerId});
+  $Res call({
+    DateTime timestamp,
+    GeoLocation location,
+    String? activity,
+    String? customerId,
+  });
 }
 
 /// @nodoc
 class __$$LocationTrackingImplCopyWithImpl<$Res>
     extends _$LocationTrackingCopyWithImpl<$Res, _$LocationTrackingImpl>
     implements _$$LocationTrackingImplCopyWith<$Res> {
-  __$$LocationTrackingImplCopyWithImpl(_$LocationTrackingImpl _value,
-      $Res Function(_$LocationTrackingImpl) _then)
-      : super(_value, _then);
+  __$$LocationTrackingImplCopyWithImpl(
+    _$LocationTrackingImpl _value,
+    $Res Function(_$LocationTrackingImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of LocationTracking
   /// with the given fields replaced by the non-null parameter values.
@@ -4321,35 +4444,38 @@ class __$$LocationTrackingImplCopyWithImpl<$Res>
     Object? activity = freezed,
     Object? customerId = freezed,
   }) {
-    return _then(_$LocationTrackingImpl(
-      timestamp: null == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      location: null == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoPoint,
-      activity: freezed == activity
-          ? _value.activity
-          : activity // ignore: cast_nullable_to_non_nullable
-              as String?,
-      customerId: freezed == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$LocationTrackingImpl(
+        timestamp: null == timestamp
+            ? _value.timestamp
+            : timestamp // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        location: null == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as GeoLocation,
+        activity: freezed == activity
+            ? _value.activity
+            : activity // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        customerId: freezed == customerId
+            ? _value.customerId
+            : customerId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$LocationTrackingImpl implements _LocationTracking {
-  const _$LocationTrackingImpl(
-      {required this.timestamp,
-      @GeoPointJsonConverter() required this.location,
-      this.activity,
-      this.customerId});
+  const _$LocationTrackingImpl({
+    required this.timestamp,
+    required this.location,
+    this.activity,
+    this.customerId,
+  });
 
   factory _$LocationTrackingImpl.fromJson(Map<String, dynamic> json) =>
       _$$LocationTrackingImplFromJson(json);
@@ -4357,11 +4483,10 @@ class _$LocationTrackingImpl implements _LocationTracking {
   @override
   final DateTime timestamp;
   @override
-  @GeoPointJsonConverter()
-  final GeoPoint location;
+  final GeoLocation location;
   @override
   final String? activity;
-// traveling, visiting, collecting, break
+  // traveling, visiting, collecting, break
   @override
   final String? customerId;
 
@@ -4397,22 +4522,23 @@ class _$LocationTrackingImpl implements _LocationTracking {
   @pragma('vm:prefer-inline')
   _$$LocationTrackingImplCopyWith<_$LocationTrackingImpl> get copyWith =>
       __$$LocationTrackingImplCopyWithImpl<_$LocationTrackingImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$LocationTrackingImplToJson(
-      this,
-    );
+    return _$$LocationTrackingImplToJson(this);
   }
 }
 
 abstract class _LocationTracking implements LocationTracking {
-  const factory _LocationTracking(
-      {required final DateTime timestamp,
-      @GeoPointJsonConverter() required final GeoPoint location,
-      final String? activity,
-      final String? customerId}) = _$LocationTrackingImpl;
+  const factory _LocationTracking({
+    required final DateTime timestamp,
+    required final GeoLocation location,
+    final String? activity,
+    final String? customerId,
+  }) = _$LocationTrackingImpl;
 
   factory _LocationTracking.fromJson(Map<String, dynamic> json) =
       _$LocationTrackingImpl.fromJson;
@@ -4420,8 +4546,7 @@ abstract class _LocationTracking implements LocationTracking {
   @override
   DateTime get timestamp;
   @override
-  @GeoPointJsonConverter()
-  GeoPoint get location;
+  GeoLocation get location;
   @override
   String? get activity; // traveling, visiting, collecting, break
   @override
@@ -4454,7 +4579,7 @@ mixin _$EMIDueList {
       throw _privateConstructorUsedError; // Overdue by 7-15 days
   int get regularDues =>
       throw _privateConstructorUsedError; // Due today or future
-// Status
+  // Status
   bool get isCompleted => throw _privateConstructorUsedError;
   DateTime? get completedAt => throw _privateConstructorUsedError;
   int get collectionsMade => throw _privateConstructorUsedError;
@@ -4473,24 +4598,26 @@ mixin _$EMIDueList {
 /// @nodoc
 abstract class $EMIDueListCopyWith<$Res> {
   factory $EMIDueListCopyWith(
-          EMIDueList value, $Res Function(EMIDueList) then) =
-      _$EMIDueListCopyWithImpl<$Res, EMIDueList>;
+    EMIDueList value,
+    $Res Function(EMIDueList) then,
+  ) = _$EMIDueListCopyWithImpl<$Res, EMIDueList>;
   @useResult
-  $Res call(
-      {String id,
-      DateTime generatedAt,
-      String agentId,
-      DateTime forDate,
-      List<EMIDueItem> dues,
-      int totalDues,
-      double totalAmount,
-      int highPriorityDues,
-      int mediumPriorityDues,
-      int regularDues,
-      bool isCompleted,
-      DateTime? completedAt,
-      int collectionsMade,
-      double collectedAmount});
+  $Res call({
+    String id,
+    DateTime generatedAt,
+    String agentId,
+    DateTime forDate,
+    List<EMIDueItem> dues,
+    int totalDues,
+    double totalAmount,
+    int highPriorityDues,
+    int mediumPriorityDues,
+    int regularDues,
+    bool isCompleted,
+    DateTime? completedAt,
+    int collectionsMade,
+    double collectedAmount,
+  });
 }
 
 /// @nodoc
@@ -4523,64 +4650,67 @@ class _$EMIDueListCopyWithImpl<$Res, $Val extends EMIDueList>
     Object? collectionsMade = null,
     Object? collectedAmount = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      generatedAt: null == generatedAt
-          ? _value.generatedAt
-          : generatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      agentId: null == agentId
-          ? _value.agentId
-          : agentId // ignore: cast_nullable_to_non_nullable
-              as String,
-      forDate: null == forDate
-          ? _value.forDate
-          : forDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      dues: null == dues
-          ? _value.dues
-          : dues // ignore: cast_nullable_to_non_nullable
-              as List<EMIDueItem>,
-      totalDues: null == totalDues
-          ? _value.totalDues
-          : totalDues // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      highPriorityDues: null == highPriorityDues
-          ? _value.highPriorityDues
-          : highPriorityDues // ignore: cast_nullable_to_non_nullable
-              as int,
-      mediumPriorityDues: null == mediumPriorityDues
-          ? _value.mediumPriorityDues
-          : mediumPriorityDues // ignore: cast_nullable_to_non_nullable
-              as int,
-      regularDues: null == regularDues
-          ? _value.regularDues
-          : regularDues // ignore: cast_nullable_to_non_nullable
-              as int,
-      isCompleted: null == isCompleted
-          ? _value.isCompleted
-          : isCompleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      completedAt: freezed == completedAt
-          ? _value.completedAt
-          : completedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      collectionsMade: null == collectionsMade
-          ? _value.collectionsMade
-          : collectionsMade // ignore: cast_nullable_to_non_nullable
-              as int,
-      collectedAmount: null == collectedAmount
-          ? _value.collectedAmount
-          : collectedAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            generatedAt: null == generatedAt
+                ? _value.generatedAt
+                : generatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            agentId: null == agentId
+                ? _value.agentId
+                : agentId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            forDate: null == forDate
+                ? _value.forDate
+                : forDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            dues: null == dues
+                ? _value.dues
+                : dues // ignore: cast_nullable_to_non_nullable
+                      as List<EMIDueItem>,
+            totalDues: null == totalDues
+                ? _value.totalDues
+                : totalDues // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalAmount: null == totalAmount
+                ? _value.totalAmount
+                : totalAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            highPriorityDues: null == highPriorityDues
+                ? _value.highPriorityDues
+                : highPriorityDues // ignore: cast_nullable_to_non_nullable
+                      as int,
+            mediumPriorityDues: null == mediumPriorityDues
+                ? _value.mediumPriorityDues
+                : mediumPriorityDues // ignore: cast_nullable_to_non_nullable
+                      as int,
+            regularDues: null == regularDues
+                ? _value.regularDues
+                : regularDues // ignore: cast_nullable_to_non_nullable
+                      as int,
+            isCompleted: null == isCompleted
+                ? _value.isCompleted
+                : isCompleted // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            completedAt: freezed == completedAt
+                ? _value.completedAt
+                : completedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            collectionsMade: null == collectionsMade
+                ? _value.collectionsMade
+                : collectionsMade // ignore: cast_nullable_to_non_nullable
+                      as int,
+            collectedAmount: null == collectedAmount
+                ? _value.collectedAmount
+                : collectedAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -4588,25 +4718,27 @@ class _$EMIDueListCopyWithImpl<$Res, $Val extends EMIDueList>
 abstract class _$$EMIDueListImplCopyWith<$Res>
     implements $EMIDueListCopyWith<$Res> {
   factory _$$EMIDueListImplCopyWith(
-          _$EMIDueListImpl value, $Res Function(_$EMIDueListImpl) then) =
-      __$$EMIDueListImplCopyWithImpl<$Res>;
+    _$EMIDueListImpl value,
+    $Res Function(_$EMIDueListImpl) then,
+  ) = __$$EMIDueListImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      DateTime generatedAt,
-      String agentId,
-      DateTime forDate,
-      List<EMIDueItem> dues,
-      int totalDues,
-      double totalAmount,
-      int highPriorityDues,
-      int mediumPriorityDues,
-      int regularDues,
-      bool isCompleted,
-      DateTime? completedAt,
-      int collectionsMade,
-      double collectedAmount});
+  $Res call({
+    String id,
+    DateTime generatedAt,
+    String agentId,
+    DateTime forDate,
+    List<EMIDueItem> dues,
+    int totalDues,
+    double totalAmount,
+    int highPriorityDues,
+    int mediumPriorityDues,
+    int regularDues,
+    bool isCompleted,
+    DateTime? completedAt,
+    int collectionsMade,
+    double collectedAmount,
+  });
 }
 
 /// @nodoc
@@ -4614,8 +4746,9 @@ class __$$EMIDueListImplCopyWithImpl<$Res>
     extends _$EMIDueListCopyWithImpl<$Res, _$EMIDueListImpl>
     implements _$$EMIDueListImplCopyWith<$Res> {
   __$$EMIDueListImplCopyWithImpl(
-      _$EMIDueListImpl _value, $Res Function(_$EMIDueListImpl) _then)
-      : super(_value, _then);
+    _$EMIDueListImpl _value,
+    $Res Function(_$EMIDueListImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of EMIDueList
   /// with the given fields replaced by the non-null parameter values.
@@ -4637,86 +4770,88 @@ class __$$EMIDueListImplCopyWithImpl<$Res>
     Object? collectionsMade = null,
     Object? collectedAmount = null,
   }) {
-    return _then(_$EMIDueListImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      generatedAt: null == generatedAt
-          ? _value.generatedAt
-          : generatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      agentId: null == agentId
-          ? _value.agentId
-          : agentId // ignore: cast_nullable_to_non_nullable
-              as String,
-      forDate: null == forDate
-          ? _value.forDate
-          : forDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      dues: null == dues
-          ? _value._dues
-          : dues // ignore: cast_nullable_to_non_nullable
-              as List<EMIDueItem>,
-      totalDues: null == totalDues
-          ? _value.totalDues
-          : totalDues // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      highPriorityDues: null == highPriorityDues
-          ? _value.highPriorityDues
-          : highPriorityDues // ignore: cast_nullable_to_non_nullable
-              as int,
-      mediumPriorityDues: null == mediumPriorityDues
-          ? _value.mediumPriorityDues
-          : mediumPriorityDues // ignore: cast_nullable_to_non_nullable
-              as int,
-      regularDues: null == regularDues
-          ? _value.regularDues
-          : regularDues // ignore: cast_nullable_to_non_nullable
-              as int,
-      isCompleted: null == isCompleted
-          ? _value.isCompleted
-          : isCompleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      completedAt: freezed == completedAt
-          ? _value.completedAt
-          : completedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      collectionsMade: null == collectionsMade
-          ? _value.collectionsMade
-          : collectionsMade // ignore: cast_nullable_to_non_nullable
-              as int,
-      collectedAmount: null == collectedAmount
-          ? _value.collectedAmount
-          : collectedAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$EMIDueListImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        generatedAt: null == generatedAt
+            ? _value.generatedAt
+            : generatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        agentId: null == agentId
+            ? _value.agentId
+            : agentId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        forDate: null == forDate
+            ? _value.forDate
+            : forDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        dues: null == dues
+            ? _value._dues
+            : dues // ignore: cast_nullable_to_non_nullable
+                  as List<EMIDueItem>,
+        totalDues: null == totalDues
+            ? _value.totalDues
+            : totalDues // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalAmount: null == totalAmount
+            ? _value.totalAmount
+            : totalAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        highPriorityDues: null == highPriorityDues
+            ? _value.highPriorityDues
+            : highPriorityDues // ignore: cast_nullable_to_non_nullable
+                  as int,
+        mediumPriorityDues: null == mediumPriorityDues
+            ? _value.mediumPriorityDues
+            : mediumPriorityDues // ignore: cast_nullable_to_non_nullable
+                  as int,
+        regularDues: null == regularDues
+            ? _value.regularDues
+            : regularDues // ignore: cast_nullable_to_non_nullable
+                  as int,
+        isCompleted: null == isCompleted
+            ? _value.isCompleted
+            : isCompleted // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        completedAt: freezed == completedAt
+            ? _value.completedAt
+            : completedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        collectionsMade: null == collectionsMade
+            ? _value.collectionsMade
+            : collectionsMade // ignore: cast_nullable_to_non_nullable
+                  as int,
+        collectedAmount: null == collectedAmount
+            ? _value.collectedAmount
+            : collectedAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$EMIDueListImpl implements _EMIDueList {
-  const _$EMIDueListImpl(
-      {required this.id,
-      required this.generatedAt,
-      required this.agentId,
-      required this.forDate,
-      final List<EMIDueItem> dues = const [],
-      this.totalDues = 0,
-      this.totalAmount = 0,
-      this.highPriorityDues = 0,
-      this.mediumPriorityDues = 0,
-      this.regularDues = 0,
-      this.isCompleted = false,
-      this.completedAt,
-      this.collectionsMade = 0,
-      this.collectedAmount = 0})
-      : _dues = dues;
+  const _$EMIDueListImpl({
+    required this.id,
+    required this.generatedAt,
+    required this.agentId,
+    required this.forDate,
+    final List<EMIDueItem> dues = const [],
+    this.totalDues = 0,
+    this.totalAmount = 0,
+    this.highPriorityDues = 0,
+    this.mediumPriorityDues = 0,
+    this.regularDues = 0,
+    this.isCompleted = false,
+    this.completedAt,
+    this.collectionsMade = 0,
+    this.collectedAmount = 0,
+  }) : _dues = dues;
 
   factory _$EMIDueListImpl.fromJson(Map<String, dynamic> json) =>
       _$$EMIDueListImplFromJson(json);
@@ -4729,9 +4864,9 @@ class _$EMIDueListImpl implements _EMIDueList {
   final String agentId;
   @override
   final DateTime forDate;
-// List of dues
+  // List of dues
   final List<EMIDueItem> _dues;
-// List of dues
+  // List of dues
   @override
   @JsonKey()
   List<EMIDueItem> get dues {
@@ -4740,7 +4875,7 @@ class _$EMIDueListImpl implements _EMIDueList {
     return EqualUnmodifiableListView(_dues);
   }
 
-// Summary
+  // Summary
   @override
   @JsonKey()
   final int totalDues;
@@ -4750,16 +4885,16 @@ class _$EMIDueListImpl implements _EMIDueList {
   @override
   @JsonKey()
   final int highPriorityDues;
-// Overdue by > 15 days
+  // Overdue by > 15 days
   @override
   @JsonKey()
   final int mediumPriorityDues;
-// Overdue by 7-15 days
+  // Overdue by 7-15 days
   @override
   @JsonKey()
   final int regularDues;
-// Due today or future
-// Status
+  // Due today or future
+  // Status
   @override
   @JsonKey()
   final bool isCompleted;
@@ -4811,21 +4946,22 @@ class _$EMIDueListImpl implements _EMIDueList {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      generatedAt,
-      agentId,
-      forDate,
-      const DeepCollectionEquality().hash(_dues),
-      totalDues,
-      totalAmount,
-      highPriorityDues,
-      mediumPriorityDues,
-      regularDues,
-      isCompleted,
-      completedAt,
-      collectionsMade,
-      collectedAmount);
+    runtimeType,
+    id,
+    generatedAt,
+    agentId,
+    forDate,
+    const DeepCollectionEquality().hash(_dues),
+    totalDues,
+    totalAmount,
+    highPriorityDues,
+    mediumPriorityDues,
+    regularDues,
+    isCompleted,
+    completedAt,
+    collectionsMade,
+    collectedAmount,
+  );
 
   /// Create a copy of EMIDueList
   /// with the given fields replaced by the non-null parameter values.
@@ -4837,28 +4973,27 @@ class _$EMIDueListImpl implements _EMIDueList {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$EMIDueListImplToJson(
-      this,
-    );
+    return _$$EMIDueListImplToJson(this);
   }
 }
 
 abstract class _EMIDueList implements EMIDueList {
-  const factory _EMIDueList(
-      {required final String id,
-      required final DateTime generatedAt,
-      required final String agentId,
-      required final DateTime forDate,
-      final List<EMIDueItem> dues,
-      final int totalDues,
-      final double totalAmount,
-      final int highPriorityDues,
-      final int mediumPriorityDues,
-      final int regularDues,
-      final bool isCompleted,
-      final DateTime? completedAt,
-      final int collectionsMade,
-      final double collectedAmount}) = _$EMIDueListImpl;
+  const factory _EMIDueList({
+    required final String id,
+    required final DateTime generatedAt,
+    required final String agentId,
+    required final DateTime forDate,
+    final List<EMIDueItem> dues,
+    final int totalDues,
+    final double totalAmount,
+    final int highPriorityDues,
+    final int mediumPriorityDues,
+    final int regularDues,
+    final bool isCompleted,
+    final DateTime? completedAt,
+    final int collectionsMade,
+    final double collectedAmount,
+  }) = _$EMIDueListImpl;
 
   factory _EMIDueList.fromJson(Map<String, dynamic> json) =
       _$EMIDueListImpl.fromJson;
@@ -4883,7 +5018,7 @@ abstract class _EMIDueList implements EMIDueList {
   int get mediumPriorityDues; // Overdue by 7-15 days
   @override
   int get regularDues; // Due today or future
-// Status
+  // Status
   @override
   bool get isCompleted;
   @override
@@ -4928,8 +5063,7 @@ mixin _$EMIDueItem {
   bool? get isCollected => throw _privateConstructorUsedError;
   double? get collectedAmount => throw _privateConstructorUsedError;
   DateTime? get collectedAt => throw _privateConstructorUsedError; // Location
-  @GeoPointJsonConverter()
-  GeoPoint? get location => throw _privateConstructorUsedError;
+  GeoLocation? get location => throw _privateConstructorUsedError;
   String? get landmark => throw _privateConstructorUsedError;
   String? get preferredTime => throw _privateConstructorUsedError;
 
@@ -4946,31 +5080,33 @@ mixin _$EMIDueItem {
 /// @nodoc
 abstract class $EMIDueItemCopyWith<$Res> {
   factory $EMIDueItemCopyWith(
-          EMIDueItem value, $Res Function(EMIDueItem) then) =
-      _$EMIDueItemCopyWithImpl<$Res, EMIDueItem>;
+    EMIDueItem value,
+    $Res Function(EMIDueItem) then,
+  ) = _$EMIDueItemCopyWithImpl<$Res, EMIDueItem>;
   @useResult
-  $Res call(
-      {String customerId,
-      String customerName,
-      String phone,
-      String address,
-      String bookingId,
-      String plotNumber,
-      String colonyName,
-      double emiAmount,
-      DateTime dueDate,
-      int daysOverdue,
-      double totalDue,
-      double lateFee,
-      DuePriority priority,
-      String? lastVisitNotes,
-      DateTime? lastVisitDate,
-      bool? isCollected,
-      double? collectedAmount,
-      DateTime? collectedAt,
-      @GeoPointJsonConverter() GeoPoint? location,
-      String? landmark,
-      String? preferredTime});
+  $Res call({
+    String customerId,
+    String customerName,
+    String phone,
+    String address,
+    String bookingId,
+    String plotNumber,
+    String colonyName,
+    double emiAmount,
+    DateTime dueDate,
+    int daysOverdue,
+    double totalDue,
+    double lateFee,
+    DuePriority priority,
+    String? lastVisitNotes,
+    DateTime? lastVisitDate,
+    bool? isCollected,
+    double? collectedAmount,
+    DateTime? collectedAt,
+    GeoLocation? location,
+    String? landmark,
+    String? preferredTime,
+  });
 }
 
 /// @nodoc
@@ -5010,92 +5146,95 @@ class _$EMIDueItemCopyWithImpl<$Res, $Val extends EMIDueItem>
     Object? landmark = freezed,
     Object? preferredTime = freezed,
   }) {
-    return _then(_value.copyWith(
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerName: null == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      address: null == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      plotNumber: null == plotNumber
-          ? _value.plotNumber
-          : plotNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      colonyName: null == colonyName
-          ? _value.colonyName
-          : colonyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      emiAmount: null == emiAmount
-          ? _value.emiAmount
-          : emiAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      dueDate: null == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      daysOverdue: null == daysOverdue
-          ? _value.daysOverdue
-          : daysOverdue // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalDue: null == totalDue
-          ? _value.totalDue
-          : totalDue // ignore: cast_nullable_to_non_nullable
-              as double,
-      lateFee: null == lateFee
-          ? _value.lateFee
-          : lateFee // ignore: cast_nullable_to_non_nullable
-              as double,
-      priority: null == priority
-          ? _value.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as DuePriority,
-      lastVisitNotes: freezed == lastVisitNotes
-          ? _value.lastVisitNotes
-          : lastVisitNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastVisitDate: freezed == lastVisitDate
-          ? _value.lastVisitDate
-          : lastVisitDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      isCollected: freezed == isCollected
-          ? _value.isCollected
-          : isCollected // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      collectedAmount: freezed == collectedAmount
-          ? _value.collectedAmount
-          : collectedAmount // ignore: cast_nullable_to_non_nullable
-              as double?,
-      collectedAt: freezed == collectedAt
-          ? _value.collectedAt
-          : collectedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoPoint?,
-      landmark: freezed == landmark
-          ? _value.landmark
-          : landmark // ignore: cast_nullable_to_non_nullable
-              as String?,
-      preferredTime: freezed == preferredTime
-          ? _value.preferredTime
-          : preferredTime // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            customerId: null == customerId
+                ? _value.customerId
+                : customerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerName: null == customerName
+                ? _value.customerName
+                : customerName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            phone: null == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            address: null == address
+                ? _value.address
+                : address // ignore: cast_nullable_to_non_nullable
+                      as String,
+            bookingId: null == bookingId
+                ? _value.bookingId
+                : bookingId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            plotNumber: null == plotNumber
+                ? _value.plotNumber
+                : plotNumber // ignore: cast_nullable_to_non_nullable
+                      as String,
+            colonyName: null == colonyName
+                ? _value.colonyName
+                : colonyName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            emiAmount: null == emiAmount
+                ? _value.emiAmount
+                : emiAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            dueDate: null == dueDate
+                ? _value.dueDate
+                : dueDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            daysOverdue: null == daysOverdue
+                ? _value.daysOverdue
+                : daysOverdue // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalDue: null == totalDue
+                ? _value.totalDue
+                : totalDue // ignore: cast_nullable_to_non_nullable
+                      as double,
+            lateFee: null == lateFee
+                ? _value.lateFee
+                : lateFee // ignore: cast_nullable_to_non_nullable
+                      as double,
+            priority: null == priority
+                ? _value.priority
+                : priority // ignore: cast_nullable_to_non_nullable
+                      as DuePriority,
+            lastVisitNotes: freezed == lastVisitNotes
+                ? _value.lastVisitNotes
+                : lastVisitNotes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            lastVisitDate: freezed == lastVisitDate
+                ? _value.lastVisitDate
+                : lastVisitDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            isCollected: freezed == isCollected
+                ? _value.isCollected
+                : isCollected // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            collectedAmount: freezed == collectedAmount
+                ? _value.collectedAmount
+                : collectedAmount // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            collectedAt: freezed == collectedAt
+                ? _value.collectedAt
+                : collectedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            location: freezed == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as GeoLocation?,
+            landmark: freezed == landmark
+                ? _value.landmark
+                : landmark // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            preferredTime: freezed == preferredTime
+                ? _value.preferredTime
+                : preferredTime // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -5103,32 +5242,34 @@ class _$EMIDueItemCopyWithImpl<$Res, $Val extends EMIDueItem>
 abstract class _$$EMIDueItemImplCopyWith<$Res>
     implements $EMIDueItemCopyWith<$Res> {
   factory _$$EMIDueItemImplCopyWith(
-          _$EMIDueItemImpl value, $Res Function(_$EMIDueItemImpl) then) =
-      __$$EMIDueItemImplCopyWithImpl<$Res>;
+    _$EMIDueItemImpl value,
+    $Res Function(_$EMIDueItemImpl) then,
+  ) = __$$EMIDueItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String customerId,
-      String customerName,
-      String phone,
-      String address,
-      String bookingId,
-      String plotNumber,
-      String colonyName,
-      double emiAmount,
-      DateTime dueDate,
-      int daysOverdue,
-      double totalDue,
-      double lateFee,
-      DuePriority priority,
-      String? lastVisitNotes,
-      DateTime? lastVisitDate,
-      bool? isCollected,
-      double? collectedAmount,
-      DateTime? collectedAt,
-      @GeoPointJsonConverter() GeoPoint? location,
-      String? landmark,
-      String? preferredTime});
+  $Res call({
+    String customerId,
+    String customerName,
+    String phone,
+    String address,
+    String bookingId,
+    String plotNumber,
+    String colonyName,
+    double emiAmount,
+    DateTime dueDate,
+    int daysOverdue,
+    double totalDue,
+    double lateFee,
+    DuePriority priority,
+    String? lastVisitNotes,
+    DateTime? lastVisitDate,
+    bool? isCollected,
+    double? collectedAmount,
+    DateTime? collectedAt,
+    GeoLocation? location,
+    String? landmark,
+    String? preferredTime,
+  });
 }
 
 /// @nodoc
@@ -5136,8 +5277,9 @@ class __$$EMIDueItemImplCopyWithImpl<$Res>
     extends _$EMIDueItemCopyWithImpl<$Res, _$EMIDueItemImpl>
     implements _$$EMIDueItemImplCopyWith<$Res> {
   __$$EMIDueItemImplCopyWithImpl(
-      _$EMIDueItemImpl _value, $Res Function(_$EMIDueItemImpl) _then)
-      : super(_value, _then);
+    _$EMIDueItemImpl _value,
+    $Res Function(_$EMIDueItemImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of EMIDueItem
   /// with the given fields replaced by the non-null parameter values.
@@ -5166,120 +5308,123 @@ class __$$EMIDueItemImplCopyWithImpl<$Res>
     Object? landmark = freezed,
     Object? preferredTime = freezed,
   }) {
-    return _then(_$EMIDueItemImpl(
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerName: null == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      address: null == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      plotNumber: null == plotNumber
-          ? _value.plotNumber
-          : plotNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      colonyName: null == colonyName
-          ? _value.colonyName
-          : colonyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      emiAmount: null == emiAmount
-          ? _value.emiAmount
-          : emiAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      dueDate: null == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      daysOverdue: null == daysOverdue
-          ? _value.daysOverdue
-          : daysOverdue // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalDue: null == totalDue
-          ? _value.totalDue
-          : totalDue // ignore: cast_nullable_to_non_nullable
-              as double,
-      lateFee: null == lateFee
-          ? _value.lateFee
-          : lateFee // ignore: cast_nullable_to_non_nullable
-              as double,
-      priority: null == priority
-          ? _value.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as DuePriority,
-      lastVisitNotes: freezed == lastVisitNotes
-          ? _value.lastVisitNotes
-          : lastVisitNotes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastVisitDate: freezed == lastVisitDate
-          ? _value.lastVisitDate
-          : lastVisitDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      isCollected: freezed == isCollected
-          ? _value.isCollected
-          : isCollected // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      collectedAmount: freezed == collectedAmount
-          ? _value.collectedAmount
-          : collectedAmount // ignore: cast_nullable_to_non_nullable
-              as double?,
-      collectedAt: freezed == collectedAt
-          ? _value.collectedAt
-          : collectedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoPoint?,
-      landmark: freezed == landmark
-          ? _value.landmark
-          : landmark // ignore: cast_nullable_to_non_nullable
-              as String?,
-      preferredTime: freezed == preferredTime
-          ? _value.preferredTime
-          : preferredTime // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$EMIDueItemImpl(
+        customerId: null == customerId
+            ? _value.customerId
+            : customerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerName: null == customerName
+            ? _value.customerName
+            : customerName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        phone: null == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        address: null == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
+                  as String,
+        bookingId: null == bookingId
+            ? _value.bookingId
+            : bookingId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        plotNumber: null == plotNumber
+            ? _value.plotNumber
+            : plotNumber // ignore: cast_nullable_to_non_nullable
+                  as String,
+        colonyName: null == colonyName
+            ? _value.colonyName
+            : colonyName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        emiAmount: null == emiAmount
+            ? _value.emiAmount
+            : emiAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        dueDate: null == dueDate
+            ? _value.dueDate
+            : dueDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        daysOverdue: null == daysOverdue
+            ? _value.daysOverdue
+            : daysOverdue // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalDue: null == totalDue
+            ? _value.totalDue
+            : totalDue // ignore: cast_nullable_to_non_nullable
+                  as double,
+        lateFee: null == lateFee
+            ? _value.lateFee
+            : lateFee // ignore: cast_nullable_to_non_nullable
+                  as double,
+        priority: null == priority
+            ? _value.priority
+            : priority // ignore: cast_nullable_to_non_nullable
+                  as DuePriority,
+        lastVisitNotes: freezed == lastVisitNotes
+            ? _value.lastVisitNotes
+            : lastVisitNotes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        lastVisitDate: freezed == lastVisitDate
+            ? _value.lastVisitDate
+            : lastVisitDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        isCollected: freezed == isCollected
+            ? _value.isCollected
+            : isCollected // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        collectedAmount: freezed == collectedAmount
+            ? _value.collectedAmount
+            : collectedAmount // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        collectedAt: freezed == collectedAt
+            ? _value.collectedAt
+            : collectedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        location: freezed == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as GeoLocation?,
+        landmark: freezed == landmark
+            ? _value.landmark
+            : landmark // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        preferredTime: freezed == preferredTime
+            ? _value.preferredTime
+            : preferredTime // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$EMIDueItemImpl implements _EMIDueItem {
-  const _$EMIDueItemImpl(
-      {required this.customerId,
-      required this.customerName,
-      required this.phone,
-      required this.address,
-      required this.bookingId,
-      required this.plotNumber,
-      required this.colonyName,
-      required this.emiAmount,
-      required this.dueDate,
-      required this.daysOverdue,
-      required this.totalDue,
-      this.lateFee = 0,
-      required this.priority,
-      this.lastVisitNotes,
-      this.lastVisitDate,
-      this.isCollected,
-      this.collectedAmount,
-      this.collectedAt,
-      @GeoPointJsonConverter() this.location,
-      this.landmark,
-      this.preferredTime});
+  const _$EMIDueItemImpl({
+    required this.customerId,
+    required this.customerName,
+    required this.phone,
+    required this.address,
+    required this.bookingId,
+    required this.plotNumber,
+    required this.colonyName,
+    required this.emiAmount,
+    required this.dueDate,
+    required this.daysOverdue,
+    required this.totalDue,
+    this.lateFee = 0,
+    required this.priority,
+    this.lastVisitNotes,
+    this.lastVisitDate,
+    this.isCollected,
+    this.collectedAmount,
+    this.collectedAt,
+    this.location,
+    this.landmark,
+    this.preferredTime,
+  });
 
   factory _$EMIDueItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$EMIDueItemImplFromJson(json);
@@ -5298,39 +5443,38 @@ class _$EMIDueItemImpl implements _EMIDueItem {
   final String plotNumber;
   @override
   final String colonyName;
-// Due Details
+  // Due Details
   @override
   final double emiAmount;
   @override
   final DateTime dueDate;
   @override
   final int daysOverdue;
-// Total Dues
+  // Total Dues
   @override
   final double totalDue;
-// Including late fees
+  // Including late fees
   @override
   @JsonKey()
   final double lateFee;
-// Status
+  // Status
   @override
   final DuePriority priority;
-// High, Medium, Low
+  // High, Medium, Low
   @override
   final String? lastVisitNotes;
   @override
   final DateTime? lastVisitDate;
-// Collection
+  // Collection
   @override
   final bool? isCollected;
   @override
   final double? collectedAmount;
   @override
   final DateTime? collectedAt;
-// Location
+  // Location
   @override
-  @GeoPointJsonConverter()
-  final GeoPoint? location;
+  final GeoLocation? location;
   @override
   final String? landmark;
   @override
@@ -5389,29 +5533,29 @@ class _$EMIDueItemImpl implements _EMIDueItem {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        customerId,
-        customerName,
-        phone,
-        address,
-        bookingId,
-        plotNumber,
-        colonyName,
-        emiAmount,
-        dueDate,
-        daysOverdue,
-        totalDue,
-        lateFee,
-        priority,
-        lastVisitNotes,
-        lastVisitDate,
-        isCollected,
-        collectedAmount,
-        collectedAt,
-        location,
-        landmark,
-        preferredTime
-      ]);
+    runtimeType,
+    customerId,
+    customerName,
+    phone,
+    address,
+    bookingId,
+    plotNumber,
+    colonyName,
+    emiAmount,
+    dueDate,
+    daysOverdue,
+    totalDue,
+    lateFee,
+    priority,
+    lastVisitNotes,
+    lastVisitDate,
+    isCollected,
+    collectedAmount,
+    collectedAt,
+    location,
+    landmark,
+    preferredTime,
+  ]);
 
   /// Create a copy of EMIDueItem
   /// with the given fields replaced by the non-null parameter values.
@@ -5423,35 +5567,34 @@ class _$EMIDueItemImpl implements _EMIDueItem {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$EMIDueItemImplToJson(
-      this,
-    );
+    return _$$EMIDueItemImplToJson(this);
   }
 }
 
 abstract class _EMIDueItem implements EMIDueItem {
-  const factory _EMIDueItem(
-      {required final String customerId,
-      required final String customerName,
-      required final String phone,
-      required final String address,
-      required final String bookingId,
-      required final String plotNumber,
-      required final String colonyName,
-      required final double emiAmount,
-      required final DateTime dueDate,
-      required final int daysOverdue,
-      required final double totalDue,
-      final double lateFee,
-      required final DuePriority priority,
-      final String? lastVisitNotes,
-      final DateTime? lastVisitDate,
-      final bool? isCollected,
-      final double? collectedAmount,
-      final DateTime? collectedAt,
-      @GeoPointJsonConverter() final GeoPoint? location,
-      final String? landmark,
-      final String? preferredTime}) = _$EMIDueItemImpl;
+  const factory _EMIDueItem({
+    required final String customerId,
+    required final String customerName,
+    required final String phone,
+    required final String address,
+    required final String bookingId,
+    required final String plotNumber,
+    required final String colonyName,
+    required final double emiAmount,
+    required final DateTime dueDate,
+    required final int daysOverdue,
+    required final double totalDue,
+    final double lateFee,
+    required final DuePriority priority,
+    final String? lastVisitNotes,
+    final DateTime? lastVisitDate,
+    final bool? isCollected,
+    final double? collectedAmount,
+    final DateTime? collectedAt,
+    final GeoLocation? location,
+    final String? landmark,
+    final String? preferredTime,
+  }) = _$EMIDueItemImpl;
 
   factory _EMIDueItem.fromJson(Map<String, dynamic> json) =
       _$EMIDueItemImpl.fromJson;
@@ -5493,8 +5636,7 @@ abstract class _EMIDueItem implements EMIDueItem {
   @override
   DateTime? get collectedAt; // Location
   @override
-  @GeoPointJsonConverter()
-  GeoPoint? get location;
+  GeoLocation? get location;
   @override
   String? get landmark;
   @override
@@ -5533,7 +5675,7 @@ mixin _$EMIReminder {
   DateTime? get respondedAt => throw _privateConstructorUsedError;
   String? get responseType =>
       throw _privateConstructorUsedError; // WillPay, NeedTime, CannotPay, Paid
-// Agent Assignment
+  // Agent Assignment
   String? get assignedAgentId => throw _privateConstructorUsedError;
   DateTime? get agentAssignedAt => throw _privateConstructorUsedError;
 
@@ -5550,28 +5692,30 @@ mixin _$EMIReminder {
 /// @nodoc
 abstract class $EMIReminderCopyWith<$Res> {
   factory $EMIReminderCopyWith(
-          EMIReminder value, $Res Function(EMIReminder) then) =
-      _$EMIReminderCopyWithImpl<$Res, EMIReminder>;
+    EMIReminder value,
+    $Res Function(EMIReminder) then,
+  ) = _$EMIReminderCopyWithImpl<$Res, EMIReminder>;
   @useResult
-  $Res call(
-      {String id,
-      String customerId,
-      String bookingId,
-      String customerName,
-      String phone,
-      double emiAmount,
-      DateTime dueDate,
-      ReminderType type,
-      ReminderStatus status,
-      String? messageContent,
-      DateTime? scheduledAt,
-      DateTime? sentAt,
-      DateTime? deliveredAt,
-      bool? isResponded,
-      DateTime? respondedAt,
-      String? responseType,
-      String? assignedAgentId,
-      DateTime? agentAssignedAt});
+  $Res call({
+    String id,
+    String customerId,
+    String bookingId,
+    String customerName,
+    String phone,
+    double emiAmount,
+    DateTime dueDate,
+    ReminderType type,
+    ReminderStatus status,
+    String? messageContent,
+    DateTime? scheduledAt,
+    DateTime? sentAt,
+    DateTime? deliveredAt,
+    bool? isResponded,
+    DateTime? respondedAt,
+    String? responseType,
+    String? assignedAgentId,
+    DateTime? agentAssignedAt,
+  });
 }
 
 /// @nodoc
@@ -5608,80 +5752,83 @@ class _$EMIReminderCopyWithImpl<$Res, $Val extends EMIReminder>
     Object? assignedAgentId = freezed,
     Object? agentAssignedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerName: null == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      emiAmount: null == emiAmount
-          ? _value.emiAmount
-          : emiAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      dueDate: null == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as ReminderType,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as ReminderStatus,
-      messageContent: freezed == messageContent
-          ? _value.messageContent
-          : messageContent // ignore: cast_nullable_to_non_nullable
-              as String?,
-      scheduledAt: freezed == scheduledAt
-          ? _value.scheduledAt
-          : scheduledAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      sentAt: freezed == sentAt
-          ? _value.sentAt
-          : sentAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      deliveredAt: freezed == deliveredAt
-          ? _value.deliveredAt
-          : deliveredAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      isResponded: freezed == isResponded
-          ? _value.isResponded
-          : isResponded // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      respondedAt: freezed == respondedAt
-          ? _value.respondedAt
-          : respondedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      responseType: freezed == responseType
-          ? _value.responseType
-          : responseType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      assignedAgentId: freezed == assignedAgentId
-          ? _value.assignedAgentId
-          : assignedAgentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agentAssignedAt: freezed == agentAssignedAt
-          ? _value.agentAssignedAt
-          : agentAssignedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerId: null == customerId
+                ? _value.customerId
+                : customerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            bookingId: null == bookingId
+                ? _value.bookingId
+                : bookingId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerName: null == customerName
+                ? _value.customerName
+                : customerName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            phone: null == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            emiAmount: null == emiAmount
+                ? _value.emiAmount
+                : emiAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            dueDate: null == dueDate
+                ? _value.dueDate
+                : dueDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as ReminderType,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as ReminderStatus,
+            messageContent: freezed == messageContent
+                ? _value.messageContent
+                : messageContent // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            scheduledAt: freezed == scheduledAt
+                ? _value.scheduledAt
+                : scheduledAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            sentAt: freezed == sentAt
+                ? _value.sentAt
+                : sentAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            deliveredAt: freezed == deliveredAt
+                ? _value.deliveredAt
+                : deliveredAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            isResponded: freezed == isResponded
+                ? _value.isResponded
+                : isResponded // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            respondedAt: freezed == respondedAt
+                ? _value.respondedAt
+                : respondedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            responseType: freezed == responseType
+                ? _value.responseType
+                : responseType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            assignedAgentId: freezed == assignedAgentId
+                ? _value.assignedAgentId
+                : assignedAgentId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            agentAssignedAt: freezed == agentAssignedAt
+                ? _value.agentAssignedAt
+                : agentAssignedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -5689,29 +5836,31 @@ class _$EMIReminderCopyWithImpl<$Res, $Val extends EMIReminder>
 abstract class _$$EMIReminderImplCopyWith<$Res>
     implements $EMIReminderCopyWith<$Res> {
   factory _$$EMIReminderImplCopyWith(
-          _$EMIReminderImpl value, $Res Function(_$EMIReminderImpl) then) =
-      __$$EMIReminderImplCopyWithImpl<$Res>;
+    _$EMIReminderImpl value,
+    $Res Function(_$EMIReminderImpl) then,
+  ) = __$$EMIReminderImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String customerId,
-      String bookingId,
-      String customerName,
-      String phone,
-      double emiAmount,
-      DateTime dueDate,
-      ReminderType type,
-      ReminderStatus status,
-      String? messageContent,
-      DateTime? scheduledAt,
-      DateTime? sentAt,
-      DateTime? deliveredAt,
-      bool? isResponded,
-      DateTime? respondedAt,
-      String? responseType,
-      String? assignedAgentId,
-      DateTime? agentAssignedAt});
+  $Res call({
+    String id,
+    String customerId,
+    String bookingId,
+    String customerName,
+    String phone,
+    double emiAmount,
+    DateTime dueDate,
+    ReminderType type,
+    ReminderStatus status,
+    String? messageContent,
+    DateTime? scheduledAt,
+    DateTime? sentAt,
+    DateTime? deliveredAt,
+    bool? isResponded,
+    DateTime? respondedAt,
+    String? responseType,
+    String? assignedAgentId,
+    DateTime? agentAssignedAt,
+  });
 }
 
 /// @nodoc
@@ -5719,8 +5868,9 @@ class __$$EMIReminderImplCopyWithImpl<$Res>
     extends _$EMIReminderCopyWithImpl<$Res, _$EMIReminderImpl>
     implements _$$EMIReminderImplCopyWith<$Res> {
   __$$EMIReminderImplCopyWithImpl(
-      _$EMIReminderImpl _value, $Res Function(_$EMIReminderImpl) _then)
-      : super(_value, _then);
+    _$EMIReminderImpl _value,
+    $Res Function(_$EMIReminderImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of EMIReminder
   /// with the given fields replaced by the non-null parameter values.
@@ -5746,105 +5896,108 @@ class __$$EMIReminderImplCopyWithImpl<$Res>
     Object? assignedAgentId = freezed,
     Object? agentAssignedAt = freezed,
   }) {
-    return _then(_$EMIReminderImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerId: null == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      bookingId: null == bookingId
-          ? _value.bookingId
-          : bookingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerName: null == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      emiAmount: null == emiAmount
-          ? _value.emiAmount
-          : emiAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      dueDate: null == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as ReminderType,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as ReminderStatus,
-      messageContent: freezed == messageContent
-          ? _value.messageContent
-          : messageContent // ignore: cast_nullable_to_non_nullable
-              as String?,
-      scheduledAt: freezed == scheduledAt
-          ? _value.scheduledAt
-          : scheduledAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      sentAt: freezed == sentAt
-          ? _value.sentAt
-          : sentAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      deliveredAt: freezed == deliveredAt
-          ? _value.deliveredAt
-          : deliveredAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      isResponded: freezed == isResponded
-          ? _value.isResponded
-          : isResponded // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      respondedAt: freezed == respondedAt
-          ? _value.respondedAt
-          : respondedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      responseType: freezed == responseType
-          ? _value.responseType
-          : responseType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      assignedAgentId: freezed == assignedAgentId
-          ? _value.assignedAgentId
-          : assignedAgentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      agentAssignedAt: freezed == agentAssignedAt
-          ? _value.agentAssignedAt
-          : agentAssignedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$EMIReminderImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerId: null == customerId
+            ? _value.customerId
+            : customerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        bookingId: null == bookingId
+            ? _value.bookingId
+            : bookingId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerName: null == customerName
+            ? _value.customerName
+            : customerName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        phone: null == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        emiAmount: null == emiAmount
+            ? _value.emiAmount
+            : emiAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        dueDate: null == dueDate
+            ? _value.dueDate
+            : dueDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as ReminderType,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as ReminderStatus,
+        messageContent: freezed == messageContent
+            ? _value.messageContent
+            : messageContent // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        scheduledAt: freezed == scheduledAt
+            ? _value.scheduledAt
+            : scheduledAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        sentAt: freezed == sentAt
+            ? _value.sentAt
+            : sentAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        deliveredAt: freezed == deliveredAt
+            ? _value.deliveredAt
+            : deliveredAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        isResponded: freezed == isResponded
+            ? _value.isResponded
+            : isResponded // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        respondedAt: freezed == respondedAt
+            ? _value.respondedAt
+            : respondedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        responseType: freezed == responseType
+            ? _value.responseType
+            : responseType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        assignedAgentId: freezed == assignedAgentId
+            ? _value.assignedAgentId
+            : assignedAgentId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        agentAssignedAt: freezed == agentAssignedAt
+            ? _value.agentAssignedAt
+            : agentAssignedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$EMIReminderImpl implements _EMIReminder {
-  const _$EMIReminderImpl(
-      {required this.id,
-      required this.customerId,
-      required this.bookingId,
-      required this.customerName,
-      required this.phone,
-      required this.emiAmount,
-      required this.dueDate,
-      required this.type,
-      required this.status,
-      this.messageContent,
-      this.scheduledAt,
-      this.sentAt,
-      this.deliveredAt,
-      this.isResponded,
-      this.respondedAt,
-      this.responseType,
-      this.assignedAgentId,
-      this.agentAssignedAt});
+  const _$EMIReminderImpl({
+    required this.id,
+    required this.customerId,
+    required this.bookingId,
+    required this.customerName,
+    required this.phone,
+    required this.emiAmount,
+    required this.dueDate,
+    required this.type,
+    required this.status,
+    this.messageContent,
+    this.scheduledAt,
+    this.sentAt,
+    this.deliveredAt,
+    this.isResponded,
+    this.respondedAt,
+    this.responseType,
+    this.assignedAgentId,
+    this.agentAssignedAt,
+  });
 
   factory _$EMIReminderImpl.fromJson(Map<String, dynamic> json) =>
       _$$EMIReminderImplFromJson(json);
@@ -5863,13 +6016,13 @@ class _$EMIReminderImpl implements _EMIReminder {
   final double emiAmount;
   @override
   final DateTime dueDate;
-// Reminder
+  // Reminder
   @override
   final ReminderType type;
-// SMS, WhatsApp, Call, Email
+  // SMS, WhatsApp, Call, Email
   @override
   final ReminderStatus status;
-// Scheduled, Sent, Delivered, Failed
+  // Scheduled, Sent, Delivered, Failed
   @override
   final String? messageContent;
   @override
@@ -5878,15 +6031,15 @@ class _$EMIReminderImpl implements _EMIReminder {
   final DateTime? sentAt;
   @override
   final DateTime? deliveredAt;
-// Response
+  // Response
   @override
   final bool? isResponded;
   @override
   final DateTime? respondedAt;
   @override
   final String? responseType;
-// WillPay, NeedTime, CannotPay, Paid
-// Agent Assignment
+  // WillPay, NeedTime, CannotPay, Paid
+  // Agent Assignment
   @override
   final String? assignedAgentId;
   @override
@@ -5937,25 +6090,26 @@ class _$EMIReminderImpl implements _EMIReminder {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      customerId,
-      bookingId,
-      customerName,
-      phone,
-      emiAmount,
-      dueDate,
-      type,
-      status,
-      messageContent,
-      scheduledAt,
-      sentAt,
-      deliveredAt,
-      isResponded,
-      respondedAt,
-      responseType,
-      assignedAgentId,
-      agentAssignedAt);
+    runtimeType,
+    id,
+    customerId,
+    bookingId,
+    customerName,
+    phone,
+    emiAmount,
+    dueDate,
+    type,
+    status,
+    messageContent,
+    scheduledAt,
+    sentAt,
+    deliveredAt,
+    isResponded,
+    respondedAt,
+    responseType,
+    assignedAgentId,
+    agentAssignedAt,
+  );
 
   /// Create a copy of EMIReminder
   /// with the given fields replaced by the non-null parameter values.
@@ -5967,32 +6121,31 @@ class _$EMIReminderImpl implements _EMIReminder {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$EMIReminderImplToJson(
-      this,
-    );
+    return _$$EMIReminderImplToJson(this);
   }
 }
 
 abstract class _EMIReminder implements EMIReminder {
-  const factory _EMIReminder(
-      {required final String id,
-      required final String customerId,
-      required final String bookingId,
-      required final String customerName,
-      required final String phone,
-      required final double emiAmount,
-      required final DateTime dueDate,
-      required final ReminderType type,
-      required final ReminderStatus status,
-      final String? messageContent,
-      final DateTime? scheduledAt,
-      final DateTime? sentAt,
-      final DateTime? deliveredAt,
-      final bool? isResponded,
-      final DateTime? respondedAt,
-      final String? responseType,
-      final String? assignedAgentId,
-      final DateTime? agentAssignedAt}) = _$EMIReminderImpl;
+  const factory _EMIReminder({
+    required final String id,
+    required final String customerId,
+    required final String bookingId,
+    required final String customerName,
+    required final String phone,
+    required final double emiAmount,
+    required final DateTime dueDate,
+    required final ReminderType type,
+    required final ReminderStatus status,
+    final String? messageContent,
+    final DateTime? scheduledAt,
+    final DateTime? sentAt,
+    final DateTime? deliveredAt,
+    final bool? isResponded,
+    final DateTime? respondedAt,
+    final String? responseType,
+    final String? assignedAgentId,
+    final DateTime? agentAssignedAt,
+  }) = _$EMIReminderImpl;
 
   factory _EMIReminder.fromJson(Map<String, dynamic> json) =
       _$EMIReminderImpl.fromJson;
@@ -6029,7 +6182,7 @@ abstract class _EMIReminder implements EMIReminder {
   DateTime? get respondedAt;
   @override
   String? get responseType; // WillPay, NeedTime, CannotPay, Paid
-// Agent Assignment
+  // Agent Assignment
   @override
   String? get assignedAgentId;
   @override

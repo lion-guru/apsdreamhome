@@ -14,8 +14,9 @@ _$ColonyModelImpl _$$ColonyModelImplFromJson(Map<String, dynamic> json) =>
       district: json['district'] as String,
       state: json['state'] as String,
       description: json['description'] as String?,
-      images:
-          (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      images: (json['images'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       masterPlanImage: json['masterPlanImage'] as String?,
       videoUrl: json['videoUrl'] as String?,
       latitude: (json['latitude'] as num?)?.toDouble(),
@@ -28,10 +29,8 @@ _$ColonyModelImpl _$$ColonyModelImplFromJson(Map<String, dynamic> json) =>
       pricePerSqft: (json['pricePerSqft'] as num).toDouble(),
       tokenAmount: (json['tokenAmount'] as num?)?.toDouble(),
       bookingPercentage: (json['bookingPercentage'] as num?)?.toDouble(),
-      blockWisePricing:
-          (json['blockWisePricing'] as Map<String, dynamic>?)?.map(
-        (k, e) => MapEntry(k, (e as num).toDouble()),
-      ),
+      blockWisePricing: (json['blockWisePricing'] as Map<String, dynamic>?)
+          ?.map((k, e) => MapEntry(k, (e as num).toDouble())),
       amenities: (json['amenities'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),

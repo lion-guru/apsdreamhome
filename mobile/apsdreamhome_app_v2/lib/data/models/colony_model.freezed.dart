@@ -12,7 +12,8 @@ part of 'colony_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 ColonyModel _$ColonyModelFromJson(Map<String, dynamic> json) {
   return _ColonyModel.fromJson(json);
@@ -42,7 +43,7 @@ mixin _$ColonyModel {
   double? get bookingPercentage => throw _privateConstructorUsedError;
   Map<String, double>? get blockWisePricing =>
       throw _privateConstructorUsedError; // A, B, C blocks with different rates
-// Amenities
+  // Amenities
   List<String>? get amenities => throw _privateConstructorUsedError; // Status
   String get status =>
       throw _privateConstructorUsedError; // upcoming, launching, active, completed, sold_out
@@ -76,45 +77,47 @@ mixin _$ColonyModel {
 /// @nodoc
 abstract class $ColonyModelCopyWith<$Res> {
   factory $ColonyModelCopyWith(
-          ColonyModel value, $Res Function(ColonyModel) then) =
-      _$ColonyModelCopyWithImpl<$Res, ColonyModel>;
+    ColonyModel value,
+    $Res Function(ColonyModel) then,
+  ) = _$ColonyModelCopyWithImpl<$Res, ColonyModel>;
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      String location,
-      String district,
-      String state,
-      String? description,
-      List<String>? images,
-      String? masterPlanImage,
-      String? videoUrl,
-      double? latitude,
-      double? longitude,
-      int totalPlots,
-      int availablePlots,
-      int holdPlots,
-      int bookedPlots,
-      int soldPlots,
-      double pricePerSqft,
-      double? tokenAmount,
-      double? bookingPercentage,
-      Map<String, double>? blockWisePricing,
-      List<String>? amenities,
-      String status,
-      DateTime? launchDate,
-      DateTime? completionDate,
-      DateTime? createdAt,
-      DateTime? updatedAt,
-      String? createdBy,
-      String? reraNumber,
-      String? legalStatus,
-      List<String>? nearbyLandmarks,
-      Map<String, dynamic>? additionalInfo,
-      String? layoutMap,
-      String? rateList,
-      String? handbill,
-      String? mapLink});
+  $Res call({
+    String id,
+    String name,
+    String location,
+    String district,
+    String state,
+    String? description,
+    List<String>? images,
+    String? masterPlanImage,
+    String? videoUrl,
+    double? latitude,
+    double? longitude,
+    int totalPlots,
+    int availablePlots,
+    int holdPlots,
+    int bookedPlots,
+    int soldPlots,
+    double pricePerSqft,
+    double? tokenAmount,
+    double? bookingPercentage,
+    Map<String, double>? blockWisePricing,
+    List<String>? amenities,
+    String status,
+    DateTime? launchDate,
+    DateTime? completionDate,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? createdBy,
+    String? reraNumber,
+    String? legalStatus,
+    List<String>? nearbyLandmarks,
+    Map<String, dynamic>? additionalInfo,
+    String? layoutMap,
+    String? rateList,
+    String? handbill,
+    String? mapLink,
+  });
 }
 
 /// @nodoc
@@ -168,148 +171,151 @@ class _$ColonyModelCopyWithImpl<$Res, $Val extends ColonyModel>
     Object? handbill = freezed,
     Object? mapLink = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      location: null == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as String,
-      district: null == district
-          ? _value.district
-          : district // ignore: cast_nullable_to_non_nullable
-              as String,
-      state: null == state
-          ? _value.state
-          : state // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      images: freezed == images
-          ? _value.images
-          : images // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      masterPlanImage: freezed == masterPlanImage
-          ? _value.masterPlanImage
-          : masterPlanImage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      videoUrl: freezed == videoUrl
-          ? _value.videoUrl
-          : videoUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      latitude: freezed == latitude
-          ? _value.latitude
-          : latitude // ignore: cast_nullable_to_non_nullable
-              as double?,
-      longitude: freezed == longitude
-          ? _value.longitude
-          : longitude // ignore: cast_nullable_to_non_nullable
-              as double?,
-      totalPlots: null == totalPlots
-          ? _value.totalPlots
-          : totalPlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      availablePlots: null == availablePlots
-          ? _value.availablePlots
-          : availablePlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      holdPlots: null == holdPlots
-          ? _value.holdPlots
-          : holdPlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      bookedPlots: null == bookedPlots
-          ? _value.bookedPlots
-          : bookedPlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      soldPlots: null == soldPlots
-          ? _value.soldPlots
-          : soldPlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      pricePerSqft: null == pricePerSqft
-          ? _value.pricePerSqft
-          : pricePerSqft // ignore: cast_nullable_to_non_nullable
-              as double,
-      tokenAmount: freezed == tokenAmount
-          ? _value.tokenAmount
-          : tokenAmount // ignore: cast_nullable_to_non_nullable
-              as double?,
-      bookingPercentage: freezed == bookingPercentage
-          ? _value.bookingPercentage
-          : bookingPercentage // ignore: cast_nullable_to_non_nullable
-              as double?,
-      blockWisePricing: freezed == blockWisePricing
-          ? _value.blockWisePricing
-          : blockWisePricing // ignore: cast_nullable_to_non_nullable
-              as Map<String, double>?,
-      amenities: freezed == amenities
-          ? _value.amenities
-          : amenities // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      launchDate: freezed == launchDate
-          ? _value.launchDate
-          : launchDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      completionDate: freezed == completionDate
-          ? _value.completionDate
-          : completionDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdBy: freezed == createdBy
-          ? _value.createdBy
-          : createdBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      reraNumber: freezed == reraNumber
-          ? _value.reraNumber
-          : reraNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      legalStatus: freezed == legalStatus
-          ? _value.legalStatus
-          : legalStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
-      nearbyLandmarks: freezed == nearbyLandmarks
-          ? _value.nearbyLandmarks
-          : nearbyLandmarks // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      additionalInfo: freezed == additionalInfo
-          ? _value.additionalInfo
-          : additionalInfo // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-      layoutMap: freezed == layoutMap
-          ? _value.layoutMap
-          : layoutMap // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rateList: freezed == rateList
-          ? _value.rateList
-          : rateList // ignore: cast_nullable_to_non_nullable
-              as String?,
-      handbill: freezed == handbill
-          ? _value.handbill
-          : handbill // ignore: cast_nullable_to_non_nullable
-              as String?,
-      mapLink: freezed == mapLink
-          ? _value.mapLink
-          : mapLink // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            location: null == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as String,
+            district: null == district
+                ? _value.district
+                : district // ignore: cast_nullable_to_non_nullable
+                      as String,
+            state: null == state
+                ? _value.state
+                : state // ignore: cast_nullable_to_non_nullable
+                      as String,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            images: freezed == images
+                ? _value.images
+                : images // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            masterPlanImage: freezed == masterPlanImage
+                ? _value.masterPlanImage
+                : masterPlanImage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            videoUrl: freezed == videoUrl
+                ? _value.videoUrl
+                : videoUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            latitude: freezed == latitude
+                ? _value.latitude
+                : latitude // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            longitude: freezed == longitude
+                ? _value.longitude
+                : longitude // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            totalPlots: null == totalPlots
+                ? _value.totalPlots
+                : totalPlots // ignore: cast_nullable_to_non_nullable
+                      as int,
+            availablePlots: null == availablePlots
+                ? _value.availablePlots
+                : availablePlots // ignore: cast_nullable_to_non_nullable
+                      as int,
+            holdPlots: null == holdPlots
+                ? _value.holdPlots
+                : holdPlots // ignore: cast_nullable_to_non_nullable
+                      as int,
+            bookedPlots: null == bookedPlots
+                ? _value.bookedPlots
+                : bookedPlots // ignore: cast_nullable_to_non_nullable
+                      as int,
+            soldPlots: null == soldPlots
+                ? _value.soldPlots
+                : soldPlots // ignore: cast_nullable_to_non_nullable
+                      as int,
+            pricePerSqft: null == pricePerSqft
+                ? _value.pricePerSqft
+                : pricePerSqft // ignore: cast_nullable_to_non_nullable
+                      as double,
+            tokenAmount: freezed == tokenAmount
+                ? _value.tokenAmount
+                : tokenAmount // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            bookingPercentage: freezed == bookingPercentage
+                ? _value.bookingPercentage
+                : bookingPercentage // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            blockWisePricing: freezed == blockWisePricing
+                ? _value.blockWisePricing
+                : blockWisePricing // ignore: cast_nullable_to_non_nullable
+                      as Map<String, double>?,
+            amenities: freezed == amenities
+                ? _value.amenities
+                : amenities // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            launchDate: freezed == launchDate
+                ? _value.launchDate
+                : launchDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            completionDate: freezed == completionDate
+                ? _value.completionDate
+                : completionDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            createdBy: freezed == createdBy
+                ? _value.createdBy
+                : createdBy // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            reraNumber: freezed == reraNumber
+                ? _value.reraNumber
+                : reraNumber // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            legalStatus: freezed == legalStatus
+                ? _value.legalStatus
+                : legalStatus // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            nearbyLandmarks: freezed == nearbyLandmarks
+                ? _value.nearbyLandmarks
+                : nearbyLandmarks // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            additionalInfo: freezed == additionalInfo
+                ? _value.additionalInfo
+                : additionalInfo // ignore: cast_nullable_to_non_nullable
+                      as Map<String, dynamic>?,
+            layoutMap: freezed == layoutMap
+                ? _value.layoutMap
+                : layoutMap // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            rateList: freezed == rateList
+                ? _value.rateList
+                : rateList // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            handbill: freezed == handbill
+                ? _value.handbill
+                : handbill // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            mapLink: freezed == mapLink
+                ? _value.mapLink
+                : mapLink // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -317,46 +323,48 @@ class _$ColonyModelCopyWithImpl<$Res, $Val extends ColonyModel>
 abstract class _$$ColonyModelImplCopyWith<$Res>
     implements $ColonyModelCopyWith<$Res> {
   factory _$$ColonyModelImplCopyWith(
-          _$ColonyModelImpl value, $Res Function(_$ColonyModelImpl) then) =
-      __$$ColonyModelImplCopyWithImpl<$Res>;
+    _$ColonyModelImpl value,
+    $Res Function(_$ColonyModelImpl) then,
+  ) = __$$ColonyModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      String location,
-      String district,
-      String state,
-      String? description,
-      List<String>? images,
-      String? masterPlanImage,
-      String? videoUrl,
-      double? latitude,
-      double? longitude,
-      int totalPlots,
-      int availablePlots,
-      int holdPlots,
-      int bookedPlots,
-      int soldPlots,
-      double pricePerSqft,
-      double? tokenAmount,
-      double? bookingPercentage,
-      Map<String, double>? blockWisePricing,
-      List<String>? amenities,
-      String status,
-      DateTime? launchDate,
-      DateTime? completionDate,
-      DateTime? createdAt,
-      DateTime? updatedAt,
-      String? createdBy,
-      String? reraNumber,
-      String? legalStatus,
-      List<String>? nearbyLandmarks,
-      Map<String, dynamic>? additionalInfo,
-      String? layoutMap,
-      String? rateList,
-      String? handbill,
-      String? mapLink});
+  $Res call({
+    String id,
+    String name,
+    String location,
+    String district,
+    String state,
+    String? description,
+    List<String>? images,
+    String? masterPlanImage,
+    String? videoUrl,
+    double? latitude,
+    double? longitude,
+    int totalPlots,
+    int availablePlots,
+    int holdPlots,
+    int bookedPlots,
+    int soldPlots,
+    double pricePerSqft,
+    double? tokenAmount,
+    double? bookingPercentage,
+    Map<String, double>? blockWisePricing,
+    List<String>? amenities,
+    String status,
+    DateTime? launchDate,
+    DateTime? completionDate,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? createdBy,
+    String? reraNumber,
+    String? legalStatus,
+    List<String>? nearbyLandmarks,
+    Map<String, dynamic>? additionalInfo,
+    String? layoutMap,
+    String? rateList,
+    String? handbill,
+    String? mapLink,
+  });
 }
 
 /// @nodoc
@@ -364,8 +372,9 @@ class __$$ColonyModelImplCopyWithImpl<$Res>
     extends _$ColonyModelCopyWithImpl<$Res, _$ColonyModelImpl>
     implements _$$ColonyModelImplCopyWith<$Res> {
   __$$ColonyModelImplCopyWithImpl(
-      _$ColonyModelImpl _value, $Res Function(_$ColonyModelImpl) _then)
-      : super(_value, _then);
+    _$ColonyModelImpl _value,
+    $Res Function(_$ColonyModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of ColonyModel
   /// with the given fields replaced by the non-null parameter values.
@@ -408,196 +417,198 @@ class __$$ColonyModelImplCopyWithImpl<$Res>
     Object? handbill = freezed,
     Object? mapLink = freezed,
   }) {
-    return _then(_$ColonyModelImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      location: null == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as String,
-      district: null == district
-          ? _value.district
-          : district // ignore: cast_nullable_to_non_nullable
-              as String,
-      state: null == state
-          ? _value.state
-          : state // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      images: freezed == images
-          ? _value._images
-          : images // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      masterPlanImage: freezed == masterPlanImage
-          ? _value.masterPlanImage
-          : masterPlanImage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      videoUrl: freezed == videoUrl
-          ? _value.videoUrl
-          : videoUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      latitude: freezed == latitude
-          ? _value.latitude
-          : latitude // ignore: cast_nullable_to_non_nullable
-              as double?,
-      longitude: freezed == longitude
-          ? _value.longitude
-          : longitude // ignore: cast_nullable_to_non_nullable
-              as double?,
-      totalPlots: null == totalPlots
-          ? _value.totalPlots
-          : totalPlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      availablePlots: null == availablePlots
-          ? _value.availablePlots
-          : availablePlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      holdPlots: null == holdPlots
-          ? _value.holdPlots
-          : holdPlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      bookedPlots: null == bookedPlots
-          ? _value.bookedPlots
-          : bookedPlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      soldPlots: null == soldPlots
-          ? _value.soldPlots
-          : soldPlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      pricePerSqft: null == pricePerSqft
-          ? _value.pricePerSqft
-          : pricePerSqft // ignore: cast_nullable_to_non_nullable
-              as double,
-      tokenAmount: freezed == tokenAmount
-          ? _value.tokenAmount
-          : tokenAmount // ignore: cast_nullable_to_non_nullable
-              as double?,
-      bookingPercentage: freezed == bookingPercentage
-          ? _value.bookingPercentage
-          : bookingPercentage // ignore: cast_nullable_to_non_nullable
-              as double?,
-      blockWisePricing: freezed == blockWisePricing
-          ? _value._blockWisePricing
-          : blockWisePricing // ignore: cast_nullable_to_non_nullable
-              as Map<String, double>?,
-      amenities: freezed == amenities
-          ? _value._amenities
-          : amenities // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      launchDate: freezed == launchDate
-          ? _value.launchDate
-          : launchDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      completionDate: freezed == completionDate
-          ? _value.completionDate
-          : completionDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdBy: freezed == createdBy
-          ? _value.createdBy
-          : createdBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      reraNumber: freezed == reraNumber
-          ? _value.reraNumber
-          : reraNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      legalStatus: freezed == legalStatus
-          ? _value.legalStatus
-          : legalStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
-      nearbyLandmarks: freezed == nearbyLandmarks
-          ? _value._nearbyLandmarks
-          : nearbyLandmarks // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      additionalInfo: freezed == additionalInfo
-          ? _value._additionalInfo
-          : additionalInfo // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-      layoutMap: freezed == layoutMap
-          ? _value.layoutMap
-          : layoutMap // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rateList: freezed == rateList
-          ? _value.rateList
-          : rateList // ignore: cast_nullable_to_non_nullable
-              as String?,
-      handbill: freezed == handbill
-          ? _value.handbill
-          : handbill // ignore: cast_nullable_to_non_nullable
-              as String?,
-      mapLink: freezed == mapLink
-          ? _value.mapLink
-          : mapLink // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$ColonyModelImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        location: null == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as String,
+        district: null == district
+            ? _value.district
+            : district // ignore: cast_nullable_to_non_nullable
+                  as String,
+        state: null == state
+            ? _value.state
+            : state // ignore: cast_nullable_to_non_nullable
+                  as String,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        images: freezed == images
+            ? _value._images
+            : images // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        masterPlanImage: freezed == masterPlanImage
+            ? _value.masterPlanImage
+            : masterPlanImage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        videoUrl: freezed == videoUrl
+            ? _value.videoUrl
+            : videoUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        latitude: freezed == latitude
+            ? _value.latitude
+            : latitude // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        longitude: freezed == longitude
+            ? _value.longitude
+            : longitude // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        totalPlots: null == totalPlots
+            ? _value.totalPlots
+            : totalPlots // ignore: cast_nullable_to_non_nullable
+                  as int,
+        availablePlots: null == availablePlots
+            ? _value.availablePlots
+            : availablePlots // ignore: cast_nullable_to_non_nullable
+                  as int,
+        holdPlots: null == holdPlots
+            ? _value.holdPlots
+            : holdPlots // ignore: cast_nullable_to_non_nullable
+                  as int,
+        bookedPlots: null == bookedPlots
+            ? _value.bookedPlots
+            : bookedPlots // ignore: cast_nullable_to_non_nullable
+                  as int,
+        soldPlots: null == soldPlots
+            ? _value.soldPlots
+            : soldPlots // ignore: cast_nullable_to_non_nullable
+                  as int,
+        pricePerSqft: null == pricePerSqft
+            ? _value.pricePerSqft
+            : pricePerSqft // ignore: cast_nullable_to_non_nullable
+                  as double,
+        tokenAmount: freezed == tokenAmount
+            ? _value.tokenAmount
+            : tokenAmount // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        bookingPercentage: freezed == bookingPercentage
+            ? _value.bookingPercentage
+            : bookingPercentage // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        blockWisePricing: freezed == blockWisePricing
+            ? _value._blockWisePricing
+            : blockWisePricing // ignore: cast_nullable_to_non_nullable
+                  as Map<String, double>?,
+        amenities: freezed == amenities
+            ? _value._amenities
+            : amenities // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        launchDate: freezed == launchDate
+            ? _value.launchDate
+            : launchDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        completionDate: freezed == completionDate
+            ? _value.completionDate
+            : completionDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        createdBy: freezed == createdBy
+            ? _value.createdBy
+            : createdBy // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        reraNumber: freezed == reraNumber
+            ? _value.reraNumber
+            : reraNumber // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        legalStatus: freezed == legalStatus
+            ? _value.legalStatus
+            : legalStatus // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        nearbyLandmarks: freezed == nearbyLandmarks
+            ? _value._nearbyLandmarks
+            : nearbyLandmarks // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        additionalInfo: freezed == additionalInfo
+            ? _value._additionalInfo
+            : additionalInfo // ignore: cast_nullable_to_non_nullable
+                  as Map<String, dynamic>?,
+        layoutMap: freezed == layoutMap
+            ? _value.layoutMap
+            : layoutMap // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        rateList: freezed == rateList
+            ? _value.rateList
+            : rateList // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        handbill: freezed == handbill
+            ? _value.handbill
+            : handbill // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        mapLink: freezed == mapLink
+            ? _value.mapLink
+            : mapLink // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$ColonyModelImpl extends _ColonyModel {
-  const _$ColonyModelImpl(
-      {required this.id,
-      required this.name,
-      required this.location,
-      required this.district,
-      required this.state,
-      this.description,
-      final List<String>? images,
-      this.masterPlanImage,
-      this.videoUrl,
-      this.latitude,
-      this.longitude,
-      required this.totalPlots,
-      required this.availablePlots,
-      required this.holdPlots,
-      required this.bookedPlots,
-      required this.soldPlots,
-      required this.pricePerSqft,
-      this.tokenAmount,
-      this.bookingPercentage,
-      final Map<String, double>? blockWisePricing,
-      final List<String>? amenities,
-      required this.status,
-      this.launchDate,
-      this.completionDate,
-      this.createdAt,
-      this.updatedAt,
-      this.createdBy,
-      this.reraNumber,
-      this.legalStatus,
-      final List<String>? nearbyLandmarks,
-      final Map<String, dynamic>? additionalInfo,
-      this.layoutMap,
-      this.rateList,
-      this.handbill,
-      this.mapLink})
-      : _images = images,
-        _blockWisePricing = blockWisePricing,
-        _amenities = amenities,
-        _nearbyLandmarks = nearbyLandmarks,
-        _additionalInfo = additionalInfo,
-        super._();
+  const _$ColonyModelImpl({
+    required this.id,
+    required this.name,
+    required this.location,
+    required this.district,
+    required this.state,
+    this.description,
+    final List<String>? images,
+    this.masterPlanImage,
+    this.videoUrl,
+    this.latitude,
+    this.longitude,
+    required this.totalPlots,
+    required this.availablePlots,
+    required this.holdPlots,
+    required this.bookedPlots,
+    required this.soldPlots,
+    required this.pricePerSqft,
+    this.tokenAmount,
+    this.bookingPercentage,
+    final Map<String, double>? blockWisePricing,
+    final List<String>? amenities,
+    required this.status,
+    this.launchDate,
+    this.completionDate,
+    this.createdAt,
+    this.updatedAt,
+    this.createdBy,
+    this.reraNumber,
+    this.legalStatus,
+    final List<String>? nearbyLandmarks,
+    final Map<String, dynamic>? additionalInfo,
+    this.layoutMap,
+    this.rateList,
+    this.handbill,
+    this.mapLink,
+  }) : _images = images,
+       _blockWisePricing = blockWisePricing,
+       _amenities = amenities,
+       _nearbyLandmarks = nearbyLandmarks,
+       _additionalInfo = additionalInfo,
+       super._();
 
   factory _$ColonyModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ColonyModelImplFromJson(json);
@@ -632,7 +643,7 @@ class _$ColonyModelImpl extends _ColonyModel {
   final double? latitude;
   @override
   final double? longitude;
-// Plot Statistics
+  // Plot Statistics
   @override
   final int totalPlots;
   @override
@@ -643,7 +654,7 @@ class _$ColonyModelImpl extends _ColonyModel {
   final int bookedPlots;
   @override
   final int soldPlots;
-// Pricing
+  // Pricing
   @override
   final double pricePerSqft;
   @override
@@ -660,11 +671,11 @@ class _$ColonyModelImpl extends _ColonyModel {
     return EqualUnmodifiableMapView(value);
   }
 
-// A, B, C blocks with different rates
-// Amenities
+  // A, B, C blocks with different rates
+  // Amenities
   final List<String>? _amenities;
-// A, B, C blocks with different rates
-// Amenities
+  // A, B, C blocks with different rates
+  // Amenities
   @override
   List<String>? get amenities {
     final value = _amenities;
@@ -674,22 +685,22 @@ class _$ColonyModelImpl extends _ColonyModel {
     return EqualUnmodifiableListView(value);
   }
 
-// Status
+  // Status
   @override
   final String status;
-// upcoming, launching, active, completed, sold_out
+  // upcoming, launching, active, completed, sold_out
   @override
   final DateTime? launchDate;
   @override
   final DateTime? completionDate;
-// Timestamps
+  // Timestamps
   @override
   final DateTime? createdAt;
   @override
   final DateTime? updatedAt;
   @override
   final String? createdBy;
-// Additional Info
+  // Additional Info
   @override
   final String? reraNumber;
   @override
@@ -714,7 +725,7 @@ class _$ColonyModelImpl extends _ColonyModel {
     return EqualUnmodifiableMapView(value);
   }
 
-// New Fields for Images and Maps
+  // New Fields for Images and Maps
   @override
   final String? layoutMap;
   @override
@@ -768,10 +779,14 @@ class _$ColonyModelImpl extends _ColonyModel {
                 other.tokenAmount == tokenAmount) &&
             (identical(other.bookingPercentage, bookingPercentage) ||
                 other.bookingPercentage == bookingPercentage) &&
-            const DeepCollectionEquality()
-                .equals(other._blockWisePricing, _blockWisePricing) &&
-            const DeepCollectionEquality()
-                .equals(other._amenities, _amenities) &&
+            const DeepCollectionEquality().equals(
+              other._blockWisePricing,
+              _blockWisePricing,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._amenities,
+              _amenities,
+            ) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.launchDate, launchDate) ||
                 other.launchDate == launchDate) &&
@@ -787,10 +802,14 @@ class _$ColonyModelImpl extends _ColonyModel {
                 other.reraNumber == reraNumber) &&
             (identical(other.legalStatus, legalStatus) ||
                 other.legalStatus == legalStatus) &&
-            const DeepCollectionEquality()
-                .equals(other._nearbyLandmarks, _nearbyLandmarks) &&
-            const DeepCollectionEquality()
-                .equals(other._additionalInfo, _additionalInfo) &&
+            const DeepCollectionEquality().equals(
+              other._nearbyLandmarks,
+              _nearbyLandmarks,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._additionalInfo,
+              _additionalInfo,
+            ) &&
             (identical(other.layoutMap, layoutMap) ||
                 other.layoutMap == layoutMap) &&
             (identical(other.rateList, rateList) ||
@@ -803,43 +822,43 @@ class _$ColonyModelImpl extends _ColonyModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        name,
-        location,
-        district,
-        state,
-        description,
-        const DeepCollectionEquality().hash(_images),
-        masterPlanImage,
-        videoUrl,
-        latitude,
-        longitude,
-        totalPlots,
-        availablePlots,
-        holdPlots,
-        bookedPlots,
-        soldPlots,
-        pricePerSqft,
-        tokenAmount,
-        bookingPercentage,
-        const DeepCollectionEquality().hash(_blockWisePricing),
-        const DeepCollectionEquality().hash(_amenities),
-        status,
-        launchDate,
-        completionDate,
-        createdAt,
-        updatedAt,
-        createdBy,
-        reraNumber,
-        legalStatus,
-        const DeepCollectionEquality().hash(_nearbyLandmarks),
-        const DeepCollectionEquality().hash(_additionalInfo),
-        layoutMap,
-        rateList,
-        handbill,
-        mapLink
-      ]);
+    runtimeType,
+    id,
+    name,
+    location,
+    district,
+    state,
+    description,
+    const DeepCollectionEquality().hash(_images),
+    masterPlanImage,
+    videoUrl,
+    latitude,
+    longitude,
+    totalPlots,
+    availablePlots,
+    holdPlots,
+    bookedPlots,
+    soldPlots,
+    pricePerSqft,
+    tokenAmount,
+    bookingPercentage,
+    const DeepCollectionEquality().hash(_blockWisePricing),
+    const DeepCollectionEquality().hash(_amenities),
+    status,
+    launchDate,
+    completionDate,
+    createdAt,
+    updatedAt,
+    createdBy,
+    reraNumber,
+    legalStatus,
+    const DeepCollectionEquality().hash(_nearbyLandmarks),
+    const DeepCollectionEquality().hash(_additionalInfo),
+    layoutMap,
+    rateList,
+    handbill,
+    mapLink,
+  ]);
 
   /// Create a copy of ColonyModel
   /// with the given fields replaced by the non-null parameter values.
@@ -851,49 +870,48 @@ class _$ColonyModelImpl extends _ColonyModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ColonyModelImplToJson(
-      this,
-    );
+    return _$$ColonyModelImplToJson(this);
   }
 }
 
 abstract class _ColonyModel extends ColonyModel {
-  const factory _ColonyModel(
-      {required final String id,
-      required final String name,
-      required final String location,
-      required final String district,
-      required final String state,
-      final String? description,
-      final List<String>? images,
-      final String? masterPlanImage,
-      final String? videoUrl,
-      final double? latitude,
-      final double? longitude,
-      required final int totalPlots,
-      required final int availablePlots,
-      required final int holdPlots,
-      required final int bookedPlots,
-      required final int soldPlots,
-      required final double pricePerSqft,
-      final double? tokenAmount,
-      final double? bookingPercentage,
-      final Map<String, double>? blockWisePricing,
-      final List<String>? amenities,
-      required final String status,
-      final DateTime? launchDate,
-      final DateTime? completionDate,
-      final DateTime? createdAt,
-      final DateTime? updatedAt,
-      final String? createdBy,
-      final String? reraNumber,
-      final String? legalStatus,
-      final List<String>? nearbyLandmarks,
-      final Map<String, dynamic>? additionalInfo,
-      final String? layoutMap,
-      final String? rateList,
-      final String? handbill,
-      final String? mapLink}) = _$ColonyModelImpl;
+  const factory _ColonyModel({
+    required final String id,
+    required final String name,
+    required final String location,
+    required final String district,
+    required final String state,
+    final String? description,
+    final List<String>? images,
+    final String? masterPlanImage,
+    final String? videoUrl,
+    final double? latitude,
+    final double? longitude,
+    required final int totalPlots,
+    required final int availablePlots,
+    required final int holdPlots,
+    required final int bookedPlots,
+    required final int soldPlots,
+    required final double pricePerSqft,
+    final double? tokenAmount,
+    final double? bookingPercentage,
+    final Map<String, double>? blockWisePricing,
+    final List<String>? amenities,
+    required final String status,
+    final DateTime? launchDate,
+    final DateTime? completionDate,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
+    final String? createdBy,
+    final String? reraNumber,
+    final String? legalStatus,
+    final List<String>? nearbyLandmarks,
+    final Map<String, dynamic>? additionalInfo,
+    final String? layoutMap,
+    final String? rateList,
+    final String? handbill,
+    final String? mapLink,
+  }) = _$ColonyModelImpl;
   const _ColonyModel._() : super._();
 
   factory _ColonyModel.fromJson(Map<String, dynamic> json) =
@@ -938,9 +956,8 @@ abstract class _ColonyModel extends ColonyModel {
   @override
   double? get bookingPercentage;
   @override
-  Map<String, double>?
-      get blockWisePricing; // A, B, C blocks with different rates
-// Amenities
+  Map<String, double>? get blockWisePricing; // A, B, C blocks with different rates
+  // Amenities
   @override
   List<String>? get amenities; // Status
   @override
