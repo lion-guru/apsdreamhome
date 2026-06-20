@@ -227,6 +227,25 @@ class MoneyWorkflowController extends AdminController
     }
 
     /* =========================================================
+     *  CASH FLOW FORECAST
+     * ========================================================= */
+    public function cashFlow()
+    {
+        $this->requireAdmin();
+        $days = (int)($_GET['days'] ?? 30);
+        $forecast = $this->safe(fn() => $this->service->forecastCashFlow($days), ['summary' => [], 'rows' => [], 'from' => date('Y-m-d'), 'to' => date('Y-m-d')]);
+        return $this->render('admin/finance/cash-flow', [
+            'page_title' => 'Cash Flow Forecast',
+            'page_heading' => 'Cash Flow Forecast',
+            'summary' => $forecast['summary'] ?? [],
+            'rows' => $forecast['rows'] ?? [],
+            'from' => $forecast['from'] ?? date('Y-m-d'),
+            'to' => $forecast['to'] ?? date('Y-m-d'),
+            'days' => $days,
+        ]);
+    }
+
+    /* =========================================================
      *  CHEQUES
      * ========================================================= */
     public function cheques()

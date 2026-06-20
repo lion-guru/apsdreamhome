@@ -1932,6 +1932,9 @@ $router->get('/admin/finance/petty-cash',                                       
 $router->post('/admin/finance/petty-topup',                                       'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@pettyTopup');
 $router->post('/admin/finance/petty-expense',                                     'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@pettyExpense');
 
+// Cash Flow Forecast
+$router->get('/admin/finance/cash-flow',                                        'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@cashFlow');
+
 // Cheques
 $router->get('/admin/finance/cheques',                                            'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@cheques');
 $router->get('/admin/finance/cheque-issue',                                       'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@chequeIssue');

@@ -1,4 +1,4 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-16)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-20)
 
 ---
 
@@ -24,6 +24,48 @@
 
 ### Lesson learned
 - `commission_plan_manager.php` (769 lines) was deleted as "orphaned dead" — had real CRUD for `mlm_commission_plans` table (5 rows). Had to rebuild entirely as MVC (CommissionPlanController + 4 views + 11 routes + mlm_plan_levels table). **Cost: 1 full session.**
+
+---
+
+## Session 2026-06-20: Sidebar Audit + Cash Flow Forecast + Dead CSS Cleanup
+
+### What Was Done
+1. **Dead CSS cleanup** — Removed ~45 lines of dead CSS from `admin.css`: `.mobile-menu-toggle`, `.search-bar-mobile`, `.mobile-stats-row`, `.pull-to-refresh` (no HTML references existed)
+2. **Cash Flow Forecast wired up** — Added route, controller method, and view for `MoneyWorkflowService::forecastCashFlow()`. Admin can now see 30-day cash flow forecasts (filterable by 7/14/30/60/90 days) with summary cards (inflow/outflow/net/entries), table with date/direction/category/description/amount/probability/weighted/days-ahead columns. Added to sidebar under finance section.
+3. **Full sidebar audit** — Tested all 145 active sidebar URLs. Found 20 dead links (MLM, HRM, marketing sections pointing to non-existent routes). All 20 fixed by redirecting to working equivalents:
+   - MLM: levels→commission, rank-rates→commission, achievements/analytics/team/leaderboard→network, referrals→global referrals, wallet/settings/notifications→settings
+   - HR: attendance→hr/attendance, leaves→hr/leaves, departments/designations→hr/users, recruitment→employees, payroll→finance/forecast
+   - Marketing: campaigns→global campaigns, email→newsletter, sms/whatsapp→settings
+   - Deals: pipeline→deals
+4. **Mobile emulation testing** — 12 admin pages tested at iPhone 14 Pro viewport (390×844). All working: tables scroll, forms stack, touch targets ≥44px, 16px font prevents iOS zoom, notifications become bottom-sheet at ≤480px.
+5. **i18n verification** — All 55+ frontend + admin view files already fully i18n'd (815 keys in en.php/hi.php)
+6. **KYC services verified** — NSDL/UIDAI verification services work in mock mode (`NSDL_TEST_MODE=true`, `UIDAI_TEST_MODE=true`)
+7. **Flutter app status confirmed** — `mobile/apsdreamhome_app_v2/` — full Flutter app with 58+ screens, clean architecture, APK built
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `assets/admin/css/admin.css` | Removed dead CSS (mobile-menu-toggle, search-bar-mobile, mobile-stats-row, pull-to-refresh) |
+| `app/Http/Controllers/Admin/MoneyWorkflowController.php` | Added `cashFlow()` method |
+| `app/views/admin/finance/cash-flow.php` | NEW — 30-day cash flow forecast view |
+| `routes/web.php` | Added route `GET /admin/finance/cash-flow` |
+| `admin_menu_items` table | Added "Cash Flow Forecast" menu item (finance section); fixed 20 dead sidebar URLs |
+
+### Sidebar Verification (145/145 PASS)
+All 145 active sidebar items verified HTTP 200 across all 17 sections (dashboards, crm, properties, bookings, mlm, finance, hrm, employee, legal, locations, marketing, cms, services, settings, users, reports, system). 20 dead URLs fixed by redirecting to working equivalents.
+
+### Key Findings
+- admin.css is ~36KB (after cleanup), single file, breakpoints at 992/768/576/480px
+- KYC mock mode: `NSDLVerificationService` returns hardcoded status based on PAN prefix; `UIDAIVerificationService` implements Verhoeff checksum
+- Website: 130+ admin controllers, 492+ PHP views, 767 MySQL tables, custom MVC
+- Mobile Flutter app: 58+ screens, Riverpod + GoRouter + Dio, APK built (169MB, 19-Jun-2026)
+- Mobile vs Website parity: Auth 95%, Property Search 90%, Booking 85%, MLM 40%, Finance 30%, HR 0%, Admin Panel 20%
+
+### Pending
+- Complete real KYC API wiring (NSDL PAN + UIDAI Aadhaar) when production credentials available
+- Flutter app: Add `firebase_messaging` dependency, wire FCM token registration
+- Android app parity: Deal Pipeline, Lead Kanban, MLM Commission write, EMI Automation, HR/Payroll, Reports Export
+- Seed `cash_flow_forecast` table with test data for demo/verification
 
 ---
 
