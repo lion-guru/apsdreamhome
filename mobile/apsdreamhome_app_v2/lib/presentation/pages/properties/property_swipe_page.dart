@@ -13,11 +13,8 @@ class PropertySwipePage extends ConsumerStatefulWidget {
 class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
     with TickerProviderStateMixin {
   late AnimationController _swipeController;
-  late Animation<Offset> _swipeAnimation;
-  late Animation<double> _rotationAnimation;
 
   Offset _dragOffset = Offset.zero;
-  bool _isDragging = false;
   int _currentIndex = 0;
   final List<Map<String, dynamic>> _savedProperties = [];
 
@@ -87,11 +84,6 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _swipeAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: Offset.zero,
-    ).animate(_swipeController);
-    _rotationAnimation = Tween<double>(begin: 0, end: 0).animate(_swipeController);
   }
 
   @override
@@ -102,7 +94,6 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
 
   void _onDragUpdate(DragUpdateDetails details) {
     setState(() {
-      _isDragging = true;
       _dragOffset += details.delta;
     });
   }
@@ -118,7 +109,6 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
       // Snap back
       setState(() {
         _dragOffset = Offset.zero;
-        _isDragging = false;
       });
     }
   }
@@ -138,7 +128,6 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
 
   void _nextCard() {
     setState(() {
-      _isDragging = false;
       _dragOffset = Offset.zero;
       if (_currentIndex < _properties.length) {
         _currentIndex++;

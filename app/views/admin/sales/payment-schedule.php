@@ -14,28 +14,28 @@ foreach ($schedule as $s) {
 <div class="aps-cp-card mb-3">
     <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
         <h5 class="m-0">
-            <i class="fas fa-calendar-alt me-2"></i>Payment Schedule — <?= htmlspecialchars((string)($booking['booking_number'] ?? '')) ?>
+            <i class="fas fa-calendar-alt me-2"></i><?= __('sale_payment_schedule') ?> — <?= htmlspecialchars((string)($booking['booking_number'] ?? '')) ?>
         </h5>
         <div>
-            <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-link"><i class="fas fa-arrow-left me-1"></i>Back</a>
+            <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>" class="btn btn-sm btn-link"><i class="fas fa-arrow-left me-1"></i><?= __('sale_back') ?></a>
         </div>
     </div>
     <div class="aps-cp-card-body">
         <div class="row g-3 mb-3">
             <div class="col-md-3">
-                <div class="text-muted small">Total Due</div>
+                <div class="text-muted small"><?= __('sale_total_due') ?></div>
                 <div class="fw-bold">&#8377;<?= number_format($totalDue) ?></div>
             </div>
             <div class="col-md-3">
-                <div class="text-muted small">Total Paid</div>
+                <div class="text-muted small"><?= __('sale_total_paid') ?></div>
                 <div class="fw-bold text-success">&#8377;<?= number_format($totalPaid) ?></div>
             </div>
             <div class="col-md-3">
-                <div class="text-muted small">Outstanding</div>
+                <div class="text-muted small"><?= __('sale_outstanding') ?></div>
                 <div class="fw-bold text-danger">&#8377;<?= number_format(max(0, $totalDue - $totalPaid)) ?></div>
             </div>
             <div class="col-md-3">
-                <div class="text-muted small">Installments</div>
+                <div class="text-muted small"><?= __('sale_installments') ?></div>
                 <div class="fw-bold"><?= count($schedule) ?></div>
             </div>
         </div>
@@ -43,17 +43,17 @@ foreach ($schedule as $s) {
         <form method="post" action="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/schedule/regenerate" class="row g-2 mb-3 align-items-end">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
             <div class="col-md-3">
-                <label class="form-label small">Tenure (months)</label>
+                <label class="form-label small"><?= __('sale_tenure_months') ?></label>
                 <input type="number" name="tenure_months" value="12" class="form-control form-control-sm" required>
             </div>
             <div class="col-md-3">
-                <label class="form-label small">Rate % p.a.</label>
+                <label class="form-label small"><?= __('sale_rate_pa') ?></label>
                 <input type="number" step="0.01" name="rate_per_annum" value="10.0" class="form-control form-control-sm" required>
             </div>
             <div class="col-md-3">
                 <button class="btn btn-sm btn-warning" type="submit"
-                        onclick="return confirm('This will REPLACE the existing schedule. Continue?');">
-                    <i class="fas fa-sync me-1"></i>Regenerate
+                        onclick="return confirm('<?= __('sale_regenerate_confirm') ?>');">
+                    <i class="fas fa-sync me-1"></i><?= __('sale_regenerate') ?>
                 </button>
             </div>
         </form>
@@ -63,19 +63,19 @@ foreach ($schedule as $s) {
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Due Date</th>
-                        <th>Type</th>
-                        <th class="text-end">Principal</th>
-                        <th class="text-end">Interest</th>
-                        <th class="text-end">Total</th>
-                        <th class="text-end">Paid</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th><?= __('sale_due_date') ?></th>
+                        <th><?= __('sale_type') ?></th>
+                        <th class="text-end"><?= __('sale_principal') ?></th>
+                        <th class="text-end"><?= __('sale_interest') ?></th>
+                        <th class="text-end"><?= __('sale_total') ?></th>
+                        <th class="text-end"><?= __('sale_paid') ?></th>
+                        <th><?= __('sale_status') ?></th>
+                        <th><?= __('sale_action') ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($schedule)): ?>
-                        <tr><td colspan="9" class="text-center text-muted py-3">No schedule generated</td></tr>
+                        <tr><td colspan="9" class="text-center text-muted py-3"><?= __('sale_no_schedule') ?></td></tr>
                     <?php else: foreach ($schedule as $i => $s):
                         $rowClass = !empty($s['is_overdue']) ? 'table-danger' : '';
                     ?>
@@ -96,7 +96,7 @@ foreach ($schedule as $s) {
                             </td>
                             <td>
                                 <?php if ($st !== 'paid'): ?>
-                                    <a class="btn btn-sm btn-success" href="<?= htmlspecialchars($base) ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/pay">Pay</a>
+                                    <a class="btn btn-sm btn-success" href="<?= htmlspecialchars($base) ?>/admin/sales/installments/<?= (int)($s['id'] ?? 0) ?>/pay"><?= __('sale_pay') ?></a>
                                 <?php endif; ?>
                             </td>
                         </tr>

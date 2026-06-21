@@ -82,9 +82,6 @@ class AIEmployeeAgent {
 
   final AIAgentService _aiService = AIAgentService();
 
-  // Work queue
-  final List<Map<String, dynamic>> _workQueue = [];
-
   // Performance tracking
   final List<AIEmployeeWorkResult> _completedTasks = [];
 

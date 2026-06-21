@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../data/services/auth_service.dart';
 import '../../widgets/app_widgets.dart';
 
 class OTPPage extends ConsumerStatefulWidget {
@@ -16,7 +15,6 @@ class OTPPage extends ConsumerStatefulWidget {
 class _OTPPageState extends ConsumerState<OTPPage> {
   final _otpController = TextEditingController();
   bool _isLoading = false;
-  String? _verificationId;
   int _resendTimer = 60;
   bool _canResend = false;
 
@@ -48,8 +46,6 @@ class _OTPPageState extends ConsumerState<OTPPage> {
     setState(() => _isLoading = true);
 
     try {
-      final authService = ref.read(authServiceProvider);
-      
       // For demo, just navigate
       await Future.delayed(const Duration(seconds: 2));
       

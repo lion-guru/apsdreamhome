@@ -13,7 +13,6 @@ class EmployeeManagementPage extends ConsumerStatefulWidget {
 
 class _EmployeeManagementPageState
     extends ConsumerState<EmployeeManagementPage> {
-  String _searchQuery = '';
   String? _selectedDepartment;
   String? _selectedStatus;
 
@@ -103,7 +102,7 @@ class _EmployeeManagementPageState
                 Expanded(
                   flex: 2,
                   child: TextField(
-                    onChanged: (value) => setState(() => _searchQuery = value),
+                    onChanged: (value) {},
                     decoration: InputDecoration(
                       hintText: 'Search employees...',
                       prefixIcon: const Icon(Icons.search),

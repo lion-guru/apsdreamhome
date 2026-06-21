@@ -53,9 +53,6 @@ class AIAgentService {
   factory AIAgentService() => _instance;
   AIAgentService._internal();
 
-  // API Configuration
-  final String _baseUrl = 'https://apsdreamhome.com/api/v1';
-
   // In-memory storage for demo purposes
   final List<Map<String, dynamic>> _feedbackHistory = [];
   final int _interactionCount = 0;

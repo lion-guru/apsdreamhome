@@ -170,9 +170,6 @@ class AIAgentService {
 
   // Local Storage
   // Hive boxes disabled - using in-memory storage instead
-  final Map<String, Map<String, dynamic>> _conversationsCache = {};
-  final Map<String, Map<String, dynamic>> _cache = {};
-  final Map<String, Map<String, dynamic>> _analyticsCache = {};
   Map<String, dynamic> _memoryBox = {};
   Map<String, dynamic> _learningBox = {};
   Map<String, dynamic> _decisionsBox = {};
@@ -971,9 +968,9 @@ class AIAgentService {
   /// Get agent statistics
   Future<Map<String, dynamic>> getAgentStats() async {
     return {
-      'memory_entries': _memoryBox.length ?? 0,
-      'learned_patterns': _learningBox.length ?? 0,
-      'decisions_made': _decisionsBox.length ?? 0,
+      'memory_entries': _memoryBox.length,
+      'learned_patterns': _learningBox.length,
+      'decisions_made': _decisionsBox.length,
       'current_agent': _currentAgent?.name ?? 'None',
       'role': _currentAgent?.role.name ?? 'None',
       'can_make_decisions': _currentAgent?.canMakeDecisions ?? false,

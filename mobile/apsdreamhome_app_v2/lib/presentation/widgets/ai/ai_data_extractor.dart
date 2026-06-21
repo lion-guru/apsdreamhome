@@ -197,17 +197,13 @@ class _AIDataExtractorState extends ConsumerState<AIDataExtractor> {
 
     // Handle different response shapes from backend
     List<Map<String, dynamic>> documents;
-    if (response is Map<String, dynamic>) {
-      final data = response['data'];
-      if (data is List) {
-        documents = data.map((e) => e as Map<String, dynamic>).toList();
-      } else if (data is Map<String, dynamic> && data.containsKey('properties')) {
-        final props = data['properties'];
-        if (props is List) {
-          documents = props.map((e) => e as Map<String, dynamic>).toList();
-        } else {
-          documents = [];
-        }
+    final data = response['data'];
+    if (data is List) {
+      documents = data.map((e) => e as Map<String, dynamic>).toList();
+    } else if (data is Map<String, dynamic> && data.containsKey('properties')) {
+      final props = data['properties'];
+      if (props is List) {
+        documents = props.map((e) => e as Map<String, dynamic>).toList();
       } else {
         documents = [];
       }

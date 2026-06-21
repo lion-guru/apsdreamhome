@@ -57,12 +57,14 @@ class MoneyWorkflowController extends AdminController
         $recentTxns = $this->safe(fn() => $this->service->getDailyCashBook(date('Y-m-01'), date('Y-m-t')), []);
         $recentTxns = array_slice($recentTxns, 0, 10);
         $banks = $this->safe(fn() => $this->service->getBankAccounts(true), []);
+        $forecast = $this->safe(fn() => $this->service->forecastCashFlow(30), ['summary' => [], 'rows' => []]);
         return $this->render('admin/finance/dashboard', [
             'page_title' => 'Money Workflow Dashboard',
             'page_heading' => 'Money Workflow Dashboard',
             'stats' => $stats,
             'recent_txns' => $recentTxns,
             'banks' => $banks,
+            'forecast' => $forecast,
         ]);
     }
 

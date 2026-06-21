@@ -1,4 +1,4 @@
-<?php $page_title = $page_title ?? 'EMI Penalties'; $page_heading = $page_heading ?? 'EMI Penalty Engine'; $summary = $summary ?? []; ?>
+<?php $page_title = $page_title ?? __('pen_emi_penalty'); $page_heading = $page_heading ?? __('pen_emi_penalty'); $summary = $summary ?? []; ?>
 <style>
 .badge-risk-grace {
     background-color: #f1f5f9;
@@ -69,17 +69,17 @@
 </style>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>EMI Penalty Engine</h2>
-        <a href="<?= BASE_URL ?>/admin/finance/cash-book" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Cash Book</a>
+        <h2 class="mb-0"><i class="fas fa-exclamation-triangle me-2 text-warning"></i><?= __('pen_emi_penalty') ?></h2>
+        <a href="<?= BASE_URL ?>/admin/finance/cash-book" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('pen_back_cash_book') ?></a>
     </div>
 
-    <p class="text-muted mb-4">18% flat per annum (0.0493%/day) after 5-day grace period. Penalties accrue daily on overdue installments.</p>
+    <p class="text-muted mb-4"><?= __('pen_description') ?></p>
 
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body">
-                    <div class="aps-cp-stat-label">Overdue Installments</div>
+                    <div class="aps-cp-stat-label"><?= __('pen_overdue_installments') ?></div>
                     <div class="aps-cp-stat-value text-danger"><?= (int)($summary['total_overdue_count'] ?? 0) ?></div>
                 </div>
             </div>
@@ -87,7 +87,7 @@
         <div class="col-md-3">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body">
-                    <div class="aps-cp-stat-label">Total Overdue Amount</div>
+                    <div class="aps-cp-stat-label"><?= __('pen_total_overdue_amount') ?></div>
                     <div class="aps-cp-stat-value text-danger">₹<?= number_format((float)($summary['total_overdue_amount'] ?? 0), 0) ?></div>
                 </div>
             </div>
@@ -95,7 +95,7 @@
         <div class="col-md-3">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body">
-                    <div class="aps-cp-stat-label">Accrued Penalties</div>
+                    <div class="aps-cp-stat-label"><?= __('pen_accrued_penalties') ?></div>
                     <div class="aps-cp-stat-value text-warning">₹<?= number_format((float)($summary['total_accrued_penalties'] ?? 0), 2) ?></div>
                 </div>
             </div>
@@ -103,7 +103,7 @@
         <div class="col-md-3">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body">
-                    <div class="aps-cp-stat-label">Worst Overdue (Days)</div>
+                    <div class="aps-cp-stat-label"><?= __('pen_worst_overdue_days') ?></div>
                     <div class="aps-cp-stat-value text-danger"><?= (int)($summary['worst_overdue_days'] ?? 0) ?>d</div>
                 </div>
             </div>
@@ -112,15 +112,15 @@
 
     <div class="aps-cp-card mb-4">
         <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
-            <span><i class="fas fa-play-circle me-1"></i>Apply Penalties Now</span>
+            <span><i class="fas fa-play-circle me-1"></i><?= __('pen_apply_now') ?></span>
         </div>
         <div class="aps-cp-card-body">
-            <p class="mb-2">Click below to calculate and apply daily penalties to all overdue installments past the 5-day grace period.</p>
+            <p class="mb-2"><?= __('pen_apply_description') ?></p>
             <form id="penaltyForm" method="post" action="<?= BASE_URL ?>/admin/finance/penalties/apply">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
             </form>
             <button id="applyPenaltiesBtn" class="btn btn-warning" onclick="applyPenalties()">
-                <i class="fas fa-calculator me-1"></i>Apply Penalties Now
+                <i class="fas fa-calculator me-1"></i><?= __('pen_apply_now') ?>
             </button>
             <div id="penaltyResult" class="mt-3" style="display:none;"></div>
         </div>
@@ -128,25 +128,25 @@
 
     <div class="aps-cp-card">
         <div class="aps-cp-card-header">
-            <span><i class="fas fa-list me-1"></i>Overdue Installments</span>
+            <span><i class="fas fa-list me-1"></i><?= __('pen_overdue_installments') ?></span>
         </div>
         <div class="aps-cp-card-body p-0">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Booking</th>
-                        <th>Plot</th>
-                        <th>Customer</th>
-                        <th>Installment #</th>
-                        <th>Due Date</th>
-                        <th class="text-center">Days Overdue</th>
-                        <th class="text-end">Amount</th>
-                        <th class="text-end">Accrued Penalty</th>
+                        <th><?= __('pen_booking') ?></th>
+                        <th><?= __('pen_plot') ?></th>
+                        <th><?= __('pen_customer') ?></th>
+                        <th><?= __('pen_installment_no') ?></th>
+                        <th><?= __('pen_due_date') ?></th>
+                        <th class="text-center"><?= __('pen_days_overdue') ?></th>
+                        <th class="text-end"><?= __('pen_amount') ?></th>
+                        <th class="text-end"><?= __('pen_accrued_penalty') ?></th>
                     </tr>
                 </thead>
                 <tbody>
                 <?php $items = $summary['overdue_installments'] ?? []; if (empty($items)): ?>
-                    <tr><td colspan="8" class="text-center text-muted py-4">No overdue installments past grace period</td></tr>
+                    <tr><td colspan="8" class="text-center text-muted py-4"><?= __('pen_no_overdue') ?></td></tr>
                 <?php else: foreach ($items as $item): ?>
                     <tr>
                         <td><code><?= htmlspecialchars($item['booking_number'] ?? 'BK-' . $item['booking_id']) ?></code></td>
@@ -162,7 +162,7 @@
                             elseif ($days <= 15) $cls = 'badge-risk-mild';
                             elseif ($days <= 30) $cls = 'badge-risk-moderate';
                             ?>
-                            <span class="<?= $cls ?>"><?= $days ?> days</span>
+                            <span class="<?= $cls ?>"><?= $days ?> <?= __('pen_days') ?></span>
                         </td>
                         <td class="text-end">₹<?= number_format((float)$item['amount'], 2) ?></td>
                         <td class="text-end fw-bold text-warning">₹<?= number_format((float)$item['accrued_penalty'], 2) ?></td>
@@ -179,7 +179,7 @@ function applyPenalties() {
     var btn = document.getElementById('applyPenaltiesBtn');
     var resultDiv = document.getElementById('penaltyResult');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i><?= __('pen_processing') ?>';
 
     var token = document.querySelector('meta[name="csrf-token"]');
     var csrfToken = token ? token.getAttribute('content') : '';
@@ -202,22 +202,22 @@ function applyPenalties() {
         resultDiv.style.display = 'block';
         if (data.success) {
             resultDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-1"></i>' +
-                'Applied <strong>' + data.penalties_applied + '</strong> penalties totaling <strong>₹' +
+                '<?= __('pen_applied') ?> <strong>' + data.penalties_applied + '</strong> <?= __('pen_penalties_totaling') ?> <strong>₹' +
                 Number(data.total_penalty).toLocaleString('en-IN', {minimumFractionDigits:2}) + '</strong>. ' +
-                'Page will reload in 2 seconds.</div>';
+                '<?= __('pen_will_reload') ?></div>';
             setTimeout(function() { location.reload(); }, 2000);
         } else {
-            resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i>Error: ' +
+            resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i><?= __('pen_error') ?> ' +
                 (data.error || 'Unknown error') + '</div>';
         }
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-calculator me-1"></i>Apply Penalties Now';
+        btn.innerHTML = '<i class="fas fa-calculator me-1"></i><?= __('pen_apply_now') ?>';
     })
     .catch(function(err) {
         resultDiv.style.display = 'block';
-        resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i>Request failed: ' + err.message + '</div>';
+        resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-1"></i><?= __('pen_request_failed') ?> ' + err.message + '</div>';
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-calculator me-1"></i>Apply Penalties Now';
+        btn.innerHTML = '<i class="fas fa-calculator me-1"></i><?= __('pen_apply_now') ?>';
     });
 }
 </script>

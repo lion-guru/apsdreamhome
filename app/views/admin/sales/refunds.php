@@ -6,25 +6,25 @@ $summary = $summary ?? ['total' => 0.0, 'pending' => 0, 'processed' => 0];
 $base = defined('BASE_URL') ? BASE_URL : '';
 ?>
 <div class="aps-cp-card mb-3">
-    <div class="aps-cp-card-header"><h5 class="m-0"><i class="fas fa-undo me-2"></i>Booking Refunds</h5></div>
+    <div class="aps-cp-card-header"><h5 class="m-0"><i class="fas fa-undo me-2"></i><?= __('sale_booking_refunds') ?></h5></div>
     <div class="aps-cp-card-body">
         <div class="row g-3 mb-3">
             <div class="col-md-4">
                 <div class="aps-cp-stat bg-info text-white">
                     <div class="aps-cp-stat-value">&#8377;<?= number_format((float)$summary['total']) ?></div>
-                    <div class="aps-cp-stat-label">Total Refundable</div>
+                    <div class="aps-cp-stat-label"><?= __('sale_total_refundable') ?></div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="aps-cp-stat bg-warning text-dark">
                     <div class="aps-cp-stat-value"><?= (int)$summary['pending'] ?></div>
-                    <div class="aps-cp-stat-label">Pending</div>
+                    <div class="aps-cp-stat-label"><?= __('sale_pending_label') ?></div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="aps-cp-stat bg-success text-white">
                     <div class="aps-cp-stat-value"><?= (int)$summary['processed'] ?></div>
-                    <div class="aps-cp-stat-label">Processed / Approved</div>
+                    <div class="aps-cp-stat-label"><?= __('sale_processed_approved') ?></div>
                 </div>
             </div>
         </div>
@@ -32,19 +32,19 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <table class="table table-sm table-hover">
                 <thead>
                     <tr>
-                        <th>Booking</th>
-                        <th>Customer</th>
-                        <th>Reason</th>
-                        <th class="text-end">Paid</th>
-                        <th class="text-end">Charge</th>
-                        <th class="text-end">Refund</th>
-                        <th>Status</th>
-                        <th>Created</th>
+                        <th><?= __('sale_booking_num') ?></th>
+                        <th><?= __('sale_customer') ?></th>
+                        <th><?= __('sale_reason') ?></th>
+                        <th class="text-end"><?= __('sale_paid') ?></th>
+                        <th class="text-end"><?= __('sale_charge') ?></th>
+                        <th class="text-end"><?= __('sale_refund') ?></th>
+                        <th><?= __('sale_status') ?></th>
+                        <th><?= __('sale_created') ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($refunds)): ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">No refunds yet</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted py-4"><?= __('sale_no_refunds') ?></td></tr>
                     <?php else: foreach ($refunds as $r):
                         $st = $r['status'] ?? 'pending';
                         $cls = ['processed'=>'success','approved'=>'success','paid'=>'success','pending'=>'warning','rejected'=>'danger'][$st] ?? 'secondary';

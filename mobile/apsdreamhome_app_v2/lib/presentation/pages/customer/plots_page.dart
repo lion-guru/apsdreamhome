@@ -20,8 +20,6 @@ class PlotsPage extends ConsumerStatefulWidget {
 class _PlotsPageState extends ConsumerState<PlotsPage> {
   String _selectedFilter = 'all';
   String? _selectedFacing;
-  double? _minArea;
-  double? _maxArea;
   bool _cornerOnly = false;
   bool _parkFacingOnly = false;
   

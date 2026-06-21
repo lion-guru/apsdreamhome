@@ -11,62 +11,13 @@ class DeepLinkService {
   factory DeepLinkService() => _instance;
   DeepLinkService._internal();
 
-  StreamSubscription? _linkSubscription;
-  Function(DeepLinkData)? _onLinkReceived;
+  StreamSubscription<String>? _linkSubscription;
 
   /// Initialize deep link handling
   Future<void> initialize({
     required Function(DeepLinkData) onLinkReceived,
   }) async {
-    _onLinkReceived = onLinkReceived;
     developer.log('Deep link service initialized (stub mode)', name: 'DeepLinkService');
-  }
-
-  /// Handle incoming link
-  void _handleLink(String link) {
-    developer.log('Handling deep link: $link', name: 'DeepLinkService');
-
-    final data = _parseLink(link);
-    if (data != null) {
-      _onLinkReceived?.call(data);
-    }
-  }
-
-  /// Parse deep link URL
-  DeepLinkData? _parseLink(String link) {
-    try {
-      final uri = Uri.parse(link);
-      final path = uri.path;
-      final queryParams = uri.queryParameters;
-
-      if (path.contains('/property/') || path.contains('/plot/')) {
-        final id = path.split('/').last;
-        return DeepLinkData(type: DeepLinkType.property, id: id, parameters: queryParams);
-      }
-
-      if (path.contains('/colony/')) {
-        final id = path.split('/').last;
-        return DeepLinkData(type: DeepLinkType.colony, id: id, parameters: queryParams);
-      }
-
-      if (path.contains('/invite') || path.contains('/refer')) {
-        return DeepLinkData(type: DeepLinkType.referral, id: queryParams['code'] ?? '', parameters: queryParams);
-      }
-
-      if (path.contains('/payment')) {
-        return DeepLinkData(type: DeepLinkType.payment, id: queryParams['order_id'] ?? '', parameters: queryParams);
-      }
-
-      if (path.contains('/lead/')) {
-        final id = path.split('/').last;
-        return DeepLinkData(type: DeepLinkType.lead, id: id, parameters: queryParams);
-      }
-
-      return DeepLinkData(type: DeepLinkType.unknown, id: '', parameters: queryParams, rawUrl: link);
-    } catch (e) {
-      developer.log('Parse link error: $e', name: 'DeepLinkService');
-      return null;
-    }
   }
 
   /// Generate shareable link

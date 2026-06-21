@@ -7,14 +7,14 @@ $totalAvailable = (int)($stats['total_available'] ?? 0);
 $totalValue = (float)($stats['total_value_sum'] ?? 0);
 ?>
 <div class="container-fluid py-4">
-  <h1 class="h3 mb-4">Colony Development Pipeline</h1>
+  <h1 class="h3 mb-4"><?= __('cp_colony_pipeline') ?></h1>
 
   <div class="row g-3 mb-4">
     <div class="col-md-3">
       <div class="card aps-cp-card">
         <div class="card-body text-center">
           <div class="fs-1 text-primary"><?= $totalColonies ?></div>
-          <div class="text-muted">Total Colonies</div>
+          <div class="text-muted"><?= __('cp_total_colonies') ?></div>
         </div>
       </div>
     </div>
@@ -22,7 +22,7 @@ $totalValue = (float)($stats['total_value_sum'] ?? 0);
       <div class="card aps-cp-card">
         <div class="card-body text-center">
           <div class="fs-1 text-info"><?= number_format($totalPlots) ?></div>
-          <div class="text-muted">Total Plots</div>
+          <div class="text-muted"><?= __('cp_total_plots') ?></div>
         </div>
       </div>
     </div>
@@ -30,7 +30,7 @@ $totalValue = (float)($stats['total_value_sum'] ?? 0);
       <div class="card aps-cp-card">
         <div class="card-body text-center">
           <div class="fs-1 text-success"><?= number_format($totalAvailable) ?></div>
-          <div class="text-muted">Available Plots</div>
+          <div class="text-muted"><?= __('cp_available_plots') ?></div>
         </div>
       </div>
     </div>
@@ -38,31 +38,31 @@ $totalValue = (float)($stats['total_value_sum'] ?? 0);
       <div class="card aps-cp-card">
         <div class="card-body text-center">
           <div class="fs-1 text-warning">₹<?= number_format($totalValue / 10000000, 2) ?> Cr</div>
-          <div class="text-muted">Total Value</div>
+          <div class="text-muted"><?= __('cp_total_value') ?></div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="card aps-cp-card">
-    <div class="card-header aps-cp-card-header"><strong>Colony List</strong></div>
+    <div class="card-header aps-cp-card-header"><strong><?= __('cp_colony_list') ?></strong></div>
     <div class="table-responsive">
       <table class="table table-hover mb-0">
         <thead>
           <tr>
-            <th>Colony Name</th>
-            <th>District</th>
-            <th>Area (Acres)</th>
-            <th>Plots (Total / Available / Booked / Sold)</th>
-            <th>Dev Cost</th>
-            <th>Layout</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th><?= __('cp_colony_name') ?></th>
+            <th><?= __('cp_district') ?></th>
+            <th><?= __('cp_area_acres') ?></th>
+            <th><?= __('cp_plots') ?></th>
+            <th><?= __('cp_dev_costs') ?></th>
+            <th><?= __('cp_layout') ?></th>
+            <th><?= __('cp_status') ?></th>
+            <th><?= __('cp_actions') ?></th>
           </tr>
         </thead>
         <tbody>
           <?php if (empty($colonies)): ?>
-            <tr><td colspan="8" class="text-center text-muted py-4">No colonies found.</td></tr>
+            <tr><td colspan="8" class="text-center text-muted py-4"><?= __('cp_no_colonies') ?></td></tr>
           <?php else: ?>
             <?php foreach ($colonies as $c): ?>
               <tr>
@@ -83,22 +83,22 @@ $totalValue = (float)($stats['total_value_sum'] ?? 0);
                 <td>₹<?= number_format((float)($c['total_dev_cost'] ?? 0), 0) ?></td>
                 <td>
                   <?php if (!empty($c['has_layout'])): ?>
-                    <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)$c['id'] ?>/layout" class="badge bg-success text-decoration-none">Layout Ready</a>
+                    <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)$c['id'] ?>/layout" class="badge bg-success text-decoration-none"><?= __('cp_layout_configured') ?></a>
                   <?php else: ?>
-                    <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)$c['id'] ?>/layout" class="badge bg-warning text-dark text-decoration-none">No Layout</a>
+                    <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)$c['id'] ?>/layout" class="badge bg-warning text-dark text-decoration-none"><?= __('cp_no_layout') ?></a>
                   <?php endif; ?>
                 </td>
                 <td>
                   <span class="badge bg-<?= !empty($c['has_layout']) ? 'success' : 'secondary' ?>">
-                    <?= !empty($c['has_layout']) ? 'Configured' : 'Pending' ?>
+                    <?= !empty($c['has_layout']) ? __('cp_configured') : __('cp_pending') ?>
                   </span>
                 </td>
                 <td>
-                  <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)$c['id'] ?>" class="btn btn-outline-primary btn-sm" title="View Details">
+                  <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)$c['id'] ?>" class="btn btn-outline-primary btn-sm" title="<?= __('cp_view') ?>">
                     <i class="fas fa-eye"></i>
                   </a>
                   <?php if (empty($c['has_layout'])): ?>
-                    <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)$c['id'] ?>/layout" class="btn btn-outline-success btn-sm" title="Generate Layout">
+                    <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)$c['id'] ?>/layout" class="btn btn-outline-success btn-sm" title="<?= __('cp_generate_plots') ?>">
                       <i class="fas fa-drafting-compass"></i>
                     </a>
                   <?php endif; ?>

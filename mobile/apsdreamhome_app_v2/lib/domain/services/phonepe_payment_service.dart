@@ -17,8 +17,6 @@ class PhonePePaymentService {
   // PhonePe Configuration
   late final String _merchantId;
   late final String _saltKey;
-  late final String _apiKey;
-  late final bool _isProduction;
 
   // Backend URL
   final String _baseUrl = 'https://apsdreamhome.com/api/v1';
@@ -34,8 +32,6 @@ class PhonePePaymentService {
 
     _merchantId = merchantId;
     _saltKey = saltKey;
-    _apiKey = apiKey ?? '';
-    _isProduction = isProduction;
 
     try {
       // Initialize PhonePe SDK

@@ -15,7 +15,6 @@ class _VoiceLeadDialogState extends State<VoiceLeadDialog> {
   bool _isListening = false;
   String _text =
       "Tap the mic and say: 'Lead name Rahul, number 9876543210, location Gomti Nagar'";
-  double _confidence = 1.0;
   bool _isProcessing = false;
 
   @override
@@ -136,9 +135,6 @@ class _VoiceLeadDialogState extends State<VoiceLeadDialog> {
         _speech.listen(
           onResult: (val) => setState(() {
             _text = val.recognizedWords;
-            if (val.hasConfidenceRating && val.confidence > 0) {
-              _confidence = val.confidence;
-            }
           }),
         );
       }

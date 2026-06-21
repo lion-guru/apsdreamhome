@@ -19,7 +19,6 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
   String _searchQuery = '';
   String? _selectedState;
   String? _selectedStatus;
-  final bool _showMapUpload = false;
 
   @override
   Widget build(BuildContext context) {

@@ -563,9 +563,7 @@ If a field is not found, use null or empty string. Return ONLY the JSON object, 
         },
       );
 
-      final leadId = (result is Map<String, dynamic>)
-          ? (result['data']?['id']?.toString() ?? result['id']?.toString())
-          : null;
+      final leadId = result['data']?['id']?.toString() ?? result['id']?.toString();
       AppLogger.info('Lead saved: $leadId');
       return leadId;
     } catch (e) {

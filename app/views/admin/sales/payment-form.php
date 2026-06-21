@@ -8,20 +8,20 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 ?>
 <div class="aps-cp-card">
     <div class="aps-cp-card-header">
-        <h5 class="m-0"><i class="fas fa-indian-rupee-sign me-2"></i>Record Payment</h5>
+        <h5 class="m-0"><i class="fas fa-indian-rupee-sign me-2"></i><?= __('sale_record_payment') ?></h5>
     </div>
     <div class="aps-cp-card-body">
         <div class="row g-3 mb-3">
             <div class="col-md-4">
-                <div class="text-muted small">Booking</div>
+                <div class="text-muted small"><?= __('sale_booking_num') ?></div>
                 <div class="fw-bold"><?= htmlspecialchars((string)($booking['booking_number'] ?? '')) ?></div>
             </div>
             <div class="col-md-4">
-                <div class="text-muted small">Installment #</div>
+                <div class="text-muted small"><?= __('sale_installment_num') ?></div>
                 <div class="fw-bold"><?= (int)($installment['installment_number'] ?? 0) ?></div>
             </div>
             <div class="col-md-4">
-                <div class="text-muted small">Due Date</div>
+                <div class="text-muted small"><?= __('sale_due_date') ?></div>
                 <div class="fw-bold"><?= htmlspecialchars((string)($installment['due_date'] ?? '')) ?></div>
             </div>
         </div>
@@ -29,15 +29,15 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Amount (&#8377;) *</label>
+                    <label class="form-label"><?= __('sale_amount_label') ?></label>
                     <input type="number" step="0.01" name="amount" value="<?= htmlspecialchars((string)($installment['amount_due'] ?? 0)) ?>" class="form-control" required>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Payment Date *</label>
+                    <label class="form-label"><?= __('sale_payment_date') ?></label>
                     <input type="date" name="paid_date" value="<?= htmlspecialchars(date('Y-m-d')) ?>" class="form-control" required>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Mode *</label>
+                    <label class="form-label"><?= __('sale_mode_label') ?></label>
                     <select name="payment_mode" class="form-select" id="payMode" required>
                         <?php foreach (['cash', 'cheque', 'dd', 'neft', 'rtgs', 'upi', 'card', 'bank_transfer'] as $m): ?>
                             <option value="<?= $m ?>"><?= strtoupper($m) ?></option>
@@ -45,37 +45,37 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     </select>
                 </div>
                 <div class="col-md-4" id="chequeFields" style="display:none">
-                    <label class="form-label">Cheque / DD #</label>
+                    <label class="form-label"><?= __('sale_cheque_dd_num') ?></label>
                     <input type="text" name="cheque_number" class="form-control">
                 </div>
                 <div class="col-md-4" id="chequeDateField" style="display:none">
-                    <label class="form-label">Cheque Date</label>
+                    <label class="form-label"><?= __('sale_cheque_date') ?></label>
                     <input type="date" name="cheque_date" class="form-control">
                 </div>
                 <div class="col-md-4" id="bankField" style="display:none">
-                    <label class="form-label">Bank Name</label>
+                    <label class="form-label"><?= __('sale_bank_name') ?></label>
                     <input type="text" name="bank_name" class="form-control">
                 </div>
                 <div class="col-md-4" id="refField" style="display:none">
-                    <label class="form-label">Transaction Ref</label>
+                    <label class="form-label"><?= __('sale_transaction_ref') ?></label>
                     <input type="text" name="transaction_ref" class="form-control">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Status *</label>
+                    <label class="form-label"><?= __('sale_status_label') ?></label>
                     <select name="status" class="form-select" required>
-                        <option value="cleared">Cleared</option>
-                        <option value="pending">Pending (Cheque in clearing)</option>
-                        <option value="bounced">Bounced</option>
+                        <option value="cleared"><?= __('sale_cleared') ?></option>
+                        <option value="pending"><?= __('sale_pending_clearing') ?></option>
+                        <option value="bounced"><?= __('sale_bounced') ?></option>
                     </select>
                 </div>
                 <div class="col-12">
-                    <label class="form-label">Notes</label>
+                    <label class="form-label"><?= __('sale_notes') ?></label>
                     <textarea name="notes" class="form-control" rows="2"></textarea>
                 </div>
             </div>
             <div class="mt-3 d-flex gap-2">
-                <button class="btn btn-primary" type="submit"><i class="fas fa-save me-1"></i>Save Receipt</button>
-                <a class="btn btn-link" href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($installment['booking_id'] ?? 0) ?>/schedule">Cancel</a>
+                <button class="btn btn-primary" type="submit"><i class="fas fa-save me-1"></i><?= __('sale_save_receipt') ?></button>
+                <a class="btn btn-link" href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/<?= (int)($installment['booking_id'] ?? 0) ?>/schedule"><?= __('sale_cancel') ?></a>
             </div>
         </form>
     </div>

@@ -6,10 +6,6 @@ import '../../core/utils/logger.dart';
 /// Backend payout processing + TDS/GST compliance
 /// Now uses REST API (MySQL) instead of Firestore
 class PayoutService {
-  // Tax Configuration
-  static const double _tdsRate = 0.05; // 5% TDS
-  static const double _minTdsThreshold = 30000; // ₹30,000 per month
-
   // ==================== INSTANT PAYOUTS ====================
 
   /// Request Withdrawal
@@ -59,30 +55,6 @@ class PayoutService {
   }
 
   // ==================== TDS & GST COMPLIANCE ====================
-
-  /// Record TDS Deduction (delegates to backend)
-  Future<void> _recordTds({
-    required String associateId,
-    required String associateName,
-    required double amount,
-    required String payoutId,
-    required DateTime month,
-  }) async {
-    try {
-      await ApiService().post(
-        '/mlm/record-tds',
-        data: {
-          'associateId': associateId,
-          'amount': amount,
-          'payoutId': payoutId,
-          'month': month.toIso8601String(),
-        },
-      );
-      AppLogger.info('TDS recorded for $associateName: ₹$amount');
-    } catch (e) {
-      AppLogger.error('TDS recording failed', e);
-    }
-  }
 
   /// Generate Digital Form 16 for Associate
   Future<Map<String, dynamic>> generateForm16({

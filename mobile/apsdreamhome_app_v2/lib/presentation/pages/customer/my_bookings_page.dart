@@ -343,11 +343,6 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
     );
   }
 
-  bool _isOverdue(String dueDate) {
-    final due = DateTime.parse(dueDate);
-    return due.isBefore(DateTime.now());
-  }
-
   void _showBookingDetails(BookingModel booking) {
     showModalBottomSheet(
       context: context,

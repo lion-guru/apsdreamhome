@@ -291,60 +291,7 @@ class SyncService {
     return await storage.read(key: AppConstants.userIdKey) ?? '';
   }
 
-  Future<void> _downloadProperties() async {
-    final properties = await _apiService.getProperties();
 
-    for (final property in properties) {
-      await DatabaseHelper.insert(
-        AppConstants.propertiesTable,
-        {
-          ...property,
-          'last_synced_at': DateTime.now().toIso8601String(),
-        },
-      );
-    }
-  }
-
-  Future<void> _downloadLeads() async {
-    final leads = await _apiService.getLeads();
-
-    for (final lead in leads) {
-      await DatabaseHelper.insert(
-        AppConstants.leadsTable,
-        {
-          ...lead,
-          'last_synced_at': DateTime.now().toIso8601String(),
-          'is_synced': 1,
-        },
-      );
-    }
-  }
-
-  Future<void> _downloadCommissions() async {
-    final commissions = await _apiService.getCommissions();
-
-    for (final commission in commissions) {
-      await DatabaseHelper.insert(
-        AppConstants.commissionsTable,
-        {
-          ...commission,
-          'last_synced_at': DateTime.now().toIso8601String(),
-        },
-      );
-    }
-  }
-
-  Future<void> _downloadUserProfile() async {
-    final profile = await _apiService.getProfile();
-
-    await DatabaseHelper.insert(
-      AppConstants.usersTable,
-      {
-        ...profile,
-        'last_synced_at': DateTime.now().toIso8601String(),
-      },
-    );
-  }
 
   Future<void> _updateLastSyncTime() async {
     // This would typically be stored in secure storage

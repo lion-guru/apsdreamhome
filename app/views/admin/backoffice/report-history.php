@@ -1,19 +1,19 @@
 <?php $history = $history ?? []; $report_id = $report_id ?? 0; ?>
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Report History</h1>
+    <h1 class="h3"><?= __('bko_report_history') ?></h1>
     <div>
-      <a href="<?= BASE_URL ?>/admin/backoffice/reports/<?= $report_id ?>/run" class="btn btn-primary btn-sm"><i class="fas fa-play me-1"></i>Run Report</a>
-      <a href="<?= BASE_URL ?>/admin/backoffice/reports" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+      <a href="<?= BASE_URL ?>/admin/backoffice/reports/<?= $report_id ?>/run" class="btn btn-primary btn-sm"><i class="fas fa-play me-1"></i><?= __('bko_run_report') ?></a>
+      <a href="<?= BASE_URL ?>/admin/backoffice/reports" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('bko_back') ?></a>
     </div>
   </div>
   <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th>#</th><th>Executed By</th><th>Start</th><th>End</th><th>Rows</th><th>Status</th><th>Error</th></tr></thead>
+        <thead><tr><th>#</th><th><?= __('bko_executed_by') ?></th><th><?= __('bko_start') ?></th><th><?= __('bko_end') ?></th><th><?= __('bko_rows') ?></th><th><?= __('bko_status') ?></th><th><?= __('bko_error') ?></th></tr></thead>
         <tbody>
           <?php if (empty($history)): ?>
-            <tr><td colspan="7" class="text-center text-muted py-4">No execution history</td></tr>
+            <tr><td colspan="7" class="text-center text-muted py-4"><?= __('bko_no_history') ?></td></tr>
           <?php else: ?>
             <?php foreach ($history as $h): ?>
               <tr>

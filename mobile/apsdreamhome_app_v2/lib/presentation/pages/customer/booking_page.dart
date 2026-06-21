@@ -490,7 +490,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
           'description': 'Plot Booking - ${plot.plotNumber}',
           'entity_type': 'plot',
           'entity_id': plot.id,
-          'entity_name': '${plot.plotNumber} - ${plot.colonyName ?? "Unknown Colony"}',
+          'entity_name': '${plot.plotNumber} - ${plot.colonyName}',
         });
       }
     } catch (e) {

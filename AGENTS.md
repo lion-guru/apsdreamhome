@@ -1,4 +1,4 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-20)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-21)
 
 ---
 
@@ -24,6 +24,53 @@
 
 ### Lesson learned
 - `commission_plan_manager.php` (769 lines) was deleted as "orphaned dead" — had real CRUD for `mlm_commission_plans` table (5 rows). Had to rebuild entirely as MVC (CommissionPlanController + 4 views + 11 routes + mlm_plan_levels table). **Cost: 1 full session.**
+
+---
+
+## Session 2026-06-21: Sales Module i18n + Flutter Android APK Build
+
+### What Was Done
+1. **Sales module i18n COMPLETE (12/12 views)** — Wrapped all 9 remaining Sales admin views with `__()` translation calls. All `sale_*` keys (~150) were already defined in both `lang/en.php` and `lang/hi.php`. Files: `payment-schedule.php` (17), `payment-form.php` (14), `demand-letter.php` (25), `cancel-form.php` (22), `transfer-form.php` (20), `commissions.php` (27), `refunds.php` (28), `rera-compliance.php` (29). All 12 pass `php -l`. JS logic preserved (payMode handler, confirm dialogs).
+
+2. **Flutter Android APK build — 5 fixes, APKs built**:
+   - **Missing pubspec dependencies**: Added `shared_preferences`, `fl_chart`, `qr_flutter`, `cached_network_image`, `font_awesome_flutter`
+   - **Logger constructor error**: `_logger.e(message, error, stackTrace)` → `_logger.e(message, error: error, stackTrace: stackTrace)` (logger v2+ named params)
+   - **connectivity_plus API change**: `result != ConnectivityResult.none` → `results.any((r) => r != ConnectivityResult.none)` (v6 returns `List<ConnectivityResult>`)
+   - **Missing .env asset**: Created empty `.env` file
+   - **Widget test package name**: `aps_dream_home` → `apsdreamhome_app_v2`
+   - **printing package release resource error**: Updated `printing: ^5.12.0` → `^5.15.0`
+   - **Result**: `flutter analyze` → 0 errors, 1 warning (unused element). Both debug (225 MB) and release (70 MB) APKs built successfully.
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `app/views/admin/sales/payment-schedule.php` | i18n wrapped (17 strings) |
+| `app/views/admin/sales/payment-form.php` | i18n wrapped (14 strings) |
+| `app/views/admin/sales/demand-letter.php` | i18n wrapped (25 strings) |
+| `app/views/admin/sales/cancel-form.php` | i18n wrapped (22 strings) |
+| `app/views/admin/sales/transfer-form.php` | i18n wrapped (20 strings) |
+| `app/views/admin/sales/commissions.php` | i18n wrapped (27 strings) |
+| `app/views/admin/sales/refunds.php` | i18n wrapped (28 strings) |
+| `app/views/admin/sales/rera-compliance.php` | i18n wrapped (29 strings) |
+| `mobile/apsdreamhome_app_v2/pubspec.yaml` | Added 5 missing deps, updated printing |
+| `mobile/apsdreamhome_app_v2/lib/core/services/logger.dart` | Named params for `e()` |
+| `mobile/apsdreamhome_app_v2/lib/core/providers/connectivity_provider.dart` | List<ConnectivityResult> API |
+| `mobile/apsdreamhome_app_v2/test/widget_test.dart` | Fixed package import |
+| `mobile/apsdreamhome_app_v2/.env` | Created (empty placeholder) |
+
+### APKs Built
+| Type | Path | Size |
+|------|------|------|
+| Debug | `mobile/apsdreamhome_app_v2/build/app-debug.apk` | 225 MB |
+| Release | `mobile/apsdreamhome_app_v2/build/app-release.apk` | 70 MB |
+
+### i18n Progress Summary
+| Module | Views | Status | Keys |
+|--------|-------|--------|------|
+| **Finance** | 6/6 | COMPLETE | ~130 keys (tds/gst/pen/vpay/dash_cf/vendors) |
+| **Sales** | 12/12 | COMPLETE | ~150 keys (sale_*) |
+| **Backoffice** | 14 | PENDING | — |
+| **Colony-Pipeline** | 6 | PENDING | — |
 
 ---
 
@@ -6095,10 +6142,51 @@ Comprehensive end-to-end verification of the complete commission + penalty + cla
 | `user_dashboard.php` | ~95 | 105 | 10 | 11 |
 | **Total** | **~655** | **~762** | **107** | **61** |
 
+### Session 2026-06-21: Sales Module i18n — 12/12 Views Complete
+
+#### What Was Done
+Completed i18n for all 12 Sales module admin views with `__()` translation calls. All `sale_*` keys (~150) were already defined in both `lang/en.php` and `lang/hi.php` from a previous session. This session wrapped the 9 remaining view files (3 were already done in the prior session).
+
+**Files i18n-wrapped this session (9):**
+- `app/views/admin/sales/payment-schedule.php` — EMI schedule table with regenerate form
+- `app/views/admin/sales/payment-form.php` — Record payment with cheque/bank/NEFT fields (JS preserved)
+- `app/views/admin/sales/demand-letter.php` — Demand letter view for overdue installment
+- `app/views/admin/sales/cancel-form.php` — Cancel booking with reason + charge
+- `app/views/admin/sales/transfer-form.php` — Transfer booking to new customer
+- `app/views/admin/sales/commissions.php` — Agent commissions ledger with summary stats
+- `app/views/admin/sales/refunds.php` — Refunds list with pending/processed summary
+- `app/views/admin/sales/rera-compliance.php` — RERA quarterly filing form
+
+**Already complete from prior session (3):**
+- `app/views/admin/sales/bookings.php` — Plot Bookings list
+- `app/views/admin/sales/booking-detail.php` — Full detail with 6 tabs + 2 modals
+- `app/views/admin/sales/booking-form.php` — New/Edit booking form
+
+#### Verification
+| Check | Result |
+|-------|--------|
+| PHP syntax (all 12 Sales views) | **12/12 PASS** |
+| All `sale_*` keys in en.php | ~150 keys present |
+| All `sale_*` keys in hi.php | ~150 keys present (Hindi Devanagari) |
+| JS logic preserved in payment-form.php | `payMode` change handler + field visibility intact |
+| JS logic preserved in payment-schedule.php | `confirm()` on regenerate intact |
+| JS logic preserved in cancel-form.php | `confirm()` on cancel intact |
+| JS logic preserved in transfer-form.php | `confirm()` on transfer intact |
+
+#### i18n Progress Summary
+| Module | Views | Status | Keys |
+|--------|-------|--------|------|
+| **Finance** | 6/6 | ✅ COMPLETE | ~130 keys (tds/gst/pen/vpay/dash_cf/vendors) |
+| **Sales** | 12/12 | ✅ COMPLETE | ~150 keys (sale_*) |
+| **Backoffice** | 14 | PENDING | — |
+| **Colony-Pipeline** | 6 | PENDING | — |
+
 ### Next Priority (Recommended)
 1. **Legal/Registry NOC Pipe** — ✅ DONE. `checkRegistryEligibility()` now correctly blocks registry when overdue installments exist.
 2. **Real KYC API** — NSDL PAN verification, UIDAI Aadhaar e-KYC integration
 3. **Mobile responsiveness** — Admin portal mobile fixes
 4. **Admin CSS modernization** — ✅ DONE (Phase 33 + CSS consolidation already complete)
 5. **On-field cash collection & reconciliation** — ✅ DONE. 3 tables, 2 services, 1 controller, 12 routes, 5 views, 43/43 E2E tests pass. Both `CashCollectionService` and `MoneyWorkflowService::recordCollection()` now update `booking_payment_schedules.paid_amount`.
+6. **Backoffice views i18n** — 14 files to wrap with `__()` calls (next target)
+7. **Colony-Pipeline views i18n** — 6 files to wrap with `__()` calls
 

@@ -16,8 +16,6 @@ class TelecallerDashboardPage extends ConsumerStatefulWidget {
 class _TelecallerDashboardPageState
     extends ConsumerState<TelecallerDashboardPage> {
   int _selectedIndex = 0;
-  final bool _isCallActive = false;
-  DateTime? _callStartTime;
 
   // Sample data
   final List<Map<String, dynamic>> _assignedLeads = [

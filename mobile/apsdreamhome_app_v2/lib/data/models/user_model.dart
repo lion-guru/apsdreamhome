@@ -65,11 +65,15 @@ class User {
 
   // Role helper getters
   bool get isCustomer => rank == 'Customer' || rank == 'customer';
+  bool get isAgent =>
+      rank == 'Agent' || rank == 'agent' ||
+      rank == 'Telecaller' || rank == 'telecaller';
+  bool get isEmployee =>
+      rank == 'Employee' || rank == 'employee' ||
+      rank == 'HR' || rank == 'hr' ||
+      rank == 'Telecalling' || rank == 'telecalling';
   bool get isAssociate =>
-      rank != 'Customer' &&
-      rank != 'customer' &&
-      rank != 'Admin' &&
-      rank != 'admin';
+      !isCustomer && !isAdmin && !isAgent && !isEmployee;
   bool get isAdmin => rank == 'Admin' || rank == 'admin';
 
   // Get rank commission rate

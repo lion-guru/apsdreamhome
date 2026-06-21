@@ -38,11 +38,11 @@
                         <th><?php echo __('finance_vendor'); ?></th>
                         <th><?php echo __('finance_type'); ?></th>
                         <th><?php echo __('finance_bill_hash'); ?></th>
-                        <th>Cur.</th>
+                        <th><?= __('vendors_currency_abbr') ?></th>
                         <th class="text-end"><?php echo __('finance_amount'); ?></th>
                         <th class="text-end"><?php echo __('finance_tds'); ?></th>
                         <th class="text-end"><?php echo __('finance_gst'); ?></th>
-                        <th class="text-end">Amount (₹ INR)</th>
+                        <th class="text-end"><?= __('vendors_amount_inr') ?></th>
                         <th><?php echo __('finance_status'); ?></th>
                     </tr>
                 </thead>

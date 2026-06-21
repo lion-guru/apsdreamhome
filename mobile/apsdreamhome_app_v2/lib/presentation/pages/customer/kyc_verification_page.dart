@@ -37,7 +37,6 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
   File? _aadhaarDocument;
   File? _selfieImage;
   File? _videoRecording;
-  XFile? _capturedImage;
 
   // Camera controller
   CameraController? _cameraController;
@@ -211,7 +210,6 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
     });
 
     try {
-      final kycRepo = ref.read(kycRepositoryProvider);
       final result = await ref.read(kycRepositoryProvider).verifyPAN(
             pan: _panController.text,
             name: _nameController.text,
@@ -273,32 +271,6 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
         _currentStatus = '';
       });
       _showError('Aadhaar verification failed: $e');
-    }
-  }
-
-  Future<void> _uploadDocuments() async {
-    setState(() {
-      _isLoading = true;
-      _currentStatus = 'Uploading documents...';
-    });
-
-    try {
-      // Simulate document upload
-      await Future.delayed(const Duration(seconds: 3));
-
-      setState(() {
-        _isLoading = false;
-        _currentStatus = '';
-      });
-
-      _showSuccess('Documents uploaded successfully!');
-      _tabController.animateTo(2); // Move to face matching tab
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _currentStatus = '';
-      });
-      _showError('Document upload failed: $e');
     }
   }
 

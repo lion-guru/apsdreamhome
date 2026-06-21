@@ -17,18 +17,18 @@ class CommissionPage extends ConsumerWidget {
         title: const Text('My Commission'),
         actions: [
           IconButton(
-            onPressed: () => ref.refresh(commissionsProvider(null)),
+            onPressed: () { ref.refresh(commissionsProvider(null)); }, // ignore: unused_result
             icon: const Icon(Icons.refresh),
           ),
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async { ref.refresh(commissionsProvider(null)); },
+        onRefresh: () async { ref.refresh(commissionsProvider(null)); }, // ignore: unused_result
         child: commissionsAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => AppWidgets.errorWidget(
             message: error.toString(),
-            onRetry: () => ref.refresh(commissionsProvider(null)),
+            onRetry: () { ref.refresh(commissionsProvider(null)); }, // ignore: unused_result
           ),
           data: (commissions) {
             if (commissions.isEmpty) {
@@ -99,7 +99,7 @@ class CommissionPage extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        commission.description ?? '',
+                        commission.description,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey.shade600,

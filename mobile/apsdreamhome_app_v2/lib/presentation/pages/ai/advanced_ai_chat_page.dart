@@ -51,7 +51,6 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
   @override
   Widget build(BuildContext context) {
     final aiState = ref.watch(aiProvider);
-    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,

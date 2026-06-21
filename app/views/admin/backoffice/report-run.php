@@ -1,12 +1,12 @@
 <?php $report = $report ?? []; $result = $result ?? null; $params = json_decode($report['parameters'] ?? '{}', true) ?: []; ?>
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Run Report: <?= htmlspecialchars($report['report_name'] ?? '') ?></h1>
-    <a href="<?= BASE_URL ?>/admin/backoffice/reports" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+    <h1 class="h3"><?= __('bko_run_report') ?>: <?= htmlspecialchars($report['report_name'] ?? '') ?></h1>
+    <a href="<?= BASE_URL ?>/admin/backoffice/reports" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i><?= __('bko_back') ?></a>
   </div>
 
   <div class="card aps-cp-card mb-4">
-    <div class="card-header aps-cp-card-header"><strong>Parameters</strong></div>
+    <div class="card-header aps-cp-card-header"><strong><?= __('bko_parameters') ?></strong></div>
     <div class="card-body aps-cp-card-body">
       <form method="post" class="row g-3 align-items-end">
         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
@@ -16,7 +16,7 @@
             <input type="text" name="<?= htmlspecialchars($key) ?>" class="form-control" required>
           </div>
         <?php endforeach; ?>
-        <div class="col-auto"><button class="btn btn-primary"><i class="fas fa-play me-1"></i>Execute</button></div>
+        <div class="col-auto"><button class="btn btn-primary"><i class="fas fa-play me-1"></i><?= __('bko_execute') ?></button></div>
       </form>
     </div>
   </div>
@@ -26,7 +26,7 @@
       <div class="alert alert-danger"><?= htmlspecialchars($result['error'] ?? '') ?></div>
     <?php else: ?>
       <div class="card aps-cp-card">
-        <div class="card-header aps-cp-card-header"><strong>Results</strong> — <?= $result['row_count'] ?? 0 ?> rows</div>
+        <div class="card-header aps-cp-card-header"><strong><?= __('bko_results') ?></strong> — <?= $result['row_count'] ?? 0 ?> <?= __('bko_rows') ?></div>
         <div class="table-responsive">
           <?php if (!empty($result['rows'])): ?>
             <table class="table table-hover mb-0">
@@ -38,7 +38,7 @@
               </tbody>
             </table>
           <?php else: ?>
-            <div class="p-4 text-center text-muted">No data returned</div>
+            <div class="p-4 text-center text-muted"><?= __('bko_no_data_returned') ?></div>
           <?php endif; ?>
         </div>
       </div>

@@ -1,18 +1,14 @@
 import 'package:apsdreamhome_app_v2/core/utils/logger.dart';
-import 'package:apsdreamhome_app_v2/data/services/auth_service.dart';
-import 'package:apsdreamhome_app_v2/core/services/database_helper.dart';
 
 /// Communication Service — console-only (Firebase Messaging removed)
 /// Push notifications and email/SMS are handled server-side by PHP backend.
 class CommunicationService {
   static CommunicationService? _instance;
-  final AuthService _authService;
-  final DatabaseHelper _databaseHelper;
 
-  CommunicationService._(this._authService, this._databaseHelper);
+  CommunicationService._();
 
   factory CommunicationService() {
-    _instance ??= CommunicationService._(AuthService(), DatabaseHelper());
+    _instance ??= CommunicationService._();
     return _instance!;
   }
 

@@ -229,6 +229,28 @@ class AuthRepository {
         'createdAt': now,
         'updatedAt': now,
       },
+      'agent': {
+        'userId': '54',
+        'name': 'Test Agent',
+        'email': 'agent@apsdreamhome.com',
+        'phone': '9999999993',
+        'rank': 'Agent',
+        'target': 500000.0,
+        'avatar': null,
+        'createdAt': now,
+        'updatedAt': now,
+      },
+      'employee': {
+        'userId': '89',
+        'name': 'Test Employee',
+        'email': 'employee@apsdreamhome.com',
+        'phone': '9999999994',
+        'rank': 'Employee',
+        'target': 0.0,
+        'avatar': null,
+        'createdAt': now,
+        'updatedAt': now,
+      },
     };
 
     final userData = demoUsers[role] ?? demoUsers['customer']!;

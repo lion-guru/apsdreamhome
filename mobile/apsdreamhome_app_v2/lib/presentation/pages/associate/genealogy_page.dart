@@ -41,12 +41,12 @@ class GenealogyPage extends ConsumerWidget {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async { ref.refresh(genealogyTreeProvider(null)); },
+        onRefresh: () async { ref.refresh(genealogyTreeProvider(null)); }, // ignore: unused_result
         child: genealogyAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => AppWidgets.errorWidget(
             message: error.toString(),
-            onRetry: () => ref.refresh(genealogyTreeProvider(null)),
+            onRetry: () { ref.refresh(genealogyTreeProvider(null)); }, // ignore: unused_result
           ),
           data: (genealogy) {
             final nodes = genealogy.nodes;

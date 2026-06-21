@@ -28,7 +28,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   String _selectedRole = AppConstants.roleCustomer;
-  final String _selectedTab = 'email'; // 'email' or 'phone'
 
   @override
   void dispose() {

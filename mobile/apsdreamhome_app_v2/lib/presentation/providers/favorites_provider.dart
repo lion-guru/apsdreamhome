@@ -34,9 +34,6 @@ class FavoritesState {
 
 /// Favorites Notifier
 class FavoritesNotifier extends StateNotifier<FavoritesState> {
-  static const String _boxName = 'favorites_box';
-  static const String _key = 'favorite_plots';
-
   FavoritesNotifier() : super(FavoritesState()) {
     _loadFavorites();
   }

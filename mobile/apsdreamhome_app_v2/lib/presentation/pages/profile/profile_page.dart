@@ -444,7 +444,7 @@ class ProfilePage extends ConsumerWidget {
 
   void _changePhoto() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    await picker.pickImage(source: ImageSource.gallery);
     // TODO: Handle image upload
   }
 

@@ -14,7 +14,6 @@ class AnalyticsDashboardPage extends StatefulWidget {
 
 class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
   String _timeRange = 'today'; // today, week, month, year
-  final int _touchedIndex = -1;
 
   // Sample data
   final Map<String, dynamic> _stats = {

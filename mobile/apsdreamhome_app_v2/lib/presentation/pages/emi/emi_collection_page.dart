@@ -345,7 +345,6 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
   }
 
   Widget _buildDueCard(Map<String, dynamic> due) {
-    final priority = due['priority'] as String;
     final daysOverdue = due['daysOverdue'] as int;
     final customerName = due['customerName'] as String;
     final plotNumber = due['plotNumber'] as String;

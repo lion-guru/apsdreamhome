@@ -84,6 +84,88 @@
         </div>
     </div>
 
+    <div class="row g-3 mb-4">
+        <div class="col-md-8">
+            <div class="aps-cp-card">
+                <div class="aps-cp-card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2 text-primary"></i><?= __('dash_cf_title') ?></h5>
+                    <a href="<?= BASE_URL ?>/admin/finance/cash-flow?days=30" class="btn btn-sm btn-outline-primary"><?= __('dash_cf_view_full') ?></a>
+                </div>
+                <div class="aps-cp-card-body">
+                    <?php $s = $forecast['summary'] ?? []; ?>
+                    <div class="row text-center mb-3">
+                        <div class="col">
+                            <div class="fw-bold text-success fs-5">₹<?= number_format((float)($s['total_inflow'] ?? 0), 0) ?></div>
+                            <small class="text-muted"><?= __('dash_cf_expected_inflow') ?></small>
+                        </div>
+                        <div class="col">
+                            <div class="fw-bold text-danger fs-5">₹<?= number_format((float)($s['total_outflow'] ?? 0), 0) ?></div>
+                            <small class="text-muted"><?= __('dash_cf_expected_outflow') ?></small>
+                        </div>
+                        <div class="col">
+                            <?php $net = (float)($s['net_position'] ?? 0); ?>
+                            <div class="fw-bold fs-5 <?= $net >= 0 ? 'text-success' : 'text-danger' ?>">₹<?= number_format($net, 0) ?></div>
+                            <small class="text-muted"><?= __('dash_cf_net_position') ?></small>
+                        </div>
+                        <div class="col">
+                            <div class="fw-bold text-primary fs-5"><?= (int)($s['entry_count'] ?? count($forecast['rows'] ?? [])) ?></div>
+                            <small class="text-muted"><?= __('dash_cf_entries') ?></small>
+                        </div>
+                    </div>
+                    <?php
+                    $rows = $forecast['rows'] ?? [];
+                    $cats = [];
+                    foreach ($rows as $r) {
+                        $cat = $r['category'] ?? 'other';
+                        if (!isset($cats[$cat])) $cats[$cat] = ['inflow' => 0, 'outflow' => 0];
+                        if (($r['direction'] ?? '') === 'inflow') $cats[$cat]['inflow'] += (float)($r['amount'] ?? 0);
+                        else $cats[$cat]['outflow'] += (float)($r['amount'] ?? 0);
+                    }
+                    $labels = ['customer_payment'=>__('dash_cf_customer_payments'),'salary'=>__('dash_cf_salaries'),'vendor'=>__('dash_cf_vendors'),'commission'=>__('dash_cf_commissions'),'tax'=>__('dash_cf_taxes'),'development'=>__('dash_cf_development'),'land_acquisition'=>__('dash_cf_land'),'loan'=>__('dash_cf_loan'),'other'=>__('dash_cf_other'),'emi_collection'=>__('dash_cf_emi_collection')];
+                    if (!empty($cats)):
+                    ?>
+                    <table class="table table-sm table-borderless mb-0">
+                        <thead><tr><th><?= __('dash_cf_category') ?></th><th class="text-end text-success"><?= __('dash_cf_inflow') ?></th><th class="text-end text-danger"><?= __('dash_cf_outflow') ?></th></tr></thead>
+                        <tbody>
+                        <?php foreach ($cats as $cat => $vals): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($labels[$cat] ?? ucfirst($cat)) ?></td>
+                                <td class="text-end"><?= $vals['inflow'] > 0 ? '₹'.number_format($vals['inflow'], 0) : '—' ?></td>
+                                <td class="text-end"><?= $vals['outflow'] > 0 ? '₹'.number_format($vals['outflow'], 0) : '—' ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php else: ?>
+                    <p class="text-center text-muted mb-0"><?= __('dash_cf_no_data') ?> <a href="<?= BASE_URL ?>/admin/finance/cash-flow?days=30"><?= __('dash_cf_generate') ?></a></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="aps-cp-card h-100">
+                <div class="aps-cp-card-header">
+                    <h5 class="mb-0"><i class="fas fa-university me-2 text-info"></i><?= __('dash_cf_bank_balances') ?></h5>
+                    <a href="<?= BASE_URL ?>/admin/finance/bank-accounts" class="btn btn-sm btn-outline-primary"><?= __('dash_cf_all') ?></a>
+                </div>
+                <div class="aps-cp-card-body">
+                    <?php if (!empty($banks)): foreach (array_slice($banks, 0, 5) as $b): ?>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <div class="fw-semibold"><?= htmlspecialchars($b['bank_name'] ?? '') ?></div>
+                            <small class="text-muted"><?= htmlspecialchars($b['account_number'] ?? '') ?></small>
+                        </div>
+                        <div class="fw-bold text-success">₹<?= number_format((float)($b['current_balance'] ?? 0), 0) ?></div>
+                    </div>
+                    <hr class="my-1">
+                    <?php endforeach; else: ?>
+                    <p class="text-muted text-center"><?= __('dash_cf_no_accounts') ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="aps-cp-card">
         <div class="aps-cp-card-header">
             <h5 class="mb-0"><i class="fas fa-list me-2"></i><?php echo __('finance_recent_cash_transactions'); ?></h5>

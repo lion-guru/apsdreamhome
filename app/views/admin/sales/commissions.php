@@ -6,31 +6,31 @@ $summary = $summary ?? ['total' => 0.0, 'pending' => 0.0, 'paid' => 0.0, 'count'
 $base = defined('BASE_URL') ? BASE_URL : '';
 ?>
 <div class="aps-cp-card mb-3">
-    <div class="aps-cp-card-header"><h5 class="m-0"><i class="fas fa-percent me-2"></i>Sales Commissions</h5></div>
+    <div class="aps-cp-card-header"><h5 class="m-0"><i class="fas fa-percent me-2"></i><?= __('sale_sales_commissions') ?></h5></div>
     <div class="aps-cp-card-body">
         <div class="row g-3 mb-3">
             <div class="col-md-3 col-6">
                 <div class="aps-cp-stat bg-primary text-white">
                     <div class="aps-cp-stat-value"><?= (int)($summary['count']) ?></div>
-                    <div class="aps-cp-stat-label">Records</div>
+                    <div class="aps-cp-stat-label"><?= __('sale_records') ?></div>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="aps-cp-stat bg-info text-white">
                     <div class="aps-cp-stat-value">&#8377;<?= number_format((float)$summary['total']) ?></div>
-                    <div class="aps-cp-stat-label">Total</div>
+                    <div class="aps-cp-stat-label"><?= __('sale_total_label') ?></div>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="aps-cp-stat bg-success text-white">
                     <div class="aps-cp-stat-value">&#8377;<?= number_format((float)$summary['paid']) ?></div>
-                    <div class="aps-cp-stat-label">Paid / Approved</div>
+                    <div class="aps-cp-stat-label"><?= __('sale_paid_approved') ?></div>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="aps-cp-stat bg-warning text-dark">
                     <div class="aps-cp-stat-value">&#8377;<?= number_format((float)$summary['pending']) ?></div>
-                    <div class="aps-cp-stat-label">Pending</div>
+                    <div class="aps-cp-stat-label"><?= __('sale_pending_label') ?></div>
                 </div>
             </div>
         </div>
@@ -38,18 +38,18 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <table class="table table-sm table-hover">
                 <thead>
                     <tr>
-                        <th>Booking</th>
-                        <th>Beneficiary</th>
-                        <th>Type</th>
-                        <th>Lvl</th>
-                        <th class="text-end">Pct</th>
-                        <th class="text-end">Amount</th>
-                        <th>Status</th>
+                        <th><?= __('sale_booking_num') ?></th>
+                        <th><?= __('sale_beneficiary') ?></th>
+                        <th><?= __('sale_type') ?></th>
+                        <th><?= __('sale_lvl') ?></th>
+                        <th class="text-end"><?= __('sale_pct') ?></th>
+                        <th class="text-end"><?= __('sale_amount') ?></th>
+                        <th><?= __('sale_status') ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($commissions)): ?>
-                        <tr><td colspan="7" class="text-center text-muted py-4">No commission records</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-4"><?= __('sale_no_commission_records') ?></td></tr>
                     <?php else: foreach ($commissions as $c):
                         $st = $c['status'] ?? 'pending';
                         $cls = ['paid' => 'success', 'approved' => 'success', 'pending' => 'warning', 'rejected' => 'danger'][$st] ?? 'secondary';

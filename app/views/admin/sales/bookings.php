@@ -24,17 +24,17 @@ $statusBadge = function ($s) {
 ?>
 <div class="aps-cp-card mb-3">
     <div class="aps-cp-card-header">
-        <h5 class="m-0"><i class="fas fa-bookmark me-2"></i>Plot Bookings</h5>
+        <h5 class="m-0"><i class="fas fa-bookmark me-2"></i><?= __('sale_plot_bookings') ?></h5>
     </div>
     <div class="aps-cp-card-body">
         <form method="get" class="row g-2 mb-3">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
             <div class="col-md-3">
-                <input type="text" name="search" value="<?= htmlspecialchars((string)($filters['search'] ?? '')) ?>" placeholder="Booking # / customer / plot" class="form-control form-control-sm">
+                <input type="text" name="search" value="<?= htmlspecialchars((string)($filters['search'] ?? '')) ?>" placeholder="<?= __('sale_search_placeholder') ?>" class="form-control form-control-sm">
             </div>
             <div class="col-md-2">
                 <select name="status" class="form-select form-select-sm">
-                    <option value="">All statuses</option>
+                    <option value=""><?= __('sale_all_statuses') ?></option>
                     <?php foreach ($statuses as $st): ?>
                         <option value="<?= htmlspecialchars($st) ?>" <?= (($filters['status'] ?? '') === $st) ? 'selected' : '' ?>><?= htmlspecialchars($st) ?></option>
                     <?php endforeach; ?>
@@ -47,9 +47,9 @@ $statusBadge = function ($s) {
                 <input type="date" name="date_to" value="<?= htmlspecialchars((string)($filters['date_to'] ?? '')) ?>" class="form-control form-control-sm">
             </div>
             <div class="col-md-3">
-                <button class="btn btn-sm btn-primary" type="submit"><i class="fas fa-search me-1"></i>Filter</button>
-                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings" class="btn btn-sm btn-link">Reset</a>
-                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/new" class="btn btn-sm btn-success float-end"><i class="fas fa-plus me-1"></i>New</a>
+                <button class="btn btn-sm btn-primary" type="submit"><i class="fas fa-search me-1"></i><?= __('sale_filter') ?></button>
+                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings" class="btn btn-sm btn-link"><?= __('sale_reset') ?></a>
+                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/new" class="btn btn-sm btn-success float-end"><i class="fas fa-plus me-1"></i><?= __('sale_new') ?></a>
             </div>
         </form>
 
@@ -57,19 +57,19 @@ $statusBadge = function ($s) {
             <table class="table table-hover table-sm">
                 <thead>
                     <tr>
-                        <th>Booking #</th>
-                        <th>Customer</th>
-                        <th>Plot</th>
-                        <th>Channel</th>
-                        <th>Status</th>
-                        <th class="text-end">Agreement</th>
-                        <th class="text-end">Paid</th>
-                        <th>Booking Date</th>
+                        <th><?= __('sale_booking_num') ?></th>
+                        <th><?= __('sale_customer') ?></th>
+                        <th><?= __('sale_plot') ?></th>
+                        <th><?= __('sale_channel') ?></th>
+                        <th><?= __('sale_status') ?></th>
+                        <th class="text-end"><?= __('sale_agreement') ?></th>
+                        <th class="text-end"><?= __('sale_paid') ?></th>
+                        <th><?= __('sale_booking_date') ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($bookings)): ?>
-                        <tr><td colspan="8" class="text-center py-4 text-muted">No bookings found</td></tr>
+                        <tr><td colspan="8" class="text-center py-4 text-muted"><?= __('sale_no_bookings') ?></td></tr>
                     <?php else: foreach ($bookings as $b): ?>
                         <tr>
                             <td>

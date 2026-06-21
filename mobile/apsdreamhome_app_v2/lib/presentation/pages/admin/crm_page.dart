@@ -18,7 +18,6 @@ class CRMPage extends ConsumerStatefulWidget {
 class _CRMPageState extends ConsumerState<CRMPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String _searchQuery = '';
   String? _selectedStatus;
   String? _selectedSource;
   DateTimeRange? _dateRange;
@@ -281,7 +280,7 @@ class _CRMPageState extends ConsumerState<CRMPage>
           Expanded(
             flex: 2,
             child: TextField(
-              onChanged: (value) => setState(() => _searchQuery = value),
+              onChanged: (value) {},
               decoration: InputDecoration(
                 hintText: 'Search by name, phone, email...',
                 prefixIcon: const Icon(Icons.search),

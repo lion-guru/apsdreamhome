@@ -23,7 +23,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   int _selectedTab = 0; // 0 = Email, 1 = Phone
-  String _selectedDemoRole = 'customer'; // For demo mode: customer, associate, admin
+  String _selectedDemoRole = 'customer'; // For demo mode: customer, associate, agent, employee, admin
 
   @override
   void dispose() {
@@ -49,12 +49,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         AppWidgets.showSuccessSnackBar(context, 'Login successful');
         
         // Navigate based on user role
-        if (user.isCustomer) {
-          context.go('/home');
+        if (user.isAdmin) {
+          context.go('/admin');
+        } else if (user.isAgent) {
+          context.go('/agent/dashboard');
         } else if (user.isAssociate) {
           context.go('/associate/dashboard');
-        } else if (user.isAdmin) {
-          context.go('/admin/dashboard');
+        } else if (user.isEmployee) {
+          context.go('/employee/check-in');
         } else {
           context.go('/home');
         }
@@ -77,8 +79,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authStateProvider);
-    
     return Scaffold(
       body: MeshGradientBackground(
         child: SafeArea(
@@ -477,7 +477,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           
           const SizedBox(height: 12),
           
-          // Role Selection
+          // Role Selection - Row 1
           Row(
             children: [
               Expanded(
@@ -491,6 +491,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Expanded(
                 child: _buildDemoRoleChip('admin', 'Admin'),
               ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Role Selection - Row 2
+          Row(
+            children: [
+              Expanded(
+                child: _buildDemoRoleChip('agent', 'Agent'),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildDemoRoleChip('employee', 'Employee'),
+              ),
+              const SizedBox(width: 8),
+              const Spacer(),
             ],
           ),
         ],
@@ -512,12 +527,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           final user = await authRepository.demoLogin(role);
           if (mounted) {
             AppWidgets.showSuccessSnackBar(context, 'Demo login as ${label}');
-            if (user.isCustomer) {
-              context.go('/home');
+            if (user.isAdmin) {
+              context.go('/admin');
+            } else if (user.isAgent) {
+              context.go('/agent/dashboard');
             } else if (user.isAssociate) {
               context.go('/associate/dashboard');
-            } else if (user.isAdmin) {
-              context.go('/admin/dashboard');
+            } else if (user.isEmployee) {
+              context.go('/employee/check-in');
             } else {
               context.go('/home');
             }

@@ -83,44 +83,6 @@ class _KYCVerificationPageState extends State<KYCVerificationPage> {
     */
   }
 
-  void _simulateOCR(String type) {
-    // In production, this would use ML Kit OCR
-    // For demo, we'll show a simulated extraction
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('OCR Processing'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text('Extracting data from ${type.replaceAll('_', ' ')}...'),
-          ],
-        ),
-      ),
-    );
-
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pop(context);
-
-      // Simulate extracted data
-      if (type == 'aadhar_front') {
-        setState(() {
-          _fullNameController.text = 'RAHUL KUMAR';
-          _aadharController.text = '1234 5678 9012';
-          _dobController.text = '15/08/1990';
-        });
-        _showSuccess('Aadhar data extracted!');
-      } else if (type == 'pan') {
-        setState(() {
-          _panController.text = 'ABCDE1234F';
-        });
-        _showSuccess('PAN data extracted!');
-      }
-    });
-  }
-
   Future<void> _submitKYC() async {
     if (!_validateForm()) return;
 

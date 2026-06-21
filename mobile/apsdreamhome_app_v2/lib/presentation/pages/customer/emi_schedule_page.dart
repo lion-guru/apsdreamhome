@@ -8,8 +8,8 @@ import '../../../core/providers/auth_provider.dart';
 import '../../widgets/glass_card.dart';
 
 class EmiSchedulePage extends ConsumerStatefulWidget {
-  final int bookingId;
-  const EmiSchedulePage({super.key, required this.bookingId});
+  final int? bookingId;
+  const EmiSchedulePage({super.key, this.bookingId});
 
   @override
   ConsumerState<EmiSchedulePage> createState() => _EmiSchedulePageState();

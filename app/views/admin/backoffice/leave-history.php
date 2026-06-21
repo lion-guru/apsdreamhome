@@ -1,25 +1,25 @@
 <?php $leaves = $leaves ?? []; $status_filter = $status_filter ?? ''; ?>
 <div class="container-fluid py-4">
-  <h1 class="h3 mb-4">Leave History</h1>
+  <h1 class="h3 mb-4"><?= __('bko_leave_history') ?></h1>
   <form class="row g-2 mb-4" method="get">
     <div class="col-auto">
       <select name="status" class="form-select">
-        <option value="">All Status</option>
-        <option value="pending" <?= $status_filter==='pending'?'selected':'' ?>>Pending</option>
-        <option value="approved" <?= $status_filter==='approved'?'selected':'' ?>>Approved</option>
-        <option value="rejected" <?= $status_filter==='rejected'?'selected':'' ?>>Rejected</option>
-        <option value="cancelled" <?= $status_filter==='cancelled'?'selected':'' ?>>Cancelled</option>
+        <option value=""><?= __('bko_all_status') ?></option>
+        <option value="pending" <?= $status_filter==='pending'?'selected':'' ?>><?= __('bko_pending') ?></option>
+        <option value="approved" <?= $status_filter==='approved'?'selected':'' ?>><?= __('bko_approved') ?></option>
+        <option value="rejected" <?= $status_filter==='rejected'?'selected':'' ?>><?= __('bko_rejected') ?></option>
+        <option value="cancelled" <?= $status_filter==='cancelled'?'selected':'' ?>><?= __('bko_cancelled') ?></option>
       </select>
     </div>
-    <div class="col-auto"><button class="btn btn-primary">Filter</button></div>
+    <div class="col-auto"><button class="btn btn-primary"><?= __('bko_filter') ?></button></div>
   </form>
   <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Approved By</th></tr></thead>
+        <thead><tr><th><?= __('bko_employee') ?></th><th><?= __('bko_type') ?></th><th><?= __('bko_from') ?></th><th><?= __('bko_to') ?></th><th><?= __('bko_days') ?></th><th><?= __('bko_status') ?></th><th><?= __('bko_approved_by') ?></th></tr></thead>
         <tbody>
           <?php if (empty($leaves)): ?>
-            <tr><td colspan="7" class="text-center text-muted py-4">No records</td></tr>
+            <tr><td colspan="7" class="text-center text-muted py-4"><?= __('bko_no_records') ?></td></tr>
           <?php else: ?>
             <?php foreach ($leaves as $l): ?>
               <tr>

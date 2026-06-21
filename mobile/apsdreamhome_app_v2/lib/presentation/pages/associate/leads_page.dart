@@ -212,7 +212,7 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
     };
 
     return RefreshIndicator(
-      onRefresh: () async { ref.refresh(myLeadsProvider(filters)); },
+      onRefresh: () async { ref.refresh(myLeadsProvider(filters)); }, // ignore: unused_result
       child: Consumer(
         builder: (context, ref, child) {
           final leadsAsync = ref.watch(myLeadsProvider(filters));
