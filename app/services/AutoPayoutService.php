@@ -23,8 +23,11 @@ class AutoPayoutService
 
     private function ensureTableExists()
     {
-        $sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
-        $this->db->query($sql);
+        try {
+            $this->db->query("SELECT 1 FROM mlm_commission_ledger LIMIT 1");
+        } catch (\Throwable $e) {
+            error_log('[AutoPayoutService] mlm_commission_ledger not accessible: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -40,7 +43,7 @@ class AutoPayoutService
                     SUM(c.amount) as total_pending,
                     COUNT(c.id) as pending_count
                 FROM mlm_commission_ledger c
-                JOIN users u ON c.user_id = u.id
+                JOIN users u ON c.beneficiary_user_id = u.id
                 WHERE c.status = 'pending'
                 GROUP BY u.id, u.name, u.email, u.phone
                 HAVING total_pending > 0
@@ -73,8 +76,8 @@ class AutoPayoutService
         // Mark all pending commissions as paid
         $agentIds = array_column($pending, 'user_id');
         $placeholders = implode(',', array_fill(0, count($agentIds), '?'));
-        $updateSql = "UPDATE mlm_commission_ledger SET status = 'paid', paid_at = NOW()
-                      WHERE user_id IN ($placeholders) AND status = 'pending'";
+        $updateSql = "UPDATE mlm_commission_ledger SET status = 'paid', updated_at = NOW()
+                      WHERE beneficiary_user_id IN ($placeholders) AND status = 'pending'";
         $this->db->query($updateSql, $agentIds);
 
         // Update batch as completed

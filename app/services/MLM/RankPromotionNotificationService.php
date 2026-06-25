@@ -219,24 +219,56 @@ class RankPromotionNotificationService
 
     /**
      * Log rank promotion to history table.
+     *
+     * mlm_rank_history columns:
+     *   associate_id (FK associates.id), from_rank, to_rank,
+     *   qualifying_volume_at_promotion, leg_count_at_promotion,
+     *   promoted_at, promoted_by, is_manual, reason, created_at
      */
     private function logRankHistory(int $userId, string $oldRank, string $newRank, array $metadata): void
     {
         try {
+            $assocStmt = $this->db->prepare(
+                "SELECT id FROM associates WHERE user_id = ? LIMIT 1"
+            );
+            $assocStmt->execute([$userId]);
+            $assoc = $assocStmt->fetch(PDO::FETCH_ASSOC);
+            $associateId = $assoc ? (int)$assoc['id'] : 0;
+
+            if ($associateId <= 0) {
+                error_log("[RankPromotionNotificationService] No associate record for user #$userId — skipping rank history log");
+                return;
+            }
+
             $this->db->prepare("
                 INSERT INTO mlm_rank_history
-                (user_id, old_rank, new_rank, promoted_at, gbv_at_promotion, team_size, notes)
-                VALUES (?, ?, ?, NOW(), ?, ?, ?)
+                (associate_id, from_rank, to_rank, qualifying_volume_at_promotion, leg_count_at_promotion,
+                 promoted_at, created_at)
+                VALUES (?, ?, ?, ?, ?, NOW(), NOW())
             ")->execute([
-                $userId,
+                $associateId,
                 $oldRank,
                 $newRank,
                 $metadata['gbv'] ?? 0,
                 $metadata['team_size'] ?? 0,
-                json_encode($metadata),
             ]);
 
-            // Update current rank in mlm_profiles
+            // Update current rank in associates extension table
+            $levelMap = [
+                'associate' => 'bronze',
+                'bronze'    => 'bronze',
+                'silver'    => 'silver',
+                'gold'      => 'gold',
+                'platinum'  => 'platinum',
+                'diamond'   => 'platinum',
+                'site_manager' => 'platinum',
+            ];
+            $newLevel = $levelMap[$newRank] ?? 'bronze';
+            $this->db->prepare("
+                UPDATE associates SET level = ? WHERE id = ?
+            ")->execute([$newLevel, $associateId]);
+
+            // Also update current_rank in mlm_profiles for display
             $this->db->prepare("
                 UPDATE mlm_profiles SET current_rank = ?, updated_at = NOW() WHERE user_id = ?
             ")->execute([$newRank, $userId]);

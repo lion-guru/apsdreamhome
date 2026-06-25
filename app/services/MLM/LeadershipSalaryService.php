@@ -179,9 +179,28 @@ class LeadershipSalaryService
     
     private function getUserTotalVolume(int $userId): float
     {
-        $stmt = $this->db->prepare("SELECT COALESCE(SUM(total_amount), 0) as total FROM bookings WHERE associate_id = ? AND status IN ('confirmed', 'completed')");
+        // Query plot_bookings via associates link (primary source for plot sales)
+        $stmt = $this->db->prepare("
+            SELECT COALESCE(SUM(pb.total_plot_value), 0) as total 
+            FROM plot_bookings pb
+            JOIN associates a ON a.id = pb.associate_id
+            WHERE a.user_id = ? 
+              AND pb.status NOT IN ('cancelled', 'defaulted')
+        ");
         $stmt->execute([$userId]);
-        return (float)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
+        $plotTotal = (float)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
+
+        // Also include legacy bookings table (CRM-style bookings)
+        $stmt = $this->db->prepare("
+            SELECT COALESCE(SUM(b.total_amount), 0) as total 
+            FROM bookings b
+            WHERE b.associate_id = ? 
+              AND b.status IN ('confirmed', 'completed')
+        ");
+        $stmt->execute([$userId]);
+        $bookingTotal = (float)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
+
+        return $plotTotal + $bookingTotal;
     }
 
     /**

@@ -132,9 +132,22 @@ class CommissionManager
     {
         try {
             $engine = new HybridCommissionEngine($this->db);
-            $result = $engine->calculateBookingCommission($bookingId);
 
-            if (empty($result['entries'])) {
+            $bookingCtx = $this->resolveBookingContext($bookingId);
+            if (!$bookingCtx) {
+                return ['success' => false, 'engine' => self::ENGINE_HYBRID, 'error' => 'Booking not found or missing data'];
+            }
+
+            $result = $engine->processPipelineCommission(
+                $bookingId,
+                $bookingCtx['receipt_id'],
+                $bookingCtx['amount'],
+                $bookingCtx['agent_id']
+            );
+
+            $entries = $result['entries'] ?? [];
+
+            if (empty($entries)) {
                 return [
                     'success' => true,
                     'engine' => self::ENGINE_HYBRID,
@@ -144,23 +157,69 @@ class CommissionManager
                 ];
             }
 
-            // Write legacy backward-compat rows
-            $legacyCount = $this->writeLegacyRows($bookingId, $result['entries']);
-
-            // Apply daily capping
-            $this->applyDailyCapping($result['entries']);
+            $legacyCount = $this->writeLegacyRows($bookingId, $entries);
+            $this->applyDailyCapping($entries);
 
             return [
                 'success' => true,
                 'engine' => self::ENGINE_HYBRID,
-                'created' => count($result['entries']),
+                'created' => count($entries),
                 'legacy_created' => $legacyCount,
                 'total_amount' => round((float)($result['total'] ?? 0.0), 2),
-                'entries' => $result['entries'],
+                'entries' => $entries,
             ];
         } catch (Exception $e) {
             error_log('[CommissionManager] calculateViaHybrid failed: ' . $e->getMessage());
             return ['success' => false, 'engine' => self::ENGINE_HYBRID, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Resolve booking context needed by HybridCommissionEngine::processPipelineCommission().
+     *
+     * @return array{receipt_id: int, amount: float, agent_id: int}|null
+     */
+    private function resolveBookingContext(int $bookingId): ?array
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    pb.id,
+                    pb.total_plot_value,
+                    pb.booking_amount,
+                    pb.agreement_value,
+                    pb.associate_id,
+                    a.user_id as agent_user_id,
+                    COALESCE(pb.agreement_value, pb.total_plot_value, 0) AS amount
+                FROM plot_bookings pb
+                LEFT JOIN associates a ON a.id = pb.associate_id
+                WHERE pb.id = ? LIMIT 1
+            ");
+            $stmt->execute([$bookingId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                return null;
+            }
+
+            $agentId = (int)($row['agent_user_id'] ?? $row['associate_id'] ?? 0);
+
+            $receiptStmt = $this->db->prepare("
+                SELECT id FROM booking_payment_schedules 
+                WHERE booking_id = ? ORDER BY id DESC LIMIT 1
+            ");
+            $receiptStmt->execute([$bookingId]);
+            $receiptRow = $receiptStmt->fetch(PDO::FETCH_ASSOC);
+            $receiptId = $receiptRow ? (int)$receiptRow['id'] : 0;
+
+            return [
+                'receipt_id' => $receiptId,
+                'amount'     => (float)$row['amount'],
+                'agent_id'   => $agentId,
+            ];
+        } catch (Exception $e) {
+            error_log('[CommissionManager] resolveBookingContext failed: ' . $e->getMessage());
+            return null;
         }
     }
 
@@ -396,11 +455,21 @@ class CommissionManager
                     continue;
                 }
 
-                // Credit wallet
-                $this->db->prepare("
-                    INSERT INTO wallet_points (user_id, points, type, description, reference_type, reference_id, created_at)
-                    VALUES (?, ?, 'commission', 'Commission payout batch #{$batchId}', 'payout_batch', ?, NOW())
-                ")->execute([$userId, $amount, $batchId]);
+                // Credit user_wallets (monetary wallet, not gamification points)
+                $walletExists = $this->db->prepare(
+                    "SELECT id FROM user_wallets WHERE user_id = ? LIMIT 1"
+                );
+                $walletExists->execute([$userId]);
+                if ($walletExists->fetch()) {
+                    $this->db->prepare("
+                        UPDATE user_wallets SET balance = balance + ?, total_credited = total_credited + ? WHERE user_id = ?
+                    ")->execute([$amount, $amount, $userId]);
+                } else {
+                    $this->db->prepare("
+                        INSERT INTO user_wallets (user_id, user_type, balance, total_credited, created_at)
+                        VALUES (?, 'associate', ?, ?, NOW())
+                    ")->execute([$userId, $amount, $amount]);
+                }
 
                 // Update ledger status to 'paid'
                 $placeholders = implode(',', array_fill(0, count($data['ids']), '?'));
