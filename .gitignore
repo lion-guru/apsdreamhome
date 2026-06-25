@@ -159,6 +159,35 @@ playwright-report/
 /.idea/
 /.metadata
 
+# Firebase / service account keys (NEVER commit)
+config/firebase-service-account.json
+**/google-services.json
+**/firebase_options.dart
+**/GoogleService-Info.plist
+
+# git-filter-repo artifact
+.git-rewrite/
+
+# Debug/test scripts (should not be in production)
+public/run_migration.php
+public/run_syntax_check.php
+public/run_test.php
+public/_debug_headers.php
+test_db.php
+
+# Mobile screenshots and large media (never commit)
+mobile/**/*.png
+mobile/**/*.mp4
+mobile/**/*.jpg
+!mobile/apsdreamhome_app_v2/lib/**/*.dart
+
+# XML UI files (design artifacts)
+mobile/**/*.xml
+
+# Build artifacts in mobile
+mobile/**/.cxx/
+mobile/**/build/
+
 # Individual junk files at root
 /build_log.txt
 /debug_tokens.php
