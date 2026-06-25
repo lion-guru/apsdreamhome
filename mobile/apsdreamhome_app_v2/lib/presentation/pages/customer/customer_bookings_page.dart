@@ -32,19 +32,25 @@ class CustomerBookingsPage extends ConsumerWidget {
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
       ),
-      body: bookingsAsync.when(
-        data: (bookings) => bookings.isEmpty
-            ? _buildEmptyState(context)
-            : ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: bookings.length,
-                itemBuilder: (context, index) {
-                  final booking = bookings[index] as Map<String, dynamic>;
-                  return _buildBookingCard(context, booking);
-                },
-              ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
+      body: RefreshIndicator(
+        onRefresh: () async => ref.invalidate(customerBookingsProvider),
+        child: bookingsAsync.when(
+          data: (bookings) => bookings.isEmpty
+              ? ListView(children: [const SizedBox(height: 100), _buildEmptyState(context)])
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: bookings.length,
+                  itemBuilder: (context, index) {
+                    final booking = bookings[index] as Map<String, dynamic>;
+                    return _buildBookingCard(context, booking);
+                  },
+                ),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (err, stack) => ListView(children: [
+            const SizedBox(height: 100),
+            Center(child: Text('Error: $err')),
+          ]),
+        ),
       ),
     );
   }

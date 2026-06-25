@@ -8,6 +8,7 @@ use PDO;
 /**
  * MLMNetworkService
  * Handles genealogy, downline tracking, and team statistics.
+ * Uses network_tree table (not users.parent_id) for MLM hierarchy.
  */
 class MLMNetworkService
 {
@@ -20,7 +21,7 @@ class MLMNetworkService
 
     /**
      * Get the downline tree for a specific user.
-     * Returns a recursive tree structure or a flattened list depending on depth.
+     * Returns a recursive tree structure using network_tree table.
      */
     public function getDownline($userId, $maxLevels = 3)
     {
@@ -33,10 +34,12 @@ class MLMNetworkService
             return [];
         }
 
-        $sql = "SELECT id, name, email, phone, rank, profile_image 
-                FROM users 
-                WHERE parent_id = ? 
-                ORDER BY name ASC";
+        $sql = "SELECT nt.associate_id as id, u.name, u.email, u.phone, u.mlm_rank as rank, u.profile_image,
+                       nt.position, nt.level as tree_level
+                FROM network_tree nt
+                JOIN users u ON u.id = nt.associate_id
+                WHERE nt.parent_id = ?
+                ORDER BY u.name ASC";
         
         $children = $this->db->fetchAll($sql, [$parentId]) ?? [];
 
@@ -56,9 +59,9 @@ class MLMNetworkService
     public function getTeamSize($userId)
     {
         $sql = "WITH RECURSIVE downline AS (
-                    SELECT id FROM users WHERE parent_id = ?
+                    SELECT associate_id FROM network_tree WHERE parent_id = ?
                     UNION ALL
-                    SELECT u.id FROM users u INNER JOIN downline d ON u.parent_id = d.id
+                    SELECT nt.associate_id FROM network_tree nt INNER JOIN downline d ON nt.parent_id = d.associate_id
                 ) SELECT COUNT(*) FROM downline";
         return (int)$this->db->fetchColumn($sql, [$userId]);
     }
@@ -68,7 +71,7 @@ class MLMNetworkService
      */
     public function getDirectCount($userId)
     {
-        $sql = "SELECT COUNT(*) FROM users WHERE parent_id = ?";
+        $sql = "SELECT COUNT(*) FROM network_tree WHERE parent_id = ?";
         return (int)$this->db->fetchColumn($sql, [$userId]);
     }
 
@@ -85,10 +88,10 @@ class MLMNetworkService
                     cl.amount as commission_earned,
                     cl.status as payout_status
                 FROM mlm_commission_ledger cl
-                JOIN sales s ON cl.sale_id = s.id
-                JOIN properties p ON s.property_id = p.id
-                JOIN users u ON s.buyer_id = u.id
-                WHERE cl.user_id = ?
+                JOIN plot_bookings pb ON cl.booking_id = pb.id
+                JOIN plots p ON pb.plot_id = p.id
+                JOIN users u ON pb.customer_id = u.id
+                WHERE cl.beneficiary_user_id = ?
                 ORDER BY cl.created_at DESC";
         
         return $this->db->fetchAll($sql, [$userId]) ?? [];

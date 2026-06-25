@@ -1600,6 +1600,246 @@ class Customer extends Model
 
         return $conversionResult;
     }
+
+    /**
+     * Get EMI schedule for a booking
+     */
+    public function getEmiSchedule($bookingId)
+    {
+        try {
+            // Get booking details first
+            $bookingSql = "
+                SELECT b.*, p.title as property_title, p.price as property_price,
+                       u.name as customer_name, u.phone as customer_phone, u.email as customer_email
+                FROM bookings b
+                LEFT JOIN properties p ON b.property_id = p.id
+                LEFT JOIN users u ON b.customer_id = u.id
+                WHERE b.id = :booking_id
+            ";
+            $bookingStmt = $this->db->prepare($bookingSql);
+            $bookingStmt->execute(['booking_id' => $bookingId]);
+            $booking = $bookingStmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$booking) {
+                return [
+                    'success' => false,
+                    'message' => 'Booking not found'
+                ];
+            }
+
+            // Get EMI installments
+            $emiSql = "
+                SELECT ei.*, b.customer_id, b.property_id,
+                       DATEDIFF(ei.due_date, CURDATE()) as days_until_due,
+                       CASE 
+                           WHEN ei.status = 'paid' THEN 'paid'
+                           WHEN ei.due_date < CURDATE() AND ei.status != 'paid' THEN 'overdue'
+                           ELSE 'pending'
+                       END as computed_status
+                FROM emi_installments ei
+                JOIN bookings b ON ei.booking_id = b.id
+                WHERE ei.booking_id = :booking_id
+                ORDER BY ei.emi_number ASC
+            ";
+            $emiStmt = $this->db->prepare($emiSql);
+            $emiStmt->execute(['booking_id' => $bookingId]);
+            $installments = $emiStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Calculate summary
+            $totalPaid = 0;
+            $totalPending = 0;
+            $overdueCount = 0;
+            foreach ($installments as $emi) {
+                if ($emi['status'] === 'paid') {
+                    $totalPaid += (float)($emi['amount'] ?? 0);
+                } else {
+                    $totalPending += (float)($emi['amount'] ?? 0);
+                    if ($emi['computed_status'] === 'overdue') {
+                        $overdueCount++;
+                    }
+                }
+            }
+
+            return [
+                'success' => true,
+                'data' => [
+                    'booking' => $booking,
+                    'installments' => $installments,
+                    'summary' => [
+                        'total_installments' => count($installments),
+                        'paid_installments' => count(array_filter($installments, fn($e) => $e['status'] === 'paid')),
+                        'pending_installments' => count(array_filter($installments, fn($e) => $e['status'] !== 'paid')),
+                        'overdue_count' => $overdueCount,
+                        'total_paid' => $totalPaid,
+                        'total_pending' => $totalPending,
+                        'next_due_date' => $this->getNextDueDate($bookingId),
+                    ]
+                ]
+            ];
+        } catch (Exception $e) {
+            error_log("[Customer] getEmiSchedule exception: " . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Failed to fetch EMI schedule: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Get next due date for a booking
+     */
+    private function getNextDueDate($bookingId)
+    {
+        $sql = "
+            SELECT MIN(due_date) as next_due
+            FROM emi_installments
+            WHERE booking_id = :booking_id AND status != 'paid'
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['booking_id' => $bookingId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['next_due'] ?? null;
+    }
+
+    /**
+     * Record EMI payment
+     */
+    public function recordEmiPayment($emiId, $amount, $method = 'Online')
+    {
+        try {
+            // Get EMI details
+            $emiSql = "
+                SELECT ei.*, b.customer_id, b.property_id
+                FROM emi_installments ei
+                JOIN bookings b ON ei.booking_id = b.id
+                WHERE ei.id = :emi_id
+            ";
+            $emiStmt = $this->db->prepare($emiSql);
+            $emiStmt->execute(['emi_id' => $emiId]);
+            $emi = $emiStmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$emi) {
+                return [
+                    'success' => false,
+                    'message' => 'EMI installment not found'
+                ];
+            }
+
+            if ($emi['status'] === 'paid') {
+                return [
+                    'success' => false,
+                    'message' => 'This EMI is already paid'
+                ];
+            }
+
+            // Validate amount
+            $dueAmount = (float)($emi['amount'] ?? 0);
+            $paidAmount = (float)($emi['paid_amount'] ?? 0);
+            $remainingAmount = $dueAmount - $paidAmount;
+
+            if ((float)$amount > $remainingAmount + 0.01) { // Small tolerance for rounding
+                return [
+                    'success' => false,
+                    'message' => 'Payment amount exceeds remaining balance of ₹' . number_format($remainingAmount, 2)
+                ];
+            }
+
+            // Begin transaction
+            $this->db->beginTransaction();
+
+            try {
+                // Update EMI installment
+                $newPaidAmount = $paidAmount + (float)$amount;
+                $newStatus = $newPaidAmount >= $dueAmount ? 'paid' : 'partial';
+
+                $updateEmiSql = "
+                    UPDATE emi_installments 
+                    SET paid_amount = :paid_amount, 
+                        status = :status,
+                        payment_method = :method,
+                        payment_date = NOW(),
+                        updated_at = NOW()
+                    WHERE id = :emi_id
+                ";
+                $updateStmt = $this->db->prepare($updateEmiSql);
+                $updateStmt->execute([
+                    'paid_amount' => $newPaidAmount,
+                    'status' => $newStatus,
+                    'method' => $method,
+                    'emi_id' => $emiId
+                ]);
+
+                // Record payment in payments table
+                $paymentSql = "
+                    INSERT INTO payments (user_id, property_id, amount, payment_method, status, 
+                                         booking_id, emi_installment_id, reference_no, created_at)
+                    VALUES (:user_id, :property_id, :amount, :method, 'completed',
+                           :booking_id, :emi_id, :reference_no, NOW())
+                ";
+                $referenceNo = 'PAY-' . date('Ymd') . '-' . strtoupper(substr(md5(uniqid()), 0, 8));
+                $paymentStmt = $this->db->prepare($paymentSql);
+                $paymentStmt->execute([
+                    'user_id' => $emi['customer_id'],
+                    'property_id' => $emi['property_id'],
+                    'amount' => $amount,
+                    'method' => $method,
+                    'booking_id' => $emi['booking_id'],
+                    'emi_id' => $emiId,
+                    'reference_no' => $referenceNo
+                ]);
+
+                // Update booking payment status if all EMIs paid
+                $this->updateBookingPaymentStatus($emi['booking_id']);
+
+                $this->db->commit();
+
+                return [
+                    'success' => true,
+                    'message' => 'Payment recorded successfully',
+                    'data' => [
+                        'emi_id' => $emiId,
+                        'amount_paid' => $amount,
+                        'new_paid_amount' => $newPaidAmount,
+                        'new_status' => $newStatus,
+                        'reference_no' => $referenceNo,
+                        'remaining_balance' => $dueAmount - $newPaidAmount
+                    ]
+                ];
+            } catch (Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            error_log("[Customer] recordEmiPayment exception: " . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Failed to record payment: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Update booking payment status based on EMI completion
+     */
+    private function updateBookingPaymentStatus($bookingId)
+    {
+        $sql = "
+            SELECT COUNT(*) as total, 
+                   SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid_count
+            FROM emi_installments
+            WHERE booking_id = :booking_id
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['booking_id' => $bookingId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result && (int)$result['total'] > 0 && (int)$result['total'] === (int)$result['paid_count']) {
+            // All EMIs paid - update booking status
+            $updateSql = "UPDATE bookings SET status = 'completed', updated_at = NOW() WHERE id = :booking_id";
+            $updateStmt = $this->db->prepare($updateSql);
+            $updateStmt->execute(['booking_id' => $bookingId]);
+        }
+    }
 }
 
 //

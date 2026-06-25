@@ -21,44 +21,55 @@ ColonyModel _$ColonyModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ColonyModel {
-  String get id => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get location => throw _privateConstructorUsedError;
+  String? get slug => throw _privateConstructorUsedError;
+  String? get description =>
+      throw _privateConstructorUsedError; // Plot statistics (API: total_plots, available_plots)
+  @JsonKey(name: 'total_plots')
+  int get totalPlots => throw _privateConstructorUsedError;
+  @JsonKey(name: 'available_plots')
+  int get availablePlots => throw _privateConstructorUsedError; // Pricing (API: starting_price)
+  @JsonKey(name: 'starting_price')
+  double get pricePerSqft => throw _privateConstructorUsedError; // Location (API: district_name, district_id)
+  @JsonKey(name: 'district_name')
   String get district => throw _privateConstructorUsedError;
+  @JsonKey(name: 'district_id')
+  int get districtId => throw _privateConstructorUsedError; // Images (API: image_path, image_url)
+  @JsonKey(name: 'image_path')
+  String? get imagePath => throw _privateConstructorUsedError;
+  @JsonKey(name: 'image_url')
+  String? get imageUrl => throw _privateConstructorUsedError; // Status (API: is_active, is_featured)
+  @JsonKey(name: 'is_active')
+  bool get isActive => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_featured')
+  bool get isFeatured => throw _privateConstructorUsedError; // Compatibility fields (computed from API data)
+  String get location => throw _privateConstructorUsedError;
   String get state => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
   List<String>? get images => throw _privateConstructorUsedError;
   String? get masterPlanImage => throw _privateConstructorUsedError;
   String? get videoUrl => throw _privateConstructorUsedError;
   double? get latitude => throw _privateConstructorUsedError;
   double? get longitude =>
-      throw _privateConstructorUsedError; // Plot Statistics
-  int get totalPlots => throw _privateConstructorUsedError;
-  int get availablePlots => throw _privateConstructorUsedError;
+      throw _privateConstructorUsedError; // Extended plot stats
   int get holdPlots => throw _privateConstructorUsedError;
   int get bookedPlots => throw _privateConstructorUsedError;
-  int get soldPlots => throw _privateConstructorUsedError; // Pricing
-  double get pricePerSqft => throw _privateConstructorUsedError;
+  int get soldPlots => throw _privateConstructorUsedError; // Extended pricing
   double? get tokenAmount => throw _privateConstructorUsedError;
   double? get bookingPercentage => throw _privateConstructorUsedError;
   Map<String, double>? get blockWisePricing =>
-      throw _privateConstructorUsedError; // A, B, C blocks with different rates
-  // Amenities
-  List<String>? get amenities => throw _privateConstructorUsedError; // Status
-  String get status =>
-      throw _privateConstructorUsedError; // upcoming, launching, active, completed, sold_out
-  DateTime? get launchDate => throw _privateConstructorUsedError;
-  DateTime? get completionDate =>
-      throw _privateConstructorUsedError; // Timestamps
-  DateTime? get createdAt => throw _privateConstructorUsedError;
-  DateTime? get updatedAt => throw _privateConstructorUsedError;
-  String? get createdBy =>
-      throw _privateConstructorUsedError; // Additional Info
+      throw _privateConstructorUsedError; // Amenities
+  List<String>? get amenities => throw _privateConstructorUsedError; // Dates
+  String? get launchDate => throw _privateConstructorUsedError;
+  String? get completionDate => throw _privateConstructorUsedError;
+  String? get createdAt => throw _privateConstructorUsedError;
+  String? get updatedAt => throw _privateConstructorUsedError; // Additional
+  String? get createdBy => throw _privateConstructorUsedError;
   String? get reraNumber => throw _privateConstructorUsedError;
   String? get legalStatus => throw _privateConstructorUsedError;
   List<String>? get nearbyLandmarks => throw _privateConstructorUsedError;
   Map<String, dynamic>? get additionalInfo =>
-      throw _privateConstructorUsedError; // New Fields for Images and Maps
+      throw _privateConstructorUsedError;
   String? get layoutMap => throw _privateConstructorUsedError;
   String? get rateList => throw _privateConstructorUsedError;
   String? get handbill => throw _privateConstructorUsedError;
@@ -82,32 +93,37 @@ abstract class $ColonyModelCopyWith<$Res> {
   ) = _$ColonyModelCopyWithImpl<$Res, ColonyModel>;
   @useResult
   $Res call({
-    String id,
+    int id,
     String name,
-    String location,
-    String district,
-    String state,
+    String? slug,
     String? description,
+    @JsonKey(name: 'total_plots') int totalPlots,
+    @JsonKey(name: 'available_plots') int availablePlots,
+    @JsonKey(name: 'starting_price') double pricePerSqft,
+    @JsonKey(name: 'district_name') String district,
+    @JsonKey(name: 'district_id') int districtId,
+    @JsonKey(name: 'image_path') String? imagePath,
+    @JsonKey(name: 'image_url') String? imageUrl,
+    @JsonKey(name: 'is_active') bool isActive,
+    @JsonKey(name: 'is_featured') bool isFeatured,
+    String location,
+    String state,
     List<String>? images,
     String? masterPlanImage,
     String? videoUrl,
     double? latitude,
     double? longitude,
-    int totalPlots,
-    int availablePlots,
     int holdPlots,
     int bookedPlots,
     int soldPlots,
-    double pricePerSqft,
     double? tokenAmount,
     double? bookingPercentage,
     Map<String, double>? blockWisePricing,
     List<String>? amenities,
-    String status,
-    DateTime? launchDate,
-    DateTime? completionDate,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    String? launchDate,
+    String? completionDate,
+    String? createdAt,
+    String? updatedAt,
     String? createdBy,
     String? reraNumber,
     String? legalStatus,
@@ -137,26 +153,31 @@ class _$ColonyModelCopyWithImpl<$Res, $Val extends ColonyModel>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? location = null,
-    Object? district = null,
-    Object? state = null,
+    Object? slug = freezed,
     Object? description = freezed,
+    Object? totalPlots = null,
+    Object? availablePlots = null,
+    Object? pricePerSqft = null,
+    Object? district = null,
+    Object? districtId = null,
+    Object? imagePath = freezed,
+    Object? imageUrl = freezed,
+    Object? isActive = null,
+    Object? isFeatured = null,
+    Object? location = null,
+    Object? state = null,
     Object? images = freezed,
     Object? masterPlanImage = freezed,
     Object? videoUrl = freezed,
     Object? latitude = freezed,
     Object? longitude = freezed,
-    Object? totalPlots = null,
-    Object? availablePlots = null,
     Object? holdPlots = null,
     Object? bookedPlots = null,
     Object? soldPlots = null,
-    Object? pricePerSqft = null,
     Object? tokenAmount = freezed,
     Object? bookingPercentage = freezed,
     Object? blockWisePricing = freezed,
     Object? amenities = freezed,
-    Object? status = null,
     Object? launchDate = freezed,
     Object? completionDate = freezed,
     Object? createdAt = freezed,
@@ -176,27 +197,63 @@ class _$ColonyModelCopyWithImpl<$Res, $Val extends ColonyModel>
             id: null == id
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as int,
             name: null == name
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                       as String,
-            location: null == location
-                ? _value.location
-                : location // ignore: cast_nullable_to_non_nullable
-                      as String,
+            slug: freezed == slug
+                ? _value.slug
+                : slug // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            totalPlots: null == totalPlots
+                ? _value.totalPlots
+                : totalPlots // ignore: cast_nullable_to_non_nullable
+                      as int,
+            availablePlots: null == availablePlots
+                ? _value.availablePlots
+                : availablePlots // ignore: cast_nullable_to_non_nullable
+                      as int,
+            pricePerSqft: null == pricePerSqft
+                ? _value.pricePerSqft
+                : pricePerSqft // ignore: cast_nullable_to_non_nullable
+                      as double,
             district: null == district
                 ? _value.district
                 : district // ignore: cast_nullable_to_non_nullable
+                      as String,
+            districtId: null == districtId
+                ? _value.districtId
+                : districtId // ignore: cast_nullable_to_non_nullable
+                      as int,
+            imagePath: freezed == imagePath
+                ? _value.imagePath
+                : imagePath // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            imageUrl: freezed == imageUrl
+                ? _value.imageUrl
+                : imageUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            isActive: null == isActive
+                ? _value.isActive
+                : isActive // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isFeatured: null == isFeatured
+                ? _value.isFeatured
+                : isFeatured // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            location: null == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
                       as String,
             state: null == state
                 ? _value.state
                 : state // ignore: cast_nullable_to_non_nullable
                       as String,
-            description: freezed == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
             images: freezed == images
                 ? _value.images
                 : images // ignore: cast_nullable_to_non_nullable
@@ -217,14 +274,6 @@ class _$ColonyModelCopyWithImpl<$Res, $Val extends ColonyModel>
                 ? _value.longitude
                 : longitude // ignore: cast_nullable_to_non_nullable
                       as double?,
-            totalPlots: null == totalPlots
-                ? _value.totalPlots
-                : totalPlots // ignore: cast_nullable_to_non_nullable
-                      as int,
-            availablePlots: null == availablePlots
-                ? _value.availablePlots
-                : availablePlots // ignore: cast_nullable_to_non_nullable
-                      as int,
             holdPlots: null == holdPlots
                 ? _value.holdPlots
                 : holdPlots // ignore: cast_nullable_to_non_nullable
@@ -237,10 +286,6 @@ class _$ColonyModelCopyWithImpl<$Res, $Val extends ColonyModel>
                 ? _value.soldPlots
                 : soldPlots // ignore: cast_nullable_to_non_nullable
                       as int,
-            pricePerSqft: null == pricePerSqft
-                ? _value.pricePerSqft
-                : pricePerSqft // ignore: cast_nullable_to_non_nullable
-                      as double,
             tokenAmount: freezed == tokenAmount
                 ? _value.tokenAmount
                 : tokenAmount // ignore: cast_nullable_to_non_nullable
@@ -257,26 +302,22 @@ class _$ColonyModelCopyWithImpl<$Res, $Val extends ColonyModel>
                 ? _value.amenities
                 : amenities // ignore: cast_nullable_to_non_nullable
                       as List<String>?,
-            status: null == status
-                ? _value.status
-                : status // ignore: cast_nullable_to_non_nullable
-                      as String,
             launchDate: freezed == launchDate
                 ? _value.launchDate
                 : launchDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
+                      as String?,
             completionDate: freezed == completionDate
                 ? _value.completionDate
                 : completionDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
+                      as String?,
             createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
+                      as String?,
             updatedAt: freezed == updatedAt
                 ? _value.updatedAt
                 : updatedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
+                      as String?,
             createdBy: freezed == createdBy
                 ? _value.createdBy
                 : createdBy // ignore: cast_nullable_to_non_nullable
@@ -329,32 +370,37 @@ abstract class _$$ColonyModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    String id,
+    int id,
     String name,
-    String location,
-    String district,
-    String state,
+    String? slug,
     String? description,
+    @JsonKey(name: 'total_plots') int totalPlots,
+    @JsonKey(name: 'available_plots') int availablePlots,
+    @JsonKey(name: 'starting_price') double pricePerSqft,
+    @JsonKey(name: 'district_name') String district,
+    @JsonKey(name: 'district_id') int districtId,
+    @JsonKey(name: 'image_path') String? imagePath,
+    @JsonKey(name: 'image_url') String? imageUrl,
+    @JsonKey(name: 'is_active') bool isActive,
+    @JsonKey(name: 'is_featured') bool isFeatured,
+    String location,
+    String state,
     List<String>? images,
     String? masterPlanImage,
     String? videoUrl,
     double? latitude,
     double? longitude,
-    int totalPlots,
-    int availablePlots,
     int holdPlots,
     int bookedPlots,
     int soldPlots,
-    double pricePerSqft,
     double? tokenAmount,
     double? bookingPercentage,
     Map<String, double>? blockWisePricing,
     List<String>? amenities,
-    String status,
-    DateTime? launchDate,
-    DateTime? completionDate,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    String? launchDate,
+    String? completionDate,
+    String? createdAt,
+    String? updatedAt,
     String? createdBy,
     String? reraNumber,
     String? legalStatus,
@@ -383,26 +429,31 @@ class __$$ColonyModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? location = null,
-    Object? district = null,
-    Object? state = null,
+    Object? slug = freezed,
     Object? description = freezed,
+    Object? totalPlots = null,
+    Object? availablePlots = null,
+    Object? pricePerSqft = null,
+    Object? district = null,
+    Object? districtId = null,
+    Object? imagePath = freezed,
+    Object? imageUrl = freezed,
+    Object? isActive = null,
+    Object? isFeatured = null,
+    Object? location = null,
+    Object? state = null,
     Object? images = freezed,
     Object? masterPlanImage = freezed,
     Object? videoUrl = freezed,
     Object? latitude = freezed,
     Object? longitude = freezed,
-    Object? totalPlots = null,
-    Object? availablePlots = null,
     Object? holdPlots = null,
     Object? bookedPlots = null,
     Object? soldPlots = null,
-    Object? pricePerSqft = null,
     Object? tokenAmount = freezed,
     Object? bookingPercentage = freezed,
     Object? blockWisePricing = freezed,
     Object? amenities = freezed,
-    Object? status = null,
     Object? launchDate = freezed,
     Object? completionDate = freezed,
     Object? createdAt = freezed,
@@ -422,27 +473,63 @@ class __$$ColonyModelImplCopyWithImpl<$Res>
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as int,
         name: null == name
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
-        location: null == location
-            ? _value.location
-            : location // ignore: cast_nullable_to_non_nullable
-                  as String,
+        slug: freezed == slug
+            ? _value.slug
+            : slug // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        totalPlots: null == totalPlots
+            ? _value.totalPlots
+            : totalPlots // ignore: cast_nullable_to_non_nullable
+                  as int,
+        availablePlots: null == availablePlots
+            ? _value.availablePlots
+            : availablePlots // ignore: cast_nullable_to_non_nullable
+                  as int,
+        pricePerSqft: null == pricePerSqft
+            ? _value.pricePerSqft
+            : pricePerSqft // ignore: cast_nullable_to_non_nullable
+                  as double,
         district: null == district
             ? _value.district
             : district // ignore: cast_nullable_to_non_nullable
+                  as String,
+        districtId: null == districtId
+            ? _value.districtId
+            : districtId // ignore: cast_nullable_to_non_nullable
+                  as int,
+        imagePath: freezed == imagePath
+            ? _value.imagePath
+            : imagePath // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        imageUrl: freezed == imageUrl
+            ? _value.imageUrl
+            : imageUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        isActive: null == isActive
+            ? _value.isActive
+            : isActive // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isFeatured: null == isFeatured
+            ? _value.isFeatured
+            : isFeatured // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        location: null == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
                   as String,
         state: null == state
             ? _value.state
             : state // ignore: cast_nullable_to_non_nullable
                   as String,
-        description: freezed == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
         images: freezed == images
             ? _value._images
             : images // ignore: cast_nullable_to_non_nullable
@@ -463,14 +550,6 @@ class __$$ColonyModelImplCopyWithImpl<$Res>
             ? _value.longitude
             : longitude // ignore: cast_nullable_to_non_nullable
                   as double?,
-        totalPlots: null == totalPlots
-            ? _value.totalPlots
-            : totalPlots // ignore: cast_nullable_to_non_nullable
-                  as int,
-        availablePlots: null == availablePlots
-            ? _value.availablePlots
-            : availablePlots // ignore: cast_nullable_to_non_nullable
-                  as int,
         holdPlots: null == holdPlots
             ? _value.holdPlots
             : holdPlots // ignore: cast_nullable_to_non_nullable
@@ -483,10 +562,6 @@ class __$$ColonyModelImplCopyWithImpl<$Res>
             ? _value.soldPlots
             : soldPlots // ignore: cast_nullable_to_non_nullable
                   as int,
-        pricePerSqft: null == pricePerSqft
-            ? _value.pricePerSqft
-            : pricePerSqft // ignore: cast_nullable_to_non_nullable
-                  as double,
         tokenAmount: freezed == tokenAmount
             ? _value.tokenAmount
             : tokenAmount // ignore: cast_nullable_to_non_nullable
@@ -503,26 +578,22 @@ class __$$ColonyModelImplCopyWithImpl<$Res>
             ? _value._amenities
             : amenities // ignore: cast_nullable_to_non_nullable
                   as List<String>?,
-        status: null == status
-            ? _value.status
-            : status // ignore: cast_nullable_to_non_nullable
-                  as String,
         launchDate: freezed == launchDate
             ? _value.launchDate
             : launchDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
+                  as String?,
         completionDate: freezed == completionDate
             ? _value.completionDate
             : completionDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
+                  as String?,
         createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
+                  as String?,
         updatedAt: freezed == updatedAt
             ? _value.updatedAt
             : updatedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
+                  as String?,
         createdBy: freezed == createdBy
             ? _value.createdBy
             : createdBy // ignore: cast_nullable_to_non_nullable
@@ -568,28 +639,33 @@ class __$$ColonyModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ColonyModelImpl extends _ColonyModel {
   const _$ColonyModelImpl({
-    this.id = '',
+    this.id = 0,
     this.name = '',
-    this.location = '',
-    this.district = '',
-    this.state = '',
+    this.slug,
     this.description,
+    @JsonKey(name: 'total_plots') this.totalPlots = 0,
+    @JsonKey(name: 'available_plots') this.availablePlots = 0,
+    @JsonKey(name: 'starting_price') this.pricePerSqft = 0.0,
+    @JsonKey(name: 'district_name') this.district = '',
+    @JsonKey(name: 'district_id') this.districtId = 0,
+    @JsonKey(name: 'image_path') this.imagePath,
+    @JsonKey(name: 'image_url') this.imageUrl,
+    @JsonKey(name: 'is_active') this.isActive = true,
+    @JsonKey(name: 'is_featured') this.isFeatured = false,
+    this.location = '',
+    this.state = '',
     final List<String>? images,
     this.masterPlanImage,
     this.videoUrl,
     this.latitude,
     this.longitude,
-    this.totalPlots = 0,
-    this.availablePlots = 0,
     this.holdPlots = 0,
     this.bookedPlots = 0,
     this.soldPlots = 0,
-    this.pricePerSqft = 0.0,
     this.tokenAmount,
     this.bookingPercentage,
     final Map<String, double>? blockWisePricing,
     final List<String>? amenities,
-    this.status = 'upcoming',
     this.launchDate,
     this.completionDate,
     this.createdAt,
@@ -615,21 +691,53 @@ class _$ColonyModelImpl extends _ColonyModel {
 
   @override
   @JsonKey()
-  final String id;
+  final int id;
   @override
   @JsonKey()
   final String name;
+  @override
+  final String? slug;
+  @override
+  final String? description;
+  // Plot statistics (API: total_plots, available_plots)
+  @override
+  @JsonKey(name: 'total_plots')
+  final int totalPlots;
+  @override
+  @JsonKey(name: 'available_plots')
+  final int availablePlots;
+  // Pricing (API: starting_price)
+  @override
+  @JsonKey(name: 'starting_price')
+  final double pricePerSqft;
+  // Location (API: district_name, district_id)
+  @override
+  @JsonKey(name: 'district_name')
+  final String district;
+  @override
+  @JsonKey(name: 'district_id')
+  final int districtId;
+  // Images (API: image_path, image_url)
+  @override
+  @JsonKey(name: 'image_path')
+  final String? imagePath;
+  @override
+  @JsonKey(name: 'image_url')
+  final String? imageUrl;
+  // Status (API: is_active, is_featured)
+  @override
+  @JsonKey(name: 'is_active')
+  final bool isActive;
+  @override
+  @JsonKey(name: 'is_featured')
+  final bool isFeatured;
+  // Compatibility fields (computed from API data)
   @override
   @JsonKey()
   final String location;
   @override
   @JsonKey()
-  final String district;
-  @override
-  @JsonKey()
   final String state;
-  @override
-  final String? description;
   final List<String>? _images;
   @override
   List<String>? get images {
@@ -648,13 +756,7 @@ class _$ColonyModelImpl extends _ColonyModel {
   final double? latitude;
   @override
   final double? longitude;
-  // Plot Statistics
-  @override
-  @JsonKey()
-  final int totalPlots;
-  @override
-  @JsonKey()
-  final int availablePlots;
+  // Extended plot stats
   @override
   @JsonKey()
   final int holdPlots;
@@ -664,10 +766,7 @@ class _$ColonyModelImpl extends _ColonyModel {
   @override
   @JsonKey()
   final int soldPlots;
-  // Pricing
-  @override
-  @JsonKey()
-  final double pricePerSqft;
+  // Extended pricing
   @override
   final double? tokenAmount;
   @override
@@ -682,10 +781,8 @@ class _$ColonyModelImpl extends _ColonyModel {
     return EqualUnmodifiableMapView(value);
   }
 
-  // A, B, C blocks with different rates
   // Amenities
   final List<String>? _amenities;
-  // A, B, C blocks with different rates
   // Amenities
   @override
   List<String>? get amenities {
@@ -696,23 +793,18 @@ class _$ColonyModelImpl extends _ColonyModel {
     return EqualUnmodifiableListView(value);
   }
 
-  // Status
+  // Dates
   @override
-  @JsonKey()
-  final String status;
-  // upcoming, launching, active, completed, sold_out
+  final String? launchDate;
   @override
-  final DateTime? launchDate;
+  final String? completionDate;
   @override
-  final DateTime? completionDate;
-  // Timestamps
+  final String? createdAt;
   @override
-  final DateTime? createdAt;
-  @override
-  final DateTime? updatedAt;
+  final String? updatedAt;
+  // Additional
   @override
   final String? createdBy;
-  // Additional Info
   @override
   final String? reraNumber;
   @override
@@ -737,7 +829,6 @@ class _$ColonyModelImpl extends _ColonyModel {
     return EqualUnmodifiableMapView(value);
   }
 
-  // New Fields for Images and Maps
   @override
   final String? layoutMap;
   @override
@@ -749,7 +840,7 @@ class _$ColonyModelImpl extends _ColonyModel {
 
   @override
   String toString() {
-    return 'ColonyModel(id: $id, name: $name, location: $location, district: $district, state: $state, description: $description, images: $images, masterPlanImage: $masterPlanImage, videoUrl: $videoUrl, latitude: $latitude, longitude: $longitude, totalPlots: $totalPlots, availablePlots: $availablePlots, holdPlots: $holdPlots, bookedPlots: $bookedPlots, soldPlots: $soldPlots, pricePerSqft: $pricePerSqft, tokenAmount: $tokenAmount, bookingPercentage: $bookingPercentage, blockWisePricing: $blockWisePricing, amenities: $amenities, status: $status, launchDate: $launchDate, completionDate: $completionDate, createdAt: $createdAt, updatedAt: $updatedAt, createdBy: $createdBy, reraNumber: $reraNumber, legalStatus: $legalStatus, nearbyLandmarks: $nearbyLandmarks, additionalInfo: $additionalInfo, layoutMap: $layoutMap, rateList: $rateList, handbill: $handbill, mapLink: $mapLink)';
+    return 'ColonyModel(id: $id, name: $name, slug: $slug, description: $description, totalPlots: $totalPlots, availablePlots: $availablePlots, pricePerSqft: $pricePerSqft, district: $district, districtId: $districtId, imagePath: $imagePath, imageUrl: $imageUrl, isActive: $isActive, isFeatured: $isFeatured, location: $location, state: $state, images: $images, masterPlanImage: $masterPlanImage, videoUrl: $videoUrl, latitude: $latitude, longitude: $longitude, holdPlots: $holdPlots, bookedPlots: $bookedPlots, soldPlots: $soldPlots, tokenAmount: $tokenAmount, bookingPercentage: $bookingPercentage, blockWisePricing: $blockWisePricing, amenities: $amenities, launchDate: $launchDate, completionDate: $completionDate, createdAt: $createdAt, updatedAt: $updatedAt, createdBy: $createdBy, reraNumber: $reraNumber, legalStatus: $legalStatus, nearbyLandmarks: $nearbyLandmarks, additionalInfo: $additionalInfo, layoutMap: $layoutMap, rateList: $rateList, handbill: $handbill, mapLink: $mapLink)';
   }
 
   @override
@@ -759,13 +850,30 @@ class _$ColonyModelImpl extends _ColonyModel {
             other is _$ColonyModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.location, location) ||
-                other.location == location) &&
-            (identical(other.district, district) ||
-                other.district == district) &&
-            (identical(other.state, state) || other.state == state) &&
+            (identical(other.slug, slug) || other.slug == slug) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.totalPlots, totalPlots) ||
+                other.totalPlots == totalPlots) &&
+            (identical(other.availablePlots, availablePlots) ||
+                other.availablePlots == availablePlots) &&
+            (identical(other.pricePerSqft, pricePerSqft) ||
+                other.pricePerSqft == pricePerSqft) &&
+            (identical(other.district, district) ||
+                other.district == district) &&
+            (identical(other.districtId, districtId) ||
+                other.districtId == districtId) &&
+            (identical(other.imagePath, imagePath) ||
+                other.imagePath == imagePath) &&
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl) &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive) &&
+            (identical(other.isFeatured, isFeatured) ||
+                other.isFeatured == isFeatured) &&
+            (identical(other.location, location) ||
+                other.location == location) &&
+            (identical(other.state, state) || other.state == state) &&
             const DeepCollectionEquality().equals(other._images, _images) &&
             (identical(other.masterPlanImage, masterPlanImage) ||
                 other.masterPlanImage == masterPlanImage) &&
@@ -775,18 +883,12 @@ class _$ColonyModelImpl extends _ColonyModel {
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
-            (identical(other.totalPlots, totalPlots) ||
-                other.totalPlots == totalPlots) &&
-            (identical(other.availablePlots, availablePlots) ||
-                other.availablePlots == availablePlots) &&
             (identical(other.holdPlots, holdPlots) ||
                 other.holdPlots == holdPlots) &&
             (identical(other.bookedPlots, bookedPlots) ||
                 other.bookedPlots == bookedPlots) &&
             (identical(other.soldPlots, soldPlots) ||
                 other.soldPlots == soldPlots) &&
-            (identical(other.pricePerSqft, pricePerSqft) ||
-                other.pricePerSqft == pricePerSqft) &&
             (identical(other.tokenAmount, tokenAmount) ||
                 other.tokenAmount == tokenAmount) &&
             (identical(other.bookingPercentage, bookingPercentage) ||
@@ -799,7 +901,6 @@ class _$ColonyModelImpl extends _ColonyModel {
               other._amenities,
               _amenities,
             ) &&
-            (identical(other.status, status) || other.status == status) &&
             (identical(other.launchDate, launchDate) ||
                 other.launchDate == launchDate) &&
             (identical(other.completionDate, completionDate) ||
@@ -837,26 +938,31 @@ class _$ColonyModelImpl extends _ColonyModel {
     runtimeType,
     id,
     name,
-    location,
-    district,
-    state,
+    slug,
     description,
+    totalPlots,
+    availablePlots,
+    pricePerSqft,
+    district,
+    districtId,
+    imagePath,
+    imageUrl,
+    isActive,
+    isFeatured,
+    location,
+    state,
     const DeepCollectionEquality().hash(_images),
     masterPlanImage,
     videoUrl,
     latitude,
     longitude,
-    totalPlots,
-    availablePlots,
     holdPlots,
     bookedPlots,
     soldPlots,
-    pricePerSqft,
     tokenAmount,
     bookingPercentage,
     const DeepCollectionEquality().hash(_blockWisePricing),
     const DeepCollectionEquality().hash(_amenities),
-    status,
     launchDate,
     completionDate,
     createdAt,
@@ -888,32 +994,37 @@ class _$ColonyModelImpl extends _ColonyModel {
 
 abstract class _ColonyModel extends ColonyModel {
   const factory _ColonyModel({
-    final String id,
+    final int id,
     final String name,
-    final String location,
-    final String district,
-    final String state,
+    final String? slug,
     final String? description,
+    @JsonKey(name: 'total_plots') final int totalPlots,
+    @JsonKey(name: 'available_plots') final int availablePlots,
+    @JsonKey(name: 'starting_price') final double pricePerSqft,
+    @JsonKey(name: 'district_name') final String district,
+    @JsonKey(name: 'district_id') final int districtId,
+    @JsonKey(name: 'image_path') final String? imagePath,
+    @JsonKey(name: 'image_url') final String? imageUrl,
+    @JsonKey(name: 'is_active') final bool isActive,
+    @JsonKey(name: 'is_featured') final bool isFeatured,
+    final String location,
+    final String state,
     final List<String>? images,
     final String? masterPlanImage,
     final String? videoUrl,
     final double? latitude,
     final double? longitude,
-    final int totalPlots,
-    final int availablePlots,
     final int holdPlots,
     final int bookedPlots,
     final int soldPlots,
-    final double pricePerSqft,
     final double? tokenAmount,
     final double? bookingPercentage,
     final Map<String, double>? blockWisePricing,
     final List<String>? amenities,
-    final String status,
-    final DateTime? launchDate,
-    final DateTime? completionDate,
-    final DateTime? createdAt,
-    final DateTime? updatedAt,
+    final String? launchDate,
+    final String? completionDate,
+    final String? createdAt,
+    final String? updatedAt,
     final String? createdBy,
     final String? reraNumber,
     final String? legalStatus,
@@ -930,17 +1041,44 @@ abstract class _ColonyModel extends ColonyModel {
       _$ColonyModelImpl.fromJson;
 
   @override
-  String get id;
+  int get id;
   @override
   String get name;
   @override
-  String get location;
+  String? get slug;
   @override
+  String? get description; // Plot statistics (API: total_plots, available_plots)
+  @override
+  @JsonKey(name: 'total_plots')
+  int get totalPlots;
+  @override
+  @JsonKey(name: 'available_plots')
+  int get availablePlots; // Pricing (API: starting_price)
+  @override
+  @JsonKey(name: 'starting_price')
+  double get pricePerSqft; // Location (API: district_name, district_id)
+  @override
+  @JsonKey(name: 'district_name')
   String get district;
   @override
-  String get state;
+  @JsonKey(name: 'district_id')
+  int get districtId; // Images (API: image_path, image_url)
   @override
-  String? get description;
+  @JsonKey(name: 'image_path')
+  String? get imagePath;
+  @override
+  @JsonKey(name: 'image_url')
+  String? get imageUrl; // Status (API: is_active, is_featured)
+  @override
+  @JsonKey(name: 'is_active')
+  bool get isActive;
+  @override
+  @JsonKey(name: 'is_featured')
+  bool get isFeatured; // Compatibility fields (computed from API data)
+  @override
+  String get location;
+  @override
+  String get state;
   @override
   List<String>? get images;
   @override
@@ -950,40 +1088,31 @@ abstract class _ColonyModel extends ColonyModel {
   @override
   double? get latitude;
   @override
-  double? get longitude; // Plot Statistics
-  @override
-  int get totalPlots;
-  @override
-  int get availablePlots;
+  double? get longitude; // Extended plot stats
   @override
   int get holdPlots;
   @override
   int get bookedPlots;
   @override
-  int get soldPlots; // Pricing
-  @override
-  double get pricePerSqft;
+  int get soldPlots; // Extended pricing
   @override
   double? get tokenAmount;
   @override
   double? get bookingPercentage;
   @override
-  Map<String, double>? get blockWisePricing; // A, B, C blocks with different rates
-  // Amenities
+  Map<String, double>? get blockWisePricing; // Amenities
   @override
-  List<String>? get amenities; // Status
+  List<String>? get amenities; // Dates
   @override
-  String get status; // upcoming, launching, active, completed, sold_out
+  String? get launchDate;
   @override
-  DateTime? get launchDate;
+  String? get completionDate;
   @override
-  DateTime? get completionDate; // Timestamps
+  String? get createdAt;
   @override
-  DateTime? get createdAt;
+  String? get updatedAt; // Additional
   @override
-  DateTime? get updatedAt;
-  @override
-  String? get createdBy; // Additional Info
+  String? get createdBy;
   @override
   String? get reraNumber;
   @override
@@ -991,7 +1120,7 @@ abstract class _ColonyModel extends ColonyModel {
   @override
   List<String>? get nearbyLandmarks;
   @override
-  Map<String, dynamic>? get additionalInfo; // New Fields for Images and Maps
+  Map<String, dynamic>? get additionalInfo;
   @override
   String? get layoutMap;
   @override

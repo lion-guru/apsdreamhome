@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../providers/property_providers.dart';
 import '../../../data/models/property_model.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../widgets/app_widgets.dart';
 
 /// Properties Page - Connected to Repository
@@ -81,6 +82,13 @@ class _PropertiesPageState extends ConsumerState<PropertiesPage> {
             icon: const Icon(Icons.tune),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/compare'),
+        backgroundColor: AppTheme.primaryColor,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.compare_arrows),
+        label: const Text('Compare'),
       ),
       body: Column(
         children: [

@@ -131,10 +131,13 @@ class KYCController extends BaseApiController
         header('Content-Type: application/json');
 
         try {
-            $authError = $this->requireLogin();
-            if ($authError) return $authError;
-
-            $userId = $this->getCurrentUserId();
+            // Accept JWT auth from ApiAuthMiddleware ($GLOBALS) or session auth
+            $userId = $GLOBALS['api_user_id'] ?? null;
+            if (!$userId) {
+                $authError = $this->requireLogin();
+                if ($authError) return $authError;
+                $userId = $this->getCurrentUserId();
+            }
 
             $db = \App\Core\Database\Database::getInstance();
 

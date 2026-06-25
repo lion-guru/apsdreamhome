@@ -60,10 +60,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       );
 
       if (credential != null && mounted) {
+        final usedReferral = _referralCodeController.text.trim();
         AppWidgets.showSuccessSnackBar(
           context,
           'Registration successful! Welcome to APS Dream Home.',
         );
+        if (usedReferral.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Joined via referral: $usedReferral. Check your profile for your own code!'),
+              backgroundColor: AppTheme.infoColor,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
 
         // Navigate based on role
         if (_selectedRole == AppConstants.roleCustomer) {
@@ -321,11 +331,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                   AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           )
-                        : const Text(
+                        : Text(
                             'Create Account',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: Colors.white,
                             ),
                           ),
                   ),
@@ -339,13 +348,17 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   children: [
                     Text(
                       'Already have an account?',
-                      style: TextStyle(color: Colors.grey.shade600),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppTheme.textSecondaryLight,
+                      ),
                     ),
                     TextButton(
                       onPressed: () => context.push('/login'),
-                      child: const Text(
+                      child: Text(
                         'Login',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: AppTheme.primaryColor,
+                        ),
                       ),
                     ),
                   ],
@@ -356,9 +369,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 // Terms & Privacy
                 Text(
                   'By registering, you agree to our Terms of Service and Privacy Policy',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade500,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppTheme.textSecondaryLight,
                   ),
                   textAlign: TextAlign.center,
                 ),

@@ -1,16 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/providers/auth_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'data/models/user_model.dart';
 
-class APSDreamHomeApp extends ConsumerWidget {
+class APSDreamHomeApp extends ConsumerStatefulWidget {
   const APSDreamHomeApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(appRouterProvider);
-    
+  ConsumerState<APSDreamHomeApp> createState() => _APSDreamHomeAppState();
+}
+
+class _APSDreamHomeAppState extends ConsumerState<APSDreamHomeApp> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.listen<User?>(authProvider, (previous, next) {
+        if (previous != next && mounted) {
+          setState(() {});
+        }
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final router = ref.read(appRouterProvider);
+
     return MaterialApp.router(
       title: 'APS Dream Home',
       debugShowCheckedModeBanner: false,
@@ -19,7 +39,6 @@ class APSDreamHomeApp extends ConsumerWidget {
       themeMode: ThemeMode.light,
       routerConfig: router,
       builder: (context, child) {
-        // Add error boundary
         ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
           return Material(
             child: Container(

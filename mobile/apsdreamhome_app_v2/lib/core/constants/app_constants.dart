@@ -27,6 +27,7 @@ class AppConstants {
   static const String notificationsRegisterEndpoint = '/notifications/register';
   static const String coloniesEndpoint = '/colonies';
   static const String plotsEndpoint = '/plots';
+  static const String crmPrefix = '/crm';
 
   // V2 Mobile Attendance
   static const String attendancePunchInEndpoint = '/attendance/punch-in';
@@ -35,6 +36,17 @@ class AppConstants {
 
   // Referral
   static const String referralTrackEndpoint = '/referral/track';
+
+  // Favorites
+  static const String favoritesEndpoint = '/user/favorites';
+  static const String favoritesCheckEndpoint = '/user/favorites/check';
+  static const String favoritesStatsEndpoint = '/user/favorites/stats';
+
+  // Documents
+  static const String documentsEndpoint = '/user/documents';
+
+  // Notifications
+  static const String notificationsEndpoint = '/user/notifications';
 
   // Database
   static const String databaseName = 'aps_dream_home.db';
@@ -160,9 +172,6 @@ class AppConstants {
   static const String appName = 'APS Dream Home';
   static const String supportPhone = '7007444842';
   static const String version = '1.0.0';
-
-  // Demo Mode
-  static const bool demoMode = true;
 
   // Validation Constants
   static const int minPasswordLength = 6;

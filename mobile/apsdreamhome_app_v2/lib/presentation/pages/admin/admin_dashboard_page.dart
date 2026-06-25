@@ -3,105 +3,128 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../data/services/auth_service.dart';
+import '../../../core/utils/responsive_helper.dart';
+import '../../../data/services/crm_service.dart';
 import '../../widgets/app_widgets.dart';
 
-class AdminDashboardPage extends ConsumerWidget {
+class AdminDashboardPage extends ConsumerStatefulWidget {
   const AdminDashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Dashboard'),
-        actions: [
-          IconButton(
-            onPressed: () => context.push('/notifications'),
-            icon: const Icon(Icons.notifications_outlined),
-          ),
-          IconButton(
-            onPressed: () {
-              ref.read(authServiceProvider).logout();
-              context.go('/login');
-            },
-            icon: const Icon(Icons.logout),
-          ),
-        ],
-      ),
-      body: CustomScrollView(
+  ConsumerState<AdminDashboardPage> createState() => _AdminDashboardPageState();
+}
+
+class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
+  Map<String, dynamic> _stats = {};
+  List<dynamic> _recentActivity = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final crm = CRMService();
+      final data = await crm.getAdminOverview();
+      if (mounted) {
+        setState(() {
+          _stats = (data['stats'] is Map) ? Map<String, dynamic>.from(data['stats'] as Map) : {};
+          _recentActivity = (data['recent_activity'] is List) ? List<dynamic>.from(data['recent_activity'] as List) : [];
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  String _formatCurrency(dynamic value) {
+    final amount = (value is num) ? value.toDouble() : 0.0;
+    if (amount >= 10000000) return '₹${(amount / 10000000).toStringAsFixed(1)}Cr';
+    if (amount >= 100000) return '₹${(amount / 100000).toStringAsFixed(1)}L';
+    if (amount >= 1000) return '₹${(amount / 1000).toStringAsFixed(1)}K';
+    return '₹${amount.toStringAsFixed(0)}';
+  }
+
+  String _timeAgo(String? dateTime) {
+    if (dateTime == null) return '';
+    try {
+      final dt = DateTime.parse(dateTime);
+      final diff = DateTime.now().difference(dt);
+      if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+      if (diff.inHours < 24) return '${diff.inHours}h ago';
+      return '${diff.inDays}d ago';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      child: CustomScrollView(
         slivers: [
-          // Admin Stats
           SliverToBoxAdapter(
-            child: _buildAdminStats(),
+            child: _loading
+                ? SizedBox(
+                    height: ResponsiveHelper.chartHeight(context),
+                    child: const Center(child: CircularProgressIndicator()),
+                  )
+                : _buildContent(),
           ),
-          
-          // Quick Actions Grid
-          SliverToBoxAdapter(
-            child: _buildQuickActionsGrid(context),
-          ),
-          
-          // Pending Approvals Header
-          SliverToBoxAdapter(
-            child: AppWidgets.sectionHeader(
-              title: 'Pending Approvals',
-              onSeeAll: () {},
-            ),
-          ),
-          
-          // Pending Items
-          SliverToBoxAdapter(
-            child: _buildPendingApprovals(context),
-          ),
-          
-          // Recent Activity Header
-          SliverToBoxAdapter(
-            child: AppWidgets.sectionHeader(
-              title: 'Recent Activity',
-              onSeeAll: () {},
-            ),
-          ),
-          
-          // Activity List
-          SliverToBoxAdapter(
-            child: _buildRecentActivity(),
-          ),
-          
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 32),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ],
       ),
     );
   }
 
-  Widget _buildAdminStats() {
+  Widget _buildContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildStatsGrid(),
+        const SizedBox(height: 8),
+        _buildQuickActionsGrid(context),
+        AppWidgets.sectionHeader(title: 'Pending Approvals', onSeeAll: () {}),
+        _buildPendingApprovals(context),
+        AppWidgets.sectionHeader(title: 'Recent Activity', onSeeAll: () {}),
+        _buildRecentActivity(),
+      ],
+    );
+  }
+
+  Widget _buildStatsGrid() {
     final stats = [
       {
         'title': 'Total Users',
-        'value': '1,245',
+        'value': '${_stats['total_users'] ?? 0}',
         'icon': Icons.people_outline,
         'color': AppTheme.primaryColor,
       },
       {
-        'title': 'Active Associates',
-        'value': '89',
+        'title': 'Associates',
+        'value': '${_stats['active_associates'] ?? 0}',
         'icon': Icons.group_outlined,
         'color': AppTheme.secondaryColor,
       },
       {
         'title': 'Bookings Today',
-        'value': '12',
+        'value': '${_stats['bookings_today'] ?? 0}',
         'icon': Icons.bookmark_outline,
         'color': AppTheme.successColor,
       },
       {
-        'title': 'Pending Commissions',
-        'value': '₹2.5L',
+        'title': 'Revenue',
+        'value': _formatCurrency(_stats['total_revenue'] ?? 0),
         'icon': Icons.payments_outlined,
         'color': AppTheme.warningColor,
       },
     ];
-    
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -136,28 +159,17 @@ class AdminDashboardPage extends ConsumerWidget {
                   color: (stat['color'] as Color).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  stat['icon'] as IconData,
-                  color: stat['color'] as Color,
-                  size: 24,
-                ),
+                child: Icon(stat['icon'] as IconData, color: stat['color'] as Color, size: 24),
               ),
               const Spacer(),
               Text(
                 stat['value'] as String,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: stat['color'] as Color,
-                ),
+                style: TextStyle(fontSize: ResponsiveHelper.fontSize(context, 24), fontWeight: FontWeight.bold, color: stat['color'] as Color),
               ),
               const SizedBox(height: 4),
               Text(
                 stat['title'] as String,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
             ],
           ),
@@ -168,82 +180,32 @@ class AdminDashboardPage extends ConsumerWidget {
 
   Widget _buildQuickActionsGrid(BuildContext context) {
     final actions = [
-      {
-        'title': 'Colonies',
-        'subtitle': 'Manage colonies',
-        'icon': Icons.location_city,
-        'color': Colors.blue,
-        'route': '/admin/colonies',
-      },
-      {
-        'title': 'Plots',
-        'subtitle': 'Update plot status',
-        'icon': Icons.map,
-        'color': Colors.green,
-        'route': '/admin/plots',
-      },
-      {
-        'title': 'Bookings',
-        'subtitle': 'Approve bookings',
-        'icon': Icons.book_online,
-        'color': Colors.orange,
-        'route': '/admin/bookings',
-      },
-      {
-        'title': 'Commissions',
-        'subtitle': 'Process payouts',
-        'icon': Icons.account_balance_wallet,
-        'color': Colors.purple,
-        'route': '/admin/commissions',
-      },
-      {
-        'title': 'Users',
-        'subtitle': 'Manage users',
-        'icon': Icons.people,
-        'color': Colors.teal,
-        'route': '/admin/users',
-      },
-      {
-        'title': 'Reports',
-        'subtitle': 'View analytics',
-        'icon': Icons.analytics,
-        'color': Colors.indigo,
-        'route': null,
-      },
+      {'title': 'Colonies', 'subtitle': 'Manage colonies', 'icon': Icons.location_city, 'color': Colors.blue, 'route': '/admin/colonies'},
+      {'title': 'Plots', 'subtitle': 'Update plot status', 'icon': Icons.map, 'color': Colors.green, 'route': '/admin/plots'},
+      {'title': 'Bookings', 'subtitle': 'Approve bookings', 'icon': Icons.book_online, 'color': Colors.orange, 'route': '/admin/bookings'},
+      {'title': 'CRM', 'subtitle': 'Manage leads', 'icon': Icons.leaderboard, 'color': Colors.red, 'route': '/admin/crm'},
+      {'title': 'Users', 'subtitle': 'Manage users', 'icon': Icons.people, 'color': Colors.teal, 'route': '/admin/customers'},
+      {'title': 'Marketing', 'subtitle': 'Campaigns', 'icon': Icons.campaign, 'color': Colors.indigo, 'route': '/admin/marketing'},
     ];
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Management',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Text('Management', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 0.9,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+              crossAxisCount: 3, childAspectRatio: 0.9, crossAxisSpacing: 12, mainAxisSpacing: 12,
             ),
             itemCount: actions.length,
             itemBuilder: (context, index) {
               final action = actions[index];
               return GestureDetector(
-                onTap: () {
-                  if (action['route'] != null) {
-                    context.push(action['route'] as String);
-                  } else {
-                    AppWidgets.showInfoSnackBar(context, 'Coming soon!');
-                  }
-                },
+                onTap: () => context.push(action['route'] as String),
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -260,32 +222,12 @@ class AdminDashboardPage extends ConsumerWidget {
                           color: (action['color'] as Color).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(
-                          action['icon'] as IconData,
-                          color: action['color'] as Color,
-                          size: 28,
-                        ),
+                        child: Icon(action['icon'] as IconData, color: action['color'] as Color, size: 28),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        action['title'] as String,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      Text(action['title'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), textAlign: TextAlign.center),
                       const SizedBox(height: 2),
-                      Text(
-                        action['subtitle'] as String,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey.shade500,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      Text(action['subtitle'] as String, style: TextStyle(fontSize: 10, color: Colors.grey.shade500), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
                     ],
                   ),
                 ),
@@ -298,33 +240,33 @@ class AdminDashboardPage extends ConsumerWidget {
   }
 
   Widget _buildPendingApprovals(BuildContext context) {
-    final items = [
-      {
-        'type': 'booking',
-        'title': 'New Booking Request',
-        'subtitle': 'Suryoday Heights - Plot 45',
-        'user': 'Rahul Kumar',
-        'time': '2 hours ago',
-        'count': 3,
+    final int hotLeads = int.tryParse('${_stats['hot_leads'] ?? 0}') ?? 0;
+    final int pendingCommissions = int.tryParse('${_stats['pending_commissions'] ?? 0}') ?? 0;
+
+    final items = <Map<String, dynamic>>[
+      if (hotLeads > 0) {
+        'type': 'leads',
+        'title': 'Hot Leads',
+        'subtitle': '$hotLeads high-priority leads need attention',
+        'count': hotLeads,
+        'color': Colors.red,
       },
-      {
+      if (pendingCommissions > 0) {
         'type': 'commission',
-        'title': 'Commission Approval',
-        'subtitle': '₹45,000 - Associate: Amit Singh',
-        'user': 'Amit Singh',
-        'time': '5 hours ago',
-        'count': 5,
+        'title': 'Commission Payouts',
+        'subtitle': '$pendingCommissions pending commission records',
+        'count': pendingCommissions,
+        'color': Colors.orange,
       },
       {
-        'type': 'payout',
-        'title': 'Payout Request',
-        'subtitle': '₹1,25,000 - Multiple associates',
-        'user': '5 associates',
-        'time': '1 day ago',
-        'count': 2,
+        'type': 'colonies',
+        'title': 'Colonies',
+        'subtitle': '${_stats['total_colonies'] ?? 0} active colonies, ${_stats['total_plots'] ?? 0} plots',
+        'count': _stats['total_colonies'] ?? 0,
+        'color': Colors.blue,
       },
     ];
-    
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -336,84 +278,31 @@ class AdminDashboardPage extends ConsumerWidget {
           child: Row(
             children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 50, height: 50,
                 decoration: BoxDecoration(
-                  color: AppTheme.warningColor.withValues(alpha: 0.1),
+                  color: (item['color'] as Color).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
-                  Icons.pending_actions,
-                  color: AppTheme.warningColor,
-                ),
+                child: Icon(Icons.pending_actions, color: item['color'] as Color),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item['title'] as String,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text(item['title'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
-                    Text(
-                      item['subtitle'] as String,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.person_outline,
-                          size: 12,
-                          color: Colors.grey.shade500,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          item['user'] as String,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Icon(
-                          Icons.access_time,
-                          size: 12,
-                          color: Colors.grey.shade500,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          item['time'] as String,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
-                    ),
+                    Text(item['subtitle'] as String, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
                   ],
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppTheme.warningColor.withValues(alpha: 0.1),
+                  color: (item['color'] as Color).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(
-                  '${item['count']}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.warningColor,
-                  ),
-                ),
+                child: Text('${item['count']}', style: TextStyle(fontWeight: FontWeight.bold, color: item['color'] as Color)),
               ),
             ],
           ),
@@ -423,85 +312,80 @@ class AdminDashboardPage extends ConsumerWidget {
   }
 
   Widget _buildRecentActivity() {
-    final activities = [
-      {
-        'action': 'Approved Booking',
-        'detail': 'Plot 32 - Raghunath City',
-        'user': 'Admin',
-        'time': '10 minutes ago',
-        'icon': Icons.check_circle,
-        'color': AppTheme.successColor,
-      },
-      {
-        'action': 'Processed Payout',
-        'detail': '₹75,000 to Vikram Singh',
-        'user': 'Admin',
-        'time': '1 hour ago',
-        'icon': Icons.payments,
-        'color': AppTheme.primaryColor,
-      },
-      {
-        'action': 'Added New Colony',
-        'detail': 'Ganga Nagri Phase 2',
-        'user': 'Admin',
-        'time': '3 hours ago',
-        'icon': Icons.add_location,
-        'color': AppTheme.infoColor,
-      },
-    ];
-    
+    if (_recentActivity.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: AppWidgets.customCard(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text('No recent activity', style: TextStyle(color: Colors.grey.shade500)),
+            ),
+          ),
+        ),
+      );
+    }
+
+    IconData _iconForType(String? type) {
+      switch (type) {
+        case 'call': return Icons.phone;
+        case 'sms': return Icons.message;
+        case 'email': return Icons.email;
+        case 'whatsapp': return Icons.chat;
+        case 'visit': return Icons.location_on;
+        case 'meeting': return Icons.people;
+        case 'note': return Icons.note;
+        default: return Icons.info_outline;
+      }
+    }
+
+    Color _colorForType(String? type) {
+      switch (type) {
+        case 'call': return Colors.green;
+        case 'sms': return Colors.blue;
+        case 'email': return Colors.indigo;
+        case 'whatsapp': return const Color(0xFF25D366);
+        case 'visit': return Colors.orange;
+        case 'meeting': return Colors.purple;
+        default: return Colors.grey;
+      }
+    }
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: activities.length,
+      itemCount: _recentActivity.length,
       itemBuilder: (context, index) {
-        final activity = activities[index];
+        final a = _recentActivity[index];
+        final type = a['interaction_type'] as String?;
         return AppWidgets.customCard(
           child: Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 40, height: 40,
                 decoration: BoxDecoration(
-                  color: (activity['color'] as Color).withValues(alpha: 0.1),
+                  color: _colorForType(type).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  activity['icon'] as IconData,
-                  color: activity['color'] as Color,
-                  size: 20,
-                ),
+                child: Icon(_iconForType(type), color: _colorForType(type), size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      activity['action'] as String,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text('${a['subject'] ?? type ?? 'Activity'}', style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 2),
                     Text(
-                      activity['detail'] as String,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
+                      '${a['lead_name'] ?? ''} — ${a['body'] ?? ''}',
+                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      maxLines: 1, overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-              Text(
-                activity['time'] as String,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey.shade500,
-                ),
-              ),
+              Text(_timeAgo(a['created_at']?.toString()), style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
             ],
           ),
         );

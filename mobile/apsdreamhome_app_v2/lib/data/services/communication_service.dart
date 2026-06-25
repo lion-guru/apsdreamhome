@@ -1,7 +1,7 @@
 import 'package:apsdreamhome_app_v2/core/utils/logger.dart';
+import 'package:apsdreamhome_app_v2/core/services/notification_service.dart';
 
-/// Communication Service — console-only (Firebase Messaging removed)
-/// Push notifications and email/SMS are handled server-side by PHP backend.
+/// Communication Service — push notifications via FCM, SMS/email are server-side
 class CommunicationService {
   static CommunicationService? _instance;
 
@@ -12,41 +12,56 @@ class CommunicationService {
     return _instance!;
   }
 
+  final NotificationService _notificationService = NotificationService();
+
   bool _initialized = false;
 
   bool get isInitialized => _initialized;
 
-  /// Initialize — no-op (Firebase Messaging removed)
+  /// Initialize — starts FCM notification service
   Future<void> initialize() async {
     if (_initialized) return;
+    await _notificationService.initialize();
     _initialized = true;
-    AppLogger.info('Communication service initialized (console-only mode)');
+    AppLogger.info('Communication service initialized with FCM');
   }
 
-  /// Register device token for push notifications (no-op without Firebase)
+  /// Register device token for push notifications
   Future<void> registerDeviceToken() async {
-    AppLogger.info('registerDeviceToken called (no-op without Firebase)');
+    final token = await _notificationService.getToken();
+    if (token != null) {
+      await _notificationService.saveTokenToBackend(token);
+    } else {
+      AppLogger.warning('No FCM token available to register');
+    }
   }
 
-  /// Update FCM token (no-op)
+  /// Update FCM token
   Future<void> updateFCMToken(String token) async {
-    AppLogger.info('updateFCMToken called (no-op without Firebase)');
+    await _notificationService.saveTokenToBackend(token);
   }
 
+  /// Send push notification (server-side, logs locally)
   Future<void> sendPushNotification({
     required String userId,
     required String title,
     required String body,
     Map<String, dynamic>? data,
   }) async {
-    AppLogger.info('Push notification requested: $title (no-op without Firebase)');
+    // Push notifications are sent from the server using the stored FCM token.
+    // This client method triggers a local notification for immediate feedback.
+    _notificationService.showLocalNotification(
+      title: title,
+      body: body,
+      payload: data,
+    );
   }
 
   Future<void> sendSMS({
     required String phoneNumber,
     required String message,
   }) async {
-    AppLogger.info('SMS requested to $phoneNumber (no-op without Firebase)');
+    AppLogger.info('SMS requested to $phoneNumber (handled server-side)');
   }
 
   Future<void> sendEmail({
@@ -55,7 +70,7 @@ class CommunicationService {
     required String body,
     bool isHtml = false,
   }) async {
-    AppLogger.info('Email requested to $toEmail (no-op without Firebase)');
+    AppLogger.info('Email requested to $toEmail (handled server-side)');
   }
 
   Future<void> sendInAppNotification({
@@ -65,7 +80,11 @@ class CommunicationService {
     String type = 'info',
     Map<String, dynamic>? metadata,
   }) async {
-    AppLogger.info('In-app notification: $title (console only)');
+    _notificationService.showLocalNotification(
+      title: title,
+      body: message,
+      payload: metadata,
+    );
   }
 
   Future<void> showLocalNotification({
@@ -73,7 +92,11 @@ class CommunicationService {
     required String body,
     Map<String, dynamic>? data,
   }) async {
-    AppLogger.info('Local notification: $title (console only)');
+    _notificationService.showLocalNotification(
+      title: title,
+      body: body,
+      payload: data,
+    );
   }
 
   Future<void> sendEmergencyNotification({
@@ -81,11 +104,25 @@ class CommunicationService {
     String priority = 'high',
     List<String>? targetRoles,
   }) async {
-    AppLogger.info('Emergency notification: $message (console only)');
+    _notificationService.showLocalNotification(
+      title: 'Emergency',
+      body: message,
+    );
+  }
+
+  /// Subscribe to a topic
+  Future<void> subscribeToTopic(String topic) async {
+    await _notificationService.subscribeToTopic(topic);
+  }
+
+  /// Unsubscribe from a topic
+  Future<void> unsubscribeFromTopic(String topic) async {
+    await _notificationService.unsubscribeFromTopic(topic);
   }
 
   /// Cleanup resources
   void dispose() {
     _initialized = false;
+    _notificationService.dispose();
   }
 }

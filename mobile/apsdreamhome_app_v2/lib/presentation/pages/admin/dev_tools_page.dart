@@ -10,12 +10,7 @@ class DevToolsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Developer Tools'),
-        backgroundColor: Colors.purple,
-      ),
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,7 +164,6 @@ class DevToolsPage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
     );
   }
 

@@ -23,15 +23,37 @@ import '../../presentation/pages/customer/documents_page.dart';
 import '../../presentation/pages/customer/colony_plot_grid_page.dart';
 import '../../presentation/pages/customer/plot_detail_page.dart';
 import '../../presentation/pages/customer/customer_bookings_page.dart';
+import '../../presentation/pages/customer/post_property_page.dart';
 
 // Property
 import '../../presentation/pages/property/property_marketplace_page.dart';
 import '../../presentation/pages/property/property_detail_page.dart';
 
+// Splash
+import '../../presentation/pages/common/splash_page.dart';
+
 // Common
 import '../../presentation/pages/common/notifications_page.dart';
 import '../../presentation/pages/common/profile_page.dart';
 import '../../presentation/pages/common/settings_page.dart';
+import '../../presentation/pages/common/notifications_center_page.dart';
+import '../../presentation/pages/common/faq_page.dart';
+import '../../presentation/pages/common/testimonials_page.dart';
+
+// Customer Features
+import '../../presentation/pages/customer/saved_searches_page.dart';
+import '../../presentation/pages/customer/property_alerts_page.dart';
+import '../../presentation/pages/customer/compare_properties_page.dart';
+import '../../presentation/pages/customer/referral_page.dart';
+import '../../presentation/pages/customer/language_page.dart';
+import '../../presentation/pages/customer/support_tickets_page.dart';
+
+// Tools
+import '../../presentation/pages/tools/stamp_duty_calculator_page.dart';
+import '../../presentation/pages/tools/plot_converter_page.dart';
+
+// Customer Shell
+import '../../presentation/pages/customer/customer_shell.dart';
 
 // Tools
 import '../../presentation/pages/tools/emi_calculator_page.dart';
@@ -60,9 +82,15 @@ import '../../presentation/pages/agent/agent_dashboard_page.dart';
 import '../../presentation/pages/agent/lead_kanban_page.dart';
 import '../../presentation/pages/agent/deal_pipeline_page.dart';
 import '../../presentation/pages/agent/commission_approval_page.dart';
+import '../../presentation/pages/agent/agent_crm_page.dart';
 
 // Employee
+import '../../presentation/pages/employee/employee_shell.dart';
+import '../../presentation/pages/employee/employee_dashboard_page.dart';
+import '../../presentation/pages/employee/employee_tasks_page.dart';
 import '../../presentation/pages/employee/check_in_page.dart';
+import '../../presentation/pages/employee/employee_profile_page.dart';
+import '../../presentation/pages/employee/employee_crm_page.dart';
 
 // Admin
 import '../../presentation/pages/admin/admin_shell.dart';
@@ -91,30 +119,74 @@ import '../providers/auth_provider.dart';
 import '../../data/models/user_model.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
-
-  return GoRouter(
-    initialLocation: '/login',
+  final router = GoRouter(
+    initialLocation: '/splash',
     redirect: (context, state) {
+      User? authState;
+      try {
+        authState = ref.read(authProvider);
+      } catch (_) {
+        authState = null;
+      }
       final isAuthenticated = authState != null;
       final uri = state.uri.toString();
-      final isLoginPage = uri == '/login';
-      final isPublicRoute = isLoginPage ||
-          uri == '/register' ||
-          uri.startsWith('/otp') ||
-          uri.startsWith('/forgot-password');
 
-      if (!isAuthenticated && !isPublicRoute) {
-        return '/login';
+      // Auth pages
+      final isLoginPage = uri == '/login';
+      final isRegisterPage = uri == '/register';
+      final isForgotPassword = uri.startsWith('/forgot-password');
+      final isOtp = uri.startsWith('/otp');
+
+      // Public pages — accessible without login
+      final isSplash = uri == '/splash';
+      final isHomePage = uri == '/home';
+      final isColonies = uri == '/colonies';
+      final isColonyDetail = uri.startsWith('/colony-detail');
+      final isColonyPlots = uri.startsWith('/colony-plots');
+      final isPlots = uri == '/plots';
+      final isPlotDetail = uri.startsWith('/plot-detail');
+      final isProperties = uri == '/properties';
+      final isPropertyDetail = uri.startsWith('/property-detail');
+      final isEmiCalc = uri == '/emi-calculator';
+      final isValuation = uri == '/property-valuation';
+      final isSiteVisit = uri == '/site-visit';
+      final isMap = uri == '/map';
+      final isLiveChat = uri == '/live-chat';
+      final isAiChat = uri == '/ai-chat';
+
+      final isPublicRoute = isSplash || isLoginPage || isRegisterPage ||
+          isForgotPassword || isOtp || isHomePage || isColonies ||
+          isColonyDetail || isColonyPlots || isPlots || isPlotDetail ||
+          isProperties || isPropertyDetail || isEmiCalc || isValuation ||
+          isSiteVisit || isMap || isLiveChat || isAiChat;
+
+      // Allow all public and auth routes
+      if (isPublicRoute) {
+        // If logged in and on splash, redirect to role home
+        if (isAuthenticated && isSplash) {
+          return _defaultRouteForRole(authState);
+        }
+        // If logged in and on login/register, redirect to role home
+        if (isAuthenticated && (isLoginPage || isRegisterPage)) {
+          return _defaultRouteForRole(authState);
+        }
+        return null;
       }
 
-      if (isAuthenticated && isLoginPage) {
-        return _defaultRouteForRole(authState);
+      // Protected routes — redirect to login if not authenticated
+      if (!isAuthenticated) {
+        return '/login';
       }
 
       return null;
     },
     routes: [
+      // ─── Splash ───
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashPage(),
+      ),
+
       // ─── Auth Routes ───
       GoRoute(
         path: '/login',
@@ -133,99 +205,196 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const OTPPage(),
       ),
 
-      // ─── Customer Routes ───
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => const HomePage(),
+      // ─── Customer Shell (bottom nav for authenticated customers) ───
+      ShellRoute(
+        builder: (context, state, child) => CustomerShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/home',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: HomePage(),
+            ),
+          ),
+          GoRoute(
+            path: '/properties',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: PropertyMarketplacePage(),
+            ),
+          ),
+          GoRoute(
+            path: '/colonies',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ColoniesPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/plots',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: PlotsPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/profile',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ProfilePage(),
+            ),
+          ),
+        ],
       ),
-      GoRoute(
-        path: '/properties',
-        builder: (context, state) => const PropertyMarketplacePage(),
-      ),
+
+      // ─── Customer Detail Routes (full-screen, with slide-up transition) ───
       GoRoute(
         path: '/property-detail/:propertyId',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
-          return PropertyDetailPage(
-            propertyId: state.pathParameters['propertyId']!,
-            title: extra?['title'] as String? ?? '',
-            price: (extra?['price'] as num?)?.toDouble() ?? 0,
-            location: extra?['location'] as String? ?? '',
-            area: (extra?['area'] as num?)?.toDouble() ?? 0,
-            type: extra?['type'] as String? ?? '',
-            description: extra?['description'] as String? ?? '',
-            image: extra?['image'] as String? ?? '',
+          return CustomTransitionPage<void>(
+            child: PropertyDetailPage(
+              propertyId: state.pathParameters['propertyId']!,
+              title: extra?['title'] as String? ?? '',
+              price: (extra?['price'] as num?)?.toDouble() ?? 0,
+              location: extra?['location'] as String? ?? '',
+              area: (extra?['area'] as num?)?.toDouble() ?? 0,
+              type: extra?['type'] as String? ?? '',
+              description: extra?['description'] as String? ?? '',
+              image: extra?['image'] as String? ?? '',
+            ),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.05),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+                  child: child,
+                ),
+              );
+            },
           );
         },
-      ),
-      GoRoute(
-        path: '/colonies',
-        builder: (context, state) => const ColoniesPage(),
       ),
       GoRoute(
         path: '/colony-detail/:colonyId',
-        builder: (context, state) {
-          return ColonyDetailPage(
-            colonyId: state.pathParameters['colonyId']!,
+        pageBuilder: (context, state) {
+          return CustomTransitionPage<void>(
+            child: ColonyDetailPage(
+              colonyId: state.pathParameters['colonyId']!,
+            ),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.05),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+                  child: child,
+                ),
+              );
+            },
           );
         },
       ),
       GoRoute(
-        path: '/plots',
-        builder: (context, state) => const PlotsPage(),
-      ),
-      GoRoute(
         path: '/colony-plots/:colonyId',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final colonyId = int.parse(state.pathParameters['colonyId']!);
           final extra = state.extra as Map<String, dynamic>?;
-          return ColonyPlotGridPage(
-            colonyId: colonyId,
-            colonyName: extra?['colonyName'] as String? ?? 'Colony',
+          return CustomTransitionPage<void>(
+            child: ColonyPlotGridPage(
+              colonyId: colonyId,
+              colonyName: extra?['colonyName'] as String? ?? 'Colony',
+            ),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.05),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+                  child: child,
+                ),
+              );
+            },
           );
         },
       ),
       GoRoute(
         path: '/plot-detail/:plotId',
-        builder: (context, state) {
-          return PlotDetailPage(
-            plotId: state.pathParameters['plotId']!,
+        pageBuilder: (context, state) {
+          return CustomTransitionPage<void>(
+            child: PlotDetailPage(
+              plotId: state.pathParameters['plotId']!,
+            ),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.05),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+                  child: child,
+                ),
+              );
+            },
           );
         },
       ),
       GoRoute(
         path: '/booking/:plotId',
-        builder: (context, state) => BookingPage(
-          plotId: state.pathParameters['plotId']!,
-        ),
+        pageBuilder: (context, state) {
+          return CustomTransitionPage<void>(
+            child: BookingPage(
+              plotId: state.pathParameters['plotId']!,
+            ),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 0.08),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+                child: FadeTransition(
+                  opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                  child: child,
+                ),
+              );
+            },
+          );
+        },
       ),
       GoRoute(
         path: '/my-bookings',
-        builder: (context, state) => const MyBookingsPage(),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: MyBookingsPage(), transitionsBuilder: _slideTransition),
       ),
       GoRoute(
         path: '/customer-bookings',
-        builder: (context, state) => const CustomerBookingsPage(),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: CustomerBookingsPage(), transitionsBuilder: _slideTransition),
       ),
       GoRoute(
         path: '/emi-schedule',
-        builder: (context, state) => const EmiSchedulePage(),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: EmiSchedulePage(), transitionsBuilder: _slideTransition),
       ),
       GoRoute(
         path: '/favorites',
-        builder: (context, state) => const FavoritesPage(),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: FavoritesPage(), transitionsBuilder: _slideTransition),
       ),
       GoRoute(
         path: '/documents',
-        builder: (context, state) => const DocumentsPage(),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: DocumentsPage(), transitionsBuilder: _slideTransition),
       ),
       GoRoute(
         path: '/kyc-verification',
-        builder: (context, state) => const KYCVerificationPage(),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: KYCVerificationPage(), transitionsBuilder: _slideTransition),
       ),
       GoRoute(
         path: '/kyc-status',
-        builder: (context, state) => const KYCStatusPage(),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: KYCStatusPage(), transitionsBuilder: _slideTransition),
+      ),
+      GoRoute(
+        path: '/post-property',
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: PostPropertyPage(), transitionsBuilder: _slideTransition),
       ),
 
       // ─── Tools Routes ───
@@ -256,12 +425,56 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const NotificationsPage(),
       ),
       GoRoute(
-        path: '/profile',
-        builder: (context, state) => const ProfilePage(),
-      ),
-      GoRoute(
         path: '/settings',
         builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: '/notifications-center',
+        builder: (context, state) => const NotificationsCenterPage(),
+      ),
+      GoRoute(
+        path: '/faq',
+        builder: (context, state) => const FaqPage(),
+      ),
+      GoRoute(
+        path: '/testimonials',
+        builder: (context, state) => const TestimonialsPage(),
+      ),
+
+      // ─── Customer Feature Routes ───
+      GoRoute(
+        path: '/saved-searches',
+        builder: (context, state) => const SavedSearchesPage(),
+      ),
+      GoRoute(
+        path: '/property-alerts',
+        builder: (context, state) => const PropertyAlertsPage(),
+      ),
+      GoRoute(
+        path: '/compare',
+        builder: (context, state) => const ComparePropertiesPage(),
+      ),
+      GoRoute(
+        path: '/referral',
+        builder: (context, state) => const ReferralPage(),
+      ),
+      GoRoute(
+        path: '/language',
+        builder: (context, state) => const LanguagePage(),
+      ),
+      GoRoute(
+        path: '/support-tickets',
+        builder: (context, state) => const SupportTicketsPage(),
+      ),
+
+      // ─── Tools Routes (extended) ───
+      GoRoute(
+        path: '/stamp-duty-calculator',
+        builder: (context, state) => const StampDutyCalculatorPage(),
+      ),
+      GoRoute(
+        path: '/plot-converter',
+        builder: (context, state) => const PlotConverterPage(),
       ),
 
       // ─── AI ───
@@ -314,6 +527,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/associate/genealogy',
         builder: (context, state) => const GenealogyPage(),
       ),
+      GoRoute(
+        path: '/associate/crm',
+        builder: (context, state) => const AgentCRMPage(),
+      ),
 
       // Legacy MLM routes (redirect to associate routes)
       GoRoute(
@@ -350,11 +567,46 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/agent/commissions',
         builder: (context, state) => const CommissionApprovalPage(),
       ),
-
-      // ─── Employee Routes ───
       GoRoute(
-        path: '/employee/check-in',
-        builder: (context, state) => const CheckInPage(),
+        path: '/agent/crm',
+        builder: (context, state) => const AgentCRMPage(),
+      ),
+
+      // ─── Employee Shell ───
+      ShellRoute(
+        builder: (context, state, child) => EmployeeShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/employee/dashboard',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: EmployeeDashboardPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/employee/tasks',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: EmployeeTasksPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/employee/check-in',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: CheckInPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/employee/profile',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: EmployeeProfilePage(),
+            ),
+          ),
+          GoRoute(
+            path: '/employee/crm',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: EmployeeCRMPage(),
+            ),
+          ),
+        ],
       ),
 
       // ─── Admin Shell (wraps all /admin sub-routes) ───
@@ -498,6 +750,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
     errorBuilder: (context, state) => ErrorPage(error: state.error),
   );
+
+  return router;
 });
 
 String _defaultRouteForRole(User? user) {
@@ -505,8 +759,26 @@ String _defaultRouteForRole(User? user) {
   if (user.isAdmin) return '/admin';
   if (user.isAgent) return '/agent/dashboard';
   if (user.isAssociate) return '/associate/dashboard';
-  if (user.isEmployee) return '/employee/check-in';
+  if (user.isEmployee) return '/employee/dashboard';
   return '/home';
+}
+
+Widget _slideTransition(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
+  return FadeTransition(
+    opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+    child: SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0, 0.04),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+      child: child,
+    ),
+  );
 }
 
 class ErrorPage extends StatelessWidget {

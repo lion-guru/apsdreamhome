@@ -24,6 +24,7 @@ class MLMDashboardPage extends ConsumerWidget {
     final commissionsAsync = ref.watch(commissionsProvider);
     final connectivity = ref.watch(connectivityProvider);
     final mlmSummaryAsync = ref.watch(mlmSummaryProvider);
+    final rankProgressAsync = ref.watch(rankProgressProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +49,8 @@ class MLMDashboardPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // User Rank Card
-              if (user != null) _buildRankCard(context, user),
+              if (user != null)
+                _buildRankCard(context, user, rankProgressAsync.value),
 
               const SizedBox(height: 16),
 
@@ -113,32 +115,6 @@ class MLMDashboardPage extends ConsumerWidget {
                   minimumSize: const Size(double.infinity, 50),
                   side: const BorderSide(color: Colors.orangeAccent),
                   foregroundColor: Colors.orangeAccent,
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              OutlinedButton.icon(
-                onPressed: () => context.push('/mlm/documents'),
-                icon: const Icon(Icons.folder_shared),
-                label: const Text('Digital Document Locker'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  side: const BorderSide(color: AppTheme.accentColor),
-                  foregroundColor: AppTheme.accentColor,
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              OutlinedButton.icon(
-                onPressed: () => context.push('/mlm/site-visit'),
-                icon: const Icon(Icons.map_outlined),
-                label: const Text('GPS Site Visit Tracker'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  side: const BorderSide(color: Colors.greenAccent),
-                  foregroundColor: Colors.greenAccent,
                 ),
               ),
 
@@ -227,8 +203,8 @@ class MLMDashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildRankCard(BuildContext context, User user) {
-    final progress = _calculateRankProgress(user);
+  Widget _buildRankCard(BuildContext context, User user, Map<String, dynamic>? rankData) {
+    final progress = _calculateRankProgress(user, rankData);
 
     return GlassCard(
       child: Column(
@@ -491,10 +467,18 @@ class MLMDashboardPage extends ConsumerWidget {
     );
   }
 
-  double _calculateRankProgress(User user) {
-    // This would typically calculate actual business progress
-    // For now, return a sample progress
-    return 0.65; // 65% progress
+  double _calculateRankProgress(User user, Map<String, dynamic>? rankData) {
+    if (rankData != null) {
+      final overallProgress = (rankData['overall_progress_pct'] as num?)?.toDouble();
+      if (overallProgress != null) {
+        return (overallProgress / 100).clamp(0.0, 1.0);
+      }
+    }
+    // Fallback: calculate from user target vs current sales
+    if (user.target > 0) {
+      return (user.totalSales / user.target).clamp(0.0, 1.0);
+    }
+    return 0.0;
   }
 
   String _formatTarget(double target) {

@@ -68,15 +68,36 @@ class PushNotificationService
      */
     public function sendToUser(int $userId, array $notification): array
     {
-        $devices = (new MobileDevice())->where('user_id', $userId)
-            ->where('is_active', true)
-            ->get();
+        $tokens = [];
 
-        if (empty($devices)) {
+        // Primary: read from push_tokens (written by Flutter app via registerFcmToken)
+        try {
+            $stmt = $this->db->query(
+                "SELECT device_token FROM push_tokens WHERE user_id = ? AND is_active = 1",
+                [$userId]
+            );
+            $tokens = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        } catch (\Throwable $e) {
+            // Table might not exist
+        }
+
+        // Fallback: read from mobile_devices (legacy path)
+        if (empty($tokens)) {
+            try {
+                $stmt = $this->db->query(
+                    "SELECT device_token FROM mobile_devices WHERE user_id = ? AND is_active = 1",
+                    [$userId]
+                );
+                $tokens = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+            } catch (\Throwable $e) {
+                // Table might not exist
+            }
+        }
+
+        if (empty($tokens)) {
             return ['success' => false, 'error' => 'No active devices found'];
         }
 
-        $tokens = array_column($devices, 'device_token');
         return $this->sendToDevices($tokens, $notification);
     }
 
@@ -172,32 +193,42 @@ class PushNotificationService
     }
 
     /**
-     * Register device token
+     * Register device token — writes to BOTH push_tokens and mobile_devices
      */
     public function registerDevice(int $userId, string $deviceToken, string $platform): array
     {
+        // Write to push_tokens (primary table for mobile app)
         try {
-            // Check if device already registered
+            $this->db->query(
+                "INSERT INTO push_tokens (user_id, user_type, device_token, platform, is_active, last_used_at, created_at, updated_at)
+                 VALUES (?, 'customer', ?, ?, 1, NOW(), NOW(), NOW())
+                 ON DUPLICATE KEY UPDATE is_active = 1, platform = VALUES(platform), last_used_at = NOW(), updated_at = NOW()",
+                [$userId, $deviceToken, $platform]
+            );
+        } catch (\Throwable $e) {
+            // Table might not exist
+        }
+
+        // Also write to mobile_devices (backward compatibility)
+        try {
             $existing = $this->db->query(
                 "SELECT id FROM mobile_devices WHERE device_token = ?",
                 [$deviceToken]
             )->fetchColumn();
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
 
-        if ($existing) {
-            // Update existing
-            $this->db->query(
-                "UPDATE mobile_devices SET user_id = ?, platform = ?, last_used_at = NOW(), is_active = 1 WHERE device_token = ?",
-                [$userId, $platform, $deviceToken]
-            );
-        } else {
-            // Insert new
-            $this->db->query(
-                "INSERT INTO mobile_devices (user_id, device_token, platform, last_used_at, is_active, created_at) VALUES (?, ?, ?, NOW(), 1, NOW())",
-                [$userId, $deviceToken, $platform]
-            );
+            if ($existing) {
+                $this->db->query(
+                    "UPDATE mobile_devices SET user_id = ?, platform = ?, last_used_at = NOW(), is_active = 1 WHERE device_token = ?",
+                    [$userId, $platform, $deviceToken]
+                );
+            } else {
+                $this->db->query(
+                    "INSERT INTO mobile_devices (user_id, device_token, platform, last_used_at, is_active, created_at) VALUES (?, ?, ?, NOW(), 1, NOW())",
+                    [$userId, $deviceToken, $platform]
+                );
+            }
+        } catch (\Throwable $e) {
+            // mobile_devices table might not exist — push_tokens is sufficient
         }
 
         // Subscribe to user role topic
@@ -215,18 +246,31 @@ class PushNotificationService
     }
 
     /**
-     * Unregister device
+     * Unregister device from both tables
      */
     public function unregisterDevice(string $deviceToken): bool
     {
+        $deactivated = false;
+
         try {
-            return $this->db->query(
-                "UPDATE mobile_devices SET is_active = 0 WHERE device_token = ?",
+            $deactivated = $this->db->query(
+                "UPDATE push_tokens SET is_active = 0 WHERE device_token = ?",
                 [$deviceToken]
             )->rowCount() > 0;
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            // Table might not exist
         }
+
+        try {
+            $this->db->query(
+                "UPDATE mobile_devices SET is_active = 0 WHERE device_token = ?",
+                [$deviceToken]
+            );
+        } catch (\Throwable $e) {
+            // Table might not exist
+        }
+
+        return $deactivated;
     }
 
     // ----------------------------------------------------------------
@@ -264,9 +308,16 @@ class PushNotificationService
             return $this->sendBatchV1($data['registration_ids'], $data);
         }
 
-        // Notification payload
+        // Notification payload (FCM v1 only accepts title, body, image)
         if (!empty($data['notification'])) {
-            $message['notification'] = $data['notification'];
+            $message['notification'] = [
+                'title' => $data['notification']['title'] ?? '',
+                'body' => $data['notification']['body'] ?? '',
+            ];
+            // image is optional
+            if (!empty($data['notification']['image'])) {
+                $message['notification']['image'] = $data['notification']['image'];
+            }
         }
 
         // Data payload (all values must be strings in v1)
@@ -278,7 +329,7 @@ class PushNotificationService
             $message['data'] = $flat;
         }
 
-        // Android-specific config
+        // Android-specific config (icon, sound, channel go here in v1)
         $message['android'] = [
             'priority' => 'high',
             'notification' => [

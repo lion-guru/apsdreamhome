@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../widgets/app_widgets.dart';
+import '../../../data/models/crm_models.dart';
+import '../../../data/services/crm_service.dart';
 
-/// Full CRM System for Admin Panel
-/// Includes: Leads, Customers, Follow-ups, Enquiries, Analytics
 class CRMPage extends ConsumerStatefulWidget {
   const CRMPage({super.key});
 
@@ -18,14 +17,28 @@ class CRMPage extends ConsumerStatefulWidget {
 class _CRMPageState extends ConsumerState<CRMPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String? _selectedStatus;
-  String? _selectedSource;
-  DateTimeRange? _dateRange;
+  final CRMService _crm = CRMService();
+  bool _isLoading = true;
+  String? _error;
+  CRMDashboardStats _stats = const CRMDashboardStats();
+  List<CRMPipelineStage> _stages = [];
+  Map<String, List<CRMLead>> _pipelineBoard = {};
+  List<CRMTask> _tasks = [];
+  int _selectedStageIdx = 0;
+  String _searchQuery = '';
+  String? _filterSource;
+  String? _filterPriority;
+  String? _filterCategory;
+  int _currentPage = 1;
+  bool _hasMore = true;
+  List<CRMLead> _leadsList = [];
+  bool _loadingLeads = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
+    _loadData();
   }
 
   @override
@@ -34,1229 +47,1270 @@ class _CRMPageState extends ConsumerState<CRMPage>
     super.dispose();
   }
 
+  Future<void> _loadData() async {
+    setState(() { _isLoading = true; _error = null; });
+    try {
+      final dashboard = await _crm.getDashboard();
+      final pipeline = await _crm.getPipeline();
+      final tasks = await _crm.getMyTasks();
+      setState(() {
+        final statsData = dashboard['stats'];
+        _stats = CRMDashboardStats.fromJson((statsData is Map<String, dynamic>) ? statsData : dashboard);
+        _stages = (pipeline['stages'] as List?)
+            ?.map((j) => CRMPipelineStage.fromJson(j as Map<String, dynamic>))
+            .toList() ?? [];
+        final board = pipeline['board'] as Map<String, dynamic>?;
+        _pipelineBoard = {};
+        board?.forEach((key, val) {
+          _pipelineBoard[key] = (val as List?)
+              ?.map((j) => CRMLead.fromJson(j as Map<String, dynamic>))
+              .toList() ?? [];
+        });
+        _tasks = (tasks as List?)
+            ?.map((j) => CRMTask.fromJson(j as Map<String, dynamic>))
+            .toList() ?? [];
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() { _error = e.toString(); _isLoading = false; });
+    }
+  }
+
+  Future<void> _loadLeads({bool append = false}) async {
+    setState(() { _loadingLeads = true; });
+    try {
+      final res = await _crm.getLeads(
+        search: _searchQuery.isNotEmpty ? _searchQuery : null,
+        source: _filterSource,
+        priority: _filterPriority,
+        category: _filterCategory,
+        page: _currentPage,
+        perPage: 25,
+      );
+      final leads = (res['leads'] as List?)
+          ?.map((j) => CRMLead.fromJson(j as Map<String, dynamic>))
+          .toList() ?? [];
+      final total = res['total'] as int? ?? 0;
+      setState(() {
+        _leadsList = append ? [..._leadsList, ...leads] : leads;
+        _hasMore = _leadsList.length < total;
+        _loadingLeads = false;
+      });
+    } catch (e) {
+      setState(() { _loadingLeads = false; });
+    }
+  }
+
+  Future<void> _moveLead(int leadId, String newStage) async {
+    final ok = await _crm.moveLeadToStage(leadId, newStage);
+    if (ok) {
+      _loadData();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lead moved to ${newStage.replaceAll('_', ' ').toUpperCase()}'), backgroundColor: AppTheme.successColor),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          // Header
-          _buildHeader(),
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 12),
+            Text(_error!, style: const TextStyle(color: Colors.red)),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: _loadData,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
 
-          // CRM Stats
-          _buildCRMStats(),
-
-          // Tabs
-          TabBar(
+    return Column(
+      children: [
+        _buildHeader(),
+        _buildStatCards(),
+        _buildTabBar(),
+        Expanded(
+          child: TabBarView(
             controller: _tabController,
-            isScrollable: true,
-            tabs: const [
-              Tab(icon: Icon(Icons.people), text: 'All Leads'),
-              Tab(icon: Icon(Icons.person_add), text: 'New Enquiries'),
-              Tab(icon: Icon(Icons.phone_callback), text: 'Follow-ups'),
-              Tab(icon: Icon(Icons.check_circle), text: 'Converted'),
-              Tab(icon: Icon(Icons.analytics), text: 'Analytics'),
+            children: [
+              _buildPipelineTab(),
+              _buildLeadsListTab(),
+              _buildTasksTab(),
+              _buildAnalyticsTab(),
             ],
           ),
-
-          // Filters
-          _buildFilters(),
-
-          // Tab Content
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildAllLeadsTab(),
-                _buildNewEnquiriesTab(),
-                _buildFollowUpsTab(),
-                _buildConvertedTab(),
-                _buildAnalyticsTab(),
-              ],
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddLeadDialog(),
-        icon: const Icon(Icons.person_add),
-        label: const Text('Add Lead'),
-      ),
+        ),
+      ],
     );
   }
 
+  // ─── Header ───────────────────────────────────────────────────────
+
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-          ),
-        ],
-      ),
+      padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          const Icon(
-            Icons.campaign,
-            size: 32,
-            color: AppTheme.primaryColor,
-          ),
-          const SizedBox(width: 16),
+          const Icon(Icons.hub, color: AppTheme.primaryColor, size: 28),
+          const SizedBox(width: 12),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Customer Relationship Management',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Manage leads, enquiries, follow-ups and conversions',
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
+                Text('CRM Pipeline', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text('Lead management & follow-ups', style: TextStyle(fontSize: 12, color: Colors.grey)),
               ],
             ),
           ),
-          Row(
-            children: [
-              OutlinedButton.icon(
-                onPressed: () => _importLeads(),
-                icon: const Icon(Icons.upload_file),
-                label: const Text('Import'),
-              ),
-              const SizedBox(width: 12),
-              OutlinedButton.icon(
-                onPressed: () => _exportLeads(),
-                icon: const Icon(Icons.download),
-                label: const Text('Export'),
-              ),
-              const SizedBox(width: 12),
-              ElevatedButton.icon(
-                onPressed: () => _showBulkActions(),
-                icon: const Icon(Icons.auto_fix_high),
-                label: const Text('Bulk Actions'),
-              ),
-            ],
+          IconButton(
+            onPressed: _loadData,
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh',
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton.icon(
+            onPressed: _showCreateLeadDialog,
+            icon: const Icon(Icons.add, size: 18),
+            label: const Text('New Lead'),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCRMStats() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      child: Row(
-        children: [
-          _buildStatCard(
-            'Total Leads',
-            '1,245',
-            Icons.people,
-            Colors.blue,
-            '+12% this month',
-          ),
-          _buildStatCard(
-            'New Today',
-            '28',
-            Icons.person_add,
-            Colors.green,
-            '5 from website',
-          ),
-          _buildStatCard(
-            'Pending Follow-up',
-            '156',
-            Icons.phone_callback,
-            Colors.orange,
-            '42 overdue',
-          ),
-          _buildStatCard(
-            'Conversion Rate',
-            '24.5%',
-            Icons.trending_up,
-            Colors.purple,
-            '+3.2% vs last month',
-          ),
-          _buildStatCard(
-            'Converted',
-            '305',
-            Icons.check_circle,
-            Colors.teal,
-            '₹12.5 Cr value',
-          ),
-        ],
-      ),
-    );
-  }
+  // ─── Stat Cards ───────────────────────────────────────────────────
 
-  Widget _buildStatCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-    String subtitle,
-  ) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              color.withValues(alpha: 0.1),
-              color.withValues(alpha: 0.05),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: color, size: 28),
-                const Spacer(),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    subtitle,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+  Widget _buildStatCards() {
+    final cards = [
+      _StatCardData('Total Leads', _stats.totalLeads.toString(), Icons.people, AppTheme.primaryColor),
+      _StatCardData('New', _stats.newLeads.toString(), Icons.fiber_new, Colors.blue),
+      _StatCardData('Qualified', _stats.qualifiedLeads.toString(), Icons.verified, Colors.cyan),
+      _StatCardData('Won', _stats.wonLeads.toString(), Icons.check_circle, AppTheme.successColor),
+      _StatCardData('Tasks', '${_stats.pendingTasks}', Icons.task_alt, Colors.orange),
+      _StatCardData('Overdue', '${_stats.overdueTasks}', Icons.warning, Colors.red),
+    ];
+
+    return SizedBox(
+      height: 90,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: cards.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (ctx, i) {
+          final c = cards[i];
+          return Container(
+            width: 120,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: c.color.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: c.color.withValues(alpha: 0.15)),
             ),
-            const SizedBox(height: 16),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilters() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.shade200),
-        ),
-      ),
-      child: Row(
-        children: [
-          // Search
-          Expanded(
-            flex: 2,
-            child: TextField(
-              onChanged: (value) {},
-              decoration: InputDecoration(
-                hintText: 'Search by name, phone, email...',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          // Status Filter
-          Expanded(
-            child: DropdownButtonFormField<String>(
-              initialValue: _selectedStatus,
-              hint: const Text('Status'),
-              decoration: _dropdownDecoration(),
-              items: const [
-                DropdownMenuItem(value: null, child: Text('All Status')),
-                DropdownMenuItem(value: 'new', child: Text('🆕 New')),
-                DropdownMenuItem(
-                    value: 'contacted', child: Text('📞 Contacted')),
-                DropdownMenuItem(
-                    value: 'interested', child: Text('⭐ Interested')),
-                DropdownMenuItem(
-                    value: 'follow_up', child: Text('🔄 Follow-up')),
-                DropdownMenuItem(
-                    value: 'not_interested', child: Text('❌ Not Interested')),
-                DropdownMenuItem(
-                    value: 'converted', child: Text('✅ Converted')),
-                DropdownMenuItem(value: 'lost', child: Text('💔 Lost')),
-              ],
-              onChanged: (value) => setState(() => _selectedStatus = value),
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          // Source Filter
-          Expanded(
-            child: DropdownButtonFormField<String>(
-              initialValue: _selectedSource,
-              hint: const Text('Source'),
-              decoration: _dropdownDecoration(),
-              items: const [
-                DropdownMenuItem(value: null, child: Text('All Sources')),
-                DropdownMenuItem(value: 'website', child: Text('🌐 Website')),
-                DropdownMenuItem(value: 'facebook', child: Text('📘 Facebook')),
-                DropdownMenuItem(
-                    value: 'instagram', child: Text('📸 Instagram')),
-                DropdownMenuItem(value: 'google', child: Text('🔍 Google Ads')),
-                DropdownMenuItem(value: 'referral', child: Text('👥 Referral')),
-                DropdownMenuItem(
-                    value: 'site_visit', child: Text('🏗️ Site Visit')),
-                DropdownMenuItem(value: 'event', child: Text('🎪 Event')),
-                DropdownMenuItem(value: 'walk_in', child: Text('🚶 Walk-in')),
-                DropdownMenuItem(
-                    value: 'associate', child: Text('🤝 Associate')),
-              ],
-              onChanged: (value) => setState(() => _selectedSource = value),
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          // Date Range
-          OutlinedButton.icon(
-            onPressed: () => _selectDateRange(),
-            icon: const Icon(Icons.calendar_today),
-            label: Text(_dateRange == null
-                ? 'Date Range'
-                : '${DateFormat('dd MMM').format(_dateRange!.start)} - ${DateFormat('dd MMM').format(_dateRange!.end)}'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  InputDecoration _dropdownDecoration() {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.white,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide.none,
-      ),
-    );
-  }
-
-  Widget _buildAllLeadsTab() {
-    return _buildLeadsList([
-      _LeadMock('Rajesh Kumar', '+91 98765 43210', 'rajesh@email.com', 'new',
-          'website', '2 hours ago', '₹0', null, 'Not assigned'),
-      _LeadMock(
-          'Priya Singh',
-          '+91 87654 32109',
-          'priya@email.com',
-          'contacted',
-          'facebook',
-          '1 day ago',
-          '₹0',
-          'Amit Sharma',
-          'Follow-up tomorrow'),
-      _LeadMock(
-          'Amit Patel',
-          '+91 76543 21098',
-          'amit@email.com',
-          'interested',
-          'referral',
-          '3 days ago',
-          '₹50,000',
-          'Suresh Kumar',
-          'Wants to visit site'),
-      _LeadMock(
-          'Sneha Gupta',
-          '+91 65432 10987',
-          'sneha@email.com',
-          'follow_up',
-          'google',
-          '1 week ago',
-          '₹25,000',
-          'Rahul Verma',
-          'EMI discussion pending'),
-      _LeadMock(
-          'Vikram Reddy',
-          '+91 54321 09876',
-          'vikram@email.com',
-          'converted',
-          'site_visit',
-          '2 weeks ago',
-          '₹12,50,000',
-          'Self',
-          'Plot A-45 booked'),
-    ]);
-  }
-
-  Widget _buildNewEnquiriesTab() {
-    return _buildLeadsList([
-      _LeadMock('Rajesh Kumar', '+91 98765 43210', 'rajesh@email.com', 'new',
-          'website', '2 hours ago', '₹0', null, 'Not assigned'),
-      _LeadMock('Anita Sharma', '+91 43210 98765', 'anita@email.com', 'new',
-          'facebook', '4 hours ago', '₹0', null, 'Not assigned'),
-      _LeadMock('Kiran Rao', '+91 32109 87654', 'kiran@email.com', 'new',
-          'google', '6 hours ago', '₹0', null, 'Not assigned'),
-    ]);
-  }
-
-  Widget _buildFollowUpsTab() {
-    return _buildLeadsList([
-      _LeadMock(
-          'Priya Singh',
-          '+91 87654 32109',
-          'priya@email.com',
-          'contacted',
-          'facebook',
-          '1 day ago',
-          '₹0',
-          'Amit Sharma',
-          'Due today'),
-      _LeadMock(
-          'Sneha Gupta',
-          '+91 65432 10987',
-          'sneha@email.com',
-          'follow_up',
-          'google',
-          '1 week ago',
-          '₹25,000',
-          'Rahul Verma',
-          'Overdue by 2 days'),
-      _LeadMock(
-          'Manoj Tiwari',
-          '+91 21098 76543',
-          'manoj@email.com',
-          'interested',
-          'referral',
-          '2 days ago',
-          '₹0',
-          'Amit Sharma',
-          'Due tomorrow'),
-    ]);
-  }
-
-  Widget _buildConvertedTab() {
-    return _buildLeadsList([
-      _LeadMock(
-          'Vikram Reddy',
-          '+91 54321 09876',
-          'vikram@email.com',
-          'converted',
-          'site_visit',
-          '2 weeks ago',
-          '₹12,50,000',
-          'Self',
-          'Plot A-45 booked'),
-      _LeadMock(
-          'Deepak Shah',
-          '+91 10987 65432',
-          'deepak@email.com',
-          'converted',
-          'walk_in',
-          '1 month ago',
-          '₹8,75,000',
-          'Suresh Kumar',
-          'Plot B-12 booked'),
-    ]);
-  }
-
-  Widget _buildLeadsList(List<_LeadMock> leads) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(24),
-      itemCount: leads.length,
-      itemBuilder: (context, index) {
-        final lead = leads[index];
-        return _buildLeadCard(lead);
-      },
-    );
-  }
-
-  Widget _buildLeadCard(_LeadMock lead) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: ExpansionTile(
-        leading: _buildStatusAvatar(lead.status),
-        title: Row(
-          children: [
-            Text(
-              lead.name,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(width: 8),
-            _buildSourceChip(lead.source),
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Icon(Icons.phone, size: 14, color: Colors.grey.shade600),
-                const SizedBox(width: 4),
-                Text(lead.phone),
-                const SizedBox(width: 16),
-                Icon(Icons.access_time, size: 14, color: Colors.grey.shade600),
-                const SizedBox(width: 4),
-                Text(lead.timeAgo),
-              ],
-            ),
-            if (lead.assignedTo != null) ...[
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  Icon(Icons.person_outline,
-                      size: 14, color: Colors.grey.shade600),
-                  const SizedBox(width: 4),
-                  Text('Assigned: ${lead.assignedTo}'),
-                ],
-              ),
-            ],
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (lead.value != '₹0')
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppTheme.successColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  lead.value,
-                  style: const TextStyle(
-                    color: AppTheme.successColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            const SizedBox(width: 8),
-            _buildStatusBadge(lead.status),
-          ],
-        ),
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Divider(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildActionButton(
-                        'Call',
-                        Icons.phone,
-                        Colors.green,
-                        () => _callLead(lead.phone),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildActionButton(
-                        'WhatsApp',
-                        Icons.message,
-                        Colors.teal,
-                        () => _whatsappLead(lead.phone),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildActionButton(
-                        'Email',
-                        Icons.email,
-                        Colors.blue,
-                        () => _emailLead(lead.email),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildActionButton(
-                        'Convert',
-                        Icons.check_circle,
-                        AppTheme.successColor,
-                        () => _convertLead(lead),
-                      ),
-                    ),
-                  ],
+                Icon(c.icon, color: c.color, size: 18),
+                const SizedBox(height: 6),
+                Text(c.value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: c.color)),
+                const SizedBox(height: 2),
+                Text(c.label, style: const TextStyle(fontSize: 10, color: Colors.grey), maxLines: 1, overflow: TextOverflow.ellipsis),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ─── Tab Bar ──────────────────────────────────────────────────────
+
+  Widget _buildTabBar() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: TabBar(
+        controller: _tabController,
+        indicator: BoxDecoration(
+          color: AppTheme.primaryColor,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        labelColor: Colors.white,
+        unselectedLabelColor: Colors.grey.shade600,
+        labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: const TextStyle(fontSize: 12),
+        dividerColor: Colors.transparent,
+        tabs: const [
+          Tab(text: 'Pipeline'),
+          Tab(text: 'Leads'),
+          Tab(text: 'Tasks'),
+          Tab(text: 'Analytics'),
+        ],
+      ),
+    );
+  }
+
+  // ─── Pipeline Tab (Horizontal Kanban) ─────────────────────────────
+
+  Widget _buildPipelineTab() {
+    if (_stages.isEmpty) {
+      return const Center(child: Text('No pipeline stages configured'));
+    }
+
+    return Column(
+      children: [
+        // Stage selector chips
+        SizedBox(
+          height: 42,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            itemCount: _stages.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 6),
+            itemBuilder: (ctx, i) {
+              final stage = _stages[i];
+              final isSelected = _selectedStageIdx == i;
+              return FilterChip(
+                label: Text('${stage.label} (${stage.count})', style: TextStyle(fontSize: 12, color: isSelected ? Colors.white : Colors.black)),
+                selected: isSelected,
+                selectedColor: AppTheme.primaryColor,
+                backgroundColor: Colors.grey.withValues(alpha: 0.1),
+                onSelected: (_) => setState(() => _selectedStageIdx = i),
+                visualDensity: VisualDensity.compact,
+              );
+            },
+          ),
+        ),
+
+        // Kanban cards
+        Expanded(
+          child: _buildKanbanColumn(_stages[_selectedStageIdx]),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildKanbanColumn(CRMPipelineStage stage) {
+    final leads = _pipelineBoard[stage.status] ?? [];
+    final statusColor = _statusColor(stage.status);
+
+    return Column(
+      children: [
+        // Column header
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Row(
+            children: [
+              Container(width: 4, height: 16, decoration: BoxDecoration(color: statusColor, borderRadius: BorderRadius.circular(2))),
+              const SizedBox(width: 8),
+              Text(stage.label, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(color: statusColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(8)),
+                child: Text('${leads.length}', style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.w600)),
+              ),
+              const SizedBox(width: 8),
+              Text('₹${_formatAmount(stage.totalValue)}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+            ],
+          ),
+        ),
+
+        // Lead cards
+        Expanded(
+          child: leads.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.inbox, size: 48, color: Colors.grey.withValues(alpha: 0.3)),
+                      const SizedBox(height: 8),
+                      Text('No leads in ${stage.label}', style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
+                    ],
+                  ),
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: leads.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (ctx, i) => _buildLeadCard(leads[i], stage.status),
                 ),
-                const SizedBox(height: 16),
-                if (lead.remarks != null)
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLeadCard(CRMLead lead, String currentStage) {
+    return Dismissible(
+      key: ValueKey('lead_${lead.id}'),
+      direction: DismissDirection.horizontal,
+      onDismissed: (dir) {
+        if (dir == DismissDirection.endToStart) {
+          _moveLead(lead.id, _nextStage(currentStage));
+        } else {
+          _moveLead(lead.id, _prevStage(currentStage));
+        }
+      },
+      background: Container(
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 20),
+        decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(12)),
+        child: const Icon(Icons.arrow_back, color: Colors.white),
+      ),
+      secondaryBackground: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(12)),
+        child: const Icon(Icons.arrow_forward, color: Colors.white),
+      ),
+      child: GestureDetector(
+        onTap: () => _showLeadDetail(lead),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.15)),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2)),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: lead.categoryColor.withValues(alpha: 0.15),
+                    child: Text(lead.name.isNotEmpty ? lead.name[0].toUpperCase() : '?',
+                        style: TextStyle(color: lead.categoryColor, fontWeight: FontWeight.bold, fontSize: 13)),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.notes, color: Colors.grey.shade600),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            lead.remarks!,
-                            style: TextStyle(color: Colors.grey.shade700),
-                          ),
-                        ),
+                        Text(lead.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        Text(lead.phone ?? 'No phone', style: const TextStyle(fontSize: 11, color: Colors.grey)),
                       ],
                     ),
                   ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  _buildScoreBadge(lead.leadScore ?? 0),
+                ],
+              ),
+              if (lead.propertyInterest != null || lead.budgetRange != null) ...[
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
                   children: [
-                    TextButton.icon(
-                      onPressed: () => _scheduleFollowUp(lead),
-                      icon: const Icon(Icons.calendar_today),
-                      label: const Text('Schedule Follow-up'),
-                    ),
-                    const SizedBox(width: 8),
-                    TextButton.icon(
-                      onPressed: () => _assignLead(lead),
-                      icon: const Icon(Icons.person_add),
-                      label: const Text('Reassign'),
-                    ),
-                    const SizedBox(width: 8),
-                    OutlinedButton.icon(
-                      onPressed: () => _viewLeadDetails(lead),
-                      icon: const Icon(Icons.visibility),
-                      label: const Text('View Details'),
-                    ),
+                    if (lead.propertyInterest != null)
+                      _tag(lead.propertyInterest!, Colors.blue),
+                    if (lead.budgetRange != null)
+                      _tag('₹${lead.budgetRange}', Colors.green),
+                    if (lead.source != null)
+                      _tag(lead.source!, Colors.purple),
                   ],
                 ),
               ],
-            ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  if (lead.nextFollowupDate != null) ...[
+                    Icon(Icons.schedule, size: 12, color: lead.nextFollowupDate!.isBefore(DateTime.now()) ? Colors.red : Colors.orange),
+                    const SizedBox(width: 4),
+                    Text(_formatDate(lead.nextFollowupDate!),
+                        style: TextStyle(fontSize: 10, color: lead.nextFollowupDate!.isBefore(DateTime.now()) ? Colors.red : Colors.orange)),
+                  ],
+                  const Spacer(),
+                  if (lead.assignedToName != null)
+                    Text(lead.assignedToName!, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildStatusAvatar(String status) {
-    final colors = {
-      'new': Colors.blue,
-      'contacted': Colors.orange,
-      'interested': Colors.purple,
-      'follow_up': Colors.amber,
-      'not_interested': Colors.grey,
-      'converted': Colors.green,
-      'lost': Colors.red,
-    };
-
-    return CircleAvatar(
-      backgroundColor: colors[status]?.withValues(alpha: 0.2) ?? Colors.grey,
-      child: Icon(
-        _getStatusIcon(status),
-        color: colors[status] ?? Colors.grey,
-        size: 20,
-      ),
-    );
-  }
-
-  IconData _getStatusIcon(String status) {
-    switch (status) {
-      case 'new':
-        return Icons.fiber_new;
-      case 'contacted':
-        return Icons.phone;
-      case 'interested':
-        return Icons.star;
-      case 'follow_up':
-        return Icons.sync;
-      case 'not_interested':
-        return Icons.thumb_down;
-      case 'converted':
-        return Icons.check_circle;
-      case 'lost':
-        return Icons.heart_broken;
-      default:
-        return Icons.person;
+  Widget _buildScoreBadge(int score) {
+    Color color;
+    if (score >= 80) {
+      color = Colors.green;
+    } else if (score >= 60) {
+      color = Colors.orange;
+    } else if (score >= 40) {
+      color = Colors.blue;
+    } else {
+      color = Colors.grey;
     }
+    return Container(
+      width: 32, height: 32,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        shape: BoxShape.circle,
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Center(
+        child: Text('$score', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color)),
+      ),
+    );
   }
 
-  Widget _buildSourceChip(String source) {
-    final icons = {
-      'website': '🌐',
-      'facebook': '📘',
-      'instagram': '📸',
-      'google': '🔍',
-      'referral': '👥',
-      'site_visit': '🏗️',
-      'event': '🎪',
-      'walk_in': '🚶',
-      'associate': '🤝',
-    };
-
+  Widget _tag(String text, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Text(
-        '${icons[source] ?? '📌'} ${source.replaceAll('_', ' ').toUpperCase()}',
-        style: TextStyle(
-          fontSize: 10,
-          color: Colors.grey.shade700,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      child: Text(text, style: TextStyle(fontSize: 10, color: color)),
     );
   }
 
-  Widget _buildStatusBadge(String status) {
-    final labels = {
-      'new': '🆕 NEW',
-      'contacted': '📞 CONTACTED',
-      'interested': '⭐ INTERESTED',
-      'follow_up': '🔄 FOLLOW-UP',
-      'not_interested': '❌ NOT INTERESTED',
-      'converted': '✅ CONVERTED',
-      'lost': '💔 LOST',
-    };
+  // ─── Leads List Tab ───────────────────────────────────────────────
 
-    final colors = {
-      'new': Colors.blue,
-      'contacted': Colors.orange,
-      'interested': Colors.purple,
-      'follow_up': Colors.amber,
-      'not_interested': Colors.grey,
-      'converted': Colors.green,
-      'lost': Colors.red,
-    };
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: colors[status]?.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-            color: colors[status]?.withValues(alpha: 0.3) ?? Colors.grey),
-      ),
-      child: Text(
-        labels[status] ?? status.toUpperCase(),
-        style: TextStyle(
-          color: colors[status] ?? Colors.grey,
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
+  Widget _buildLeadsListTab() {
+    return Column(
+      children: [
+        // Search + filters
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search leads...',
+                    prefixIcon: const Icon(Icons.search, size: 20),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                    isDense: true,
+                  ),
+                  onChanged: (v) { _searchQuery = v; _currentPage = 1; _loadLeads(); },
+                ),
+              ),
+              const SizedBox(width: 8),
+              PopupMenuButton<String>(
+                icon: Badge(
+                  isLabelVisible: _filterSource != null || _filterPriority != null || _filterCategory != null,
+                  child: const Icon(Icons.filter_list),
+                ),
+                onSelected: (v) {
+                  if (v == 'clear') {
+                    setState(() { _filterSource = null; _filterPriority = null; _filterCategory = null; });
+                  } else if (v.startsWith('source:')) {
+                    setState(() { _filterSource = v.substring(7); });
+                  } else if (v.startsWith('priority:')) {
+                    setState(() { _filterPriority = v.substring(9); });
+                  } else if (v.startsWith('cat:')) {
+                    setState(() { _filterCategory = v.substring(4); });
+                  }
+                  _currentPage = 1;
+                  _loadLeads();
+                },
+                itemBuilder: (_) => [
+                  const PopupMenuItem(value: 'clear', child: Text('Clear all')),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem(value: 'source:website', child: Text('Source: Website')),
+                  const PopupMenuItem(value: 'source:whatsapp', child: Text('Source: WhatsApp')),
+                  const PopupMenuItem(value: 'source:walk-in', child: Text('Source: Walk-in')),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem(value: 'priority:high', child: Text('Priority: High')),
+                  const PopupMenuItem(value: 'priority:medium', child: Text('Priority: Medium')),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem(value: 'cat:hot', child: Text('Hot Leads')),
+                  const PopupMenuItem(value: 'cat:warm', child: Text('Warm Leads')),
+                  const PopupMenuItem(value: 'cat:cold', child: Text('Cold Leads')),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
+
+        // Leads list
+        Expanded(
+          child: _loadingLeads && _leadsList.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : _leadsList.isEmpty
+                  ? const Center(child: Text('No leads found'))
+                  : RefreshIndicator(
+                      onRefresh: () async { _currentPage = 1; await _loadLeads(); },
+                      child: ListView.separated(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        itemCount: _leadsList.length + (_hasMore ? 1 : 0),
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        itemBuilder: (ctx, i) {
+                          if (i == _leadsList.length) {
+                            _currentPage++;
+                            _loadLeads(append: true);
+                            return const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                          return _buildLeadListItem(_leadsList[i]);
+                        },
+                      ),
+                    ),
+        ),
+      ],
     );
   }
 
-  Widget _buildActionButton(
-    String label,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    return InkWell(
-      onTap: onTap,
+  Widget _buildLeadListItem(CRMLead lead) {
+    return GestureDetector(
+      onTap: () => _showLeadDetail(lead),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.12)),
         ),
-        child: Column(
+        child: Row(
           children: [
-            Icon(icon, color: color),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: lead.statusColor.withValues(alpha: 0.15),
+              child: Text(lead.name.isNotEmpty ? lead.name[0].toUpperCase() : '?',
+                  style: TextStyle(color: lead.statusColor, fontWeight: FontWeight.bold)),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(lead.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                            maxLines: 1, overflow: TextOverflow.ellipsis),
+                      ),
+                      _buildScoreBadge(lead.leadScore ?? 0),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      if (lead.phone != null) ...[
+                        const Icon(Icons.phone, size: 12, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        Text(lead.phone!, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                        const SizedBox(width: 8),
+                      ],
+                      if (lead.source != null)
+                        _tag(lead.source!, Colors.purple),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: lead.statusColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(_statusLabel(lead.status), style: TextStyle(fontSize: 10, color: lead.statusColor, fontWeight: FontWeight.w600)),
+                      ),
+                      const SizedBox(width: 6),
+                      if (lead.leadCategory != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: lead.categoryColor.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(lead.leadCategory!.toUpperCase(),
+                              style: TextStyle(fontSize: 10, color: lead.categoryColor, fontWeight: FontWeight.w600)),
+                        ),
+                      const Spacer(),
+                      if (lead.assignedToName != null)
+                        Text(lead.assignedToName!, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                    ],
+                  ),
+                ],
               ),
             ),
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAnalyticsTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  // ─── Tasks Tab ────────────────────────────────────────────────────
+
+  Widget _buildTasksTab() {
+    if (_tasks.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: _loadData,
+        child: ListView(
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+            Icon(Icons.task_alt, size: 64, color: Colors.grey.withValues(alpha: 0.3)),
+            const SizedBox(height: 12),
+            const Center(child: Text('No pending tasks', style: TextStyle(color: Colors.grey))),
+            const SizedBox(height: 8),
+            const Center(child: Text('Create follow-ups from lead detail', style: TextStyle(color: Colors.grey, fontSize: 12))),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      child: ListView.separated(
+        padding: const EdgeInsets.all(12),
+        itemCount: _tasks.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        itemBuilder: (ctx, i) => _buildTaskCard(_tasks[i]),
+      ),
+    );
+  }
+
+  Widget _buildTaskCard(CRMTask task) {
+    final isOverdue = task.isOverdue;
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: isOverdue ? Colors.red.withValues(alpha: 0.3) : Colors.grey.withValues(alpha: 0.12)),
+      ),
+      child: Row(
         children: [
-          const Text(
-            'Lead Source Analysis',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          GestureDetector(
+            onTap: () async {
+              await _crm.completeTask(task.id);
+              _loadData();
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Task completed'), backgroundColor: Colors.green),
+                );
+              }
+            },
+            child: Icon(
+              task.status == 'completed' ? Icons.check_circle : Icons.radio_button_unchecked,
+              color: task.status == 'completed' ? Colors.green : Colors.grey,
+              size: 24,
             ),
           ),
-          const SizedBox(height: 16),
-          _buildSourceAnalytics(),
-          const SizedBox(height: 32),
-          const Text(
-            'Conversion Funnel',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildConversionFunnel(),
-          const SizedBox(height: 32),
-          const Text(
-            'Agent Performance',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildAgentPerformance(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSourceAnalytics() {
-    final sources = [
-      {'name': 'Website', 'count': 450, 'percentage': 36, 'color': Colors.blue},
-      {
-        'name': 'Facebook',
-        'count': 280,
-        'percentage': 22,
-        'color': Colors.indigo
-      },
-      {
-        'name': 'Referrals',
-        'count': 200,
-        'percentage': 16,
-        'color': Colors.green
-      },
-      {
-        'name': 'Google Ads',
-        'count': 150,
-        'percentage': 12,
-        'color': Colors.orange
-      },
-      {
-        'name': 'Site Visit',
-        'count': 100,
-        'percentage': 8,
-        'color': Colors.purple
-      },
-      {'name': 'Others', 'count': 65, 'percentage': 5, 'color': Colors.grey},
-    ];
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: Column(
-        children: sources.map((source) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Row(
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: source['color'] as Color,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(source['name'] as String),
-                ),
-                Text(
-                  '${source['count']} leads',
-                  style: TextStyle(color: Colors.grey.shade600),
-                ),
-                const SizedBox(width: 16),
-                SizedBox(
-                  width: 100,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: (source['percentage'] as int) / 100,
-                      backgroundColor: Colors.grey.shade200,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        source['color'] as Color,
-                      ),
-                      minHeight: 8,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${source['percentage']}%',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildConversionFunnel() {
-    final stages = [
-      {
-        'name': 'Total Leads',
-        'count': 1245,
-        'width': 1.0,
-        'color': Colors.blue
-      },
-      {
-        'name': 'Contacted',
-        'count': 890,
-        'width': 0.75,
-        'color': Colors.blue.shade400
-      },
-      {
-        'name': 'Interested',
-        'count': 520,
-        'width': 0.55,
-        'color': Colors.blue.shade300
-      },
-      {
-        'name': 'Site Visits',
-        'count': 380,
-        'width': 0.40,
-        'color': Colors.blue.shade200
-      },
-      {'name': 'Converted', 'count': 305, 'width': 0.30, 'color': Colors.green},
-    ];
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: Column(
-        children: stages.asMap().entries.map((entry) {
-          final index = entry.key;
-          final stage = entry.value;
-          return Container(
-            margin: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 120,
-                  child: Text(
-                    stage['name'] as String,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: FractionallySizedBox(
-                      widthFactor: stage['width'] as double,
-                      child: Container(
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: stage['color'] as Color,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '${stage['count']}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                if (index < stages.length - 1)
-                  Text(
-                    '${((stages[index + 1]['count'] as int) / (stage['count'] as int) * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 12,
-                    ),
-                  ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildAgentPerformance() {
-    final agents = [
-      {
-        'name': 'Amit Sharma',
-        'leads': 145,
-        'converted': 42,
-        'rate': 29,
-        'revenue': '₹5.2 Cr'
-      },
-      {
-        'name': 'Suresh Kumar',
-        'leads': 128,
-        'converted': 38,
-        'rate': 30,
-        'revenue': '₹4.8 Cr'
-      },
-      {
-        'name': 'Rahul Verma',
-        'leads': 112,
-        'converted': 31,
-        'rate': 28,
-        'revenue': '₹3.9 Cr'
-      },
-      {
-        'name': 'Priya Patel',
-        'leads': 98,
-        'converted': 28,
-        'rate': 29,
-        'revenue': '₹3.5 Cr'
-      },
-      {
-        'name': 'Vikram Singh',
-        'leads': 87,
-        'converted': 24,
-        'rate': 28,
-        'revenue': '₹3.1 Cr'
-      },
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: DataTable(
-        columns: const [
-          DataColumn(label: Text('Agent')),
-          DataColumn(label: Text('Leads'), numeric: true),
-          DataColumn(label: Text('Converted'), numeric: true),
-          DataColumn(label: Text('Conversion'), numeric: true),
-          DataColumn(label: Text('Revenue'), numeric: true),
-        ],
-        rows: agents.map((agent) {
-          return DataRow(
-            cells: [
-              DataCell(
+                Text(task.title, style: TextStyle(
+                  fontWeight: FontWeight.w600, fontSize: 13,
+                  decoration: task.status == 'completed' ? TextDecoration.lineThrough : null,
+                )),
+                const SizedBox(height: 4),
                 Row(
                   children: [
-                    CircleAvatar(
-                      radius: 16,
-                      child: Text((agent['name'] as String).substring(0, 1)),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(agent['name'] as String),
+                    _tag(task.taskType, Colors.blue),
+                    const SizedBox(width: 6),
+                    _tag(task.priority, task.priority == 'high' ? Colors.red : Colors.orange),
+                    if (isOverdue) ...[
+                      const SizedBox(width: 6),
+                      _tag('OVERDUE', Colors.red),
+                    ],
                   ],
                 ),
-              ),
-              DataCell(Text('${agent['leads']}')),
-              DataCell(Text('${agent['converted']}')),
-              DataCell(
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
+                if (task.dueDate != null) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.schedule, size: 12, color: isOverdue ? Colors.red : Colors.grey),
+                      const SizedBox(width: 4),
+                      Text('${_formatDate(task.dueDate!)}${task.dueTime != null ? ' ${task.dueTime}' : ''}',
+                          style: TextStyle(fontSize: 11, color: isOverdue ? Colors.red : Colors.grey)),
+                    ],
                   ),
-                  child: Text(
-                    '${agent['rate']}%',
-                    style: const TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              DataCell(
-                Text(
-                  agent['revenue'] as String,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          );
-        }).toList(),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  void _selectDateRange() async {
-    final picked = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
+  // ─── Analytics Tab ────────────────────────────────────────────────
+
+  Widget _buildAnalyticsTab() {
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _analyticsCard('Conversion Rate', '${_stats.conversionRate.toStringAsFixed(1)}%', Icons.trending_up, AppTheme.successColor),
+          const SizedBox(height: 12),
+          _analyticsCard('Total Pipeline Value', '₹${_formatAmount(_stats.totalValue)}', Icons.monetization_on, Colors.amber),
+          const SizedBox(height: 16),
+          const Text('By Source', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          const SizedBox(height: 8),
+          ..._stats.bySource.entries.map((e) => _barRow(e.key, e.value, _stats.totalLeads)),
+          const SizedBox(height: 16),
+          const Text('By Priority', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          const SizedBox(height: 8),
+          ..._stats.byPriority.entries.map((e) => _barRow(e.key, e.value, _stats.totalLeads)),
+          const SizedBox(height: 16),
+          const Text('Pipeline Overview', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          const SizedBox(height: 8),
+          ..._stages.map((s) => _barRow(s.label, s.count, _stats.totalLeads)),
+        ],
+      ),
     );
-    if (picked != null) {
-      setState(() => _dateRange = picked);
+  }
+
+  Widget _analyticsCard(String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(value, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color)),
+              Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _barRow(String label, int value, int total) {
+    final pct = total > 0 ? value / total : 0.0;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          SizedBox(width: 100, child: Text(label, style: const TextStyle(fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: pct,
+                backgroundColor: Colors.grey.withValues(alpha: 0.15),
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor.withValues(alpha: 0.7)),
+                minHeight: 8,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(width: 30, child: Text('$value', style: const TextStyle(fontSize: 11), textAlign: TextAlign.right)),
+        ],
+      ),
+    );
+  }
+
+  // ─── Dialogs ──────────────────────────────────────────────────────
+
+  void _showLeadDetail(CRMLead lead) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        maxChildSize: 0.95,
+        minChildSize: 0.4,
+        expand: false,
+        builder: (ctx, scrollCtrl) => _LeadDetailSheet(lead: lead, crm: _crm, onRefresh: _loadData),
+      ),
+    );
+  }
+
+  void _showCreateLeadDialog() {
+    final nameCtrl = TextEditingController();
+    final phoneCtrl = TextEditingController();
+    final emailCtrl = TextEditingController();
+    final sourceCtrl = TextEditingController(text: 'website');
+    final propertyCtrl = TextEditingController();
+    final budgetCtrl = TextEditingController();
+    String selectedPriority = 'medium';
+    String selectedCategory = 'warm';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('New Lead', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Name *', border: OutlineInputBorder())),
+                const SizedBox(height: 12),
+                TextField(controller: phoneCtrl, decoration: const InputDecoration(labelText: 'Phone *', border: OutlineInputBorder()), keyboardType: TextInputType.phone),
+                const SizedBox(height: 12),
+                TextField(controller: emailCtrl, decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()), keyboardType: TextInputType.emailAddress),
+                const SizedBox(height: 12),
+                TextField(controller: sourceCtrl, decoration: const InputDecoration(labelText: 'Source', border: OutlineInputBorder())),
+                const SizedBox(height: 12),
+                TextField(controller: propertyCtrl, decoration: const InputDecoration(labelText: 'Property Interest', border: OutlineInputBorder())),
+                const SizedBox(height: 12),
+                TextField(controller: budgetCtrl, decoration: const InputDecoration(labelText: 'Budget Range', border: OutlineInputBorder()), keyboardType: TextInputType.number),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        initialValue: selectedPriority,
+                        decoration: const InputDecoration(labelText: 'Priority', border: OutlineInputBorder()),
+                        items: ['low', 'medium', 'high'].map((p) => DropdownMenuItem(value: p, child: Text(p.toUpperCase()))).toList(),
+                        onChanged: (v) => setState(() => selectedPriority = v ?? 'medium'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        initialValue: selectedCategory,
+                        decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
+                        items: ['cold', 'lukewarm', 'warm', 'hot'].map((c) => DropdownMenuItem(value: c, child: Text(c.toUpperCase()))).toList(),
+                        onChanged: (v) => setState(() => selectedCategory = v ?? 'warm'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (nameCtrl.text.isEmpty || phoneCtrl.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Name and Phone are required')),
+                        );
+                        return;
+                      }
+                      final lead = await _crm.createLead({
+                        'name': nameCtrl.text,
+                        'phone': phoneCtrl.text,
+                        'email': emailCtrl.text.isNotEmpty ? emailCtrl.text : null,
+                        'source': sourceCtrl.text,
+                        'property_interest': propertyCtrl.text.isNotEmpty ? propertyCtrl.text : null,
+                        'budget_range': budgetCtrl.text.isNotEmpty ? budgetCtrl.text : null,
+                        'priority': selectedPriority,
+                        'lead_category': selectedCategory,
+                      });
+                      if (ctx.mounted) Navigator.pop(ctx);
+                      if (lead != null) {
+                        _loadData();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Lead created: ${lead.name}'), backgroundColor: AppTheme.successColor),
+                          );
+                        }
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor),
+                    child: const Text('Create Lead'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ─── Helpers ──────────────────────────────────────────────────────
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'new': return Colors.blue;
+      case 'contacted': return Colors.purple;
+      case 'qualified': return Colors.cyan;
+      case 'site_visit': return Colors.orange;
+      case 'proposal': return Colors.deepOrange;
+      case 'negotiation': return Colors.pink;
+      case 'booking': return Colors.indigo;
+      case 'won': return Colors.green;
+      case 'lost': return Colors.red;
+      case 'nurture': return Colors.teal;
+      default: return Colors.grey;
     }
   }
 
-  void _showAddLeadDialog() {
-    // Add lead dialog
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add New Lead'),
-        content: const Text('Lead creation form with all fields'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+  String _statusLabel(String? status) {
+    return (status ?? 'unknown').replaceAll('_', ' ').toUpperCase();
+  }
+
+  String _nextStage(String current) {
+    final order = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotiation', 'booking', 'won'];
+    final idx = order.indexOf(current);
+    if (idx < 0 || idx >= order.length - 1) return current;
+    return order[idx + 1];
+  }
+
+  String _prevStage(String current) {
+    final order = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotiation', 'booking', 'won'];
+    final idx = order.indexOf(current);
+    if (idx <= 0) return current;
+    return order[idx - 1];
+  }
+
+  String _formatAmount(double amount) {
+    if (amount >= 10000000) return '${(amount / 10000000).toStringAsFixed(1)}Cr';
+    if (amount >= 100000) return '${(amount / 100000).toStringAsFixed(1)}L';
+    if (amount >= 1000) return '${(amount / 1000).toStringAsFixed(1)}K';
+    return amount.toStringAsFixed(0);
+  }
+
+  String _formatDate(DateTime dt) {
+    final now = DateTime.now();
+    final diff = dt.difference(now).inDays;
+    if (diff == 0) return 'Today';
+    if (diff == 1) return 'Tomorrow';
+    if (diff == -1) return 'Yesterday';
+    return DateFormat('dd MMM').format(dt);
+  }
+}
+
+class _StatCardData {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+  _StatCardData(this.label, this.value, this.icon, this.color);
+}
+
+// ─── Lead Detail Bottom Sheet ────────────────────────────────────────
+
+class _LeadDetailSheet extends StatefulWidget {
+  final CRMLead lead;
+  final CRMService crm;
+  final VoidCallback onRefresh;
+
+  const _LeadDetailSheet({required this.lead, required this.crm, required this.onRefresh});
+
+  @override
+  State<_LeadDetailSheet> createState() => _LeadDetailSheetState();
+}
+
+class _LeadDetailSheetState extends State<_LeadDetailSheet> {
+  List<CRMInteraction> _interactions = [];
+  bool _loadingInteractions = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInteractions();
+  }
+
+  Future<void> _loadInteractions() async {
+    final interactions = await widget.crm.getInteractions(widget.lead.id);
+    setState(() { _interactions = interactions; _loadingInteractions = false; });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final lead = widget.lead;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          // Handle
+          Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2))),
+          const SizedBox(height: 16),
+
+          // Lead header
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 24,
+                backgroundColor: lead.statusColor.withValues(alpha: 0.15),
+                child: Text(lead.name.isNotEmpty ? lead.name[0].toUpperCase() : '?',
+                    style: TextStyle(color: lead.statusColor, fontWeight: FontWeight.bold, fontSize: 18)),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(lead.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text(lead.phone ?? '', style: const TextStyle(color: Colors.grey)),
+                    if (lead.email != null) Text(lead.email!, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: lead.statusColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(_statusLabel(lead.status), style: TextStyle(color: lead.statusColor, fontSize: 11, fontWeight: FontWeight.w600)),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Save'),
+
+          const SizedBox(height: 16),
+
+          // Info row
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            children: [
+              if (lead.source != null) _infoChip(Icons.source, lead.source!),
+              if (lead.leadCategory != null) _infoChip(Icons.category, lead.leadCategory!.toUpperCase()),
+              if (lead.propertyInterest != null) _infoChip(Icons.home, lead.propertyInterest!),
+              if (lead.budgetRange != null) _infoChip(Icons.currency_rupee, '₹${lead.budgetRange}'),
+              if (lead.assignedToName != null) _infoChip(Icons.person, lead.assignedToName!),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Quick actions
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _actionBtn(Icons.call, 'Call', Colors.green, () {
+                if (lead.phone != null) {
+                  launchUrl(Uri(scheme: 'tel', path: lead.phone));
+                }
+              }),
+              _actionBtn(Icons.sms, 'SMS', Colors.blue, () {}),
+              _actionBtn(Icons.chat, 'WhatsApp', Colors.teal, () {}),
+              _actionBtn(Icons.note_add, 'Note', Colors.orange, () => _showAddInteraction('note')),
+              _actionBtn(Icons.calendar_today, 'Follow-up', Colors.purple, () => _showAddInteraction('follow_up')),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Interactions timeline
+          const Align(alignment: Alignment.centerLeft, child: Text('Timeline', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+          const SizedBox(height: 8),
+
+          Expanded(
+            child: _loadingInteractions
+                ? const Center(child: CircularProgressIndicator())
+                : _interactions.isEmpty
+                    ? const Center(child: Text('No interactions yet', style: TextStyle(color: Colors.grey)))
+                    : ListView.separated(
+                        itemCount: _interactions.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        itemBuilder: (ctx, i) => _buildInteractionItem(_interactions[i]),
+                      ),
           ),
         ],
       ),
     );
   }
 
-  void _importLeads() {
-    AppWidgets.showInfoSnackBar(context, 'Import leads from Excel/CSV');
+  Widget _infoChip(IconData icon, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: Colors.grey),
+          const SizedBox(width: 4),
+          Text(text, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        ],
+      ),
+    );
   }
 
-  void _exportLeads() {
-    AppWidgets.showInfoSnackBar(context, 'Export leads to CSV/PDF');
+  Widget _actionBtn(IconData icon, String label, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 40, height: 40,
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.12), shape: BoxShape.circle),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(height: 4),
+          Text(label, style: TextStyle(fontSize: 10, color: color)),
+        ],
+      ),
+    );
   }
 
-  void _showBulkActions() {
-    AppWidgets.showInfoSnackBar(
-        context, 'Bulk assign, update status, send messages');
+  Widget _buildInteractionItem(CRMInteraction interaction) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            children: [
+              Container(
+                width: 32, height: 32,
+                decoration: BoxDecoration(
+                  color: Colors.blue.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(interaction.icon, size: 16, color: Colors.blue),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.grey.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(interaction.interactionType.toUpperCase(),
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.blue)),
+                    const Spacer(),
+                    Text(_formatTime(interaction.createdAt), style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                  ],
+                ),
+                if (interaction.subject != null) ...[
+                  const SizedBox(height: 4),
+                  Text(interaction.subject!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                ],
+                if (interaction.body != null) ...[
+                  const SizedBox(height: 2),
+                  Text(interaction.body!, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                ],
+                if (interaction.outcome != null) ...[
+                  const SizedBox(height: 4),
+                  _tag(interaction.outcome!, Colors.green),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  void _callLead(String phone) {
-    // Launch phone dialer
-    AppWidgets.showInfoSnackBar(context, 'Calling $phone...');
+  void _showAddInteraction(String type) {
+    final bodyCtrl = TextEditingController();
+    final subjectCtrl = TextEditingController();
+    String direction = 'outbound';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Add ${type.replaceAll('_', ' ').toUpperCase()}',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              TextField(controller: subjectCtrl, decoration: const InputDecoration(labelText: 'Subject', border: OutlineInputBorder())),
+              const SizedBox(height: 12),
+              TextField(controller: bodyCtrl, decoration: const InputDecoration(labelText: 'Notes', border: OutlineInputBorder()), maxLines: 3),
+              const SizedBox(height: 12),
+              SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'outbound', label: Text('Outbound')),
+                  ButtonSegment(value: 'inbound', label: Text('Inbound')),
+                ],
+                selected: {direction},
+                onSelectionChanged: (v) => setState(() => direction = v.first),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await widget.crm.addInteraction(widget.lead.id, {
+                      'type': type,
+                      'direction': direction,
+                      'subject': subjectCtrl.text.isNotEmpty ? subjectCtrl.text : null,
+                      'body': bodyCtrl.text.isNotEmpty ? bodyCtrl.text : null,
+                    });
+                    if (ctx.mounted) Navigator.pop(ctx);
+                    widget.onRefresh();
+                    _loadInteractions();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Interaction added'), backgroundColor: Colors.green),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor),
+                  child: const Text('Save'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
-  void _whatsappLead(String phone) {
-    // Open WhatsApp
-    AppWidgets.showInfoSnackBar(context, 'Opening WhatsApp...');
+  String _formatTime(DateTime dt) {
+    final now = DateTime.now();
+    final diff = now.difference(dt);
+    if (diff.inMinutes < 1) return 'Now';
+    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
+    if (diff.inDays < 1) return '${diff.inHours}h ago';
+    return '${diff.inDays}d ago';
   }
 
-  void _emailLead(String email) {
-    // Open email
-    AppWidgets.showInfoSnackBar(context, 'Sending email to $email...');
+  String _statusLabel(String? status) => (status ?? 'unknown').replaceAll('_', ' ').toUpperCase();
+
+  Widget _tag(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
+      child: Text(text, style: TextStyle(fontSize: 10, color: color)),
+    );
   }
-
-  void _convertLead(_LeadMock lead) {
-    // Convert to customer/booking
-    AppWidgets.showInfoSnackBar(
-        context, 'Converting ${lead.name} to customer...');
-  }
-
-  void _scheduleFollowUp(_LeadMock lead) {
-    // Schedule follow-up
-    AppWidgets.showInfoSnackBar(context, 'Schedule follow-up for ${lead.name}');
-  }
-
-  void _assignLead(_LeadMock lead) {
-    // Reassign to another agent
-    AppWidgets.showInfoSnackBar(context, 'Reassign ${lead.name}');
-  }
-
-  void _viewLeadDetails(_LeadMock lead) {
-    // View full lead history
-    context.push('/admin/crm/leads/${lead.hashCode}');
-  }
-}
-
-// Mock lead class for demo
-class _LeadMock {
-  final String name;
-  final String phone;
-  final String email;
-  final String status;
-  final String source;
-  final String timeAgo;
-  final String value;
-  final String? assignedTo;
-  final String? remarks;
-
-  _LeadMock(
-    this.name,
-    this.phone,
-    this.email,
-    this.status,
-    this.source,
-    this.timeAgo,
-    this.value,
-    this.assignedTo,
-    this.remarks,
-  );
 }

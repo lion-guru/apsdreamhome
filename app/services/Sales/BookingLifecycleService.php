@@ -137,6 +137,22 @@ class BookingLifecycleService
             // Audit trail
             $this->logStatusHistory($bookingId, null, 'token_paid', null, 'Booking created');
 
+            // Send push notification to customer
+            try {
+                $pushSvc = new \App\Services\Communication\PushNotificationService();
+                $pushSvc->sendToUser((int)$customerId, [
+                    'title' => 'Booking Confirmed!',
+                    'body' => "Your booking {$bookingNumber} for plot has been confirmed. Token amount received.",
+                    'data' => [
+                        'type' => 'booking_confirmed',
+                        'booking_id' => $bookingId,
+                        'booking_number' => $bookingNumber,
+                    ],
+                ]);
+            } catch (\Throwable $e) {
+                error_log('[BookingLifecycleService] Push notification failed: ' . $e->getMessage());
+            }
+
             return [
                 'success'           => true,
                 'id'                => $bookingId,
@@ -541,12 +557,12 @@ class BookingLifecycleService
                 ];
                 if ($customerId) {
                     \App\Services\WebSocketBroadcaster::broadcastToUser($customerId, $payload);
-                    \App\Services\Communication\PushNotificationService::sendToUser(
-                        $customerId,
-                        'Payment Received',
-                        '₹' . number_format($amount) . ' received for installment #' . $installmentId,
-                        $payload
-                    );
+                    $pushSvc = new \App\Services\Communication\PushNotificationService();
+                    $pushSvc->sendToUser((int)$customerId, [
+                        'title' => 'Payment Received',
+                        'body'  => '₹' . number_format($amount) . ' received for installment #' . $installmentId,
+                        'data'  => $payload,
+                    ]);
                 }
             } catch (\Throwable $e) {
                 error_log("[BookingLifecycleService::recordPayment] broadcast failed: " . $e->getMessage());
@@ -712,7 +728,7 @@ class BookingLifecycleService
 
             $this->db->commit();
 
-            // Send cancellation notification (email + SMS)
+            // Send cancellation notification (email + SMS + push)
             try {
                 $emailSvc = new \App\Services\EmailTemplateService();
                 $emailSvc->sendBookingCancellation((int)$booking['customer_id'], [
@@ -731,6 +747,18 @@ class BookingLifecycleService
                     $notifSvc = new \App\Services\BookingNotificationService();
                     $notifSvc->sendStatusChange($booking, $userData, $prevStatus, 'cancelled');
                 }
+
+                // Push notification for cancellation
+                $pushSvc = new \App\Services\Communication\PushNotificationService();
+                $pushSvc->sendToUser((int)$booking['customer_id'], [
+                    'title' => 'Booking Cancelled',
+                    'body'  => "Booking {$booking['booking_number']} has been cancelled. Refund of ₹" . number_format($refundAmt) . " will be processed.",
+                    'data'  => [
+                        'type' => 'booking_cancelled',
+                        'booking_id' => $bookingId,
+                        'refund_amount' => $refundAmt,
+                    ],
+                ]);
             } catch (\Throwable $e) {
                 error_log("[BookingLifecycleService] cancelBooking notification failed: " . $e->getMessage());
             }

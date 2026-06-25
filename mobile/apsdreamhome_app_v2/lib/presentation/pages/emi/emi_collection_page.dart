@@ -221,16 +221,21 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
               ],
             ),
             const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildStatItem('Collected', '${_todayStats['collected']}',
-                    Icons.check_circle, Colors.green),
-                _buildStatItem('Partial', '${_todayStats['partial']}',
-                    Icons.timelapse, Colors.orange),
-                _buildStatItem('Not Home', '${_todayStats['notHome']}',
-                    Icons.home_outlined, Colors.grey),
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildStatItem('Collected', '${_todayStats['collected']}',
+                      Icons.check_circle, Colors.green),
+                  const SizedBox(width: 16),
+                  _buildStatItem('Partial', '${_todayStats['partial']}',
+                      Icons.timelapse, Colors.orange),
+                  const SizedBox(width: 16),
+                  _buildStatItem('Not Home', '${_todayStats['notHome']}',
+                      Icons.home_outlined, Colors.grey),
+                ],
+              ),
             ),
             const Divider(height: 24),
             Row(
@@ -429,9 +434,12 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
           const Divider(),
           Padding(
             padding: const EdgeInsets.all(8),
-            child: Row(
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                Expanded(
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () => _showCollectDialog(due),
                     icon: const Icon(Icons.check_circle),
@@ -442,8 +450,8 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () => _showPartialDialog(due),
                     icon: const Icon(Icons.timelapse),

@@ -233,6 +233,78 @@ class MlmRepository {
     final summary = await getSummary();
     return summary.nextRankProgress ?? RankProgress.empty();
   }
+
+  /// Get my team data (direct referrals + stats)
+  Future<Map<String, dynamic>> getMyTeam() async {
+    if (await _apiService.isConnected()) {
+      try {
+        final response = await _apiService.get('/mlm/my-team');
+        return response['data'] as Map<String, dynamic>;
+      } catch (e) {
+        return {
+          'direct_referrals': <Referral>[],
+          'stats': {
+            'total_team_size': 0,
+            'direct_referrals': 0,
+            'active_members': 0,
+            'inactive_members': 0,
+            'recent_joinings_30d': 0,
+            'total_team_business': 0.0,
+          }
+        };
+      }
+    }
+    return {
+      'direct_referrals': <Referral>[],
+      'stats': {
+        'total_team_size': 0,
+        'direct_referrals': 0,
+        'active_members': 0,
+        'inactive_members': 0,
+        'recent_joinings_30d': 0,
+        'total_team_business': 0.0,
+      }
+    };
+  }
+
+  /// Get rank progress
+  Future<Map<String, dynamic>> getRankProgress() async {
+    if (await _apiService.isConnected()) {
+      try {
+        final response = await _apiService.get('/mlm/rank-progress');
+        return response['data'] as Map<String, dynamic>;
+      } catch (e) {
+        return {
+          'current_rank': 'Associate',
+          'total_sales': 0.0,
+          'total_commission': 0.0,
+          'direct_count': 0,
+          'next_rank': null,
+          'sales_progress_pct': 0.0,
+          'commission_progress_pct': 0.0,
+          'directs_progress_pct': 0.0,
+          'overall_progress_pct': 0.0,
+          'sales_remaining': 0.0,
+          'commission_remaining': 0.0,
+          'directs_remaining': 0,
+        };
+      }
+    }
+    return {
+      'current_rank': 'Associate',
+      'total_sales': 0.0,
+      'total_commission': 0.0,
+      'direct_count': 0,
+      'next_rank': null,
+      'sales_progress_pct': 0.0,
+      'commission_progress_pct': 0.0,
+      'directs_progress_pct': 0.0,
+      'overall_progress_pct': 0.0,
+      'sales_remaining': 0.0,
+      'commission_remaining': 0.0,
+      'directs_remaining': 0,
+    };
+  }
 }
 
 /// MLM Summary Model
@@ -257,14 +329,19 @@ class MlmSummary {
 
   factory MlmSummary.fromJson(Map<String, dynamic> json) {
     return MlmSummary(
-      totalEarnings: (json['total_earnings'] as num?)?.toDouble() ?? 0.0,
+      totalEarnings: (json['total_earnings'] as num?)?.toDouble()
+          ?? (json['business_volume'] as num?)?.toDouble() ?? 0.0,
       currentBalance: (json['current_balance'] as num?)?.toDouble() ?? 0.0,
       thisMonthEarnings: (json['this_month_earnings'] as num?)?.toDouble() ?? 0.0,
-      totalReferrals: (json['total_referrals'] as int?) ?? 0,
-      activeReferrals: (json['active_referrals'] as int?) ?? 0,
-      currentRank: (json['current_rank'] as String?) ?? 'Member',
-      nextRankProgress: json['next_rank_progress'] != null
-          ? RankProgress.fromJson(json['next_rank_progress'] as Map<String, dynamic>)
+      totalReferrals: (json['total_referrals'] as int?)
+          ?? (json['team_size'] as int?) ?? 0,
+      activeReferrals: (json['active_referrals'] as int?)
+          ?? (json['active_members'] as int?) ?? 0,
+      currentRank: (json['current_rank'] as String?)
+          ?? (json['rank'] as String?) ?? 'Member',
+      nextRankProgress: (json['next_rank_progress'] ?? json['next_rank_info']) != null
+          ? RankProgress.fromJson(
+              (json['next_rank_progress'] ?? json['next_rank_info']) as Map<String, dynamic>)
           : null,
     );
   }
@@ -310,8 +387,10 @@ class RankProgress {
   factory RankProgress.fromJson(Map<String, dynamic> json) {
     return RankProgress(
       nextRank: (json['next_rank'] as String?) ?? '',
-      currentPoints: (json['current_points'] as num?)?.toDouble() ?? 0.0,
-      requiredPoints: (json['required_points'] as num?)?.toDouble() ?? 1.0,
+      currentPoints: (json['current_points'] as num?)?.toDouble()
+          ?? (json['total_sales'] as num?)?.toDouble() ?? 0.0,
+      requiredPoints: (json['required_points'] as num?)?.toDouble()
+          ?? (json['required_bv'] as num?)?.toDouble() ?? 1.0,
       progressPercentage: (json['progress_percentage'] as num?)?.toDouble() ?? 0.0,
     );
   }
@@ -456,12 +535,12 @@ class Commission {
 
   factory Commission.fromJson(Map<String, dynamic> json) {
     return Commission(
-      id: (json['id'] as String?) ?? '',
+      id: '${json['id'] ?? ''}',
       type: (json['type'] as String?) ?? '',
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
       description: (json['description'] as String?) ?? '',
       status: (json['status'] as String?) ?? 'pending',
-      date: DateTime.parse((json['date'] as String?) ?? DateTime.now().toIso8601String()),
+      date: DateTime.tryParse((json['date'] as String?) ?? '') ?? DateTime.now(),
       notes: json['notes'] as String?,
     );
   }
@@ -757,4 +836,16 @@ final teamPerformanceProvider = FutureProvider.autoDispose<TeamPerformance>((ref
 final directReferralsProvider = FutureProvider.autoDispose<List<Referral>>((ref) async {
   final repository = ref.watch(mlmRepositoryProvider);
   return await repository.getDirectReferrals();
+});
+
+/// Provider for my team data
+final myTeamProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final repository = ref.watch(mlmRepositoryProvider);
+  return await repository.getMyTeam();
+});
+
+/// Provider for rank progress
+final rankProgressProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  final repository = ref.watch(mlmRepositoryProvider);
+  return await repository.getRankProgress();
 });

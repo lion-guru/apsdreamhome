@@ -14,13 +14,7 @@ class AdminToolsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final connectivity = ref.watch(connectivityProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Tools'),
-        backgroundColor: Colors.red,
-        foregroundColor: Colors.white,
-      ),
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
         padding: const EdgeInsets.all(AppConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,7 +204,6 @@ class AdminToolsPage extends ConsumerWidget {
             const SizedBox(height: 20),
           ],
         ),
-      ),
     );
   }
 

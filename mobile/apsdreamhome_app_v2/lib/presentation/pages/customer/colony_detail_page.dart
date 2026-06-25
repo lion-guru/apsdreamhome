@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../data/services/colony_service.dart';
@@ -14,6 +15,20 @@ class ColonyDetailPage extends ConsumerWidget {
     super.key,
     required this.colonyId,
   });
+
+  void _shareColony(ColonyModel colony) {
+    final locationParts = [
+      if (colony.district.isNotEmpty) colony.district,
+      if (colony.state.isNotEmpty) colony.state,
+    ];
+    final locationText = locationParts.isNotEmpty ? locationParts.join(', ') : 'APS Dream Home';
+    final message = 'Check out ${colony.name} by APS Dream Home!\n'
+        '$locationText\n'
+        '${colony.pricePerSqft > 0 ? "Price from ₹${colony.pricePerSqft.toStringAsFixed(0)}/sqft" : ""}\n'
+        'Plots: ${colony.availablePlots} available out of ${colony.totalPlots}\n'
+        'View details: https://apsdreamhome.com/colonies/$colonyId';
+    Share.share(message, subject: colony.name);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,14 +51,21 @@ class ColonyDetailPage extends ConsumerWidget {
                 expandedHeight: 300,
                 floating: false,
                 pinned: true,
+                actions: [
+                  IconButton(
+                    onPressed: () => _shareColony(colony),
+                    icon: const Icon(Icons.share, color: Colors.white),
+                    tooltip: 'Share Colony',
+                  ),
+                ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
                     fit: StackFit.expand,
                     children: [
                       // Background Image
-                      colony.images != null && colony.images!.isNotEmpty
+                      colony.displayImages.isNotEmpty
                           ? Image.network(
-                              colony.images!.first,
+                              colony.displayImages.first,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
@@ -134,8 +156,10 @@ class ColonyDetailPage extends ConsumerWidget {
                       AppWidgets.infoRow(
                         icon: Icons.location_on_outlined,
                         label: 'Location',
-                        value:
-                            '${colony.location}, ${colony.district}, ${colony.state}',
+                        value: [
+                            if (colony.district.isNotEmpty) colony.district,
+                            if (colony.state.isNotEmpty) colony.state,
+                          ].join(', '),
                       ),
 
                       const SizedBox(height: 12),

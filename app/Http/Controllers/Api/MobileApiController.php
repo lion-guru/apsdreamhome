@@ -352,11 +352,11 @@ class MobileApiController extends BaseController
 
             // Toggle favorite
             if ($this->isFavorited($user_id, $property_id)) {
-                $this->removeFavorite($user_id, $property_id);
+                $this->removeFavoriteInternal($user_id, $property_id);
                 $is_favorited = false;
                 $message = 'Removed from favorites';
             } else {
-                $this->addFavorite($user_id, $property_id);
+                $this->addFavoriteInternal($user_id, $property_id);
                 $is_favorited = true;
                 $message = 'Added to favorites';
             }
@@ -461,11 +461,11 @@ class MobileApiController extends BaseController
                     p.area_sqft,
                     p.featured,
                     p.created_at,
-                    pt.name as property_type,
+                    pt.type as property_type,
                     (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, id ASC LIMIT 1) as main_image
                 FROM properties p
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                WHERE p.status = 'available'
+                WHERE p.status IN ('active', '')
             ";
 
             $params = [];
@@ -534,11 +534,11 @@ class MobileApiController extends BaseController
             $sql = "
                 SELECT
                     p.*,
-                    pt.name as property_type_name,
-                    pt.icon as property_type_icon
+                    pt.type as property_type_name,
+                    NULL as property_type_icon
                 FROM properties p
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                WHERE p.id = :id AND p.status = 'available'
+                WHERE p.id = :id AND p.status IN ('active', '')
             ";
 
             $stmt = $this->db->prepare($sql);
@@ -608,11 +608,11 @@ class MobileApiController extends BaseController
             $sql = "
                 SELECT
                     p.*,
-                    pt.name as property_type_name,
-                    pt.icon as property_type_icon
+                    pt.type as property_type_name,
+                    NULL as property_type_icon
                 FROM properties p
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                WHERE p.updated_at > :last_sync AND p.status = 'available'
+                WHERE p.updated_at > :last_sync AND p.status IN ('active', '')
             ";
 
             $params = ['last_sync' => $last_sync];
@@ -668,7 +668,7 @@ class MobileApiController extends BaseController
                 return 0;
             }
 
-            $sql = "SELECT COUNT(*) as count FROM properties WHERE updated_at > :last_sync AND status = 'available'";
+            $sql = "SELECT COUNT(*) as count FROM properties WHERE updated_at > :last_sync AND status IN ('active', '')";
             $params = ['last_sync' => $last_sync];
 
             // Add filters
@@ -1007,9 +1007,9 @@ class MobileApiController extends BaseController
     }
 
     /**
-     * Add property to favorites
+     * Add property to favorites (internal helper)
      */
-    private function addFavorite($user_id, $property_id)
+    private function addFavoriteInternal($user_id, $property_id)
     {
         try {
             if (!$this->db) {
@@ -1025,9 +1025,9 @@ class MobileApiController extends BaseController
     }
 
     /**
-     * Remove property from favorites
+     * Remove property from favorites (internal helper)
      */
-    private function removeFavorite($user_id, $property_id)
+    private function removeFavoriteInternal($user_id, $property_id)
     {
         try {
             if (!$this->db) {
@@ -1052,7 +1052,7 @@ class MobileApiController extends BaseController
                 return false;
             }
 
-            $stmt = $this->db->prepare("SELECT id FROM properties WHERE id = :propertyId AND status = 'available'");
+            $stmt = $this->db->prepare("SELECT id FROM properties WHERE id = :propertyId AND status IN ('active', '')");
             $stmt->execute(['propertyId' => $property_id]);
             return $stmt->rowCount() > 0;
         } catch (Exception $e) {
@@ -1083,7 +1083,7 @@ class MobileApiController extends BaseController
                     p.area_sqft,
                     p.featured,
                     p.created_at,
-                    pt.name as property_type,
+                    pt.type as property_type,
                     (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, id ASC LIMIT 1) as main_image
                 FROM property_favorites pf
                 JOIN properties p ON pf.property_id = p.id
@@ -1129,7 +1129,7 @@ class MobileApiController extends BaseController
                 return [];
             }
 
-            $stmt = $this->db->query("SELECT DISTINCT city FROM properties WHERE status = 'available' AND city IS NOT NULL ORDER BY city");
+            $stmt = $this->db->query("SELECT DISTINCT city FROM properties WHERE status IN ('active', '') AND city IS NOT NULL ORDER BY city");
             return $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
             error_log('Get available cities error: ' . $e->getMessage());
@@ -1147,7 +1147,7 @@ class MobileApiController extends BaseController
                 return 0;
             }
 
-            $sql = "SELECT COUNT(*) as count FROM properties WHERE status = 'available'";
+            $sql = "SELECT COUNT(*) as count FROM properties WHERE status IN ('active', '')";
             $params = [];
 
             // Apply filters
@@ -1200,7 +1200,7 @@ class MobileApiController extends BaseController
         try {
             // Enhanced sync: Get all details for offline DB
             $stmt = $this->db->prepare("
-                SELECT p.id, p.title as property_name, pt.name as property_type, p.status, p.price, p.city as location, p.area_sqft, p.updated_at
+                SELECT p.id, p.title as property_name, pt.type as property_type, p.status, p.price, p.city as location, p.area_sqft, p.updated_at
                 FROM properties p
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
                 ORDER BY p.updated_at DESC
@@ -1210,7 +1210,7 @@ class MobileApiController extends BaseController
 
             return $this->successResponse($properties, 'Properties fetched for sync');
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch properties: ' . $e->getMessage());
         }
@@ -1264,7 +1264,7 @@ class MobileApiController extends BaseController
 
             return $this->successResponse(['synced_count' => count($leads)], 'Leads batch synced successfully');
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             $this->db->rollBack();
             return $this->errorResponse('Batch sync failed: ' . $e->getMessage());
@@ -1298,7 +1298,7 @@ class MobileApiController extends BaseController
 
             return $this->successResponse(['id' => $this->db->lastInsertId()], 'Lead synced successfully');
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Lead sync failed: ' . $e->getMessage());
         }
@@ -1322,7 +1322,7 @@ class MobileApiController extends BaseController
             
             return $this->successResponse($summary, 'MLM performance summary fetched');
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch MLM summary: ' . $e->getMessage());
         }
@@ -1353,7 +1353,7 @@ class MobileApiController extends BaseController
 
             return $this->successResponse($history, 'Payout history fetched');
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch payout history: ' . $e->getMessage());
         }
@@ -1390,7 +1390,7 @@ class MobileApiController extends BaseController
 
             return $this->successResponse($user, 'User profile fetched');
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch profile: ' . $e->getMessage());
         }
@@ -1434,7 +1434,7 @@ class MobileApiController extends BaseController
 
             return $this->successResponse($summary, 'Monthly incentives fetched');
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch incentives: ' . $e->getMessage());
         }
@@ -1458,7 +1458,7 @@ class MobileApiController extends BaseController
 
             return $this->successResponse($documents, 'Documents fetched from locker');
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch documents: ' . $e->getMessage());
         }
@@ -1526,6 +1526,106 @@ class MobileApiController extends BaseController
         } else {
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to save document']);
+        }
+    }
+
+
+    /**
+     * Get Customer Documents (KYC, Booking Agreements, Payment Receipts, etc.)
+     */
+    public function getCustomerDocuments()
+    {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($_GET['user_id']) ?? null;
+
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'User ID required']);
+            return;
+        }
+
+        try {
+            // Fetch documents from multiple sources
+            $documents = [];
+
+            // 1. KYC Documents from document_locker
+            $kycSql = "
+                SELECT dl.id, dl.title, dl.document_type as type, dl.category, 
+                       dl.file_url as url, dl.created_at as uploaded_at, dl.status,
+                       'kyc' as source
+                FROM document_locker dl
+                WHERE dl.user_id = ? AND dl.status = 'verified'
+                ORDER BY dl.created_at DESC
+            ";
+            $kycStmt = $this->db->prepare($kycSql);
+            $kycStmt->execute([$userId]);
+            $kycDocs = $kycStmt->fetchAll(PDO::FETCH_ASSOC);
+            $documents = array_merge($documents, $kycDocs);
+
+            // 2. Booking Agreements from bookings
+            $bookingSql = "
+                SELECT b.id, CONCAT('Booking Agreement - ', p.title) as name, 
+                       'agreement' as type, 'booking' as category,
+                       ba.agreement_file as url, ba.created_at as uploaded_at, 'verified' as status,
+                       'booking' as source
+                FROM bookings b
+                JOIN properties p ON b.property_id = p.id
+                LEFT JOIN booking_agreements ba ON b.id = ba.booking_id
+                WHERE b.customer_id = ? AND ba.agreement_file IS NOT NULL
+                ORDER BY ba.created_at DESC
+            ";
+            $bookingStmt = $this->db->prepare($bookingSql);
+            $bookingStmt->execute([$userId]);
+            $bookingDocs = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
+            $documents = array_merge($documents, $bookingDocs);
+
+            // 3. Payment Receipts from payments
+            $paymentSql = "
+                SELECT pay.id, CONCAT('Payment Receipt - ', p.title) as name,
+                       'receipt' as type, 'payment' as category,
+                       pay.receipt_file as url, pay.created_at as uploaded_at, 'verified' as status,
+                       'payment' as source
+                FROM payments pay
+                JOIN bookings b ON pay.booking_id = b.id
+                JOIN properties p ON b.property_id = p.id
+                WHERE b.customer_id = ? AND pay.receipt_file IS NOT NULL
+                ORDER BY pay.created_at DESC
+            ";
+            $paymentStmt = $this->db->prepare($paymentSql);
+            $paymentStmt->execute([$userId]);
+            $paymentDocs = $paymentStmt->fetchAll(PDO::FETCH_ASSOC);
+            $documents = array_merge($documents, $paymentDocs);
+
+            // 4. Plot Allotment Letters
+            $allotmentSql = "
+                SELECT pa.id, CONCAT('Allotment Letter - ', p.title) as name,
+                       'allotment' as type, 'booking' as category,
+                       pa.letter_file as url, pa.created_at as uploaded_at, pa.status,
+                       'allotment' as source
+                FROM plot_allotments pa
+                JOIN bookings b ON pa.booking_id = b.id
+                JOIN properties p ON b.property_id = p.id
+                WHERE b.customer_id = ? AND pa.letter_file IS NOT NULL
+                ORDER BY pa.created_at DESC
+            ";
+            $allotmentStmt = $this->db->prepare($allotmentSql);
+            $allotmentStmt->execute([$userId]);
+            $allotmentDocs = $allotmentStmt->fetchAll(PDO::FETCH_ASSOC);
+            $documents = array_merge($documents, $allotmentDocs);
+
+            // Sort by uploaded_at descending
+            usort($documents, function($a, $b) {
+                return strtotime($b['uploaded_at']) - strtotime($a['uploaded_at']);
+            });
+
+            echo json_encode([
+                'success' => true,
+                'data' => $documents
+            ]);
+        } catch (Exception $e) {
+            error_log("[MobileApiController] exception: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to fetch documents: ' . $e->getMessage()]);
         }
     }
 
@@ -1661,7 +1761,7 @@ class MobileApiController extends BaseController
             $status = $visitService->getVisitStatus($visitId);
             echo json_encode(['success' => true, 'data' => $status]);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Fetch failed: ' . $e->getMessage()]);
@@ -1679,7 +1779,7 @@ class MobileApiController extends BaseController
             $pending = $payoutService->getPendingPayouts();
             echo json_encode(['success' => true, 'data' => $pending]);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -1704,7 +1804,7 @@ class MobileApiController extends BaseController
             $result = $payoutService->processPayouts($adminId);
             echo json_encode($result);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -1722,7 +1822,7 @@ class MobileApiController extends BaseController
             $history = $payoutService->getPayoutHistory();
             echo json_encode(['success' => true, 'data' => $history]);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -1742,7 +1842,7 @@ class MobileApiController extends BaseController
             $tree = $mlmService->getDownline($userId);
             echo json_encode(['success' => true, 'data' => $tree]);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -1768,8 +1868,178 @@ class MobileApiController extends BaseController
             $data = $mlmService->getBusinessBreakdown($userId);
             echo json_encode(['success' => true, 'data' => $data]);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get associate's direct team members (My Team)
+     */
+    public function getMyTeam()
+    {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? Security::sanitize($_GET['user_id']) ?? null;
+
+        if (!$userId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'User ID required']);
+            return;
+        }
+
+        try {
+            $mlmService = new \App\Services\MLMNetworkService();
+            
+            // Get direct referrals from network_tree
+            $directSql = "SELECT nt.associate_id, u.name, u.email, u.phone, u.profile_image, nt.level, nt.position, nt.joined_at
+                FROM network_tree nt
+                JOIN users u ON u.id = nt.associate_id
+                WHERE nt.parent_id = ?
+                ORDER BY nt.joined_at DESC";
+            $directReferrals = $this->db->fetchAll($directSql, [$userId]) ?? [];
+            
+            // Get team stats
+            $teamSize = $mlmService->getTeamSize($userId);
+            $directCount = $mlmService->getDirectCount($userId);
+            
+            // Get active/inactive counts via network_tree
+            $activeSql = "SELECT COUNT(*) FROM network_tree nt JOIN users u ON u.id = nt.associate_id WHERE nt.parent_id = ? AND u.status = 'active'";
+            $inactiveSql = "SELECT COUNT(*) FROM network_tree nt JOIN users u ON u.id = nt.associate_id WHERE nt.parent_id = ? AND u.status != 'active'";
+            
+            $activeStmt = $this->db->prepare($activeSql);
+            $activeStmt->execute([$userId]);
+            $activeCount = (int)$activeStmt->fetchColumn();
+            
+            $inactiveStmt = $this->db->prepare($inactiveSql);
+            $inactiveStmt->execute([$userId]);
+            $inactiveCount = (int)$inactiveStmt->fetchColumn();
+
+            // Get recent joinings (last 30 days)
+            $recentSql = "SELECT COUNT(*) FROM network_tree WHERE parent_id = ? AND joined_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+            $recentStmt = $this->db->prepare($recentSql);
+            $recentStmt->execute([$userId]);
+            $recentCount = (int)$recentStmt->fetchColumn();
+
+            // Get total team business from plot_bookings
+            $businessSql = "
+                SELECT COALESCE(SUM(pb.total_plot_value), 0) as total_business
+                FROM plot_bookings pb
+                WHERE pb.associate_id IN (
+                    SELECT nt.associate_id FROM network_tree nt WHERE nt.parent_id = ?
+                )
+            ";
+            $businessStmt = $this->db->prepare($businessSql);
+            $businessStmt->execute([$userId]);
+            $totalBusiness = (float)$businessStmt->fetchColumn();
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'direct_referrals' => $directReferrals,
+                    'stats' => [
+                        'total_team_size' => $teamSize,
+                        'direct_referrals' => $directCount,
+                        'active_members' => $activeCount,
+                        'inactive_members' => $inactiveCount,
+                        'recent_joinings_30d' => $recentCount,
+                        'total_team_business' => $totalBusiness
+                    ]
+                ]
+            ]);
+        } catch (\Exception $e) {
+            error_log("[MobileApiController] exception: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get associate's rank progress
+     */
+    public function getRankProgress()
+    {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? Security::sanitize($_GET['user_id'] ?? '') ?: null;
+
+        if (!$userId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'User ID required']);
+            return;
+        }
+
+        try {
+            // Get current rank from mlm_profiles
+            $profileSql = "SELECT current_level, lifetime_sales as total_sales, total_commission FROM mlm_profiles WHERE user_id = ?";
+            $profileStmt = $this->db->prepare($profileSql);
+            $profileStmt->execute([$userId]);
+            $profile = $profileStmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$profile) {
+                echo json_encode([
+                    'success' => true,
+                    'data' => ['current_rank' => 'Associate', 'overall_progress_pct' => 0],
+                ]);
+                return;
+            }
+
+            $currentRank = $profile['current_level'] ?? 'Associate';
+            $totalSales = (float)($profile['total_sales'] ?? 0);
+            $totalCommission = (float)($profile['total_commission'] ?? 0);
+
+            // Define rank thresholds
+            $rankThresholds = [
+                'Bronze' => ['sales' => 0, 'commission' => 0, 'directs' => 0],
+                'Silver' => ['sales' => 100000, 'commission' => 5000, 'directs' => 2],
+                'Gold' => ['sales' => 500000, 'commission' => 25000, 'directs' => 5],
+                'Platinum' => ['sales' => 1500000, 'commission' => 75000, 'directs' => 10],
+                'Diamond' => ['sales' => 5000000, 'commission' => 250000, 'directs' => 20],
+                'Crown' => ['sales' => 15000000, 'commission' => 750000, 'directs' => 50],
+            ];
+
+            $rankOrder = array_keys($rankThresholds);
+            $currentIndex = array_search($currentRank, $rankOrder);
+            if ($currentIndex === false) $currentIndex = 0;
+
+            $nextRank = $currentIndex < count($rankOrder) - 1 ? $rankOrder[$currentIndex + 1] : null;
+            
+            $progress = [
+                'current_rank' => $currentRank,
+                'total_sales' => $totalSales,
+                'total_commission' => $totalCommission,
+                'direct_count' => (int)($this->db->fetchOne("SELECT COUNT(*) FROM network_tree WHERE parent_id = ?", [$userId])['COUNT(*)'] ?? 0),
+                'next_rank' => $nextRank,
+            ];
+
+            if ($nextRank) {
+                $nextThreshold = $rankThresholds[$nextRank];
+                $salesProgress = min(100, ($totalSales / max(1, $nextThreshold['sales'])) * 100);
+                $commissionProgress = min(100, ($totalCommission / max(1, $nextThreshold['commission'])) * 100);
+                $directsProgress = min(100, ($progress['direct_count'] / max(1, $nextThreshold['directs'])) * 100);
+                
+                $progress['next_rank_thresholds'] = $nextThreshold;
+                $progress['sales_progress_pct'] = round($salesProgress, 1);
+                $progress['commission_progress_pct'] = round($commissionProgress, 1);
+                $progress['directs_progress_pct'] = round($directsProgress, 1);
+                $progress['overall_progress_pct'] = round(($salesProgress + $commissionProgress + $directsProgress) / 3, 1);
+                $progress['sales_remaining'] = max(0, $nextThreshold['sales'] - $totalSales);
+                $progress['commission_remaining'] = max(0, $nextThreshold['commission'] - $totalCommission);
+                $progress['directs_remaining'] = max(0, $nextThreshold['directs'] - $progress['direct_count']);
+            } else {
+                $progress['next_rank_thresholds'] = null;
+                $progress['sales_progress_pct'] = 100;
+                $progress['commission_progress_pct'] = 100;
+                $progress['directs_progress_pct'] = 100;
+                $progress['overall_progress_pct'] = 100;
+                $progress['sales_remaining'] = 0;
+                $progress['commission_remaining'] = 0;
+                $progress['directs_remaining'] = 0;
+            }
+
+            echo json_encode(['success' => true, 'data' => $progress]);
+        } catch (Exception $e) {
+            error_log("[MobileApiController] exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1808,7 +2078,7 @@ class MobileApiController extends BaseController
 
             echo json_encode(['success' => true, 'message' => 'Payout request submitted successfully']);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -1834,7 +2104,7 @@ class MobileApiController extends BaseController
             $data = $customerService->getCustomerBookings($customerId);
             echo json_encode(['success' => true, 'data' => $data]);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -1856,11 +2126,11 @@ class MobileApiController extends BaseController
         }
 
         try {
-            $customerService = new \App\Services\CustomerService();
-            $data = $customerService->getEmiSchedule($bookingId);
-            echo json_encode(['success' => true, 'data' => $data]);
+            $customer = new \App\Models\User\Customer();
+            $data = $customer->getEmiSchedule($bookingId);
+            echo json_encode($data);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -1884,11 +2154,11 @@ class MobileApiController extends BaseController
         }
 
         try {
-            $customerService = new \App\Services\CustomerService();
-            $result = $customerService->recordEmiPayment($emiId, $amount, $method);
+            $customer = new \App\Models\User\Customer();
+            $result = $customer->recordEmiPayment($emiId, $amount, $method);
             echo json_encode($result);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -1933,7 +2203,7 @@ class MobileApiController extends BaseController
             $result = $submissionService->submitProperty($data);
             echo json_encode($result);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -1953,7 +2223,7 @@ class MobileApiController extends BaseController
             $data = $submissionService->getUserSubmissions($userId);
             echo json_encode(['success' => true, 'data' => $data]);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -1990,6 +2260,10 @@ class MobileApiController extends BaseController
     /**
      * Extract Bearer token from Authorization header.
      * Returns null when missing or malformed.
+
+    /**
+     * Extract Bearer token from Authorization header.
+     * Returns null when missing or malformed.
      */
     private function extractBearerToken()
     {
@@ -2005,6 +2279,7 @@ class MobileApiController extends BaseController
                 }
             }
         }
+
         if (!$header) {
             return null;
         }
@@ -2021,6 +2296,11 @@ class MobileApiController extends BaseController
      */
     private function authenticateAndRateLimit()
     {
+        // If ApiAuthMiddleware already set the user, skip JWT verification
+        if (!empty($GLOBALS['api_user_id'])) {
+            return;
+        }
+
         $token = $this->extractBearerToken();
         if (!$token) {
             http_response_code(401);
@@ -2189,7 +2469,7 @@ class MobileApiController extends BaseController
                 'data' => $user,
             ]);
         } catch (\Throwable $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Profile fetch failed: ' . $e->getMessage(), 'code' => 500]);
@@ -2240,7 +2520,7 @@ class MobileApiController extends BaseController
                 ],
             ]);
         } catch (\Throwable $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Properties fetch failed: ' . $e->getMessage(), 'code' => 500]);
@@ -2273,7 +2553,7 @@ class MobileApiController extends BaseController
                 $stmt->execute([$userId]);
                 $stats['property_count'] = (int) $stmt->fetchColumn();
             } catch (\Throwable $e) {
-                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+                error_log("[MobileApiController] exception: " . $e->getMessage());
 }
 
             try {
@@ -2281,7 +2561,7 @@ class MobileApiController extends BaseController
                 $stmt->execute([$userId, $userId]);
                 $stats['lead_count'] = (int) $stmt->fetchColumn();
             } catch (\Throwable $e) {
-                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+                error_log("[MobileApiController] exception: " . $e->getMessage());
 }
 
             try {
@@ -2289,7 +2569,7 @@ class MobileApiController extends BaseController
                 $stmt->execute([$userId]);
                 $stats['unread_notifications'] = (int) $stmt->fetchColumn();
             } catch (\Throwable $e) {
-                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+                error_log("[MobileApiController] exception: " . $e->getMessage());
 }
 
             try {
@@ -2301,7 +2581,7 @@ class MobileApiController extends BaseController
                     $stats['mlm_points'] = (int) ($row['mlm_points'] ?? 0);
                 }
             } catch (\Throwable $e) {
-                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+                error_log("[MobileApiController] exception: " . $e->getMessage());
 }
 
             echo json_encode([
@@ -2309,7 +2589,7 @@ class MobileApiController extends BaseController
                 'data' => $stats,
             ]);
         } catch (\Throwable $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Dashboard fetch failed: ' . $e->getMessage(), 'code' => 500]);
@@ -2350,6 +2630,93 @@ class MobileApiController extends BaseController
         ]);
     }
 
+    /**
+     * POST /api/v2/mobile/fcm/register
+     * Body: { "token": "...", "platform": "android|ios" }
+     * 
+     * This is the endpoint Flutter notification_service.dart calls.
+     * It stores the FCM token in push_tokens table AND mobile_devices table
+     * so both PushNotificationService and MobileDevice model can find it.
+     */
+    public function registerFcmToken()
+    {
+        $this->setCorsHeaders();
+        // Auth already handled by ApiAuthMiddleware on this route
+        // $GLOBALS['api_user_id'] is set by middleware
+
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        
+        // Flutter sends "token", backend expects "device_token" — handle both
+        $deviceToken = trim((string) ($data['token'] ?? $data['device_token'] ?? ''));
+        $platform = trim((string) ($data['platform'] ?? 'android'));
+        $appVersion = trim((string) ($data['app_version'] ?? ''));
+
+        if ($deviceToken === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'token required', 'code' => 400]);
+            return;
+        }
+
+        $userId = (int) $GLOBALS['api_user_id'];
+        $userRole = (string) $GLOBALS['api_user_role'];
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            // 1. Write to push_tokens (used by JWTAuthService path)
+            $stmt = $pdo->prepare("
+                INSERT INTO push_tokens (user_id, user_type, device_token, platform, is_active, last_used_at, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 1, NOW(), NOW(), NOW())
+                ON DUPLICATE KEY UPDATE
+                    is_active = 1,
+                    platform = VALUES(platform),
+                    last_used_at = NOW(),
+                    updated_at = NOW()
+            ");
+            $stmt->execute([$userId, $userRole, $deviceToken, $platform]);
+
+            // 2. Also write to mobile_devices (used by PushNotificationService::sendToUser)
+            try {
+                $existing = $pdo->prepare("SELECT id FROM mobile_devices WHERE device_token = ? LIMIT 1");
+                $existing->execute([$deviceToken]);
+                $existingDevice = $existing->fetchColumn();
+
+                if ($existingDevice) {
+                    $upd = $pdo->prepare("UPDATE mobile_devices SET user_id = ?, platform = ?, last_used_at = NOW(), is_active = 1 WHERE device_token = ?");
+                    $upd->execute([$userId, $platform, $deviceToken]);
+                } else {
+                    $ins = $pdo->prepare("INSERT INTO mobile_devices (user_id, device_token, platform, last_used_at, is_active, created_at) VALUES (?, ?, ?, NOW(), 1, NOW())");
+                    $ins->execute([$userId, $deviceToken, $platform]);
+                }
+            } catch (\Throwable $e) {
+                // mobile_devices table might not exist — push_tokens is sufficient
+                error_log('FCM register: mobile_devices write failed: ' . $e->getMessage());
+            }
+
+            // 3. Subscribe to role-based topic for broadcast notifications
+            try {
+                if (!empty($this->fcmProjectId)) {
+                    // Topic subscription handled by PushNotificationService
+                    $pushSvc = new \App\Services\Communication\PushNotificationService();
+                    $pushSvc->subscribeToTopic($deviceToken, 'role_' . $userRole);
+                    $pushSvc->subscribeToTopic($deviceToken, 'all');
+                }
+            } catch (\Throwable $e) {
+                // Non-critical — token is already saved
+            }
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'FCM token registered',
+            ]);
+
+        } catch (\Throwable $e) {
+            error_log('registerFcmToken error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Server error', 'code' => 500]);
+        }
+    }
+
     // ============================================================
     // PROPERTY BROWSING ENDPOINTS (Approved properties for customers)
     // ============================================================
@@ -2377,7 +2744,7 @@ class MobileApiController extends BaseController
         try {
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 
-            $where = "WHERE p.status = 'active'";
+            $where = "WHERE p.status IN ('active', '')";
             $params = [];
 
             if ($type) {
@@ -2469,7 +2836,7 @@ class MobileApiController extends BaseController
             $id = (int) $id;
 
             $stmt = $pdo->prepare("
-                SELECT p.*, pt.name as property_type_name
+                SELECT p.*, pt.type as property_type_name
                 FROM properties p
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
                 WHERE p.id = ? AND p.status = 'active'
@@ -2619,7 +2986,7 @@ class MobileApiController extends BaseController
             $stmt = $pdo->prepare("
                 SELECT pb.id, pb.booking_number, pb.booking_date, pb.total_plot_value,
                        pb.booking_amount, pb.status, pb.channel, pb.created_at,
-                       p.title as plot_title, p.price as plot_price
+                       p.plot_code as plot_title, p.total_price as plot_price
                 FROM plot_bookings pb
                 LEFT JOIN plots p ON pb.plot_id = p.id
                 WHERE pb.customer_id = ?
@@ -2664,7 +3031,7 @@ class MobileApiController extends BaseController
 
             $stmt = $pdo->prepare("
                 SELECT pb.*,
-                       p.title as plot_title, p.price as plot_price, p.location as plot_location
+                       p.plot_code as plot_title, p.total_price as plot_price
                 FROM plot_bookings pb
                 LEFT JOIN plots p ON pb.plot_id = p.id
                 WHERE pb.id = ? AND pb.customer_id = ?
@@ -3213,7 +3580,7 @@ class MobileApiController extends BaseController
             // Check if already punched in today without punching out
             $today = date('Y-m-d');
             $stmt = $pdo->prepare(
-                "SELECT id FROM employee_attendance WHERE user_id = ? AND DATE(punch_in_time) = ? AND punch_out_time IS NULL LIMIT 1"
+                "SELECT id FROM employee_attendance WHERE employee_id = ? AND attendance_date = ? AND check_out_time IS NULL LIMIT 1"
             );
             $stmt->execute([$userId, $today]);
             if ($stmt->fetch()) {
@@ -3223,16 +3590,15 @@ class MobileApiController extends BaseController
             }
 
             $stmt = $pdo->prepare(
-                "INSERT INTO employee_attendance (user_id, punch_in_time, latitude, longitude, distance_from_office, status)
-                 VALUES (?, NOW(), ?, ?, ?, 'present')"
+                "INSERT INTO employee_attendance (employee_id, attendance_date, check_in_time, status)
+                 VALUES (?, CURDATE(), NOW(), 'present')"
             );
-            $stmt->execute([$userId, $lat, $lng, round($distance, 1)]);
+            $stmt->execute([$userId]);
 
             echo json_encode([
                 'success' => true,
                 'message' => 'Punched in successfully',
                 'punch_in_time' => date('Y-m-d H:i:s'),
-                'distance_meters' => round($distance, 1),
             ]);
         } catch (\Throwable $e) {
             error_log('MobileApiController::punchIn() exception: ' . $e->getMessage());
@@ -3265,7 +3631,7 @@ class MobileApiController extends BaseController
 
             $today = date('Y-m-d');
             $stmt = $pdo->prepare(
-                "SELECT id, punch_in_time FROM employee_attendance WHERE user_id = ? AND DATE(punch_in_time) = ? AND punch_out_time IS NULL LIMIT 1"
+                "SELECT id, check_in_time FROM employee_attendance WHERE employee_id = ? AND attendance_date = ? AND check_out_time IS NULL LIMIT 1"
             );
             $stmt->execute([$userId, $today]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -3276,14 +3642,12 @@ class MobileApiController extends BaseController
                 return;
             }
 
-            $inTime = new \DateTime($row['punch_in_time']);
+            $inTime = new \DateTime($row['check_in_time']);
             $now = new \DateTime();
             $hoursWorked = round($now->diff($inTime)->h + $now->diff($inTime)->i / 60, 2);
 
-            $distance = $this->haversineDistance($lat, $lng, $this->officeLat, $this->officeLng);
-
             $stmt = $pdo->prepare(
-                "UPDATE employee_attendance SET punch_out_time = NOW(), hours_worked = ? WHERE id = ?"
+                "UPDATE employee_attendance SET check_out_time = NOW(), hours_worked = ? WHERE id = ?"
             );
             $stmt->execute([$hoursWorked, $row['id']]);
 
@@ -3292,7 +3656,6 @@ class MobileApiController extends BaseController
                 'message' => 'Punched out successfully',
                 'punch_out_time' => date('Y-m-d H:i:s'),
                 'hours_worked' => $hoursWorked,
-                'distance_meters' => round($distance, 1),
             ]);
         } catch (\Throwable $e) {
             error_log('MobileApiController::punchOut() exception: ' . $e->getMessage());
@@ -3316,8 +3679,8 @@ class MobileApiController extends BaseController
 
             $today = date('Y-m-d');
             $stmt = $pdo->prepare(
-                "SELECT punch_in_time, punch_out_time, distance_from_office, status, hours_worked
-                 FROM employee_attendance WHERE user_id = ? AND DATE(punch_in_time) = ?
+                "SELECT check_in_time as punch_in_time, check_out_time as punch_out_time, status, hours_worked
+                 FROM employee_attendance WHERE employee_id = ? AND attendance_date = ?
                  ORDER BY id DESC LIMIT 1"
             );
             $stmt->execute([$userId, $today]);
@@ -3331,7 +3694,6 @@ class MobileApiController extends BaseController
                     'punched_out' => !empty($record['punch_out_time']),
                     'punch_out_time' => $record['punch_out_time'] ?? null,
                     'hours_worked' => $record['hours_worked'] ?? null,
-                    'distance_meters' => $record['distance_from_office'] ?? null,
                     'status' => $record['status'],
                 ] : [
                     'punched_in' => false,
@@ -3342,6 +3704,208 @@ class MobileApiController extends BaseController
             error_log('MobileApiController::attendanceStatus() exception: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Could not fetch attendance status']);
+        }
+    }
+
+    // ================================================================
+    // Employee Dashboard API (mobile v2)
+    // ================================================================
+
+    /**
+     * GET /api/mobile/v2/employee/dashboard
+     * Aggregated employee dashboard: tasks summary, today attendance, recent announcements
+     */
+    public function employeeDashboard()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+
+        $data = [
+            'tasks' => ['pending' => 0, 'completed_today' => 0, 'overdue' => 0],
+            'attendance' => ['punched_in' => false, 'punched_out' => false, 'hours_worked' => null, 'punch_in_time' => null, 'punch_out_time' => null, 'distance_meters' => null],
+            'announcements' => [],
+        ];
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            // Tasks summary (from lead_pipeline assigned to this employee)
+            try {
+                $stmt = $pdo->prepare(
+                    "SELECT
+                        SUM(CASE WHEN status NOT IN ('closed_won','closed_lost') THEN 1 ELSE 0 END) as pending,
+                        SUM(CASE WHEN status = 'closed_won' AND DATE(created_at) = CURDATE() THEN 1 ELSE 0 END) as completed_today,
+                        SUM(CASE WHEN status NOT IN ('closed_won','closed_lost') AND follow_up_date < CURDATE() THEN 1 ELSE 0 END) as overdue
+                     FROM lead_pipeline WHERE assigned_to = ?"
+                );
+                $stmt->execute([$userId]);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($row) {
+                    $data['tasks'] = [
+                        'pending' => (int) ($row['pending'] ?? 0),
+                        'completed_today' => (int) ($row['completed_today'] ?? 0),
+                        'overdue' => (int) ($row['overdue'] ?? 0),
+                    ];
+                }
+            } catch (\Throwable $e) { /* table may not exist */ }
+
+            // Today's attendance
+            try {
+                $today = date('Y-m-d');
+                $stmt = $pdo->prepare(
+                    "SELECT check_in_time as punch_in_time, check_out_time as punch_out_time, status, hours_worked
+                     FROM employee_attendance WHERE employee_id = ? AND attendance_date = ?
+                     ORDER BY id DESC LIMIT 1"
+                );
+                $stmt->execute([$userId, $today]);
+                $record = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($record) {
+                    $data['attendance'] = [
+                        'punched_in' => true,
+                        'punch_in_time' => $record['punch_in_time'],
+                        'punched_out' => !empty($record['punch_out_time']),
+                        'punch_out_time' => $record['punch_out_time'] ?? null,
+                        'hours_worked' => $record['hours_worked'] ?? null,
+                        'status' => $record['status'],
+                    ];
+                }
+            } catch (\Throwable $e) { /* table may not exist */ }
+
+            // Recent announcements (from daily_operations_log, last 5)
+            try {
+                $stmt = $pdo->prepare(
+                    "SELECT id, operation_type as title, notes as subtitle, created_at
+                     FROM daily_operations_log
+                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                     ORDER BY created_at DESC LIMIT 5"
+                );
+                $stmt->execute();
+                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($rows as $r) {
+                    $created = new \DateTime($r['created_at']);
+                    $diff = $created->diff(new \DateTime());
+                    $timeAgo = '';
+                    if ($diff->d > 0) $timeAgo = $diff->d . 'd ago';
+                    elseif ($diff->h > 0) $timeAgo = $diff->h . 'h ago';
+                    else $timeAgo = max(1, $diff->i) . 'm ago';
+                    $data['announcements'][] = [
+                        'title' => $r['title'] ?? 'Update',
+                        'subtitle' => $r['subtitle'] ?? '',
+                        'time' => $timeAgo,
+                    ];
+                }
+            } catch (\Throwable $e) { /* table may not exist */ }
+
+            echo json_encode(['success' => true, 'data' => $data]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::employeeDashboard() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Could not fetch employee dashboard']);
+        }
+    }
+
+    /**
+     * GET /api/mobile/v2/employee/tasks
+     * Task list for the authenticated employee
+     */
+    public function employeeTasks()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+        $status = $_GET['status'] ?? null;
+        $limit = min((int) ($_GET['limit'] ?? 20), 50);
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $where = "lp.assigned_to = ?";
+            $params = [$userId];
+
+            if ($status && $status !== 'all') {
+                $where .= " AND lp.status = ?";
+                $params[] = $status;
+            }
+
+            $stmt = $pdo->prepare(
+                "SELECT lp.id, lp.lead_number, lp.lead_name, lp.status, lp.priority,
+                        lp.follow_up_date as next_followup_date, lp.score as lead_score, lp.lead_source as source, lp.created_at
+                 FROM lead_pipeline lp
+                 WHERE {$where}
+                 ORDER BY
+                    CASE lp.priority WHEN 'hot' THEN 0 WHEN 'warm' THEN 1 WHEN 'cold' THEN 2 ELSE 3 END,
+                    COALESCE(lp.follow_up_date, '9999-12-31') ASC
+                 LIMIT {$limit}"
+            );
+            $stmt->execute($params);
+            $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode(['success' => true, 'data' => ['tasks' => $tasks]]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::employeeTasks() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Could not fetch tasks: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * GET /api/mobile/v2/employee/attendance
+     * Attendance history for the authenticated employee (last 30 days)
+     */
+    public function employeeAttendance()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+        $userId = (int) $GLOBALS['api_user_id'];
+        $days = min((int) ($_GET['days'] ?? 30), 90);
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $stmt = $pdo->prepare(
+                "SELECT DATE(check_in_time) as date, check_in_time as punch_in_time, check_out_time as punch_out_time,
+                        hours_worked, status
+                 FROM employee_attendance
+                 WHERE employee_id = ? AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+                 ORDER BY check_in_time DESC"
+            );
+            $stmt->execute([$userId, $days]);
+            $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Summary stats
+            $totalDays = count($records);
+            $presentDays = 0;
+            $totalHours = 0.0;
+            $lateDays = 0;
+
+            foreach ($records as $r) {
+                if ($r['status'] === 'present' || $r['status'] === 'late') {
+                    $presentDays++;
+                }
+                $totalHours += (float) ($r['hours_worked'] ?? 0);
+                if ($r['status'] === 'late') {
+                    $lateDays++;
+                }
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'records' => $records,
+                    'summary' => [
+                        'total_days' => $totalDays,
+                        'present_days' => $presentDays,
+                        'total_hours' => round($totalHours, 1),
+                        'late_days' => $lateDays,
+                        'avg_hours' => $presentDays > 0 ? round($totalHours / $presentDays, 1) : 0,
+                    ],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::employeeAttendance() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Could not fetch attendance history']);
         }
     }
 
@@ -3431,4 +3995,385 @@ class MobileApiController extends BaseController
             echo json_encode(['success' => false, 'error' => 'Referral tracking failed']);
         }
     }
+
+    /**
+     * GET /api/v2/mobile/user/favorites
+     * Get user's favorite properties
+     */
+    public function getFavorites()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $userId = (int) $GLOBALS['api_user_id'];
+            $limit = (int) ($_GET['limit'] ?? 50);
+
+            $favoriteModel = new \App\Models\Property\Favorite();
+            $favorites = $favoriteModel->getUserFavorites($userId, $limit);
+
+            // Transform to match Flutter expectations
+            $data = [];
+            foreach ($favorites as $fav) {
+                $data[] = [
+                    'id' => $fav['id'] ?? 0,
+                    'property_id' => $fav['property_id'] ?? $fav['id'],
+                    'title' => $fav['title'] ?? 'Property',
+                    'type' => $fav['type'] ?? 'plot',
+                    'price' => (float)($fav['price'] ?? 0),
+                    'size' => (float)($fav['area_sqft'] ?? 0),
+                    'area' => $fav['city'] ?? '',
+                    'image_url' => $fav['main_image'] ?? '',
+                    'location' => $fav['city'] ?? '',
+                ];
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => $data,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::getFavorites() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch favorites']);
+        }
+    }
+
+    /**
+     * DELETE /api/v2/mobile/user/favorites/{id}
+     * Remove property from favorites
+     */
+    public function removeFavorite()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $userId = (int) $GLOBALS['api_user_id'];
+            $propertyId = (int) ($_GET['id'] ?? 0);
+
+            if ($propertyId <= 0) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Property ID required']);
+                return;
+            }
+
+            $favoriteModel = new \App\Models\Property\Favorite();
+            $result = $favoriteModel->removeFavorite($userId, $propertyId);
+
+            echo json_encode([
+                'success' => $result,
+                'message' => $result ? 'Removed from favorites' : 'Failed to remove',
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::removeFavorite() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to remove favorite']);
+        }
+    }
+
+    /**
+     * POST /api/v2/mobile/user/favorites
+     * Add property to favorites
+     */
+    public function addFavorite()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $userId = (int) $GLOBALS['api_user_id'];
+            $propertyId = (int) ($_POST['property_id'] ?? 0);
+
+            if ($propertyId <= 0) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Property ID required']);
+                return;
+            }
+
+            $favoriteModel = new \App\Models\Property\Favorite();
+            $result = $favoriteModel->addFavorite($userId, $propertyId);
+
+            echo json_encode([
+                'success' => $result,
+                'message' => $result ? 'Added to favorites' : 'Already in favorites',
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::addFavorite() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to add favorite']);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/user/favorites/check
+     * Check if property is favorited
+     */
+    public function checkFavorite()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $userId = (int) $GLOBALS['api_user_id'];
+            $propertyId = (int) ($_GET['property_id'] ?? 0);
+
+            if ($propertyId <= 0) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Property ID required']);
+                return;
+            }
+
+            $favoriteModel = new \App\Models\Property\Favorite();
+            $isFavorited = $favoriteModel->isFavorited($userId, $propertyId);
+
+            echo json_encode([
+                'success' => true,
+                'data' => ['is_favorited' => $isFavorited],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::checkFavorite() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to check favorite']);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/user/favorites/stats
+     * Get favorites statistics
+     */
+    public function getFavoritesStats()
+    {
+        $this->setCorsHeaders();
+        $this->authenticateAndRateLimit();
+
+        try {
+            $userId = (int) $GLOBALS['api_user_id'];
+            $favoriteModel = new \App\Models\Property\Favorite();
+            $stats = $favoriteModel->getStats();
+
+            // Also get user-specific stats
+            $userFavorites = $favoriteModel->getUserFavorites($userId, 1000);
+            $stats['user_total'] = count($userFavorites);
+
+            echo json_encode([
+                'success' => true,
+                'data' => $stats,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::getFavoritesStats() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch stats']);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/colonies
+     * List all active colonies with summary stats
+     */
+    public function getColonies()
+    {
+        $this->setCorsHeaders();
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $page = max(1, (int)($_GET['page'] ?? 1));
+            $limit = min(50, max(1, (int)($_GET['limit'] ?? 20)));
+            $offset = ($page - 1) * $limit;
+            $search = trim($_GET['search'] ?? '');
+            $status = trim($_GET['status'] ?? '');
+            $districtId = (int)($_GET['district_id'] ?? 0);
+
+            $where = ['1=1'];
+            $params = [];
+
+            if ($search !== '') {
+                $where[] = 'c.name LIKE ?';
+                $params[] = "%$search%";
+            }
+            if ($status !== '') {
+                $where[] = 'c.is_active = ?';
+                $params[] = $status === 'active' ? 1 : 0;
+            }
+            if ($districtId > 0) {
+                $where[] = 'c.district_id = ?';
+                $params[] = $districtId;
+            }
+
+            $whereSql = implode(' AND ', $where);
+
+            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM colonies c WHERE $whereSql");
+            $countStmt->execute($params);
+            $total = (int)$countStmt->fetchColumn();
+
+            $stmt = $pdo->prepare("
+                SELECT c.id, c.name, c.slug, c.description, c.total_plots, c.available_plots,
+                       c.starting_price, c.image_path, c.is_featured, c.is_active,
+                       d.name as district_name, d.id as district_id
+                FROM colonies c
+                LEFT JOIN districts d ON d.id = c.district_id
+                WHERE $whereSql
+                ORDER BY c.is_featured DESC, c.name ASC
+                LIMIT $limit OFFSET $offset
+            ");
+            $stmt->execute($params);
+            $colonies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($colonies as &$colony) {
+                $colony['total_plots'] = (int)($colony['total_plots'] ?? 0);
+                $colony['available_plots'] = (int)($colony['available_plots'] ?? 0);
+                $colony['starting_price'] = (float)($colony['starting_price'] ?? 0);
+                $colony['is_featured'] = (bool)($colony['is_featured'] ?? false);
+                $colony['is_active'] = (bool)($colony['is_active'] ?? false);
+                $colony['image_url'] = $colony['image_path'] ? BASE_URL . '/' . ltrim($colony['image_path'], '/') : null;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => $colonies,
+                'pagination' => [
+                    'page' => $page,
+                    'limit' => $limit,
+                    'total' => $total,
+                    'pages' => (int)ceil($total / $limit),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('getColonies error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch colonies']);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/colonies/search?q=...
+     */
+    public function searchColonies()
+    {
+        $this->setCorsHeaders();
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $q = trim($_GET['q'] ?? $_GET['search'] ?? '');
+            if ($q === '') {
+                echo json_encode(['success' => true, 'data' => []]);
+                return;
+            }
+            $stmt = $pdo->prepare("
+                SELECT c.id, c.name, c.slug, c.image_path, c.total_plots, c.available_plots, c.starting_price
+                FROM colonies c
+                WHERE c.is_active = 1 AND c.name LIKE ?
+                ORDER BY c.name ASC LIMIT 20
+            ");
+            $stmt->execute(["%$q%"]);
+            echo json_encode(['success' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+        } catch (\Throwable $e) {
+            error_log('searchColonies error: ' . $e->getMessage());
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/colonies/{id}
+     */
+    public function getColonyDetail($id)
+    {
+        $this->setCorsHeaders();
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare("
+                SELECT c.*, d.name as district_name
+                FROM colonies c
+                LEFT JOIN districts d ON d.id = c.district_id
+                WHERE c.id = ?
+            ");
+            $stmt->execute([(int)$id]);
+            $colony = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$colony) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Colony not found']);
+                return;
+            }
+            $colony['image_url'] = $colony['image_path'] ? BASE_URL . '/' . ltrim($colony['image_path'], '/') : null;
+            echo json_encode(['success' => true, 'data' => $colony]);
+        } catch (\Throwable $e) {
+            error_log('getColonyDetail error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch colony']);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/colonies/{id}/stats
+     */
+    public function getColonyStats($id)
+    {
+        $this->setCorsHeaders();
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $total = $pdo->prepare("SELECT COUNT(*) FROM plots WHERE colony_id = ?");
+            $total->execute([(int)$id]);
+            $totalPlots = (int)$total->fetchColumn();
+
+            $available = $pdo->prepare("SELECT COUNT(*) FROM plots WHERE colony_id = ? AND status = 'available'");
+            $available->execute([(int)$id]);
+            $availablePlots = (int)$available->fetchColumn();
+
+            $booked = $pdo->prepare("SELECT COUNT(*) FROM plots WHERE colony_id = ? AND status = 'booked'");
+            $booked->execute([(int)$id]);
+            $bookedPlots = (int)$booked->fetchColumn();
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'total_plots' => $totalPlots,
+                    'available_plots' => $availablePlots,
+                    'booked_plots' => $bookedPlots,
+                    'sold_plots' => $totalPlots - $availablePlots - $bookedPlots,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('getColonyStats error: ' . $e->getMessage());
+            echo json_encode(['success' => true, 'data' => ['total_plots' => 0, 'available_plots' => 0, 'booked_plots' => 0, 'sold_plots' => 0]]);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/colonies/{id}/plots
+     */
+    public function getColonyPlots($id)
+    {
+        $this->setCorsHeaders();
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $page = max(1, (int)($_GET['page'] ?? 1));
+            $limit = min(100, max(1, (int)($_GET['limit'] ?? 50)));
+            $offset = ($page - 1) * $limit;
+            $status = trim($_GET['status'] ?? '');
+
+            $where = ['p.colony_id = ?'];
+            $params = [(int)$id];
+            if ($status !== '') {
+                $where[] = 'p.status = ?';
+                $params[] = $status;
+            }
+            $whereSql = implode(' AND ', $where);
+
+            $stmt = $pdo->prepare("
+                SELECT p.id, p.plot_number, p.block, p.area_sqft, p.status,
+                       p.total_price, p.price_per_sqft, p.facing, p.corner_plot, p.width_ft, p.length_ft
+                FROM plots p WHERE $whereSql
+                ORDER BY p.block, p.plot_number
+                LIMIT $limit OFFSET $offset
+            ");
+            $stmt->execute($params);
+            echo json_encode(['success' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+        } catch (\Throwable $e) {
+            error_log('getColonyPlots error (colony_id=' . $id . '): ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch plots', 'data' => []]);
+        }
+    }
+
+    /**
+     * POST /api/attendance/punch-in
+     * Body: { "latitude": 26.84, "longitude": 83.30 }
+     */
 }

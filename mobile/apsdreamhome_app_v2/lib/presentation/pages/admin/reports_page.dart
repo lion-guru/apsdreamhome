@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/responsive_helper.dart';
 
 class ReportsPage extends ConsumerWidget {
   const ReportsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: Column(
-        children: [
-          // Header
-          Container(
+    return SingleChildScrollView(
+      child: Column(
+      children: [
+        // Header
+        Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -31,14 +32,14 @@ class ReportsPage extends ConsumerWidget {
                   color: AppTheme.primaryColor,
                 ),
                 const SizedBox(width: 16),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Reports & Analytics',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: ResponsiveHelper.fontSize(context, 24),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -72,15 +73,18 @@ class ReportsPage extends ConsumerWidget {
           ),
           
           // Report Cards
-          Expanded(
+          Padding(
+            padding: const EdgeInsets.all(24),
             child: GridView.count(
-              padding: const EdgeInsets.all(24),
-              crossAxisCount: 3,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: ResponsiveHelper.isLargeScreen(context) ? 3 : 2,
               childAspectRatio: 1.3,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
               children: [
                 _buildReportCard(
+                  context,
                   'Sales Report',
                   'Monthly sales performance',
                   Icons.trending_up,
@@ -89,6 +93,7 @@ class ReportsPage extends ConsumerWidget {
                   '+15% vs last month',
                 ),
                 _buildReportCard(
+                  context,
                   'Booking Report',
                   'Plot booking status',
                   Icons.book_online,
@@ -97,6 +102,7 @@ class ReportsPage extends ConsumerWidget {
                   '45 this month',
                 ),
                 _buildReportCard(
+                  context,
                   'Collection Report',
                   'Payment collections',
                   Icons.account_balance_wallet,
@@ -105,6 +111,7 @@ class ReportsPage extends ConsumerWidget {
                   '85% collection rate',
                 ),
                 _buildReportCard(
+                  context,
                   'Agent Performance',
                   'Top performing agents',
                   Icons.people,
@@ -113,6 +120,7 @@ class ReportsPage extends ConsumerWidget {
                   '23 new this month',
                 ),
                 _buildReportCard(
+                  context,
                   'Colony Progress',
                   'Development status',
                   Icons.location_city,
@@ -121,6 +129,7 @@ class ReportsPage extends ConsumerWidget {
                   '4 launching soon',
                 ),
                 _buildReportCard(
+                  context,
                   'EMI Status',
                   'Pending collections',
                   Icons.payment,
@@ -131,12 +140,13 @@ class ReportsPage extends ConsumerWidget {
               ],
             ),
           ),
-        ],
-      ),
+      ],
+    ),
     );
   }
 
   Widget _buildReportCard(
+    BuildContext context,
     String title,
     String subtitle,
     IconData icon,
@@ -190,7 +200,7 @@ class ReportsPage extends ConsumerWidget {
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: ResponsiveHelper.fontSize(context, 24),
                     fontWeight: FontWeight.bold,
                     color: color,
                   ),

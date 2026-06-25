@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../data/repositories/auth_repository.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/router/app_router.dart';
+import '../../../core/services/notification_service.dart';
+import '../../../core/utils/logger.dart';
 import '../../widgets/app_widgets.dart';
 import '../../widgets/glass_card.dart';
 
@@ -22,8 +24,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
-  int _selectedTab = 0; // 0 = Email, 1 = Phone
-  String _selectedDemoRole = 'customer'; // For demo mode: customer, associate, agent, employee, admin
+  int _selectedTab = 0;
 
   @override
   void dispose() {
@@ -38,43 +39,50 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     setState(() => _isLoading = true);
 
     try {
-      final authRepository = ref.read(authRepositoryProvider);
-      
-      final user = await authRepository.login(
+      AppLogger.info('[LoginPage] Starting login...');
+      final authNotifier = ref.read(authProvider.notifier);
+
+      final user = await authNotifier.login(
         _emailController.text.trim(),
         _passwordController.text,
       );
 
-      if (mounted) {
-        AppWidgets.showSuccessSnackBar(context, 'Login successful');
-        
-        // Navigate based on user role
-        if (user.isAdmin) {
-          context.go('/admin');
-        } else if (user.isAgent) {
-          context.go('/agent/dashboard');
-        } else if (user.isAssociate) {
-          context.go('/associate/dashboard');
-        } else if (user.isEmployee) {
-          context.go('/employee/check-in');
-        } else {
-          context.go('/home');
+      AppLogger.info('[LoginPage] Login returned: userId=${user.userId}, rank=${user.rank}');
+
+      if (!mounted) return;
+
+      AppWidgets.showSuccessSnackBar(context, 'Login successful');
+
+      // Register FCM token now that user is authenticated
+      try {
+        final token = await NotificationService().getToken();
+        if (token != null) {
+          await NotificationService().saveTokenToBackend(token);
         }
-      }
+      } catch (_) {}
+
+      // Force GoRouter to re-evaluate redirect with the new auth state.
+      // Do NOT call context.go() or ref.invalidate() — the former would
+      // redirect back to /login (old closure), and the latter destroys the
+      // mounted GoRouter causing _dependents.isEmpty assertion failure.
+      // router.refresh() re-evaluates the redirect with the current auth state.
+      ref.read(appRouterProvider).refresh();
+      AppLogger.info('[LoginPage] Router refreshed, redirect should handle navigation');
     } on Exception catch (e) {
+      AppLogger.error('[LoginPage] Exception', e);
       if (mounted) {
         AppWidgets.showErrorSnackBar(context, e.toString());
+      }
+    } catch (e, stackTrace) {
+      AppLogger.error('[LoginPage] Error', e, stackTrace);
+      if (mounted) {
+        AppWidgets.showErrorSnackBar(context, 'Unexpected error: $e');
       }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
-  }
-
-  void _sendOTP() {
-    // Navigate to OTP page for phone login
-    context.push('/otp');
   }
 
   @override
@@ -89,38 +97,33 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 40),
-                  
+
                   // Logo and Title
                   _buildHeader(),
-                  
+
                   const SizedBox(height: 40),
-                  
+
                   // Tab Selection
                   _buildTabSelection(),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Login Form
-                  if (_selectedTab == 0) 
+                  if (_selectedTab == 0)
                     _buildEmailLoginForm()
-                  else 
+                  else
                     _buildPhoneLoginForm(),
-                  
+
                   const SizedBox(height: 24),
-                  
-                  // Demo Mode Section
-                  if (AppConstants.demoMode) _buildDemoMode(),
-                  
-                  const SizedBox(height: 24),
-                  
+
                   // Forgot Password
                   _buildForgotPassword(),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Register Link
                   _buildRegisterLink(),
-                  
+
                   const SizedBox(height: 20),
                 ],
               ),
@@ -132,9 +135,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Widget _buildHeader() {
+    final textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
-        // Logo
         Container(
           width: 80,
           height: 80,
@@ -142,33 +145,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             color: AppTheme.primaryColor,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Icon(
-            Icons.home,
-            size: 40,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.home, size: 40, color: Colors.white),
         ),
-        
         const SizedBox(height: 16),
-        
-        // Title
-        const Text(
+        Text(
           'APS Dream Home',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
+          style: textTheme.displayMedium?.copyWith(
             color: AppTheme.primaryColor,
           ),
         ),
-        
         const SizedBox(height: 8),
-        
-        // Subtitle
         Text(
           'Your Dream Property Awaits',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey.shade600,
+          style: textTheme.bodyLarge?.copyWith(
+            color: AppTheme.textSecondaryLight,
           ),
         ),
       ],
@@ -191,19 +181,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 height: 46,
                 margin: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
-                  color: _selectedTab == 0 
-                      ? AppTheme.primaryColor 
-                      : Colors.transparent,
+                  color: _selectedTab == 0 ? AppTheme.primaryColor : Colors.transparent,
                   borderRadius: BorderRadius.circular(23),
                 ),
                 child: Center(
                   child: Text(
                     'Email',
-                    style: TextStyle(
-                      color: _selectedTab == 0 
-                          ? Colors.white 
-                          : Colors.grey.shade600,
-                      fontWeight: FontWeight.w600,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: _selectedTab == 0 ? Colors.white : AppTheme.textSecondaryLight,
                     ),
                   ),
                 ),
@@ -217,19 +202,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 height: 46,
                 margin: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
-                  color: _selectedTab == 1 
-                      ? AppTheme.primaryColor 
-                      : Colors.transparent,
+                  color: _selectedTab == 1 ? AppTheme.primaryColor : Colors.transparent,
                   borderRadius: BorderRadius.circular(23),
                 ),
                 child: Center(
                   child: Text(
                     'Phone',
-                    style: TextStyle(
-                      color: _selectedTab == 1 
-                          ? Colors.white 
-                          : Colors.grey.shade600,
-                      fontWeight: FontWeight.w600,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: _selectedTab == 1 ? Colors.white : AppTheme.textSecondaryLight,
                     ),
                   ),
                 ),
@@ -246,7 +226,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       key: _formKey,
       child: Column(
         children: [
-          // Email Field
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
@@ -254,32 +233,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               labelText: 'Email Address',
               hintText: 'Enter your email',
               prefixIcon: const Icon(Icons.email_outlined),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.grey.shade300),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppTheme.primaryColor),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: AppTheme.primaryColor),
               ),
             ),
             validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your email';
-              }
-              if (!value.contains('@')) {
-                return 'Please enter a valid email';
-              }
+              if (value == null || value.isEmpty) return 'Please enter your email';
+              if (!value.contains('@')) return 'Please enter a valid email';
               return null;
             },
           ),
-          
           const SizedBox(height: 16),
-          
-          // Password Field
           TextFormField(
             controller: _passwordController,
             obscureText: _obscurePassword,
@@ -288,41 +258,26 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               hintText: 'Enter your password',
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-                icon: Icon(
-                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                ),
+                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.grey.shade300),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppTheme.primaryColor),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: AppTheme.primaryColor),
               ),
             ),
             validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your password';
-              }
-              if (value.length < 6) {
-                return 'Password must be at least 6 characters';
-              }
+              if (value == null || value.isEmpty) return 'Please enter your password';
+              if (value.length < 6) return 'Password must be at least 6 characters';
               return null;
             },
           ),
-          
           const SizedBox(height: 32),
-          
-          // Login Button
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -332,9 +287,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: _isLoading
                   ? const Row(
@@ -352,13 +305,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         Text('Signing in...'),
                       ],
                     )
-                  : const Text(
-                      'Sign In',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                   : Text(
+                       'Sign In',
+                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                         color: Colors.white,
+                       ),
+                     ),
             ),
           ),
         ],
@@ -369,200 +321,54 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget _buildPhoneLoginForm() {
     return Column(
       children: [
-        // Phone Number Field
         TextFormField(
           keyboardType: TextInputType.phone,
           decoration: InputDecoration(
             labelText: 'Phone Number',
             hintText: '+91 98765 43210',
             prefixIcon: const Icon(Icons.phone_outlined),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.grey.shade300),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppTheme.primaryColor),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(color: AppTheme.primaryColor),
             ),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your phone number';
-            }
-            if (value.length < 10) {
-              return 'Please enter a valid phone number';
-            }
+            if (value == null || value.isEmpty) return 'Please enter your phone number';
+            if (value.length < 10) return 'Please enter a valid phone number';
             return null;
           },
         ),
-        
         const SizedBox(height: 32),
-        
-        // Send OTP Button
         SizedBox(
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: _sendOTP,
+            onPressed: () {},
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
               elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: const Text(
-              'Send OTP',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            child: Text('Send OTP', style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Colors.white,
+            )),
           ),
         ),
-        
         const SizedBox(height: 16),
-        
-        // OTP Note
         Text(
           'We will send a verification code to your phone number',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: AppTheme.textSecondaryLight,
           ),
           textAlign: TextAlign.center,
         ),
       ],
-    );
-  }
-
-  Widget _buildDemoMode() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.orange.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.info_outline, color: Colors.orange.shade700, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                'Demo Mode',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange.shade700,
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 12),
-          
-          Text(
-            'Select demo role for quick login:',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade700,
-            ),
-          ),
-          
-          const SizedBox(height: 12),
-          
-          // Role Selection - Row 1
-          Row(
-            children: [
-              Expanded(
-                child: _buildDemoRoleChip('customer', 'Customer'),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildDemoRoleChip('associate', 'Associate'),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildDemoRoleChip('admin', 'Admin'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Role Selection - Row 2
-          Row(
-            children: [
-              Expanded(
-                child: _buildDemoRoleChip('agent', 'Agent'),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildDemoRoleChip('employee', 'Employee'),
-              ),
-              const SizedBox(width: 8),
-              const Spacer(),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDemoRoleChip(String role, String label) {
-    final isSelected = _selectedDemoRole == role;
-    
-    return GestureDetector(
-      onTap: () async {
-        setState(() {
-          _selectedDemoRole = role;
-          _isLoading = true;
-        });
-        try {
-          final authRepository = ref.read(authRepositoryProvider);
-          final user = await authRepository.demoLogin(role);
-          if (mounted) {
-            AppWidgets.showSuccessSnackBar(context, 'Demo login as ${label}');
-            if (user.isAdmin) {
-              context.go('/admin');
-            } else if (user.isAgent) {
-              context.go('/agent/dashboard');
-            } else if (user.isAssociate) {
-              context.go('/associate/dashboard');
-            } else if (user.isEmployee) {
-              context.go('/employee/check-in');
-            } else {
-              context.go('/home');
-            }
-          }
-        } catch (e) {
-          if (mounted) {
-            AppWidgets.showErrorSnackBar(context, 'Demo login failed: $e');
-          }
-        } finally {
-          if (mounted) setState(() => _isLoading = false);
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.orange.shade600 : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.orange.shade300),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: isSelected ? Colors.white : Colors.orange.shade700,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-          ),
-        ),
-      ),
     );
   }
 
@@ -573,10 +379,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         onPressed: () => context.push('/forgot-password'),
         child: const Text(
           'Forgot Password?',
-          style: TextStyle(
-            color: AppTheme.primaryColor,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.w500),
         ),
       ),
     );
@@ -588,8 +391,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       children: [
         Text(
           "Don't have an account? ",
-          style: TextStyle(
-            color: Colors.grey.shade600,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppTheme.textSecondaryLight,
           ),
         ),
         TextButton(
@@ -599,11 +402,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          child: const Text(
+          child: Text(
             'Register Now',
-            style: TextStyle(
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: AppTheme.primaryColor,
-              fontWeight: FontWeight.bold,
             ),
           ),
         ),

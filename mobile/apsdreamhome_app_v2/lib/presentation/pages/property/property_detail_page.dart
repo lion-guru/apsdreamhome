@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../widgets/glass_card.dart';
 import '../../../data/services/referral_service.dart';
+import '../../../core/theme/app_theme.dart';
 
 class PropertyDetailPage extends ConsumerStatefulWidget {
   const PropertyDetailPage({
@@ -316,6 +317,46 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                     ],
                   ),
                 ),
+
+              const SizedBox(height: 12),
+
+              // Set Alert action
+              GlassCard(
+                opacity: 0.08,
+                child: InkWell(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Alert set for this property type'),
+                        backgroundColor: AppTheme.successColor,
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.notifications_active, color: Color(0xFFFFD700), size: 24),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Set Property Alert',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              'Get notified for similar properties',
+                              style: TextStyle(color: Colors.white70, fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
+                    ],
+                  ),
+                ),
+              ),
 
               const SizedBox(height: 80),
             ],

@@ -43,18 +43,14 @@ class AppWidgets {
             const SizedBox(height: 16),
             const Text(
               'Oops! Something went wrong',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade600,
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textSecondaryLight,
               ),
             ),
             if (onRetry != null) ...[
@@ -93,19 +89,16 @@ class AppWidgets {
             const SizedBox(height: 24),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey.shade700,
+              style: AppTheme.titleLarge.copyWith(
+                color: AppTheme.textPrimaryLight,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade500,
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textSecondaryLight,
               ),
             ),
             if (onAction != null && actionLabel != null) ...[
@@ -231,50 +224,31 @@ class AppWidgets {
     );
   }
 
-  // Price Tag
+  // Price Tag — uses prefix as the currency symbol (defaults to ₹)
   static Widget priceTag({
     required double amount,
     String? prefix,
     TextStyle? style,
   }) {
     final formattedAmount = _formatCurrency(amount);
+    final symbol = prefix ?? AppConstants.currencySymbol;
+    final defaultStyle = const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+      color: AppTheme.primaryColor,
+    );
+    final s = style ?? defaultStyle;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (prefix != null)
-          Text(
-            prefix,
-            style: style?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ) ??
-                const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
-                ),
-          ),
         Text(
-          AppConstants.currencySymbol,
-          style: style?.copyWith(
-                fontWeight: FontWeight.bold,
-              ) ??
-              const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primaryColor,
-              ),
+          symbol,
+          style: s.copyWith(fontWeight: FontWeight.bold),
         ),
         Text(
           formattedAmount,
-          style: style?.copyWith(
-                fontWeight: FontWeight.bold,
-              ) ??
-              const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primaryColor,
-              ),
+          style: s.copyWith(fontWeight: FontWeight.bold),
         ),
       ],
     );

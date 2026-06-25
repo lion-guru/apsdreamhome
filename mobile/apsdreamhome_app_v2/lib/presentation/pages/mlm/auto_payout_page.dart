@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/responsive_helper.dart';
 
 
 final pendingPayoutsProvider = FutureProvider.autoDispose<List<dynamic>>((ref) async {
@@ -88,7 +89,7 @@ class _AutoPayoutPageState extends ConsumerState<AutoPayoutPage> {
                     const SizedBox(height: 4),
                     Text(
                       '₹${_formatAmount(totalAmount)}',
-                      style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.white, fontSize: ResponsiveHelper.fontSize(context, 28), fontWeight: FontWeight.bold),
                     ),
                     Text(
                       '${payouts.length} agents eligible',
@@ -217,9 +218,9 @@ class _AutoPayoutPageState extends ConsumerState<AutoPayoutPage> {
               child: const Icon(Icons.check_circle, color: Colors.green, size: 72),
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'Payouts Processed! 🎉',
-              style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontSize: ResponsiveHelper.fontSize(context, 24), fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(

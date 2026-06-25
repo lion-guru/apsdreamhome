@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../core/services/api_service.dart';
 import '../../core/services/database_helper.dart';
+import '../../core/utils/logger.dart';
 import '../models/user_model.dart';
 
 /// Auth Repository - Handles authentication & user data
@@ -19,31 +20,46 @@ class AuthRepository {
   /// Login with email/password
   Future<UserModel> login(String email, String password) async {
     try {
+      AppLogger.info('[AuthRepo] Calling API login...');
       final response = await _apiService.login(email, password);
 
+      AppLogger.info('[AuthRepo] Response success: ${response['success']}');
       if (response['success'] != true) {
         throw Exception(response['message'] ?? 'Login failed');
       }
 
       final userData = response['data']['user'] as Map<String, dynamic>;
       final token = response['data']['token'] as String;
+      AppLogger.info('[AuthRepo] Got userId=${userData['userId']}, rank=${userData['rank']}, token=${token.substring(0, 8)}...');
 
       // Save token
+      AppLogger.info('[AuthRepo] Saving token...');
       await _apiService.saveToken(token);
       await _secureStorage.write(key: 'auth_token', value: token);
+      AppLogger.info('[AuthRepo] Token saved');
 
       // Create user model
+      AppLogger.info('[AuthRepo] Creating UserModel fromJson...');
       final user = UserModel.fromJson(userData);
+      AppLogger.info('[AuthRepo] UserModel created: userId=${user.userId}, rank=${user.rank}, isAssociate=${user.isAssociate}');
 
       // Save user to local DB
-      await _dbHelper.saveUser(user.toJson());
+      AppLogger.info('[AuthRepo] Saving user to DB...');
+      try {
+        await _dbHelper.saveUser(user.toJson());
+        AppLogger.info('[AuthRepo] User saved to DB');
+      } catch (dbErr) {
+        AppLogger.warning('[AuthRepo] DB save failed (non-fatal): $dbErr');
+      }
       await _secureStorage.write(
         key: 'current_user',
         value: user.toJson().toString(),
       );
+      AppLogger.info('[AuthRepo] Returning user...');
 
       return user;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('[AuthRepo] LOGIN FAILED', e, stackTrace);
       throw Exception('Login failed: $e');
     }
   }
@@ -133,9 +149,9 @@ class AuthRepository {
       return UserModel.fromJson(localUser);
     }
 
-    // Check for token — skip API if no token or demo token
+    // Check for token — skip API if no token
     final token = await _apiService.getToken();
-    if (token == null || token.isEmpty || token.startsWith('demo_')) {
+    if (token == null || token.isEmpty) {
       return null;
     }
 
@@ -190,77 +206,6 @@ class AuthRepository {
       }
       throw Exception('Update failed: $e');
     }
-  }
-
-  /// Quick demo login (no API needed)
-  Future<UserModel> demoLogin(String role) async {
-    final now = DateTime.now().toIso8601String();
-    final demoUsers = {
-      'customer': {
-        'userId': '3',
-        'name': 'Customer One',
-        'email': 'customer1@apsdreamhome.com',
-        'phone': '9999999991',
-        'rank': 'Customer',
-        'target': 0.0,
-        'avatar': null,
-        'createdAt': now,
-        'updatedAt': now,
-      },
-      'associate': {
-        'userId': '9',
-        'name': 'Test Emp',
-        'email': 'associate@apsdreamhome.com',
-        'phone': '9999999992',
-        'rank': 'Associate',
-        'target': 1000000.0,
-        'avatar': null,
-        'createdAt': now,
-        'updatedAt': now,
-      },
-      'admin': {
-        'userId': '1',
-        'name': 'Admin',
-        'email': 'admin@apsdreamhome.com',
-        'phone': '9999999990',
-        'rank': 'Admin',
-        'target': 0.0,
-        'avatar': null,
-        'createdAt': now,
-        'updatedAt': now,
-      },
-      'agent': {
-        'userId': '54',
-        'name': 'Test Agent',
-        'email': 'agent@apsdreamhome.com',
-        'phone': '9999999993',
-        'rank': 'Agent',
-        'target': 500000.0,
-        'avatar': null,
-        'createdAt': now,
-        'updatedAt': now,
-      },
-      'employee': {
-        'userId': '89',
-        'name': 'Test Employee',
-        'email': 'employee@apsdreamhome.com',
-        'phone': '9999999994',
-        'rank': 'Employee',
-        'target': 0.0,
-        'avatar': null,
-        'createdAt': now,
-        'updatedAt': now,
-      },
-    };
-
-    final userData = demoUsers[role] ?? demoUsers['customer']!;
-    final user = UserModel.fromJson(userData);
-
-    await _secureStorage.write(key: 'auth_token', value: 'demo_token_$role');
-    await _secureStorage.write(key: 'current_user', value: user.toJson().toString());
-    await _dbHelper.saveUser(user.toJson());
-
-    return user;
   }
 
   /// Check if user is logged in

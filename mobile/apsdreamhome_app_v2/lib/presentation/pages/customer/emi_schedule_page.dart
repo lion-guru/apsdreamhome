@@ -56,15 +56,25 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _installments.isEmpty
-              ? const Center(
-                  child: Text('No EMI schedule found for this booking.'))
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _installments.length,
-                  itemBuilder: (context, index) {
-                    final emi = _installments[index] as Map<String, dynamic>;
-                    return _buildEmiTile(emi);
-                  },
+              ? RefreshIndicator(
+                  onRefresh: _fetchSchedule,
+                  child: ListView(
+                    children: const [
+                      SizedBox(height: 100),
+                      Center(child: Text('No EMI schedule found for this booking.')),
+                    ],
+                  ),
+                )
+              : RefreshIndicator(
+                  onRefresh: _fetchSchedule,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _installments.length,
+                    itemBuilder: (context, index) {
+                      final emi = _installments[index] as Map<String, dynamic>;
+                      return _buildEmiTile(emi);
+                    },
+                  ),
                 ),
     );
   }

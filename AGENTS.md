@@ -6190,3 +6190,140 @@ Completed i18n for all 12 Sales module admin views with `__()` translation calls
 6. **Backoffice views i18n** — 14 files to wrap with `__()` calls (next target)
 7. **Colony-Pipeline views i18n** — 6 files to wrap with `__()` calls
 
+---
+
+## Session 2026-06-21: Flutter 5-Role Audit + Comprehensive UI Gap Analysis
+
+### What Was Done
+1. **Full Flutter mobile app audit** — Analyzed every page across all 5 roles (Admin, Customer, Associate, Agent, Employee) for API integration, hardcoded data, missing features, and improvement opportunities.
+2. **Admin Shell fully responsive** — Drawer-based sidebar on mobile (<768px), Row-based persistent sidebar on desktop. Hamburger tap fixed via `_scaffoldKey.currentState?.openDrawer()` (GlobalKey approach).
+3. **Employee Shell created** — BottomNavigationBar with 4 tabs (Home/Tasks/Attendance/Profile), AppBar with APS Dream Home branding.
+4. **14 admin sub-pages Scaffold removed** — All now return body content only for nesting in AdminShell. FABs converted to Stack+Positioned.
+5. **APK rebuilt and installed** — Zero compile errors, all 5 roles verified on emulator.
+
+### Complete UI Gap Analysis by Role
+
+#### ROLE 1: ADMIN (16 pages)
+| Page | Status | Data Source | Key Gaps |
+|------|--------|-------------|----------|
+| `admin_shell.dart` | ✅ COMPLETE | Auth provider | None — responsive Drawer/Row |
+| `admin_dashboard_page.dart` | ⚠️ HARDCODED | No API | Stats ("1,245 users", "₹12.5Cr revenue") all fake; booking/user creation dialogs are placeholder |
+| `accounts_page.dart` | ⚠️ HARDCODED | No API | 404 lines; reused for 4 routes (/accounts, /payouts, /invoices, /ledger) — all show identical content; Invoices/Ledger tabs say "Coming Soon" |
+| `admin_tools_page.dart` | ⚠️ HARDCODED | No API | Stats are fake; System Health is a dialog placeholder |
+| `analytics_dashboard_page.dart` | ⚠️ HARDCODED | No API | 636 lines; fl_chart with fake data; time range toggle changes local values only; Custom date range not implemented |
+| `bulk_marketing_page.dart` | ⚠️ HARDCODED | No API | 620 lines; SMS/Email/WhatsApp send is animated fake; image_picker commented out; no delivery tracking |
+| `campaign_management_page.dart` | ⚠️ HARDCODED | No API | 703 lines; QR codes generated locally; campaign creation is dialog-only (no submit); no A/B testing |
+| `colony_management_page.dart` | 🟡 PARTIAL API | `ColonyService` | Read works; Add/Edit/Delete show success SnackBar but DON'T call API |
+| `crm_page.dart` | ⚠️ HARDCODED | No API | 768 lines; 8 hardcoded leads; LeadService exists but NOT used; no lead CRUD |
+| `employee_management_page.dart` | ⚠️ HARDCODED | No API | 7 hardcoded employees; no CRUD; no attendance/payroll |
+| `reports_page.dart` | ⚠️ HARDCODED | No API | "Generate" shows SnackBar; DailyOperationsService exists but NOT used |
+| `dev_tools_page.dart` | ⚠️ UTILITY | Local only | Seed data is logged, not sent to API |
+| `booking_approvals_page.dart` | 🔴 STUB | None | 11 lines — just Text widget |
+| `commission_approvals_page.dart` | 🔴 STUB | None | 11 lines — just Text widget |
+| `plot_management_page.dart` | 🔴 STUB | None | 11 lines — just Text widget |
+| `user_management_page.dart` | 🔴 STUB | None | 11 lines — just Text widget |
+
+**Admin Priority Matrix:**
+- **P0 (4 stubs):** BookingApprovals, CommissionApprovals, PlotManagement, UserManagement
+- **P1 (7 hardcoded → API):** Dashboard, CRM, EmployeeMgmt, Accounts, Analytics, BulkMarketing, Campaigns
+- **P2 (4 fixes):** ColonyManagement (wire write ops), Reports, AdminTools, DevTools
+
+**Existing Backend Services NOT Used by Admin Pages:**
+| Service | Model | Could Power |
+|---------|-------|-------------|
+| `BookingRepository` | `BookingModel` | BookingApprovalsPage |
+| `MLMService` | `CommissionModel` | CommissionApprovalsPage |
+| `LeadService` | `LeadModel` | CRMPage |
+| `PayoutService` | `PayoutModel` | AccountsPage |
+| `DailyOperationsService` | — | ReportsPage, EmployeeMgmt |
+| `CommunicationService` | — | BulkMarketing, Campaigns |
+
+#### ROLE 2: CUSTOMER (15 pages)
+| Page | Status | Data Source | Key Gaps |
+|------|--------|-------------|----------|
+| `home_page.dart` | ⚠️ HARDCODED | No API | Quick Actions, Featured Colonies hardcoded; no real property listings |
+| `colonies_page.dart` | 🟡 PARTIAL | `ColonyService` | Colony list from API; no search/filter |
+| `colony_detail_page.dart` | 🟡 PARTIAL | `ColonyService` | Plot grid from API; no booking action |
+| `plots_page.dart` | 🟡 PARTIAL | `ColonyService` | Plot list from API |
+| `bookings_page.dart` | ⚠️ MOCK | Hardcoded | Fake booking entries |
+| `my_bookings_page.dart` | ⚠️ MOCK | Hardcoded | Overlaps bookings_page.dart |
+| `favorites_page.dart` | ⚠️ HARDCODED | No API | Favorite properties hardcoded |
+| `documents_page.dart` | 🔴 STUB | None | 33 lines — just Text widget |
+| `plot_detail_page.dart` | 🔴 STUB | None | 48 lines — hardcoded data, no API |
+| `emi_schedule_page.dart` | ⚠️ HARDCODED | No API | EMI table hardcoded |
+| `emi_calculator_page.dart` | ✅ FUNCTIONAL | Local calc | EMI math works, no API needed |
+| `kyc_verification_page.dart` | ✅ FUNCTIONAL | Local flow | KYC submission flow works |
+| `kyc_status_page.dart` | ✅ FUNCTIONAL | Local flow | KYC status tracking works |
+| `notifications_page.dart` | ⚠️ HARDCODED | No API | Notification list hardcoded |
+
+**Customer Priority Matrix:**
+- **P0 (3 stubs):** PlotDetail, Documents, MyBookings (merge with bookings_page)
+- **P1 (5 hardcoded → API):** Home, Favorites, EMISchedule, Notifications, Bookings
+- **P2 (4 API wiring):** Colonies (add search), ColonyDetail (add booking), Plots (add filters)
+
+#### ROLE 3: ASSOCIATE/MLM (7 pages)
+| Page | Status | Data Source | Key Gaps |
+|------|--------|-------------|----------|
+| `mlm_dashboard_page.dart` | ⚠️ HARDCODED | No API | Referral code, stats all fake |
+| `genealogy_page.dart` | ⚠️ HARDCODED | No API | Tree structure hardcoded; level filter is no-op |
+| `commissions_page.dart` | ⚠️ HARDCODED | No API | Commission entries hardcoded |
+| `referrals_page.dart` | ⚠️ HARDCODED | No API | Referral list hardcoded |
+| `my_team_page.dart` | 🔴 STUB | None | Empty — no implementation |
+| `payout_page.dart` | 🔴 STUB | None | Empty — no implementation |
+| `rank_progress_page.dart` | ⚠️ HARDCODED | No API | Rank thresholds hardcoded |
+
+**Associate Priority Matrix:**
+- **P0 (2 stubs):** MyTeam, Payout
+- **P1 (5 hardcoded → API):** Dashboard (MLMService exists), Genealogy, Commissions, Referrals, RankProgress
+
+#### ROLE 4: AGENT (4 pages) — BEST IMPLEMENTED
+| Page | Status | Data Source | Key Gaps |
+|------|--------|-------------|----------|
+| `agent_dashboard_page.dart` | ✅ FUNCTIONAL | `AgentService` | Real stats; could add more KPIs |
+| `lead_kanban_page.dart` | ✅ FUNCTIONAL | `AgentService` | Drag-and-drop works; no lead detail view |
+| `deal_pipeline_page.dart` | ✅ FUNCTIONAL | `AgentService` | Real deal data; stage advancement works |
+| `commission_approval_page.dart` | ✅ FUNCTIONAL | `AgentService` | Commission list works; approve/reject could be smoother |
+
+**Agent Priority Matrix:**
+- **P1:** Add lead detail/edit page; add deal detail page; add pull-to-refresh
+- **P2:** Add offline support for lead kanban; add lead assignment
+
+#### ROLE 5: EMPLOYEE (6 pages)
+| Page | Status | Data Source | Key Gaps |
+|------|--------|-------------|----------|
+| `employee_shell.dart` | ✅ COMPLETE | Auth provider | BottomNav with 4 tabs |
+| `employee_dashboard_page.dart` | ⚠️ HARDCODED | No API | Welcome card, stats, tasks, attendance all hardcoded |
+| `employee_tasks_page.dart` | ⚠️ HARDCODED | No API | Task list hardcoded |
+| `employee_profile_page.dart` | ✅ FUNCTIONAL | Auth data | Avatar, role badge, logout work |
+| `check_in_page.dart` | ✅ FUNCTIONAL | Local | Attendance check-in flow works |
+| `attendance_history_page.dart` | ⚠️ HARDCODED | No API | Attendance records hardcoded |
+
+**Employee Priority Matrix:**
+- **P1 (3 hardcoded → API):** Dashboard, Tasks, AttendanceHistory
+- **P2:** Add team announcements API; add leave request form
+
+### Overall Flutter App Statistics
+| Metric | Value |
+|--------|-------|
+| Total page files | ~55 |
+| Fully functional (API-backed) | 8 (Agent:4, Employee:2, Customer:2) |
+| Hardcoded UI (works but fake data) | 32 |
+| Stubs (empty/minimal) | 7 |
+| Backend services available | 15+ |
+| Backend services actually used | 2 (ColonyService, AgentService) |
+| Models defined | 43 |
+| Routes registered | 75+ |
+| Demo users | 6 (admin, customer, sales, leader, branch, state) |
+
+### Recommended Next Steps (Priority Order)
+1. **Wire 4 admin stubs** → BookingApprovals, CommissionApprovals, PlotManagement, UserManagement (use existing services)
+2. **Wire CRM page** → LeadService already exists, just connect it
+3. **Wire Employee pages** → DailyOperationsService already exists
+4. **Wire customer bookings** → BookingRepository already exists
+5. **Wire accounts/finance** → Use existing PayoutService
+6. **Wire associate MLM** → MLMService already exists
+7. **Add missing pages** → Lead detail, deal detail, leave request, team management
+8. **Add pull-to-refresh** across all pages
+9. **Add offline support** for critical pages (lead kanban, attendance)
+10. **Wire FCM** → Push notifications for all roles
+

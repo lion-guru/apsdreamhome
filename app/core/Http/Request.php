@@ -436,9 +436,9 @@ class Request implements Countable
 
         foreach ($this->server->all() as $key => $value) {
             if (0 === strpos($key, 'HTTP_')) {
-                $headers[substr($key, 5)] = $value;
+                $headers[strtolower(substr($key, 5))] = $value;
             } elseif (\in_array($key, ['CONTENT_TYPE', 'CONTENT_LENGTH', 'CONTENT_MD5'], true)) {
-                $headers[$key] = $value;
+                $headers[strtolower($key)] = $value;
             }
         }
 
@@ -1475,7 +1475,7 @@ class Request implements Countable
      */
     public function bearerToken(): ?string
     {
-        $header = $this->headers->get('Authorization', '');
+        $header = $this->headers->get('authorization', '');
 
         if (str_starts_with($header, 'Bearer ')) {
             return substr($header, 7);

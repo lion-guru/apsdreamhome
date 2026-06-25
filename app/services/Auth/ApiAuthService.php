@@ -3,7 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Core\Database;
-use Security;
+use App\Core\Security;
 use PDO;
 use Exception;
 

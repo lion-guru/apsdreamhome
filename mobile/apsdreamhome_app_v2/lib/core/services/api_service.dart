@@ -260,9 +260,13 @@ class AuthInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      // Token expired, try to refresh or logout
-      await _apiService.logout();
-      // You might want to navigate to login screen here
+      // Only logout if we actually have a token (i.e. the request was authenticated)
+      final token = await _apiService.getToken();
+      if (token != null) {
+        // We had a token but it was rejected — token expired or invalid
+        await _apiService.logout();
+      }
+      // If no token was sent (public endpoint), don't logout — just pass the error through
     }
     handler.next(err);
   }

@@ -24,63 +24,69 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
   Widget build(BuildContext context) {
     final coloniesAsync = ref.watch(coloniesProvider);
 
-    return Scaffold(
-      body: Column(
-        children: [
-          // Header Section
-          _buildHeader(),
+    return Stack(
+      children: [
+        Column(
+          children: [
+            // Header Section
+            _buildHeader(),
 
-          // Stats Cards
-          _buildStatsRow(),
+            // Stats Cards
+            _buildStatsRow(),
 
-          // Filters
-          _buildFilters(),
+            // Filters
+            _buildFilters(),
 
-          // Colonies List
-          Expanded(
-            child: coloniesAsync.when(
-              data: (colonies) {
-                var filtered = colonies;
+            // Colonies List
+            Expanded(
+              child: coloniesAsync.when(
+                data: (colonies) {
+                  var filtered = colonies;
 
-                if (_searchQuery.isNotEmpty) {
-                  filtered = filtered
-                      .where((c) =>
-                          c.name
-                              .toLowerCase()
-                              .contains(_searchQuery.toLowerCase()) ||
-                          c.location
-                              .toLowerCase()
-                              .contains(_searchQuery.toLowerCase()))
-                      .toList();
-                }
+                  if (_searchQuery.isNotEmpty) {
+                    filtered = filtered
+                        .where((c) =>
+                            c.name
+                                .toLowerCase()
+                                .contains(_searchQuery.toLowerCase()) ||
+                            c.location
+                                .toLowerCase()
+                                .contains(_searchQuery.toLowerCase()))
+                        .toList();
+                  }
 
-                if (_selectedState != null) {
-                  filtered =
-                      filtered.where((c) => c.state == _selectedState).toList();
-                }
+                  if (_selectedState != null) {
+                    filtered =
+                        filtered.where((c) => c.state == _selectedState).toList();
+                  }
 
-                if (_selectedStatus != null) {
-                  filtered = filtered
-                      .where((c) => c.status == _selectedStatus)
-                      .toList();
-                }
+                  if (_selectedStatus != null) {
+                    filtered = filtered
+                        .where((c) => c.status == _selectedStatus)
+                        .toList();
+                  }
 
-                return _buildColoniesGrid(filtered);
-              },
-              loading: () => _buildLoadingGrid(),
-              error: (error, stack) => AppWidgets.errorWidget(
-                message: error.toString(),
-                onRetry: () => ref.refresh(coloniesProvider),
+                  return _buildColoniesGrid(filtered);
+                },
+                loading: () => _buildLoadingGrid(),
+                error: (error, stack) => AppWidgets.errorWidget(
+                  message: error.toString(),
+                  onRetry: () => ref.refresh(coloniesProvider),
+                ),
               ),
             ),
+          ],
+        ),
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton.extended(
+            onPressed: () => _showAddColonyDialog(),
+            icon: const Icon(Icons.add),
+            label: const Text('Add Colony'),
           ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddColonyDialog(),
-        icon: const Icon(Icons.add),
-        label: const Text('Add Colony'),
-      ),
+        ),
+      ],
     );
   }
 

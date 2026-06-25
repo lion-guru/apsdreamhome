@@ -34,60 +34,65 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
   
   final List<String> _facings = ['North', 'South', 'East', 'West'];
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildBody() {
     final colonyAsync = widget.colonyId != null
         ? ref.watch(colonyProvider(widget.colonyId!))
         : const AsyncValue.data(null);
-    
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select Plot'),
-        actions: [
-          IconButton(
-            onPressed: _showFilterBottomSheet,
-            icon: const Icon(Icons.filter_list),
-          ),
-        ],
-      ),
-      body: colonyAsync.when(
-        data: (colony) {
-          if (colony == null && widget.colonyId != null) {
-            return AppWidgets.errorWidget(
-              message: 'Colony not found',
-              onRetry: () => ref.refresh(colonyProvider(widget.colonyId!)),
-            );
-          }
-          
-          return Column(
+
+    return colonyAsync.when(
+      data: (colony) {
+        if (colony == null && widget.colonyId != null) {
+          return AppWidgets.errorWidget(
+            message: 'Colony not found',
+            onRetry: () => ref.refresh(colonyProvider(widget.colonyId!)),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            if (widget.colonyId != null) {
+              ref.invalidate(colonyProvider(widget.colonyId!));
+              ref.invalidate(plotsProvider(widget.colonyId!));
+            }
+          },
+          child: Column(
             children: [
-              // Legend
               _buildLegend(),
-              
-              // Stats Bar
               if (colony != null) _buildStatsBar(colony),
-              
-              // Filter Chips
               _buildFilterChips(),
-              
-              // Plot Grid
               Expanded(
                 child: widget.colonyId != null
                     ? _buildPlotGrid()
                     : _buildAllPlotsList(),
               ),
             ],
-          );
-        },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stack) => AppWidgets.errorWidget(
-          message: error.toString(),
-          onRetry: () => ref.refresh(colonyProvider(widget.colonyId!)),
-        ),
+          ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => AppWidgets.errorWidget(
+        message: error.toString(),
+        onRetry: () => ref.refresh(colonyProvider(widget.colonyId!)),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Standalone (colony detail → plots): needs own Scaffold with AppBar
+    if (widget.colonyId != null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Select Plot'),
+          actions: [
+            IconButton(onPressed: _showFilterBottomSheet, icon: const Icon(Icons.filter_list)),
+          ],
+        ),
+        body: _buildBody(),
+      );
+    }
+    // Shell tab: body only (shell provides Scaffold/AppBar)
+    return _buildBody();
   }
 
   Widget _buildLegend() {

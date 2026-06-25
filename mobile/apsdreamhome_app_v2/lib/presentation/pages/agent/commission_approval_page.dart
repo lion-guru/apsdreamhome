@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/responsive_helper.dart';
 import '../../../data/repositories/mlm_repository.dart';
 import '../../widgets/app_widgets.dart';
 
@@ -73,7 +74,7 @@ class _CommissionApprovalPageState extends ConsumerState<CommissionApprovalPage>
           data: (summary) => _buildOverviewContent(summary),
           loading: () => AppWidgets.shimmerLoading(
             child: Container(
-              height: 400,
+              height: ResponsiveHelper.chartHeight(context),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),

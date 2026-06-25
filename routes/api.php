@@ -29,12 +29,53 @@ $router->post('/api/v2/mobile/payouts/process', 'Api\MobileApiController@process
 $router->get('/api/v2/mobile/payouts/history', 'Api\MobileApiController@getPayoutHistory')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/mlm/genealogy', 'Api\MobileApiController@getGenealogy')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/mlm/business-breakdown', 'Api\MobileApiController@getBusinessBreakdown')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/my-team', 'Api\MobileApiController@getMyTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/rank-progress', 'Api\MobileApiController@getRankProgress')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/mlm/request-payout', 'Api\MobileApiController@requestPayout')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/customer/bookings', 'Api\MobileApiController@getCustomerBookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/customer/emi-schedule', 'Api\MobileApiController@getEmiSchedule')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/customer/pay-emi', 'Api\MobileApiController@makeEmiPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/properties/submit', 'Api\MobileApiController@submitProperty')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/properties/my-submissions', 'Api\MobileApiController@getSubmissions')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// MOBILE API V2 — User Favorites
+// ============================================================
+$router->get('/api/v2/mobile/user/favorites', 'Api\MobileApiController@getFavorites')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/user/documents', 'Api\MobileApiController@getCustomerDocuments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// MOBILE API V2 — User Notifications
+// ============================================================
+$router->get('/api/v2/mobile/user/notifications', 'Api\MobileApiController@getCustomerNotifications')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/user/notifications/read', 'Api\MobileApiController@markNotificationsRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// MOBILE API V2 — FCM Token Registration
+// ============================================================
+$router->post('/api/v2/mobile/fcm/register', 'Api\MobileApiController@registerFcmToken')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/user/favorites', 'Api\MobileApiController@addFavorite')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->delete('/api/v2/mobile/user/favorites/{id}', 'Api\MobileApiController@removeFavorite')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/user/favorites/check', 'Api\MobileApiController@checkFavorite')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/user/favorites/stats', 'Api\MobileApiController@getFavoritesStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// MOBILE API V2 — Colonies & Plots (Public Browsing)
+// ============================================================
+$router->get('/api/v2/mobile/colonies', 'Api\MobileApiController@getColonies');
+$router->get('/api/v2/mobile/colonies/search', 'Api\MobileApiController@searchColonies');
+$router->get('/api/v2/mobile/colonies/{id}', 'Api\MobileApiController@getColonyDetail');
+$router->get('/api/v2/mobile/colonies/{id}/stats', 'Api\MobileApiController@getColonyStats');
+$router->get('/api/v2/mobile/colonies/{id}/plots', 'Api\MobileApiController@getColonyPlots');
+
+$router->get('/api/v2/mobile/plots/{id}', 'Api\MobileApiController@getPlotDetail');
+$router->post('/api/v2/mobile/plots/{id}/hold', 'Api\MobileApiController@holdPlot')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/plots/{id}/release', 'Api\MobileApiController@releasePlot')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Property detail + search under /api/v2/mobile/ prefix
+$router->get('/api/v2/mobile/properties/{id}', 'Api\MobileApiController@propertyDetail');
+$router->get('/api/v2/mobile/properties/search', 'Api\MobileApiController@searchProperties');
 
 $router->get('/api/health', 'Api\SystemController@health');
 $router->get('/api/properties', 'Api\PropertyController@index');
@@ -123,6 +164,11 @@ $router->post('/api/mobile/v2/inquiries', 'Api\MobileApiController@submitInquiry
 $router->get('/api/mobile/v2/inquiries', 'Api\MobileApiController@listInquiries');
 $router->put('/api/mobile/v2/profile', 'Api\MobileApiController@updateProfileV2');
 $router->get('/api/mobile/v2/dashboard', 'Api\MobileApiController@dashboardV3');
+
+// Employee Dashboard API Routes (mobile v2)
+$router->get('/api/mobile/v2/employee/dashboard', 'Api\MobileApiController@employeeDashboard');
+$router->get('/api/mobile/v2/employee/tasks', 'Api\MobileApiController@employeeTasks');
+$router->get('/api/mobile/v2/employee/attendance', 'Api\MobileApiController@employeeAttendance');
 
 // AI Dashboard API Routes
 $router->post('/api/ai-dashboard/training', 'App\\Http\\Controllers\\AIDashboardController@startTraining');
@@ -259,3 +305,85 @@ $router->post('/api/twilio/voice/gather', 'Api\TwilioVoiceWebhookController@gath
 // API v1 Routes
 $router->get('/api/v1/search/properties', 'Api\SearchController@searchProperties');
 $router->post('/api/v1/finance/emi-calculate', 'Api\NewFeaturesApiController@calculateEmi');
+
+// ══════════════════════════════════════════════════════════════
+// CRM API (Flutter Lead Management + Pipeline + Follow-ups)
+// ══════════════════════════════════════════════════════════════
+$crmPrefix = '/api/v2/mobile/crm';
+
+// Public endpoints (no auth — for lead capture forms)
+$router->post("$crmPrefix/capture", 'Api\CRMController@captureForm');
+
+// Authenticated endpoints
+$router->get("$crmPrefix/dashboard", 'Api\CRMController@dashboard');
+$router->get("$crmPrefix/admin-overview", 'Api\CRMController@adminOverview');
+$router->get("$crmPrefix/pipeline", 'Api\CRMController@pipeline');
+$router->post("$crmPrefix/pipeline/move-stage", 'Api\CRMController@moveStage');
+$router->get("$crmPrefix/leads", 'Api\CRMController@leads');
+$router->post("$crmPrefix/leads", 'Api\CRMController@createLead');
+$router->get("$crmPrefix/leads/{id}", 'Api\CRMController@leadDetail');
+$router->put("$crmPrefix/leads/{id}", 'Api\CRMController@updateLead');
+$router->delete("$crmPrefix/leads/{id}", 'Api\CRMController@deleteLead');
+$router->post("$crmPrefix/leads/{id}/interact", 'Api\CRMController@addInteraction');
+$router->get("$crmPrefix/leads/{id}/interactions", 'Api\CRMController@getInteractions');
+$router->post("$crmPrefix/leads/{id}/assign", 'Api\CRMController@assignLead');
+$router->get("$crmPrefix/tasks", 'Api\CRMController@myTasks');
+$router->post("$crmPrefix/tasks", 'Api\CRMController@createTask');
+$router->put("$crmPrefix/tasks/{id}/complete", 'Api\CRMController@completeTask');
+$router->get("$crmPrefix/campaigns", 'Api\CRMController@campaigns');
+$router->post("$crmPrefix/campaigns", 'Api\CRMController@createCampaign');
+$router->get("$crmPrefix/forms", 'Api\CRMController@forms');
+$router->get("$crmPrefix/admin-employees", 'Api\CRMController@adminEmployees');
+$router->get("$crmPrefix/finance-overview", 'Api\CRMController@financeOverview');
+$router->get("$crmPrefix/search", 'Api\CRMController@search');
+$router->post("$crmPrefix/rescore-all", 'Api\CRMController@rescoreAll');
+$router->post("$crmPrefix/rescore/{id}", 'Api\CRMController@rescoreLead');
+$router->post("$crmPrefix/auto-assign", 'Api\CRMController@autoAssign');
+
+// ══════════════════════════════════════════════════════════════
+// FLUTTER ROUTE ALIASES — Map /api/v2/mobile/* to existing routes
+// Flutter app sends ALL requests under /api/v2/mobile/ prefix
+// but backend routes for employee, bookings, etc use different prefixes
+// ══════════════════════════════════════════════════════════════
+
+// Employee routes (existing at /api/mobile/v2/employee/*)
+$router->get('/api/v2/mobile/employee/dashboard', 'Api\MobileApiController@employeeDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/employee/tasks', 'Api\MobileApiController@employeeTasks')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/employee/attendance', 'Api\MobileApiController@employeeAttendance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Bookings routes (existing at /api/mobile/v2/bookings)
+$router->get('/api/v2/mobile/bookings', 'Api\MobileApiController@listBookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/bookings/{id}', 'Api\MobileApiController@bookingDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/bookings/{id}/pay', 'Api\MobileApiController@recordBookingPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// MLM aliases (Flutter calls /mlm/commissions, /mlm/network, etc but routes exist at different names)
+$router->get('/api/v2/mobile/mlm/commissions', 'Api\MobileApiController@getMlmPayouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/network', 'Api\MobileApiController@getMyTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/network/tree', 'Api\MobileApiController@getGenealogy')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/dashboard', 'Api\MobileApiController@getMlmSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/rank', 'Api\MobileApiController@getRankProgress')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/direct-referrals', 'Api\MobileApiController@getMyTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/referrals', 'Api\MobileApiController@getMyTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Referral routes — point to MobileApiController (Api\ReferralController doesn't exist)
+$router->get('/api/v2/mobile/referral/stats', 'Api\MobileApiController@getMlmSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/referral/dashboard', 'Api\MobileApiController@getMlmSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/referral/list', 'Api\MobileApiController@getMyTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/referral/track', 'Api\MobileApiController@trackReferral')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// KYC routes (existing at /api/kyc/*)
+$router->get('/api/v2/mobile/kyc/status', 'Api\KYCController@getStatus')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/kyc/verify-pan', 'Api\KYCController@verifyPan')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/kyc/verify-aadhaar', 'Api\KYCController@verifyAadhaar')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Attendance routes (existing at /api/attendance/*)
+$router->get('/api/v2/mobile/attendance/status', 'Api\MobileApiController@attendanceStatus')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/attendance/punch-in', 'Api\MobileApiController@punchIn')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/attendance/punch-out', 'Api\MobileApiController@punchOut')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Notification registration (existing at /api/mobile/notifications/*)
+$router->post('/api/v2/mobile/notifications/register', 'Api\MobileApiController@registerPushTokenV2')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// CRM analytics aliases (Flutter calls /crm/analytics, /crm/team-performance)
+$router->get('/api/v2/mobile/crm/analytics', 'Api\CRMController@adminOverview');
+$router->get('/api/v2/mobile/crm/team-performance', 'Api\CRMController@dashboard');

@@ -172,162 +172,154 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Attendance',
-            style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
-      ),
-      body: _isLoading && _todayRecord == null
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  // Status card
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: _isPunchedIn
-                            ? [
-                                AppTheme.successColor,
-                                AppTheme.successColor.withValues(alpha: 0.7)
-                              ]
-                            : [
-                                AppTheme.primaryColor,
-                                AppTheme.primaryColor.withValues(alpha: 0.7)
-                              ],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: (_isPunchedIn
-                                  ? AppTheme.successColor
-                                  : AppTheme.primaryColor)
-                              .withValues(alpha: 0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+    return _isLoading && _todayRecord == null
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                // Status card
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: _isPunchedIn
+                          ? [
+                              AppTheme.successColor,
+                              AppTheme.successColor.withValues(alpha: 0.7)
+                            ]
+                          : [
+                              AppTheme.primaryColor,
+                              AppTheme.primaryColor.withValues(alpha: 0.7)
+                            ],
                     ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          _isPunchedIn
-                              ? Icons.check_circle
-                              : Icons.access_time,
-                          size: 64,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(height: 12),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (_isPunchedIn
+                                ? AppTheme.successColor
+                                : AppTheme.primaryColor)
+                            .withValues(alpha: 0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        _isPunchedIn
+                            ? Icons.check_circle
+                            : Icons.access_time,
+                        size: 64,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        _isPunchedIn ? 'Checked In' : 'Not Checked In',
+                        style: GoogleFonts.outfit(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white),
+                      ),
+                      if (_todayRecord != null) ...[
+                        const SizedBox(height: 8),
                         Text(
-                          _isPunchedIn ? 'Checked In' : 'Not Checked In',
-                          style: GoogleFonts.outfit(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white),
+                          'In: ${_todayRecord!['punch_in_time'] ?? 'N/A'}',
+                          style:
+                              GoogleFonts.inter(color: Colors.white70),
                         ),
-                        if (_todayRecord != null) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            'In: ${_todayRecord!['punch_in_time'] ?? 'N/A'}',
-                            style:
-                                GoogleFonts.inter(color: Colors.white70),
-                          ),
-                        ],
                       ],
-                    ),
+                    ],
                   ),
-                  const SizedBox(height: 24),
+                ),
+                const SizedBox(height: 24),
 
-                  // Error message
-                  if (_error != null)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppTheme.errorColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                            color: AppTheme.errorColor.withValues(alpha: 0.3)),
-                      ),
-                      child: Text(_error!,
-                          style: GoogleFonts.inter(
-                              color: AppTheme.errorColor, fontSize: 13)),
-                    ),
-
-                  if (_distanceFromOffice != null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      'Distance from office: ${_distanceFromOffice!.round()}m',
-                      style:
-                          GoogleFonts.inter(color: Colors.grey.shade600),
-                    ),
-                  ],
-
-                  const SizedBox(height: 24),
-
-                  // Action button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed:
-                          _isLoading ? null : (_isPunchedIn ? _punchOut : _punchIn),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _isPunchedIn
-                            ? AppTheme.errorColor
-                            : AppTheme.primaryColor,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        elevation: 2,
-                      ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator(
-                              color: Colors.white)
-                          : Text(
-                              _isPunchedIn ? 'PUNCH OUT' : 'PUNCH IN',
-                              style: GoogleFonts.outfit(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.2),
-                            ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Office info
+                // Error message
+                if (_error != null)
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
+                      color: AppTheme.errorColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                          color: AppTheme.errorColor.withValues(alpha: 0.3)),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Office Location',
-                            style: GoogleFonts.outfit(
-                                fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 4),
-                        Text('Kunraghat Office, Gorakhpur',
-                            style: GoogleFonts.inter(
-                                color: Colors.grey.shade600)),
-                        Text('Radius: ${_radiusMeters}m',
-                            style: GoogleFonts.inter(
-                                color: Colors.grey.shade600,
-                                fontSize: 12)),
-                      ],
-                    ),
+                    child: Text(_error!,
+                        style: GoogleFonts.inter(
+                            color: AppTheme.errorColor, fontSize: 13)),
+                  ),
+
+                if (_distanceFromOffice != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    'Distance from office: ${_distanceFromOffice!.round()}m',
+                    style:
+                        GoogleFonts.inter(color: Colors.grey.shade600),
                   ),
                 ],
-              ),
+
+                const SizedBox(height: 24),
+
+                // Action button
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed:
+                        _isLoading ? null : (_isPunchedIn ? _punchOut : _punchIn),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _isPunchedIn
+                          ? AppTheme.errorColor
+                          : AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      elevation: 2,
+                    ),
+                    child: _isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white)
+                        : Text(
+                            _isPunchedIn ? 'PUNCH OUT' : 'PUNCH IN',
+                            style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.2),
+                          ),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Office info
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Office Location',
+                          style: GoogleFonts.outfit(
+                              fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 4),
+                      Text('Kunraghat Office, Gorakhpur',
+                          style: GoogleFonts.inter(
+                              color: Colors.grey.shade600)),
+                      Text('Radius: ${_radiusMeters}m',
+                          style: GoogleFonts.inter(
+                              color: Colors.grey.shade600,
+                              fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ],
             ),
-    );
+          );
   }
 }

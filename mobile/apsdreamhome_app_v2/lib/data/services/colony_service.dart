@@ -28,15 +28,32 @@ class ColonyService {
         queryParameters: params,
       );
 
-      final data = response['data'] ?? [];
-      final colonies = (data as List).map((json) {
-        return ColonyModel.fromJson(json as Map<String, dynamic>);
-      }).toList();
+      AppLogger.info('[Colonies] Raw response keys: ${response.keys.toList()}');
+      AppLogger.info('[Colonies] success=${response['success']}, data type=${response['data']?.runtimeType}');
 
-      AppLogger.info('Fetched ${colonies.length} colonies');
+      final data = response['data'] ?? [];
+      if (data is! List) {
+        AppLogger.error('[Colonies] data is not List, it is ${data.runtimeType}: $data', null, StackTrace.current);
+        return [];
+      }
+
+      AppLogger.info('[Colonies] data.length=${data.length}, first item type=${data.isNotEmpty ? data.first.runtimeType : "empty"}');
+
+      final colonies = <ColonyModel>[];
+      for (var i = 0; i < data.length; i++) {
+        try {
+          final item = data[i] as Map<String, dynamic>;
+          colonies.add(ColonyModel.fromJson(item));
+        } catch (e, st) {
+          AppLogger.error('[Colonies] Parse error at index $i', e, st);
+          AppLogger.error('[Colonies] Item: ${data[i]}', null, null);
+        }
+      }
+
+      AppLogger.info('[Colonies] Parsed ${colonies.length}/${data.length} colonies');
       return colonies;
     } catch (e, stackTrace) {
-      AppLogger.error('Error fetching colonies', e, stackTrace);
+      AppLogger.error('[Colonies] FATAL Error fetching colonies', e, stackTrace);
       return [];
     }
   }

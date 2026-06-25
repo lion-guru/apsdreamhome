@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,179 +17,156 @@ class SplashPage extends ConsumerStatefulWidget {
 
 class _SplashPageState extends ConsumerState<SplashPage>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
+  bool _navigating = false;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    _fadeController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 800),
     );
-
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0, 0.5, curve: Curves.easeIn),
-      ),
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
     );
+    _fadeController.forward();
 
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.2, 0.7, curve: Curves.elasticOut),
-      ),
-    );
-
-    _controller.forward();
-
-    // Check auth status and navigate
-    Future.delayed(const Duration(seconds: 3), () {
-      _checkAuthAndNavigate();
+    Timer(const Duration(seconds: 2), () {
+      if (mounted && !_navigating) {
+        _checkAuthAndNavigate();
+      }
     });
   }
 
   Future<void> _checkAuthAndNavigate() async {
-    final authService = ref.read(authServiceProvider);
-    final user = authService.currentUser;
+    if (_navigating) return;
+    _navigating = true;
 
-    if (user != null) {
-      // User is logged in, get their role and navigate accordingly
-      final userData = await authService.getCurrentUserData();
+    try {
+      final authService = ref.read(authServiceProvider);
+      final user = authService.currentUser;
 
-      if (mounted) {
-        if (userData != null) {
-          if (userData.isCustomer) {
-            context.go('/home');
-          } else if (userData.isAssociate) {
-            context.go('/associate/dashboard');
-          } else if (userData.isAdmin) {
-            context.go('/admin/dashboard');
+      if (user != null) {
+        final userData = await authService.getCurrentUserData();
+
+        if (mounted) {
+          if (userData != null) {
+            if (userData.isCustomer) {
+              context.go('/home');
+            } else if (userData.isAssociate) {
+              context.go('/associate/dashboard');
+            } else if (userData.isAdmin) {
+              context.go('/admin/dashboard');
+            } else if (userData.isAgent) {
+              context.go('/agent/dashboard');
+            } else if (userData.isEmployee) {
+              context.go('/employee/dashboard');
+            } else {
+              context.go('/home');
+            }
           } else {
             context.go('/home');
           }
-        } else {
-          context.go('/login');
+        }
+      } else {
+        if (mounted) {
+          context.go('/home');
         }
       }
-    } else {
+    } catch (_) {
       if (mounted) {
-        context.go('/login');
+        context.go('/home');
       }
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _fadeController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppTheme.primaryColor,
-              AppTheme.secondaryColor,
-            ],
+      backgroundColor: AppTheme.primaryColor,
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppTheme.primaryColor,
+                AppTheme.secondaryColor,
+              ],
+            ),
           ),
-        ),
-        child: Center(
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return FadeTransition(
-                opacity: _fadeAnimation,
-                child: ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Logo Container
-                      Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.home_work,
-                            size: 80,
-                            color: AppTheme.primaryColor,
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 40),
-
-                      // App Name
-                      const Text(
-                        AppConstants.appName,
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      // Tagline
-                      const Text(
-                        'Your Dream Home Awaits',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                          letterSpacing: 1,
-                        ),
-                      ),
-
-                      const SizedBox(height: 60),
-
-                      // Loading Indicator
-                      const SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                          strokeWidth: 3,
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Loading Text
-                      const Text(
-                        'Loading...',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white70,
-                        ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
                     ],
                   ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Image.asset(
+                      'assets/images/aps_logo.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.home_work,
+                        size: 80,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                  ),
                 ),
-              );
-            },
+                const SizedBox(height: 40),
+                Text(
+                  AppConstants.appName,
+                  style: AppTheme.displayLarge.copyWith(
+                    color: Colors.white,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Your Dream Home Awaits',
+                  style: AppTheme.bodyLarge.copyWith(
+                    color: Colors.white70,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 60),
+                const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white,
+                    ),
+                    strokeWidth: 3,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

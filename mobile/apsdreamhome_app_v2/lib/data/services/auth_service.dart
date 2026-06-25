@@ -28,11 +28,6 @@ class AuthService {
   // Allows the synchronous `currentUser` getter to work without async storage.
   bool _isLoggedIn = false;
 
-  // Demo mode flag
-  static bool _demoMode = false;
-  static bool get demoMode => _demoMode;
-  static void setDemoMode(bool value) => _demoMode = value;
-
   /// Synchronous check: is a user currently logged in?
   /// Consumers use this as a null-check proxy (`authService.currentUser != null`).
   /// We check in-memory flag first, then fall back to token presence.

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../data/services/auth_service.dart';
+import '../../../data/models/user_model.dart';
 
-/// Admin Shell - Main Layout for Admin Panel (Web/Desktop optimized)
+/// Admin Shell - Main Layout for Admin Panel
+/// Desktop: sidebar + content side-by-side
+/// Mobile: Drawer sidebar + full-width content
 class AdminShell extends ConsumerStatefulWidget {
   final Widget child;
 
@@ -19,78 +22,72 @@ class AdminShell extends ConsumerStatefulWidget {
 }
 
 class _AdminShellState extends ConsumerState<AdminShell> {
-  bool _isSidebarExpanded = true;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    final userAsync = ref.watch(currentUserDataProvider);
+    final user = ref.watch(authProvider);
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 768;
 
-    return userAsync.when(
-      data: (user) {
-        if (user == null || user.role != 'admin') {
-          return const Scaffold(
-            body: Center(
-              child: Text('Access Denied - Admin Only'),
-            ),
-          );
-        }
+    if (user == null || user.role.toLowerCase() != 'admin') {
+      return const Scaffold(
+        body: Center(
+          child: Text('Access Denied - Admin Only'),
+        ),
+      );
+    }
 
-        return Scaffold(
-          body: Row(
-            children: [
-              // Sidebar
-              if (!isMobile || _isSidebarExpanded)
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  width: _isSidebarExpanded ? 260 : 70,
-                  child: _buildSidebar(context, user),
-                ),
+    // MOBILE: Scaffold with Drawer
+    if (isMobile) {
+      return Scaffold(
+        key: _scaffoldKey,
+        drawer: Drawer(
+          child: _buildSidebar(context, user),
+        ),
+        body: Column(
+          children: [
+            _buildMobileTopBar(context, user),
+            Expanded(child: widget.child),
+          ],
+        ),
+      );
+    }
 
-              // Main Content
-              Expanded(
-                child: Column(
-                  children: [
-                    // Top App Bar
-                    _buildTopBar(context, user, isMobile),
-
-                    // Content
-                    Expanded(
-                      child: widget.child,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    // DESKTOP: Row with persistent sidebar
+    return Scaffold(
+      body: Row(
+        children: [
+          SizedBox(
+            width: 260,
+            child: _buildSidebar(context, user),
           ),
-        );
-      },
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
-      error: (error, stack) => Scaffold(
-        body: Center(child: Text('Error: $error')),
+          Expanded(
+            child: Column(
+              children: [
+                _buildDesktopTopBar(context, user),
+                Expanded(child: widget.child),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildSidebar(BuildContext context, dynamic user) {
-    final menuItems = _getMenuItems((user.subRole as String?) ?? 'director');
+  Widget _buildSidebar(BuildContext context, User user) {
+    final menuItems = _getMenuItems('director');
 
     return Container(
-      color: const Color(0xFF1E293B), // Dark blue-gray
+      color: const Color(0xFF1E293B),
       child: Column(
         children: [
-          // Logo Section
+          // Logo
           Container(
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
               border: Border(
-                bottom: BorderSide(
-                  color: Color(0xFF334155),
-                  width: 1,
-                ),
+                bottom: BorderSide(color: Color(0xFF334155), width: 1),
               ),
             ),
             child: Row(
@@ -104,42 +101,37 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
-                    Icons.home_work,
-                    color: Colors.white,
+                  child: const Icon(Icons.home_work, color: Colors.white),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'APS Dream Home',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        'Admin Panel',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                if (_isSidebarExpanded) ...[
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'APS Dream Home',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          'Admin Panel',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.6),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
               ],
             ),
           ),
 
-          // Menu Items
+          // Menu
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -147,7 +139,6 @@ class _AdminShellState extends ConsumerState<AdminShell> {
               itemBuilder: (context, index) {
                 final item = menuItems[index];
                 final isSelected = _isCurrentRoute(item['route'] as String);
-
                 return _buildMenuItem(
                   icon: item['icon'] as IconData,
                   label: item['label'] as String,
@@ -159,62 +150,42 @@ class _AdminShellState extends ConsumerState<AdminShell> {
             ),
           ),
 
-          // User Profile at Bottom
+          // User at bottom
           Container(
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: Color(0xFF334155),
-                  width: 1,
-                ),
-              ),
+              border: Border(top: BorderSide(color: Color(0xFF334155), width: 1)),
             ),
             child: Row(
               children: [
                 CircleAvatar(
                   backgroundColor: AppTheme.primaryColor,
                   child: Text(
-                    (user.name as String).substring(0, 1).toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    user.name.substring(0, 1).toUpperCase(),
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
-                if (_isSidebarExpanded) ...[
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user.name as String,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          (user.subRole as String?)?.toUpperCase() ?? 'ADMIN',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.6),
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
-                    ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.name,
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        'ADMIN',
+                        style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 11),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    onPressed: () => _logout(),
-                    icon: const Icon(
-                      Icons.logout,
-                      color: Colors.white70,
-                      size: 20,
-                    ),
-                  ),
-                ],
+                ),
+                IconButton(
+                  onPressed: () => _logout(),
+                  icon: const Icon(Icons.logout, color: Colors.white70, size: 20),
+                ),
               ],
             ),
           ),
@@ -231,108 +202,109 @@ class _AdminShellState extends ConsumerState<AdminShell> {
     int? badge,
   }) {
     return InkWell(
-      onTap: () => context.go(route),
+      onTap: () {
+        context.go(route);
+        // Close drawer on mobile
+        final isMobile = MediaQuery.of(context).size.width < 768;
+        if (isMobile) {
+          Navigator.of(context).pop();
+        }
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppTheme.primaryColor.withValues(alpha: 0.2)
-              : Colors.transparent,
+          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: isSelected
-              ? Border.all(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.5),
-                  width: 1,
-                )
+              ? Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.5), width: 1)
               : null,
         ),
         child: Row(
           children: [
             Icon(
               icon,
-              color: isSelected
-                  ? AppTheme.primaryColor
-                  : Colors.white.withValues(alpha: 0.7),
+              color: isSelected ? AppTheme.primaryColor : Colors.white.withValues(alpha: 0.7),
               size: 22,
             ),
-            if (_isSidebarExpanded) ...[
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: isSelected
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.7),
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
-                    fontSize: 14,
-                  ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.7),
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 14,
                 ),
               ),
-              if (badge != null && badge > 0)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    badge.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            ),
+            if (badge != null && badge > 0)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-            ],
+                child: Text(
+                  badge.toString(),
+                  style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTopBar(BuildContext context, dynamic user, bool isMobile) {
+  // MOBILE top bar: hamburger + search + notifications
+  Widget _buildMobileTopBar(BuildContext context, User user) {
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+            icon: const Icon(Icons.menu),
+          ),
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.home_work, color: Colors.white, size: 18),
+          ),
+          const SizedBox(width: 8),
+          const Text('APS Dream Home', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Spacer(),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications_outlined, size: 22),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // DESKTOP top bar: search + notifications + user
+  Widget _buildDesktopTopBar(BuildContext context, User user) {
     return Container(
       height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
       ),
       child: Row(
         children: [
-          if (isMobile)
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _isSidebarExpanded = !_isSidebarExpanded;
-                });
-              },
-              icon: const Icon(Icons.menu),
-            ),
-          if (!isMobile)
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _isSidebarExpanded = !_isSidebarExpanded;
-                });
-              },
-              icon: Icon(
-                _isSidebarExpanded ? Icons.chevron_left : Icons.chevron_right,
-              ),
-            ),
-          const SizedBox(width: 16),
-
-          // Search Bar
           Expanded(
             child: Container(
               height: 44,
@@ -351,10 +323,7 @@ class _AdminShellState extends ConsumerState<AdminShell> {
               ),
             ),
           ),
-
           const Spacer(),
-
-          // Notifications
           Stack(
             children: [
               IconButton(
@@ -367,44 +336,20 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                 child: Container(
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
+                  decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
                 ),
               ),
             ],
           ),
-
           const SizedBox(width: 8),
-
-          // Quick Actions
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'profile') context.push('/admin/profile');
               if (value == 'settings') context.push('/admin/settings');
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'profile',
-                child: Row(
-                  children: [
-                    Icon(Icons.person_outline),
-                    SizedBox(width: 8),
-                    Text('Profile'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'settings',
-                child: Row(
-                  children: [
-                    Icon(Icons.settings_outlined),
-                    SizedBox(width: 8),
-                    Text('Settings'),
-                  ],
-                ),
-              ),
+              const PopupMenuItem(value: 'profile', child: Row(children: [Icon(Icons.person_outline), SizedBox(width: 8), Text('Profile')])),
+              const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings_outlined), SizedBox(width: 8), Text('Settings')])),
             ],
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -418,21 +363,12 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                     radius: 16,
                     backgroundColor: AppTheme.primaryColor,
                     child: Text(
-                      ((user['name'] as String?) ?? 'U')
-                          .substring(0, 1)
-                          .toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      user.name.substring(0, 1).toUpperCase(),
+                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    ((user['name'] as String?) ?? 'User').split(' ')[0],
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
+                  Text(user.name.split(' ')[0], style: const TextStyle(fontWeight: FontWeight.w500)),
                   const Icon(Icons.arrow_drop_down),
                 ],
               ),
@@ -445,129 +381,27 @@ class _AdminShellState extends ConsumerState<AdminShell> {
 
   List<Map<String, dynamic>> _getMenuItems(String subRole) {
     final commonItems = [
-      {
-        'icon': Icons.dashboard_outlined,
-        'label': 'Dashboard',
-        'route': '/admin',
-        'badge': 0
-      },
-      {
-        'icon': Icons.campaign_outlined,
-        'label': 'CRM',
-        'route': '/admin/crm',
-        'badge': 28
-      },
-      {
-        'icon': Icons.book_online_outlined,
-        'label': 'Bookings',
-        'route': '/admin/bookings',
-        'badge': 5
-      },
-      {
-        'icon': Icons.people_outline,
-        'label': 'Customers',
-        'route': '/admin/customers',
-        'badge': 0
-      },
-      {
-        'icon': Icons.assessment_outlined,
-        'label': 'Reports',
-        'route': '/admin/reports',
-        'badge': 0
-      },
+      {'icon': Icons.dashboard_outlined, 'label': 'Dashboard', 'route': '/admin', 'badge': 0},
+      {'icon': Icons.campaign_outlined, 'label': 'CRM', 'route': '/admin/crm', 'badge': 28},
+      {'icon': Icons.book_online_outlined, 'label': 'Bookings', 'route': '/admin/bookings', 'badge': 5},
+      {'icon': Icons.people_outline, 'label': 'Customers', 'route': '/admin/customers', 'badge': 0},
+      {'icon': Icons.assessment_outlined, 'label': 'Reports', 'route': '/admin/reports', 'badge': 0},
     ];
 
     final directorItems = [
-      {
-        'icon': Icons.location_city_outlined,
-        'label': 'Colonies',
-        'route': '/admin/colonies',
-        'badge': 0
-      },
-      {
-        'icon': Icons.map_outlined,
-        'label': 'Plots',
-        'route': '/admin/plots',
-        'badge': 12
-      },
-      {
-        'icon': Icons.group_outlined,
-        'label': 'Employees',
-        'route': '/admin/employees',
-        'badge': 0
-      },
-      {
-        'icon': Icons.account_balance_wallet_outlined,
-        'label': 'Commissions',
-        'route': '/admin/commissions',
-        'badge': 8
-      },
-      {
-        'icon': Icons.payments_outlined,
-        'label': 'Payouts',
-        'route': '/admin/payouts',
-        'badge': 3
-      },
-      {
-        'icon': Icons.account_balance_outlined,
-        'label': 'Accounts',
-        'route': '/admin/accounts',
-        'badge': 0
-      },
-      {
-        'icon': Icons.settings_outlined,
-        'label': 'Settings',
-        'route': '/admin/settings',
-        'badge': 0
-      },
-    ];
-
-    final accountantItems = [
-      {
-        'icon': Icons.receipt_outlined,
-        'label': 'Invoices',
-        'route': '/admin/invoices',
-        'badge': 0
-      },
-      {
-        'icon': Icons.account_balance_outlined,
-        'label': 'Ledger',
-        'route': '/admin/ledger',
-        'badge': 0
-      },
-      {
-        'icon': Icons.trending_up_outlined,
-        'label': 'EMI Collections',
-        'route': '/admin/emi',
-        'badge': 0
-      },
-    ];
-
-    final salesItems = [
-      {
-        'icon': Icons.person_add_outlined,
-        'label': 'Leads',
-        'route': '/admin/leads',
-        'badge': 15
-      },
-      {
-        'icon': Icons.campaign_outlined,
-        'label': 'Marketing',
-        'route': '/admin/marketing',
-        'badge': 0
-      },
+      {'icon': Icons.location_city_outlined, 'label': 'Colonies', 'route': '/admin/colonies', 'badge': 0},
+      {'icon': Icons.map_outlined, 'label': 'Plots', 'route': '/admin/plots', 'badge': 12},
+      {'icon': Icons.group_outlined, 'label': 'Employees', 'route': '/admin/employees', 'badge': 0},
+      {'icon': Icons.account_balance_wallet_outlined, 'label': 'Commissions', 'route': '/admin/commissions', 'badge': 8},
+      {'icon': Icons.payments_outlined, 'label': 'Payouts', 'route': '/admin/payouts', 'badge': 3},
+      {'icon': Icons.account_balance_outlined, 'label': 'Accounts', 'route': '/admin/accounts', 'badge': 0},
+      {'icon': Icons.settings_outlined, 'label': 'Settings', 'route': '/admin/settings', 'badge': 0},
     ];
 
     switch (subRole.toLowerCase()) {
       case 'director':
       case 'md':
         return [...commonItems, ...directorItems];
-      case 'accountant':
-      case 'cmd':
-        return [...commonItems, ...accountantItems];
-      case 'sales':
-      case 'sales_manager':
-        return [...commonItems, ...salesItems];
       default:
         return commonItems;
     }
@@ -579,7 +413,7 @@ class _AdminShellState extends ConsumerState<AdminShell> {
   }
 
   void _logout() {
-    ref.read(authServiceProvider).logout();
+    ref.read(authProvider.notifier).logout();
     context.go('/login');
   }
 }

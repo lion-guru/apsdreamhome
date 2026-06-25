@@ -309,7 +309,7 @@ class _MapViewPageState extends State<MapViewPage> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      context.push('/colony/${colony['id']}');
+                      context.push('/colony-detail/${colony['id']}');
                     },
                     icon: const Icon(Icons.visibility, size: 18),
                     label: const Text('View Details'),

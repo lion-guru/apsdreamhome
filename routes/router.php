@@ -159,7 +159,7 @@ class Router
             if (class_exists($middlewareClass)) {
                 $middleware = new $middlewareClass();
                 if (method_exists($middleware, 'handle')) {
-                    $request = new \App\Core\Http\Request();
+                    $request = \App\Core\Http\Request::createFromGlobals();
                     $middleware->handle($request, function ($req) {
                         return $req;
                     });

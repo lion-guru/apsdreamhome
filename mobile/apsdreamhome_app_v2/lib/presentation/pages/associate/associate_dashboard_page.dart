@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/responsive_helper.dart';
 import '../../../data/services/auth_service.dart';
 import '../../../data/repositories/mlm_repository.dart';
 import '../../../data/models/user_model.dart';
@@ -27,6 +27,8 @@ class AssociateDashboardPage extends ConsumerWidget {
           }
 
           final commissionAsync = ref.watch(mlmSummaryProvider);
+          final rankProgressAsync = ref.watch(rankProgressProvider);
+          final recentCommissionsAsync = ref.watch(commissionsProvider(null));
 
           return CustomScrollView(
             slivers: [
@@ -66,9 +68,26 @@ class AssociateDashboardPage extends ConsumerWidget {
                 child: _buildQuickActions(context),
               ),
 
-              // Rank Progress
-              SliverToBoxAdapter(
-                child: _buildRankProgress(context, user),
+              // Rank Progress (from API)
+              rankProgressAsync.when(
+                data: (rankData) => SliverToBoxAdapter(
+                  child: _buildRankProgressFromAPI(context, rankData),
+                ),
+                loading: () => SliverToBoxAdapter(
+                  child: AppWidgets.shimmerLoading(
+                    child: Container(
+                      height: 160,
+                      margin: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
+                error: (error, stack) => SliverToBoxAdapter(
+                  child: _buildRankProgressFallback(context),
+                ),
               ),
 
               // Recent Commissions Header
@@ -80,11 +99,22 @@ class AssociateDashboardPage extends ConsumerWidget {
               ),
 
               // Recent Commissions List
-              commissionAsync.when(
-                data: (summary) {
-                  // For now, show placeholder or fetch actual commissions
+              recentCommissionsAsync.when(
+                data: (commissions) {
+                  if (commissions.isEmpty) {
+                    return SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: AppWidgets.emptyState(
+                          title: 'No Commissions Yet',
+                          subtitle: 'Start making sales to earn commissions',
+                          icon: Icons.account_balance_wallet_outlined,
+                        ),
+                      ),
+                    );
+                  }
                   return SliverToBoxAdapter(
-                    child: _buildRecentCommissions(context),
+                    child: _buildRecentCommissionsFromAPI(context, commissions),
                   );
                 },
                 loading: () => SliverToBoxAdapter(
@@ -109,8 +139,11 @@ class AssociateDashboardPage extends ConsumerWidget {
                     },
                   ),
                 ),
-                error: (error, stack) => const SliverToBoxAdapter(
-                  child: SizedBox.shrink(),
+                error: (error, stack) => SliverToBoxAdapter(
+                  child: AppWidgets.errorWidget(
+                    message: 'Failed to load commissions',
+                    onRetry: () => ref.refresh(commissionsProvider(null)),
+                  ),
                 ),
               ),
 
@@ -386,7 +419,7 @@ class AssociateDashboardPage extends ConsumerWidget {
                 Text(
                   stat['count'].toString(),
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: ResponsiveHelper.fontSize(context, 24),
                     fontWeight: FontWeight.bold,
                     color: stat['color'] as Color,
                   ),
@@ -485,162 +518,16 @@ class AssociateDashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildRankProgress(BuildContext context, User user) {
-    final currentRank = user.rank;
-    final currentIndex = AppConstants.rankOrder.indexOf(currentRank);
-    final nextRank = currentIndex < AppConstants.rankOrder.length - 1
-        ? AppConstants.rankOrder[currentIndex + 1]
-        : null;
-
-    if (nextRank == null) {
-      // Max rank achieved
-      return AppWidgets.customCard(
-        child: Column(
-          children: [
-            const Icon(
-              Icons.emoji_events,
-              color: AppTheme.successColor,
-              size: 48,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Congratulations!',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'You have reached the highest rank - Site Manager!',
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-    }
-
-    final target = AppConstants.rankTargets[nextRank] ?? 0;
-    final currentSales = user.totalSales.toDouble();
-    final progress = (currentSales / target).clamp(0.0, 1.0);
-    final remaining = target - currentSales;
-
-    return AppWidgets.customCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Rank Progress',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '${(progress * 100).toStringAsFixed(0)}%',
-                  style: const TextStyle(
-                    color: AppTheme.accentColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          // Rank Names
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                currentRank,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
-                ),
-              ),
-              Text(
-                nextRank,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          // Progress Bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: progress,
-              backgroundColor: Colors.grey.shade200,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                AppTheme.primaryColor,
-              ),
-              minHeight: 10,
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Remaining
-          Text(
-            '₹${_formatCurrency(remaining)} more to reach $nextRank',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRecentCommissions(BuildContext context) {
-    // Placeholder - will be replaced with actual data
-    final commissions = [
-      {
-        'colony': 'Suryoday Heights',
-        'plot': 'Plot 45',
-        'amount': 45000.0,
-        'date': 'Today',
-        'type': 'Direct Sale',
-      },
-      {
-        'colony': 'Raghunath City',
-        'plot': 'Plot 12',
-        'amount': 25000.0,
-        'date': 'Yesterday',
-        'type': 'Differential',
-      },
-      {
-        'colony': 'Ganga Nagri',
-        'plot': 'Plot 89',
-        'amount': 15000.0,
-        'date': '2 days ago',
-        'type': 'Indirect',
-      },
-    ];
-
+  Widget _buildRecentCommissionsFromAPI(BuildContext context, List<Commission> commissions) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: commissions.length,
+      itemCount: commissions.length > 5 ? 5 : commissions.length,
       itemBuilder: (context, index) {
         final commission = commissions[index];
+        final typeLabel = commission.type.isNotEmpty ? commission.type : 'Commission';
+        final dateLabel = _formatDate(commission.date);
 
         return AppWidgets.customCard(
           child: Row(
@@ -663,14 +550,14 @@ class AssociateDashboardPage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      commission['colony'] as String,
+                      commission.description.isNotEmpty ? commission.description : typeLabel,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${commission['plot']} • ${commission['type']}',
+                      typeLabel,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,
@@ -683,7 +570,7 @@ class AssociateDashboardPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   AppWidgets.priceTag(
-                    amount: commission['amount'] as double,
+                    amount: commission.amount,
                     prefix: '+₹',
                     style: const TextStyle(
                       fontSize: 16,
@@ -693,7 +580,7 @@ class AssociateDashboardPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    commission['date'] as String,
+                    dateLabel,
                     style: TextStyle(
                       fontSize: 11,
                       color: Colors.grey.shade500,
@@ -708,6 +595,15 @@ class AssociateDashboardPage extends ConsumerWidget {
     );
   }
 
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final diff = now.difference(date);
+    if (diff.inDays == 0) return 'Today';
+    if (diff.inDays == 1) return 'Yesterday';
+    if (diff.inDays < 7) return '${diff.inDays} days ago';
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
   String _formatCurrency(double amount) {
     if (amount >= 10000000) {
       return '${(amount / 10000000).toStringAsFixed(1)} Cr';
@@ -717,5 +613,96 @@ class AssociateDashboardPage extends ConsumerWidget {
       return '${(amount / 1000).toStringAsFixed(1)} K';
     }
     return amount.toStringAsFixed(0);
+  }
+
+  Widget _buildRankProgressFromAPI(BuildContext context, Map<String, dynamic> rankData) {
+    final currentRank = rankData['current_rank'] as String? ?? 'Associate';
+    final nextRank = rankData['next_rank'] as String?;
+    final overallProgress = (rankData['overall_progress_pct'] as num?)?.toDouble() ?? 0.0;
+    final salesRemaining = (rankData['sales_remaining'] as num?)?.toDouble() ?? 0.0;
+    final commissionRemaining = (rankData['commission_remaining'] as num?)?.toDouble() ?? 0.0;
+    final directsRemaining = (rankData['directs_remaining'] as int?) ?? 0;
+
+    if (nextRank == null || overallProgress >= 100) {
+      return AppWidgets.customCard(
+        child: Column(
+          children: [
+            const Icon(Icons.emoji_events, color: AppTheme.successColor, size: 48),
+            const SizedBox(height: 12),
+            Text('Congratulations!', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text('You have reached the highest rank - $currentRank!', textAlign: TextAlign.center),
+          ],
+        ),
+      );
+    }
+
+    return AppWidgets.customCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Rank Progress', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(color: AppTheme.accentColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
+                child: Text('${overallProgress.toStringAsFixed(0)}%', style: const TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(currentRank, style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
+              Text(nextRank, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade600)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: (overallProgress / 100).clamp(0.0, 1.0),
+              backgroundColor: Colors.grey.shade200,
+              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+              minHeight: 10,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text('₹${_formatCurrency(salesRemaining)} sales • ₹${_formatCurrency(commissionRemaining)} commission • $directsRemaining directs to reach $nextRank',
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRankProgressFallback(BuildContext context) {
+    return AppWidgets.customCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Rank Progress', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(color: AppTheme.accentColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
+                child: const Text('--', style: TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(value: 0, backgroundColor: Colors.grey.shade200, valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryColor), minHeight: 10),
+          ),
+          const SizedBox(height: 8),
+          Text('Load your rank data to see progress', style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+        ],
+      ),
+    );
   }
 }

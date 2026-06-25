@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/responsive_helper.dart';
 import '../../../data/repositories/mlm_repository.dart';
 import '../../../data/repositories/lead_repository.dart';
 import '../../../data/services/auth_service.dart';
@@ -288,7 +289,7 @@ class AgentDashboardPage extends ConsumerWidget {
                     Text(
                       '${stat['count']}',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: ResponsiveHelper.fontSize(context, 24),
                         fontWeight: FontWeight.bold,
                         color: stat['color'] as Color,
                       ),

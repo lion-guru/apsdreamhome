@@ -20,108 +20,125 @@
 
     <!-- Admin CSS (page-specific overrides) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/responsive-fixes.css" rel="stylesheet">
     <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo $extra_css; ?><?php endif; ?>
-    <style>
-        /* Only overrides that admin.css does not cover */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font); background: var(--body-bg); overflow-x: hidden; }
-    </style>
-
-    <!-- CRITICAL: Sidebar functions in HEAD - load before body -->
-    <script>
-        var APS = APS || {};
-        APS._sidebar = null;
-        APS._overlay = null;
-        APS._touchStartX = 0;
-
-        APS._init = function() {
-            APS._sidebar = document.getElementById('sidebarMenu');
-            APS._overlay = document.getElementById('sidebarOverlay');
-            APS._restoreSections();
-            APS._bindSwipe();
-            // Auto-close sidebar on mobile when a link is clicked
-            if (APS._sidebar) {
-                APS._sidebar.querySelectorAll('a[href]').forEach(function(a) {
-                    a.addEventListener('click', function() {
-                        if (window.innerWidth <= 992) APS.closeSidebar();
-                    });
-                });
+        <style>
+            /* Only overrides that admin.css does not cover */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
-        };
 
-        APS.toggleSidebar = function() {
-            if (!APS._sidebar) return;
-            APS._sidebar.classList.toggle('show');
-            if (APS._overlay) APS._overlay.classList.toggle('active', APS._sidebar.classList.contains('show'));
-            document.body.style.overflow = APS._sidebar.classList.contains('show') ? 'hidden' : '';
-        };
+            body {
+                font-family: var(--font);
+                background: var(--body-bg);
+                overflow-x: hidden;
+            }
+        </style>
 
-        APS.closeSidebar = function() {
-            if (!APS._sidebar) return;
-            APS._sidebar.classList.remove('show');
-            if (APS._overlay) APS._overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        };
+        <!-- CRITICAL: Sidebar functions in HEAD - load before body -->
+        <script>
+            var APS = APS || {};
+            APS._sidebar = null;
+            APS._overlay = null;
+            APS._touchStartX = 0;
 
-        APS.toggleSection = function(id) {
-            var ul = document.getElementById(id);
-            if (!ul) return;
-            var hidden = ul.style.display === 'none';
-            ul.style.display = hidden ? '' : 'none';
-            var arrow = document.getElementById('arrow-' + id);
-            if (arrow) arrow.classList.toggle('collapsed', !hidden);
-            var saved = localStorage.getItem('adminSidebarSections');
-            var state = saved ? JSON.parse(saved) : {};
-            state[id] = hidden;
-            localStorage.setItem('adminSidebarSections', JSON.stringify(state));
-        };
+            APS._init = function() {
+                APS._sidebar = document.getElementById('sidebarMenu');
+                APS._overlay = document.getElementById('sidebarOverlay');
+                APS._restoreSections();
+                APS._bindSwipe();
+                // Auto-close sidebar on mobile when a link is clicked
+                if (APS._sidebar) {
+                    APS._sidebar.querySelectorAll('a[href]').forEach(function(a) {
+                        a.addEventListener('click', function() {
+                            if (window.innerWidth <= 992) APS.closeSidebar();
+                        });
+                    });
+                }
+            };
 
-        APS.toggleAllSections = function() {
-            var menus = document.querySelectorAll('.sidebar-menu[id]');
-            var anyHidden = Array.from(menus).some(function(el) { return el.style.display === 'none'; });
-            menus.forEach(function(el) {
-                el.style.display = anyHidden ? '' : 'none';
+            APS.toggleSidebar = function() {
+                if (!APS._sidebar) return;
+                APS._sidebar.classList.toggle('show');
+                if (APS._overlay) APS._overlay.classList.toggle('active', APS._sidebar.classList.contains('show'));
+                document.body.style.overflow = APS._sidebar.classList.contains('show') ? 'hidden' : '';
+            };
+
+            APS.closeSidebar = function() {
+                if (!APS._sidebar) return;
+                APS._sidebar.classList.remove('show');
+                if (APS._overlay) APS._overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+
+            APS.toggleSection = function(id) {
+                var ul = document.getElementById(id);
+                if (!ul) return;
+                var hidden = ul.style.display === 'none';
+                ul.style.display = hidden ? '' : 'none';
+                var arrow = document.getElementById('arrow-' + id);
+                if (arrow) arrow.classList.toggle('collapsed', !hidden);
                 var saved = localStorage.getItem('adminSidebarSections');
                 var state = saved ? JSON.parse(saved) : {};
-                state[el.id] = anyHidden;
+                state[id] = hidden;
                 localStorage.setItem('adminSidebarSections', JSON.stringify(state));
-            });
-            document.querySelectorAll('.sidebar-sec-arrow[id^="arrow-sec-"]').forEach(function(arr) {
-                arr.classList.toggle('collapsed', !anyHidden);
-            });
-        };
+            };
 
-        APS._restoreSections = function() {
-            var saved = localStorage.getItem('adminSidebarSections');
-            if (!saved) return;
-            try {
-                var state = JSON.parse(saved);
-                Object.keys(state).forEach(function(id) {
-                    var ul = document.getElementById(id);
-                    var arrow = document.getElementById('arrow-' + id);
-                    if (ul) ul.style.display = state[id] ? '' : 'none';
-                    if (arrow) arrow.classList.toggle('collapsed', !state[id]);
+            APS.toggleAllSections = function() {
+                var menus = document.querySelectorAll('.sidebar-menu[id]');
+                var anyHidden = Array.from(menus).some(function(el) {
+                    return el.style.display === 'none';
                 });
-            } catch (e) { /* ignore */ }
-        };
+                menus.forEach(function(el) {
+                    el.style.display = anyHidden ? '' : 'none';
+                    var saved = localStorage.getItem('adminSidebarSections');
+                    var state = saved ? JSON.parse(saved) : {};
+                    state[el.id] = anyHidden;
+                    localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+                });
+                document.querySelectorAll('.sidebar-sec-arrow[id^="arrow-sec-"]').forEach(function(arr) {
+                    arr.classList.toggle('collapsed', !anyHidden);
+                });
+            };
 
-        APS._bindSwipe = function() {
-            if (!APS._sidebar) return;
-            APS._sidebar.addEventListener('touchstart', function(e) {
-                APS._touchStartX = e.touches[0].clientX;
-            }, { passive: true });
-            APS._sidebar.addEventListener('touchend', function(e) {
-                var dx = e.changedTouches[0].clientX - APS._touchStartX;
-                if (dx < -60) APS.closeSidebar();
-            }, { passive: true });
-        };
+            APS._restoreSections = function() {
+                var saved = localStorage.getItem('adminSidebarSections');
+                if (!saved) return;
+                try {
+                    var state = JSON.parse(saved);
+                    Object.keys(state).forEach(function(id) {
+                        var ul = document.getElementById(id);
+                        var arrow = document.getElementById('arrow-' + id);
+                        if (ul) ul.style.display = state[id] ? '' : 'none';
+                        if (arrow) arrow.classList.toggle('collapsed', !state[id]);
+                    });
+                } catch (e) {
+                    /* ignore */ }
+            };
 
-        // Legacy globals for onclick handlers in rbac_sidebar.php
-        window.toggleSidebarSection = APS.toggleSection;
-        window.toggleAllSidebarSections = APS.toggleAllSections;
+            APS._bindSwipe = function() {
+                if (!APS._sidebar) return;
+                APS._sidebar.addEventListener('touchstart', function(e) {
+                    APS._touchStartX = e.touches[0].clientX;
+                }, {
+                    passive: true
+                });
+                APS._sidebar.addEventListener('touchend', function(e) {
+                    var dx = e.changedTouches[0].clientX - APS._touchStartX;
+                    if (dx < -60) APS.closeSidebar();
+                }, {
+                    passive: true
+                });
+            };
 
-        document.addEventListener('DOMContentLoaded', APS._init);
-    </script>
+            // Legacy globals for onclick handlers in rbac_sidebar.php
+            window.toggleSidebarSection = APS.toggleSection;
+            window.toggleAllSidebarSections = APS.toggleAllSections;
+
+            document.addEventListener('DOMContentLoaded', APS._init);
+        </script>
 </head>
 
 <body>
@@ -245,94 +262,93 @@
     <!-- Admin JS -->
     <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/js/admin.js"></script>
     <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo $extra_js; ?><?php endif; ?>
-    <!-- Frontend enhancements: a11y, forms, toasts, loading -->
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
+        <!-- Frontend enhancements: a11y, forms, toasts, loading -->
+        <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
 
-    <!-- Real-time WebSocket Notifications -->
-    <script>
-        window.NOTIFY_USER = {
-            id: <?php echo isset($_SESSION['admin_id']) ? (int)$_SESSION['admin_id'] : (isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 'null'); ?>,
-            role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? htmlspecialchars($_SESSION['role'] ?? '', ENT_QUOTES) : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>'
-        };
-    </script>
-    <script defer src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/notification-system.js"></script>
+        <!-- Real-time WebSocket Notifications -->
+        <script>
+            window.NOTIFY_USER = {
+                id: <?php echo isset($_SESSION['admin_id']) ? (int)$_SESSION['admin_id'] : (isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 'null'); ?>,
+                role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? htmlspecialchars($_SESSION['role'] ?? '', ENT_QUOTES) : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>'
+            };
+        </script>
+        <script defer src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/notification-system.js"></script>
 
-    <script>
-        // AJAX Navigation for Sidebar - sidebar remains fixed, only content updates
-        // Guard: only initialize once per page (prevents double-registration after reRunScripts)
-        if (!window._adminAjaxNavInitialized) {
-            window._adminAjaxNavInitialized = true;
-            (function() {
-                var baseUrl = '<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>';
+        <script>
+            // AJAX Navigation for Sidebar - sidebar remains fixed, only content updates
+            // Guard: only initialize once per page (prevents double-registration after reRunScripts)
+            if (!window._adminAjaxNavInitialized) {
+                window._adminAjaxNavInitialized = true;
+                (function() {
+                    var baseUrl = '<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>';
 
-                function updateActiveSidebar(url) {
-                    document.querySelectorAll('.sidebar-link').forEach(function(link) {
-                        var href = link.getAttribute('href');
-                        if (href && (url === href || url.startsWith(href + '/'))) {
-                            link.classList.add('active');
-                        } else {
-                            link.classList.remove('active');
-                        }
-                    });
-                }
-
-                function loadContent(url, pushState) {
-                    if (pushState !== false) {
-                        history.pushState({
-                            url: url
-                        }, '', url);
-                    }
-                    updateActiveSidebar(url);
-
-                    fetch(url, {
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
+                    function updateActiveSidebar(url) {
+                        document.querySelectorAll('.sidebar-link').forEach(function(link) {
+                            var href = link.getAttribute('href');
+                            if (href && (url === href || url.startsWith(href + '/'))) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
                             }
-                        })
-                        .then(function(r) {
-                            return r.text();
-                        })
-                        .then(function(html) {
-                            var parser = new DOMParser();
-                            var doc = parser.parseFromString(html, 'text/html');
-                            var newContent = doc.getElementById('page-content');
-                            var newTitle = doc.getElementById('breadcrumb-title');
-                            if (newContent) {
-                                document.getElementById('page-content').innerHTML = newContent.innerHTML;
-                                // Re-initialize any scripts in the new content
-                                if (typeof reRunScripts === 'function') reRunScripts();
-                            }
-                            if (newTitle) {
-                                document.getElementById('breadcrumb-title').textContent = newTitle.textContent;
-                                document.title = newTitle.textContent + ' - APS Dream Home Admin';
-                            }
-                        })
-                        .catch(function(err) {
-                            console.error('AJAX nav error:', err);
                         });
-                }
-
-                // Handle browser back/forward
-                window.addEventListener('popstate', function(e) {
-                    if (e.state && e.state.url) {
-                        loadContent(e.state.url, false);
                     }
-                });
 
-                // Intercept sidebar links
-                document.querySelectorAll('.sidebar-link').forEach(function(link) {
-                    link.addEventListener('click', function(e) {
-                        var href = this.getAttribute('href');
-                        if (href && href.startsWith('/') && !href.includes('/logout')) {
-                            e.preventDefault();
-                            loadContent(href);
+                    function loadContent(url, pushState) {
+                        if (pushState !== false) {
+                            history.pushState({
+                                url: url
+                            }, '', url);
+                        }
+                        updateActiveSidebar(url);
+
+                        fetch(url, {
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(function(r) {
+                                return r.text();
+                            })
+                            .then(function(html) {
+                                var parser = new DOMParser();
+                                var doc = parser.parseFromString(html, 'text/html');
+                                var newContent = doc.getElementById('page-content');
+                                var newTitle = doc.getElementById('breadcrumb-title');
+                                if (newContent) {
+                                    document.getElementById('page-content').innerHTML = newContent.innerHTML;
+                                    // Re-initialize any scripts in the new content
+                                    if (typeof reRunScripts === 'function') reRunScripts();
+                                }
+                                if (newTitle) {
+                                    document.getElementById('breadcrumb-title').textContent = newTitle.textContent;
+                                    document.title = newTitle.textContent + ' - APS Dream Home Admin';
+                                }
+                            })
+                            .catch(function(err) {
+                                console.error('AJAX nav error:', err);
+                            });
+                    }
+
+                    // Handle browser back/forward
+                    window.addEventListener('popstate', function(e) {
+                        if (e.state && e.state.url) {
+                            loadContent(e.state.url, false);
                         }
                     });
-                });
-            })();
-        }
-    </script>
+
+                    // Intercept sidebar links
+                    document.querySelectorAll('.sidebar-link').forEach(function(link) {
+                        link.addEventListener('click', function(e) {
+                            var href = this.getAttribute('href');
+                            if (href && href.startsWith('/') && !href.includes('/logout')) {
+                                e.preventDefault();
+                                loadContent(href);
+                            }
+                        });
+                    });
+                })();
+            }
+        </script>
 </body>
 
 </html>
-

@@ -26,7 +26,7 @@ class ApiAuthMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $header = $request->header('Authorization');
+        $header = $request->header('authorization');
 
         if (!$header || strpos($header, 'Bearer ') !== 0) {
             return $this->unauthorized();
@@ -52,9 +52,10 @@ class ApiAuthMiddleware
 
         try {
             $stmt = $this->db->prepare("
-                SELECT user_id, expires_at 
-                FROM api_tokens 
-                WHERE token = ? AND (expires_at IS NULL OR expires_at > NOW())
+                SELECT t.user_id, u.role, t.expires_at 
+                FROM api_tokens t
+                JOIN users u ON u.id = t.user_id
+                WHERE t.token = ? AND (t.expires_at IS NULL OR t.expires_at > NOW())
             ");
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
@@ -63,8 +64,9 @@ class ApiAuthMiddleware
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($result) {
-            // Attach user_id to request for later use in controllers
+            // Attach user_id + role to globals for later use in controllers
             $GLOBALS['api_user_id'] = $result['user_id'];
+            $GLOBALS['api_user_role'] = $result['role'] ?? 'customer';
             return true;
         }
 

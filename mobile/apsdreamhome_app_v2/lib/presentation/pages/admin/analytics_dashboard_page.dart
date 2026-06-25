@@ -1,159 +1,93 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/app_constants.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 
 /// Analytics Dashboard Page
 /// Real-time stats and insights for admin
-class AnalyticsDashboardPage extends StatefulWidget {
+class AnalyticsDashboardPage extends ConsumerStatefulWidget {
   const AnalyticsDashboardPage({super.key});
 
   @override
-  State<AnalyticsDashboardPage> createState() => _AnalyticsDashboardPageState();
+  ConsumerState<AnalyticsDashboardPage> createState() =>
+      _AnalyticsDashboardPageState();
 }
 
-class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
-  String _timeRange = 'today'; // today, week, month, year
-
-  // Sample data
-  final Map<String, dynamic> _stats = {
-    'today': {
-      'bookings': 12,
-      'revenue': 2450000.0,
-      'leads': 48,
-      'conversions': 8,
-      'visits': 156,
-      'commissions': 145000.0,
-    },
-    'week': {
-      'bookings': 89,
-      'revenue': 18500000.0,
-      'leads': 342,
-      'conversions': 64,
-      'visits': 1124,
-      'commissions': 925000.0,
-    },
-    'month': {
-      'bookings': 312,
-      'revenue': 62500000.0,
-      'leads': 1248,
-      'conversions': 218,
-      'visits': 4856,
-      'commissions': 3150000.0,
-    },
-  };
-
-  // Top agents data
-  final List<Map<String, dynamic>> _topAgents = [
-    {
-      'name': 'Rahul Kumar',
-      'sales': 24,
-      'revenue': 4800000,
-      'rank': 'President'
-    },
-    {
-      'name': 'Priya Sharma',
-      'sales': 19,
-      'revenue': 3800000,
-      'rank': 'Vice President'
-    },
-    {'name': 'Amit Singh', 'sales': 16, 'revenue': 3200000, 'rank': 'Sr. BDM'},
-    {'name': 'Neha Patel', 'sales': 14, 'revenue': 2800000, 'rank': 'BDM'},
-    {'name': 'Vikram Rao', 'sales': 12, 'revenue': 2400000, 'rank': 'BDM'},
-  ];
-
-  // Revenue chart data
-  final List<double> _revenueData = [
-    2.5,
-    3.2,
-    2.8,
-    4.1,
-    3.9,
-    4.8,
-    5.2,
-    4.5,
-    5.8,
-    6.1,
-    5.5,
-    6.2
-  ];
-  final List<String> _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ];
+class _AnalyticsDashboardPageState
+    extends ConsumerState<AnalyticsDashboardPage> {
+  String _timeRange = 'today';
 
   @override
   Widget build(BuildContext context) {
-    final currentStats = (_stats[_timeRange] as Map<String, dynamic>?) ??
-        (_stats['today'] as Map<String, dynamic>);
+    final overviewAsync = ref.watch(_adminOverviewProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Analytics Dashboard'),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              setState(() {});
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.download),
-            onPressed: _exportReport,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTimeRangeSelector(),
+          const SizedBox(height: 24),
+          overviewAsync.when(
+            loading: () => const Center(
+                child: Padding(
+              padding: EdgeInsets.all(40),
+              child: CircularProgressIndicator(),
+            )),
+            error: (e, _) => _buildErrorCard(e.toString()),
+            data: (data) => _buildContent(data),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Time Range Selector
-            _buildTimeRangeSelector(),
-            const SizedBox(height: 24),
+    );
+  }
 
-            // Stats Cards
-            _buildStatsGrid(currentStats),
-            const SizedBox(height: 24),
+  Widget _buildContent(Map<String, dynamic> data) {
+    final stats = (data['stats'] as Map<String, dynamic>?) ?? {};
+    final recentActivity =
+        (data['recent_activity'] as List<dynamic>?) ?? [];
 
-            // Revenue Chart
-            _buildRevenueChart(),
-            const SizedBox(height: 24),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildStatsGrid(stats),
+        const SizedBox(height: 24),
+        _buildRecentActivity(recentActivity),
+      ],
+    );
+  }
 
-            // Two Column Layout
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _buildTopAgentsList(),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildLeadConversionChart(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // Colony Performance
-            _buildColonyPerformanceTable(),
-            const SizedBox(height: 24),
-
-            // Recent Activity
-            _buildRecentActivity(),
-          ],
+  Widget _buildErrorCard(String message) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Center(
+          child: Column(
+            children: [
+              Icon(Icons.error_outline, size: 48, color: Colors.red.shade300),
+              const SizedBox(height: 16),
+              Text(
+                'Failed to load analytics',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade800),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                style: TextStyle(color: Colors.grey.shade600),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => ref.invalidate(_adminOverviewProvider),
+                icon: const Icon(Icons.refresh),
+                label: const Text('Retry'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -161,7 +95,6 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
 
   Widget _buildTimeRangeSelector() {
     final ranges = ['today', 'week', 'month', 'year'];
-
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -170,23 +103,21 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
             final isSelected = _timeRange == range;
             return Expanded(
               child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _timeRange = range;
-                  });
-                },
+                onTap: () => setState(() => _timeRange = range),
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color:
-                        isSelected ? Colors.blue.shade700 : Colors.transparent,
+                    color: isSelected
+                        ? Colors.blue.shade700
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     range.toUpperCase(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.grey.shade700,
+                      color:
+                          isSelected ? Colors.white : Colors.grey.shade700,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -201,6 +132,16 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
   }
 
   Widget _buildStatsGrid(Map<String, dynamic> stats) {
+    final totalLeads = (stats['total_leads'] as num?)?.toInt() ?? 0;
+    final hotLeads = (stats['hot_leads'] as num?)?.toInt() ?? 0;
+    final bookingsToday =
+        (stats['bookings_today'] as num?)?.toInt() ?? 0;
+    final totalRevenue =
+        (stats['total_revenue'] as num?)?.toDouble() ?? 0;
+    final pendingCommissions =
+        (stats['pending_commissions'] as num?)?.toInt() ?? 0;
+    final totalUsers = (stats['total_users'] as num?)?.toInt() ?? 0;
+
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -210,36 +151,32 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
       childAspectRatio: 1.5,
       children: [
         _buildStatCard(
-          'Bookings',
-          (stats['bookings'] as int).toString(),
-          Icons.shopping_cart,
+          'Total Users',
+          '$totalUsers',
+          Icons.people,
           Colors.blue,
-          '+12% from last period',
-          true,
+          '$hotLeads hot leads',
         ),
         _buildStatCard(
           'Revenue',
-          '${AppConstants.currencySymbol}${((stats['revenue'] as num).toDouble() / 100000).toStringAsFixed(2)}L',
+          '₹${(totalRevenue / 100000).toStringAsFixed(1)}L',
           Icons.account_balance_wallet,
           Colors.green,
-          '+18% from last period',
-          true,
+          '$bookingsToday bookings today',
         ),
         _buildStatCard(
-          'New Leads',
-          (stats['leads'] as int).toString(),
-          Icons.people,
-          Colors.orange,
-          '+24% from last period',
-          true,
-        ),
-        _buildStatCard(
-          'Conversion Rate',
-          '${(((stats['conversions'] as num) / (stats['leads'] as num)) * 100).toStringAsFixed(1)}%',
+          'Total Leads',
+          '$totalLeads',
           Icons.trending_up,
+          Colors.orange,
+          '$hotLeads hot leads',
+        ),
+        _buildStatCard(
+          'Pending Commissions',
+          '$pendingCommissions',
+          Icons.payment,
           Colors.purple,
-          '+5% from last period',
-          true,
+          'awaiting approval',
         ),
       ],
     );
@@ -250,8 +187,7 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
     String value,
     IconData icon,
     Color color,
-    String trend,
-    bool isPositive,
+    String subtitle,
   ) {
     return Card(
       elevation: 2,
@@ -269,46 +205,13 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(icon, color: color, size: 24),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: isPositive
-                        ? Colors.green.shade100
-                        : Colors.red.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isPositive ? Icons.arrow_upward : Icons.arrow_downward,
-                        size: 12,
-                        color: isPositive ? Colors.green : Colors.red,
-                      ),
-                      Text(
-                        trend.split(' ')[0],
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: isPositive ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 24),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,7 +219,7 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: color,
                   ),
@@ -324,286 +227,17 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     color: Colors.grey.shade600,
                   ),
                 ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRevenueChart() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Revenue Trend',
+                Text(
+                  subtitle,
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                    color: Colors.grey.shade500,
                   ),
                 ),
-                DropdownButton<String>(
-                  value: 'This Year',
-                  items: const [
-                    DropdownMenuItem(
-                        value: 'This Year', child: Text('This Year')),
-                    DropdownMenuItem(
-                        value: 'Last Year', child: Text('Last Year')),
-                  ],
-                  onChanged: (value) {},
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 200,
-              child: LineChart(
-                LineChartData(
-                  gridData: const FlGridData(show: true),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 40,
-                        getTitlesWidget: (value, meta) {
-                          return Text(
-                            '${value.toInt()}L',
-                            style: const TextStyle(fontSize: 10),
-                          );
-                        },
-                      ),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          if (value.toInt() >= 0 &&
-                              value.toInt() < _months.length) {
-                            return Text(
-                              _months[value.toInt()],
-                              style: const TextStyle(fontSize: 10),
-                            );
-                          }
-                          return const Text('');
-                        },
-                      ),
-                    ),
-                    rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: _revenueData.asMap().entries.map((e) {
-                        return FlSpot(e.key.toDouble(), e.value);
-                      }).toList(),
-                      isCurved: true,
-                      color: Colors.blue.shade700,
-                      barWidth: 3,
-                      dotData: const FlDotData(show: true),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        color: Colors.blue.shade700.withValues(alpha: 0.2),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTopAgentsList() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Top Performing Agents',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ..._topAgents.asMap().entries.map((entry) {
-              final index = entry.key;
-              final agent = entry.value;
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: index < 3 ? Colors.amber.shade50 : Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: index == 0
-                            ? Colors.amber
-                            : index == 1
-                                ? Colors.grey.shade400
-                                : index == 2
-                                    ? Colors.orange.shade300
-                                    : Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      child: Center(
-                        child: Text(
-                          '${index + 1}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color:
-                                index < 3 ? Colors.white : Colors.grey.shade700,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            agent['name'] as String? ?? 'Unknown',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            agent['rank'] as String? ?? 'Associate',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '${agent['sales']} sales',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          '${AppConstants.currencySymbol}${((agent['revenue'] as num).toDouble() / 100000).toStringAsFixed(1)}L',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.green.shade700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLeadConversionChart() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Lead Conversion',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: PieChart(
-                PieChartData(
-                  sections: [
-                    PieChartSectionData(
-                      color: Colors.green,
-                      value: 35,
-                      title: '35%\nConverted',
-                      radius: 60,
-                      titleStyle: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    PieChartSectionData(
-                      color: Colors.orange,
-                      value: 25,
-                      title: '25%\nIn Progress',
-                      radius: 50,
-                      titleStyle: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    PieChartSectionData(
-                      color: Colors.blue,
-                      value: 20,
-                      title: '20%\nNew',
-                      radius: 40,
-                      titleStyle: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    PieChartSectionData(
-                      color: Colors.red,
-                      value: 20,
-                      title: '20%\nLost',
-                      radius: 40,
-                      titleStyle: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                  sectionsSpace: 2,
-                  centerSpaceRadius: 20,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 16,
-              runSpacing: 8,
-              children: [
-                _buildLegendItem(Colors.green, 'Converted (35%)'),
-                _buildLegendItem(Colors.orange, 'In Progress (25%)'),
-                _buildLegendItem(Colors.blue, 'New (20%)'),
-                _buildLegendItem(Colors.red, 'Lost (20%)'),
               ],
             ),
           ],
@@ -612,104 +246,7 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
     );
   }
 
-  Widget _buildLegendItem(Color color, String label) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 11)),
-      ],
-    );
-  }
-
-  Widget _buildColonyPerformanceTable() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Colony Performance',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('View All'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('Colony')),
-                  DataColumn(label: Text('Plots')),
-                  DataColumn(label: Text('Booked')),
-                  DataColumn(label: Text('Revenue')),
-                  DataColumn(label: Text('Progress')),
-                ],
-                rows: [
-                  _buildColonyRow(
-                      'Suryoday Heights Phase 1', 120, 89, 23400000, 74),
-                  _buildColonyRow(
-                      'Raghunath City Center', 80, 45, 14500000, 56),
-                  _buildColonyRow('Braj Radha Enclave', 200, 156, 48500000, 78),
-                  _buildColonyRow('Budh Bihar Colony', 60, 22, 6200000, 37),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  DataRow _buildColonyRow(
-      String name, int total, int booked, int revenue, int percent) {
-    return DataRow(
-      cells: [
-        DataCell(Text(name)),
-        DataCell(Text('$total')),
-        DataCell(Text('$booked')),
-        DataCell(Text(
-            '${AppConstants.currencySymbol}${(revenue / 100000).toStringAsFixed(1)}L')),
-        DataCell(
-          SizedBox(
-            width: 100,
-            child: LinearProgressIndicator(
-              value: percent / 100,
-              backgroundColor: Colors.grey.shade200,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                percent > 70
-                    ? Colors.green
-                    : percent > 40
-                        ? Colors.orange
-                        : Colors.red,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRecentActivity() {
+  Widget _buildRecentActivity(List<dynamic> activities) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -718,44 +255,92 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
           children: [
             const Text(
               'Recent Activity',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildActivityItem(
-              Icons.check_circle,
-              Colors.green,
-              'New Booking',
-              'Rahul Kumar booked Plot #45 in Suryoday Heights',
-              '2 mins ago',
-            ),
-            _buildActivityItem(
-              Icons.person_add,
-              Colors.blue,
-              'New Associate',
-              'Priya Sharma joined as Sr. Associate',
-              '15 mins ago',
-            ),
-            _buildActivityItem(
-              Icons.payment,
-              Colors.orange,
-              'Commission Paid',
-              '₹45,000 paid to Amit Singh',
-              '1 hour ago',
-            ),
-            _buildActivityItem(
-              Icons.location_on,
-              Colors.purple,
-              'Site Visit',
-              'Neha Patel completed site visit with 3 customers',
-              '2 hours ago',
-            ),
+            if (activities.isEmpty)
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Icon(Icons.history,
+                          size: 48, color: Colors.grey.shade300),
+                      const SizedBox(height: 12),
+                      Text(
+                        'No recent activity',
+                        style: TextStyle(
+                            color: Colors.grey.shade500, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              ...activities.map((activity) {
+                final type =
+                    (activity['interaction_type'] as String?) ?? 'note';
+                final subject =
+                    (activity['subject'] as String?) ?? '';
+                final body = (activity['body'] as String?) ?? '';
+                final leadName =
+                    (activity['lead_name'] as String?) ?? 'Unknown';
+                final createdAt =
+                    (activity['created_at'] as String?) ?? '';
+
+                IconData icon;
+                Color color;
+                switch (type) {
+                  case 'call':
+                    icon = Icons.phone;
+                    color = Colors.green;
+                    break;
+                  case 'email':
+                    icon = Icons.email;
+                    color = Colors.blue;
+                    break;
+                  case 'sms':
+                    icon = Icons.sms;
+                    color = Colors.orange;
+                    break;
+                  case 'visit':
+                    icon = Icons.location_on;
+                    color = Colors.purple;
+                    break;
+                  default:
+                    icon = Icons.note;
+                    color = Colors.grey;
+                }
+
+                final description = subject.isNotEmpty ? subject : body;
+                final timeAgo = _formatTimeAgo(createdAt);
+
+                return _buildActivityItem(
+                  icon,
+                  color,
+                  type.toUpperCase(),
+                  '$leadName: $description',
+                  timeAgo,
+                );
+              }),
           ],
         ),
       ),
     );
+  }
+
+  String _formatTimeAgo(String dateTimeStr) {
+    if (dateTimeStr.isEmpty) return '';
+    try {
+      final dt = DateTime.parse(dateTimeStr);
+      final diff = DateTime.now().difference(dt);
+      if (diff.inMinutes < 1) return 'Just now';
+      if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+      if (diff.inHours < 24) return '${diff.inHours}h ago';
+      return '${diff.inDays}d ago';
+    } catch (_) {
+      return dateTimeStr;
+    }
   }
 
   Widget _buildActivityItem(
@@ -783,23 +368,19 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text(title,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey.shade600,
-                  ),
+                  style:
+                      TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   time,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey.shade500,
-                  ),
+                  style:
+                      TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
               ],
             ),
@@ -808,34 +389,24 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
       ),
     );
   }
-
-  void _exportReport() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Export Report'),
-        content: const Text(
-          'Report will be exported as PDF and sent to your email.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Report exported successfully!'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-            },
-            child: const Text('Export'),
-          ),
-        ],
-      ),
-    );
-  }
 }
+
+// ─── Providers ────────────────────────────────────────────────────────
+
+final _adminOverviewProvider =
+    FutureProvider<Map<String, dynamic>>((ref) async {
+  try {
+    final response =
+        await ApiService().get('/crm/admin-overview');
+    if (response['success'] == true) {
+      return {
+        'stats': response['stats'] ?? {},
+        'recent_activity': response['recent_activity'] ?? [],
+      };
+    }
+    return {'stats': {}, 'recent_activity': []};
+  } catch (e) {
+    AppLogger.error('Failed to fetch admin overview', e);
+    return {'stats': {}, 'recent_activity': []};
+  }
+});

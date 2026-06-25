@@ -3,55 +3,68 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'colony_model.freezed.dart';
 part 'colony_model.g.dart';
 
-/// Colony Model - Colony Development & Plot Sales
+/// Colony Model - maps directly to PHP API snake_case response
 @freezed
 class ColonyModel with _$ColonyModel {
   const factory ColonyModel({
-    @Default('') String id,
+    @Default(0) int id,
     @Default('') String name,
-    @Default('') String location,
-    @Default('') String district,
-    @Default('') String state,
+    String? slug,
     String? description,
+
+    // Plot statistics (API: total_plots, available_plots)
+    @JsonKey(name: 'total_plots') @Default(0) int totalPlots,
+    @JsonKey(name: 'available_plots') @Default(0) int availablePlots,
+
+    // Pricing (API: starting_price)
+    @JsonKey(name: 'starting_price') @Default(0.0) double pricePerSqft,
+
+    // Location (API: district_name, district_id)
+    @JsonKey(name: 'district_name') @Default('') String district,
+    @JsonKey(name: 'district_id') @Default(0) int districtId,
+
+    // Images (API: image_path, image_url)
+    @JsonKey(name: 'image_path') String? imagePath,
+    @JsonKey(name: 'image_url') String? imageUrl,
+
+    // Status (API: is_active, is_featured)
+    @JsonKey(name: 'is_active') @Default(true) bool isActive,
+    @JsonKey(name: 'is_featured') @Default(false) bool isFeatured,
+
+    // Compatibility fields (computed from API data)
+    @Default('') String location,
+    @Default('') String state,
     List<String>? images,
     String? masterPlanImage,
     String? videoUrl,
     double? latitude,
     double? longitude,
-    
-    // Plot Statistics
-    @Default(0) int totalPlots,
-    @Default(0) int availablePlots,
+
+    // Extended plot stats
     @Default(0) int holdPlots,
     @Default(0) int bookedPlots,
     @Default(0) int soldPlots,
-    
-    // Pricing
-    @Default(0.0) double pricePerSqft,
+
+    // Extended pricing
     double? tokenAmount,
     double? bookingPercentage,
-    Map<String, double>? blockWisePricing, // A, B, C blocks with different rates
-    
+    Map<String, double>? blockWisePricing,
+
     // Amenities
     List<String>? amenities,
-    
-    // Status
-    @Default('upcoming') String status, // upcoming, launching, active, completed, sold_out
-    DateTime? launchDate,
-    DateTime? completionDate,
-    
-    // Timestamps
-    DateTime? createdAt,
-    DateTime? updatedAt,
+
+    // Dates
+    String? launchDate,
+    String? completionDate,
+    String? createdAt,
+    String? updatedAt,
+
+    // Additional
     String? createdBy,
-    
-    // Additional Info
     String? reraNumber,
     String? legalStatus,
     List<String>? nearbyLandmarks,
     Map<String, dynamic>? additionalInfo,
-    
-    // New Fields for Images and Maps
     String? layoutMap,
     String? rateList,
     String? handbill,
@@ -63,13 +76,26 @@ class ColonyModel with _$ColonyModel {
 
   const ColonyModel._();
 
-  double get progressPercentage => totalPlots > 0 
-      ? (soldPlots / totalPlots) * 100 
+  /// Computed status string from isActive flag
+  String get status => isActive ? 'active' : 'upcoming';
+
+  double get progressPercentage => totalPlots > 0
+      ? (soldPlots / totalPlots) * 100
       : 0;
-      
+
   bool get isUpcoming => status == 'upcoming';
   bool get isLaunching => status == 'launching';
-  bool get isActive => status == 'active';
+  bool get isActiveStatus => status == 'active';
   bool get isCompleted => status == 'completed';
   bool get isSoldOut => status == 'sold_out';
+
+  /// Get display image URL (prefer image_url, fallback to imagePath)
+  String? get displayImage => imageUrl ?? imagePath;
+
+  /// Get display images list
+  List<String> get displayImages {
+    if (imageUrl != null && imageUrl!.isNotEmpty) return [imageUrl!];
+    if (imagePath != null && imagePath!.isNotEmpty) return [imagePath!];
+    return [];
+  }
 }

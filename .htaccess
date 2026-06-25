@@ -1,4 +1,8 @@
 # APS Dream Home - Apache Configuration
+
+# Pass Authorization header to PHP (needed for Bearer token auth on API routes)
+SetEnvIf Authorization (.*) HTTP_AUTHORIZATION=$1
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     

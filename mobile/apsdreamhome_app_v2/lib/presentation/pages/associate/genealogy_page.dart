@@ -6,24 +6,38 @@ import '../../../data/repositories/mlm_repository.dart';
 import '../../widgets/app_widgets.dart';
 
 /// Genealogy Page - Connected to MlmRepository
-class GenealogyPage extends ConsumerWidget {
+class GenealogyPage extends ConsumerStatefulWidget {
   const GenealogyPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final genealogyAsync = ref.watch(genealogyTreeProvider(null));
+  ConsumerState<GenealogyPage> createState() => _GenealogyPageState();
+}
+
+class _GenealogyPageState extends ConsumerState<GenealogyPage> {
+  int? _selectedDepth;
+
+  @override
+  Widget build(BuildContext context) {
+    final genealogyAsync = ref.watch(genealogyTreeProvider(_selectedDepth));
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Team'),
         actions: [
           IconButton(
-            onPressed: () => ref.refresh(genealogyTreeProvider(null)),
+            onPressed: () => ref.refresh(genealogyTreeProvider(_selectedDepth)),
             icon: const Icon(Icons.refresh),
           ),
-          PopupMenuButton<int>(
-            onSelected: (value) {},
+          PopupMenuButton<int?>(
+            onSelected: (value) {
+              setState(() => _selectedDepth = value);
+              ref.invalidate(genealogyTreeProvider);
+            },
             itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: null,
+                child: Text('Show All Levels'),
+              ),
               const PopupMenuItem(
                 value: 3,
                 child: Text('Show 3 Levels'),
@@ -37,16 +51,29 @@ class GenealogyPage extends ConsumerWidget {
                 child: Text('Show 7 Levels'),
               ),
             ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _selectedDepth == null ? 'All' : '$_selectedDepth',
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                  const Icon(Icons.arrow_drop_down),
+                ],
+              ),
+            ),
           ),
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async { ref.refresh(genealogyTreeProvider(null)); }, // ignore: unused_result
+        onRefresh: () async { ref.refresh(genealogyTreeProvider(_selectedDepth)); },
         child: genealogyAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => AppWidgets.errorWidget(
             message: error.toString(),
-            onRetry: () { ref.refresh(genealogyTreeProvider(null)); }, // ignore: unused_result
+            onRetry: () { ref.refresh(genealogyTreeProvider(_selectedDepth)); },
           ),
           data: (genealogy) {
             final nodes = genealogy.nodes;
