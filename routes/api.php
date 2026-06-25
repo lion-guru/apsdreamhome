@@ -365,6 +365,12 @@ $router->get('/api/v2/mobile/mlm/rank', 'Api\MobileApiController@getRankProgress
 $router->get('/api/v2/mobile/mlm/direct-referrals', 'Api\MobileApiController@getMyTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/mlm/referrals', 'Api\MobileApiController@getMyTeam')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
+// Commission Simulation API (admin-only, for what-if analysis)
+$router->post('/api/commission/simulate', 'Api\CommissionSimulationController@simulate');
+$router->post('/api/commission/simulate-bulk', 'Api\CommissionSimulationController@simulateBulk');
+$router->get('/api/commission/tds', 'Api\CommissionSimulationController@tdsCalc');
+$router->get('/api/commission/summary/{id}', 'Api\CommissionSimulationController@summary');
+
 // Referral routes — point to MobileApiController (Api\ReferralController doesn't exist)
 $router->get('/api/v2/mobile/referral/stats', 'Api\MobileApiController@getMlmSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/referral/dashboard', 'Api\MobileApiController@getMlmSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');

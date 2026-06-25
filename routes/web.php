@@ -3128,6 +3128,14 @@ $router->post('/admin/commission/payout', 'App\\Http\\Controllers\\Admin\\Commis
 $router->post('/admin/commission/action', 'App\\Http\\Controllers\\Admin\\CommissionController@processApproval');
 $router->post('/admin/commissions/processPayout', 'App\\Http\\Controllers\\Admin\\CommissionController@processPayout');
 
+// Commission Reconciliation (daily audit + TDS config)
+$router->get('/admin/commission/reconciliation', function() {
+    requireAdmin();
+    $service = new \App\Services\MLM\CommissionReconciliationService();
+    $data = $service->reconcile();
+    require __DIR__ . '/../app/views/admin/commission/reconciliation.php';
+});
+
 // Commission Plans (CRUD + calculator)
 $router->get('/admin/commission-plans',                        'App\\Http\\Controllers\\Admin\\CommissionPlanController@index');
 $router->get('/admin/commission-plans/create',                 'App\\Http\\Controllers\\Admin\\CommissionPlanController@create');
