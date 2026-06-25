@@ -546,7 +546,8 @@ class MLMCommissionEngine
             if (!empty($booking['sales_manager_id'])) {
                 $sourceUserId = (int)$booking['sales_manager_id'];
             } elseif (!empty($booking['associate_id'])) {
-                $aStmt = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? LIMIT 1");
+                // booking.associate_id stores the user_id, look up associates by user_id
+                $aStmt = $this->db->prepare("SELECT user_id FROM associates WHERE user_id = ? LIMIT 1");
                 $aStmt->execute([$booking['associate_id']]);
                 $ar = $aStmt->fetch(PDO::FETCH_ASSOC);
                 if ($ar && !empty($ar['user_id'])) {
@@ -601,11 +602,12 @@ class MLMCommissionEngine
             }
 
             // Insert each entry into mlm_commission_ledger
+            // property_id is FK to properties table - use NULL for plot bookings
             $ins = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
-                    (beneficiary_user_id, source_user_id, commission_type, level, amount, status, property_id, sale_amount, commission_percentage, notes, created_at)
+                    (beneficiary_user_id, source_user_id, commission_type, level, amount, status, property_id, sale_amount, commission_percentage, notes, booking_id, receipt_id, hold_until, created_at)
                 VALUES
-                    (?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, NOW())
+                    (?, ?, ?, ?, ?, 'pending', NULL, ?, ?, ?, ?, 0, DATE_ADD(NOW(), INTERVAL 30 DAY), NOW())
             ");
             foreach ($entries as &$e) {
                 try {
@@ -615,10 +617,10 @@ class MLMCommissionEngine
                         $e['commission_type'],
                         $e['level'],
                         $e['amount'],
-                        $bookingId,
                         $saleValue,
                         $e['pct'],
                         'Module 4 auto-calc from booking #' . $bookingId,
+                        $bookingId,
                     ]);
                     $e['id'] = (int)$this->db->lastInsertId();
                     $result['created_ids'][] = $e['id'];

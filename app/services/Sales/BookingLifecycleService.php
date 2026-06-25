@@ -857,31 +857,9 @@ class BookingLifecycleService
             $rows = $engineResult['entries'] ?? [];
             $totalAmt = (float)($engineResult['total'] ?? 0.0);
 
-            // Backward-compat: write summary rows to booking_commissions
-            // so legacy dashboard queries still work.
-            $created = 0;
-            $ins = $this->db->prepare(
-                "INSERT INTO booking_commissions
-                 (booking_id, beneficiary_user_id, source_user_id, commission_type, amount, percent, level, status)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')"
-            );
-            foreach ($rows as $r) {
-                try {
-                    $ins->execute([
-                        $bookingId,
-                        $r['beneficiary_user_id'],
-                        $r['source_user_id'],
-                        $r['commission_type'],
-                        $r['amount'],
-                        $r['pct'],
-                        $r['level'],
-                    ]);
-                    $created++;
-                } catch (Exception $e) {
-                    // non-fatal: booking_commissions is legacy compat
-                    error_log('[BookingLifecycleService::calculateCommission] booking_commissions insert skip: ' . $e->getMessage());
-                }
-            }
+            // mlm_commission_ledger is now the single source of truth
+            // booking_commissions table is deprecated (migrated)
+            $created = count($rows);
 
             $out = [
                 'success'       => true,

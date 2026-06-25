@@ -456,11 +456,11 @@ class BookingLifecycleController extends AdminController
         $summary = ['total' => 0.0, 'pending' => 0.0, 'paid' => 0.0, 'count' => 0];
         try {
             $stmt = $this->db->query(
-                "SELECT bc.*, pb.booking_number, u.name AS beneficiary_name
-                 FROM booking_commissions bc
-                 JOIN plot_bookings pb ON pb.id = bc.booking_id
-                 LEFT JOIN users u ON u.id = bc.beneficiary_user_id
-                 ORDER BY bc.id DESC LIMIT 200"
+                "SELECT ml.*, pb.booking_number, u.name AS beneficiary_name
+                 FROM mlm_commission_ledger ml
+                 JOIN plot_bookings pb ON pb.id = ml.booking_id
+                 LEFT JOIN users u ON u.id = ml.beneficiary_user_id
+                 ORDER BY ml.id DESC LIMIT 200"
             );
             $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             foreach ($rows as $r) {
@@ -474,7 +474,7 @@ class BookingLifecycleController extends AdminController
             }
         } catch (Exception $e) {
             error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
-}
+        }
         $this->render('admin/sales/commissions', [
             'page_title'   => 'Commissions',
             'page_heading' => 'Sales Commissions',
@@ -678,17 +678,17 @@ class BookingLifecycleController extends AdminController
     {
         try {
             $s = $this->db->prepare(
-                "SELECT bc.*, u.name AS beneficiary_name
-                 FROM booking_commissions bc
-                 LEFT JOIN users u ON u.id = bc.beneficiary_user_id
-                 WHERE bc.booking_id = ?
-                 ORDER BY bc.level ASC, bc.id ASC"
+                "SELECT ml.*, u.name AS beneficiary_name
+                 FROM mlm_commission_ledger ml
+                 LEFT JOIN users u ON u.id = ml.beneficiary_user_id
+                 WHERE ml.booking_id = ?
+                 ORDER BY ml.level ASC, ml.id ASC"
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
- return []; }
+        return []; }
     }
 
     private function fetchInstallment(int $id): ?array
