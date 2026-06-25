@@ -218,3 +218,8 @@ mobile/**/build/
 # Backup files
 *.bak
 *.apk
+
+# Large media assets (logos, videos)
+assets/images/logo/*.mp4
+assets/images/logo/*.mov
+assets/images/logo/*.avi
