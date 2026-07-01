@@ -350,6 +350,9 @@ $router->get('/booking/{id}/pay', 'Front\\PlotController@payBooking');
 $router->post('/booking/{id}/pay', 'Front\\PlotController@processPayment');
 $router->get('/booking/{id}/receipt', 'Front\\PlotController@receipt');
 $router->get('/colony/{slug}/plots', 'Front\\PlotController@colonyPlots');
+$router->get('/colony/raghunath-nagri/block-c-dashboard', 'Front\\ColonyDashboardController@raghunathBlockC');
+$router->post('/api/colony/raghunath-nagri/sync-booking', 'Front\\ColonyDashboardController@syncBookingFromFirebase');
+$router->get('/api/colony/raghunath-nagri/bookings', 'Front\\ColonyDashboardController@getBlockCBookings');
 $router->get('/api/plots/by-colony/{colonyId}', 'Front\\PlotController@apiByColony');
 $router->get('/navigation', 'Front\\PageController@navigation');
 $router->get('/downloads', 'Front\\PageController@downloads');
@@ -745,9 +748,14 @@ $router->post('/associate/login', 'Auth\\AssociateAuthController@authenticateAss
 $router->get('/associate/logout', 'Auth\\AssociateAuthController@logout');
 $router->get('/associate/dashboard', 'App\\Http\\Controllers\\AssociateController@dashboard');
 $router->get('/associate/add-property', 'App\\Http\\Controllers\\AssociateController@addProperty');
+$router->post('/associate/add-property', 'App\\Http\\Controllers\\AssociateController@storeAddProperty');
 $router->get('/associate/leads', 'App\\Http\\Controllers\\AssociateController@leads');
+$router->get('/associate/crm', 'App\\Http\\Controllers\\AssociateController@crmDashboard');
 $router->get('/associate/commissions', 'App\\Http\\Controllers\\AssociateController@commissions');
 $router->get('/associate/properties', 'App\\Http\\Controllers\\AssociateController@properties');
+$router->get('/associate/properties/edit/{id}', 'App\\Http\\Controllers\\AssociateController@editProperty');
+$router->post('/associate/properties/update/{id}', 'App\\Http\\Controllers\\AssociateController@updateProperty');
+$router->post('/associate/properties/delete/{id}', 'App\\Http\\Controllers\\AssociateController@deleteProperty');
 $router->get('/associate/sold', 'App\\Http\\Controllers\\AssociateController@sold');
 $router->get('/associate/pending', 'App\\Http\\Controllers\\AssociateController@pending');
 $router->get('/associate/profile', 'App\\Http\\Controllers\\AssociateController@profile');
@@ -756,12 +764,26 @@ $router->get('/associate/wallet', 'App\\Http\\Controllers\\WalletController@asso
 $router->get('/associate/bank-details', 'App\\Http\\Controllers\\WalletController@bankAccounts');
 $router->get('/associate/settings', 'App\\Http\\Controllers\\AssociateController@settings');
 $router->get('/associate/mlm-plan', 'App\\Http\\Controllers\\AssociateController@mlmPlan');
+$router->get('/associate/documents', 'App\\Http\\Controllers\\AssociateController@documents');
+$router->get('/associate/browse', 'App\\Http\\Controllers\\AssociateController@browse');
 $router->get('/associate/list-property', 'App\\Http\\Controllers\\AssociateController@listProperty');
 $router->post('/associate/list-property/submit', 'App\\Http\\Controllers\\AssociateController@submitProperty');
+$router->post('/property/interest', 'App\\Http\\Controllers\\Front\\PageController@propertyInterest');
 
-// Associate Leads sub-routes
-$router->get('/associate/leads/add', 'App\\Http\\Controllers\\AssociateController@leads');
+// Associate Leads CRM routes (specific routes FIRST)
+$router->get('/associate/leads/add', 'App\\Http\\Controllers\\AssociateController@addLead');
+$router->post('/associate/leads/store', 'App\\Http\\Controllers\\AssociateController@storeLead');
 $router->get('/associate/leads/all', 'App\\Http\\Controllers\\AssociateController@leads');
+$router->post('/associate/leads/{id}/status', 'App\\Http\\Controllers\\AssociateController@updateLeadStatus');
+$router->post('/associate/leads/{id}/note', 'App\\Http\\Controllers\\AssociateController@addLeadNote');
+$router->get('/associate/leads/{id}', 'App\\Http\\Controllers\\AssociateController@leadDetail');
+$router->get('/associate/leads/import', 'App\\Http\\Controllers\\AssociateController@importLeads');
+$router->post('/associate/leads/import', 'App\\Http\\Controllers\\AssociateController@importLeads');
+$router->get('/associate/leads/bulk-whatsapp', 'App\\Http\\Controllers\\AssociateController@bulkWhatsApp');
+$router->post('/associate/leads/bulk-whatsapp', 'App\\Http\\Controllers\\AssociateController@bulkWhatsApp');
+$router->post('/associate/leads/{id}/assign', 'App\\Http\\Controllers\\AssociateController@assignLead');
+$router->post('/associate/leads/{id}/recalculate-score', 'App\\Http\\Controllers\\AssociateController@recalculateScore');
+$router->post('/associate/leads/recalculate-all-scores', 'App\\Http\\Controllers\\AssociateController@recalculateAllScores');
 $router->get('/associate/commissions/history', 'App\\Http\\Controllers\\AssociateController@commissions');
 $router->get('/associate/wallet/withdraw', 'App\\Http\\Controllers\\WalletController@withdrawal');
 $router->get('/associate/network/tree', 'App\\Http\\Controllers\\MLMTreeController@tree');
@@ -783,6 +805,34 @@ $router->get('/associate/export/downline', 'Associate\ExportController@downline'
 $router->get('/associate/export/new-directs', 'Associate\ExportController@newDirects');
 $router->get('/associate/export/plot-sales', 'Associate\ExportController@plotSales');
 $router->get('/associate/export/registry', 'Associate\ExportController@registry');
+
+// Associate Follow-ups & Schedule
+$router->get('/associate/followups', 'App\\Http\\Controllers\\AssociateController@followups');
+$router->post('/associate/followups/update/{id}', 'App\\Http\\Controllers\\AssociateController@updateFollowup');
+$router->get('/associate/schedule', 'App\\Http\\Controllers\\AssociateController@schedule');
+$router->get('/associate/schedule/calendar-data', 'App\\Http\\Controllers\\AssociateController@calendarData');
+
+// Associate Site Visits
+$router->get('/associate/site-visits', 'App\\Http\\Controllers\\AssociateController@siteVisits');
+$router->get('/associate/site-visits/schedule', 'App\\Http\\Controllers\\AssociateController@scheduleSiteVisit');
+$router->post('/associate/site-visits/schedule', 'App\\Http\\Controllers\\AssociateController@scheduleSiteVisit');
+$router->post('/associate/site-visits/{id}/complete', 'App\\Http\\Controllers\\AssociateController@completeSiteVisit');
+$router->post('/associate/site-visits/{id}/cancel', 'App\\Http\\Controllers\\AssociateController@cancelSiteVisit');
+$router->post('/associate/site-visits/{id}/reschedule', 'App\\Http\\Controllers\\AssociateController@rescheduleSiteVisit');
+
+$router->get('/associate/referral', 'App\\Http\\Controllers\\AssociateController@referral');
+$router->get('/associate/compare', 'App\\Http\\Controllers\\AssociateController@compareProperties');
+
+// Associate Business Intelligence
+$router->get('/associate/my-bookings', 'App\\Http\\Controllers\\AssociateController@myBookings');
+$router->get('/associate/my-customers', 'App\\Http\\Controllers\\AssociateController@myCustomers');
+$router->get('/associate/customer/{id}', 'App\\Http\\Controllers\\AssociateController@customerDetail');
+$router->get('/associate/emi-tracker', 'App\\Http\\Controllers\\AssociateController@emiTracker');
+$router->get('/associate/payment-history', 'App\\Http\\Controllers\\AssociateController@paymentHistory');
+$router->get('/associate/booking/{id}/receipt', 'App\\Http\\Controllers\\AssociateController@bookingReceipt');
+$router->get('/associate/rank-eligibility', 'App\\Http\\Controllers\\AssociateController@rankEligibility');
+$router->get('/associate/book-plot', 'App\\Http\\Controllers\\AssociateController@bookPlot');
+$router->post('/associate/book-plot/submit', 'App\\Http\\Controllers\\AssociateController@submitPlotBooking');
 
 // Farmer Management
 $router->get('/farmers', 'User\\FarmerController@index');
@@ -880,6 +930,8 @@ $router->post('/employee/dashboard/update-task-status', 'Employee\\EmployeeDashb
 // MLM/Team
 $router->get('/team/genealogy', 'Admin\\NetworkController@genealogy');
 $router->get('/api/mlm/tree', 'App\\Http\\Controllers\\MLMController@getNetworkTree');
+$router->get('/api/mlm/tree-data', 'App\\Http\\Controllers\\MLMTreeController@getTreeData');
+$router->get('/api/mlm/search', 'App\\Http\\Controllers\\MLMTreeController@search');
 
 // ============================================================
 // AI PROPERTY VALUATION
@@ -967,6 +1019,10 @@ $router->post('/admin/ai-aggregator/fetch', 'App\\Http\\Controllers\\Admin\\AIAg
 $router->get('/admin/users', 'App\\Http\\Controllers\\Admin\\UserController@index');
 $router->get('/admin/users/create', 'App\\Http\\Controllers\\Admin\\UserController@create');
 $router->post('/admin/users', 'App\\Http\\Controllers\\Admin\\UserController@store');
+$router->get('/admin/users/pending', 'App\\Http\\Controllers\\Admin\\UserController@pending');
+$router->post('/admin/users/{id}/approve', 'App\\Http\\Controllers\\Admin\\UserController@approve');
+$router->post('/admin/users/{id}/reject', 'App\\Http\\Controllers\\Admin\\UserController@reject');
+$router->post('/admin/users/bulk-approve', 'App\\Http\\Controllers\\Admin\\UserController@bulkApprove');
 $router->get('/admin/users/{id}', 'App\\Http\\Controllers\\Admin\\UserController@show');
 $router->get('/admin/users/{id}/edit', 'App\\Http\\Controllers\\Admin\\UserController@edit');
 $router->post('/admin/users/{id}/update', 'App\\Http\\Controllers\\Admin\\UserController@update');
@@ -978,8 +1034,9 @@ $router->get('/admin/leads/create', 'App\\Http\\Controllers\\Admin\\LeadControll
 $router->post('/admin/leads', 'App\\Http\\Controllers\\Admin\\LeadController@store');
 $router->get('/admin/leads/status', 'App\\Http\\Controllers\\Admin\\LeadController@status');
 $router->get('/admin/leads/followups', 'App\\Http\\Controllers\\Admin\\LeadController@followups');
-$router->get('/admin/leads/import', 'App\\Http\\Controllers\\Admin\\LeadController@import');
 $router->get('/admin/leads/analysis', 'App\\Http\\Controllers\\Admin\\LeadController@analysis');
+$router->get('/admin/leads/assign', 'App\\Http\\Controllers\\Admin\\LeadController@assignPage');
+$router->post('/admin/leads/assign/process', 'App\\Http\\Controllers\\Admin\\LeadController@processAssignment');
 $router->get('/admin/leads/{id}', 'App\\Http\\Controllers\\Admin\\LeadController@show');
 $router->get('/admin/leads/{id}/edit', 'App\\Http\\Controllers\\Admin\\LeadController@edit');
 $router->post('/admin/leads/{id}/update', 'App\\Http\\Controllers\\Admin\\LeadController@update');
@@ -1011,6 +1068,10 @@ $router->get('/admin/bookings/{id}/edit', 'App\\Http\\Controllers\\Admin\\Bookin
 $router->post('/admin/bookings/{id}/update', 'App\\Http\\Controllers\\Admin\\BookingController@update');
 $router->post('/admin/bookings/{id}/destroy', 'App\\Http\\Controllers\\Admin\\BookingController@destroy');
 $router->post('/admin/bookings/{id}/payment', 'App\\Http\\Controllers\\Admin\\BookingController@processPayment');
+
+// Admin Site Visits
+$router->get('/admin/site-visits', 'App\\Http\\Controllers\\Admin\\SiteVisitController@index');
+$router->post('/admin/site-visits/{id}/status', 'App\\Http\\Controllers\\Admin\\SiteVisitController@updateStatus');
 
 // Admin Agreements
 $router->get('/admin/agreements', 'App\\Http\\Controllers\\Admin\\AgreementController@index');
@@ -1208,6 +1269,11 @@ $router->post('/admin/test-ai-api', 'App\\Http\\Controllers\\AIController@testAP
 // Smart AI Chatbot (RBAC-enabled, Human-like)
 $router->post('/api/ai/chat', 'App\\Http\\Controllers\\SmartAIController@chat');
 $router->get('/api/ai/history', 'App\\Http\\Controllers\\SmartAIController@history');
+$router->post('/api/ai/feedback', 'App\\Http\\Controllers\\SmartAIController@feedback');
+$router->get('/api/ai/stats', 'App\\Http\\Controllers\\SmartAIController@stats');
+$router->get('/api/ai/rag-stats', 'App\\Http\\Controllers\\SmartAIController@ragStats');
+$router->post('/api/ai/generate-document', 'App\\Http\\Controllers\\SmartAIController@generateDocument');
+$router->post('/api/ai/workflow-event', 'App\\Http\\Controllers\\SmartAIController@workflowEvent');
 $router->get('/ai-assistant', 'App\\Http\\Controllers\\SmartAIController@assistantPage');
 
 // Notifications API
@@ -1248,7 +1314,7 @@ $router->post('/admin/godmode/execute-command', 'App\\Http\\Controllers\\Admin\\
 $router->get('/admin/godmode/system-health', 'App\\Http\\Controllers\\Admin\\GodModeController@systemHealth');
 
 // MLM Management Routes
-$router->get('/admin/mlm', 'App\Http\Controllers\Admin\MLMController@index');
+$router->get('/admin/mlm', 'App\Http\Controllers\Admin\MLMCommissionController@index');
 $router->get('/admin/mlm/users', 'App\Http\Controllers\Admin\MLMController@users');
 $router->get('/admin/mlm/users/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
 $router->post('/admin/mlm/users/create', 'App\Http\Controllers\Admin\MLMController@createAssociate');
@@ -1268,6 +1334,11 @@ $router->get('/admin/mlm-settings/rules', 'App\Http\Controllers\Admin\MLMSetting
 $router->post('/admin/mlm-settings/rules/update/{id}', 'App\Http\Controllers\Admin\MLMSettingsController@updateRule');
 $router->get('/admin/mlm-settings/evaluate', 'App\Http\Controllers\Admin\MLMSettingsController@evaluateRanks');
 $router->get('/admin/mlm-settings/associate-progress', 'App\Http\Controllers\Admin\MLMSettingsController@associateProgress');
+
+// MLM Plan Editor (CRUD for rank benefits + mlm_settings)
+$router->get('/admin/mlm/plan-editor', 'App\Http\Controllers\Admin\MLMCommissionController@planEditor');
+$router->post('/admin/mlm/plan-editor/update', 'App\Http\Controllers\Admin\MLMCommissionController@planEditorUpdate');
+
 
 // Projects Management Routes
 $router->get('/admin/projects', 'App\Http\Controllers\Admin\ProjectsAdminController@index');
@@ -1379,6 +1450,9 @@ $router->post('/wallet/withdrawal/process', 'App\\Http\\Controllers\\WalletContr
 // Bank Account Management
 $router->get('/wallet/bank-accounts', 'App\\Http\\Controllers\\WalletController@bankAccounts');
 $router->post('/wallet/bank-accounts/add', 'App\\Http\\Controllers\\WalletController@addBankAccount');
+$router->post('/wallet/bank-accounts/set-primary', 'App\\Http\\Controllers\\WalletController@setPrimaryBank');
+$router->post('/wallet/bank-accounts/delete', 'App\\Http\\Controllers\\WalletController@deleteBankAccount');
+$router->post('/wallet/bank-accounts/update', 'App\\Http\\Controllers\\WalletController@updateBankAccount');
 
 // Referral Network
 $router->get('/wallet/referral-network', 'App\\Http\\Controllers\\WalletController@referralNetwork');
@@ -1899,6 +1973,9 @@ $router->get('/admin/sales/bookings/{id}/transfer',               'App\\Http\\Co
 $router->get('/admin/sales/installments/{installmentId}/pay',      'App\\Http\\Controllers\\Admin\\BookingLifecycleController@recordPaymentForm');
 $router->post('/admin/sales/installments/{installmentId}/pay',     'App\\Http\\Controllers\\Admin\\BookingLifecycleController@recordPaymentStore');
 $router->get('/admin/sales/installments/{installmentId}/demand-letter', 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@demandLetter');
+$router->get('/admin/sales/approvals',                             'App\\Http\\Controllers\\Admin\\BookingLifecycleController@approvalList');
+$router->post('/admin/sales/approvals/{id}/approve',              'App\\Http\\Controllers\\Admin\\BookingLifecycleController@approveBooking');
+$router->post('/admin/sales/approvals/{id}/reject',               'App\\Http\\Controllers\\Admin\\BookingLifecycleController@rejectBooking');
 $router->get('/admin/sales/commissions',                          'App\\Http\\Controllers\\Admin\\BookingLifecycleController@commissions');
 $router->get('/admin/sales/refunds',                              'App\\Http\\Controllers\\Admin\\BookingLifecycleController@refunds');
 $router->get('/admin/sales/rera',                                 'App\\Http\\Controllers\\Admin\\BookingLifecycleController@reraCompliance');
@@ -2352,6 +2429,29 @@ $router->get('/admin/crm/users/create', 'App\\Http\\Controllers\\Admin\\CRMContr
 $router->get('/admin/crm/groups', 'App\\Http\\Controllers\\Admin\\CRMController@groups');
 $router->get('/admin/crm/followups', 'App\\Http\\Controllers\\Admin\\CRMController@followups');
 
+// CRM - Lead Import
+$router->get('/admin/leads/import', 'App\\Http\\Controllers\\Admin\\LeadImportController@importForm');
+$router->post('/admin/leads/import/preview', 'App\\Http\\Controllers\\Admin\\LeadImportController@previewImport');
+$router->post('/admin/leads/import/commit', 'App\\Http\\Controllers\\Admin\\LeadImportController@commitImport');
+
+// CRM - Bulk Outreach
+$router->get('/admin/crm/outreach', 'App\\Http\\Controllers\\Admin\\BulkOutreachController@index');
+$router->post('/admin/crm/outreach/create', 'App\\Http\\Controllers\\Admin\\BulkOutreachController@createCampaign');
+$router->post('/admin/crm/outreach/{id}/send', 'App\\Http\\Controllers\\Admin\\BulkOutreachController@sendCampaign');
+$router->get('/admin/crm/outreach/{id}/stats', 'App\\Http\\Controllers\\Admin\\BulkOutreachController@campaignStats');
+
+// CRM - Share Analytics
+$router->get('/admin/crm/shares', 'App\\Http\\Controllers\\Front\\ShareController@shareStats');
+$router->post('/share/track', 'App\\Http\\Controllers\\Front\\ShareController@trackShare');
+
+// Buyer System
+$router->get('/buyer/dashboard', 'App\\Http\\Controllers\\BuyerController@dashboard');
+$router->post('/buyer/interest/submit', 'App\\Http\\Controllers\\BuyerController@submitInterest');
+
+// Property Commission
+$router->post('/api/property-commission/record', 'App\\Http\\Controllers\\PropertyCommissionController@recordSale');
+$router->get('/api/property-commission/summary', 'App\\Http\\Controllers\\PropertyCommissionController@summary');
+
 // Ad Manager
 $router->get('/admin/ads', 'App\\Http\\Controllers\\Admin\\AdManagerController@index');
 $router->get('/admin/ads/create', 'App\\Http\\Controllers\\Admin\\AdManagerController@create');
@@ -2434,10 +2534,20 @@ $router->post('/user/book-site-visit', 'Front\\UserController@bookSiteVisit');
 $router->get('/user/notifications', 'Front\\UserController@notifications');
 $router->post('/user/notifications/read-all', 'Front\\UserController@markAllNotificationsRead');
 $router->post('/user/notifications/{id}/read', 'Front\\UserController@markNotificationRead');
+$router->get('/user/messages', function () {
+    header('Location: ' . BASE_URL . '/user/notifications');
+    exit;
+});
 $router->get('/user/payments', function () {
     header('Location: ' . BASE_URL . '/payment/history');
     exit;
 });
+
+// Customer Portal - EMI & Payments
+$router->get('/user/emi-tracker', 'Front\\UserController@emiTracker');
+$router->get('/user/payment-history', 'Front\\UserController@paymentHistory');
+$router->get('/user/site-visits', 'Front\\UserController@mySiteVisits');
+$router->post('/user/site-visits/book', 'Front\\UserController@bookSiteVisitAction');
 
 // Lead source analytics
 $router->get('/admin/leads/sources', 'Admin\\LeadController@sources');
@@ -2659,7 +2769,6 @@ $router->post('/api/ai/score-lead/{id}', 'Front\\AIBotController@scoreLead');
 $router->post('/api/ai/predict-price', 'Front\\AIBotController@predictPrice');
 $router->get('/api/ai/recommend', 'Front\\AIBotController@recommend');
 $router->post('/api/ai/retrain', 'Front\\AIBotController@retrain');
-$router->get('/api/ai/stats', 'Front\\AIBotController@stats');
 $router->any('/api/ai/legacy-chat', 'Front\\AIBotController@chat');
 
 // ═══════════════════════════════════════════════════
@@ -3100,6 +3209,8 @@ $router->get('/admin/commission/bonuses', 'App\\Http\\Controllers\\Admin\\Commis
 $router->get('/admin/commission/mlm/levels', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@mlmLevels');
 $router->get('/admin/commission/mlm/records', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@mlmRecords');
 $router->get('/admin/commission/mlm/analytics', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@mlmAnalytics');
+$router->get('/admin/commission/mlm/ledger/legacy', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@mlmLedgerLegacy');
+$router->get('/admin/commission/calculations/all', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@commissionCalculations');
 $router->get('/admin/commission/revenue/daily', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@revenueDaily');
 $router->get('/admin/commission/telecaller/rules', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerRules');
 $router->get('/admin/commission/telecaller/commissions', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@telecallerCommissions');
@@ -3129,12 +3240,7 @@ $router->post('/admin/commission/action', 'App\\Http\\Controllers\\Admin\\Commis
 $router->post('/admin/commissions/processPayout', 'App\\Http\\Controllers\\Admin\\CommissionController@processPayout');
 
 // Commission Reconciliation (daily audit + TDS config)
-$router->get('/admin/commission/reconciliation', function() {
-    requireAdmin();
-    $service = new \App\Services\MLM\CommissionReconciliationService();
-    $data = $service->reconcile();
-    require __DIR__ . '/../app/views/admin/commission/reconciliation.php';
-});
+$router->get('/admin/commission/reconciliation', 'App\\Http\\Controllers\\Admin\\CommissionAdminController@reconciliation');
 
 // Commission Plans (CRUD + calculator)
 $router->get('/admin/commission-plans',                        'App\\Http\\Controllers\\Admin\\CommissionPlanController@index');
@@ -3882,6 +3988,11 @@ $router->get('/admin/mlm/royalty-pool',                           'App\\Http\\Co
 $router->get('/admin/mlm/api/rank-distribution',                  'App\\Http\\Controllers\\Admin\\MLMCommissionController@apiRankDistribution');
 
 // ============================================================
+// PUBLIC MLM PLAN INFO PAGE
+// ============================================================
+$router->get('/how-it-works', 'Front\\PageController@howItWorks');
+
+// ============================================================
 // MODULE 5: BACKOFFICE + DAILY OPERATIONS
 // URL prefix: /admin/backoffice/*
 // All actions delegate to App\Http\Controllers\Admin\BackofficeController.
@@ -3904,6 +4015,7 @@ $router->get('/admin/backoffice/leaves/history',                     'App\\Http\
 $router->get('/admin/backoffice/payslips',                           'App\\Http\\Controllers\\Admin\\BackofficeController@payslips');
 $router->post('/admin/backoffice/payslips/generate',                 'App\\Http\\Controllers\\Admin\\BackofficeController@payslipGenerate');
 $router->get('/admin/backoffice/payslips/{id}',                      'App\\Http\\Controllers\\Admin\\BackofficeController@payslipView');
+$router->post('/admin/backoffice/payslips/{id}/pay',                  'App\\Http\\Controllers\\Admin\\BackofficeController@payslipPay');
 
 // Leads
 $router->get('/admin/backoffice/leads',                              'App\\Http\\Controllers\\Admin\\BackofficeController@leads');

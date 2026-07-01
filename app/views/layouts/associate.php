@@ -3,126 +3,6 @@
 if (session_status() === PHP_SESSION_NONE) {
     @session_start();
 }
-
-// Include database connection for role-based menu
-require_once __DIR__ . '/../../config/database.php';
-
-// Get user role from session
-$userRole = $_SESSION['role'] ?? 'associate';
-
-/**
- * Get role-based sidebar menu
- */
-function getRoleBasedSidebar($userRole)
-{
-    global $pdo;
-
-    // Static menu for users (fallback if database menu doesn't exist)
-    if ($userRole === 'associate') {
-        return [
-            [
-                'menu_item' => 'Dashboard',
-                'menu_url' => '/associate/dashboard',
-                'menu_icon' => 'fas fa-tachometer-alt',
-                'menu_order' => 1,
-                'parent_menu' => null
-            ],
-            [
-                'menu_item' => 'My Properties',
-                'menu_url' => '/associate/properties',
-                'menu_icon' => 'fas fa-building',
-                'menu_order' => 2,
-                'parent_menu' => null
-            ],
-            [
-                'menu_item' => 'My Leads',
-                'menu_url' => '/associate/leads',
-                'menu_icon' => 'fas fa-users',
-                'menu_order' => 3,
-                'parent_menu' => null
-            ],
-            [
-                'menu_item' => 'Add Lead',
-                'menu_url' => '/associate/leads/add',
-                'menu_icon' => 'fas fa-plus',
-                'menu_order' => 4,
-                'parent_menu' => 'My Leads'
-            ],
-            [
-                'menu_item' => 'All Leads',
-                'menu_url' => '/associate/leads/all',
-                'menu_icon' => 'fas fa-list',
-                'menu_order' => 5,
-                'parent_menu' => 'My Leads'
-            ],
-            [
-                'menu_item' => 'My Commissions',
-                'menu_url' => '/associate/commissions',
-                'menu_icon' => 'fas fa-rupee-sign',
-                'menu_order' => 6,
-                'parent_menu' => null
-            ],
-            [
-                'menu_item' => 'Commission History',
-                'menu_url' => '/associate/commissions/history',
-                'menu_icon' => 'fas fa-history',
-                'menu_order' => 7,
-                'parent_menu' => 'My Commissions'
-            ],
-            [
-                'menu_item' => 'Withdraw Commission',
-                'menu_url' => '/associate/wallet/withdraw',
-                'menu_icon' => 'fas fa-money-bill-wave',
-                'menu_order' => 8,
-                'parent_menu' => 'My Commissions'
-            ],
-            [
-                'menu_item' => 'Network Tree',
-                'menu_url' => '/associate/genealogy',
-                'menu_icon' => 'fas fa-sitemap',
-                'menu_order' => 9,
-                'parent_menu' => null
-            ],
-            [
-                'menu_item' => 'Team Management',
-                'menu_url' => '/associate/team',
-                'menu_icon' => 'fas fa-users-cog',
-                'menu_order' => 10,
-                'parent_menu' => null
-            ],
-            [
-                'menu_item' => 'Add Team Member',
-                'menu_url' => '/associate/team/add',
-                'menu_icon' => 'fas fa-user-plus',
-                'menu_order' => 11,
-                'parent_menu' => 'Team Management'
-            ],
-            [
-                'menu_item' => 'Team Performance',
-                'menu_url' => '/associate/team/performance',
-                'menu_icon' => 'fas fa-chart-line',
-                'menu_order' => 12,
-                'parent_menu' => 'Team Management'
-            ],
-            [
-                'menu_item' => 'My Profile',
-                'menu_url' => '/associate/profile',
-                'menu_icon' => 'fas fa-user',
-                'menu_order' => 13,
-                'parent_menu' => null
-            ],
-            [
-                'menu_item' => 'Settings',
-                'menu_url' => '/associate/settings',
-                'menu_icon' => 'fas fa-cog',
-                'menu_order' => 14,
-                'parent_menu' => null
-            ]
-        ];
-    }
-
-    return [];
-}
 ?>
 
 <!DOCTYPE html>
@@ -158,7 +38,7 @@ function getRoleBasedSidebar($userRole)
             left: 0;
             width: 260px;
             height: 100vh;
-            background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%);
+            background: linear-gradient(180deg, #0f172a 0%, #134e4a 100%);
             z-index: 1000;
             overflow-y: auto;
             transition: transform 0.3s ease;
@@ -191,7 +71,7 @@ function getRoleBasedSidebar($userRole)
 
         .sidebar-logo i {
             font-size: 1.3rem;
-            color: #a5b4fc;
+            color: #5eead4;
         }
 
         .sidebar-sub {
@@ -209,7 +89,7 @@ function getRoleBasedSidebar($userRole)
         .user-avatar {
             width: 45px;
             height: 45px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -251,11 +131,11 @@ function getRoleBasedSidebar($userRole)
         .sidebar-link {
             display: flex;
             align-items: center;
-            padding: 15px 20px;
+            padding: 11px 20px;
             color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            font-size: 0.88rem;
         }
 
         .sidebar-link:hover {
@@ -264,9 +144,9 @@ function getRoleBasedSidebar($userRole)
         }
 
         .sidebar-link.active {
-            background: rgba(165, 180, 252, 0.2);
-            color: #a5b4fc;
-            border-left: 3px solid #a5b4fc;
+            background: rgba(13, 148, 136, 0.2);
+            color: #5eead4;
+            border-left: 3px solid #5eead4;
         }
 
         .sidebar-link i {
@@ -307,8 +187,8 @@ function getRoleBasedSidebar($userRole)
         }
 
         .submenu-link.active {
-            background: rgba(165, 180, 252, 0.1);
-            color: #a5b4fc;
+            background: rgba(13, 148, 136, 0.1);
+            color: #5eead4;
         }
 
         /* Main Content */
@@ -380,7 +260,7 @@ function getRoleBasedSidebar($userRole)
             z-index: 1001;
             width: 45px;
             height: 45px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             border: none;
             border-radius: 10px;
             color: #fff;
@@ -466,7 +346,7 @@ function getRoleBasedSidebar($userRole)
 
         .stat-icon.purple {
             background: rgba(139, 92, 246, 0.1);
-            color: #8b5cf6;
+            color: #14b8a6;
         }
 
         .stat-value {
@@ -495,6 +375,123 @@ function getRoleBasedSidebar($userRole)
 
         .stat-trend.down {
             color: #ef4444;
+        }
+
+        /* aps-cp-card styles (used by views but defined nowhere in associate layout) */
+        .aps-cp-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .aps-cp-card-header {
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 20px;
+        }
+        .aps-cp-card-body {
+            padding: 20px;
+        }
+
+        /* Custom Bootstrap color extensions (not in standard BS5) */
+        .bg-purple { background-color: #6f42c1 !important; }
+        .text-purple { color: #6f42c1 !important; }
+        .bg-gold { background-color: #d4a843 !important; }
+        .text-gold { color: #d4a843 !important; }
+        .bg-teal { background-color: #20c997 !important; }
+        .text-teal { color: #20c997 !important; }
+        .bg-indigo { background-color: #0d9488 !important; }
+        .text-indigo { color: #0d9488 !important; }
+
+        /* Fix text visibility on colored backgrounds */
+        .card.bg-success, .card.bg-warning, .card.bg-info, .card.bg-primary {
+            color: #fff;
+        }
+        .card.bg-success .card-title,
+        .card.bg-warning .card-title,
+        .card.bg-info .card-title,
+        .card.bg-primary .card-title {
+            color: #fff;
+        }
+        .card.bg-success h6, .card.bg-warning h6, .card.bg-info h6, .card.bg-primary h6 {
+            color: #fff;
+        }
+        .card.bg-success h3, .card.bg-warning h3, .card.bg-info h3, .card.bg-primary h3 {
+            color: #fff;
+        }
+
+        /* Fix table responsiveness double-wrap */
+        .table-responsive .table-responsive {
+            overflow: visible;
+        }
+
+        /* Sidebar badge */
+        .sidebar-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: auto;
+            font-weight: 600;
+        }
+
+        /* Collapsible section toggle */
+        .sidebar-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            margin-top: 4px;
+        }
+        .sidebar-section:first-of-type {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 12px;
+        }
+        .sidebar-section .section-toggle {
+            font-size: 0.65rem;
+            transition: transform 0.2s ease;
+        }
+        .sidebar-section.collapsed .section-toggle {
+            transform: rotate(-90deg);
+        }
+        .sidebar-section.collapsed + .sidebar-menu {
+            display: none;
+        }
+
+        /* ===== ASSOCIATE PORTAL MOBILE RESPONSIVENESS ===== */
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 10px 12px 10px 65px !important;
+                flex-wrap: wrap;
+            }
+            .page-title { font-size: 1rem !important; }
+            .breadcrumb { font-size: 0.72rem !important; display: none !important; }
+            .header-actions { gap: 6px; }
+            .content-wrapper { padding: 12px !important; }
+            .stat-card { padding: 14px !important; }
+            .stat-value { font-size: 1.3rem !important; }
+            .stat-icon { width: 40px !important; height: 40px !important; font-size: 1.1rem !important; }
+            .aps-cp-card { border-radius: 10px !important; }
+            .aps-cp-card-header { padding: 12px 14px !important; font-size: 0.85rem !important; flex-wrap: wrap; }
+            .aps-cp-card-body { padding: 14px !important; }
+            .table-responsive { font-size: 0.8rem; }
+            .table th, .table td { padding: 6px 8px !important; white-space: nowrap; }
+            .btn { padding: 6px 12px !important; font-size: 0.8rem !important; }
+            .row.g-3 > [class*="col-"] { padding: 6px; }
+            .row.g-4 > [class*="col-"] { padding: 8px; }
+            .pipeline-mini { gap: 4px !important; }
+            .pipeline-mini .pm-item { min-width: 60px !important; padding: 6px 8px !important; font-size: 0.7rem !important; }
+            .pipeline-mini .pm-item .pm-count { font-size: 1rem !important; }
+        }
+        @media (max-width: 480px) {
+            .user-card { padding: 10px 14px !important; }
+            .stat-value { font-size: 1.1rem !important; }
+            .pipeline-mini .pm-item { min-width: 50px !important; padding: 4px 6px !important; font-size: 0.65rem !important; }
         }
     </style>
 </head>
@@ -536,10 +533,24 @@ function getRoleBasedSidebar($userRole)
             $portalMenu = [];
         }
         $activeKey = $current_page ?? '';
+        // Auto-expand section containing active item
+        $activeSection = '';
+        foreach ($portalMenu as $section) {
+            foreach ($section['items'] as $item) {
+                if ($item['key'] === $activeKey) {
+                    $activeSection = $section['name'];
+                    break 2;
+                }
+            }
+        }
         foreach ($portalMenu as $section):
             if (empty($section['items'])) continue;
+            $isCollapsed = ($activeSection !== '' && $activeSection !== $section['name']);
         ?>
-        <div class="sidebar-section"><?= htmlspecialchars(__($section['name'], null, $section['name'])) ?></div>
+        <div class="sidebar-section <?= $isCollapsed ? 'collapsed' : '' ?>" onclick="toggleSection(this)">
+            <span><?= htmlspecialchars(__($section['name'], null, $section['name'])) ?></span>
+            <i class="fas fa-chevron-down section-toggle"></i>
+        </div>
         <ul class="sidebar-menu">
             <?php foreach ($section['items'] as $menuItem):
                 $isActive = ($activeKey === $menuItem['key']);
@@ -574,13 +585,13 @@ function getRoleBasedSidebar($userRole)
                 </nav>
             </div>
             <div class="header-actions">
-                <button class="btn-icon" title="Notifications">
+                <a href="<?= BASE_URL ?>/user/notifications" class="btn-icon" title="Notifications">
                     <i class="fas fa-bell"></i>
-                </button>
-                <button class="btn-icon" title="Messages">
+                </a>
+                <a href="<?= BASE_URL ?>/user/messages" class="btn-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
-                </button>
-                <a href="<?php echo BASE_URL; ?>/associate/profile" class="btn-icon" title="Profile">
+                </a>
+                <a href="<?= BASE_URL ?>/associate/profile" class="btn-icon" title="My Profile">
                     <i class="fas fa-user"></i>
                 </a>
             </div>
@@ -604,6 +615,20 @@ function getRoleBasedSidebar($userRole)
             overlay.classList.toggle('show');
         }
 
+        function toggleSection(el) {
+            el.classList.toggle('collapsed');
+            localStorage.setItem('sidebar_section_' + el.querySelector('span').textContent, el.classList.contains('collapsed') ? '1' : '0');
+        }
+
+        // Restore section states from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.sidebar-section').forEach(function(sec) {
+                var key = 'sidebar_section_' + sec.querySelector('span').textContent;
+                var val = localStorage.getItem(key);
+                if (val === '1') sec.classList.add('collapsed');
+            });
+        });
+
         // Close sidebar on window resize if open
         window.addEventListener('resize', function() {
             if (window.innerWidth > 1024) {
@@ -613,6 +638,63 @@ function getRoleBasedSidebar($userRole)
                 overlay.classList.remove('show');
             }
         });
+    </script>
+
+    <!-- Floating AI Chat Widget -->
+    <div id="aiChatWidget" style="position:fixed;bottom:24px;right:24px;z-index:9999;">
+        <button id="chatToggle" onclick="toggleAssociateChat()" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border:none;box-shadow:0 4px 20px rgba(13,148,136,0.4);cursor:pointer;font-size:1.4rem;transition:transform 0.3s;">
+            <i class="fas fa-robot"></i>
+        </button>
+        <div id="chatPanel" style="display:none;position:absolute;bottom:70px;right:0;width:360px;max-height:480px;background:#fff;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.15);overflow:hidden;border:1px solid #e2e8f0;">
+            <div style="background:linear-gradient(135deg,#0d9488,#0f766e);padding:14px 18px;color:#fff;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <i class="fas fa-robot" style="font-size:1.2rem;"></i>
+                    <div>
+                        <div style="font-weight:700;font-size:0.95rem;">APS Assistant</div>
+                        <div style="font-size:0.7rem;opacity:0.8;">Property &amp; MLM Help</div>
+                    </div>
+                </div>
+                <button onclick="toggleAssociateChat()" style="background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;opacity:0.8;"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="assocChatMessages" style="height:320px;overflow-y:auto;padding:14px;background:#f8fafc;">
+                <div style="background:#fff;border-left:3px solid #0d9488;padding:10px 14px;border-radius:12px;font-size:0.85rem;color:#334155;max-width:88%;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+                    Namaste! I'm your APS assistant. Ask about properties, commissions, bookings, or anything else.
+                </div>
+            </div>
+            <div style="padding:10px 14px;background:#fff;border-top:1px solid #e2e8f0;display:flex;gap:8px;">
+                <input type="text" id="assocChatInput" placeholder="Type a message..." style="flex:1;border:1px solid #e2e8f0;border-radius:20px;padding:8px 14px;font-size:0.85rem;outline:none;" onkeypress="if(event.key==='Enter')sendAssociateChat()">
+                <button onclick="sendAssociateChat()" style="width:36px;height:36px;border-radius:50%;background:#0d9488;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fas fa-paper-plane" style="font-size:0.8rem;"></i></button>
+            </div>
+        </div>
+    </div>
+    <script>
+    function toggleAssociateChat() {
+        var p = document.getElementById('chatPanel');
+        p.style.display = p.style.display === 'none' ? 'block' : 'none';
+        if (p.style.display === 'block') document.getElementById('assocChatInput').focus();
+    }
+    async function sendAssociateChat() {
+        var inp = document.getElementById('assocChatInput');
+        var msg = inp.value.trim();
+        if (!msg) return;
+        inp.value = '';
+        addAssocMsg(msg, true);
+        try {
+            var r = await fetch('<?= BASE_URL ?>api/ai/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({message:msg}) });
+            var d = await r.json();
+            addAssocMsg(d.reply || d.response || 'Sorry, I could not process that.', false);
+        } catch(e) {
+            addAssocMsg('Connection error. Please try again.', false);
+        }
+    }
+    function addAssocMsg(text, isUser) {
+        var c = document.getElementById('assocChatMessages');
+        var d = document.createElement('div');
+        d.style.cssText = 'padding:10px 14px;border-radius:12px;font-size:0.85rem;max-width:88%;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06);' + (isUser ? 'background:#0d9488;color:#fff;margin-left:auto;border-radius:12px 12px 4px 12px;' : 'background:#fff;color:#334155;border-left:3px solid #0d9488;');
+        d.innerHTML = text.replace(/\n/g,'<br>');
+        c.appendChild(d);
+        c.scrollTop = c.scrollHeight;
+    }
     </script>
 </body>
 

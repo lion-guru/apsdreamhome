@@ -19,6 +19,16 @@ if (!defined('BASE_URL')) {
 $admin_name = $_SESSION['admin_name'] ?? 'Admin';
 $admin_role = $_SESSION['admin_role'] ?? 'admin';
 $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+
+// Get pending approval count for sidebar badge
+$pendingCount = 0;
+try {
+    $db = \App\Core\Database\Database::getInstance();
+    $pendingResult = $db->fetchOne("SELECT COUNT(*) as cnt FROM users WHERE registration_status = 'pending'");
+    $pendingCount = (int)($pendingResult['cnt'] ?? 0);
+} catch (Exception $e) {
+    // Silently fail - badge just won't show
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,9 +41,9 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4f46e5; --primary-dark: #4338ca;
-            --sidebar-bg: #1e1b4b; --sidebar-hover: #312e81;
-            --sidebar-active: #4f46e5; --sidebar-text: #c7d2fe; --sidebar-icon: #a5b4fc;
+            --primary: #0d9488; --primary-dark: #0f766e;
+            --sidebar-bg: #0f172a; --sidebar-hover: #134e4a;
+            --sidebar-active: #0d9488; --sidebar-text: #c7d2fe; --sidebar-icon: #5eead4;
             --main-bg: #f1f5f9; --card-bg: #ffffff; --card-border: #e2e8f0;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -80,12 +90,12 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
         .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .stat-card { background: #fff; border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; display: flex; align-items: flex-start; gap: 15px; }
         .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .stat-icon.primary { background: #eef2ff; color: #4f46e5; }
+        .stat-icon.primary { background: #eef2ff; color: #0d9488; }
         .stat-icon.success { background: #ecfdf5; color: #10b981; }
         .stat-icon.warning { background: #fffbeb; color: #f59e0b; }
         .stat-icon.danger { background: #fef2f2; color: #ef4444; }
         .stat-icon.info { background: #f0fdfa; color: #14b8a6; }
-        .stat-icon.purple { background: #faf5ff; color: #a855f7; }
+        .stat-icon.purple { background: #faf5ff; color: #14b8a6; }
         .stat-content { flex: 1; }
         .stat-label { font-size: 0.72rem; color: #64748b; text-transform: uppercase; font-weight: 500; margin-bottom: 4px; }
         .stat-value { font-size: 1.5rem; font-weight: 700; color: #1e293b; }
@@ -107,6 +117,26 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
             .main-content { margin-left: 0; }
             .toggle-sidebar { display: block; }
             .user-info { display: none; }
+            .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+            .sidebar-overlay.show { display: block; }
+            .page-content { padding: 16px; }
+            .stat-card { flex-direction: column; text-align: center; }
+            .top-navbar { padding: 0 12px; }
+            .navbar-right { gap: 8px; }
+            .table-responsive { font-size: 0.8rem; }
+            .page-breadcrumb { display: none; }
+        }
+        @media (max-width: 576px) {
+            .stat-card { padding: 12px; }
+            .stat-icon { width: 36px; height: 36px; font-size: 1rem; border-radius: 8px; }
+            .stat-value { font-size: 1.2rem; }
+            .stat-label { font-size: 0.65rem; }
+            .page-content { padding: 12px; }
+            .top-navbar { height: 50px; }
+            .user-dropdown { padding: 4px 6px; }
+            .user-avatar { width: 30px; height: 30px; font-size: 0.75rem; }
+            .navbar-icon { padding: 6px; font-size: 0.9rem; }
+            .navbar-icon .badge { font-size: 0.5rem; padding: 1px 4px; }
         }
     </style>
 </head>
@@ -146,8 +176,8 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
         </ul>
         <div class="sidebar-section">Team</div>
         <ul class="sidebar-menu">
-            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/users" class="sidebar-link <?php echo strpos($current_uri, '/admin/users') !== false ? 'active' : ''; ?>"><i class="fas fa-users"></i> Users</a></li>
-            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/users" class="sidebar-link <?php echo strpos($current_uri, '/admin/users') !== false ? 'active' : ''; ?>"><i class="fas fa-user-tie"></i> users</a></li>
+            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/users" class="sidebar-link <?php echo strpos($current_uri, '/admin/users') !== false && strpos($current_uri, '/pending') === false ? 'active' : ''; ?>"><i class="fas fa-users"></i> Users</a></li>
+            <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/users/pending" class="sidebar-link <?php echo strpos($current_uri, '/admin/users/pending') !== false ? 'active' : ''; ?>"><i class="fas fa-user-clock"></i> Pending Approvals <?php if ($pendingCount > 0): ?><span class="badge bg-danger ms-1"><?php echo $pendingCount; ?></span><?php endif; ?></a></li>
         </ul>
         <div class="sidebar-section">System</div>
         <ul class="sidebar-menu">
@@ -160,6 +190,9 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
             <li class="sidebar-item"><a href="<?php echo BASE_URL; ?>/admin/logout" class="sidebar-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </aside>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="document.getElementById('sidebar').classList.remove('show'); this.classList.remove('show');"></div>
 
     <main class="main-content">
         <nav class="top-navbar">
@@ -193,10 +226,16 @@ $current_uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('toggleSidebar')?.addEventListener('click', function() { document.getElementById('sidebar').classList.toggle('show'); });
+        document.getElementById('toggleSidebar')?.addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('show');
+            document.getElementById('sidebarOverlay')?.classList.toggle('show');
+        });
         document.addEventListener('click', function(e) {
-            const s = document.getElementById('sidebar'), b = document.getElementById('toggleSidebar');
-            if (window.innerWidth < 992 && s.classList.contains('show') && !s.contains(e.target) && !b.contains(e.target)) s.classList.remove('show');
+            const s = document.getElementById('sidebar'), b = document.getElementById('toggleSidebar'), o = document.getElementById('sidebarOverlay');
+            if (window.innerWidth < 992 && s.classList.contains('show') && !s.contains(e.target) && !b.contains(e.target)) {
+                s.classList.remove('show');
+                o?.classList.remove('show');
+            }
         });
         setTimeout(() => { document.querySelectorAll('.alert').forEach(a => { try { new bootstrap.Alert(a).close(); } catch(e) {} }); }, 5000);
     </script>
