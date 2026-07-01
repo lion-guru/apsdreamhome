@@ -143,7 +143,7 @@ include __DIR__ . '/../layouts/base.php';
 }
 
 .ai-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     padding: 30px;
     text-align: center;
@@ -175,8 +175,8 @@ include __DIR__ . '/../layouts/base.php';
 }
 
 .form-check-input:checked {
-    background-color: #667eea;
-    border-color: #667eea;
+    background-color: #0d9488;
+    border-color: #0d9488;
 }
 
 .results-content,
@@ -186,7 +186,7 @@ include __DIR__ . '/../layouts/base.php';
 }
 
 .valuation-metric {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     padding: 20px;
     border-radius: 12px;
@@ -215,7 +215,7 @@ include __DIR__ . '/../layouts/base.php';
 
 .recommendation {
     background: #f8f9fa;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #0d9488;
     padding: 15px;
     margin: 10px 0;
     border-radius: 0 8px 8px 0;
@@ -240,7 +240,7 @@ include __DIR__ . '/../layouts/base.php';
 
 .trend-value {
     font-weight: bold;
-    color: #667eea;
+    color: #0d9488;
 }
 
 .investment-score {
@@ -276,7 +276,7 @@ include __DIR__ . '/../layouts/base.php';
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     border: none;
     padding: 12px 30px;
     font-weight: 600;
@@ -284,14 +284,14 @@ include __DIR__ . '/../layouts/base.php';
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }
 
 .form-control:focus,
 .form-select:focus {
-    border-color: #667eea;
+    border-color: #0d9488;
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 </style>

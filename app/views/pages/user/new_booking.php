@@ -76,7 +76,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                 <a href="<?= BASE_URL ?>/user/bookings/new?colony_id=<?= (int)$colony['id'] ?>"
                    class="text-decoration-none">
                     <div class="aps-cp-card h-100 <?= (int)$colony['id'] === $selectedColony ? 'border-primary shadow' : '' ?>"
-                         style="<?= (int)$colony['id'] === $selectedColony ? 'border: 2px solid #4f46e5;' : 'border: 1px solid var(--aps-cp-border);' ?>">
+                         style="<?= (int)$colony['id'] === $selectedColony ? 'border: 2px solid #0d9488;' : 'border: 1px solid var(--aps-cp-border);' ?>">
                         <div class="position-relative">
                             <?php if (!empty($colony['image_path'])): ?>
                                 <img src="<?= BASE_URL ?>/<?= htmlspecialchars($colony['image_path']) ?>"
@@ -186,7 +186,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
-            <div class="modal-header" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; border: none;">
                 <h5 class="modal-title" id="bookingModalLabel">
                     <i class="fas fa-file-contract me-2"></i><?= __('user_new_booking_modal_title', 'Confirm Your Booking') ?>
                 </h5>

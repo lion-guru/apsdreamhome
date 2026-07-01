@@ -289,7 +289,7 @@ class OTPService
 
         $message = $messages[$purpose] ?? "Your OTP is: <strong>$otpCode</strong>";
 
-        return "<html><body><div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;'><div style='background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);'><h2 style='color: #667eea; text-align: center; margin-bottom: 30px;'>APS Dream Home</h2><p style='font-size: 16px; color: #333; line-height: 1.6;'>$message</p><div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center; margin-top: 20px;'><span style='font-size: 24px; font-weight: bold; color: #667eea; letter-spacing: 3px;'>$otpCode</span></div><p style='font-size: 12px; color: #666; text-align: center; margin-top: 30px;'>If you didn't request this OTP, please ignore this email.</p></div></div></body></html>";
+        return "<html><body><div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;'><div style='background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);'><h2 style='color: #0d9488; text-align: center; margin-bottom: 30px;'>APS Dream Home</h2><p style='font-size: 16px; color: #333; line-height: 1.6;'>$message</p><div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center; margin-top: 20px;'><span style='font-size: 24px; font-weight: bold; color: #0d9488; letter-spacing: 3px;'>$otpCode</span></div><p style='font-size: 12px; color: #666; text-align: center; margin-top: 30px;'>If you didn't request this OTP, please ignore this email.</p></div></div></body></html>";
     }
 
     /**

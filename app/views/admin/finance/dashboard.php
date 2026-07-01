@@ -124,7 +124,7 @@
                     $labels = ['customer_payment'=>__('dash_cf_customer_payments'),'salary'=>__('dash_cf_salaries'),'vendor'=>__('dash_cf_vendors'),'commission'=>__('dash_cf_commissions'),'tax'=>__('dash_cf_taxes'),'development'=>__('dash_cf_development'),'land_acquisition'=>__('dash_cf_land'),'loan'=>__('dash_cf_loan'),'other'=>__('dash_cf_other'),'emi_collection'=>__('dash_cf_emi_collection')];
                     if (!empty($cats)):
                     ?>
-                    <table class="table table-sm table-borderless mb-0">
+                    <div class="table-responsive"><table class="table table-sm table-borderless mb-0">
                         <thead><tr><th><?= __('dash_cf_category') ?></th><th class="text-end text-success"><?= __('dash_cf_inflow') ?></th><th class="text-end text-danger"><?= __('dash_cf_outflow') ?></th></tr></thead>
                         <tbody>
                         <?php foreach ($cats as $cat => $vals): ?>
@@ -135,7 +135,7 @@
                             </tr>
                         <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                     <?php else: ?>
                     <p class="text-center text-muted mb-0"><?= __('dash_cf_no_data') ?> <a href="<?= BASE_URL ?>/admin/finance/cash-flow?days=30"><?= __('dash_cf_generate') ?></a></p>
                     <?php endif; ?>
@@ -172,7 +172,7 @@
             <a href="<?= BASE_URL ?>/admin/finance/cash-book" class="btn btn-sm btn-outline-primary"><?php echo __('finance_view_all'); ?></a>
         </div>
         <div class="aps-cp-card-body">
-            <table class="table table-hover align-middle">
+            <div class="table-responsive"><table class="table table-hover align-middle">
                 <thead class="table-light">
                     <tr><th><?php echo __('finance_date'); ?></th><th><?php echo __('finance_type'); ?></th><th><?php echo __('finance_party'); ?></th><th><?php echo __('finance_mode'); ?></th><th class="text-end"><?php echo __('finance_amount'); ?></th><th><?php echo __('finance_voucher'); ?></th></tr>
                 </thead>
@@ -190,7 +190,7 @@
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

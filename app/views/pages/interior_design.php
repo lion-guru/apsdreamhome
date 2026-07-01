@@ -1,8 +1,8 @@
 <?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <style>
-:root { --primary: #6a1b9a; --secondary: #ff6f00; --accent: #00c853; }
+:root { --primary: #0d9488; --secondary: #ff6f00; --accent: #00c853; }
 .interior-hero {
-    background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #8e24aa 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d9488 100%);
     color: #fff; padding: 100px 0 80px; position: relative; overflow: hidden;
 }
 .interior-hero::before {
@@ -19,12 +19,12 @@
 .team-card { text-align: center; padding: 2rem; border-radius: 16px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
 .team-card img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; }
 .testimonial-card { background: #fff; border-radius: 16px; padding: 2rem; box-shadow: 0 2px 15px rgba(0,0,0,0.06); height: 100%; }
-.faq-accordion .accordion-button:not(.collapsed) { background: #f3e5f5; color: #4a148c; }
-.lead-form-section { background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); }
+.faq-accordion .accordion-button:not(.collapsed) { background: #f0fdfa; color: #0d9488; }
+.lead-form-section { background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); }
 .flash-message { position: fixed; top: 20px; right: 20px; z-index: 9999; animation: slideIn 0.3s ease; }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 .tool-card { text-align: center; padding: 1.5rem; border: 2px dashed #e0e0e0; border-radius: 12px; transition: all 0.3s; cursor: pointer; }
-.tool-card:hover { border-color: #6a1b9a; background: #f3e5f5; }
+.tool-card:hover { border-color: #0d9488; background: #f0fdfa; }
 </style>
 
 <section class="interior-hero">
@@ -190,7 +190,7 @@
         <div class="row g-4 mt-2">
             <div class="col-md-6">
                 <div class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
-                    <i class="fas fa-palette fa-2x text-purple mb-2" style="color:#6a1b9a;"></i>
+                    <i class="fas fa-palette fa-2x mb-2" style="color:#0d9488;"></i>
                     <h5><?= __('id_color_palette') ?></h5>
                     <p class="text-muted small mb-2"><?= __('id_color_palette_desc') ?></p>
                     <div class="collapse">
@@ -256,7 +256,7 @@ function generatePalette() {
             'Minimalist': { colors: ['#FFFFFF','#F0F0F0','#A0A0A0','#D0D0D0','#606060'], desc: 'Crisp white-on-white with subtle gray depth for an ultra-clean kitchen.' }
         }
     };
-    const p = (palettes[room] && palettes[room][style]) || { colors: ['#6a1b9a','#ff6f00','#00c853','#2979ff','#ff1744'], desc: 'Default vibrant palette. Customize for your space.' };
+    const p = (palettes[room] && palettes[room][style]) || { colors: ['#0d9488','#ff6f00','#00c853','#2979ff','#ff1744'], desc: 'Default vibrant palette. Customize for your space.' };
     const cont = document.getElementById('paletteColors');
     cont.innerHTML = p.colors.map(c => `<div style="width:50px;height:50px;border-radius:8px;background:${c};border:2px solid #ddd;cursor:pointer" title="${c}" onclick="navigator.clipboard.writeText('${c}')"></div>`).join('');
     document.getElementById('paletteDesc').textContent = p.desc;
@@ -293,7 +293,7 @@ function planFurniture() {
     items.forEach((item, i) => {
         const iw = item.w * scale; const il = item.l * scale;
         if (xp + iw + 5 > rw && yp > 5) { xp = 5; yp += Math.max(...items.map(it => it.l * scale)) + 5; }
-        const colors = ['#6a1b9a','#3498db','#27ae60','#e74c3c','#f39c12','#8e44ad','#1abc9c','#e67e22'];
+        const colors = ['#0d9488','#3498db','#27ae60','#e74c3c','#f39c12','#8e44ad','#1abc9c','#e67e22'];
         html += `<div style="position:absolute;left:${xp}px;top:${yp}px;width:${iw}px;height:${il}px;background:${colors[i%colors.length]};border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,0.3);">${item.name}</div>`;
         xp += iw + 5;
     });

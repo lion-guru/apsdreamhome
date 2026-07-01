@@ -392,4 +392,15 @@ $router->post('/api/v2/mobile/notifications/register', 'Api\MobileApiController@
 
 // CRM analytics aliases (Flutter calls /crm/analytics, /crm/team-performance)
 $router->get('/api/v2/mobile/crm/analytics', 'Api\CRMController@adminOverview');
+
+// ══════════════════════════════════════════════════════════════
+// ADMIN MOBILE API — JSON endpoints for Flutter admin pages
+// ══════════════════════════════════════════════════════════════
+$adminMobilePrefix = '/api/v2/mobile/admin';
+$router->get("$adminMobilePrefix/bookings", 'Api\AdminMobileController@bookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post("$adminMobilePrefix/bookings/{id}/status", 'Api\AdminMobileController@updateBookingStatus')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get("$adminMobilePrefix/commissions", 'Api\AdminMobileController@commissions')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post("$adminMobilePrefix/commissions/{id}/action", 'Api\AdminMobileController@commissionAction')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get("$adminMobilePrefix/plots", 'Api\AdminMobileController@plots')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get("$adminMobilePrefix/users", 'Api\AdminMobileController@users')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/crm/team-performance', 'Api\CRMController@dashboard');

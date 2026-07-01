@@ -75,8 +75,8 @@ try {
 
     <style>
         :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
+            --primary-color: #0d9488;
+            --secondary-color: #0f766e;
             --accent-color: #f093fb;
             --success-color: #28a745;
             --info-color: #17a2b8;

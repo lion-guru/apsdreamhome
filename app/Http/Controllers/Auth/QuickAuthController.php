@@ -64,6 +64,8 @@ class QuickAuthController extends BaseController
                 'referred_by' => $referrerId,
                 'role' => 'customer',
                 'status' => 'active',
+                'registration_status' => 'approved',
+                'approved_at' => date('Y-m-d H:i:s'),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);

@@ -326,7 +326,7 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
       );
     }
 
-    IconData _iconForType(String? type) {
+    IconData iconForType(String? type) {
       switch (type) {
         case 'call': return Icons.phone;
         case 'sms': return Icons.message;
@@ -339,7 +339,7 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
       }
     }
 
-    Color _colorForType(String? type) {
+    Color colorForType(String? type) {
       switch (type) {
         case 'call': return Colors.green;
         case 'sms': return Colors.blue;
@@ -365,10 +365,10 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
               Container(
                 width: 40, height: 40,
                 decoration: BoxDecoration(
-                  color: _colorForType(type).withValues(alpha: 0.1),
+                  color: colorForType(type).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(_iconForType(type), color: _colorForType(type), size: 20),
+                child: Icon(iconForType(type), color: colorForType(type), size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(

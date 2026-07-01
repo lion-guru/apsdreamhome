@@ -11,7 +11,7 @@ $pairingBonus = (float)($stats['pairing_bonus'] ?? 0);
 
 $rankColors = [
     'associate' => '#94a3b8', 'bronze' => '#a16207', 'silver' => '#94a3b8',
-    'gold' => '#ca8a04', 'platinum' => '#0891b2', 'diamond' => '#7c3aed',
+    'gold' => '#ca8a04', 'platinum' => '#0891b2', 'diamond' => '#0f766e',
 ];
 $rankIcons = [
     'associate' => 'fa-user', 'bronze' => 'fa-medal', 'silver' => 'fa-award',
@@ -108,7 +108,7 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:#7c3aed;">&#8377;<?= number_format($pairingBonus) ?></div>
+                    <div style="font-size:1.8rem;font-weight:700;color:#0f766e;">&#8377;<?= number_format($pairingBonus) ?></div>
                     <div class="text-muted small">Pairing Bonus Paid</div>
                 </div>
             </div>

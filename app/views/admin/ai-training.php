@@ -144,8 +144,8 @@ $categories = [
     
     <style>
         :root {
-            --primary: #667eea;
-            --secondary: #764ba2;
+            --primary: #0d9488;
+            --secondary: #0f766e;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;

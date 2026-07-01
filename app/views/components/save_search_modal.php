@@ -18,7 +18,7 @@ $currentFilters = $currentFilters ?? [];
 <div class="modal fade" id="saveSearchModal" tabindex="-1" aria-labelledby="saveSearchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-gradient-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="modal-header bg-gradient-primary text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
                 <h5 class="modal-title" id="saveSearchModalLabel">
                     <i class="fas fa-bookmark me-2"></i>__('component_save_this_search', 'Save this search')
                 </h5>

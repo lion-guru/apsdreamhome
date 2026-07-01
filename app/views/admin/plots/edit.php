@@ -178,7 +178,7 @@
                                 <?php $priceHistory = $priceHistory ?? []; if (!empty($priceHistory)): ?>
                                 <div class="mt-3">
                                     <h6 class="fw-bold"><i class="fas fa-history"></i> Price Change History</h6>
-                                    <table class="table table-sm table-striped">
+                                    <div class="table-responsive"><table class="table table-sm table-striped">
                                         <thead><tr><th>Date</th><th>Old Price</th><th>New Price</th><th>Type</th><th>Reason</th></tr></thead>
                                         <tbody>
                                             <?php foreach ($priceHistory as $ph): ?>
@@ -191,7 +191,7 @@
                                             </tr>
                                             <?php endforeach; ?>
                                         </tbody>
-                                    </table>
+                                    </table></div>
                                 </div>
                                 <?php endif; ?>
                             </div>

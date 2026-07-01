@@ -8,6 +8,7 @@
     <div class="aps-cp-card mb-4">
         <div class="aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-exclamation-circle me-2 text-warning"></i><?php echo __('finance_vendor_outstanding'); ?></h5></div>
         <div class="aps-cp-card-body p-0">
+            <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light"><tr><th><?php echo __('finance_vendor'); ?></th><th><?php echo __('finance_type'); ?></th><th class="text-end"><?php echo __('finance_payable'); ?></th><th class="text-end"><?php echo __('finance_tds'); ?></th><th class="text-end"><?php echo __('finance_gst'); ?></th><th><?php echo __('finance_bills'); ?></th></tr></thead>
                 <tbody>
@@ -25,12 +26,14 @@
                 <?php endforeach; endif; ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 
     <div class="aps-cp-card">
         <div class="aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-list me-2"></i><?php echo __('finance_recent_payments'); ?></h5></div>
         <div class="aps-cp-card-body p-0">
+            <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
@@ -77,6 +80,7 @@
                 <?php endforeach; endif; ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>

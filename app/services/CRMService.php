@@ -34,7 +34,7 @@ class CRMService
         return [
             ['id'=>1,'name'=>'New Lead','slug'=>'new','color'=>'#10b981','order_index'=>1],
             ['id'=>2,'name'=>'Contacted','slug'=>'contacted','color'=>'#3b82f6','order_index'=>2],
-            ['id'=>3,'name'=>'Qualified','slug'=>'qualified','color'=>'#8b5cf6','order_index'=>3],
+            ['id'=>3,'name'=>'Qualified','slug'=>'qualified','color'=>'#14b8a6','order_index'=>3],
             ['id'=>4,'name'=>'Site Visit','slug'=>'site_visit','color'=>'#f59e0b','order_index'=>4],
             ['id'=>5,'name'=>'Proposal','slug'=>'proposal','color'=>'#ec4899','order_index'=>5],
             ['id'=>6,'name'=>'Negotiation','slug'=>'negotiation','color'=>'#ef4444','order_index'=>6],

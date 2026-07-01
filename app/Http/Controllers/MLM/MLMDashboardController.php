@@ -33,54 +33,211 @@ class MLMDashboardController extends BaseController
      */
     public function index()
     {
-        $userId = $_SESSION['user_id'];
-        $userRole = $_SESSION['role'] ?? 'associate';
+        if (!isset($_SESSION['user_id'])) {
+            $base = defined('BASE_URL') ? BASE_URL : '';
+            header('Location: ' . $base . '/login');
+            exit;
+        }
+
+        $userId = (int)$_SESSION['user_id'];
+        $base   = defined('BASE_URL') ? BASE_URL : '';
+
+        // ── defaults (safe fallback if no associate record) ──────────────
+        $data = [
+            'page_title'        => 'My MLM Dashboard',
+            'associate_name'    => $_SESSION['name'] ?? 'Associate',
+            'associate_id'      => 'N/A',
+            'referral_code'     => 'APS000000',
+            'team_size'         => 0,
+            'total_sales'       => 0,
+            'commission_earned' => 0,
+            'pending_payout'    => 0,
+            'downline_members'  => [],
+            'commission_history'=> [],
+            'payout_history'    => [],
+            // rank progress
+            'current_rank'          => 'associate',
+            'current_rank_label'    => 'Associate',
+            'current_rank_color'    => '#94a3b8',
+            'current_rank_rate'     => 5,
+            'next_rank'             => 'sr_associate',
+            'next_rank_label'       => 'Sr. Associate',
+            'next_rank_color'       => '#64748b',
+            'next_rank_rate'        => 7,
+            'next_rank_min_volume'  => 1000000,
+            'lifetime_sales_volume' => 0,
+            'rank_progress_pct'     => 0,
+            'amount_to_next_rank'   => 1000000,
+            'commission_by_type'    => [],
+            'rank_benefits'         => [],
+        ];
 
         try {
             $pdo = $this->db->getConnection();
 
-            // Get associate details
-            $stmt = $pdo->prepare("SELECT * FROM mlm_associates WHERE user_id = ?");
+            // ── 1. Associate record (from `associates` table — real table) ──
+            $stmt = $pdo->prepare("
+                SELECT a.*, u.name AS user_name, u.phone
+                FROM associates a
+                JOIN users u ON u.id = a.user_id
+                WHERE a.user_id = ? AND a.status = 'active'
+                LIMIT 1
+            ");
             $stmt->execute([$userId]);
             $associate = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$associate) {
-                // Not registered as associate yet
-                $this->view('mlm/register', [
-                    'title' => 'Become an Associate'
-                ]);
-                return;
+                // Not an associate — show "become associate" prompt
+                return $this->render('pages/mlm_dashboard', $data);
             }
 
-            // Get network statistics
-            $stats = $this->getNetworkStats($associate['id']);
+            $associateId  = (int)$associate['id'];
+            $referralCode = $associate['referral_code'] ?? ('APS' . str_pad($associateId, 6, '0', STR_PAD_LEFT));
+            $data['associate_name'] = $associate['user_name'] ?? ($_SESSION['name'] ?? 'Associate');
+            $data['associate_id']   = 'APS-' . str_pad($associateId, 5, '0', STR_PAD_LEFT);
+            $data['referral_code']  = $referralCode;
 
-            // Get commission summary
-            $commissions = $this->getCommissionSummary($associate['id']);
+            // ── 2. All rank benefits (sorted by volume threshold) ────────────
+            $rankRows = $pdo->query("
+                SELECT rank_name, rank_order, direct_sale_pct, min_volume, color_code, badge_icon
+                FROM mlm_rank_benefits
+                ORDER BY rank_order ASC
+            ")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $data['rank_benefits'] = $rankRows;
 
-            // Get recent payouts
-            $payouts = $this->getRecentPayouts($associate['id']);
+            // Build rank lookup: name => row
+            $rankMap = [];
+            foreach ($rankRows as $r) {
+                $rankMap[$r['rank_name']] = $r;
+            }
 
-            // Get downline count by level
-            $downline = $this->getDownlineByLevel($associate['id']);
+            // ── 3. Associate's current rank from mlm_network_tree or associates ──
+            $currentRankName = $associate['level'] ?? 'associate';   // associates.level stores rank name
+            if (!isset($rankMap[$currentRankName])) {
+                $currentRankName = 'associate';
+            }
+            $currentRank = $rankMap[$currentRankName] ?? ['rank_name'=>'associate','direct_sale_pct'=>5,'min_volume'=>0,'color_code'=>'#94a3b8','badge_icon'=>'fa-user'];
 
-            // Get current rank details
-            $rank = $this->getCurrentRank($associate['rank_id']);
+            // ── 4. Next rank ─────────────────────────────────────────────────
+            $nextRank    = null;
+            $foundCurrent = false;
+            foreach ($rankRows as $r) {
+                if ($foundCurrent) { $nextRank = $r; break; }
+                if ($r['rank_name'] === $currentRankName) { $foundCurrent = true; }
+            }
 
-            $this->view('mlm/dashboard', [
-                'title' => 'MLM Dashboard',
-                'associate' => $associate,
-                'stats' => $stats,
-                'commissions' => $commissions,
-                'payouts' => $payouts,
-                'downline' => $downline,
-                'rank' => $rank,
-                'userRole' => $userRole
-            ]);
+            // ── 5. Lifetime sales volume (sum of plot_bookings for this associate) ──
+            $stmt = $pdo->prepare("
+                SELECT COALESCE(SUM(b.total_amount), 0) AS total_volume
+                FROM plot_bookings b
+                WHERE b.associate_id = ? AND b.status NOT IN ('cancelled','rejected')
+            ");
+            $stmt->execute([$associateId]);
+            $lifetimeVolume = (float)($stmt->fetchColumn() ?: 0);
+            $data['total_sales']            = $lifetimeVolume;
+            $data['lifetime_sales_volume']  = $lifetimeVolume;
+
+            // ── 6. Rank progress calculation ─────────────────────────────────
+            $currentMin = (float)($currentRank['min_volume'] ?? 0);
+            $nextMin    = $nextRank ? (float)$nextRank['min_volume'] : $currentMin;
+
+            if ($nextRank && $nextMin > $currentMin) {
+                $progressInSlab = max(0, $lifetimeVolume - $currentMin);
+                $slabSize       = $nextMin - $currentMin;
+                $progressPct    = min(100, round(($progressInSlab / $slabSize) * 100, 1));
+                $amountNeeded   = max(0, $nextMin - $lifetimeVolume);
+            } else {
+                // At top rank
+                $progressPct  = 100;
+                $amountNeeded = 0;
+            }
+
+            $rankLabels = [
+                'associate'      => 'Associate',
+                'sr_associate'   => 'Sr. Associate',
+                'bdm'            => 'BDM',
+                'sr_bdm'         => 'Sr. BDM',
+                'vice_president' => 'Vice President',
+                'president'      => 'President',
+                'site_manager'   => 'Site Manager',
+            ];
+
+            $data['current_rank']         = $currentRankName;
+            $data['current_rank_label']   = $rankLabels[$currentRankName] ?? ucfirst(str_replace('_', ' ', $currentRankName));
+            $data['current_rank_color']   = $currentRank['color_code'] ?? '#94a3b8';
+            $data['current_rank_rate']    = (float)($currentRank['direct_sale_pct'] ?? 5);
+            $data['next_rank']            = $nextRank['rank_name'] ?? null;
+            $data['next_rank_label']      = $nextRank ? ($rankLabels[$nextRank['rank_name']] ?? ucfirst(str_replace('_',' ',$nextRank['rank_name']))) : 'Top Rank';
+            $data['next_rank_color']      = $nextRank['color_code'] ?? '#1e40af';
+            $data['next_rank_rate']       = $nextRank ? (float)$nextRank['direct_sale_pct'] : (float)($currentRank['direct_sale_pct'] ?? 20);
+            $data['next_rank_min_volume'] = $nextMin;
+            $data['rank_progress_pct']    = $progressPct;
+            $data['amount_to_next_rank']  = $amountNeeded;
+
+            // ── 7. Commission stats from mlm_commission_ledger ───────────────
+            $stmt = $pdo->prepare("
+                SELECT
+                    COALESCE(SUM(amount), 0)                                              AS total_earned,
+                    COALESCE(SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END), 0) AS pending_payout
+                FROM mlm_commission_ledger
+                WHERE beneficiary_user_id = ?
+            ");
+            $stmt->execute([$userId]);
+            $commTotals = $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];
+            $data['commission_earned'] = (float)($commTotals['total_earned']  ?? 0);
+            $data['pending_payout']    = (float)($commTotals['pending_payout'] ?? 0);
+
+            // Commission breakdown by type
+            $stmt = $pdo->prepare("
+                SELECT commission_type, COALESCE(SUM(amount),0) AS total, COUNT(*) AS cnt
+                FROM mlm_commission_ledger
+                WHERE beneficiary_user_id = ?
+                GROUP BY commission_type
+                ORDER BY total DESC
+            ");
+            $stmt->execute([$userId]);
+            $byType = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $data['commission_by_type'] = $byType;
+
+            // Commission history (last 20)
+            $stmt = $pdo->prepare("
+                SELECT l.*, u.name AS source_name
+                FROM mlm_commission_ledger l
+                LEFT JOIN users u ON u.id = l.source_user_id
+                WHERE l.beneficiary_user_id = ?
+                ORDER BY l.created_at DESC
+                LIMIT 20
+            ");
+            $stmt->execute([$userId]);
+            $data['commission_history'] = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            // ── 8. Downline members (direct + L2) from mlm_network_tree ──────
+            $stmt = $pdo->prepare("
+                SELECT t.level, u.name, u.id, a.status, a.created_at AS join_date,
+                       t.parent_id
+                FROM mlm_network_tree t
+                JOIN users u ON u.id = t.associate_id
+                LEFT JOIN associates a ON a.user_id = t.associate_id
+                WHERE t.parent_id = ?
+                   OR (t.level = 2 AND t.parent_id IN (
+                        SELECT associate_id FROM mlm_network_tree WHERE parent_id = ?
+                   ))
+                ORDER BY t.level, u.name
+                LIMIT 50
+            ");
+            $stmt->execute([$userId, $userId]);
+            $data['downline_members'] = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            // Team size
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM mlm_network_tree WHERE parent_id = ?");
+            $stmt->execute([$userId]);
+            $data['team_size'] = (int)$stmt->fetchColumn();
+
         } catch (\Exception $e) {
-            $this->logger->error("MLM Dashboard error: " . $e->getMessage());
-            $this->view('error', ['message' => 'Failed to load MLM dashboard']);
+            $this->logger->error('MLMDashboardController error: ' . $e->getMessage());
         }
+
+        return $this->render('pages/mlm_dashboard', $data);
     }
 
     /**

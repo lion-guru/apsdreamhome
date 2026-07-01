@@ -24,7 +24,7 @@ $base = BASE_URL;
     <style>
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #0d9488, #0f766e);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -52,7 +52,7 @@ $base = BASE_URL;
             <div class="card-body aps-cp-card-body">
                 <div class="text-center mb-4">
                     <div class="mb-3">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width:60px;height:60px;background:linear-gradient(135deg,#667eea,#764ba2)"><i class="fas fa-home text-white fa-lg"></i></div>
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width:60px;height:60px;background:linear-gradient(135deg,#0d9488,#0f766e)"><i class="fas fa-home text-white fa-lg"></i></div>
                     </div>
                     <h3 class="fw-bold"><?= __('register_title') ?></h3>
                     <p class="text-muted"><?= __('register_subtitle') ?></p>
@@ -101,10 +101,10 @@ $base = BASE_URL;
                         </div>
                     </div>
                     <?php if ($formVariant === 'minimal'): ?>
-                        <button type="button" class="btn btn-primary w-100 py-2 reg-step-1-btn" id="reg-step-1-continue" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none">
+                        <button type="button" class="btn btn-primary w-100 py-2 reg-step-1-btn" id="reg-step-1-continue" style="background:linear-gradient(135deg,#0d9488,#0f766e);border:none">
                             <i class="fas fa-arrow-right me-2"></i><?= __('register_continue') ?>
                         </button>
-                        <button type="submit" class="btn btn-primary w-100 py-2 reg-step-2-btn" id="reg-step-2-submit" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;display:none">
+                        <button type="submit" class="btn btn-primary w-100 py-2 reg-step-2-btn" id="reg-step-2-submit" style="background:linear-gradient(135deg,#0d9488,#0f766e);border:none;display:none">
                             <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
                         </button>
                         <script>
@@ -124,7 +124,7 @@ $base = BASE_URL;
                         })();
                         </script>
                     <?php else: ?>
-                        <button type="submit" class="btn btn-primary w-100 py-2" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none">
+                        <button type="submit" class="btn btn-primary w-100 py-2" style="background:linear-gradient(135deg,#0d9488,#0f766e);border:none">
                             <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
                         </button>
                     <?php endif; ?>

@@ -22,7 +22,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center py-5">
                         <div class="mb-3">
-                            <div style="width: 100px; height: 100px; border-radius: 50%; background: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto;">
+                            <div style="width: 100px; height: 100px; border-radius: 50%; background: #0d9488; color: white; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto;">
                                 <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
                             </div>
                         </div>
@@ -138,21 +138,79 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <script>
         function resetPassword(userId) {
             if (confirm('Are you sure you want to reset this user\'s password?')) {
-                alert('Password reset functionality to be implemented');
+                const newPassword = prompt('Enter new password (min 6 chars):');
+                if (!newPassword || newPassword.length < 6) {
+                    alert('Password must be at least 6 characters');
+                    return;
+                }
+
+                fetch('<?php echo $base; ?>/admin/users/' + userId + '/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: 'csrf_token=' + encodeURIComponent(document.querySelector('input[name="csrf_token"]')?.value || '') + '&password=' + encodeURIComponent(newPassword)
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Password updated successfully!');
+                    } else {
+                        alert(data.message || 'Failed to update password');
+                    }
+                })
+                .catch(() => alert('Network error'));
             }
         }
-        
+
         function toggleStatus(userId, currentStatus) {
+            const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
             const action = currentStatus === 'active' ? 'deactivate' : 'activate';
-            if (confirm(`Are you sure you want to ${action} this user?`)) {
-                alert('Status toggle functionality to be implemented');
-            }
+
+            if (!confirm('Are you sure you want to ' + action + ' this user?')) return;
+
+            fetch('<?php echo $base; ?>/admin/users/' + userId + '/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: 'csrf_token=' + encodeURIComponent(document.querySelector('input[name="csrf_token"]')?.value || '') + '&status=' + newStatus
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert('User ' + action + 'd successfully!');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Failed to update status');
+                }
+            })
+            .catch(() => alert('Network error'));
         }
-        
+
         function deleteUser(userId) {
-            if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-                alert('Delete functionality to be implemented');
-            }
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
+
+            fetch('<?php echo $base; ?>/admin/users/' + userId + '/destroy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: 'csrf_token=' + encodeURIComponent(document.querySelector('input[name="csrf_token"]')?.value || '')
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert('User deleted successfully!');
+                    window.location.href = '<?php echo $base; ?>/admin/users';
+                } else {
+                    alert(data.message || 'Failed to delete user');
+                }
+            })
+            .catch(() => alert('Network error'));
         }
     </script>
 

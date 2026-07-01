@@ -271,8 +271,8 @@ class MLMController extends BaseController
     private function getMockDashboardData()
     {
         return [
-            'current_level' => 'Gold',
-            'plan_name' => 'Gold',
+            'current_level' => 'associate',
+            'plan_name' => 'Associate',
             'total_downline' => 15,
             'monthly_commission' => 2500.00,
             'business_volume' => 15000.00,

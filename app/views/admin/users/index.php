@@ -28,6 +28,7 @@
                         <th class="border-0">Email</th>
                         <th class="border-0">Role</th>
                         <th class="border-0">Status</th>
+                        <th class="border-0">Reg. Status</th>
                         <th class="border-0">Joined</th>
                         <th class="border-0 text-end pe-4">Actions</th>
                     </tr>
@@ -50,6 +51,18 @@
                         <td><?php echo htmlspecialchars($user['email'] ?? ''); ?></td>
                         <td><span class="badge bg-primary"><?php echo ucfirst($user['role'] ?? 'user'); ?></span></td>
                         <td><span class="badge bg-<?php echo ($user['status'] ?? 'active') === 'active' ? 'success' : 'secondary'; ?>"><?php echo ucfirst($user['status'] ?? 'active'); ?></span></td>
+                        <td>
+                            <?php
+                            $regStatus = $user['registration_status'] ?? 'approved';
+                            $regBadgeClass = match($regStatus) {
+                                'approved' => 'success',
+                                'pending' => 'warning',
+                                'rejected' => 'danger',
+                                default => 'secondary'
+                            };
+                            ?>
+                            <span class="badge bg-<?php echo $regBadgeClass; ?>"><?php echo ucfirst($regStatus); ?></span>
+                        </td>
                         <td><?php echo date('M d, Y', strtotime($user['created_at'] ?? 'now')); ?></td>
                         <td class="text-end pe-4">
                             <a href="<?php echo BASE_URL; ?>/admin/users/<?php echo $user['id']; ?>/edit" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
@@ -62,7 +75,7 @@
                     <?php endforeach; ?>
                     <?php else: ?>
                     <tr>
-                        <td colspan="6" class="text-center py-4 text-muted">No users found</td>
+                        <td colspan="7" class="text-center py-4 text-muted">No users found</td>
                     </tr>
                     <?php endif; ?>
                 </tbody>

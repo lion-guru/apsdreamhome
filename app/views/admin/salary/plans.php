@@ -16,11 +16,11 @@
                             <span class="badge bg-<?= ($p['is_active'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($p['is_active'] ?? 0) ? 'Active' : 'Inactive' ?></span>
                         </div>
                         <p class="text-muted"><?= htmlspecialchars($p['description'] ?? '') ?></p>
-                        <table class="table table-sm mb-0">
+                        <div class="table-responsive"><table class="table table-sm mb-0">
                             <tr><td>Base Salary</td><td class="text-end"><strong>₹<?= number_format($p['base_salary'] ?? 0, 2) ?></strong></td></tr>
                             <tr><td>Bonus %</td><td class="text-end"><?= (float)($p['bonus_percent'] ?? 0) ?>%</td></tr>
                             <tr><td>Commission %</td><td class="text-end"><?= (float)($p['commission_percent'] ?? 0) ?>%</td></tr>
-                        </table>
+                        </table></div>
                         <button class="btn btn-sm btn-outline-warning mt-3" data-bs-toggle="modal" data-bs-target="#editModal<?= $p['id'] ?>"><i class="fas fa-edit me-1"></i>Edit</button>
                     </div>
                 </div>

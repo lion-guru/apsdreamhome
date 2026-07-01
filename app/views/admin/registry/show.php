@@ -80,7 +80,7 @@ $isCancelled = $currentStatus === 'cancelled';
         <div class="card detail-section">
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle"></i> Booking Info</h5></div>
             <div class="card-body aps-cp-card-body">
-                <table class="table table-bordered table-sm">
+                <div class="table-responsive"><table class="table table-bordered table-sm">
                     <tr><th style="width:140px">Booking #</th><td><strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong></td></tr>
                     <tr><th>Property</th><td><?= htmlspecialchars($booking['property_title'] ?? '') ?> <small class="text-muted">(<?= htmlspecialchars($booking['property_location'] ?? '') ?>)</small></td></tr>
                     <tr><th>Plot #</th><td><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></td></tr>
@@ -89,7 +89,7 @@ $isCancelled = $currentStatus === 'cancelled';
                     <tr><th>Price</th><td>&#8377; <?= number_format(floatval($booking['property_price'] ?? 0), 2) ?></td></tr>
                     <tr><th>Buyer</th><td><?= htmlspecialchars($booking['customer_name'] ?? '') ?><br><small><?= htmlspecialchars($booking['customer_email'] ?? '') ?> / <?= htmlspecialchars($booking['customer_phone'] ?? '') ?></small></td></tr>
                     <tr><th>Current Status</th><td><span class="badge bg-<?= $statusSteps[$currentStatus]['color'] ?? 'secondary' ?> fs-6"><?= $statusSteps[$currentStatus]['label'] ?? ucfirst($currentStatus) ?></span></td></tr>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>
@@ -115,11 +115,11 @@ $isCancelled = $currentStatus === 'cancelled';
         <div class="card detail-section">
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-rupee-sign"></i> Stamp Duty & Fees</h5></div>
             <div class="card-body aps-cp-card-body">
-                <table class="table table-sm table-bordered">
+                <div class="table-responsive"><table class="table table-sm table-bordered">
                     <tr><th>Stamp Duty</th><td>&#8377; <?= number_format(floatval($booking['stamp_duty_amount'] ?? 0), 2) ?></td></tr>
                     <tr><th>Registration Fees</th><td>&#8377; <?= number_format(floatval($booking['registration_fees'] ?? 0), 2) ?></td></tr>
                     <tr class="table-active"><th>Total</th><td><strong>&#8377; <?= number_format(floatval($booking['stamp_duty_amount'] ?? 0) + floatval($booking['registration_fees'] ?? 0), 2) ?></strong></td></tr>
-                </table>
+                </table></div>
                 <?php if ($currentStep <= 2 && $currentStep >= 1 && !$isCancelled): ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/registry/<?= $booking['id'] ?>/stamp-duty">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
@@ -149,10 +149,10 @@ $isCancelled = $currentStatus === 'cancelled';
         <div class="card detail-section">
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-calendar-check"></i> Appointment</h5></div>
             <div class="card-body aps-cp-card-body">
-                <table class="table table-bordered table-sm">
+                <div class="table-responsive"><table class="table table-bordered table-sm">
                     <tr><th style="width:140px">Office</th><td><?= htmlspecialchars($booking['sub_registrar_office'] ?? 'Not scheduled') ?></td></tr>
                     <tr><th>Appointment</th><td><?= !empty($booking['appointment_date']) ? date('d M Y h:i A', strtotime($booking['appointment_date'])) : 'Not scheduled' ?></td></tr>
-                </table>
+                </table></div>
                 <?php if ($currentStep <= 3 && $currentStep >= 2 && !$isCancelled): ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/registry/<?= $booking['id'] ?>/appointment">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
@@ -180,10 +180,10 @@ $isCancelled = $currentStatus === 'cancelled';
         <div class="card detail-section">
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-check-circle"></i> Registration</h5></div>
             <div class="card-body aps-cp-card-body">
-                <table class="table table-bordered table-sm">
+                <div class="table-responsive"><table class="table table-bordered table-sm">
                     <tr><th style="width:140px">Registry #</th><td><?= htmlspecialchars($booking['registry_number'] ?? 'Not registered') ?></td></tr>
                     <tr><th>Registry Date</th><td><?= !empty($booking['registry_date']) ? date('d M Y', strtotime($booking['registry_date'])) : 'N/A' ?></td></tr>
-                </table>
+                </table></div>
                 <?php if ($currentStep <= 4 && $currentStep >= 3 && !$isCancelled): ?>
                     <form method="POST" action="<?= BASE_URL ?>/admin/registry/<?= $booking['id'] ?>/register">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
@@ -214,11 +214,11 @@ $isCancelled = $currentStatus === 'cancelled';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-exchange-alt"></i> Mutation</h5></div>
             <div class="card-body aps-cp-card-body">
                 <?php if (!empty($booking['mutation_number'])): ?>
-                <table class="table table-bordered table-sm">
+                <div class="table-responsive"><table class="table table-bordered table-sm">
                     <tr><th style="width:140px">Mutation #</th><td><?= htmlspecialchars($booking['mutation_number']) ?></td></tr>
                     <tr><th>Mutation Date</th><td><?= !empty($booking['mutation_date']) ? date('d M Y', strtotime($booking['mutation_date'])) : 'N/A' ?></td></tr>
                     <tr><th>Status</th><td><span class="badge bg-<?= ($booking['mutation_status'] ?? '') === 'completed' ? 'success' : (($booking['mutation_status'] ?? '') === 'in_progress' ? 'warning' : 'secondary') ?>"><?= ucfirst($booking['mutation_status'] ?? 'pending') ?></span></td></tr>
-                </table>
+                </table></div>
                 <?php else: ?>
                     <p class="text-muted">Mutation not yet initiated.</p>
                 <?php endif; ?>

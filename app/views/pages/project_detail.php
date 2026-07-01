@@ -14,9 +14,9 @@ if ($project) {
     if (stripos($project->site_name, 'Suryoday') !== false) {
         $heroImg = '/assets/images/projects/gorakhpur/suryoday.jpg';
     } elseif (stripos($project->site_name, 'Raghunath') !== false) {
-        $heroImg = '/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG';
+        $heroImg = '/assets/images/projects/gorakhpur/raghunath-nagri.jpg';
     } elseif (stripos($project->site_name, 'Braj') !== false || stripos($project->site_name, 'Radha') !== false) {
-        $heroImg = '/assets/images/projects/gorakhpur/suryoday1.jpeg';
+        $heroImg = '/assets/images/projects/lucknow/braj-radha-nagri.jpg';
     }
 }
 ?>
@@ -378,7 +378,7 @@ if ($project) {
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri" style="height: 150px; object-fit: cover;" />
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/braj-radha-nagri.jpg" class="card-img-top" alt="Braj Radha Nagri" style="height: 150px; object-fit: cover;" />
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Braj Radha Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -397,7 +397,7 @@ if ($project) {
 </section>
 
 <!-- CTA Section -->
-<section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
     <div class="container text-center">
         <h2 class="mb-3">Interested in <?php echo htmlspecialchars($project->site_name); ?>?</h2>
         <p class="lead mb-4"><?= __('project_cta_desc') ?></p>

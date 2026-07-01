@@ -99,7 +99,7 @@ include __DIR__ . '/../layouts/base.php';
     }
 </style>
 
-<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <script>
     let svg, g, zoom, root;
     const width = document.getElementById('genealogy-tree').clientWidth;

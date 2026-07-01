@@ -67,10 +67,10 @@ $csrf_token = $csrf_token ?? '';
                     <h6 class="m-0"><i class="fas fa-layer-group me-2 text-primary"></i>Track A — Slab Differential (15% cap)</h6>
                 </div>
                 <div class="aps-cp-card-body p-0">
-                    <table class="table table-sm mb-0" id="trackATable">
+                    <div class="table-responsive"><table class="table table-sm mb-0" id="trackATable">
                         <thead><tr><th>Beneficiary</th><th>Rate</th><th class="text-end">Amount</th></tr></thead>
                         <tbody></tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
 
@@ -80,10 +80,10 @@ $csrf_token = $csrf_token ?? '';
                     <h6 class="m-0"><i class="fas fa-chart-line me-2 text-success"></i>Track B — Performance Rollup (3% cap)</h6>
                 </div>
                 <div class="aps-cp-card-body p-0">
-                    <table class="table table-sm mb-0" id="trackBTable">
+                    <div class="table-responsive"><table class="table table-sm mb-0" id="trackBTable">
                         <thead><tr><th>Beneficiary</th><th>Rate</th><th class="text-end">Amount</th></tr></thead>
                         <tbody></tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
 
@@ -93,10 +93,10 @@ $csrf_token = $csrf_token ?? '';
                     <h6 class="m-0"><i class="fas fa-piggy-bank me-2 text-warning"></i>Track C — Milestone Escrow (2% cap)</h6>
                 </div>
                 <div class="aps-cp-card-body p-0">
-                    <table class="table table-sm mb-0" id="trackCTable">
+                    <div class="table-responsive"><table class="table table-sm mb-0" id="trackCTable">
                         <thead><tr><th>Description</th><th>Rate</th><th class="text-end">Amount</th></tr></thead>
                         <tbody></tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
 

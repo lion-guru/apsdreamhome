@@ -47,7 +47,7 @@ class PlotManagementPage extends ConsumerStatefulWidget {
 class _PlotManagementPageState extends ConsumerState<PlotManagementPage> {
   String _filterStatus = 'all';
   String _filterColony = 'all';
-  String _searchQuery = '';
+  final String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {

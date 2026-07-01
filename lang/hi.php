@@ -8134,4 +8134,27 @@ return array(
   'cp_no_data_export' => 'निर्यात के लिए कोई डेटा नहीं',
   'cp_no_matching' => 'कोई मेल खाता प्लॉट नहीं',
   'cp_clear_filters' => 'फ़िल्टर साफ़ करें',
+
+  // ── Backoffice: Payslip & Operations i18n ──
+  'bko_cancel' => 'रद्द करें',
+  'bko_paid_date' => 'भुगतान तिथि',
+  'bko_payment_mode' => 'भुगतान का तरीका',
+  'bko_transaction_ref' => 'संदर्भ / वाउचर',
+  'bko_process_payout' => 'भुगतान प्रक्रिया',
+  'bko_cash' => 'नकद',
+  'bko_bank_transfer' => 'बैंक (ऑनलाइन ट्रांसफर)',
+  'bko_bank_account' => 'बैंक खाता',
+  'bko_select_bank_account' => '-- बैंक खाता चुनें --',
+  'bko_pay_salary' => 'वेतन का भुगतान करें',
+  'bko_amount' => 'राशि',
+  'bko_party' => 'पक्ष',
+
+  // ── Colony Pipeline: Plots i18n ──
+  'cp_per_sqft' => '₹/वर्गफुट',
+  'cp_corner' => 'कोना',
+  'cp_park' => 'पार्क',
+  'cp_wide_road' => 'चौड़ी सड़क',
+  'cp_unknown' => 'अज्ञात',
+  'cp_sqft' => 'वर्गफुट',
+  'cp_colony' => 'कॉलोनी',
 );

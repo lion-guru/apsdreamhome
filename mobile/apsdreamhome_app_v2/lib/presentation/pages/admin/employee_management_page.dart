@@ -64,8 +64,8 @@ class _EmployeeManagementPageState
                     Text('Employee Management',
                         style: TextStyle(
                             fontSize: ResponsiveHelper.fontSize(context, 24), fontWeight: FontWeight.bold)),
-                    SizedBox(height: 4),
-                    Text('Manage staff, roles, and permissions',
+                    const SizedBox(height: 4),
+                    const Text('Manage staff, roles, and permissions',
                         style: TextStyle(color: Colors.grey)),
                   ],
                 ),

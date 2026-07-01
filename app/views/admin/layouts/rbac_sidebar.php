@@ -178,6 +178,26 @@ $sectionNames = [
                     <i class="fas fa-calendar-check"></i> Bookings
                 </a>
             </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/site-visits" class="sidebar-link <?php echo $currentPage == 'site-visits' ? 'active' : ''; ?>">
+                    <i class="fas fa-map-marker-alt"></i> Site Visits
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/leads/import" class="sidebar-link <?php echo $currentPage == 'import' ? 'active' : ''; ?>">
+                    <i class="fas fa-file-import"></i> Import Leads
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/crm/outreach" class="sidebar-link <?php echo $currentPage == 'outreach' ? 'active' : ''; ?>">
+                    <i class="fas fa-paper-plane"></i> Bulk Outreach
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/crm/shares" class="sidebar-link <?php echo $currentPage == 'shares' ? 'active' : ''; ?>">
+                    <i class="fas fa-share-alt"></i> Share Analytics
+                </a>
+            </li>
         </ul>
 
         <div class="sidebar-sec" onclick="toggleSidebarSection('sec-properties')">

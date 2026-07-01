@@ -31,7 +31,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <div class="text-muted"><?= __('sale_select_colony_rera') ?></div>
         <?php else: ?>
             <h6 class="mt-3"><?= __('sale_existing_records') ?></h6>
-            <table class="table table-sm table-hover">
+            <div class="table-responsive"><table class="table table-sm table-hover">
                 <thead>
                     <tr>
                         <th><?= __('sale_year') ?></th>
@@ -54,7 +54,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </tr>
                     <?php endforeach; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
 
             <h6 class="mt-4"><?= __('sale_add_quarterly_filing') ?></h6>
             <form method="post" action="<?= htmlspecialchars($base) ?>/admin/sales/rera/store" class="row g-2 align-items-end">

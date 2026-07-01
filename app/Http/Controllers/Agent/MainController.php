@@ -49,7 +49,7 @@ class AgentController extends BaseController
                 // Handle case where user exists but no MLM profile or not an agent
                 $agent_data = [
                     'referral_code' => 'N/A',
-                    'current_level' => 'Agent',
+                    'current_level' => 'associate',
                     'lifetime_sales' => 0,
                     'total_commission' => 0,
                     'total_team_size' => 0,

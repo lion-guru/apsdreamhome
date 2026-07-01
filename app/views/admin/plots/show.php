@@ -35,7 +35,7 @@
                     <div class="card mb-4">
                         <div class="card-header aps-cp-card-header"><h5 class="mb-0">Basic Information</h5></div>
                         <div class="card-body aps-cp-card-body">
-                            <table class="table table-bordered">
+                            <div class="table-responsive"><table class="table table-bordered">
                                 <tr><th style="width:160px">Plot Number</th><td><?= htmlspecialchars($plot['plot_number'] ?? '') ?></td></tr>
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector']) : '' ?></td></tr>
                                 <tr><th>Type</th><td><?= ucfirst(htmlspecialchars($plot['plot_type'] ?? 'residential')) ?></td></tr>
@@ -46,7 +46,7 @@
                                 </td></tr>
                                 <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? '') ?></td></tr>
                                 <tr><th>Location</th><td><?= htmlspecialchars(($plot['state_name'] ?? '') . ($plot['district_name'] ? ', ' . $plot['district_name'] : '')) ?></td></tr>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                     <div class="card mb-4">
                         <div class="card-header aps-cp-card-header"><h5 class="mb-0">Dimensions & Area</h5></div>
                         <div class="card-body aps-cp-card-body">
-                            <table class="table table-bordered">
+                            <div class="table-responsive"><table class="table table-bordered">
                                 <tr><th style="width:160px">Dimensions</th>
                                     <td>
                                         <?php if (!empty($plot['dimension_label'])): ?>
@@ -74,7 +74,7 @@
                                 <tr><th>Frontage / Depth</th><td><?= ($plot['frontage_ft'] ?? 0) > 0 ? floatval($plot['frontage_ft']) . ' ft' : 'N/A' ?> / <?= ($plot['depth_ft'] ?? 0) > 0 ? floatval($plot['depth_ft']) . ' ft' : 'N/A' ?></td></tr>
                                 <tr><th>Road Width</th><td><?= ($plot['road_width_ft'] ?? 0) > 0 ? floatval($plot['road_width_ft']) . ' ft' : 'N/A' ?></td></tr>
                                 <tr><th>Facing</th><td><?= htmlspecialchars(ucfirst($plot['facing'] ?? 'N/A')) ?></td></tr>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
             <div class="card mb-4">
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-history"></i> Price Change History</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-striped">
+                    <div class="table-responsive"><table class="table table-striped">
                         <thead><tr><th>Date</th><th>Old Price</th><th>New Price</th><th>Change Type</th><th>Reason</th><th>Changed By</th></tr></thead>
                         <tbody>
                             <?php foreach ($priceHistory as $ph): ?>
@@ -134,7 +134,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
             <?php endif; ?>
@@ -164,7 +164,7 @@
             <div class="card mb-4">
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-book"></i> Related Bookings</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-striped">
+                    <div class="table-responsive"><table class="table table-striped">
                         <thead><tr><th>Booking #</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
                         <tbody>
                             <?php foreach ($bookings as $bk): ?>
@@ -177,7 +177,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
             <?php endif; ?>
@@ -187,7 +187,7 @@
             <div class="card mb-4">
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0">Status History</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-striped">
+                    <div class="table-responsive"><table class="table table-striped">
                         <thead><tr><th>Date</th><th>Old Status</th><th>New Status</th><th>Changed By</th><th>Reason</th></tr></thead>
                         <tbody>
                             <?php foreach ($history as $h): ?>
@@ -200,7 +200,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
             <?php endif; ?>

@@ -1,0 +1,414 @@
+{
+    "before_associates_level": [
+        {
+            "id": 1,
+            "level": "associate"
+        },
+        {
+            "id": 2,
+            "level": "associate"
+        },
+        {
+            "id": 3,
+            "level": "associate"
+        },
+        {
+            "id": 4,
+            "level": "associate"
+        },
+        {
+            "id": 5,
+            "level": "associate"
+        },
+        {
+            "id": 6,
+            "level": "associate"
+        },
+        {
+            "id": 7,
+            "level": "associate"
+        },
+        {
+            "id": 8,
+            "level": "associate"
+        },
+        {
+            "id": 9,
+            "level": "associate"
+        },
+        {
+            "id": 10,
+            "level": "associate"
+        },
+        {
+            "id": 11,
+            "level": "associate"
+        },
+        {
+            "id": 12,
+            "level": "associate"
+        },
+        {
+            "id": 13,
+            "level": "associate"
+        },
+        {
+            "id": 14,
+            "level": "associate"
+        },
+        {
+            "id": 15,
+            "level": "associate"
+        },
+        {
+            "id": 301,
+            "level": "associate"
+        },
+        {
+            "id": 302,
+            "level": "associate"
+        },
+        {
+            "id": 303,
+            "level": "associate"
+        },
+        {
+            "id": 304,
+            "level": "associate"
+        },
+        {
+            "id": 305,
+            "level": "associate"
+        },
+        {
+            "id": 306,
+            "level": "associate"
+        },
+        {
+            "id": 307,
+            "level": "associate"
+        },
+        {
+            "id": 308,
+            "level": "associate"
+        },
+        {
+            "id": 309,
+            "level": "associate"
+        },
+        {
+            "id": 310,
+            "level": "associate"
+        },
+        {
+            "id": 311,
+            "level": "associate"
+        },
+        {
+            "id": 312,
+            "level": "associate"
+        },
+        {
+            "id": 313,
+            "level": "associate"
+        },
+        {
+            "id": 314,
+            "level": "associate"
+        },
+        {
+            "id": 315,
+            "level": "associate"
+        },
+        {
+            "id": 316,
+            "level": "associate"
+        },
+        {
+            "id": 317,
+            "level": "associate"
+        },
+        {
+            "id": 318,
+            "level": "associate"
+        }
+    ],
+    "before_mlm_levels": [
+        {
+            "id": 1,
+            "level_number": 1,
+            "level_name": "Associate",
+            "level_order": 1,
+            "direct_commission_percentage": "10.00",
+            "team_commission_percentage": "2.00",
+            "level_difference_commission_percentage": "0.00",
+            "matching_bonus_percentage": "0.00",
+            "leadership_bonus_percentage": "0.00",
+            "performance_bonus_percentage": "0.00",
+            "joining_fee": "100.00",
+            "monthly_maintenance": "10.00",
+            "team_size_required": 0,
+            "direct_referrals_required": 0,
+            "monthly_target": "500.00",
+            "created_at": "2025-11-01 23:08:58",
+            "updated_at": "2025-11-01 23:08:58"
+        },
+        {
+            "id": 2,
+            "level_number": 2,
+            "level_name": "Bronze",
+            "level_order": 2,
+            "direct_commission_percentage": "12.00",
+            "team_commission_percentage": "3.00",
+            "level_difference_commission_percentage": "1.00",
+            "matching_bonus_percentage": "0.50",
+            "leadership_bonus_percentage": "0.00",
+            "performance_bonus_percentage": "0.00",
+            "joining_fee": "150.00",
+            "monthly_maintenance": "15.00",
+            "team_size_required": 5,
+            "direct_referrals_required": 2,
+            "monthly_target": "1000.00",
+            "created_at": "2025-11-01 23:08:58",
+            "updated_at": "2026-05-12 09:23:24"
+        },
+        {
+            "id": 3,
+            "level_number": 3,
+            "level_name": "Silver",
+            "level_order": 3,
+            "direct_commission_percentage": "14.00",
+            "team_commission_percentage": "4.00",
+            "level_difference_commission_percentage": "1.50",
+            "matching_bonus_percentage": "1.00",
+            "leadership_bonus_percentage": "0.00",
+            "performance_bonus_percentage": "0.00",
+            "joining_fee": "200.00",
+            "monthly_maintenance": "20.00",
+            "team_size_required": 10,
+            "direct_referrals_required": 3,
+            "monthly_target": "2000.00",
+            "created_at": "2025-11-01 23:08:58",
+            "updated_at": "2026-05-12 09:23:24"
+        },
+        {
+            "id": 4,
+            "level_number": 4,
+            "level_name": "Gold",
+            "level_order": 4,
+            "direct_commission_percentage": "16.00",
+            "team_commission_percentage": "5.00",
+            "level_difference_commission_percentage": "2.00",
+            "matching_bonus_percentage": "1.50",
+            "leadership_bonus_percentage": "0.50",
+            "performance_bonus_percentage": "0.00",
+            "joining_fee": "250.00",
+            "monthly_maintenance": "25.00",
+            "team_size_required": 20,
+            "direct_referrals_required": 5,
+            "monthly_target": "4000.00",
+            "created_at": "2025-11-01 23:08:58",
+            "updated_at": "2026-05-12 09:23:24"
+        },
+        {
+            "id": 5,
+            "level_number": 5,
+            "level_name": "Platinum",
+            "level_order": 5,
+            "direct_commission_percentage": "18.00",
+            "team_commission_percentage": "6.00",
+            "level_difference_commission_percentage": "2.50",
+            "matching_bonus_percentage": "2.00",
+            "leadership_bonus_percentage": "1.00",
+            "performance_bonus_percentage": "0.50",
+            "joining_fee": "300.00",
+            "monthly_maintenance": "30.00",
+            "team_size_required": 40,
+            "direct_referrals_required": 7,
+            "monthly_target": "8000.00",
+            "created_at": "2025-11-01 23:08:58",
+            "updated_at": "2026-05-12 09:23:24"
+        },
+        {
+            "id": 6,
+            "level_number": 6,
+            "level_name": "Diamond",
+            "level_order": 6,
+            "direct_commission_percentage": "20.00",
+            "team_commission_percentage": "7.00",
+            "level_difference_commission_percentage": "3.00",
+            "matching_bonus_percentage": "2.50",
+            "leadership_bonus_percentage": "1.50",
+            "performance_bonus_percentage": "1.00",
+            "joining_fee": "350.00",
+            "monthly_maintenance": "35.00",
+            "team_size_required": 80,
+            "direct_referrals_required": 10,
+            "monthly_target": "15000.00",
+            "created_at": "2025-11-01 23:08:58",
+            "updated_at": "2026-05-12 09:23:24"
+        },
+        {
+            "id": 7,
+            "level_number": 7,
+            "level_name": "Crown",
+            "level_order": 7,
+            "direct_commission_percentage": "22.00",
+            "team_commission_percentage": "8.00",
+            "level_difference_commission_percentage": "3.50",
+            "matching_bonus_percentage": "3.00",
+            "leadership_bonus_percentage": "2.00",
+            "performance_bonus_percentage": "1.50",
+            "joining_fee": "400.00",
+            "monthly_maintenance": "40.00",
+            "team_size_required": 150,
+            "direct_referrals_required": 12,
+            "monthly_target": "25000.00",
+            "created_at": "2025-11-01 23:08:58",
+            "updated_at": "2026-05-12 09:23:24"
+        },
+        {
+            "id": 8,
+            "level_number": 8,
+            "level_name": "Ambassador",
+            "level_order": 8,
+            "direct_commission_percentage": "24.00",
+            "team_commission_percentage": "9.00",
+            "level_difference_commission_percentage": "4.00",
+            "matching_bonus_percentage": "3.50",
+            "leadership_bonus_percentage": "2.50",
+            "performance_bonus_percentage": "2.00",
+            "joining_fee": "450.00",
+            "monthly_maintenance": "45.00",
+            "team_size_required": 250,
+            "direct_referrals_required": 15,
+            "monthly_target": "40000.00",
+            "created_at": "2025-11-01 23:08:58",
+            "updated_at": "2026-05-12 09:23:24"
+        },
+        {
+            "id": 9,
+            "level_number": 9,
+            "level_name": "Royal Ambassador",
+            "level_order": 9,
+            "direct_commission_percentage": "26.00",
+            "team_commission_percentage": "10.00",
+            "level_difference_commission_percentage": "4.50",
+            "matching_bonus_percentage": "4.00",
+            "leadership_bonus_percentage": "3.00",
+            "performance_bonus_percentage": "2.50",
+            "joining_fee": "500.00",
+            "monthly_maintenance": "50.00",
+            "team_size_required": 400,
+            "direct_referrals_required": 18,
+            "monthly_target": "60000.00",
+            "created_at": "2025-11-01 23:08:58",
+            "updated_at": "2026-05-12 09:23:24"
+        },
+        {
+            "id": 10,
+            "level_number": 10,
+            "level_name": "Global Director",
+            "level_order": 10,
+            "direct_commission_percentage": "28.00",
+            "team_commission_percentage": "11.00",
+            "level_difference_commission_percentage": "5.00",
+            "matching_bonus_percentage": "4.50",
+            "leadership_bonus_percentage": "3.50",
+            "performance_bonus_percentage": "3.00",
+            "joining_fee": "550.00",
+            "monthly_maintenance": "55.00",
+            "team_size_required": 600,
+            "direct_referrals_required": 20,
+            "monthly_target": "100000.00",
+            "created_at": "2025-11-01 23:08:58",
+            "updated_at": "2026-05-12 09:23:24"
+        }
+    ],
+    "before_mlm_commission_levels": [
+        {
+            "id": 59,
+            "plan_id": 6,
+            "level": 1,
+            "name": "Associate",
+            "commission_rate": "10.00",
+            "min_associates": 2,
+            "direct_percentage": "10.00",
+            "min_business": "50000.00",
+            "max_business": "200000.00",
+            "created_at": "2026-04-04 22:35:13"
+        },
+        {
+            "id": 60,
+            "plan_id": 6,
+            "level": 2,
+            "name": "Senior Associate",
+            "commission_rate": "12.00",
+            "min_associates": 4,
+            "direct_percentage": "12.00",
+            "min_business": "100000.00",
+            "max_business": "400000.00",
+            "created_at": "2026-04-04 22:35:13"
+        },
+        {
+            "id": 61,
+            "plan_id": 6,
+            "level": 3,
+            "name": "Team Leader",
+            "commission_rate": "15.00",
+            "min_associates": 6,
+            "direct_percentage": "15.00",
+            "min_business": "200000.00",
+            "max_business": "800000.00",
+            "created_at": "2026-04-04 22:35:13"
+        },
+        {
+            "id": 62,
+            "plan_id": 6,
+            "level": 4,
+            "name": "Senior Team Leader",
+            "commission_rate": "18.00",
+            "min_associates": 8,
+            "direct_percentage": "18.00",
+            "min_business": "350000.00",
+            "max_business": "1500000.00",
+            "created_at": "2026-04-04 22:35:13"
+        },
+        {
+            "id": 63,
+            "plan_id": 6,
+            "level": 5,
+            "name": "Manager",
+            "commission_rate": "22.00",
+            "min_associates": 10,
+            "direct_percentage": "22.00",
+            "min_business": "500000.00",
+            "max_business": "2500000.00",
+            "created_at": "2026-04-04 22:35:13"
+        },
+        {
+            "id": 64,
+            "plan_id": 6,
+            "level": 6,
+            "name": "Senior Manager",
+            "commission_rate": "25.00",
+            "min_associates": 15,
+            "direct_percentage": "25.00",
+            "min_business": "750000.00",
+            "max_business": "5000000.00",
+            "created_at": "2026-04-04 22:35:13"
+        },
+        {
+            "id": 65,
+            "plan_id": 6,
+            "level": 7,
+            "name": "Director",
+            "commission_rate": "30.00",
+            "min_associates": 20,
+            "direct_percentage": "30.00",
+            "min_business": "1000000.00",
+            "max_business": "10000000.00",
+            "created_at": "2026-04-04 22:35:13"
+        }
+    ]
+}

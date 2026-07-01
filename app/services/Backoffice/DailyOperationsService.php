@@ -145,9 +145,11 @@ class DailyOperationsService
         $emp = $this->fetchOne("SELECT * FROM users WHERE id=?", [$employeeId]);
         if (!$emp) return ['error' => 'Employee not found'];
 
-        $ctc = 50000.0;
         $empExt = $this->fetchOne("SELECT * FROM employees WHERE user_id=?", [$employeeId]);
-        if ($empExt && isset($empExt['salary'])) $ctc = (float)$empExt['salary'];
+        if (!$empExt) return ['error' => 'Employee details not found in employees table'];
+
+        $empTableId = (int)$empExt['id'];
+        $ctc = isset($empExt['salary']) ? (float)$empExt['salary'] : 50000.0;
 
         $basic = round($ctc * 0.60, 2);
         $hra = round($basic * 0.40, 2);
@@ -180,13 +182,13 @@ class DailyOperationsService
         $gross = round($basic + $hra + $allowances, 2);
         $net = max(0, round($gross - $totalDeductions, 2));
 
-        $existing = $this->fetchOne("SELECT id FROM employee_payslips WHERE employee_id=? AND period_month=? AND period_year=?", [$employeeId, $month, $year]);
+        $existing = $this->fetchOne("SELECT id FROM employee_payslips WHERE employee_id=? AND period_month=? AND period_year=?", [$empTableId, $month, $year]);
 
         if ($existing) {
             $this->execute("UPDATE employee_payslips SET basic_salary=?,hra=?,allowances=?,deductions=?,tds=?,pf=?,esi=?,professional_tax=?,net_salary=?,days_present=?,lop_days=?,status='draft' WHERE id=?", [$basic,$hra,$allowances,$deductions,$tds,$pf,$esi,$pt,$net,$daysPresent,$lopDays,$existing['id']]);
             $payslipId = (int)$existing['id'];
         } else {
-            $payslipId = $this->execute("INSERT INTO employee_payslips (employee_id,period_month,period_year,basic_salary,hra,allowances,deductions,tds,pf,esi,professional_tax,net_salary,days_present,lop_days,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'draft')", [$employeeId,$month,$year,$basic,$hra,$allowances,$deductions,$tds,$pf,$esi,$pt,$net,$daysPresent,$lopDays]);
+            $payslipId = $this->execute("INSERT INTO employee_payslips (employee_id,period_month,period_year,basic_salary,hra,allowances,deductions,tds,pf,esi,professional_tax,net_salary,days_present,lop_days,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'draft')", [$empTableId,$month,$year,$basic,$hra,$allowances,$deductions,$tds,$pf,$esi,$pt,$net,$daysPresent,$lopDays]);
         }
 
         return ['id'=>$payslipId,'employee_id'=>$employeeId,'period_month'=>$month,'period_year'=>$year,'basic_salary'=>$basic,'hra'=>$hra,'allowances'=>$allowances,'deductions'=>$deductions,'tds'=>$tds,'pf'=>$pf,'esi'=>$esi,'professional_tax'=>$pt,'net_salary'=>$net,'days_present'=>$daysPresent,'lop_days'=>$lopDays,'status'=>'draft'];
@@ -194,12 +196,14 @@ class DailyOperationsService
 
     public function getPayslipHistory($employeeId)
     {
-        return $this->fetchAll("SELECT * FROM employee_payslips WHERE employee_id=? ORDER BY period_year DESC,period_month DESC", [$employeeId]);
+        $empExt = $this->fetchOne("SELECT id FROM employees WHERE user_id=?", [$employeeId]);
+        if (!$empExt) return [];
+        return $this->fetchAll("SELECT * FROM employee_payslips WHERE employee_id=? ORDER BY period_year DESC,period_month DESC", [$empExt['id']]);
     }
 
     public function getAllPayslips($month = '', $year = '')
     {
-        $sql = "SELECT ep.*,u.name AS employee_name FROM employee_payslips ep LEFT JOIN users u ON ep.employee_id=u.id";
+        $sql = "SELECT ep.*,u.name AS employee_name FROM employee_payslips ep LEFT JOIN employees e ON ep.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id";
         $params = [];
         if ($month && $year) { $sql .= " WHERE ep.period_month=? AND ep.period_year=?"; $params[] = $month; $params[] = $year; }
         $sql .= " ORDER BY ep.period_year DESC,ep.period_month DESC,u.name";
@@ -208,7 +212,72 @@ class DailyOperationsService
 
     public function getPayslipById($id)
     {
-        return $this->fetchOne("SELECT ep.*,u.name AS employee_name,u.email AS employee_email FROM employee_payslips ep LEFT JOIN users u ON ep.employee_id=u.id WHERE ep.id=?", [$id]);
+        return $this->fetchOne("SELECT ep.*,u.name AS employee_name,u.email AS employee_email FROM employee_payslips ep LEFT JOIN employees e ON ep.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id WHERE ep.id=?", [$id]);
+    }
+
+    public function payPayslip($payslipId, $paymentMode, $bankAccountId = null)
+    {
+        $payslip = $this->getPayslipById($payslipId);
+        if (!$payslip) {
+            throw new \Exception('Payslip not found');
+        }
+        if ($payslip['status'] === 'paid') {
+            throw new \Exception('Payslip is already paid');
+        }
+
+        $netSalary = (float)$payslip['net_salary'];
+        $employeeName = $payslip['employee_name'];
+        $month = (int)$payslip['period_month'];
+        $year = (int)$payslip['period_year'];
+        $monthName = date('F', mktime(0, 0, 0, $month, 1, $year));
+
+        $dbPaymentMode = 'cash';
+        if ($paymentMode === 'bank') {
+            $dbPaymentMode = 'bank_transfer';
+            if (empty($bankAccountId)) {
+                throw new \Exception('Bank account is required for bank payments');
+            }
+        } elseif ($paymentMode !== 'cash') {
+            throw new \Exception('Invalid payment mode');
+        }
+
+        $adminId = $_SESSION['admin_id'] ?? null;
+
+        $this->pdo->beginTransaction();
+        try {
+            $moneyService = new \App\Services\Accounting\MoneyWorkflowService();
+            $txnResult = $moneyService->recordCashTransaction([
+                'transaction_type' => 'payment',
+                'amount' => $netSalary,
+                'bank_account_id' => $paymentMode === 'bank' ? $bankAccountId : null,
+                'party_name' => $employeeName,
+                'narration' => "Salary payment for {$monthName} {$year} to {$employeeName}",
+                'transaction_date' => date('Y-m-d'),
+                'payment_mode' => $paymentMode === 'bank' ? 'bank' : 'cash',
+                'reference_type' => 'payroll',
+                'reference_id' => $payslipId,
+                'recorded_by' => $adminId
+            ]);
+
+            $voucherNumber = $txnResult['voucher_number'] ?? null;
+
+            $stmt = $this->pdo->prepare("
+                UPDATE employee_payslips 
+                SET status = 'paid', 
+                    paid_date = CURDATE(), 
+                    payment_mode = ?, 
+                    transaction_ref = ?, 
+                    paid_by = ? 
+                WHERE id = ?
+            ");
+            $stmt->execute([$dbPaymentMode, $voucherNumber, $adminId, $payslipId]);
+
+            $this->pdo->commit();
+            return true;
+        } catch (\Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
     }
 
     /* ── LEADS ─────────────────────────────────────────── */

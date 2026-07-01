@@ -95,7 +95,7 @@ $isDelayed = $currentStatus === 'delayed';
         <div class="card mb-4">
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle"></i> Booking Info</h5></div>
             <div class="card-body aps-cp-card-body">
-                <table class="table table-bordered table-sm">
+                <div class="table-responsive"><table class="table table-bordered table-sm">
                     <tr><th style="width:140px">Booking #</th><td><strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong></td></tr>
                     <tr><th>Property</th><td><?= htmlspecialchars($booking['property_title'] ?? '') ?> <small class="text-muted">(<?= htmlspecialchars($booking['property_location'] ?? '') ?>)</small></td></tr>
                     <tr><th>Plot #</th><td><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></td></tr>
@@ -115,7 +115,7 @@ $isDelayed = $currentStatus === 'delayed';
                     <?php if (!empty($booking['defect_liability_end_date'])): ?>
                         <tr><th>Defect Liability Until</th><td><?= date('d M Y', strtotime($booking['defect_liability_end_date'])) ?> <small class="text-muted">(<?= intval($booking['defect_liability_period'] ?? 0) ?> days)</small></td></tr>
                     <?php endif; ?>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

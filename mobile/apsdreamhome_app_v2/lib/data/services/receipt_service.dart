@@ -80,7 +80,7 @@ class ReceiptService {
                     ),
                     child: pw.Text(
                       'EMI PAYMENT RECEIPT',
-                      style: pw.TextStyle(
+                      style: const pw.TextStyle(
                         fontSize: 20,
                         fontWeight: pw.FontWeight.bold,
                       ),
@@ -158,7 +158,7 @@ class ReceiptService {
                 pw.Center(
                   child: pw.Text(
                     'This is a computer-generated receipt and does not require a physical signature.',
-                    style: pw.TextStyle(
+                    style: const pw.TextStyle(
                       fontSize: 10,
                       fontStyle: pw.FontStyle.italic,
                       color: PdfColors.grey700,
@@ -169,7 +169,7 @@ class ReceiptService {
                 pw.Center(
                   child: pw.Text(
                     'Thank you for your payment!',
-                    style: pw.TextStyle(
+                    style: const pw.TextStyle(
                       fontSize: 12,
                       fontWeight: pw.FontWeight.bold,
                     ),
@@ -244,7 +244,7 @@ class ReceiptService {
                     ),
                     child: pw.Text(
                       'BOOKING CONFIRMATION',
-                      style: pw.TextStyle(
+                      style: const pw.TextStyle(
                         fontSize: 22,
                         fontWeight: pw.FontWeight.bold,
                         color: PdfColors.blue900,
@@ -273,7 +273,7 @@ class ReceiptService {
                         ),
                         pw.Text(
                           bookingId,
-                          style: pw.TextStyle(
+                          style: const pw.TextStyle(
                             fontSize: 28,
                             fontWeight: pw.FontWeight.bold,
                             color: PdfColors.blue,
@@ -378,7 +378,7 @@ class ReceiptService {
                 pw.Center(
                   child: pw.Text(
                     'Congratulations on your booking! Thank you for choosing APS Dream Home.',
-                    style: pw.TextStyle(
+                    style: const pw.TextStyle(
                       fontSize: 12,
                       fontWeight: pw.FontWeight.bold,
                       color: PdfColors.blue900,
@@ -437,7 +437,7 @@ class ReceiptService {
                 pw.Center(
                   child: pw.Text(
                     'COMMISSION STATEMENT',
-                    style: pw.TextStyle(
+                    style: const pw.TextStyle(
                       fontSize: 20,
                       fontWeight: pw.FontWeight.bold,
                     ),
@@ -575,7 +575,7 @@ class ReceiptService {
               children: [
                 pw.Text(
                   _companyName,
-                  style: pw.TextStyle(
+                  style: const pw.TextStyle(
                     fontSize: 24,
                     fontWeight: pw.FontWeight.bold,
                   ),
@@ -607,7 +607,7 @@ class ReceiptService {
       ),
       child: pw.Text(
         title,
-        style: pw.TextStyle(
+        style: const pw.TextStyle(
           fontSize: 14,
           fontWeight: pw.FontWeight.bold,
         ),
@@ -625,7 +625,7 @@ class ReceiptService {
             flex: 3,
             child: pw.Text(
               label,
-              style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              style: const pw.TextStyle(fontWeight: pw.FontWeight.bold),
             ),
           ),
           pw.Expanded(
@@ -650,7 +650,7 @@ class ReceiptService {
         ),
         pw.Text(
           value,
-          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+          style: const pw.TextStyle(fontWeight: pw.FontWeight.bold),
         ),
       ],
     );

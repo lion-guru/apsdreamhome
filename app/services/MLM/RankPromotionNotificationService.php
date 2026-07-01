@@ -29,7 +29,7 @@ class RankPromotionNotificationService
         'platinum'  => ['label' => 'Platinum', 'icon' => 'fa-crown', 'color' => '#e5e4e2', 'next' => 'Diamond'],
         'diamond'   => ['label' => 'Diamond', 'icon' => 'fa-gem', 'color' => '#b9f2ff', 'next' => null],
         // HybridEngine ranks
-        'site_manager' => ['label' => 'Site Manager', 'icon' => 'fa-building', 'color' => '#4f46e5', 'next' => null],
+        'site_manager' => ['label' => 'Site Manager', 'icon' => 'fa-building', 'color' => '#0d9488', 'next' => null],
     ];
 
     public function __construct(?PDO $pdo = null)
@@ -152,7 +152,7 @@ class RankPromotionNotificationService
 
             $gbvLine = '';
             if (!empty($metadata['gbv'])) {
-                $gbvLine = "<p style='font-size:16px;color:#555;'>Your Group Business Volume: <strong style='color:#4f46e5;'>₹" . number_format($metadata['gbv']) . "</strong></p>";
+                $gbvLine = "<p style='font-size:16px;color:#555;'>Your Group Business Volume: <strong style='color:#0d9488;'>₹" . number_format($metadata['gbv']) . "</strong></p>";
             }
 
             $nextLine = '';
@@ -162,7 +162,7 @@ class RankPromotionNotificationService
 
             $html = "
             <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;'>
-                <div style='background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;padding:30px;border-radius:12px 12px 0 0;text-align:center;'>
+                <div style='background:linear-gradient(135deg,#0d9488,#0f766e);color:white;padding:30px;border-radius:12px 12px 0 0;text-align:center;'>
                     <h1 style='margin:0;font-size:24px;'>🎉 Rank Promotion!</h1>
                 </div>
                 <div style='background:#f8fafc;padding:30px;border:1px solid #e2e8f0;border-radius:0 0 12px 12px;'>

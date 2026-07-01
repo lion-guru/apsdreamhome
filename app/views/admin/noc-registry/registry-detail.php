@@ -83,7 +83,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                     <h6 class="mb-0"><i class="fas fa-receipt me-2"></i><?= __('admin_cost_breakdown') ?></h6>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm mb-0">
+                    <div class="table-responsive"><table class="table table-sm mb-0">
                         <tbody>
                             <tr>
                                 <td><?= __('admin_plot_value') ?></td>
@@ -106,7 +106,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
                                 <td class="text-end fw-bold fs-5">₹<?= number_format($registry['total_registry_cost'], 0) ?></td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

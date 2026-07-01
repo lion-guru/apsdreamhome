@@ -47,7 +47,7 @@ define('PUSH_SUBSCRIBE_BTN_LOADED', true);
     padding: 10px 16px;
     border: 0;
     border-radius: 999px;
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     color: #fff;
     font-weight: 600;
     font-size: 13px;

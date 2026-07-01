@@ -11,8 +11,8 @@
     --company-owner-gradient: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #b8860b 100%);
     
     /* Superadmin Colors */
-    --superadmin-primary: #8b5cf6;
-    --superadmin-gradient: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    --superadmin-primary: #14b8a6;
+    --superadmin-gradient: linear-gradient(135deg, #14b8a6 0%, #14b8a6 100%);
     
     /* Admin Colors */
     --admin-primary: #1976d2;
@@ -31,8 +31,8 @@
     --hr-gradient: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
     
     /* IT Colors */
-    --it-primary: #7c3aed;
-    --it-gradient: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    --it-primary: #0f766e;
+    --it-gradient: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
     
     /* Sales Colors */
     --sales-primary: #ea580c;
@@ -56,7 +56,7 @@
     
     /* Employee Colors */
     --employee-primary: #6366f1;
-    --employee-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    --employee-gradient: linear-gradient(135deg, #6366f1 0%, #0d9488 100%);
     
     /* Director Colors */
     --director-primary: #b45309;

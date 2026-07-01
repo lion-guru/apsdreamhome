@@ -29,7 +29,7 @@ class RankEvaluationService
             return ['user_id' => $userId, 'error' => 'No MLM profile found'];
         }
 
-        $currentLevel = $profile['current_level'] ?? 'Associate';
+        $currentLevel = $profile['current_level'] ?? 'associate';
         $levels = $this->db->fetchAll("SELECT * FROM mlm_levels ORDER BY level_number ASC");
 
         $teamSize = (int)$this->db->fetchColumn(
@@ -60,11 +60,42 @@ class RankEvaluationService
         }
 
         $promoted = false;
+        $fromLevel = $currentLevel;
         if ($highestEligible !== null && $highestEligible !== $currentLevel) {
             $this->db->query(
                 "UPDATE mlm_profiles SET current_level = ?, rank_updated_at = NOW() WHERE user_id = ?",
                 [$highestEligible, $userId]
             );
+
+            // Sync associates.level (extension table) with new rank
+            try {
+                $this->db->query(
+                    "UPDATE associates SET level = ? WHERE user_id = ?",
+                    [$highestEligible, $userId]
+                );
+            } catch (\Throwable $e) {}
+
+            // Log to mlm_rank_history
+            try {
+                $this->db->query(
+                    "INSERT INTO mlm_rank_history (associate_id, from_rank, to_rank, qualifying_volume_at_promotion, leg_count_at_promotion, promoted_at)
+                     VALUES (?, ?, ?, ?, ?, NOW())",
+                    [$userId, $fromLevel, $highestEligible, $monthlySales, $teamSize]
+                );
+            } catch (\Throwable $e) {}
+
+            // Broadcast rank change via WebSocket
+            try {
+                \App\Services\WebSocketBroadcaster::broadcastToUser($userId, [
+                    'event'     => 'rank_promoted',
+                    'user_id'   => $userId,
+                    'from_rank' => $fromLevel,
+                    'to_rank'   => $highestEligible,
+                    'message'   => "Congratulations! You've been promoted from {$fromLevel} to {$highestEligible}",
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            } catch (\Throwable $e) {}
+
             $promoted = true;
         }
 
@@ -99,7 +130,7 @@ class RankEvaluationService
 
         $currentLevelNum = 0;
         foreach ($levels as $l) {
-            if ($l['level_name'] === $profile['current_level']) {
+            if (strtolower($l['level_name']) === strtolower($profile['current_level'] ?? '')) {
                 $currentLevelNum = $l['level_number'];
                 break;
             }

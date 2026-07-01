@@ -6,7 +6,7 @@
 
     <div class="card aps-cp-card">
         <div class="card-body p-0">
-            <table class="table table-striped mb-0">
+            <div class="table-responsive"><table class="table table-striped mb-0">
                 <thead><tr><th>#</th><th>Commission ID</th><th>Action</th><th>Details</th><th>Date</th></tr></thead>
                 <tbody>
                     <?php foreach ($ledger ?? [] as $l): ?>
@@ -19,7 +19,7 @@
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

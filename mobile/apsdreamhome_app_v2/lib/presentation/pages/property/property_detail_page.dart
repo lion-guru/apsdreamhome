@@ -326,8 +326,8 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                 child: InkWell(
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Alert set for this property type'),
+                      const SnackBar(
+                        content: Text('Alert set for this property type'),
                         backgroundColor: AppTheme.successColor,
                       ),
                     );

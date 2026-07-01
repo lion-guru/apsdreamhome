@@ -516,7 +516,7 @@ class _SavedSearchesPageState extends ConsumerState<SavedSearchesPage> {
                       });
                       _toggleAlerts(id, value);
                     },
-                    activeColor: AppTheme.primaryColor,
+                    activeThumbColor: AppTheme.primaryColor,
                   ),
                 ],
               ),

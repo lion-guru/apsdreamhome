@@ -183,10 +183,34 @@ class BackofficeController extends AdminController
             $this->redirect(BASE_URL . '/admin/backoffice/payslips');
             return;
         }
+
+        $moneySvc = new \App\Services\Accounting\MoneyWorkflowService();
+        $bankAccounts = $moneySvc->listBankAccounts(true);
+
         $this->render('admin/backoffice/payslip-view', [
             'page_title' => 'Payslip #' . $id,
-            'payslip' => $payslip
+            'payslip' => $payslip,
+            'bank_accounts' => $bankAccounts
         ]);
+    }
+
+    public function payslipPay($id)
+    {
+        $this->requireAdmin();
+        if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            $this->redirect(BASE_URL . '/admin/backoffice/payslips/' . $id . '?error=' . urlencode('Invalid CSRF token'));
+            return;
+        }
+
+        $paymentMode = $_POST['payment_mode'] ?? 'cash';
+        $bankAccountId = !empty($_POST['bank_account_id']) ? (int)$_POST['bank_account_id'] : null;
+
+        try {
+            $this->svc->payPayslip((int)$id, $paymentMode, $bankAccountId);
+            $this->redirect(BASE_URL . '/admin/backoffice/payslips/' . $id . '?success=' . urlencode('Salary paid successfully'));
+        } catch (\Throwable $e) {
+            $this->redirect(BASE_URL . '/admin/backoffice/payslips/' . $id . '?error=' . urlencode($e->getMessage()));
+        }
     }
 
     /* ── LEADS ─────────────────────────────────────────── */

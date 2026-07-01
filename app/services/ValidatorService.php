@@ -37,6 +37,22 @@ class ValidatorService {
         return empty($this->errors);
     }
     
+    public function validateMinLength($field, $length) {
+        if (!empty($this->data[$field]) && strlen($this->data[$field]) < $length) {
+            $this->errors[$field] = ucfirst($field) . " must be at least $length characters";
+        }
+        return empty($this->errors[$field]);
+    }
+    
+    public function validateMatch($field1, $field2) {
+        $val1 = $this->data[$field1] ?? null;
+        $val2 = $this->data[$field2] ?? null;
+        if ($val1 !== $val2) {
+            $this->errors[$field2] = 'Passwords do not match';
+        }
+        return empty($this->errors[$field2]);
+    }
+    
     public function sanitizeInput($input, $type = 'string') {
         switch ($type) {
             case 'email':
@@ -84,6 +100,14 @@ class Validator {
         return $this->validator->validatePhone($field);
     }
     
+    public function validateMinLength($field, $length) {
+        return $this->validator->validateMinLength($field, $length);
+    }
+
+    public function validateMatch($field1, $field2) {
+        return $this->validator->validateMatch($field1, $field2);
+    }
+
     public function sanitizeInput($input, $type = 'string') {
         return $this->validator->sanitizeInput($input, $type);
     }

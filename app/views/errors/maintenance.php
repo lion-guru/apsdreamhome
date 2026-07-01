@@ -21,10 +21,10 @@ header('Retry-After: 3600');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; }
+        body { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); min-height: 100vh; display: flex; align-items: center; }
         .card { border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
         .icon-circle { width: 100px; height: 100px; border-radius: 50%; background: #f8f9fa; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
-        .icon-circle i { font-size: 3rem; color: #764ba2; }
+        .icon-circle i { font-size: 3rem; color: #0f766e; }
     </style>
 </head>
 <body>

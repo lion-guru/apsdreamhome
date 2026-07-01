@@ -16,7 +16,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <table class="table table-bordered">
+                            <div class="table-responsive"><table class="table table-bordered">
                                 <tr>
                                     <th class="w-25">ID</th>
                                     <td><?php echo $testimonial['id']; ?></td>
@@ -68,7 +68,7 @@
                                     <th>Created Date</th>
                                     <td><?php echo date('Y-m-d H:i:s', strtotime($testimonial['created_at'])); ?></td>
                                 </tr>
-                            </table>
+                            </table></div>
                         </div>
                         <div class="col-md-6">
                             <div class="card h-100">

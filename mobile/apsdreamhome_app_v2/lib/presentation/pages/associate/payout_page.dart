@@ -445,7 +445,7 @@ class _PayoutPageState extends ConsumerState<PayoutPage> {
             const SizedBox(height: 8),
             Text(
               _activeFilter != 'all'
-                  ? 'No ${_activeFilter} payouts found'
+                  ? 'No $_activeFilter payouts found'
                   : 'Start making sales to earn commissions',
               style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
               textAlign: TextAlign.center,

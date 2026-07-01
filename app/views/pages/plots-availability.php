@@ -130,7 +130,7 @@ foreach ($plots as $plot) {
                     <div class="col-lg-6">
                         <h5 class="fw-bold mb-3"><?= __('plots_avail_map_heading', [], 'Colony Layout Map') ?></h5>
                         <div class="text-center">
-                            <img loading="lazy" src="/assets/img/suryoday-colony-map-sample.jpg" alt="<?= __('plots_avail_map_alt', [], 'Suryoday Colony Map') ?>" class="plot-map-img mb-3 border img-fluid">
+                            <img loading="lazy" src="/assets/images/projects/gorakhpur/suryoday.jpg" alt="<?= __('plots_avail_map_alt', [], 'Suryoday Colony Map') ?>" class="plot-map-img mb-3 border img-fluid">
                             <div class="alert alert-info py-2 small">
                                 <i class="fas fa-info-circle me-2"></i><?= __('plots_avail_map_desc', [], 'Map numbering matches the table. For an interactive experience, contact our sales team.') ?>
                             </div>

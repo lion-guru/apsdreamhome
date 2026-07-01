@@ -6,7 +6,7 @@
     </div>
     <div class="aps-cp-card">
         <div class="aps-cp-card-body p-0">
-            <table class="table table-hover align-middle mb-0">
+            <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr><th><?php echo __('finance_name'); ?></th><th><?php echo __('finance_type'); ?></th><th><?php echo __('finance_subject'); ?></th><th><?php echo __('finance_active'); ?></th><th><?php echo __('finance_created'); ?></th><th></th></tr>
                 </thead>
@@ -31,7 +31,7 @@
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

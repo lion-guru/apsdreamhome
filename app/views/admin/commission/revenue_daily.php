@@ -38,7 +38,7 @@
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-table"></i> Daily Records</div>
                 <div class="card-body p-0">
-                    <table class="table table-striped mb-0">
+                    <div class="table-responsive"><table class="table table-striped mb-0">
                         <thead><tr><th>Date</th><th>Agent</th><th>Revenue</th><th>Deals</th><th>Commission</th><th>Action</th></tr></thead>
                         <tbody>
                             <?php foreach ($daily ?? [] as $d): ?>
@@ -52,7 +52,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

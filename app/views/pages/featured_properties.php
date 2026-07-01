@@ -11,7 +11,7 @@ $featuredProperties = [
 ];
 ?>
 
-<section class="py-5 bg-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="py-5 bg-primary text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
     <div class="container text-center">
         <h1 class="display-4 fw-bold mb-3"><?= __('featured_hero_title') ?></h1>
         <p class="lead"><?= __('featured_hero_desc') ?></p>

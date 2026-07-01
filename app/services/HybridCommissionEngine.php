@@ -307,6 +307,17 @@ class HybridCommissionEngine
                 return ['success' => false, 'error' => 'Amount received must be positive'];
             }
 
+            // ── 0a. IDEMPOTENCY: Skip if commissions already exist for this booking+receipt ──
+            $dupCheck = $this->pdo->prepare("
+                SELECT COUNT(*) FROM mlm_commission_ledger 
+                WHERE booking_id = ? AND receipt_id = ? AND status NOT IN ('cancelled','clawed_back')
+            ");
+            $dupCheck->execute([$bookingId, $receiptId]);
+            if ((int)$dupCheck->fetchColumn() > 0) {
+                $this->pdo->rollBack();
+                return ['success' => true, 'skipped' => true, 'reason' => 'commissions_already_exist_for_this_receipt'];
+            }
+
             // ── 0b. Independent Agent bypass — flat commission, no MLM upline ──
             $assocStmt = $this->pdo->prepare(
                 "SELECT agent_track, brokerage_model, brokerage_rate FROM associates WHERE user_id = ? LIMIT 1"
@@ -490,6 +501,17 @@ class HybridCommissionEngine
             // ── 9. Update agent GBV in mlm_profiles ───────────────
             $this->incrementGbv($executingAgentId, $amountReceived);
 
+            // Check and activate salary grants for direct seller and uplines
+            try {
+                $this->activateSalaryGrants($executingAgentId);
+                $upline = $this->getUplineChain($executingAgentId, 7);
+                foreach ($upline as $gen) {
+                    $this->activateSalaryGrants($gen['user_id']);
+                }
+            } catch (\Throwable $sgEx) {
+                error_log("[HybridCommissionEngine] activateSalaryGrants failed: " . $sgEx->getMessage());
+            }
+
             $this->pdo->commit();
 
             return [
@@ -547,6 +569,15 @@ class HybridCommissionEngine
             $eligible   = false;
             $bestTier   = null;
 
+            // Resolve associates.id from users.id (agentId)
+            $assocStmt = $this->pdo->prepare("SELECT id FROM associates WHERE user_id = ? LIMIT 1");
+            $assocStmt->execute([$agentId]);
+            $assocId = $assocStmt->fetchColumn();
+
+            if (!$assocId) {
+                return ['eligible' => false, 'reason' => 'Associate profile not found', 'tiers' => self::SALARY_TIERS];
+            }
+
             // Gather all confirmed bookings where this agent is the associate
             $stmt = $this->pdo->prepare("
                 SELECT pb.created_at, COALESCE(pb.agreement_value, pb.total_plot_value, 0) AS sale_value
@@ -556,7 +587,7 @@ class HybridCommissionEngine
                   AND pb.created_at IS NOT NULL
                 ORDER BY pb.created_at DESC
             ");
-            $stmt->execute([$agentId]);
+            $stmt->execute([$assocId]);
             $sales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (empty($sales)) {
@@ -565,7 +596,8 @@ class HybridCommissionEngine
 
             $now = new \DateTime();
 
-            foreach (self::SALARY_TIERS as $tier) {
+            $reversedTiers = array_reverse(self::SALARY_TIERS, true);
+            foreach ($reversedTiers as $index => $tier) {
                 $windowStart = clone $now;
                 $windowStart->modify("-{$tier['window_days']} days");
 
@@ -580,9 +612,10 @@ class HybridCommissionEngine
                 if ($volumeInWindow >= $tier['volume_threshold']) {
                     $eligible = true;
                     $bestTier = $tier;
+                    $bestTier['tier_index'] = $index;
                     $bestTier['volume_achieved'] = $volumeInWindow;
                     $bestTier['total_grant_value'] = $tier['monthly_grant'] * $tier['months'];
-                    break; // tiers are ordered highest first; first match is best
+                    break;
                 }
             }
 
@@ -599,11 +632,202 @@ class HybridCommissionEngine
         }
     }
 
-    /* ================================================================
-       PUBLIC API — RANK RESOLVER
-       ================================================================ */
+    /**
+     * Evaluate salary grant eligibility and activate the highest eligible tier if not already active.
+     */
+    public function activateSalaryGrants(int $agentId): bool
+    {
+        $eligibility = $this->checkSalaryIncentiveEligibility($agentId);
+        if (!$eligibility['eligible'] || empty($eligibility['tier'])) {
+            return false;
+        }
+
+        $tier = $eligibility['tier'];
+        $tierIndex = (int)$tier['tier_index'];
+        $volumeThreshold = (float)$tier['volume_threshold'];
+        $monthlyAmount = (float)$tier['monthly_grant'];
+        $monthsTotal = (int)$tier['months'];
+
+        // Check if this tier has already been activated for this user
+        $stmt = $this->pdo->prepare("
+            SELECT COUNT(*) FROM mlm_salary_grants 
+            WHERE user_id = ? AND tier_index = ?
+        ");
+        $stmt->execute([$agentId, $tierIndex]);
+        $exists = (int)$stmt->fetchColumn() > 0;
+
+        if ($exists) {
+            return false;
+        }
+
+        // Insert new grant
+        $stmt = $this->pdo->prepare("
+            INSERT INTO mlm_salary_grants 
+            (user_id, tier_index, volume_threshold, monthly_amount, months_total, months_paid, status, activated_at, created_at, updated_at) 
+            VALUES (?, ?, ?, ?, ?, 0, 'active', NOW(), NOW(), NOW())
+        ");
+        $stmt->execute([
+            $agentId,
+            $tierIndex,
+            $volumeThreshold,
+            $monthlyAmount,
+            $monthsTotal
+        ]);
+
+        return true;
+    }
 
     /**
+     * Process monthly salary grants for a given month-year (YYYY-MM).
+     * Pays out active grants to the commission ledger under type 'salary'.
+     */
+    public function processMonthlySalaryGrants(string $monthYear): array
+    {
+        $processed = 0;
+        $errors = [];
+
+        if (!preg_match('/^\d{4}-\d{2}$/', $monthYear)) {
+            return ['success' => false, 'error' => 'Invalid month format, must be YYYY-MM'];
+        }
+
+        try {
+            $stmt = $this->pdo->query("SELECT * FROM mlm_salary_grants WHERE status = 'active'");
+            $grants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($grants as $grant) {
+                // We run each grant payout in its own transaction to isolate errors
+                $this->pdo->beginTransaction();
+                try {
+                    // Check if already paid this month
+                    $checkStmt = $this->pdo->prepare("
+                        SELECT COUNT(*) FROM mlm_commission_ledger 
+                        WHERE beneficiary_user_id = ? 
+                          AND commission_type = 'salary' 
+                          AND DATE_FORMAT(created_at, '%Y-%m') = ?
+                          AND status NOT IN ('cancelled')
+                    ");
+                    $checkStmt->execute([$grant['user_id'], $monthYear]);
+                    if ((int)$checkStmt->fetchColumn() > 0) {
+                        $this->pdo->rollBack();
+                        continue;
+                    }
+
+                    // Check monthly active maintenance target (new recruitment or plot booking)
+                    $isMaintainer = $this->checkMonthlySalaryMaintenance((int)$grant['user_id'], $monthYear);
+                    if (!$isMaintainer) {
+                        $this->pdo->rollBack();
+                        error_log("Skipped monthly salary grant for User ID {$grant['user_id']} in {$monthYear} due to inactivity.");
+                        continue;
+                    }
+
+                    $tierIndex = $grant['tier_index'];
+                    $monthsPaid = (int)$grant['months_paid'];
+                    $monthsTotal = (int)$grant['months_total'];
+                    $monthlyAmount = (float)$grant['monthly_amount'];
+
+                    $notes = "Monthly Salary Grant (Tier " . ($tierIndex + 1) . ", Month " . ($monthsPaid + 1) . "/{$monthsTotal}) for {$monthYear}";
+
+                    $this->writeLedger(
+                        (int)$grant['user_id'],
+                        (int)$grant['user_id'],
+                        0.0,
+                        0.0,
+                        $monthlyAmount,
+                        'salary',
+                        0,
+                        0,
+                        0,
+                        $notes
+                    );
+
+                    $newMonthsPaid = $monthsPaid + 1;
+                    $newStatus = ($newMonthsPaid >= $monthsTotal) ? 'completed' : 'active';
+                    
+                    $updateStmt = $this->pdo->prepare("
+                        UPDATE mlm_salary_grants 
+                        SET months_paid = ?, 
+                            status = ?, 
+                            last_paid_at = NOW(), 
+                            updated_at = NOW() 
+                        WHERE id = ?
+                    ");
+                    $updateStmt->execute([$newMonthsPaid, $newStatus, $grant['id']]);
+
+                    $this->pdo->commit();
+                    $processed++;
+                } catch (\Throwable $e) {
+                    if ($this->pdo->inTransaction()) {
+                        $this->pdo->rollBack();
+                    }
+                    $errors[] = "Grant ID {$grant['id']} failed: " . $e->getMessage();
+                }
+            }
+
+            return [
+                'success' => true,
+                'processed' => $processed,
+                'errors' => $errors
+            ];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Check if an associate qualifies for their monthly salary installment by remaining active.
+     * They must have either:
+     * 1. At least 1 direct plot booking (not cancelled) in the target month.
+     * 2. Recruited at least 1 new associate who bought a joining package in that month.
+     *
+     * @param int $userId
+     * @param string $monthYear  Format 'YYYY-MM'
+     * @return bool
+     */
+    public function checkMonthlySalaryMaintenance(int $userId, string $monthYear): bool
+    {
+        try {
+            // Check Activity A: Direct plot booking in this month
+            $assocStmt = $this->pdo->prepare("SELECT id FROM associates WHERE user_id = ? LIMIT 1");
+            $assocStmt->execute([$userId]);
+            $assocId = $assocStmt->fetchColumn();
+
+            if ($assocId) {
+                $bookingStmt = $this->pdo->prepare("
+                    SELECT COUNT(*) 
+                    FROM plot_bookings 
+                    WHERE associate_id = ? 
+                      AND status NOT IN ('cancelled')
+                      AND DATE_FORMAT(created_at, '%Y-%m') = ?
+                ");
+                $bookingStmt->execute([$assocId, $monthYear]);
+                if ((int)$bookingStmt->fetchColumn() > 0) {
+                    return true;
+                }
+            }
+
+            // Check Activity B: Recruited at least 1 new associate who bought a package this month
+            $recruitStmt = $this->pdo->prepare("
+                SELECT COUNT(*) 
+                FROM users u
+                JOIN mlm_associate_registrations r ON r.user_id = u.id
+                WHERE u.referred_by = ?
+                  AND r.payment_status = 'paid'
+                  AND DATE_FORMAT(r.registered_at, '%Y-%m') = ?
+            ");
+            $recruitStmt->execute([$userId, $monthYear]);
+            if ((int)$recruitStmt->fetchColumn() > 0) {
+                return true;
+            }
+
+            return false;
+        } catch (\Throwable $e) {
+            error_log("[HybridCommissionEngine] checkMonthlySalaryMaintenance failed: " . $e->getMessage());
+            return false; // Safest fallback: fail closed to protect corporate margins
+        }
+    }
+
+    /* ================================================================
+       PUBLIC API — RANK RESOLVER
      * Determine the current rank slug for an agent based on their lifetime GBV.
      */
     public function resolveRank(int $agentId): string
@@ -1059,8 +1283,8 @@ class HybridCommissionEngine
             INSERT INTO mlm_commission_ledger
                 (beneficiary_user_id, source_user_id, commission_type, amount,
                  level, sale_amount, commission_percentage, status, notes,
-                 property_id, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, NOW())
+                 property_id, booking_id, receipt_id, hold_until, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 45 DAY), NOW())
         ");
         $stmt->execute([
             $beneficiaryId,
@@ -1071,7 +1295,9 @@ class HybridCommissionEngine
             $saleAmount,
             round($pct, 2),
             $notes,
-            null, // property_id — booking tracked via notes, not FK
+            null, // property_id
+            $bookingId > 0 ? $bookingId : null,
+            $receiptId > 0 ? $receiptId : null,
         ]);
         $ledgerId = (int) $this->pdo->lastInsertId();
 
@@ -1088,11 +1314,14 @@ class HybridCommissionEngine
                 'created_at'  => date('Y-m-d H:i:s'),
             ];
             \App\Services\WebSocketBroadcaster::broadcastToUser($beneficiaryId, $payload);
-            \App\Services\Communication\PushNotificationService::sendToUser(
+            $pushService = new \App\Services\Communication\PushNotificationService();
+            $pushService->sendToUser(
                 $beneficiaryId,
-                'Commission Credited',
-                '₹' . number_format(round($amount, 2)) . ' ' . ucfirst($type) . ' commission credited',
-                $payload
+                [
+                    'title' => 'Commission Credited',
+                    'body'  => '₹' . number_format(round($amount, 2)) . ' ' . ucfirst($type) . ' commission credited',
+                    'data'  => $payload,
+                ]
             );
         } catch (\Throwable $e) {
             error_log("[HybridCommissionEngine] broadcast failed: " . $e->getMessage());
@@ -1343,7 +1572,7 @@ class HybridCommissionEngine
                     INSERT INTO mlm_commission_ledger
                         (beneficiary_user_id, source_user_id, commission_type, amount, sale_amount,
                          commission_percentage, status, notes, created_at)
-                    VALUES (?, ?, 'performance_bonus', ?, ?, 0, 'pending', ?, NOW())
+                    VALUES (?, ?, 'royalty_pool', ?, ?, 0, 'pending', ?, NOW())
                 ");
                 $note = "Site Manager Royalty Pool — {$monthYear} share (Pool: ₹" . number_format($poolAmount) . " ÷ {$managerCount} managers)";
                 $stmt->execute([$mgr['user_id'], $mgr['user_id'], $perShare, $poolAmount, $note]);
@@ -1903,6 +2132,276 @@ class HybridCommissionEngine
         } catch (Exception $e) {
             error_log("PolicyGuard maintenance check failed: " . $e->getMessage());
             return ['consecutive_months' => 0, 'qualifying_months' => 0, 'total_volume' => 0.0];
+        }
+    }
+
+    /* ================================================================
+       SECTION — INVESTMENT SALE COMMISSION (3% pool)
+       ================================================================ */
+
+    /**
+     * Process commission on an investment sale (3% of investment amount).
+     *
+     * Split:
+     *   2.0% — Direct agent/sponsor who referred the investment
+     *   0.7% — L1 upline (agent's parent in network tree)
+     *   0.3% — L2 upline (agent's grandparent in network tree)
+     *
+     * No global 20% cap applied — investment commissions are independent
+     * of plot-sale commissions. Written to mlm_commission_ledger with
+     * commission_type = 'investment_sale'.
+     *
+     * @param int   $investmentId    investments.id
+     * @param int   $investorUserId  users.id of the person who invested
+     * @param float $amount          principal investment amount
+     * @param int   $referrerUserId  users.id of the referring agent/associate (may be 0 if self)
+     * @return array{success: bool, distributed: float, entries: int, details: array}
+     */
+    public function investmentSale(
+        int   $investmentId,
+        int   $investorUserId,
+        float $amount,
+        int   $referrerUserId
+    ): array {
+        if ($amount <= 0 || $referrerUserId <= 0) {
+            return ['success' => true, 'distributed' => 0, 'entries' => 0, 'details' => []];
+        }
+
+        $totalPool    = round($amount * 0.05, 2);  // 5% of investment
+        $agentShare   = round($amount * 0.035, 2);  // 3.5% direct
+        $l1Share      = round($amount * 0.01, 2); // 1.0% L1
+        $l2Share      = round($amount * 0.005, 2); // 0.5% L2
+        // Rounding adjustment goes to agent
+        $agentShare   = round($totalPool - $l1Share - $l2Share, 2);
+
+        $details = [];
+
+        try {
+            $this->pdo->beginTransaction();
+
+            // 1. Direct agent/referrer — 3.5%
+            if ($agentShare > 0) {
+                $ledgerId = $this->writeLedger(
+                    $referrerUserId,
+                    $investorUserId,
+                    $amount,
+                    3.5,
+                    $agentShare,
+                    'investment_sale',
+                    0,
+                    0, // no booking_id for investments
+                    $investmentId,
+                    "Investment #{$investmentId} — 3.5% direct agent commission"
+                );
+                $this->incrementGbv($referrerUserId, $amount);
+                $details[] = ['user_id' => $referrerUserId, 'level' => 0, 'pct' => 3.5, 'amount' => $agentShare, 'ledger_id' => $ledgerId];
+            }
+
+            // 2. Walk upline for L1 and L2
+            $chain = $this->getUplineChain($referrerUserId, 2);
+            $remaining = [$l1Share, $l2Share];
+            $pcts      = [1.0, 0.5];
+
+            foreach ($chain as $i => $upline) {
+                if (!isset($remaining[$i]) || $remaining[$i] <= 0) {
+                    break;
+                }
+                $ledgerId = $this->writeLedger(
+                    $upline['user_id'],
+                    $investorUserId,
+                    $amount,
+                    $pcts[$i],
+                    $remaining[$i],
+                    'investment_sale',
+                    $i + 1,
+                    0,
+                    $investmentId,
+                    "Investment #{$investmentId} — L" . ($i + 1) . " upline override ({$pcts[$i]}%)"
+                );
+                $this->incrementGbv($upline['user_id'], $amount);
+                $details[] = ['user_id' => $upline['user_id'], 'level' => $i + 1, 'pct' => $pcts[$i], 'amount' => $remaining[$i], 'ledger_id' => $ledgerId];
+            }
+
+            $this->pdo->commit();
+
+            $totalDistributed = array_sum(array_column($details, 'amount'));
+
+            return [
+                'success'      => true,
+                'distributed'  => $totalDistributed,
+                'entries'      => count($details),
+                'details'      => $details,
+            ];
+
+        } catch (Exception $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            error_log("[HybridCommissionEngine] investmentSale FAILED: " . $e->getMessage());
+            return ['success' => false, 'distributed' => 0, 'entries' => 0, 'details' => [], 'error' => $e->getMessage()];
+        }
+    }
+
+    /* ================================================================
+       SECTION — COMMISSION REVERSAL (cancellation / refund)
+       ================================================================ */
+
+    /**
+     * Reverse all commissions for a cancelled booking.
+     *
+     * Creates offsetting 'cancelled' ledger entries for each original
+     * commission row, and debits the agent's lifetime_sales accordingly.
+     *
+     * @param int    $bookingId    plot_bookings.id
+     * @param string $reason       Reason for cancellation (appears in notes)
+     * @return array{success: bool, reversed: int, total_reversed: float, entries: array}
+     */
+    public function reverseBookingCommissions(int $bookingId, string $reason = 'Booking cancelled'): array
+    {
+        try {
+            $this->pdo->beginTransaction();
+
+            // Fetch all pending/approved ledger entries for this booking
+            $stmt = $this->pdo->prepare("
+                SELECT id, beneficiary_user_id, amount, commission_type, level
+                FROM mlm_commission_ledger
+                WHERE booking_id = ?
+                  AND status IN ('pending', 'approved')
+            ");
+            $stmt->execute([$bookingId]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($rows)) {
+                $this->pdo->commit();
+                return ['success' => true, 'reversed' => 0, 'total_reversed' => 0, 'entries' => []];
+            }
+
+            $totalReversed = 0.0;
+            $reversedEntries = [];
+
+            $updateStmt = $this->pdo->prepare("
+                UPDATE mlm_commission_ledger
+                SET status = 'cancelled', updated_at = NOW(), notes = CONCAT(notes, ' | REVERSED: ', ?)
+                WHERE id = ?
+            ");
+
+            $debitStmt = $this->pdo->prepare("
+                UPDATE mlm_profiles
+                SET lifetime_sales = GREATEST(0, lifetime_sales - ?),
+                    updated_at = NOW()
+                WHERE user_id = ?
+            ");
+
+            foreach ($rows as $row) {
+                // Mark original entry as cancelled
+                $updateStmt->execute([$reason, $row['id']]);
+
+                // Debit lifetime_sales (negative commission)
+                $debitStmt->execute([(float)$row['amount'], $row['beneficiary_user_id']]);
+
+                $totalReversed += (float)$row['amount'];
+                $reversedEntries[] = [
+                    'ledger_id'      => (int)$row['id'],
+                    'user_id'        => (int)$row['beneficiary_user_id'],
+                    'amount'         => (float)$row['amount'],
+                    'type'           => $row['commission_type'],
+                ];
+            }
+
+            $this->pdo->commit();
+
+            return [
+                'success'        => true,
+                'reversed'       => count($rows),
+                'total_reversed' => round($totalReversed, 2),
+                'entries'        => $reversedEntries,
+            ];
+
+        } catch (Exception $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            error_log("[HybridCommissionEngine] reverseBookingCommissions FAILED: " . $e->getMessage());
+            return ['success' => false, 'reversed' => 0, 'total_reversed' => 0, 'entries' => [], 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Reverse all commissions for a cancelled investment.
+     *
+     * Investment commissions are stored in mlm_commission_ledger with
+     * commission_type='investment_sale' and receipt_id=investmentId.
+     * This method marks them 'cancelled' and debits lifetime_sales.
+     *
+     * @param int    $investmentId  investments.id
+     * @param string $reason        Reason for reversal (appears in notes)
+     * @return array{success: bool, reversed: int, total_reversed: float, entries: array}
+     */
+    public function reverseInvestmentCommissions(int $investmentId, string $reason = 'Investment cancelled'): array
+    {
+        try {
+            $this->pdo->beginTransaction();
+
+            // Investment commissions are stored with receipt_id = investmentId
+            $stmt = $this->pdo->prepare("
+                SELECT id, beneficiary_user_id, amount, commission_type, level
+                FROM mlm_commission_ledger
+                WHERE receipt_id = ?
+                  AND commission_type = 'investment_sale'
+                  AND status IN ('pending', 'approved')
+            ");
+            $stmt->execute([$investmentId]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($rows)) {
+                $this->pdo->commit();
+                return ['success' => true, 'reversed' => 0, 'total_reversed' => 0, 'entries' => []];
+            }
+
+            $totalReversed = 0.0;
+            $reversedEntries = [];
+
+            $updateStmt = $this->pdo->prepare("
+                UPDATE mlm_commission_ledger
+                SET status = 'cancelled', updated_at = NOW(), notes = CONCAT(notes, ' | REVERSED: ', ?)
+                WHERE id = ?
+            ");
+
+            $debitStmt = $this->pdo->prepare("
+                UPDATE mlm_profiles
+                SET lifetime_sales = GREATEST(0, lifetime_sales - ?),
+                    updated_at = NOW()
+                WHERE user_id = ?
+            ");
+
+            foreach ($rows as $row) {
+                $updateStmt->execute([$reason, $row['id']]);
+                $debitStmt->execute([(float)$row['amount'], $row['beneficiary_user_id']]);
+
+                $totalReversed += (float)$row['amount'];
+                $reversedEntries[] = [
+                    'ledger_id'      => (int)$row['id'],
+                    'user_id'        => (int)$row['beneficiary_user_id'],
+                    'amount'         => (float)$row['amount'],
+                    'type'           => $row['commission_type'],
+                ];
+            }
+
+            $this->pdo->commit();
+
+            return [
+                'success'        => true,
+                'reversed'       => count($rows),
+                'total_reversed' => round($totalReversed, 2),
+                'entries'        => $reversedEntries,
+            ];
+
+        } catch (Exception $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            error_log("[HybridCommissionEngine] reverseInvestmentCommissions FAILED: " . $e->getMessage());
+            return ['success' => false, 'reversed' => 0, 'total_reversed' => 0, 'entries' => [], 'error' => $e->getMessage()];
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 $user = $user ?? [];
-$roles = $roles ?? ['admin', 'manager', 'associate', 'customer', 'user'];
+$roles = $roles ?? ['admin', 'manager', 'associate', 'agent', 'customer', 'user'];
 $page_title = $page_title ?? 'Edit User';
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
@@ -101,9 +101,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <script>
         document.getElementById('editUserForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
-            
+
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
@@ -111,18 +111,28 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    // Non-AJAX response - redirect to users list
+                    window.location.href = '<?php echo $base; ?>/admin/users';
+                    return { success: true };
+                }
+            })
             .then(data => {
-                if (data.success) {
+                if (data && data.success) {
                     alert('User updated successfully!');
                     window.location.href = '<?php echo $base; ?>/admin/users';
-                } else {
+                } else if (data) {
                     alert(data.message || 'Failed to update user');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while updating user');
+                // On network error, try redirecting anyway
+                window.location.href = '<?php echo $base; ?>/admin/users';
             });
         });
     </script>

@@ -8,7 +8,7 @@ $blocks = $blocks ?? [];
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="h3 mb-1"><?= htmlspecialchars($colony['name'] ?? 'Colony') ?></h1>
+      <h1 class="h3 mb-1"><?= htmlspecialchars($colony['name'] ?? __('cp_colony')) ?></h1>
       <span class="text-muted">
         <?= htmlspecialchars($colony['colony_code'] ?? '') ?>
         &middot; <?= htmlspecialchars($colony['district_name'] ?? '') ?>
@@ -171,7 +171,7 @@ $blocks = $blocks ?? [];
   </div>
 
   <div class="text-muted small">
-    <?= __('cp_avg_area') ?>: <?= number_format((float)($plotStats['avg_area'] ?? 0), 0) ?> sqft
+    <?= __('cp_avg_area') ?>: <?= number_format((float)($plotStats['avg_area'] ?? 0), 0) ?> <?= __('cp_sqft') ?>
     &middot; <?= __('cp_starting_price') ?>: ₹<?= number_format((float)($colony['starting_price'] ?? 0), 0) ?>
     &middot; <?= __('cp_location') ?>: <?= htmlspecialchars($colony['location'] ?? '') ?>
   </div>

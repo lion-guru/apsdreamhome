@@ -133,6 +133,9 @@ class PageController extends BaseController
                         error_log("Inquiry save error: " . $e2->getMessage());
                     }
 
+                    // Auto-wire to CRM lead
+                    try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$subject.': '.$message,'type'=>'contact']); } catch (\Exception $e3) {}
+
                     // Trigger WhatsApp notification for new inquiry
                     try {
                         $waService = new \App\Services\Communication\WhatsAppService();
@@ -419,28 +422,27 @@ class PageController extends BaseController
 
         // Try to fetch from database first
         try {
-            $this->db->query("SELECT 1 FROM user_properties LIMIT 1");
+            $this->db->query("SELECT 1 FROM properties LIMIT 1");
 
-            $where = "WHERE status = 'approved'";
+            $where = "WHERE status = 'active' AND deleted_at IS NULL";
             $params = [];
 
             if ($keyword !== '') {
-                $where .= " AND (name LIKE ? OR address LIKE ? OR location LIKE ? OR description LIKE ?)";
+                $where .= " AND (title LIKE ? OR location LIKE ? OR description LIKE ?)";
                 $like = '%' . $keyword . '%';
-                array_push($params, $like, $like, $like, $like);
+                array_push($params, $like, $like, $like);
             }
             if ($type) {
-                $where .= " AND property_type = ?";
+                $where .= " AND type = ?";
                 $params[] = $type;
             }
             if ($listingType) {
-                $where .= " AND listing_type = ?";
-                $params[] = $listingType;
+                // properties table doesn't have listing_type, skip
             }
             if ($location) {
-                $where .= " AND (address LIKE ? OR location LIKE ? OR city_name LIKE ?)";
+                $where .= " AND (location LIKE ? OR city LIKE ?)";
                 $loc = '%' . $location . '%';
-                array_push($params, $loc, $loc, $loc);
+                array_push($params, $loc, $loc);
             }
             if ($minPrice > 0) {
                 $where .= " AND price >= ?";
@@ -459,12 +461,10 @@ class PageController extends BaseController
                 $params[] = $bathrooms;
             }
             if ($furnished !== '') {
-                $where .= " AND furnished = ?";
-                $params[] = $furnished;
+                // properties table doesn't have furnished column
             }
             if ($yearBuilt > 0) {
-                $where .= " AND year_built >= ?";
-                $params[] = $yearBuilt;
+                // properties table doesn't have year_built column
             }
             if ($areaMin > 0) {
                 $where .= " AND area_sqft >= ?";
@@ -481,18 +481,17 @@ class PageController extends BaseController
                 'oldest' => 'created_at ASC',
                 'area_large' => 'area_sqft DESC',
                 'area_small' => 'area_sqft ASC',
-                'relevance' => 'views DESC, created_at DESC',
                 default => 'created_at DESC'
             };
 
             // Count total
-            $countSql = "SELECT COUNT(*) as total FROM user_properties $where";
+            $countSql = "SELECT COUNT(*) as total FROM properties $where";
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = (int)$countStmt->fetch()['total'];
 
             // Get properties
-            $sql = "SELECT * FROM user_properties $where ORDER BY $orderBy LIMIT $perPage OFFSET $offset";
+            $sql = "SELECT * FROM properties $where ORDER BY $orderBy LIMIT $perPage OFFSET $offset";
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -959,7 +958,7 @@ class PageController extends BaseController
                 "SELECT * FROM news WHERE status = 'published' ORDER BY created_at DESC"
             );
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $news_items = [];
         }
@@ -1161,7 +1160,7 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM construction_projects WHERE status IN ('completed', 'in_progress') ORDER BY created_at DESC LIMIT 6");
             $projects = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $projects = [];
         }
@@ -1170,7 +1169,7 @@ class PageController extends BaseController
             $stmt = $this->db->query("SELECT * FROM testimonials WHERE type = 'construction' AND status = 'active' LIMIT 3");
             $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $testimonials = [];
         }
@@ -1209,6 +1208,9 @@ class PageController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, 'project', 'pending', 'medium', NOW())");
             $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: ₹{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
 
+            // Auto-wire to CRM lead
+            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>"Construction: {$project_type}",'type'=>'project']); } catch (\Exception $e3) {}
+
             // Also save to service_interests if table exists
             try {
                 $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, created_at) VALUES (?, 'construction', 'pending', ?, NOW())");
@@ -1219,7 +1221,7 @@ class PageController extends BaseController
 
             $_SESSION['flash_success'] = 'Thank you! We will contact you shortly regarding your construction project.';
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $_SESSION['flash_error'] = 'Something went wrong. Please try again.';
         }
@@ -1507,7 +1509,7 @@ class PageController extends BaseController
                         $plotStmt->execute([$project->id]);
                         $plots = $plotStmt->fetchAll(\PDO::FETCH_OBJ);
                     } catch (\Exception $e) {
-                        error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+                        error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
                         $plots = [];
                     }
@@ -1518,7 +1520,7 @@ class PageController extends BaseController
                         $relatedStmt->execute([$project->district, $project->id]);
                         $related_projects = $relatedStmt->fetchAll(\PDO::FETCH_OBJ);
                     } catch (\Exception $e) {
-                        error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+                        error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
                         $related_projects = [];
                     }
@@ -1682,7 +1684,7 @@ class PageController extends BaseController
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $project = null;
         }
@@ -1703,7 +1705,7 @@ class PageController extends BaseController
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $project = null;
         }
@@ -1724,7 +1726,7 @@ class PageController extends BaseController
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $project = null;
         }
@@ -1745,7 +1747,7 @@ class PageController extends BaseController
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $project = null;
         }
@@ -1766,7 +1768,7 @@ class PageController extends BaseController
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $project = null;
         }
@@ -2183,6 +2185,9 @@ class PageController extends BaseController
                 $stmt->execute([$name, $email, $phone, $fullMessage, $formType]);
                 $inquiryId = $this->db->lastInsertId();
 
+                // Auto-wire to CRM lead
+                try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$fullMessage,'type'=>$formType]); } catch (\Exception $e3) {}
+
                 // Also save to contacts table
                 try {
                     $contactStmt = $this->db->prepare("INSERT INTO contacts (name, email, phone, subject, message, ip_address, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
@@ -2389,6 +2394,9 @@ class PageController extends BaseController
                     error_log("Inquiry save error: " . $e2->getMessage());
                 }
 
+                // Auto-wire to CRM lead
+                try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property','created_by'=>$postedBy]); } catch (\Exception $e3) {}
+
                 // Success message with user-specific redirect
                 $_SESSION['flash_success'] = 'Thank you! Your property listing request has been submitted. Our team will contact you within 24 hours to verify the details.';
 
@@ -2431,7 +2439,7 @@ class PageController extends BaseController
             $stmt->execute();
             $legal_docs = $stmt->fetchAll(\PDO::FETCH_OBJ);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $legal_docs = [];
         }
@@ -2716,7 +2724,7 @@ class PageController extends BaseController
                     $data['result'] = ['found' => false, 'message' => 'No record found for RERA number: ' . htmlspecialchars($reraNumber)];
                 }
             } catch (\Exception $e) {
-                error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+                error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
                 $data['result'] = ['found' => false, 'message' => 'Lookup failed. Please try again.'];
             }
@@ -2736,7 +2744,7 @@ class PageController extends BaseController
             $stmt->execute([$id]);
             $property = $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $property = null;
         }
@@ -2753,12 +2761,188 @@ class PageController extends BaseController
             error_log("PageController.php: " . $e->getMessage());
         }
 
+        // Track property view for lead generation
+        try {
+            $this->trackPropertyView($id);
+        } catch (\Exception $e) {
+            error_log("PageController: trackPropertyView error: " . $e->getMessage());
+        }
+
         $data = [
             'page_title' => ($property['name'] ?? 'Property') . ' - APS Dream Home',
             'page_description' => 'View property details',
             'property' => $property
         ];
         $this->render('properties/user_detail', $data);
+    }
+
+    /**
+     * Track property view and auto-create leads from browsing behavior
+     */
+    private function trackPropertyView(int $propertyId): void
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $referrer = $_SERVER['HTTP_REFERER'] ?? '';
+
+        // Insert into property_views
+        try {
+            $this->db->query(
+                "INSERT INTO property_views (property_id, user_id, ip_address, user_agent, referrer, viewed_at) VALUES (?, ?, ?, ?, ?, NOW())",
+                [$propertyId, $userId, $ip, $ua, $referrer]
+            );
+        } catch (\Exception $e) {
+            // Table might not exist yet — silently skip
+            if (strpos($e->getMessage(), 'property_views') !== false) {
+                return;
+            }
+            throw $e;
+        }
+
+        // Auto-create lead from browsing behavior (3+ property views in session)
+        if (!$userId) {
+            if (!isset($_SESSION['property_view_count'])) {
+                $_SESSION['property_view_count'] = 0;
+                $_SESSION['property_views_list'] = [];
+            }
+            $_SESSION['property_view_count']++;
+            if (!in_array($propertyId, $_SESSION['property_views_list'])) {
+                $_SESSION['property_views_list'][] = $propertyId;
+            }
+
+            // Auto-create lead after 3+ property views
+            if ($_SESSION['property_view_count'] >= 3 && !empty($_SESSION['auto_lead_created'])) {
+                // Already created, skip
+            } elseif ($_SESSION['property_view_count'] >= 3) {
+                $viewedIds = $_SESSION['property_views_list'];
+                $propNames = [];
+                try {
+                    $placeholders = implode(',', array_fill(0, count($viewedIds), '?'));
+                    $rows = $this->db->fetchAll("SELECT name FROM user_properties WHERE id IN ($placeholders)", $viewedIds);
+                    $propNames = array_column($rows, 'name');
+                } catch (\Exception $e) { /* skip */ }
+
+                try {
+                    $this->db->query(
+                        "INSERT INTO leads (name, phone, email, source, status, priority, property_interest, notes, created_by, lead_score, created_at) VALUES (?, ?, ?, 'browsing_behavior', 'nurture', 'low', ?, ?, 0, 30, NOW())",
+                        [
+                            'Anonymous Visitor',
+                            '',
+                            '',
+                            implode(', ', $propNames),
+                            "Auto-created: Viewed " . count($viewedIds) . " properties — " . implode(', ', $propNames)
+                        ]
+                    );
+                    $_SESSION['auto_lead_created'] = true;
+                } catch (\Exception $e) {
+                    error_log("Auto lead creation error: " . $e->getMessage());
+                }
+            }
+        }
+    }
+
+    /**
+     * AJAX endpoint: Record property interest (creates lead)
+     */
+    public function propertyInterest()
+    {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+            return;
+        }
+
+        $propertyId = (int)($_POST['property_id'] ?? 0);
+        $name = trim($_POST['name'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $budget = trim($_POST['budget'] ?? '');
+        $source = trim($_POST['source'] ?? 'property_interest');
+
+        if (!$propertyId || empty($phone)) {
+            echo json_encode(['success' => false, 'message' => 'Phone number is required']);
+            return;
+        }
+
+        // Validate phone (basic Indian format)
+        $phoneClean = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($phoneClean) < 10) {
+            echo json_encode(['success' => false, 'message' => 'Please enter a valid phone number']);
+            return;
+        }
+
+        // Get property name
+        $propName = '';
+        try {
+            $prop = $this->db->fetch("SELECT name FROM user_properties WHERE id = ?", [$propertyId]);
+            $propName = $prop['name'] ?? '';
+        } catch (\Exception $e) { /* skip */ }
+
+        // Check if lead already exists for this phone
+        $existingLead = null;
+        try {
+            $existingLead = $this->db->fetch("SELECT id FROM leads WHERE phone = ? AND deleted_at IS NULL ORDER BY id DESC LIMIT 1", [$phoneClean]);
+        } catch (\Exception $e) { /* skip */ }
+
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        try {
+            if ($existingLead) {
+                // Update existing lead
+                $this->db->query(
+                    "UPDATE leads SET property_interest = CONCAT(COALESCE(property_interest, ''), ?), notes = CONCAT(COALESCE(notes, ''), ?), lead_score = LEAST(100, lead_score + 10), updated_at = NOW() WHERE id = ?",
+                    [
+                        ($propName ? ", $propName" : ''),
+                        "\n" . date('Y-m-d H:i') . " — Expressed interest in: $propName (Budget: $budget)",
+                        $existingLead['id']
+                    ]
+                );
+                $leadId = $existingLead['id'];
+            } else {
+                // Create new lead
+                $this->db->query(
+                    "INSERT INTO leads (name, phone, email, source, status, priority, property_interest, budget_range, notes, created_by, lead_score, created_at) VALUES (?, ?, '', ?, 'new', 'high', ?, ?, ?, 0, 50, NOW())",
+                    [
+                        $name ?: 'Unknown',
+                        $phoneClean,
+                        $source,
+                        $propName,
+                        $budget,
+                        "Expressed interest in: $propName" . ($budget ? " (Budget: $budget)" : '')
+                    ]
+                );
+                $leadId = $this->db->lastInsertId();
+            }
+
+            // Also save to inquiries table for backward compatibility
+            try {
+                $this->db->query(
+                    "INSERT INTO inquiries (property_id, name, email, phone, message, type, property_type, status, priority, lead_id, created_at) VALUES (?, ?, '', ?, ?, 'property_inquiry', 'user_property', 'new', 'high', ?, NOW())",
+                    [
+                        $propertyId,
+                        $name ?: 'Unknown',
+                        $phoneClean,
+                        "Interested in: $propName" . ($budget ? " | Budget: $budget" : ''),
+                        $leadId
+                    ]
+                );
+            } catch (\Exception $e) { /* skip */ }
+
+            // Notify property owner
+            try {
+                $prop = $this->db->fetch("SELECT * FROM user_properties WHERE id = ?", [$propertyId]);
+                if ($prop && !empty($prop['email'])) {
+                    $ownerMsg = "New interest in your property '{$prop['name']}'!\n\nFrom: " . ($name ?: 'Unknown') . " ($phoneClean)\nBudget: $budget\n\nAPS Dream Home";
+                    @mail($prop['email'], "Interest in your property: {$prop['name']}", $ownerMsg, "From: info@apsdreamhome.com\r\nReply-To: $phoneClean@aps.local");
+                }
+            } catch (\Exception $e) { /* skip */ }
+
+            echo json_encode(['success' => true, 'message' => 'Interest recorded! Our team will contact you shortly.', 'lead_id' => $leadId]);
+        } catch (\Exception $e) {
+            error_log("Property interest error: " . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Something went wrong. Please try again.']);
+        }
     }
 
     public function propertyInquiry()
@@ -2783,6 +2967,9 @@ class PageController extends BaseController
         try {
             $stmt = $this->db->prepare("INSERT INTO inquiries (property_id, name, email, phone, message, type, property_type, status, priority, created_at) VALUES (?, ?, ?, ?, ?, 'property_inquiry', 'user_property', 'new', 'high', NOW())");
             $stmt->execute([$propertyId, $name, $email, $phone, $message]);
+
+            // Auto-wire to CRM lead
+            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property_inquiry','property_id'=>$propertyId]); } catch (\Exception $e3) {}
 
             // Also notify property owner
             try {
@@ -2856,7 +3043,7 @@ class PageController extends BaseController
                 'cities_covered' => count(array_unique(array_column($colonies, 'district_name')))
             ];
         } catch (\Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $colonies = [];
             $colonyStats = ['total_colonies' => 0, 'total_area' => '0', 'total_plots' => 0, 'cities_covered' => 0];
@@ -2897,19 +3084,42 @@ class PageController extends BaseController
         $loggedInReferralCode = $isLoggedIn ? ($_SESSION['referral_code'] ?? '') : '';
         $userName = $isLoggedIn ? ($_SESSION['user_name'] ?? '') : '';
         $base = BASE_URL;
+        $role = $_SESSION['role'] ?? '';
 
-        // Default company referral code - shown when no user is logged in
-        // so CTA links always have a value (new visitors can register without a sponsor)
+        // Default company referral code
         $referral_code = $loggedInReferralCode ?: 'APS-COMPANY';
+        $referral_link = $base . '/associate/register?ref=' . urlencode($referral_code);
 
-        $this->render('pages/become_associate', [
-            'page_title' => 'Become an Associate',
-            'isLoggedIn' => $isLoggedIn,
-            'loggedInReferralCode' => $loggedInReferralCode,
-            'referral_code' => $referral_code,
-            'userName' => $userName,
-            'base' => $base
-        ]);
+        // If logged in, use portal layout; otherwise standalone page
+        if ($isLoggedIn && in_array($role, ['associate', 'customer', 'user', 'agent'])) {
+            $layoutMap = [
+                'associate' => 'layouts/associate',
+                'agent' => 'layouts/associate',
+            ];
+            $this->layout = $layoutMap[$role] ?? 'layouts/customer';
+            $this->render('pages/become_associate_embed', [
+                'page_title' => 'Promote & Earn',
+                'page_description' => 'Share your referral code and earn rewards',
+                'current_page' => 'list-property',
+                'isLoggedIn' => true,
+                'loggedInReferralCode' => $loggedInReferralCode,
+                'referral_code' => $referral_code,
+                'referral_link' => $referral_link,
+                'userName' => $userName,
+                'base' => $base,
+            ], $this->layout);
+        } else {
+            // Standalone public page
+            $this->render('pages/become_associate', [
+                'page_title' => 'Become an Associate',
+                'isLoggedIn' => false,
+                'loggedInReferralCode' => '',
+                'referral_code' => $referral_code,
+                'referral_link' => $referral_link,
+                'userName' => '',
+                'base' => $base
+            ]);
+        }
     }
 
     /**
@@ -3034,6 +3244,58 @@ class PageController extends BaseController
         $this->render('pages/opportunity', [
             'page_title' => 'Earning Opportunity - APS Dream Home',
             'page_description' => 'Join the APS Dream Home Associate & Agent program to earn unlimited commissions.',
+        ]);
+    }
+
+    /**
+     * Public MLM plan info page — no auth required.
+     * Shows commission structure, rank ladder, and how to join.
+     */
+    public function howItWorks()
+    {
+        $levels = [];
+        $benefits = [];
+        $stats = [
+            'total_associates' => 0,
+            'total_commission_paid' => 0,
+            'active_colonies' => 0,
+        ];
+
+        try {
+            $levels = $this->db->fetchAll("SELECT * FROM mlm_levels ORDER BY level_number ASC");
+        } catch (\Exception $e) { /* graceful */ }
+
+        try {
+            $benefits = $this->db->fetchAll("SELECT * FROM mlm_rank_benefits ORDER BY rank_order ASC");
+        } catch (\Exception $e) { /* graceful */ }
+
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM mlm_profiles");
+            $stats['total_associates'] = (int)($row['cnt'] ?? 0);
+        } catch (\Exception $e) { /* graceful */ }
+
+        try {
+            $row = $this->db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE status IN ('approved','paid')");
+            $stats['total_commission_paid'] = (float)($row['total'] ?? 0);
+        } catch (\Exception $e) { /* graceful */ }
+
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) as cnt FROM colonies WHERE status = 'active'");
+            $stats['active_colonies'] = (int)($row['cnt'] ?? 0);
+        } catch (\Exception $e) { /* graceful */ }
+
+        $this->render('associate/mlm_plan', [
+            'page_title'  => 'MLM Plan & Commission Structure - APS Dream Home',
+            'page_description' => 'Learn about APS Dream Home MLM plan, commission structure, and earning potential.',
+            'levels'      => $levels,
+            'benefits'    => $benefits,
+            'current_plan' => null,
+            'current_rank' => null,
+            'next_rank'    => null,
+            'user_profile' => null,
+            'current_page' => 'how-it-works',
+            'is_public'   => true,
+            'stats'       => $stats,
         ]);
     }
 }

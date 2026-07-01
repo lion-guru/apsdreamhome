@@ -9,6 +9,8 @@
 namespace App\Http\Controllers;
 
 use App\Core\Database\Database;
+use App\Services\AI\SelfLearningAI;
+use App\Services\AI\RAGAgent;
 
 class SmartAIController extends BaseController
 {
@@ -111,8 +113,34 @@ class SmartAIController extends BaseController
         $modelUsed = 'none';
         $response = null;
 
-        // 1. Try Gemini
-        if (!empty($this->geminiApiKey) && $this->geminiApiKey !== 'YOUR_GEMINI_API_KEY_HERE') {
+        // 1. Self-Learning AI Brain (local, learns from conversations, no API needed)
+        try {
+            $selfLearning = new SelfLearningAI($sessionId, $userContext['id'], $userContext['role']);
+            $aiResult = $selfLearning->processMessage($message);
+            if (!empty($aiResult['success']) && $aiResult['confidence'] >= 0.3) {
+                $response = $aiResult['response'];
+                $modelUsed = 'self_learning';
+            }
+        } catch (\Exception $e) {
+            error_log("SelfLearningAI error: " . $e->getMessage());
+        }
+
+        // 2. RAG Agent (data-backed answers from knowledge base + live property/plot data)
+        if ($response === null) {
+            try {
+                $rag = new RAGAgent();
+                $ragResult = $rag->answer($message, $userContext['id']);
+                if (!empty($ragResult['success']) && $ragResult['confidence'] >= 0.4) {
+                    $response = $ragResult['answer'];
+                    $modelUsed = 'rag';
+                }
+            } catch (\Exception $e) {
+                error_log("RAGAgent error: " . $e->getMessage());
+            }
+        }
+
+        // 3. Try Gemini (if self-learning and RAG confidence is low)
+        if ($response === null && !empty($this->geminiApiKey) && $this->geminiApiKey !== 'YOUR_GEMINI_API_KEY_HERE') {
             $response = $this->getGeminiResponse($message, $userContext, $language);
             if (!empty($response) && strpos($response, 'quota') === false && strpos($response, 'API key') === false) {
                 $modelUsed = 'gemini';
@@ -665,5 +693,127 @@ EOT;
         ];
 
         $this->render('pages/ai_assistant', $data);
+    }
+
+    /**
+     * Process chat feedback (thumbs up/down)
+     */
+    public function feedback()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+            $messageId = (int)($_POST['message_id'] ?? $input['message_id'] ?? 0);
+            $positive = filter_var($_POST['positive'] ?? $input['positive'] ?? true, FILTER_VALIDATE_BOOLEAN);
+            $comment = $_POST['comment'] ?? $input['comment'] ?? null;
+            $sessionId = $_POST['session_id'] ?? $input['session_id'] ?? session_id();
+            $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
+
+            if (!$messageId) {
+                echo json_encode(['success' => false, 'error' => 'message_id required']);
+                exit;
+            }
+
+            $selfLearning = new SelfLearningAI($sessionId, $userId);
+            $result = $selfLearning->processFeedback($messageId, $positive, $comment);
+
+            echo json_encode(['success' => $result]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Get AI performance stats (for chat widget)
+     */
+    public function stats()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $sessionId = session_id();
+            $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
+            $selfLearning = new SelfLearningAI($sessionId, $userId);
+            $stats = $selfLearning->getPerformanceStats();
+
+            echo json_encode(['success' => true, 'stats' => $stats]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Get RAG agent stats
+     */
+    public function ragStats()
+    {
+        header('Content-Type: application/json');
+        try {
+            $rag = new RAGAgent();
+            $stats = $rag->getStats();
+            echo json_encode(['success' => true, 'stats' => $stats]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Generate document (receipt, demand letter, booking confirmation, commission statement)
+     */
+    public function generateDocument()
+    {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+            $type = $_POST['type'] ?? $input['type'] ?? '';
+            $id = (int)($_POST['id'] ?? $input['id'] ?? 0);
+            $month = $_POST['month'] ?? $input['month'] ?? date('Y-m');
+
+            $gen = new \App\Services\AI\DocumentGeneratorAgent();
+
+            $result = match ($type) {
+                'receipt' => $gen->generatePaymentReceipt($id),
+                'demand_letter' => $gen->generateDemandLetter($id),
+                'booking' => $gen->generateBookingConfirmation($id),
+                'commission' => $gen->generateCommissionStatement($id, $month),
+                'leads' => $gen->generateLeadSummary($id),
+                default => ['success' => false, 'error' => 'Unknown type. Use: receipt, demand_letter, booking, commission, leads']
+            };
+
+            echo json_encode($result);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Trigger workflow automation event
+     */
+    public function workflowEvent()
+    {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+            $event = $_POST['event'] ?? $input['event'] ?? '';
+            $data = $input['data'] ?? [];
+
+            if (empty($event)) {
+                echo json_encode(['success' => false, 'error' => 'Event type required']);
+                exit;
+            }
+
+            $agent = new \App\Services\AI\WorkflowAutomationAgent();
+            $result = $agent->processEvent($event, $data);
+
+            echo json_encode(['success' => true, 'result' => $result]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
     }
 }

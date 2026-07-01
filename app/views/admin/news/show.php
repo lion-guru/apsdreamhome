@@ -36,7 +36,7 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
             <div class="card shadow mb-4">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Article Details</h6></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm">
                         <tr><th>Title</th><td><?= htmlspecialchars($news['title'] ?? '') ?></td></tr>
                         <tr><th>Author</th><td><?= htmlspecialchars($news['author'] ?? '') ?></td></tr>
                         <tr><th>Category</th><td><?= htmlspecialchars($news['category'] ?? 'General') ?></td></tr>
@@ -45,7 +45,7 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
                         <?php if (!empty($news['updated_at'])): ?>
                         <tr><th>Last Updated</th><td><?= htmlspecialchars($news['updated_at']) ?></td></tr>
                         <?php endif; ?>
-                    </table>
+                    </table></div>
                 </div>
             </div>
             <div class="card shadow">

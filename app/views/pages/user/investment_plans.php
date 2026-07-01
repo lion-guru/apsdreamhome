@@ -50,7 +50,7 @@ ob_start();
             </div>
             <div style="flex:1; margin-left:24px;">
                 <div class="aps-cp-progress">
-                    <div class="aps-cp-progress-bar" style="width:<?= (float)$stats['progress_pct'] ?>%; background:linear-gradient(90deg, #4f46e5, #8b5cf6);"></div>
+                    <div class="aps-cp-progress-bar" style="width:<?= (float)$stats['progress_pct'] ?>%; background:linear-gradient(90deg, #0d9488, #14b8a6);"></div>
                 </div>
                 <p class="aps-cp-muted mt-1 mb-0"><?= __('user_investment_plans_progress_text', null, 'Invest ₹') ?><?= number_format((float)$stats['next_threshold']) ?> <?= __('user_investment_plans_progress_more', null, 'more to reach') ?> <strong><?= htmlspecialchars($stats['next_level']) ?></strong></p>
             </div>

@@ -18,7 +18,7 @@
   <?php else: ?>
     <div class="card aps-cp-card">
       <div class="card-body p-0">
-        <table class="table table-hover mb-0">
+        <div class="table-responsive"><table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
               <th>Colony</th>
@@ -80,7 +80,7 @@
               </tr>
             <?php endforeach; ?>
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   <?php endif; ?>

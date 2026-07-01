@@ -195,7 +195,7 @@ $currentKeys = $this->db->query("SELECT * FROM api_keys WHERE is_active = 1")->f
             <h5 class="mb-0"><i class="fas fa-list me-2"></i>Current Active Keys</h5>
         </div>
         <div class="card-body p-0">
-            <table class="table mb-0">
+            <div class="table-responsive"><table class="table mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>Service</th>
@@ -214,7 +214,7 @@ $currentKeys = $this->db->query("SELECT * FROM api_keys WHERE is_active = 1")->f
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
     <?php endif; ?>

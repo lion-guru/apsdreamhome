@@ -31,7 +31,7 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                     <div class="card mb-4">
                         <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="fas fa-th"></i> Plot Details</h5></div>
                         <div class="card-body aps-cp-card-body">
-                            <table class="table table-bordered">
+                            <div class="table-responsive"><table class="table table-bordered">
                                 <tr><th style="width:140px">Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
                                 <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? 'N/A') ?></td></tr>
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector']) : '' ?></td></tr>
@@ -42,7 +42,7 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                                 <tr><th>Total Price</th><td><strong class="text-primary">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></strong></td></tr>
                                 <tr><th>Status</th><td><span class="badge bg-<?= $plot['status'] === 'available' ? 'success' : 'warning' ?>"><?= ucfirst(htmlspecialchars($plot['status'] ?? 'available')) ?></span></td></tr>
                                 <tr><th>Facing</th><td><?= htmlspecialchars(ucfirst($plot['facing'] ?? 'N/A')) ?></td></tr>
-                            </table>
+                            </table></div>
                             <?php if (!empty($plot['features'])): ?>
                                 <h6>Features</h6>
                                 <p class="text-muted"><?= nl2br(htmlspecialchars($plot['features'])) ?></p>

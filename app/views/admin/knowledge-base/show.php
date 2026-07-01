@@ -16,7 +16,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-12">
-                            <table class="table table-bordered">
+                            <div class="table-responsive"><table class="table table-bordered">
                                 <tr>
                                     <th class="w-25">ID</th>
                                     <td><?php echo $article['id']; ?></td>
@@ -47,7 +47,7 @@
                                     <th>Created Date</th>
                                     <td><?php echo date('Y-m-d H:i:s', strtotime($article['created_at'])); ?></td>
                                 </tr>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                     <div class="row mt-3">

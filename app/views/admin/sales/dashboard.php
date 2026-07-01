@@ -66,7 +66,7 @@ $statusBadge = function ($s) {
                 <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings" class="btn btn-link btn-sm">View all <i class="fas fa-arrow-right"></i></a>
             </div>
             <div class="aps-cp-card-body p-0">
-                <table class="table table-sm m-0">
+                <div class="table-responsive"><table class="table table-sm m-0">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -93,7 +93,7 @@ $statusBadge = function ($s) {
                             </tr>
                         <?php endforeach; endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>
@@ -103,7 +103,7 @@ $statusBadge = function ($s) {
                 <h5 class="m-0"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>Overdue Installments</h5>
             </div>
             <div class="aps-cp-card-body p-0">
-                <table class="table table-sm m-0">
+                <div class="table-responsive"><table class="table table-sm m-0">
                     <thead>
                         <tr>
                             <th>Booking</th>
@@ -126,7 +126,7 @@ $statusBadge = function ($s) {
                             </tr>
                         <?php endforeach; endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

@@ -55,7 +55,7 @@
                                 'available' => '#10b981',
                                 'booked' => '#ef4444',
                                 'on_emi' => '#f59e0b',
-                                'registered' => '#8b5cf6',
+                                'registered' => '#14b8a6',
                                 'blocked' => '#64748b',
                                 default => '#94a3b8'
                             };
@@ -85,7 +85,7 @@
             <span><span class="badge" style="background:#10b981; width:16px; height:16px; display:inline-block;"></span> Available</span>
             <span><span class="badge" style="background:#ef4444; width:16px; height:16px; display:inline-block;"></span> Booked</span>
             <span><span class="badge" style="background:#f59e0b; width:16px; height:16px; display:inline-block;"></span> On EMI</span>
-            <span><span class="badge" style="background:#8b5cf6; width:16px; height:16px; display:inline-block;"></span> Registered</span>
+            <span><span class="badge" style="background:#14b8a6; width:16px; height:16px; display:inline-block;"></span> Registered</span>
             <span><span class="badge" style="background:#64748b; width:16px; height:16px; display:inline-block;"></span> Blocked</span>
         </div>
     </div>

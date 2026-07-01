@@ -118,7 +118,8 @@ class BackupRestoreService
         fwrite($handle, "DROP TABLE IF EXISTS `{$table}`;\n");
         
         $create = $this->database->query("SHOW CREATE TABLE `{$table}`")->fetch(\PDO::FETCH_ASSOC);
-        fwrite($handle, $create['Create Table'] . ";\n\n");
+        $createSql = $create['Create Table'] ?? $create['Create Table'] ?? '';
+        fwrite($handle, $createSql . ";\n\n");
         
         // Get data
         $rows = $this->database->query("SELECT * FROM `{$table}`")->fetchAll(\PDO::FETCH_ASSOC);

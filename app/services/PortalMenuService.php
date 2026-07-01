@@ -50,11 +50,11 @@ class PortalMenuService
     public function getMenu(): array
     {
         $role = $this->normalizeRole($this->role);
-        $common = $this->commonItems();
         $specific = $this->roleSpecificItems($role);
+        $common = $this->commonItems();
 
-        // Merge common + role-specific and group by section
-        $all = array_merge($common, $specific);
+        // Role-specific items FIRST, then common items (Account/Settings at bottom)
+        $all = array_merge($specific, $common);
         $sections = [];
         foreach ($all as $item) {
             $section = $item['section'];
@@ -68,22 +68,23 @@ class PortalMenuService
 
     /**
      * Items every authenticated user sees.
+     * Split into Account + Settings sections for better UX.
      */
     private function commonItems(): array
     {
         return [
-            // Notifications (top of account section)
+            // Account
+            $this->item('profile', 'Account', 'My Profile', $this->profileUrl(), 'fas fa-user'),
             $this->item('notifications', 'Account', 'Notifications', '/user/notifications', 'fas fa-bell', $this->countTable('notifications', 'user_id')),
             $this->item('messages', 'Account', 'Messages', '/user/messages', 'fas fa-envelope'),
-            $this->item('profile', 'Account', 'My Profile', $this->profileUrl(), 'fas fa-user-cog'),
             $this->item('address', 'Account', 'My Address', $this->addressUrl(), 'fas fa-map-marker-alt'),
             $this->item('bank', 'Account', 'Bank Details', $this->bankUrl(), 'fas fa-university'),
-            $this->item('kyc', 'Account', 'KYC Verification', $this->kycUrl(), 'fas fa-id-card'),
-            $this->item('documents', 'Account', 'Document Locker', $this->documentsUrl(), 'fas fa-folder-open'),
-            $this->item('insurance', 'Account', 'Insurance', '/user/insurance', 'fas fa-shield-alt'),
-            $this->item('investment', 'Account', 'Investment Plans', '/user/investment-plans', 'fas fa-chart-line'),
-            $this->item('settings', 'Account', 'Settings', $this->settingsUrl(), 'fas fa-cog'),
-            $this->item('logout', 'Account', 'Logout', $this->logoutUrl(), 'fas fa-sign-out-alt', null, 'danger'),
+            $this->item('kyc', 'Account', 'KYC', $this->kycUrl(), 'fas fa-id-card'),
+            $this->item('documents', 'Account', 'Documents', $this->documentsUrl(), 'fas fa-folder-open'),
+
+            // Settings
+            $this->item('settings', 'Settings', 'Settings', $this->settingsUrl(), 'fas fa-cog'),
+            $this->item('logout', 'Settings', 'Logout', $this->logoutUrl(), 'fas fa-sign-out-alt', null, 'danger'),
         ];
     }
 
@@ -120,32 +121,71 @@ class PortalMenuService
             $this->item('bookings', 'Main', 'My Bookings', '/user/bookings', 'fas fa-file-contract', $this->countTable('bookings', 'user_id')),
             $this->item('favorites', 'Main', 'Favorites', '/user/favorites', 'fas fa-heart', $this->countTable('favorites', 'user_id')),
             $this->item('saved-searches', 'Main', 'Saved Searches', '/user/saved-searches', 'fas fa-bookmark', $this->countTable('saved_searches', 'user_id')),
-            $this->item('tickets', 'Main', 'Support Tickets', '/user/tickets', 'fas fa-life-ring', $this->countTable('support_tickets', 'user_id')),
-            $this->item('referral', 'Main', 'Refer & Earn', '/user/referral', 'fas fa-user-friends'),
+
+            // Finance
+            $this->item('emi-tracker', 'Finance', 'EMI Tracker', '/user/emi-tracker', 'fas fa-calendar-check'),
+            $this->item('payment-history', 'Finance', 'Payment History', '/user/payment-history', 'fas fa-receipt'),
+            $this->item('site-visits', 'Finance', 'Site Visits', '/user/site-visits', 'fas fa-map-marker-alt'),
+
+            // Support
+            $this->item('tickets', 'Support', 'Support Tickets', '/user/tickets', 'fas fa-life-ring', $this->countTable('support_tickets', 'user_id')),
+            $this->item('referral', 'Support', 'Refer & Earn', '/user/referral', 'fas fa-user-friends'),
+            $this->item('insurance', 'Support', 'Insurance', '/user/insurance', 'fas fa-shield-alt'),
+            $this->item('investment', 'Support', 'Investments', '/user/investment-plans', 'fas fa-chart-line'),
+
+            // Explore
             $this->item('browse', 'Explore', 'Browse Properties', '/properties', 'fas fa-search'),
             $this->item('list-property', 'Explore', 'Post Property', '/list-property', 'fas fa-plus-circle'),
-            $this->item('loans', 'Explore', 'Home Loan', '/financial-services', 'fas fa-hand-holding-usd'),
-            $this->item('interior', 'Explore', 'Interior Design', '/interior-design', 'fas fa-couch'),
-            $this->item('tools', 'Tools', 'Property Tools', '/tools-hub', 'fas fa-calculator'),
-            $this->item('compare', 'Tools', 'Compare Properties', '/properties/compare', 'fas fa-balance-scale'),
-            $this->item('auctions', 'Tools', 'Auctions', '/auctions', 'fas fa-gavel'),
+            $this->item('compare', 'Explore', 'Compare Properties', '/properties/compare', 'fas fa-balance-scale'),
+            $this->item('auctions', 'Explore', 'Auctions', '/auctions', 'fas fa-gavel'),
         ];
     }
 
     private function associateItems(): array
     {
         return [
+            // Main Operations
             $this->item('dashboard', 'Main', 'Dashboard', '/associate/dashboard', 'fas fa-tachometer-alt'),
-            $this->item('leads', 'Main', 'My Leads', '/associate/leads', 'fas fa-users', $this->countTable('leads', 'assigned_to')),
+            $this->item('crm', 'Main', 'CRM Dashboard', '/associate/crm', 'fas fa-funnel-dollar'),
+            $this->item('leads', 'Main', 'My Leads', '/associate/leads', 'fas fa-user-friends', $this->countTable('leads', 'assigned_to')),
+            $this->item('leads-import', 'Main', 'Import Leads', '/associate/leads/import', 'fas fa-file-import'),
+            $this->item('leads-bulk-wa', 'Main', 'Bulk WhatsApp', '/associate/leads/bulk-whatsapp', 'fab fa-whatsapp'),
+            $this->item('followups', 'Main', 'Follow-ups', '/associate/followups', 'fas fa-calendar-check', $this->countTable('crm_tasks', 'assigned_to', 'status', 'pending')),
             $this->item('properties', 'Main', 'My Properties', '/associate/properties', 'fas fa-building', $this->countTable('user_properties', 'posted_by')),
+
+            // Earnings & Finance
             $this->item('commissions', 'Earnings', 'Commissions', '/associate/commissions', 'fas fa-rupee-sign'),
             $this->item('wallet', 'Earnings', 'Wallet', '/associate/wallet', 'fas fa-wallet'),
             $this->item('withdraw', 'Earnings', 'Withdraw', '/associate/wallet/withdraw', 'fas fa-money-bill-wave'),
-            $this->item('network', 'Network', 'Network Tree', '/associate/network/tree', 'fas fa-sitemap'),
-            $this->item('team', 'Network', 'Team Management', '/associate/team', 'fas fa-users-cog'),
-            $this->item('rank', 'Network', 'My Rank & Plan', '/associate/mlm-plan', 'fas fa-trophy'),
-            $this->item('browse', 'Explore', 'Browse Properties', '/properties', 'fas fa-search'),
-            $this->item('list-property', 'Explore', 'Add Property', '/associate/list-property', 'fas fa-plus-circle'),
+
+            // Network & Team
+            $this->item('network', 'Network', 'Network Tree', '/associate/network/tree', 'fas fa-project-diagram'),
+            $this->item('team', 'Network', 'Team Members', '/associate/team', 'fas fa-users'),
+            $this->item('rank-eligibility', 'Network', 'Rank & Eligibility', '/associate/rank-eligibility', 'fas fa-trophy'),
+            $this->item('mlm-plan', 'Network', 'Commission Plan', '/associate/mlm-plan', 'fas fa-file-invoice-dollar'),
+            $this->item('referral', 'Network', 'Refer & Earn', '/associate/referral', 'fas fa-user-friends'),
+
+            // Field Operations
+            $this->item('collections', 'Field Ops', 'Cash Collections', '/associate/collections', 'fas fa-hand-holding-usd'),
+            $this->item('site-visits', 'Field Ops', 'Site Visits', '/associate/site-visits', 'fas fa-map-marker-alt', $this->countSiteVisits()),
+            $this->item('schedule', 'Field Ops', 'My Schedule', '/associate/schedule', 'fas fa-calendar-alt'),
+
+            // Property Tools
+            $this->item('browse', 'Properties', 'Browse Properties', '/associate/browse', 'fas fa-search'),
+            $this->item('list-property', 'Properties', 'Add Property', '/associate/list-property', 'fas fa-plus-circle'),
+            $this->item('book-plot', 'Properties', 'Book Plot', '/associate/book-plot', 'fas fa-file-signature'),
+            $this->item('compare', 'Properties', 'Compare Properties', '/associate/compare', 'fas fa-balance-scale'),
+
+            // My Business
+            $this->item('my-bookings', 'Business', 'My Bookings', '/associate/my-bookings', 'fas fa-file-contract'),
+            $this->item('my-customers', 'Business', 'My Customers', '/associate/my-customers', 'fas fa-address-book'),
+            $this->item('emi-tracker', 'Business', 'EMI Tracker', '/associate/emi-tracker', 'fas fa-calendar-check'),
+            $this->item('payment-history', 'Business', 'Payment History', '/associate/payment-history', 'fas fa-receipt'),
+
+            // Tools & Reports
+            $this->item('emi-calculator', 'Tools', 'EMI Calculator', '/tools-hub', 'fas fa-calculator'),
+            $this->item('export-earnings', 'Reports', 'Export Earnings', '/associate/export/my-earnings', 'fas fa-file-download'),
+            $this->item('export-team', 'Reports', 'Export Team', '/associate/export/active-team', 'fas fa-file-export'),
         ];
     }
 
@@ -303,6 +343,20 @@ class PortalMenuService
         }
     }
 
+    private function countSiteVisits(): ?int
+    {
+        if (!$this->pdo || !$this->userId) {
+            return null;
+        }
+        try {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) as cnt FROM site_visits WHERE (assigned_to = ? OR user_id = ?) AND status NOT IN ('cancelled','completed') AND visit_date >= CURDATE()");
+            $stmt->execute([$this->userId, $this->userId]);
+            return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
     /**
      * URL helpers (vary by role).
      */
@@ -339,6 +393,7 @@ class PortalMenuService
         return match ($this->normalizeRole($this->role)) {
             'admin', 'super_admin' => '/admin/documents',
             'employee' => '/employee/documents',
+            'associate' => '/associate/documents',
             default => '/customer/documents',
         };
     }

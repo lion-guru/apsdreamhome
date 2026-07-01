@@ -149,7 +149,7 @@ const App = () => {
   return (
     <ThemeProvider>
       <NavigationContainer>
-        <StatusBar barStyle='light-content' backgroundColor='#1a237e' />
+        <StatusBar barStyle='light-content' backgroundColor='#0d9488' />
         <AppNavigator />
       </NavigationContainer>
     </ThemeProvider>
@@ -409,7 +409,7 @@ export default apiService;";
   "splash": {
     "image": "./assets/images/splash.png",
     "resizeMode": "contain",
-    "backgroundColor": "#1a237e"
+    "backgroundColor": "#0d9488"
   },
   "assetBundlePatterns": [
     "**/*"
@@ -421,7 +421,7 @@ export default apiService;";
   "android": {
     "adaptiveIcon": {
       "foregroundImage": "./assets/images/icon.png",
-      "backgroundColor": "#1a237e"
+    "backgroundColor": "#0d9488"
     },
     "package": "com.apsdreamhomes.app"
   }

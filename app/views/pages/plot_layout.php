@@ -20,7 +20,7 @@
         transition: all 0.2s;
     }
     .colony-tab:hover { background: #334155; color: #f8fafc; }
-    .colony-tab.active { background: #4f46e5; color: #fff; border-color: #6366f1; }
+    .colony-tab.active { background: #0d9488; color: #fff; border-color: #6366f1; }
     .colony-tab .tab-stats { font-size: 11px; color: #94a3b8; margin-top: 4px; }
     .colony-tab.active .tab-stats { color: #c7d2fe; }
     .sidebar-legend { padding: 16px 20px; border-bottom: 1px solid #334155; }
@@ -43,13 +43,13 @@
         padding: 8px 14px; border: 1px solid #e2e8f0; border-radius: 8px;
         font-size: 13px; width: 220px; outline: none;
     }
-    .map-toolbar input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+    .map-toolbar input:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
     .filter-btn {
         padding: 7px 14px; border: 1px solid #e2e8f0; border-radius: 8px;
         background: #fff; font-size: 12px; cursor: pointer; transition: all 0.15s;
     }
     .filter-btn:hover { background: #f1f5f9; }
-    .filter-btn.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+    .filter-btn.active { background: #0d9488; color: #fff; border-color: #0d9488; }
     .zoom-controls { margin-left: auto; display: flex; gap: 4px; }
     .zoom-btn {
         width: 32px; height: 32px; border: 1px solid #e2e8f0; border-radius: 6px;
@@ -91,7 +91,7 @@
     }
     .detail-footer { padding: 16px 20px; border-top: 1px solid #e2e8f0; flex-shrink: 0; }
     .book-btn {
-        display: block; width: 100%; padding: 12px; background: #4f46e5; color: #fff;
+        display: block; width: 100%; padding: 12px; background: #0d9488; color: #fff;
         border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
         cursor: pointer; text-align: center; text-decoration: none;
     }
@@ -399,7 +399,7 @@ function showPlotDetail(id) {
     body += '<div class="detail-field"><div class="label">Block</div><div class="value">' + escHtml(plot.block || '-') + '</div></div>';
     body += '<div class="detail-field"><div class="label">Dimensions</div><div class="value">' + (plot.width_ft || '-') + ' ft x ' + (plot.length_ft || '-') + ' ft</div></div>';
     body += '<div class="detail-field"><div class="label">Area</div><div class="value">' + (parseFloat(plot.area_sqft) ? Math.round(plot.area_sqft) + ' sqft' : '-') + '</div></div>';
-    body += '<div class="detail-field"><div class="label">Total Price</div><div class="value" style="color:#4f46e5;font-size:16px">&#8377; ' + formatPrice(plot.total_price) + '</div></div>';
+    body += '<div class="detail-field"><div class="label">Total Price</div><div class="value" style="color:#0d9488;font-size:16px">&#8377; ' + formatPrice(plot.total_price) + '</div></div>';
     if (plot.facing) body += '<div class="detail-field"><div class="label">Facing</div><div class="value">' + escHtml(plot.facing) + '</div></div>';
     if (plot.corner_plot == 1) body += '<div class="detail-field"><div class="label">Corner Plot</div><div class="value" style="color:#10b981"><i class="fas fa-check-circle"></i> Yes</div></div>';
     if (plot.park_facing == 1) body += '<div class="detail-field"><div class="label">Park Facing</div><div class="value" style="color:#10b981"><i class="fas fa-check-circle"></i> Yes</div></div>';

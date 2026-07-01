@@ -109,7 +109,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
     <div class="tab-pane fade show active" id="sched">
         <div class="aps-cp-card">
             <div class="aps-cp-card-body p-0">
-                <table class="table table-sm m-0">
+                <div class="table-responsive"><table class="table table-sm m-0">
                     <thead><tr><th>#</th><th><?= __('sale_due_date') ?></th><th><?= __('sale_type') ?></th><th class="text-end"><?= __('sale_amount') ?></th><th class="text-end"><?= __('sale_paid') ?></th><th><?= __('sale_status') ?></th><th><?= __('sale_actions') ?></th></tr></thead>
                     <tbody>
                         <?php if (empty($schedule)): ?>
@@ -140,13 +140,13 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                             </tr>
                         <?php endforeach; endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>
     <div class="tab-pane fade" id="rcpt">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
-            <table class="table table-sm m-0">
+            <div class="table-responsive"><table class="table table-sm m-0">
                 <thead><tr><th><?= __('sale_receipt_num') ?></th><th><?= __('sale_date') ?></th><th><?= __('sale_mode') ?></th><th><?= __('sale_status') ?></th><th class="text-end"><?= __('sale_amount') ?></th><th><?= __('sale_collected_by') ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($receipts)): ?>
@@ -162,12 +162,12 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div></div>
     </div>
     <div class="tab-pane fade" id="dl">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
-            <table class="table table-sm m-0">
+            <div class="table-responsive"><table class="table table-sm m-0">
                 <thead><tr><th><?= __('sale_letter_num') ?></th><th><?= __('sale_generated') ?></th><th><?= __('sale_sent') ?></th><th><?= __('sale_type') ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($demand_letters)): ?>
@@ -181,12 +181,12 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div></div>
     </div>
     <div class="tab-pane fade" id="comm">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
-            <table class="table table-sm m-0">
+            <div class="table-responsive"><table class="table table-sm m-0">
                 <thead><tr><th><?= __('sale_level') ?></th><th><?= __('sale_beneficiary') ?></th><th><?= __('sale_type') ?></th><th class="text-end"><?= __('sale_pct') ?></th><th class="text-end"><?= __('sale_amount') ?></th><th><?= __('sale_status') ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($commissions)): ?>
@@ -202,12 +202,12 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div></div>
     </div>
     <div class="tab-pane fade" id="doc">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
-            <table class="table table-sm m-0">
+            <div class="table-responsive"><table class="table table-sm m-0">
                 <thead><tr><th><?= __('sale_document') ?></th><th><?= __('sale_type') ?></th><th><?= __('sale_uploaded') ?></th><th><?= __('sale_verified') ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($documents)): ?>
@@ -221,12 +221,12 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div></div>
     </div>
     <div class="tab-pane fade" id="hist">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
-            <table class="table table-sm m-0">
+            <div class="table-responsive"><table class="table table-sm m-0">
                 <thead><tr><th><?= __('sale_date') ?></th><th><?= __('sale_from') ?></th><th><?= __('sale_to') ?></th><th><?= __('sale_by') ?></th><th><?= __('sale_note') ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($history)): ?>
@@ -241,7 +241,7 @@ $progressPct = $totalDue > 0 ? min(100, round($totalPaid / $totalDue * 100)) : 0
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div></div>
     </div>
 </div>

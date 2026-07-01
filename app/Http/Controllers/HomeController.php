@@ -67,9 +67,33 @@ class HomeController extends BaseController
             if (empty($name) || empty($email) || empty($subject) || empty($message)) {
                 $_SESSION['error'] = 'Please fill in all required fields.';
             } else {
-                // Here you would typically save to database or send email
-                $_SESSION['success'] = 'Thank you for your message! We will get back to you within 24 hours.';
-                error_log("Contact form submission: Name: $name, Email: $email, Subject: $subject");
+                // Save to inquiries table for CRM tracking
+                try {
+                    $db = \App\Core\Database\Database::getInstance();
+                    $stmt = $db->prepare(
+                        "INSERT INTO inquiries (name, email, phone, subject, message, type, status, priority, posted_by_type, created_at) 
+                         VALUES (?, ?, ?, ?, ?, 'contact_form', 'new', 'medium', 'customer', NOW())"
+                    );
+                    $stmt->execute([$name, $email, $phone, $subject, $message]);
+                    $inquiryId = $db->lastInsertId();
+
+                    // Auto-wire to CRM lead
+                    try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$subject.': '.$message,'type'=>'contact']); } catch (\Exception $e3) {}
+
+                    // Notify admins
+                    $notifService = new \App\Services\AdminNotificationService();
+                    $notifService->notify(
+                        'contact_form',
+                        "New contact form submission from $name.",
+                        null,
+                        '/admin/inquiries/' . $inquiryId
+                    );
+
+                    $_SESSION['success'] = 'Thank you for your message! We will get back to you within 24 hours.';
+                } catch (\Exception $e) {
+                    error_log("Contact form submission error: " . $e->getMessage());
+                    $_SESSION['error'] = 'Sorry, there was an error sending your message. Please try again later.';
+                }
             }
 
             // Redirect back to contact page

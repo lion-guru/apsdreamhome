@@ -1,5 +1,0 @@
-﻿=== PERFORMANCE INDEX AUDIT ===
-
-Existing indexes: 78
-Missing indexes: 0
-

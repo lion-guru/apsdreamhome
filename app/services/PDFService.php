@@ -17,33 +17,33 @@ class PDFService
             body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; color: #1e293b; line-height: 1.6; background: #fff; }
             .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-35deg); font-size: 80px; font-weight: 900; color: rgba(0,0,0,0.04); letter-spacing: 12px; text-transform: uppercase; pointer-events: none; z-index: 0; white-space: nowrap; }
             .page { max-width: 800px; margin: 0 auto; padding: 40px 50px; position: relative; z-index: 1; }
-            .header { text-align: center; border-bottom: 3px solid #4f46e5; padding-bottom: 20px; margin-bottom: 30px; }
-            .header h1 { color: #4f46e5; font-size: 28px; margin-bottom: 4px; }
+            .header { text-align: center; border-bottom: 3px solid #0d9488; padding-bottom: 20px; margin-bottom: 30px; }
+            .header h1 { color: #0d9488; font-size: 28px; margin-bottom: 4px; }
             .header .tagline { color: #6b7280; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
             .header .contact { font-size: 12px; color: #6b7280; margin-top: 8px; }
             .header .contact span { margin: 0 8px; }
-            .section-title { font-size: 18px; font-weight: 700; color: #4f46e5; margin: 24px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+            .section-title { font-size: 18px; font-weight: 700; color: #0d9488; margin: 24px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
             .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; margin-bottom: 20px; }
             .info-grid .row { display: flex; }
             .info-grid .label { font-weight: 600; color: #6b7280; min-width: 140px; }
             .info-grid .value { color: #1e293b; font-weight: 500; }
             table { width: 100%; border-collapse: collapse; margin: 16px 0; }
-            table th { background: #4f46e5; color: #fff; padding: 10px 12px; text-align: left; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+            table th { background: #0d9488; color: #fff; padding: 10px 12px; text-align: left; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
             table td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; font-size: 13px; }
             table tr:nth-child(even) td { background: #f8fafc; }
             .amount { text-align: right; font-family: "Courier New", monospace; }
-            .total-row td { font-weight: 700; background: #ede9fe !important; border-top: 2px solid #4f46e5; }
+            .total-row td { font-weight: 700; background: #ede9fe !important; border-top: 2px solid #0d9488; }
             .body-text { margin: 16px 0; line-height: 1.8; }
             .body-text p { margin-bottom: 12px; }
             .highlight { background: #fef3c7; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
-            .footer { margin-top: 40px; border-top: 2px solid #4f46e5; padding-top: 16px; font-size: 12px; color: #6b7280; }
+            .footer { margin-top: 40px; border-top: 2px solid #0d9488; padding-top: 16px; font-size: 12px; color: #6b7280; }
             .footer .payment-info { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
             .footer .payment-info h4 { color: #166534; font-size: 14px; margin-bottom: 8px; }
             .signature { margin-top: 50px; display: flex; justify-content: space-between; }
             .signature-block { text-align: center; width: 200px; }
             .signature-block .line { border-top: 1px solid #1e293b; margin-top: 60px; padding-top: 6px; font-weight: 600; font-size: 13px; }
             .noc-header { text-align: center; margin-bottom: 24px; }
-            .noc-number { font-size: 16px; color: #4f46e5; font-weight: 700; }
+            .noc-number { font-size: 16px; color: #0d9488; font-weight: 700; }
             .stamp-box { border: 2px solid #dc2626; border-radius: 50%; width: 100px; height: 100px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; transform: rotate(-12deg); }
             .stamp-box span { color: #dc2626; font-weight: 900; font-size: 11px; text-transform: uppercase; text-align: center; line-height: 1.2; }
             @media print {
@@ -186,7 +186,7 @@ class PDFService
         </div>
 
         <div class="no-print" style="text-align:center; margin-top:24px;">
-            <button onclick="window.print()" style="background:#4f46e5;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">
+            <button onclick="window.print()" style="background:#0d9488;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">
                 <i class="fas fa-print"></i> Print / Save as PDF
             </button>
         </div>
@@ -308,7 +308,7 @@ class PDFService
         </div>
 
         <div class="no-print" style="text-align:center; margin-top:24px;">
-            <button onclick="window.print()" style="background:#4f46e5;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">
+            <button onclick="window.print()" style="background:#0d9488;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">
                 <i class="fas fa-print"></i> Print / Save as PDF
             </button>
         </div>
@@ -402,7 +402,7 @@ class PDFService
         </div>
 
         <div class="no-print" style="text-align:center; margin-top:24px;">
-            <button onclick="window.print()" style="background:#4f46e5;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">
+            <button onclick="window.print()" style="background:#0d9488;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;">
                 <i class="fas fa-print"></i> Print / Save as PDF
             </button>
         </div>

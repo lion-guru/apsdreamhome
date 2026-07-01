@@ -270,7 +270,7 @@ $error = $error ?? null;
     }
 
     .campaign-preview h4 {
-        color: #667eea;
+        color: #0d9488;
         margin-bottom: 20px;
     }
 

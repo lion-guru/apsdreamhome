@@ -504,7 +504,7 @@ function deleteLead() {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     display: flex;
     align-items: center;
@@ -518,7 +518,7 @@ function deleteLead() {
     padding: 0.75rem;
     border-radius: 8px;
     background: #f8f9fc;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #0d9488;
 }
 
 .card {
@@ -550,14 +550,14 @@ function deleteLead() {
     height: 12px;
     border-radius: 50%;
     border: 2px solid #fff;
-    box-shadow: 0 0 0 2px #667eea;
+    box-shadow: 0 0 0 2px #0d9488;
 }
 
 .timeline-content {
     background: #f8f9fc;
     padding: 10px 15px;
     border-radius: 8px;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #0d9488;
 }
 
 .notes-list {

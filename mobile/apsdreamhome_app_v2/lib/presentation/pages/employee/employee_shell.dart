@@ -16,7 +16,7 @@ class EmployeeShell extends ConsumerStatefulWidget {
 }
 
 class _EmployeeShellState extends ConsumerState<EmployeeShell> {
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
 
   final _tabs = const [
     '/employee/dashboard',

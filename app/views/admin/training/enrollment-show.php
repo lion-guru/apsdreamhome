@@ -25,11 +25,11 @@ $e = $enrollment ?? [];
                     <h5 class="mb-0"><i class="fas fa-user me-2"></i>User Information</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm">
                         <tr><th>Name</th><td><?php echo htmlspecialchars($e['user_name'] ?? '-'); ?></td></tr>
                         <tr><th>Email</th><td><?php echo htmlspecialchars($e['user_email'] ?? '-'); ?></td></tr>
                         <tr><th>Phone</th><td><?php echo htmlspecialchars($e['user_phone'] ?? '-'); ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -41,13 +41,13 @@ $e = $enrollment ?? [];
                     <h5 class="mb-0"><i class="fas fa-book me-2"></i>Course Information</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm">
                         <tr><th>Course</th><td><?php echo htmlspecialchars($e['course_title'] ?? '-'); ?></td></tr>
                         <tr><th>Category</th><td><span class="badge bg-info"><?php echo ucfirst($e['course_category'] ?? '-'); ?></span></td></tr>
                         <tr><th>Difficulty</th><td><span class="badge bg-secondary"><?php echo ucfirst($e['difficulty_level'] ?? '-'); ?></span></td></tr>
                         <tr><th>Duration</th><td><?php echo $e['course_duration_hours'] ?? 0; ?> hrs</td></tr>
                         <tr><th>Mandatory</th><td><?php echo ($e['is_mandatory'] ?? 0) ? '<span class="badge bg-danger">Yes</span>' : '<span class="badge bg-secondary">No</span>'; ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@ $e = $enrollment ?? [];
                             </div>
                         </div>
                     </div>
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm">
                         <tr><th>Status</th>
                             <td>
                                 <span class="badge bg-<?php echo match($e['status'] ?? '') {
@@ -83,7 +83,7 @@ $e = $enrollment ?? [];
                         <tr><th>Enrolled At</th><td><?php echo $e['enrolled_at'] ?? '-'; ?></td></tr>
                         <tr><th>Completed At</th><td><?php echo $e['completed_at'] ?? '-'; ?></td></tr>
                         <tr><th>Last Accessed</th><td><?php echo $e['last_accessed_at'] ?? '-'; ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@ $e = $enrollment ?? [];
                     <h5 class="mb-0"><i class="fas fa-certificate me-2"></i>Certificate Information</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm">
                         <tr><th>Certificate Issued</th>
                             <td><?php echo ($e['certificate_issued'] ?? 0) ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>'; ?></td>
                         </tr>
@@ -110,7 +110,7 @@ $e = $enrollment ?? [];
                                 <?php endif; ?>
                             </td>
                         </tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

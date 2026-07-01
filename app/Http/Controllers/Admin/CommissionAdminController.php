@@ -14,54 +14,57 @@ class CommissionAdminController extends AdminController
             $stats = [];
 
             // Agent commission rates
-            $r = $this->db->fetchAll("SELECT * FROM agent_commission_rates ORDER BY min_sqft");
+            $r = $this->db->fetchAll("SELECT acr.*, u.name as agent_name FROM agent_commission_rates acr LEFT JOIN users u ON acr.agent_id = u.id ORDER BY acr.agent_id, acr.property_type");
             $stats['agent_rates_count'] = count($r);
             $stats['agent_rates'] = $r;
 
-            // Associate structure levels
-            $r = $this->db->fetchAll("SELECT * FROM associate_commission_structure WHERE status='active' ORDER BY level_number");
-            $stats['structure_levels'] = $r;
+            // Rank benefits (replaces associate_commission_structure)
+            $r = $this->db->fetchAll("SELECT * FROM mlm_rank_benefits ORDER BY FIELD(rank_name, 'associate','bronze','silver','gold','platinum','diamond')");
+            $stats['rank_benefits'] = $r;
 
-            // Associate calculations
-            $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(commission_amount),0) as total, COALESCE(SUM(CASE WHEN status='pending' THEN commission_amount ELSE 0 END),0) as pending_total FROM associate_commission_calculations");
-            $stats['calc_stats'] = $r[0] ?? ['c'=>0,'total'=>0,'pending_total'=>0];
+            // MLM commission ledger stats (single source of truth)
+            try {
+                $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(amount),0) as total, COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END),0) as pending FROM mlm_commission_ledger");
+                $stats['mlm_records_stats'] = $r[0] ?? ['c'=>0,'total'=>0,'pending'=>0];
+            } catch (\Throwable $e) {
+                $stats['mlm_records_stats'] = ['c'=>0,'total'=>0,'pending'=>0];
+            }
 
-            // Commission bonuses
-            $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(bonus_amount),0) as total FROM commission_bonuses");
-            $stats['bonus_stats'] = $r[0] ?? ['c'=>0,'total'=>0];
+            // Bonus stats from ledger
+            try {
+                $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(amount),0) as total FROM mlm_commission_ledger WHERE commission_type IN ('performance_bonus','team_bonus')");
+                $stats['bonus_stats'] = $r[0] ?? ['c'=>0,'total'=>0];
+            } catch (\Throwable $e) {
+                $stats['bonus_stats'] = ['c'=>0,'total'=>0];
+            }
 
-            // Commission calculations (agent resell)
-            $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(final_commission),0) as total, COALESCE(SUM(CASE WHEN payment_status='pending' THEN final_commission ELSE 0 END),0) as pending FROM commission_calculations");
-            $stats['calc_agent_stats'] = $r[0] ?? ['c'=>0,'total'=>0,'pending'=>0];
+            // Pending payouts
+            try {
+                $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(amount),0) as total FROM mlm_payouts WHERE status='pending'");
+                $stats['pending_payouts'] = $r[0] ?? ['c'=>0,'total'=>0];
+            } catch (\Throwable $e) {
+                $stats['pending_payouts'] = ['c'=>0,'total'=>0];
+            }
 
-            // MLM levels
-            $r = $this->db->fetchAll("SELECT COUNT(*) as c FROM mlm_commission_levels");
+            // MLM levels (from mlm_rank_benefits — single source of truth)
+            $r = $this->db->fetchAll("SELECT COUNT(*) as c FROM mlm_rank_benefits");
             $stats['mlm_levels_count'] = $r[0]['c'] ?? 0;
 
-            // MLM records
-            $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(total_commission),0) as total FROM mlm_commission_records");
-            $stats['mlm_records_stats'] = $r[0] ?? ['c'=>0,'total'=>0];
-
-            // MLM analytics
-            $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(total_earned),0) as earned, COALESCE(SUM(total_paid),0) as paid FROM mlm_commission_analytics");
-            $stats['mlm_analytics_stats'] = $r[0] ?? ['c'=>0,'earned'=>0,'paid'=>0];
-
-            // Revenue daily
-            $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(revenue),0) as rev, COALESCE(SUM(commission),0) as comm FROM revenue_commission_daily");
-            $stats['revenue_stats'] = $r[0] ?? ['c'=>0,'rev'=>0,'comm'=>0];
-
+            // Telecaller rules
             try {
-                // Telecaller rules
                 $r = $this->db->fetchAll("SELECT COUNT(*) as c FROM telecaller_commission_rules WHERE is_active=1");
+                $stats['tc_rules_count'] = $r[0]['c'] ?? 0;
             } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
-                $r = null;
+                $stats['tc_rules_count'] = 0;
             }
-            $stats['tc_rules_count'] = $r[0]['c'] ?? 0;
 
             // Telecaller commissions
-            $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(commission_amount),0) as total, COALESCE(SUM(CASE WHEN status='pending' THEN commission_amount ELSE 0 END),0) as pending FROM telecaller_commissions");
-            $stats['tc_comm_stats'] = $r[0] ?? ['c'=>0,'total'=>0,'pending'=>0];
+            try {
+                $r = $this->db->fetchAll("SELECT COUNT(*) as c, COALESCE(SUM(commission_amount),0) as total, COALESCE(SUM(CASE WHEN status='pending' THEN commission_amount ELSE 0 END),0) as pending FROM telecaller_commissions");
+                $stats['tc_comm_stats'] = $r[0] ?? ['c'=>0,'total'=>0,'pending'=>0];
+            } catch (\Throwable $e) {
+                $stats['tc_comm_stats'] = ['c'=>0,'total'=>0,'pending'=>0];
+            }
 
             $this->data['page_title'] = 'Commission Management System';
             $this->data['stats'] = $stats;
@@ -76,7 +79,11 @@ class CommissionAdminController extends AdminController
     public function agentRates()
     {
         try {
-            $this->data['rates'] = $this->db->fetchAll("SELECT * FROM agent_commission_rates ORDER BY min_sqft");
+            $this->data['rates'] = $this->db->fetchAll(
+                "SELECT acr.*, u.name as agent_name FROM agent_commission_rates acr
+                 LEFT JOIN users u ON acr.agent_id = u.id
+                 ORDER BY acr.agent_id, acr.property_type"
+            );
             $this->data['page_title'] = 'Agent Commission Rates';
             return $this->render('admin/commission/agent_rates', $this->data);
         } catch (\Exception $e) {
@@ -89,9 +96,10 @@ class CommissionAdminController extends AdminController
     {
         $this->validateCsrfOrFail();
         try {
-            $this->db->query("INSERT INTO agent_commission_rates (min_sqft, max_sqft, commission_per_sqft, commission_percentage, status) VALUES (?, ?, ?, ?, ?)", [
-                (int)$_POST['min_sqft'], (int)$_POST['max_sqft'], (float)$_POST['commission_per_sqft'],
-                (float)($_POST['commission_percentage'] ?? 0), $_POST['status'] ?? 'active'
+            $this->db->query("INSERT INTO agent_commission_rates (agent_id, property_type, base_rate_pct, override_pct, bonus_rate_pct, effective_from, effective_to) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+                (int)$_POST['agent_id'], $_POST['property_type'] ?? 'plot', (float)($_POST['base_rate_pct'] ?? 0),
+                (float)($_POST['override_pct'] ?? 0), (float)($_POST['bonus_rate_pct'] ?? 0),
+                $_POST['effective_from'] ?? date('Y-m-d'), $_POST['effective_to'] ?? null
             ]);
             $this->setFlash('success', 'Agent rate created');
         } catch (\Exception $e) {
@@ -111,12 +119,12 @@ class CommissionAdminController extends AdminController
         return $this->redirect('admin/commission/agent-rates');
     }
 
-    // ===== Associate Commission Structure =====
+    // ===== Rank Benefits (replaces Associate Commission Structure) =====
     public function associateStructure()
     {
         try {
-            $this->data['levels'] = $this->db->fetchAll("SELECT * FROM associate_commission_structure ORDER BY level_number");
-            $this->data['page_title'] = 'Associate Commission Structure';
+            $this->data['levels'] = $this->db->fetchAll("SELECT id, rank_name, direct_sale_pct as commission_percentage, l1_pct as gen1_override_pct, l2_pct as gen2_override_pct, l3_pct as gen3_override_pct FROM mlm_rank_benefits ORDER BY FIELD(rank_name, 'associate','bronze','silver','gold','platinum','diamond')");
+            $this->data['page_title'] = 'Rank Commission Benefits';
             return $this->render('admin/commission/associate_structure', $this->data);
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -128,12 +136,15 @@ class CommissionAdminController extends AdminController
     {
         $this->validateCsrfOrFail();
         try {
-            $this->db->query("INSERT INTO associate_commission_structure (level_number, level_name, commission_percentage, min_property_value, max_property_value, status) VALUES (?, ?, ?, ?, ?, ?)", [
-                (int)$_POST['level_number'], $_POST['level_name'], (float)$_POST['commission_percentage'],
-                (float)($_POST['min_property_value'] ?? 0), (float)($_POST['max_property_value'] ?? 999999999.99),
-                $_POST['status'] ?? 'active'
+            $rankName = $_POST['level_name'] ?? $_POST['rank_name'] ?? '';
+            $this->db->query("UPDATE mlm_rank_benefits SET direct_sale_pct = ?, l1_pct = ?, l2_pct = ?, l3_pct = ? WHERE rank_name = ?", [
+                (float)($_POST['commission_percentage'] ?? 0),
+                (float)($_POST['gen1_override_pct'] ?? 0),
+                (float)($_POST['gen2_override_pct'] ?? 0),
+                (float)($_POST['gen3_override_pct'] ?? 0),
+                $rankName
             ]);
-            $this->setFlash('success', 'Level created');
+            $this->setFlash('success', "Rank benefits updated for {$rankName}");
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
         }
@@ -142,24 +153,21 @@ class CommissionAdminController extends AdminController
 
     public function associateStructureDelete($id)
     {
-        try {
-            $this->db->query("DELETE FROM associate_commission_structure WHERE id = ?", [(int)$id]);
-            $this->setFlash('success', 'Level deleted');
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-        }
+        $this->setFlash('warning', 'Rank benefits cannot be deleted — use edit to modify rates.');
         return $this->redirect('admin/commission/associate/structure');
     }
 
-    // ===== Associate Commission Calculations =====
+    // ===== Commission Calculations (from mlm_commission_ledger) =====
     public function associateCalculations()
     {
         try {
             $this->data['calculations'] = $this->db->fetchAll(
-                "SELECT acc.*, u.name as associate_name FROM associate_commission_calculations acc
-                 LEFT JOIN users u ON acc.associate_id = u.id ORDER BY acc.created_at DESC"
+                "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
+                 LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
+                 WHERE mcl.commission_type IN ('direct_sale','mlm_level_1','mlm_level_2','mlm_level_3')
+                 ORDER BY mcl.created_at DESC LIMIT 100"
             );
-            $this->data['page_title'] = 'Associate Commission Calculations';
+            $this->data['page_title'] = 'Commission Calculations';
             return $this->render('admin/commission/associate_calculations', $this->data);
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -171,24 +179,27 @@ class CommissionAdminController extends AdminController
     {
         if (!in_array($status, ['confirmed','paid'])) { $status = 'confirmed'; }
         try {
-            $this->db->query("UPDATE associate_commission_calculations SET status = ? WHERE id = ?", [$status, (int)$id]);
-            $this->setFlash('success', "Calculation #{$id} marked as {$status}");
+            $dbStatus = ($status === 'confirmed') ? 'approved' : 'paid';
+            $this->db->query("UPDATE mlm_commission_ledger SET status = ? WHERE id = ?", [$dbStatus, (int)$id]);
+            $this->setFlash('success', "Record #{$id} marked as {$status}");
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/associate/calculations');
     }
 
-    // ===== Commission Bonuses =====
+    // ===== Performance Bonuses (from mlm_commission_ledger) =====
     public function bonuses()
     {
         try {
             $this->data['bonuses'] = $this->db->fetchAll(
-                "SELECT cb.*, u.name as associate_name FROM commission_bonuses cb
-                 LEFT JOIN users u ON cb.associate_id = u.id ORDER BY cb.created_at DESC"
+                "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
+                 LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
+                 WHERE mcl.commission_type IN ('performance_bonus','team_bonus','royalty_pool')
+                 ORDER BY mcl.created_at DESC LIMIT 100"
             );
-            $this->data['users'] = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role IN ('associate','agent') ORDER BY name");
-            $this->data['page_title'] = 'Commission Bonuses';
+            $this->data['users'] = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role IN ('associate','agent','employee') ORDER BY name");
+            $this->data['page_title'] = 'Performance Bonuses';
             return $this->render('admin/commission/bonuses', $this->data);
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -201,15 +212,13 @@ class CommissionAdminController extends AdminController
         $this->validateCsrfOrFail();
         try {
             $bonusAmount = (float)$_POST['bonus_amount'];
-            $bonusPct = null;
-            if (!empty($_POST['bonus_percentage']) && $bonusAmount == 0) {
-                $bonusPct = (float)$_POST['bonus_percentage'];
-            }
-            $this->db->query("INSERT INTO commission_bonuses (associate_id, achievement_id, bonus_percentage, bonus_amount) VALUES (?, ?, ?, ?)", [
-                (int)$_POST['associate_id'], !empty($_POST['achievement_id']) ? (int)$_POST['achievement_id'] : null,
-                $bonusPct ?? 0.00, $bonusAmount
-            ]);
-            $this->setFlash('success', 'Bonus created');
+            $beneficiaryId = (int)$_POST['associate_id'];
+            $reason = $_POST['reason'] ?? 'Manual bonus';
+            $this->db->query(
+                "INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, status, payment_amount, notes) VALUES (?, ?, 'performance_bonus', ?, 'pending', 0, ?)",
+                [$beneficiaryId, $beneficiaryId, $bonusAmount, $reason]
+            );
+            $this->setFlash('success', 'Bonus recorded in commission ledger');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
         }
@@ -219,22 +228,24 @@ class CommissionAdminController extends AdminController
     public function bonusDelete($id)
     {
         try {
-            $this->db->query("DELETE FROM commission_bonuses WHERE id = ?", [(int)$id]);
-            $this->setFlash('success', 'Bonus deleted');
+            $this->db->query("UPDATE mlm_commission_ledger SET status = 'reversed' WHERE id = ? AND commission_type = 'performance_bonus'", [(int)$id]);
+            $this->setFlash('success', 'Bonus reversed');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/bonuses');
     }
 
-    // ===== Commission Calculations (Resell Agent) =====
+    // ===== Commission Calculations (Agent Resell — from ledger) =====
     public function commissionCalculations()
     {
         try {
             $this->data['calculations'] = $this->db->fetchAll(
-                "SELECT * FROM commission_calculations ORDER BY created_at DESC LIMIT 50"
+                "SELECT mcl.*, u.name as agent_name FROM mlm_commission_ledger mcl
+                 LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
+                 ORDER BY mcl.created_at DESC LIMIT 50"
             );
-            $this->data['page_title'] = 'Commission Calculations (Resell)';
+            $this->data['page_title'] = 'Commission Calculations';
             return $this->render('admin/commission/commission_calculations', $this->data);
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -242,11 +253,11 @@ class CommissionAdminController extends AdminController
         }
     }
 
-    // ===== MLM Commission Levels =====
+    // ===== MLM Commission Levels (reads from mlm_rank_benefits — single source of truth) =====
     public function mlmLevels()
     {
         try {
-            $this->data['levels'] = $this->db->fetchAll("SELECT * FROM mlm_commission_levels ORDER BY plan_id, level");
+            $this->data['levels'] = $this->db->fetchAll("SELECT id, rank_name as name, min_leg_count as min_associates, min_qualifying_volume as min_business, direct_sale_pct as commission_rate, direct_sale_pct as direct_percentage FROM mlm_rank_benefits ORDER BY id");
             $this->data['page_title'] = 'MLM Commission Levels';
             return $this->render('admin/commission/mlm_levels', $this->data);
         } catch (\Exception $e) {
@@ -259,11 +270,13 @@ class CommissionAdminController extends AdminController
     {
         $this->validateCsrfOrFail();
         try {
-            $this->db->query("INSERT INTO mlm_commission_levels (plan_id, level, name, commission_rate, min_associates, direct_percentage, min_business, max_business) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
-                (int)$_POST['plan_id'], (int)$_POST['level'], $_POST['name'],
-                (float)$_POST['commission_rate'], (int)($_POST['min_associates'] ?? 0),
-                (float)$_POST['direct_percentage'], (float)($_POST['min_business'] ?? 0),
-                !empty($_POST['max_business']) ? (float)$_POST['max_business'] : null
+            $this->db->query("INSERT INTO mlm_rank_benefits (rank_name, min_leg_count, min_qualifying_volume, direct_sale_pct, l1_override_pct, l2_override_pct, l3_override_pct) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+                strtolower(trim($_POST['name'] ?? '')),
+                (int)($_POST['min_associates'] ?? 0),
+                (float)($_POST['min_business'] ?? 0),
+                (float)($_POST['commission_rate'] ?? 1),
+                (float)($_POST['direct_percentage'] ?? 1),
+                1.5, 1.0
             ]);
             $this->setFlash('success', 'MLM level created');
         } catch (\Exception $e) {
@@ -275,7 +288,7 @@ class CommissionAdminController extends AdminController
     public function mlmLevelDelete($id)
     {
         try {
-            $this->db->query("DELETE FROM mlm_commission_levels WHERE id = ?", [(int)$id]);
+            $this->db->query("DELETE FROM mlm_rank_benefits WHERE id = ?", [(int)$id]);
             $this->setFlash('success', 'Level deleted');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -283,15 +296,15 @@ class CommissionAdminController extends AdminController
         return $this->redirect('admin/commission/mlm/levels');
     }
 
-    // ===== MLM Commission Records =====
+    // ===== MLM Commission Ledger =====
     public function mlmRecords()
     {
         try {
             $this->data['records'] = $this->db->fetchAll(
-                "SELECT mcr.*, u.name as associate_name FROM mlm_commission_records mcr
-                 LEFT JOIN users u ON mcr.associate_id = u.id ORDER BY mcr.created_at DESC LIMIT 50"
+                "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
+                 LEFT JOIN users u ON mcl.beneficiary_user_id = u.id ORDER BY mcl.created_at DESC LIMIT 50"
             );
-            $this->data['page_title'] = 'MLM Commission Records';
+            $this->data['page_title'] = 'MLM Commission Ledger';
             return $this->render('admin/commission/mlm_records', $this->data);
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -303,7 +316,7 @@ class CommissionAdminController extends AdminController
     {
         if (!in_array($status, ['approved','paid','cancelled'])) { $status = 'approved'; }
         try {
-            $this->db->query("UPDATE mlm_commission_records SET status = ? WHERE id = ?", [$status, (int)$id]);
+            $this->db->query("UPDATE mlm_commission_ledger SET status = ? WHERE id = ?", [$status, (int)$id]);
             $this->setFlash('success', "Record #{$id} marked as {$status}");
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -311,16 +324,27 @@ class CommissionAdminController extends AdminController
         return $this->redirect('admin/commission/mlm/records');
     }
 
-    // ===== MLM Commission Analytics =====
+    // ===== MLM Commission Analytics (aggregated from ledger) =====
     public function mlmAnalytics()
     {
         try {
+            // Per-user commission summary from ledger
             $this->data['analytics'] = $this->db->fetchAll(
-                "SELECT mca.*, u.name as associate_name FROM mlm_commission_analytics mca
-                 LEFT JOIN users u ON mca.associate_id = u.id ORDER BY mca.period_date DESC LIMIT 50"
+                "SELECT mcl.beneficiary_user_id, u.name as associate_name,
+                        COUNT(*) as total_entries,
+                        COALESCE(SUM(mcl.amount),0) as total_earned,
+                        COALESCE(SUM(CASE WHEN mcl.status='paid' THEN mcl.amount ELSE 0 END),0) as total_paid,
+                        COALESCE(SUM(CASE WHEN mcl.status='pending' THEN mcl.amount ELSE 0 END),0) as pending_amount,
+                        COALESCE(SUM(CASE WHEN mcl.commission_type='direct_sale' THEN mcl.amount ELSE 0 END),0) as direct_commissions,
+                        COALESCE(SUM(CASE WHEN mcl.commission_type LIKE 'mlm_level_%' THEN mcl.amount ELSE 0 END),0) as team_commissions,
+                        COALESCE(SUM(CASE WHEN mcl.commission_type IN ('performance_bonus','team_bonus') THEN mcl.amount ELSE 0 END),0) as bonus_commissions
+                 FROM mlm_commission_ledger mcl
+                 LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
+                 GROUP BY mcl.beneficiary_user_id
+                 ORDER BY total_earned DESC LIMIT 50"
             );
-            // Summary
-            $r = $this->db->fetchAll("SELECT COALESCE(SUM(total_earned),0) as earned, COALESCE(SUM(total_paid),0) as paid, COALESCE(SUM(pending_amount),0) as pending, COALESCE(SUM(direct_commissions),0) as direct, COALESCE(SUM(team_commissions),0) as team, COALESCE(SUM(bonus_commissions),0) as bonus FROM mlm_commission_analytics");
+            // Overall summary
+            $r = $this->db->fetchAll("SELECT COALESCE(SUM(amount),0) as earned, COALESCE(SUM(CASE WHEN status='paid' THEN amount ELSE 0 END),0) as paid, COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END),0) as pending, COALESCE(SUM(CASE WHEN commission_type='direct_sale' THEN amount ELSE 0 END),0) as direct, COALESCE(SUM(CASE WHEN commission_type LIKE 'mlm_level_%' THEN amount ELSE 0 END),0) as team, COALESCE(SUM(CASE WHEN commission_type IN ('performance_bonus','team_bonus') THEN amount ELSE 0 END),0) as bonus FROM mlm_commission_ledger");
             $this->data['summary'] = $r[0] ?? ['earned'=>0,'paid'=>0,'pending'=>0,'direct'=>0,'team'=>0,'bonus'=>0];
             $this->data['page_title'] = 'MLM Commission Analytics';
             return $this->render('admin/commission/mlm_analytics', $this->data);
@@ -331,13 +355,16 @@ class CommissionAdminController extends AdminController
     }
 
     // ===== MLM Commission Ledger Legacy (Audit) =====
+    // Legacy table was dropped during ledger consolidation — redirects to live ledger
     public function mlmLedgerLegacy()
     {
         try {
             $this->data['ledger'] = $this->db->fetchAll(
-                "SELECT * FROM mlm_commission_ledger_legacy ORDER BY created_at DESC LIMIT 100"
+                "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
+                 LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
+                 ORDER BY mcl.created_at DESC LIMIT 100"
             );
-            $this->data['page_title'] = 'MLM Commission Ledger (Legacy Audit)';
+            $this->data['page_title'] = 'MLM Commission Ledger (Audit)';
             return $this->render('admin/commission/commission_audit_log', $this->data);
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
@@ -346,14 +373,21 @@ class CommissionAdminController extends AdminController
     }
 
     // ===== Revenue Commission Daily =====
+    // Aggregates daily commission from mlm_commission_ledger (no separate table needed)
     public function revenueDaily()
     {
         try {
             $this->data['daily'] = $this->db->fetchAll(
-                "SELECT rcd.*, u.name as agent_name FROM revenue_commission_daily rcd
-                 LEFT JOIN users u ON rcd.agent_id = u.id ORDER BY rcd.stat_date DESC LIMIT 60"
+                "SELECT DATE(mcl.created_at) as stat_date, mcl.beneficiary_user_id, u.name as agent_name,
+                        COUNT(*) as deals,
+                        SUM(mcl.amount) as commission,
+                        SUM(COALESCE(mcl.sale_amount, 0)) as revenue
+                 FROM mlm_commission_ledger mcl
+                 LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
+                 GROUP BY DATE(mcl.created_at), mcl.beneficiary_user_id
+                 ORDER BY stat_date DESC LIMIT 60"
             );
-            $r = $this->db->fetchAll("SELECT COALESCE(SUM(revenue),0) as total_rev, COALESCE(SUM(commission),0) as total_comm, COALESCE(SUM(deals),0) as total_deals FROM revenue_commission_daily");
+            $r = $this->db->fetchAll("SELECT COALESCE(SUM(COALESCE(sale_amount, 0)),0) as total_rev, COALESCE(SUM(amount),0) as total_comm, COUNT(DISTINCT DATE(created_at)) as total_deals FROM mlm_commission_ledger");
             $this->data['summary'] = $r[0] ?? ['total_rev'=>0,'total_comm'=>0,'total_deals'=>0];
             $this->data['users'] = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('agent','associate') ORDER BY name");
             $this->data['page_title'] = 'Daily Revenue Commission';
@@ -367,26 +401,13 @@ class CommissionAdminController extends AdminController
     public function revenueDailyStore()
     {
         $this->validateCsrfOrFail();
-        try {
-            $this->db->query("INSERT INTO revenue_commission_daily (stat_date, agent_id, revenue, deals, commission) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE revenue = VALUES(revenue), deals = VALUES(deals), commission = VALUES(commission)", [
-                $_POST['stat_date'], (int)$_POST['agent_id'], (float)$_POST['revenue'],
-                (int)($_POST['deals'] ?? 0), (float)$_POST['commission']
-            ]);
-            $this->setFlash('success', 'Daily revenue recorded');
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-        }
+        $this->setFlash('info', 'Daily revenue is auto-calculated from commission ledger entries. No manual entry needed.');
         return $this->redirect('admin/commission/revenue/daily');
     }
 
     public function revenueDailyDelete($id)
     {
-        try {
-            $this->db->query("DELETE FROM revenue_commission_daily WHERE id = ?", [(int)$id]);
-            $this->setFlash('success', 'Record deleted');
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-        }
+        $this->setFlash('info', 'Revenue records are auto-generated from the commission ledger and cannot be deleted individually.');
         return $this->redirect('admin/commission/revenue/daily');
     }
 
@@ -530,5 +551,18 @@ class CommissionAdminController extends AdminController
     {
         $this->data['page_title'] = 'Commissions';
         return $this->render('admin/commissions/index', $this->data);
+    }
+
+    public function reconciliation()
+    {
+        try {
+            $service = new \App\Services\MLM\CommissionReconciliationService();
+            $this->data['data'] = $service->reconcile();
+            $this->data['page_title'] = 'Commission Reconciliation';
+            return $this->render('admin/commission/reconciliation', $this->data);
+        } catch (\Exception $e) {
+            $this->setFlash('error', $e->getMessage());
+            return $this->redirect('admin/commission');
+        }
     }
 }

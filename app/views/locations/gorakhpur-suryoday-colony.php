@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="hero-section-project" style="background: linear-gradient(rgba(30,60,114,0.7), rgba(30,60,114,0.7)), url('<?= ASSETS_URL ?>images/site_photo/gorakhpur/suryoday/suryoday.png') center/cover no-repeat; padding: 100px 0; color: #fff; text-align: center; border-radius: 0 0 50px 50px;">
+        <div class="hero-section-project" style="background: linear-gradient(rgba(30,60,114,0.7), rgba(30,60,114,0.7)), url('<?= ASSETS_URL ?>images/projects/gorakhpur/suryoday.jpg') center/cover no-repeat; padding: 100px 0; color: #fff; text-align: center; border-radius: 0 0 50px 50px;">
             <div class="container">
                 <h1 class="display-3 fw-bold mb-3 animate-fade-up"><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'Suryoday Colony' ?></h1>
                 <p class="lead animate-fade-up"><?= isset($project['description']) ? htmlspecialchars($project['description']) : "Gorakhpur's Finest Residential Community" ?></p>

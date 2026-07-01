@@ -69,6 +69,11 @@ class AssociateAuthController extends BaseController
             $referral_code = strtoupper(substr($name, 0, 3)) . date('ymd') . rand(100, 999);
             $hashed = password_hash($password, PASSWORD_DEFAULT);
 
+            // Auto-approve if valid sponsor code, else pending
+            $hasValidSponsor = !empty($referrer_id);
+            $regStatus = $hasValidSponsor ? 'approved' : 'pending';
+            $userStatus = $hasValidSponsor ? 'active' : 'inactive';
+
             $db->insert('users', [
                 'customer_id' => $associate_id,
                 'name' => $name,
@@ -78,7 +83,9 @@ class AssociateAuthController extends BaseController
                 'referral_code' => $referral_code,
                 'referred_by' => $referrer_id,
                 'role' => 'associate',
-                'status' => 'active',
+                'status' => $userStatus,
+                'registration_status' => $regStatus,
+                'approved_at' => $hasValidSponsor ? date('Y-m-d H:i:s') : null,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
@@ -122,7 +129,7 @@ class AssociateAuthController extends BaseController
                 'sponsor_user_id' => $referrer_id,
                 'sponsor_code' => $referral ?: null,
                 'user_type' => 'associate',
-                'current_level' => 1,
+                'current_level' => 'associate',
                 'total_team_size' => 0,
                 'direct_referrals' => 0,
                 'total_commission' => 0.00,
@@ -224,7 +231,11 @@ class AssociateAuthController extends BaseController
                 }
             }
 
-            $_SESSION['success'] = "Associate registration successful! ID: $associate_id. Please login.";
+            if ($hasValidSponsor) {
+                $_SESSION['success'] = "Associate registration successful! ID: $associate_id. You can now login.";
+            } else {
+                $_SESSION['success'] = "Associate registration successful! ID: $associate_id. Your account is pending admin approval. You will be notified once approved.";
+            }
 
             // Mark visitor as converted
             try {
@@ -274,8 +285,25 @@ class AssociateAuthController extends BaseController
 
         try {
             $db = Database::getInstance();
-            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role = 'associate' AND status = 'active' LIMIT 1", [$email, $email]);
+            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role = 'associate' LIMIT 1", [$email, $email]);
             if ($user && password_verify($password, $user['password'])) {
+                // Check registration status first
+                if (($user['registration_status'] ?? 'approved') === 'pending') {
+                    $_SESSION['errors'] = ["Your account is pending admin approval. You will be able to login once approved."];
+                    header('Location: ' . BASE_URL . '/associate/login');
+                    exit;
+                }
+                if (($user['status'] ?? 'active') !== 'active') {
+                    $_SESSION['errors'] = ["Your account has been " . ($user['status'] ?? 'inactive') . ". Please contact support."];
+                    header('Location: ' . BASE_URL . '/associate/login');
+                    exit;
+                }
+                if (($user['registration_status'] ?? 'approved') === 'rejected') {
+                    $_SESSION['errors'] = ["Your registration has been rejected. Please contact support."];
+                    header('Location: ' . BASE_URL . '/associate/login');
+                    exit;
+                }
+
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['customer_id'] = $user['customer_id'] ?? $user['id'];
                 $_SESSION['user_name'] = $user['name'];

@@ -29,7 +29,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e293b 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -76,7 +76,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
         .brand-logo {
             width: 72px;
             height: 72px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
@@ -149,13 +149,13 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
         }
 
         .input-icon-wrapper .form-control:focus {
-            border-color: #667eea;
+            border-color: #0d9488;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
             outline: none;
         }
 
         .input-icon-wrapper .form-control:focus~.input-icon {
-            color: #667eea;
+            color: #0d9488;
         }
 
         .password-wrapper .form-control {
@@ -177,7 +177,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
         }
 
         .toggle-password:hover {
-            color: #667eea;
+            color: #0d9488;
         }
 
         .form-options {
@@ -189,19 +189,19 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
         }
 
         .form-check-input:checked {
-            background-color: #667eea;
-            border-color: #667eea;
+            background-color: #0d9488;
+            border-color: #0d9488;
         }
 
         .forgot-link {
-            color: #667eea;
+            color: #0d9488;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.2s;
         }
 
         .forgot-link:hover {
-            color: #764ba2;
+            color: #0f766e;
         }
 
         .btn-login {
@@ -209,7 +209,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
             height: 50px;
             border: none;
             border-radius: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             color: #fff;
             font-size: 1rem;
             font-weight: 600;
@@ -251,14 +251,14 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
         }
 
         .register-section a {
-            color: #a78bfa;
+            color: #5eead4;
             text-decoration: none;
             font-weight: 600;
             transition: color 0.2s;
         }
 
         .register-section a:hover {
-            color: #c4b5fd;
+            color: #99f6e4;
         }
 
         .back-home {

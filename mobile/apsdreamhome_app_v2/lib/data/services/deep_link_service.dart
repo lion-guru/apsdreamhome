@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:apsdreamhome_app_v2/core/utils/logger.dart';
+import '../../core/utils/logger.dart';
 
 /// Deep Link Service — no-op stub (Firebase Dynamic Links removed)
 /// When backend supports deep links, replace this implementation.

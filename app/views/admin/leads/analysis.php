@@ -15,7 +15,7 @@
                     <?php if (empty($by_source)): ?>
                         <p class="text-muted text-center py-3">No data</p>
                     <?php else: ?>
-                        <table class="table table-sm mb-0">
+                        <div class="table-responsive"><table class="table table-sm mb-0">
                             <thead><tr><th>Source</th><th>Total</th><th>Converted</th><th>Rate</th></tr></thead>
                             <tbody>
                             <?php foreach ($by_source as $bs): ?>
@@ -27,7 +27,7 @@
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     <?php if (empty($monthly)): ?>
                         <p class="text-muted text-center py-3">No data</p>
                     <?php else: ?>
-                        <table class="table table-sm mb-0">
+                        <div class="table-responsive"><table class="table table-sm mb-0">
                             <thead><tr><th>Month</th><th>Total</th><th>Converted</th><th>Rate</th></tr></thead>
                             <tbody>
                             <?php foreach ($monthly as $m): ?>
@@ -51,7 +51,7 @@
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -61,14 +61,14 @@
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Top Cities</h6></div>
             <div class="card-body p-0">
-                <table class="table table-sm mb-0">
+                <div class="table-responsive"><table class="table table-sm mb-0">
                     <thead><tr><th>City</th><th>Count</th></tr></thead>
                     <tbody>
                     <?php foreach ($by_city as $c): ?>
                         <tr><td><?= htmlspecialchars($c['city']) ?></td><td><strong><?= $c['cnt'] ?></strong></td></tr>
                     <?php endforeach; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     <?php endif; ?>

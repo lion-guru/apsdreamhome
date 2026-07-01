@@ -25,7 +25,7 @@ $active_page = 'agreements';
                 <h5 class="mb-0"><i class="fas fa-info-circle"></i> Booking Details</h5>
             </div>
             <div class="card-body aps-cp-card-body">
-                <table class="table table-sm table-borderless">
+                <div class="table-responsive"><table class="table table-sm table-borderless">
                     <tr>
                         <th class="text-muted">Customer:</th>
                         <td><?= htmlspecialchars($booking['customer_name'] ?? 'N/A') ?></td>
@@ -62,7 +62,7 @@ $active_page = 'agreements';
                         <th class="text-muted">Status:</th>
                         <td><span class="badge bg-<?= match($booking['status'] ?? '') { 'confirmed' => 'success', 'completed' => 'info', 'cancelled' => 'danger', default => 'warning' } ?>"><?= ucfirst($booking['status'] ?? 'N/A') ?></span></td>
                     </tr>
-                </table>
+                </table></div>
             </div>
         </div>
 

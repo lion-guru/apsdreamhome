@@ -17,7 +17,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0 position-relative">
-                    <div id="panoramaViewer" style="height:500px;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);" class="rounded">
+                    <div id="panoramaViewer" style="height:500px;background:linear-gradient(135deg,#0f172a,#1e3a5f,#1e293b);" class="rounded">
                         <div class="d-flex align-items-center justify-content-center h-100">
                             <div class="text-center text-white">
                                 <i class="fas fa-vr-cardboard fa-5x mb-3 opacity-50"></i>

@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,10 +10,12 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Color(0xFF4F46E5),
-    statusBarIconBrightness: Brightness.light,
-  ));
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Color(0xFF4F46E5),
+      statusBarIconBrightness: Brightness.light,
+    ),
+  );
   runApp(const APSDreamHomeApp());
 }
 
@@ -58,9 +59,10 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
     _controller.forward();
 
     Future.delayed(const Duration(seconds: 3), () {
@@ -210,7 +212,9 @@ class _MainScreenState extends State<MainScreen> {
           onNavigationRequest: (request) async {
             final url = request.url;
 
-            if (url.contains('apsdreamhome') || url.contains('10.0.2.2') || url.contains('ngrok-free.dev')) {
+            if (url.contains('apsdreamhome') ||
+                url.contains('10.0.2.2') ||
+                url.contains('ngrok-free.dev')) {
               return NavigationDecision.navigate;
             }
 
@@ -269,7 +273,9 @@ class _MainScreenState extends State<MainScreen> {
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('No Internet'),
-            content: const Text('Please check your internet connection and try again.'),
+            content: const Text(
+              'Please check your internet connection and try again.',
+            ),
             actions: [
               TextButton(
                 onPressed: () {
@@ -320,72 +326,84 @@ class _MainScreenState extends State<MainScreen> {
       },
       child: Scaffold(
         body: SafeArea(
-          child: Stack(
-            children: [
-              WebViewWidget(controller: _webViewController),
-              if (_isLoading)
-                const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF4F46E5),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                _isLoading = true;
+                _hasError = false;
+              });
+              await _webViewController.reload();
+              // Wait for page to finish loading
+              await Future.delayed(const Duration(seconds: 2));
+            },
+            color: const Color(0xFF4F46E5),
+            backgroundColor: Colors.white,
+            strokeWidth: 3.0,
+            child: Stack(
+              children: [
+                WebViewWidget(controller: _webViewController),
+                if (_isLoading)
+                  const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF4F46E5)),
                   ),
-                ),
-              if (_hasError)
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.wifi_off_rounded,
-                          size: 80,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(height: 16),
-                        const Text(
-                          'Connection Error',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                if (_hasError)
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.wifi_off_rounded,
+                            size: 80,
+                            color: Colors.grey,
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Please check your internet connection\nand try again.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 24),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            setState(() => _hasError = false);
-                            _webViewController.reload();
-                          },
-                          icon: const Icon(Icons.refresh),
-                          label: const Text('Retry'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4F46E5),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Connection Error',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        TextButton.icon(
-                          onPressed: _checkConnectivity,
-                          icon: const Icon(Icons.wifi_find),
-                          label: const Text('Check Connection'),
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Please check your internet connection\nand try again.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              setState(() => _hasError = false);
+                              _webViewController.reload();
+                            },
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('Retry'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4F46E5),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextButton.icon(
+                            onPressed: _checkConnectivity,
+                            icon: const Icon(Icons.wifi_find),
+                            label: const Text('Check Connection'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: NavigationBar(

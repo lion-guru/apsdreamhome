@@ -22,9 +22,9 @@ $verified = $_GET['verified'] ?? '';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: linear-gradient(135deg, #667eea, #764ba2); min-height: 100vh; font-family: 'Inter', sans-serif; padding: 20px 0; }
+        body { background: linear-gradient(135deg, #0d9488, #0f766e); min-height: 100vh; font-family: 'Inter', sans-serif; padding: 20px 0; }
         .wizard-card { max-width: 640px; margin: auto; border: none; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
-        .wizard-header { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border-radius: 16px 16px 0 0; padding: 1.5rem; }
+        .wizard-header { background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; border-radius: 16px 16px 0 0; padding: 1.5rem; }
         .verify-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
         .verify-card.verified { border-color: #10b981; background: #f0fdf4; }
     </style>

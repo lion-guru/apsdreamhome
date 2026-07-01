@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
@@ -22,7 +22,7 @@
             margin-bottom: 2rem;
         }
         .stat-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #0d9488, #0f766e);
             color: white;
             border-radius: 15px;
             padding: 2rem;
@@ -60,7 +60,7 @@
             min-width: 150px;
             text-align: center;
         }
-        .level-1 { border-left: 4px solid #667eea; }
+        .level-1 { border-left: 4px solid #0d9488; }
         .level-2 { border-left: 4px solid #28a745; }
         .level-3 { border-left: 4px solid #ffc107; }
         .level-4 { border-left: 4px solid #dc3545; }
@@ -283,7 +283,7 @@
                     labels: data.stats.level_breakdown.map(item => `Level ${item.level}`),
                     datasets: [{
                         data: data.stats.level_breakdown.map(item => item.count),
-                        backgroundColor: ['#667eea', '#28a745', '#ffc107', '#dc3545', '#6f42c1']
+                        backgroundColor: ['#0d9488', '#28a745', '#ffc107', '#dc3545', '#6f42c1']
                     }]
                 },
                 options: {
@@ -301,7 +301,7 @@
                     datasets: [{
                         label: 'Referrals',
                         data: data.analytics.map(item => item.referrals),
-                        borderColor: '#667eea',
+                        borderColor: '#0d9488',
                         backgroundColor: 'rgba(102, 126, 234, 0.1)',
                         fill: true
                     }]
@@ -335,7 +335,7 @@
                         <strong>${member.name}</strong><br>
                         <small>${member.type}</small><br>
                         <small>Level ${member.level}</small>
-                        <div class="node-rank" style="background:${member.rank_color || '#667eea'};">
+                        <div class="node-rank" style="background:${member.rank_color || '#0d9488'};">
                             ${member.rank_label || 'Associate'}
                         </div>
                     </div>

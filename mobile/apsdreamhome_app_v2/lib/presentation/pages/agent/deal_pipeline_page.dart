@@ -239,7 +239,7 @@ class _DealPipelinePageState extends ConsumerState<DealPipelinePage> {
                 children: [
                   // Deal value
                   if (dealValue > 0) ...[
-                    Icon(Icons.currency_rupee, size: 16, color: AppTheme.successColor),
+                    const Icon(Icons.currency_rupee, size: 16, color: AppTheme.successColor),
                     const SizedBox(width: 4),
                     Text(
                       _formatCurrency(dealValue),
@@ -254,11 +254,11 @@ class _DealPipelinePageState extends ConsumerState<DealPipelinePage> {
 
                   // Probability
                   if (probability > 0) ...[
-                    Icon(Icons.percent, size: 14, color: AppTheme.warningColor),
+                    const Icon(Icons.percent, size: 14, color: AppTheme.warningColor),
                     const SizedBox(width: 4),
                     Text(
                       '${probability.toStringAsFixed(0)}%',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
                         color: AppTheme.warningColor,

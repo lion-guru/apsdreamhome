@@ -31,7 +31,7 @@ $activities = $dashboardData['activities'] ?? [];
     
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             min-height: 100vh;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
@@ -47,7 +47,7 @@ $activities = $dashboardData['activities'] ?? [];
         }
 
         .welcome-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             color: white;
             padding: 30px;
             border-radius: 15px;
@@ -85,7 +85,7 @@ $activities = $dashboardData['activities'] ?? [];
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #0d9488, #0f766e);
         }
 
         .stat-card:hover {
@@ -105,7 +105,7 @@ $activities = $dashboardData['activities'] ?? [];
             color: white;
         }
 
-        .stat-icon.tasks { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .stat-icon.tasks { background: linear-gradient(135deg, #0d9488, #0f766e); }
         .stat-icon.performance { background: linear-gradient(135deg, #f093fb, #f5576c); }
         .stat-icon.attendance { background: linear-gradient(135deg, #4facfe, #00f2fe); }
         .stat-icon.activities { background: linear-gradient(135deg, #43e97b, #38f9d7); }
@@ -133,7 +133,7 @@ $activities = $dashboardData['activities'] ?? [];
         }
 
         .action-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -147,7 +147,7 @@ $activities = $dashboardData['activities'] ?? [];
         }
 
         .action-btn:hover {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
@@ -158,7 +158,7 @@ $activities = $dashboardData['activities'] ?? [];
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #0d9488;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
@@ -211,7 +211,7 @@ $activities = $dashboardData['activities'] ?? [];
         }
 
         .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             border-radius: 15px;
             padding: 15px 25px;
             margin-bottom: 30px;
@@ -406,7 +406,7 @@ $activities = $dashboardData['activities'] ?? [];
                         <?php if (!empty($activities)): ?>
                             <?php foreach (array_slice($activities, 0, 5) as $activity): ?>
                                 <div class="activity-item">
-                                    <div class="activity-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                                    <div class="activity-icon" style="background: linear-gradient(135deg, #0d9488, #0f766e);">
                                         <i class="fas fa-bell"></i>
                                     </div>
                                     <div class="flex-grow-1">

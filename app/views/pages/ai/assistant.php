@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-9">
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                <div class="card-header text-white p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-header text-white p-4" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <i class="fas fa-robot fa-2x"></i>
@@ -22,7 +22,7 @@
                 <div class="chat-container d-flex flex-column" style="height: 520px; background: #f8f9fa;">
                     <div class="chat-messages p-4" id="chatMessages" style="flex: 1; overflow-y: auto;">
                         <div class="text-center mb-4">
-                            <div class="d-inline-block p-3 rounded-circle mb-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="d-inline-block p-3 rounded-circle mb-2" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
                                 <i class="fas fa-robot fa-2x text-white"></i>
                             </div>
                             <h4 class="mb-1"><?= __('aiast_greeting', [], 'Namaste!') ?> 🙏</h4>
@@ -120,11 +120,11 @@
         wrapper.className = 'message mb-3 clearfix';
         if (role === 'user') {
             wrapper.innerHTML =
-                '<div class="p-3 rounded-4 shadow-sm" style="max-width: 85%; margin-left: auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">'
+                '<div class="p-3 rounded-4 shadow-sm" style="max-width: 85%; margin-left: auto; background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: #fff;">'
                 + escapeHtml(text) + '</div>';
         } else {
             wrapper.innerHTML =
-                '<div class="p-3 rounded-4 bg-white shadow-sm" style="max-width: 85%; margin-right: auto; border-left: 4px solid #667eea;">'
+                '<div class="p-3 rounded-4 bg-white shadow-sm" style="max-width: 85%; margin-right: auto; border-left: 4px solid #0d9488;">'
                 + escapeHtml(text) + '</div>';
         }
         messages.appendChild(wrapper);

@@ -9,7 +9,7 @@ $earnings = $earnings ?? [];
 $shareLinks = $share_links ?? [];
 ?>
 
-<div class="aps-cp-hero" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);">
+<div class="aps-cp-hero" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #14b8a6 100%);">
     <div class="row align-items-center">
         <div class="col-md-8">
             <h2><i class="fas fa-gift me-2"></i><?= __('referral_hero_title') ?></h2>
@@ -70,7 +70,7 @@ $shareLinks = $share_links ?? [];
                 <h5><i class="fas fa-share-alt text-primary me-2"></i><?= __('referral_share_your_code') ?></h5>
             </div>
             <div class="aps-cp-card-body">
-                <div class="text-center p-4 mb-3" style="background:linear-gradient(135deg,#f8fafc,#ede9fe);border-radius:12px;border:2px dashed #7c3aed;">
+                <div class="text-center p-4 mb-3" style="background:linear-gradient(135deg,#f8fafc,#ede9fe);border-radius:12px;border:2px dashed #0f766e;">
                     <small class="text-muted d-block mb-1"><?= __('referral_your_referral_code') ?></small>
                     <div class="display-6 fw-bold text-primary" style="font-family:'Courier New',monospace;letter-spacing:3px;" id="refCode">
                         <?= htmlspecialchars($referralCode) ?>
@@ -90,25 +90,25 @@ $shareLinks = $share_links ?? [];
 
                 <label class="form-label small text-muted fw-bold"><?= __('referral_share_via') ?></label>
                 <div class="d-grid gap-2">
-                    <a href="<?= htmlspecialchars($shareLinks['whatsapp'] ?? '#') ?>" target="_blank" class="btn btn-success">
+                    <a href="<?= htmlspecialchars($shareLinks['whatsapp'] ?? '#') ?>" target="_blank" class="btn btn-success" onclick="trackShare('whatsapp')">
                         <i class="fab fa-whatsapp me-2"></i><?= __('referral_share_whatsapp') ?>
                     </a>
-                    <a href="<?= htmlspecialchars($shareLinks['sms'] ?? '#') ?>" class="btn btn-secondary">
+                    <a href="<?= htmlspecialchars($shareLinks['sms'] ?? '#') ?>" class="btn btn-secondary" onclick="trackShare('sms')">
                         <i class="fas fa-sms me-2"></i><?= __('referral_share_sms') ?>
                     </a>
                     <div class="row g-2">
                         <div class="col-4">
-                            <a href="<?= htmlspecialchars($shareLinks['facebook'] ?? '#') ?>" target="_blank" class="btn btn-outline-primary w-100">
+                            <a href="<?= htmlspecialchars($shareLinks['facebook'] ?? '#') ?>" target="_blank" class="btn btn-outline-primary w-100" onclick="trackShare('facebook')">
                                 <i class="fab fa-facebook-f"></i>
                             </a>
                         </div>
                         <div class="col-4">
-                            <a href="<?= htmlspecialchars($shareLinks['twitter'] ?? '#') ?>" target="_blank" class="btn btn-outline-info w-100">
+                            <a href="<?= htmlspecialchars($shareLinks['twitter'] ?? '#') ?>" target="_blank" class="btn btn-outline-info w-100" onclick="trackShare('twitter')">
                                 <i class="fab fa-twitter"></i>
                             </a>
                         </div>
                         <div class="col-4">
-                            <a href="<?= htmlspecialchars($shareLinks['email'] ?? '#') ?>" class="btn btn-outline-secondary w-100">
+                            <a href="<?= htmlspecialchars($shareLinks['email'] ?? '#') ?>" class="btn btn-outline-secondary w-100" onclick="trackShare('email')">
                                 <i class="fas fa-envelope"></i>
                             </a>
                         </div>
@@ -256,7 +256,9 @@ $shareLinks = $share_links ?? [];
                                         <?php
                                         $st = $e['status'] ?? 'pending';
                                         $badge = match($st) { 'paid' => 'success', 'cancelled' => 'danger', default => 'warning' };
-                                        ?>
+$shareStats = $share_stats ?? ['total' => 0, 'by_platform' => [], 'recent' => []];
+$leaderboard = $leaderboard ?? [];
+?>
                                         <span class="badge bg-<?= $badge ?>"><?= ucfirst(htmlspecialchars($st)) ?></span>
                                     </td>
                                 </tr>
@@ -267,6 +269,92 @@ $shareLinks = $share_links ?? [];
                 <?php endif; ?>
             </div>
         </div>
+
+        <!-- Share Analytics -->
+        <?php if ($shareStats['total'] > 0): ?>
+        <div class="aps-cp-card mt-4">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-chart-bar text-info me-2"></i>Your Share Analytics</h5>
+                <span class="badge bg-info"><?= $shareStats['total'] ?> total shares</span>
+            </div>
+            <div class="aps-cp-card-body">
+                <?php if (!empty($shareStats['by_platform'])): ?>
+                <div class="d-flex gap-3 flex-wrap mb-3">
+                    <?php foreach ($shareStats['by_platform'] as $p):
+                        $platformIcons = ['whatsapp'=>'fab fa-whatsapp text-success', 'sms'=>'fas fa-sms text-secondary', 'facebook'=>'fab fa-facebook-f text-primary', 'twitter'=>'fab fa-twitter text-info', 'email'=>'fas fa-envelope text-warning', 'telegram'=>'fab fa-telegram text-info', 'copy'=>'fas fa-copy text-muted'];
+                    ?>
+                    <div class="text-center">
+                        <div style="width:48px;height:48px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;">
+                            <i class="<?= $platformIcons[$p['share_method']] ?? 'fas fa-share text-muted' ?>" style="font-size:1.1rem;"></i>
+                        </div>
+                        <div class="fw-bold mt-1" style="font-size:0.9rem;"><?= $p['cnt'] ?></div>
+                        <small class="text-muted" style="font-size:0.7rem;"><?= ucfirst($p['share_method']) ?></small>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+                <?php if (!empty($shareStats['recent'])): ?>
+                <small class="text-muted fw-bold d-block mb-2">Recent Shares</small>
+                <?php foreach (array_slice($shareStats['recent'], 0, 5) as $rs): ?>
+                <div class="d-flex justify-content-between align-items-center py-1" style="border-bottom:1px solid #f1f5f9;">
+                    <div>
+                        <i class="<?= $platformIcons[$rs['share_method']] ?? 'fas fa-share' ?> me-2 text-muted"></i>
+                        <span style="font-size:0.85rem;"><?= ucfirst(htmlspecialchars($rs['share_method'])) ?></span>
+                        <?php if (!empty($rs['lead_name'])): ?>
+                            <small class="text-muted"> — <?= htmlspecialchars($rs['lead_name']) ?></small>
+                        <?php endif; ?>
+                    </div>
+                    <small class="text-muted"><?= date('M d, g:i A', strtotime($rs['created_at'])) ?></small>
+                </div>
+                <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Referral Leaderboard -->
+        <?php if (!empty($leaderboard)): ?>
+        <div class="aps-cp-card mt-4">
+            <div class="aps-cp-card-header">
+                <h5><i class="fas fa-trophy text-warning me-2"></i>Top Referrers</h5>
+            </div>
+            <div class="aps-cp-card-body p-0">
+                <div class="table-responsive">
+                    <table class="aps-cp-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th class="text-center">Referrals</th>
+                                <th class="text-end">Earned</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($leaderboard as $idx => $lb): ?>
+                            <tr style="<?= ($lb['name'] ?? '') === ($user['name'] ?? '') ? 'background:#f0fdf4;' : '' ?>">
+                                <td>
+                                    <?php if ($idx === 0): ?><i class="fas fa-crown text-warning"></i>
+                                    <?php elseif ($idx === 1): ?><i class="fas fa-medal text-secondary"></i>
+                                    <?php elseif ($idx === 2): ?><i class="fas fa-medal" style="color:#cd7f32;"></i>
+                                    <?php else: ?><?= $idx + 1 ?><?php endif; ?>
+                                </td>
+                                <td>
+                                    <strong><?= htmlspecialchars($lb['name'] ?? '') ?></strong>
+                                    <?php if (($lb['name'] ?? '') === ($user['name'] ?? '')): ?>
+                                        <span class="badge bg-success ms-1" style="font-size:0.65rem;">You</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="text-center"><?= (int)$lb['referral_count'] ?></td>
+                                <td class="text-end fw-bold text-success">₹<?= number_format((float)$lb['total_earned']) ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
     </div>
 </div>
 
@@ -281,5 +369,17 @@ function copyToClipboard(text, btn) {
             btn.classList.remove('btn-success');
         }, 2000);
     });
+}
+
+function trackShare(platform) {
+    var code = '<?= htmlspecialchars($referralCode) ?>';
+    if (!code) return;
+    try {
+        var fd = new FormData();
+        fd.append('platform', platform);
+        fd.append('referral_code', code);
+        fd.append('message', 'Shared via ' + platform);
+        fetch('<?= BASE_URL ?>/share/track', { method: 'POST', body: fd, credentials: 'same-origin' });
+    } catch(e) {}
 }
 </script>

@@ -9,7 +9,7 @@
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>System Overview</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <p>This system has <strong>two salary modules</strong> working together:</p>
-                    <table class="table table-bordered">
+                    <div class="table-responsive"><table class="table table-bordered">
                         <thead class="table-light"><tr><th>Module</th><th>Table</th><th>Records</th><th>Total Paid</th></tr></thead>
                         <tbody>
                             <tr>
@@ -25,7 +25,7 @@
                                 <td>₹<?= number_format($payroll_total ?? 0, 2) ?></td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

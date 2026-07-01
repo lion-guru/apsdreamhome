@@ -18,7 +18,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         </div>
     </div>
     <div class="aps-cp-card-body p-0">
-        <table class="table table-hover m-0">
+        <div class="table-responsive"><table class="table table-hover m-0">
             <thead>
                 <tr>
                     <th>#</th>
@@ -81,6 +81,6 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     </tr>
                 <?php endforeach; endif; ?>
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>

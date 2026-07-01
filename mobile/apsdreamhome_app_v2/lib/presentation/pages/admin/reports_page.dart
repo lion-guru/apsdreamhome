@@ -43,8 +43,8 @@ class ReportsPage extends ConsumerWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 4),
-                      Text(
+                      const SizedBox(height: 4),
+                      const Text(
                         'Business insights and performance metrics',
                         style: TextStyle(
                           color: Colors.grey,

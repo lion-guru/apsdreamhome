@@ -93,7 +93,7 @@
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-dollar-sign"></i> Agent Commission Rates</div>
                 <div class="card-body p-0">
-                    <table class="table table-sm mb-0">
+                    <div class="table-responsive"><table class="table table-sm mb-0">
                         <thead><tr><th>Range (sqft)</th><th>Per sqft</th><th>Status</th></tr></thead>
                         <tbody>
                             <?php foreach (array_slice($stats['agent_rates'] ?? [], 0, 5) as $r): ?>
@@ -104,7 +104,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
                 <div class="card-footer"><a href="/admin/commission/agent-rates" class="btn btn-sm btn-primary">Manage Rates</a></div>
             </div>
@@ -113,7 +113,7 @@
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-layer-group"></i> Associate Structure</div>
                 <div class="card-body p-0">
-                    <table class="table table-sm mb-0">
+                    <div class="table-responsive"><table class="table table-sm mb-0">
                         <thead><tr><th>Level</th><th>Name</th><th>%</th></tr></thead>
                         <tbody>
                             <?php foreach (array_slice($stats['structure_levels'] ?? [], 0, 5) as $l): ?>
@@ -124,7 +124,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
                 <div class="card-footer"><a href="/admin/commission/associate/structure" class="btn btn-sm btn-success">Manage Structure</a></div>
             </div>
@@ -133,7 +133,7 @@
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-phone"></i> Telecaller Rules</div>
                 <div class="card-body p-0">
-                    <table class="table table-sm mb-0">
+                    <div class="table-responsive"><table class="table table-sm mb-0">
                         <thead><tr><th>Rule</th><th>Type</th><th>Amount</th></tr></thead>
                         <tbody>
                             <?php foreach (($tc_rules ?? []) as $r):
@@ -145,7 +145,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
                 <div class="card-footer"><a href="/admin/commission/telecaller/rules" class="btn btn-sm" style="background:#6f42c1;color:white;">Manage Rules</a></div>
             </div>

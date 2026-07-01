@@ -1984,22 +1984,23 @@ class MobileApiController extends BaseController
                 return;
             }
 
-            $currentRank = $profile['current_level'] ?? 'Associate';
+            $currentRank = $profile['current_level'] ?? 'associate';
             $totalSales = (float)($profile['total_sales'] ?? 0);
             $totalCommission = (float)($profile['total_commission'] ?? 0);
 
-            // Define rank thresholds
+            // Define rank thresholds (matching mlm_rank_benefits)
             $rankThresholds = [
-                'Bronze' => ['sales' => 0, 'commission' => 0, 'directs' => 0],
-                'Silver' => ['sales' => 100000, 'commission' => 5000, 'directs' => 2],
-                'Gold' => ['sales' => 500000, 'commission' => 25000, 'directs' => 5],
-                'Platinum' => ['sales' => 1500000, 'commission' => 75000, 'directs' => 10],
-                'Diamond' => ['sales' => 5000000, 'commission' => 250000, 'directs' => 20],
-                'Crown' => ['sales' => 15000000, 'commission' => 750000, 'directs' => 50],
+                'associate' => ['sales' => 0, 'commission' => 0, 'directs' => 0],
+                'senior_associate' => ['sales' => 25000, 'commission' => 5000, 'directs' => 1],
+                'bdm' => ['sales' => 100000, 'commission' => 25000, 'directs' => 2],
+                'sr_bdm' => ['sales' => 300000, 'commission' => 75000, 'directs' => 3],
+                'vice_president' => ['sales' => 800000, 'commission' => 250000, 'directs' => 4],
+                'president' => ['sales' => 2000000, 'commission' => 750000, 'directs' => 5],
+                'site_manager' => ['sales' => 5000000, 'commission' => 2000000, 'directs' => 6],
             ];
 
             $rankOrder = array_keys($rankThresholds);
-            $currentIndex = array_search($currentRank, $rankOrder);
+            $currentIndex = array_search(strtolower($currentRank), $rankOrder);
             if ($currentIndex === false) $currentIndex = 0;
 
             $nextRank = $currentIndex < count($rankOrder) - 1 ? $rankOrder[$currentIndex + 1] : null;
@@ -3284,6 +3285,9 @@ class MobileApiController extends BaseController
             ");
             $stmt->execute([$userId, $name, $email, $phone, $message, $propertyId, $projectId, $type]);
             $inquiryId = (int) $pdo->lastInsertId();
+
+            // Auto-wire to CRM lead
+            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>$type,'created_by'=>$userId]); } catch (\Exception $e3) {}
 
             echo json_encode([
                 'success' => true,

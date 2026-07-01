@@ -178,7 +178,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
     }
     
     .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         border: none;
         transition: all 0.3s ease;
     }

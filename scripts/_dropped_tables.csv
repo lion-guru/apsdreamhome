@@ -1,6 +1,0 @@
-table_name,drop_count,scripts
-IF,12,drop_ai_one_ref.php;drop_ai_zero_refs.php;drop_mlm_duplicates.php;phase10_drop_empty_low_ref.php;phase2_user_unification.php;phase3_bulk_cleanup.php;phase4_drop_1ref_trycatch.php;phase5_drop_2ref_trycatch.php;phase7_drop_1ref_method_trycatch.php;phase8_drop_fake_data.php;phase9_drop_more_5ref.php;safe_cleanup.php
-agent_details,1,step2_merge_agent_details.php
-ai_conversations,1,create_ai_tables_fresh.php
-ai_generated_content,1,drop_ai_2ref_safe.php
-ai_knowledge_base,1,create_ai_tables_fresh.php

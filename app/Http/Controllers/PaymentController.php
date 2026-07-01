@@ -97,7 +97,7 @@ class PaymentController extends BaseController
                     "contact": "' . htmlspecialchars($userPhone) . '"
                 },
                 "theme": {
-                    "color": "#4f46e5"
+                    "color": "#0d9488"
                 }
             };
             var rzp = new Razorpay(options);

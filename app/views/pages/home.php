@@ -8,26 +8,43 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
 $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 ?>
 <main id="main-content">
-    <!-- Hero Section -->
-    <section class="hero hero-with-bg bg-gradient-hero" aria-labelledby="hero-title" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero/hero-bg.jpg');background-size:cover;background-position:center;background-repeat:no-repeat;">
-        <div class="container">
+    <!-- Hero Section (Modern + Particles + Typed Text) -->
+    <section class="hero-modern" aria-labelledby="hero-title" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero/hero-bg.jpg');background-size:cover;background-position:center;">
+        <!-- Particles Canvas -->
+        <canvas id="particles-canvas"></canvas>
+        <!-- Gradient Overlay -->
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg, rgba(15,23,42,0.88) 0%, rgba(30,41,59,0.82) 50%, rgba(51,65,85,0.75) 100%);z-index:1;"></div>
+        <div class="container" style="position:relative;z-index:2;">
             <div class="row align-items-center g-5">
                 <div class="col-lg-7">
-                    <span class="badge px-3 py-2 mb-3"
-                        style="background:rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color:#fff;"><?= __('trusted_by') ?>
-                        <?= __('home_families_count') ?></span>
-                    <h1 id="hero-title" class="fw-bold text-white"><?= __('hero_title') ?></h1>
-                    <p class="lead mb-4" style="color:rgba(255,255,255,0.85);"><?= __('hero_subtitle') ?></p>
-                    <div class="d-flex gap-3 flex-wrap">
+                    <div class="reveal">
+                        <span class="badge px-3 py-2 mb-3 badge-pulse"
+                            style="background:rgba(129,140,248,0.2); border: 1px solid rgba(129,140,248,0.4); color:#5eead4; backdrop-filter:blur(8px);">
+                            <i class="fas fa-star me-1" style="color:#f59e0b;"></i>
+                            <?= __('trusted_by') ?> <?= __('home_families_count') ?>
+                        </span>
+                    </div>
+                    <h1 id="hero-title" class="fw-bold text-white reveal" style="font-size:3.2rem;line-height:1.15;animation:fadeInUp 0.8s ease;">
+                        <?= __('hero_title') ?>
+                    </h1>
+                    <p class="lead mb-4 reveal" style="color:rgba(255,255,255,0.8);font-size:1.2rem;animation:fadeInUp 0.8s ease 0.15s both;">
+                        <?= __('hero_subtitle') ?>
+                    </p>
+                    <!-- Typed Text Subtitle -->
+                    <div class="mb-4 reveal" style="animation:fadeInUp 0.8s ease 0.25s both;">
+                        <span style="color:rgba(255,255,255,0.6);font-size:0.95rem;">
+                            <i class="fas fa-circle me-1" style="color:#10b981;font-size:0.5rem;vertical-align:middle;"></i>
+                            <?= __('home_we_offer') ?> <span id="typed-text" class="fw-semibold gradient-text-gold" data-strings="<?= __('hero_typed_strings') ?>||Premium Plots in Gorakhpur||Smart Investment Opportunities||Trusted by 5000+ Families||"></span><span class="typing-cursor" style="color:#14b8a6;"></span>
+                        </span>
+                    </div>
+                    <div class="d-flex gap-3 flex-wrap reveal" style="animation:fadeInUp 0.8s ease 0.35s both;">
                         <?php
-                        // A/B test: homepage_cta - variant-aware hero CTA copy
                         $heroVariant = $_SESSION['experiments']['homepage_cta'] ?? null;
                         $heroCtaText = match ($heroVariant) {
                             'urgent'   => __('hero_cta_urgent'),
                             'family'   => __('hero_cta_family'),
                             default    => __('hero_cta'),
                         };
-                        // A/B test: cta_button_color - variant-aware hero CTA color
                         $ctaColorVariant = $_SESSION['experiments']['cta_button_color'] ?? 'blue';
                         $ctaColorClass = match ($ctaColorVariant) {
                             'green'  => 'ab-btn-green',
@@ -36,64 +53,81 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         };
                         ?>
                         <a href="<?php echo BASE_URL; ?>/company/projects"
-                            class="btn btn-lg <?= htmlspecialchars($ctaColorClass) ?>" data-experiment="homepage_cta"
+                            class="btn btn-lg <?= htmlspecialchars($ctaColorClass) ?> btn-glow btn-shine" data-experiment="homepage_cta"
                             data-variant="<?php echo htmlspecialchars((string) $heroVariant, ENT_QUOTES); ?>"
                             data-color-experiment="cta_button_color"
                             data-color-variant="<?php echo htmlspecialchars((string) $ctaColorVariant, ENT_QUOTES); ?>"
-                            id="hero-cta"><?= htmlspecialchars($heroCtaText) ?></a>
+                            id="hero-cta">
+                            <i class="fas fa-building me-2"></i><?= htmlspecialchars($heroCtaText) ?>
+                        </a>
                         <a href="<?php echo BASE_URL; ?>/list-property"
-                            class="btn btn-outline-light btn-lg"><?= __('nav_post_property') ?></a>
+                            class="btn btn-outline-light btn-lg btn-glow">
+                            <i class="fas fa-plus-circle me-2"></i><?= __('nav_post_property') ?>
+                        </a>
+                    </div>
+                    <!-- Trust Badges -->
+                    <div class="d-flex gap-4 mt-4 flex-wrap reveal" style="animation:fadeInUp 0.8s ease 0.45s both;">
+                        <div class="d-flex align-items-center gap-2" style="color:rgba(255,255,255,0.7);">
+                            <i class="fas fa-shield-halved" style="color:#10b981;"></i>
+                            <span class="small">RERA Registered</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2" style="color:rgba(255,255,255,0.7);">
+                            <i class="fas fa-vector-square" style="color:#f59e0b;"></i>
+                            <span class="small">5000+ Plots Sold</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2" style="color:rgba(255,255,255,0.7);">
+                            <i class="fas fa-users" style="color:#14b8a6;"></i>
+                            <span class="small">500+ Happy Families</span>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-5">
-                    <div class="card border-0 glass-card-premium">
-                        <div class="card-header text-center py-3"
-                            style="background:transparent; border-bottom: 1px solid rgba(0,0,0,0.06);">
-                            <h5 class="mb-0 fw-semibold text-dark"><i class="fas fa-search me-2 text-primary"></i><?= __('search') ?>
-                                <?= __('properties') ?></h5>
+                    <div class="hero-search-glass float-slow">
+                        <div class="card-header text-center py-3">
+                            <h5 class="mb-0 fw-semibold" style="color:#fff;"><i class="fas fa-search me-2" style="color:#14b8a6;"></i><?= __('search') ?> <?= __('properties') ?></h5>
                         </div>
-                        <div class="card-body aps-cp-card-body">
+                        <div class="card-body p-4">
                             <form action="<?php echo BASE_URL; ?>/properties" method="GET">
                                 <div class="mb-3">
-                                    <select name="listing" class="form-select">
-                                        <option value=""><?= __('home_buy_rent') ?></option>
-                                        <option value="sell"><?= __('home_buy') ?></option>
-                                        <option value="rent"><?= __('home_rent') ?></option>
+                                    <select name="listing" class="form-select" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:10px;">
+                                        <option value="" style="background:#1e293b;color:#fff;"><?= __('home_buy_rent') ?></option>
+                                        <option value="sell" style="background:#1e293b;color:#fff;"><?= __('home_buy') ?></option>
+                                        <option value="rent" style="background:#1e293b;color:#fff;"><?= __('home_rent') ?></option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <select name="type" class="form-select">
-                                        <option value=""><?= __('home_property_type') ?></option>
-                                        <option value="residential"><?= __('home_residential') ?></option>
-                                        <option value="commercial"><?= __('home_commercial') ?></option>
-                                        <option value="plot"><?= __('home_plot_land') ?></option>
-                                        <option value="house"><?= __('home_house_villa') ?></option>
-                                        <option value="flat"><?= __('home_flat_apartment') ?></option>
+                                    <select name="type" class="form-select" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:10px;">
+                                        <option value="" style="background:#1e293b;color:#fff;"><?= __('home_property_type') ?></option>
+                                        <option value="residential" style="background:#1e293b;color:#fff;"><?= __('home_residential') ?></option>
+                                        <option value="commercial" style="background:#1e293b;color:#fff;"><?= __('home_commercial') ?></option>
+                                        <option value="plot" style="background:#1e293b;color:#fff;"><?= __('home_plot_land') ?></option>
+                                        <option value="house" style="background:#1e293b;color:#fff;"><?= __('home_house_villa') ?></option>
+                                        <option value="flat" style="background:#1e293b;color:#fff;"><?= __('home_flat_apartment') ?></option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <select name="location" class="form-select">
-                                        <option value=""><?= __('home_select_location') ?></option>
-                                        <option value="Gorakhpur"><?= __('loc_gorakhpur') ?></option>
-                                        <option value="Lucknow"><?= __('loc_lucknow') ?></option>
-                                        <option value="Kushinagar"><?= __('loc_kushinagar') ?></option>
-                                        <option value="Varanasi"><?= __('loc_varanasi') ?></option>
-                                        <option value="Ayodhya"><?= __('loc_ayodhya') ?></option>
-                                        <option value="Other"><?= __('home_other') ?></option>
+                                    <select name="location" class="form-select" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:10px;">
+                                        <option value="" style="background:#1e293b;color:#fff;"><?= __('home_select_location') ?></option>
+                                        <option value="Gorakhpur" style="background:#1e293b;color:#fff;"><?= __('loc_gorakhpur') ?></option>
+                                        <option value="Lucknow" style="background:#1e293b;color:#fff;"><?= __('loc_lucknow') ?></option>
+                                        <option value="Kushinagar" style="background:#1e293b;color:#fff;"><?= __('loc_kushinagar') ?></option>
+                                        <option value="Varanasi" style="background:#1e293b;color:#fff;"><?= __('loc_varanasi') ?></option>
+                                        <option value="Ayodhya" style="background:#1e293b;color:#fff;"><?= __('loc_ayodhya') ?></option>
+                                        <option value="Other" style="background:#1e293b;color:#fff;"><?= __('home_other') ?></option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <select name="budget" class="form-select">
-                                        <option value=""><?= __('home_budget') ?></option>
-                                        <option value="under_5l"><?= __('home_budget_under_5l') ?></option>
-                                        <option value="5_10l"><?= __('home_budget_5_10l') ?></option>
-                                        <option value="10_20l"><?= __('home_budget_10_20l') ?></option>
-                                        <option value="20_50l"><?= __('home_budget_20_50l') ?></option>
-                                        <option value="above_50l"><?= __('home_budget_above_50l') ?></option>
+                                    <select name="budget" class="form-select" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:10px;">
+                                        <option value="" style="background:#1e293b;color:#fff;"><?= __('home_budget') ?></option>
+                                        <option value="under_5l" style="background:#1e293b;color:#fff;"><?= __('home_budget_under_5l') ?></option>
+                                        <option value="5_10l" style="background:#1e293b;color:#fff;"><?= __('home_budget_5_10l') ?></option>
+                                        <option value="10_20l" style="background:#1e293b;color:#fff;"><?= __('home_budget_10_20l') ?></option>
+                                        <option value="20_50l" style="background:#1e293b;color:#fff;"><?= __('home_budget_20_50l') ?></option>
+                                        <option value="above_50l" style="background:#1e293b;color:#fff;"><?= __('home_budget_above_50l') ?></option>
                                     </select>
                                 </div>
-                                <button type="submit" class="btn btn-gradient w-100 btn-lg">
-                                    <i class="fas fa-search me-2"></i><?= __('search') ?>
+                                <button type="submit" class="btn w-100 btn-lg btn-glow btn-shine" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-radius:12px;padding:0.75rem;">
+                                    <i class="fas fa-search me-2"></i><?= __('search') ?> <?= __('properties') ?>
                                 </button>
                             </form>
                         </div>
@@ -110,8 +144,8 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 <div class="col-6 col-md-3">
                     <a href="<?php echo BASE_URL; ?>/properties?type=residential" class="text-decoration-none">
                         <div class="quick-link-card">
-                            <div class="icon-wrap" style="background:rgba(79,70,229,0.08);">
-                                <i class="fas fa-home fa-xl" style="color:#4f46e5;"></i>
+                            <div class="icon-wrap" style="background:rgba(13,148,136,0.08);">
+                                <i class="fas fa-home fa-xl" style="color:#0d9488;"></i>
                             </div>
                             <h6><?= __('nav_residential') ?></h6>
                         </div>
@@ -151,41 +185,98 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         </div>
     </section>
 
-    <!-- Stats -->
-    <section class="py-5">
+    <!-- Stats - Big Company Feel -->
+    <section class="py-0" style="margin-top:-20px;position:relative;z-index:10;">
         <div class="container">
-            <?php
-            $hero_stats = $hero_stats ?? [
-                'years_experience' => '15',
-                'projects_completed' => '50',
-                'happy_customers' => '5000',
-                'awards_won' => '25'
-            ];
-            ?>
-            <div class="row g-4 stat-animate">
-                <div class="col-6 col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-number"><?php echo $hero_stats['years_experience']; ?>+</div>
-                        <div class="stat-label"><?= __('years_experience') ?></div>
+            <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#0d9488 100%);border-radius:24px;padding:40px 30px;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15)">
+                <div style="position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 70%);border-radius:50%"></div>
+                <div style="position:absolute;bottom:-30%;left:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(16,185,129,0.15) 0%,transparent 70%);border-radius:50%"></div>
+                
+                <div class="row g-4 align-items-center position-relative" style="z-index:2">
+                    <div class="col-lg-3 col-6">
+                        <div class="text-center">
+                            <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;border:1px solid rgba(255,255,255,0.15)">
+                                <i class="fas fa-vector-square fa-lg" style="color:#10b981"></i>
+                            </div>
+                            <div class="stat-number" data-target="5000" data-suffix="+" style="color:#fff;font-size:2.2rem;font-weight:800;line-height:1">0</div>
+                            <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:500;margin-top:4px">Plots Sold</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="text-center">
+                            <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;border:1px solid rgba(255,255,255,0.15)">
+                                <i class="fas fa-home fa-lg" style="color:#3b82f6"></i>
+                            </div>
+                            <div class="stat-number" data-target="500" data-suffix="+" style="color:#fff;font-size:2.2rem;font-weight:800;line-height:1">0</div>
+                            <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:500;margin-top:4px">Happy Families</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="text-center">
+                            <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;border:1px solid rgba(255,255,255,0.15)">
+                                <i class="fas fa-city fa-lg" style="color:#f59e0b"></i>
+                            </div>
+                            <div class="stat-number" data-target="4" data-suffix="" style="color:#fff;font-size:2.2rem;font-weight:800;line-height:1">0</div>
+                            <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:500;margin-top:4px">Colonies Delivered</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="text-center">
+                            <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;border:1px solid rgba(255,255,255,0.15)">
+                                <i class="fas fa-calendar-alt fa-lg" style="color:#ec4899"></i>
+                            </div>
+                            <div class="stat-number" data-target="4" data-suffix="+" style="color:#fff;font-size:2.2rem;font-weight:800;line-height:1">0</div>
+                            <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:500;margin-top:4px">Years of Trust</div>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row g-3">
                 <div class="col-6 col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-number"><?php echo $hero_stats['projects_completed']; ?>+</div>
-                        <div class="stat-label"><?= __('projects_completed') ?></div>
-                    </div>
+                    <a href="<?php echo BASE_URL; ?>/properties?type=residential" class="text-decoration-none">
+                        <div class="quick-link-card">
+                            <div class="icon-wrap" style="background:rgba(13,148,136,0.08);">
+                                <i class="fas fa-home fa-xl" style="color:#0d9488;"></i>
+                            </div>
+                            <h6><?= __('nav_residential') ?></h6>
+                        </div>
+                    </a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-number"><?php echo $hero_stats['happy_customers']; ?>+</div>
-                        <div class="stat-label"><?= __('happy_clients') ?></div>
-                    </div>
+                    <a href="<?php echo BASE_URL; ?>/properties?type=commercial" class="text-decoration-none">
+                        <div class="quick-link-card">
+                            <div class="icon-wrap" style="background:rgba(16,185,129,0.08);">
+                                <i class="fas fa-store fa-xl" style="color:#10b981;"></i>
+                            </div>
+                            <h6><?= __('nav_commercial') ?></h6>
+                        </div>
+                    </a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-number"><?php echo $hero_stats['awards_won']; ?></div>
-                        <div class="stat-label"><?= __('awards_won') ?></div>
-                    </div>
+                    <a href="<?php echo BASE_URL; ?>/properties?type=plot" class="text-decoration-none">
+                        <div class="quick-link-card">
+                            <div class="icon-wrap" style="background:rgba(245,158,11,0.08);">
+                                <i class="fas fa-vector-square fa-xl" style="color:#f59e0b;"></i>
+                            </div>
+                            <h6><?= __('plots') ?></h6>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="<?php echo BASE_URL; ?>/list-property" class="text-decoration-none">
+                        <div class="quick-link-card">
+                            <div class="icon-wrap" style="background:rgba(6,182,212,0.08);">
+                                <i class="fas fa-plus-circle fa-xl" style="color:#06b6d4;"></i>
+                            </div>
+                            <h6><?= __('nav_post_property') ?></h6>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -242,7 +333,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                     <div class="result-card bg-dark text-white" style="background: rgba(15, 23, 42, 0.95) !important; border: 1px solid rgba(255,255,255,0.05); box-shadow: var(--shadow-xl); border-radius: var(--radius-md); padding: 1.75rem;">
                                         <p class="text-white-50 mb-1 small text-uppercase text-center"
                                             style="letter-spacing:0.08em;"><?= __('home_your_monthly_emi') ?></p>
-                                        <p class="display-5 fw-bold mb-0 text-center" id="emiResult" style="color:#818cf8;">₹42,426</p>
+                                        <p class="display-5 fw-bold mb-0 text-center" id="emiResult" style="color:#14b8a6;">₹42,426</p>
                                         
                                         <!-- Animated Donut Chart -->
                                         <div class="emi-chart-container my-3">
@@ -259,7 +350,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 
                                         <hr class="border-secondary my-3">
                                         <div class="d-flex justify-content-between">
-                                            <span class="text-white-50"><i class="fas fa-circle me-1" style="color: #818cf8;"></i><?= __('home_loan_amount') ?></span>
+                                            <span class="text-white-50"><i class="fas fa-circle me-1" style="color: #14b8a6;"></i><?= __('home_loan_amount') ?></span>
                                             <span class="fw-bold text-white" id="totalPrincipalDisp">₹50,00,000</span>
                                         </div>
                                         <div class="d-flex justify-content-between mt-2">
@@ -339,134 +430,323 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     calcEMI();
     </script>
 
-    <!-- Our Projects -->
-    <section class="py-5 bg-light" aria-labelledby="projects-title">
+    <!-- Construction Excellence - Builder Section -->
+    <section class="py-5" style="background:#f8fafc" aria-labelledby="construction-title">
         <div class="container">
-            <div class="text-center mb-4">
-                <span class="section-label"><?= __('home_our_portfolio') ?></span>
-                <h2 id="projects-title" class="fw-bold"><?= __('section_our_projects') ?></h2>
-                <p class="section-subtitle"><?= __('projects_subtitle') ?></p>
-                <div class="section-divider"></div>
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px">
+                        <i class="fas fa-hard-hat"></i> Builder & Developer
+                    </div>
+                    <h2 id="construction-title" style="font-size:2rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px;line-height:1.2;margin-bottom:16px">
+                        Building <span style="background:linear-gradient(135deg,#0f172a,#1e3a5f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Dreams</span> Into Reality
+                    </h2>
+                    <p style="color:#64748b;font-size:1rem;line-height:1.8;margin-bottom:20px">
+                        From raw land to thriving colonies — we handle everything. Our team of architects, 
+                        engineers, and project managers deliver quality construction on time, every time.
+                    </p>
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div style="background:#fff;border-radius:12px;padding:16px;border:1px solid #f1f5f9">
+                                <div style="display:flex;align-items:center;gap:10px">
+                                    <div style="width:40px;height:40px;border-radius:10px;background:#f0fdfa;display:flex;align-items:center;justify-content:center">
+                                        <i class="fas fa-drafting-compass" style="color:#0d9488"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:700;color:#1e293b;font-size:0.9rem">Planning</div>
+                                        <div style="color:#64748b;font-size:0.75rem">Architectural Design</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="background:#fff;border-radius:12px;padding:16px;border:1px solid #f1f5f9">
+                                <div style="display:flex;align-items:center;gap:10px">
+                                    <div style="width:40px;height:40px;border-radius:10px;background:#eff6ff;display:flex;align-items:center;justify-content:center">
+                                        <i class="fas fa-road" style="color:#3b82f6"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:700;color:#1e293b;font-size:0.9rem">Infrastructure</div>
+                                        <div style="color:#64748b;font-size:0.75rem">Roads, Drainage, Lights</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="background:#fff;border-radius:12px;padding:16px;border:1px solid #f1f5f9">
+                                <div style="display:flex;align-items:center;gap:10px">
+                                    <div style="width:40px;height:40px;border-radius:10px;background:#fef3c7;display:flex;align-items:center;justify-content:center">
+                                        <i class="fas fa-tree" style="color:#f59e0b"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:700;color:#1e293b;font-size:0.9rem">Green Spaces</div>
+                                        <div style="color:#64748b;font-size:0.75rem">Parks & Landscaping</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="background:#fff;border-radius:12px;padding:16px;border:1px solid #f1f5f9">
+                                <div style="display:flex;align-items:center;gap:10px">
+                                    <div style="width:40px;height:40px;border-radius:10px;background:#fce7f3;display:flex;align-items:center;justify-content:center">
+                                        <i class="fas fa-bolt" style="color:#ec4899"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:700;color:#1e293b;font-size:0.9rem">Utilities</div>
+                                        <div style="color:#64748b;font-size:0.75rem">Electricity & Water</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="<?= BASE_URL ?>/company/projects" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;padding:12px 28px;border-radius:12px;font-weight:700;font-size:0.95rem;text-decoration:none;transition:all 0.3s">
+                        <i class="fas fa-arrow-right"></i> View Our Projects
+                    </a>
+                </div>
+                <div class="col-lg-6">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                        <div style="border-radius:20px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.08)">
+                            <img src="<?= BASE_URL ?>/assets/images/construction-1.jpg" alt="Construction Work" style="width:100%;height:200px;object-fit:cover;display:block" loading="lazy">
+                        </div>
+                        <div style="border-radius:20px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.08)">
+                            <img src="<?= BASE_URL ?>/assets/images/construction-2.jpg" alt="Building Progress" style="width:100%;height:200px;object-fit:cover;display:block" loading="lazy">
+                        </div>
+                        <div style="border-radius:20px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.08);grid-column:span 2">
+                            <img src="<?= BASE_URL ?>/assets/images/construction-3.jpg" alt="Modern Construction" style="width:100%;height:200px;object-fit:cover;display:block" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Colony Development Showcase -->
+    <section class="py-5" aria-labelledby="colony-title">
+        <div class="container">
+            <div class="text-center mb-5">
+                <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,0.08);color:#10b981;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px">
+                    <i class="fas fa-city"></i> Colony Development
+                </div>
+                <h2 id="colony-title" style="font-size:2rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px">
+                    From <span style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Land to Thriving Communities</span>
+                </h2>
+                <p style="color:#64748b;font-size:1rem;max-width:600px;margin:0 auto">
+                    Watch us transform raw land into beautiful colonies with modern infrastructure, parks, and amenities.
+                </p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%" class="scroll-reveal">
+                        <div style="position:relative;height:220px;overflow:hidden">
+                            <img src="<?= BASE_URL ?>/assets/images/colony-dev-1.jpg" alt="Colony Development" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+                            <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,0.7))">
+                                <span style="background:#10b981;color:#fff;font-size:0.7rem;font-weight:700;padding:4px 12px;border-radius:50px">Delivered</span>
+                            </div>
+                        </div>
+                        <div style="padding:20px">
+                            <h5 style="font-weight:700;color:#1e293b;margin-bottom:8px">Suryoday Colony</h5>
+                            <p style="color:#64748b;font-size:0.85rem;margin-bottom:12px">1050+ plots on 35 acres — 100+ plots sold with possession delivered. Rate ₹999+/sqft</p>
+                            <div style="display:flex;gap:16px;font-size:0.8rem;color:#94a3b8">
+                                <span><i class="fas fa-map-marker-alt me-1" style="color:#10b981"></i>Gorakhpur</span>
+                                <span><i class="fas fa-vector-square me-1" style="color:#10b981"></i>1050+ Plots</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%" class="scroll-reveal">
+                        <div style="position:relative;height:220px;overflow:hidden">
+                            <img src="<?= BASE_URL ?>/assets/images/colony-dev-2.jpg" alt="Colony Development" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+                            <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,0.7))">
+                                <span style="background:#f59e0b;color:#fff;font-size:0.7rem;font-weight:700;padding:4px 12px;border-radius:50px">Ongoing</span>
+                            </div>
+                        </div>
+                        <div style="padding:20px">
+                            <h5 style="font-weight:700;color:#1e293b;margin-bottom:8px">Braj Radha Nagri</h5>
+                            <p style="color:#64748b;font-size:0.85rem;margin-bottom:12px">1550+ plots across 10 acres — largest colony project in Gorakhpur with premium amenities</p>
+                            <div style="display:flex;gap:16px;font-size:0.8rem;color:#94a3b8">
+                                <span><i class="fas fa-map-marker-alt me-1" style="color:#f59e0b"></i>Gorakhpur</span>
+                                <span><i class="fas fa-vector-square me-1" style="color:#f59e0b"></i>1550+ Plots</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%" class="scroll-reveal">
+                        <div style="position:relative;height:220px;overflow:hidden">
+                            <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" alt="Colony Development" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+                            <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,0.7))">
+                                <span style="background:#3b82f6;color:#fff;font-size:0.7rem;font-weight:700;padding:4px 12px;border-radius:50px">Upcoming</span>
+                            </div>
+                        </div>
+                        <div style="padding:20px">
+                            <h5 style="font-weight:700;color:#1e293b;margin-bottom:8px">Budh Bihar Colony</h5>
+                            <p style="color:#64748b;font-size:0.85rem;margin-bottom:12px">1280+ affordable plots in Kushinagar with clear titles and all basic amenities</p>
+                            <div style="display:flex;gap:16px;font-size:0.8rem;color:#94a3b8">
+                                <span><i class="fas fa-map-marker-alt me-1" style="color:#3b82f6"></i>Kushinagar</span>
+                                <span><i class="fas fa-vector-square me-1" style="color:#3b82f6"></i>1280+ Plots</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Premium Projects -->
+    <section class="projects-section" aria-labelledby="projects-title">
+        <div class="container">
+            <div class="text-center ps-section-header">
+                <span class="section-label" style="background:rgba(13,148,136,0.08);color:#0d9488;">Portfolio</span>
+                <h2 id="projects-title" class="ps-heading"><?= __('section_our_projects') ?></h2>
+                <p class="ps-subtitle"><?= __('projects_subtitle') ?></p>
+                <div class="section-divider-modern"></div>
             </div>
 
-            <!-- Location Filter Tabs -->
-            <div class="filter-tabs-container">
-                <button class="filter-tab-btn active" data-filter="all"><?= __('all_locations') ?></button>
-                <button class="filter-tab-btn" data-filter="gorakhpur"><?= __('loc_gorakhpur') ?></button>
-                <button class="filter-tab-btn" data-filter="lucknow"><?= __('loc_lucknow') ?></button>
-                <button class="filter-tab-btn" data-filter="kushinagar"><?= __('loc_kushinagar') ?></button>
+            <!-- Filter Tabs - mobile horizontal scroll -->
+            <div class="ps-filter-scroll">
+                <div class="ps-filter-bar">
+                    <button class="ps-filter-btn active" data-filter="all">
+                        <i class="fas fa-globe-asia"></i><span><?= __('all_locations') ?></span>
+                    </button>
+                    <button class="ps-filter-btn" data-filter="gorakhpur">
+                        <i class="fas fa-map-pin"></i><span><?= __('loc_gorakhpur') ?></span>
+                    </button>
+                    <button class="ps-filter-btn" data-filter="lucknow">
+                        <i class="fas fa-map-pin"></i><span><?= __('loc_lucknow') ?></span>
+                    </button>
+                    <button class="ps-filter-btn" data-filter="kushinagar">
+                        <i class="fas fa-map-pin"></i><span><?= __('loc_kushinagar') ?></span>
+                    </button>
+                </div>
             </div>
 
-            <div class="row card-stagger">
+            <div class="ps-grid">
                 <?php
                 $featured_properties = $featured_properties ?? [];
                 $hasProjects = !empty($featured_properties);
                 if (!$hasProjects):
-                    // Fallback projects from database
                     $fallbackProjects = [
-                        ['title' => 'Suryoday Colony', 'city' => 'Gorakhpur', 'price' => __('home_starting_5_5l'), 'slug' => 'suryoday-colony', 'status' => __('home_available'), 'img' => 'gorakhpur/suryoday.jpg'],
-                        ['title' => 'Raghunath Nagri', 'city' => 'Gorakhpur', 'price' => __('home_starting_7_5l'), 'slug' => 'raghunath-nagri', 'status' => __('home_available'), 'img' => 'gorakhpur/raghunath nagri motiram.JPG'],
-                        ['title' => 'Braj Radha Nagri', 'city' => 'Lucknow', 'price' => __('home_starting_12l'), 'slug' => 'braj-radha-nagri', 'status' => __('home_available'), 'img' => 'gorakhpur/suryoday1.jpeg'],
-                        ['title' => 'Budh Bihar Colony', 'city' => 'Kushinagar', 'price' => __('home_starting_3_5l'), 'slug' => 'budh-bihar-colony', 'status' => __('home_available'), 'img' => 'kushinagar/budh-bihar.jpg'],
+                        ['title' => 'Suryoday Colony', 'city' => 'Gorakhpur', 'price' => '₹999+/sqft', 'slug' => 'suryoday-colony', 'status' => 'Possession Ready', 'img' => 'gorakhpur/suryoday.jpg', 'plots' => '1050+', 'type' => 'Residential', 'area' => '35 Acres', 'sold' => '100+ Sold'],
+                        ['title' => 'Braj Radha Nagri', 'city' => 'Gorakhpur', 'price' => '₹7.5L+', 'slug' => 'braj-radha-nagri', 'status' => 'Available', 'img' => 'gorakhpur/braj-radha-nagri.jpg', 'plots' => '1550+', 'type' => 'Premium', 'area' => '10 Acres', 'sold' => 'Best Seller'],
+                        ['title' => 'Raghunath Nagri', 'city' => 'Gorakhpur', 'price' => '₹5.5L+', 'slug' => 'raghunath-nagri', 'status' => 'Available', 'img' => 'projects/gorakhpur/raghunath-nagri.jpg', 'plots' => '780+', 'type' => 'Residential', 'area' => '22 Acres', 'sold' => 'Hot Deal'],
+                        ['title' => 'Budh Bihar Colony', 'city' => 'Kushinagar', 'price' => '₹3.5L+', 'slug' => 'budh-bihar-colony', 'status' => 'Available', 'img' => 'kushinagar/budh-bihar.jpg', 'plots' => '1280+', 'type' => 'Affordable', 'area' => '30 Acres', 'sold' => 'Value Buy'],
                     ];
-                    foreach ($fallbackProjects as $project):
+                    foreach ($fallbackProjects as $p):
                 ?>
-                <div class="col-lg-3 col-md-6 mb-4 project-card-item" data-location="<?= strtolower($project['city'] ?? '') ?>">
-                    <div class="project-card h-100">
-                        <div class="position-relative overflow-hidden">
+                <div class="ps-card-wrap project-card-item" data-location="<?= strtolower($p['city']) ?>">
+                    <div class="ps-card">
+                        <div class="ps-card-img">
                             <img loading="lazy"
-                                src="<?php echo BASE_URL; ?>/assets/images/projects/<?= $project['img'] ?>"
-                                class="w-100" style="height:190px;object-fit:cover;"
-                                alt="<?= htmlspecialchars($project['title'] ?? __('home_property_image')) ?>"
-                                onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
-                            <span
-                                class="badge bg-success position-absolute top-0 end-0 m-2 px-3 py-1"><?= $project['status'] ?></span>
+                                src="<?= BASE_URL ?>/assets/images/<?= $p['img'] ?>"
+                                alt="<?= htmlspecialchars($p['title']) ?>"
+                                onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
+                            <div class="ps-card-img-grad"></div>
+                            <span class="ps-badge ps-badge-status"><?= $p['status'] ?></span>
+                            <span class="ps-badge ps-badge-type"><?= $p['type'] ?></span>
+                            <div class="ps-card-location-chip"><i class="fas fa-map-marker-alt"></i> <?= $p['city'] ?></div>
                         </div>
-                        <div class="card-body aps-cp-card-body">
-                            <h5 class="card-title"><?= $project['title'] ?></h5>
-                            <p class="text-muted small mb-2"><i
-                                    class="fas fa-map-marker-alt me-1"></i><?= $project['city'] ?></p>
-                            <p class="price"><?= $project['price'] ?></p>
-                            <a href="<?php echo BASE_URL; ?>/colony/<?= $project['slug'] ?>"
-                                class="btn btn-outline-primary btn-sm px-4"><?= __('view_details') ?></a>
+                        <div class="ps-card-body">
+                            <h5 class="ps-card-title"><?= $p['title'] ?></h5>
+                            <div class="ps-card-stats">
+                                <span><i class="fas fa-vector-square"></i> <?= $p['plots'] ?> Plots</span>
+                                <span><i class="fas fa-expand-arrows-alt"></i> <?= $p['area'] ?></span>
+                            </div>
+                            <div style="background:#f0fdf4;color:#166534;font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:10px">
+                                <i class="fas fa-check-circle me-1"></i> <?= $p['sold'] ?>
+                            </div>
+                            <div class="ps-card-bottom">
+                                <div class="ps-price"><small>Starting</small> <?= $p['price'] ?></div>
+                                <a href="<?= BASE_URL ?>/colony/<?= $p['slug'] ?>" class="ps-btn"><?= __('view_details') ?> <i class="fas fa-arrow-right"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <?php endforeach; ?>
                 <?php else: ?>
-                <?php foreach (array_slice($featured_properties, 0, 4) as $project):
-                        $slug = $projectTitle = $project['title'] ?? '';
+                <?php foreach (array_slice($featured_properties, 0, 6) as $project):
+                        $projectTitle = $project['title'] ?? $project['name'] ?? '';
                         $slug = $project['slug'] ?? strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $projectTitle));
                         $imgPath = '/assets/images/projects/';
                         if ($projectTitle && stripos($projectTitle, 'Suryoday') !== false) {
                             $imgPath .= 'gorakhpur/suryoday.jpg';
                         } elseif ($projectTitle && stripos($projectTitle, 'Raghunath') !== false) {
-                            $imgPath .= 'gorakhpur/raghunath nagri motiram.JPG';
-                        } elseif ($projectTitle && stripos($projectTitle, 'Braj') !== false) {
-                            $imgPath .= 'gorakhpur/suryoday1.jpeg';
+                            $imgPath .= 'gorakhpur/raghunath-nagri.jpg';
+                        } elseif ($projectTitle && stripos($projectTitle, 'Braj') !== false || stripos($projectTitle, 'Radha') !== false) {
+                            $imgPath .= 'gorakhpur/braj-radha-nagri.jpg';
                         } elseif ($projectTitle && stripos($projectTitle, 'Budh') !== false) {
                             $imgPath .= 'kushinagar/budh-bihar.jpg';
+                        } elseif ($projectTitle && stripos($projectTitle, 'APS Valley') !== false) {
+                            $imgPath .= 'lucknow/aps-valley.jpg';
+                        } elseif ($projectTitle && stripos($projectTitle, 'APS Heights') !== false) {
+                            $imgPath .= 'prayagraj/aps-heights.jpg';
                         } else {
                             $imgPath .= 'placeholder/property.svg';
                         }
                     ?>
-                <div class="col-lg-3 col-md-6 mb-4 project-card-item" data-location="<?php echo strtolower($project['city'] ?? ''); ?>">
-                    <div class="project-card h-100">
-                        <div class="position-relative overflow-hidden">
-                            <img loading="lazy" src="<?php echo BASE_URL . $imgPath; ?>" class="w-100"
-                                style="height:190px;object-fit:cover;"
-                                alt="<?php echo htmlspecialchars($project['title'] ?? __('home_property_image')); ?>"
-                                onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
-                            <span
-                                class="badge bg-success position-absolute top-0 end-0 m-2 px-3 py-1"><?php echo $project['status']; ?></span>
+                <div class="ps-card-wrap project-card-item" data-location="<?= strtolower($project['city'] ?? '') ?>">
+                    <div class="ps-card">
+                        <div class="ps-card-img">
+                            <img loading="lazy" src="<?= BASE_URL . $imgPath ?>"
+                                alt="<?= htmlspecialchars($projectTitle) ?>"
+                                onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
+                            <div class="ps-card-img-grad"></div>
+                            <span class="ps-badge ps-badge-status"><?= $project['status'] ?? 'Available' ?></span>
+                            <span class="ps-badge ps-badge-type"><?= $project['type'] ?? 'Residential' ?></span>
+                            <div class="ps-card-location-chip"><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($project['city'] ?? '') ?></div>
                         </div>
-                        <div class="card-body aps-cp-card-body">
-                            <h5 class="card-title"><?php echo htmlspecialchars($project['title'] ?? ''); ?></h5>
-                            <p class="text-muted small mb-2"><i
-                                    class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($project['city'] ?? ''); ?>
-                            </p>
-                            <p class="price"><?php echo $project['price']; ?></p>
-                            <a href="<?php echo BASE_URL; ?>/colony/<?php echo $slug; ?>"
-                                class="btn btn-outline-primary btn-sm px-4"><?= __('view_details') ?></a>
+                        <div class="ps-card-body">
+                            <h5 class="ps-card-title"><?= htmlspecialchars($projectTitle) ?></h5>
+                            <div class="ps-card-stats">
+                                <?php if (!empty($project['plots'])): ?>
+                                <span><i class="fas fa-vector-square"></i> <?= $project['plots'] ?> Plots</span>
+                                <?php endif; ?>
+                                <?php if (!empty($project['area'])): ?>
+                                <span><i class="fas fa-expand-arrows-alt"></i> <?= $project['area'] ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <?php if (!empty($project['sold'])): ?>
+                            <div style="background:#f0fdf4;color:#166534;font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:10px">
+                                <i class="fas fa-check-circle me-1"></i> <?= $project['sold'] ?>
+                            </div>
+                            <?php endif; ?>
+                            <div class="ps-card-bottom">
+                                <div class="ps-price"><small>Starting</small> <?= $project['price'] ?? '' ?></div>
+                                <a href="<?= BASE_URL ?>/colony/<?= $slug ?>" class="ps-btn"><?= __('view_details') ?> <i class="fas fa-arrow-right"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <?php endforeach; ?>
                 <?php endif; ?>
             </div>
-            
+
             <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const btns = document.querySelectorAll('.filter-tab-btn');
-                const items = document.querySelectorAll('.project-card-item');
-                btns.forEach(btn => {
+                var btns = document.querySelectorAll('.ps-filter-btn');
+                var items = document.querySelectorAll('.project-card-item');
+                btns.forEach(function(btn) {
                     btn.addEventListener('click', function() {
-                        btns.forEach(b => b.classList.remove('active'));
+                        btns.forEach(function(b) { b.classList.remove('active'); });
                         this.classList.add('active');
-                        const filterVal = this.getAttribute('data-filter');
-                        items.forEach(item => {
-                            const itemLoc = item.getAttribute('data-location') || '';
-                            if (filterVal === 'all' || itemLoc.includes(filterVal)) {
-                                item.style.display = 'block';
-                                const card = item.querySelector('.project-card');
-                                if (card) {
-                                    card.classList.remove('is-hidden');
-                                    card.classList.add('is-visible');
-                                }
+                        var f = this.getAttribute('data-filter');
+                        items.forEach(function(item) {
+                            var loc = item.getAttribute('data-location') || '';
+                            if (f === 'all' || loc.indexOf(f) !== -1) {
+                                item.style.display = '';
+                                item.style.opacity = '0';
+                                item.style.transform = 'scale(0.95)';
+                                requestAnimationFrame(function() {
+                                    item.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+                                    item.style.opacity = '1';
+                                    item.style.transform = 'scale(1)';
+                                });
                             } else {
-                                const card = item.querySelector('.project-card');
-                                if (card) {
-                                    card.classList.remove('is-visible');
-                                    card.classList.add('is-hidden');
-                                }
-                                setTimeout(() => {
-                                    if (this.classList.contains('active')) { // only hide if state hasn't changed back
-                                        const curFilter = this.getAttribute('data-filter');
-                                        if (curFilter !== 'all' && !itemLoc.includes(curFilter)) {
-                                            item.style.display = 'none';
-                                        }
-                                    }
-                                }, 300);
+                                item.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                                item.style.opacity = '0';
+                                item.style.transform = 'scale(0.95)';
+                                setTimeout(function() { item.style.display = 'none'; }, 250);
                             }
                         });
                     });
@@ -474,99 +754,478 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             });
             </script>
 
-            <div class="text-center mt-4">
-                <a href="<?php echo BASE_URL; ?>/company/projects"
-                    class="btn btn-gradient btn-lg"><?= __('nav_all_projects') ?></a>
+            <div class="text-center ps-viewall-wrap">
+                <a href="<?= BASE_URL ?>/company/projects" class="ps-viewall-btn">
+                    <i class="fas fa-th-large"></i> <?= __('nav_all_projects') ?> <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Services -->
-    <section class="py-5" style="background:#f8fafc;" aria-labelledby="services-title">
+    <!-- Platform Users - Big Company Social Proof -->
+    <section class="py-5" style="background:#f8fafc" aria-labelledby="users-title">
         <div class="container">
             <div class="text-center mb-5">
-                <span class="section-label"><?= __('home_our_expertise') ?></span>
-                <h2 id="services-title" class="fw-bold"><?= __('our_services') ?></h2>
-                <p class="section-subtitle"><?= __('services_tagline') ?></p>
-                <div class="section-divider"></div>
+                <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.08);color:#f59e0b;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px">
+                    <i class="fas fa-users"></i> Trusted Platform
+                </div>
+                <h2 id="users-title" style="font-size:2rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px">
+                    Thousands Trust <span style="background:linear-gradient(135deg,#f59e0b,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">APS Dream Home</span>
+                </h2>
+                <p style="color:#64748b;font-size:1rem;max-width:600px;margin:0 auto">
+                    From buyers to sellers, renters to agents — our platform serves everyone in the real estate ecosystem.
+                </p>
             </div>
-            <div class="row g-4 card-stagger">
-                <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card icon-green" onclick="openServiceModal('loan')">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto">
-                                <i class="fas fa-hand-holding-usd fa-2x"></i>
-                            </div>
-                            <h5 class="fw-bold mb-2"><?= __('home_service_home_loan') ?></h5>
-                            <p class="text-muted small"><?= __('home_service_home_loan_desc') ?></p>
-                            <span
-                                class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill"><?= __('home_service_home_loan_badge') ?></span>
+            
+            <div class="row g-4">
+                <!-- Buyers -->
+                <div class="col-lg-3 col-md-6">
+                    <div style="background:#fff;border-radius:20px;padding:28px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%;border:1px solid #f1f5f9" class="scroll-reveal">
+                        <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#0f172a,#1e3a5f);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#fff">
+                            <i class="fas fa-shopping-cart"></i>
                         </div>
+                        <h3 style="font-size:2rem;font-weight:800;color:#1e293b;margin-bottom:4px">2,500+</h3>
+                        <p style="color:#64748b;font-size:0.9rem;margin-bottom:16px">Happy Buyers</p>
+                        <p style="color:#94a3b8;font-size:0.82rem;line-height:1.6;margin:0">Found their dream plot through our platform and became proud homeowners</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card icon-indigo" onclick="openServiceModal('legal')">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto">
-                                <i class="fas fa-gavel fa-2x"></i>
-                            </div>
-                            <h5 class="fw-bold mb-2"><?= __('home_service_legal') ?></h5>
-                            <p class="text-muted small"><?= __('home_service_legal_desc') ?></p>
-                            <span
-                                class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill"><?= __('home_service_legal_badge') ?></span>
+                
+                <!-- Sellers -->
+                <div class="col-lg-3 col-md-6">
+                    <div style="background:#fff;border-radius:20px;padding:28px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%;border:1px solid #f1f5f9" class="scroll-reveal">
+                        <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#fff">
+                            <i class="fas fa-hand-holding-usd"></i>
                         </div>
+                        <h3 style="font-size:2rem;font-weight:800;color:#1e293b;margin-bottom:4px">800+</h3>
+                        <p style="color:#64748b;font-size:0.9rem;margin-bottom:16px">Property Sellers</p>
+                        <p style="color:#94a3b8;font-size:0.82rem;line-height:1.6;margin:0">Listed and sold their properties with transparent pricing and legal support</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card icon-amber" onclick="openServiceModal('interior')">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto">
-                                <i class="fas fa-couch fa-2x"></i>
-                            </div>
-                            <h5 class="fw-bold mb-2"><?= __('home_service_interior') ?></h5>
-                            <p class="text-muted small"><?= __('home_service_interior_desc') ?></p>
-                            <span
-                                class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill"><?= __('home_interior_badge') ?></span>
+                
+                <!-- Renters -->
+                <div class="col-lg-3 col-md-6">
+                    <div style="background:#fff;border-radius:20px;padding:28px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%;border:1px solid #f1f5f9" class="scroll-reveal">
+                        <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#3b82f6,#14b8a6);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#fff">
+                            <i class="fas fa-key"></i>
                         </div>
+                        <h3 style="font-size:2rem;font-weight:800;color:#1e293b;margin-bottom:4px">1,200+</h3>
+                        <p style="color:#64748b;font-size:0.9rem;margin-bottom:16px">Rental Deals</p>
+                        <p style="color:#94a3b8;font-size:0.82rem;line-height:1.6;margin:0">Verified rental properties with secure documentation and easy payments</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card icon-red" onclick="openServiceModal('registry')">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto">
-                                <i class="fas fa-file-signature fa-2x"></i>
-                            </div>
-                            <h5 class="fw-bold mb-2"><?= __('home_service_registry') ?></h5>
-                            <p class="text-muted small"><?= __('home_service_registry_desc') ?></p>
-                            <span
-                                class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill"><?= __('home_service_registry_badge') ?></span>
+                
+                <!-- Agents/Associates -->
+                <div class="col-lg-3 col-md-6">
+                    <div style="background:#fff;border-radius:20px;padding:28px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%;border:1px solid #f1f5f9" class="scroll-reveal">
+                        <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#f59e0b,#ec4899);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#fff">
+                            <i class="fas fa-user-tie"></i>
                         </div>
+                        <h3 style="font-size:2rem;font-weight:800;color:#1e293b;margin-bottom:4px">500+</h3>
+                        <p style="color:#64748b;font-size:0.9rem;margin-bottom:16px">Active Associates</p>
+                        <p style="color:#94a3b8;font-size:0.82rem;line-height:1.6;margin:0">Earning commissions through our MLM network and helping families find homes</p>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card icon-purple" onclick="openServiceModal('rental')">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto">
-                                <i class="fas fa-file-contract fa-2x"></i>
+            </div>
+            
+            <!-- Testimonial Ticker -->
+            <div style="margin-top:48px;background:#fff;border-radius:20px;padding:24px 32px;box-shadow:0 4px 20px rgba(0,0,0,0.04);border:1px solid #f1f5f9">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center text-md-start mb-3 mb-md-0">
+                        <div style="display:inline-flex;align-items:center;gap:6px;color:#f59e0b;font-weight:700">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div style="font-size:0.85rem;color:#64748b;margin-top:4px">5.0/5 Rating</div>
+                    </div>
+                    <div class="col-md-7">
+                        <div style="overflow:hidden;height:24px;position:relative">
+                            <div id="testimonial-ticker" style="animation:scrollTestimonials 12s linear infinite">
+                                <p style="color:#1e293b;font-size:0.95rem;font-weight:600;margin:0;height:24px;line-height:24px"><i class="fas fa-quote-left me-2" style="color:#0d9488"></i>"Best real estate platform in Gorakhpur. Found my dream plot in Suryoday Colony!"</p>
+                                <p style="color:#1e293b;font-size:0.95rem;font-weight:600;margin:0;height:24px;line-height:24px"><i class="fas fa-quote-left me-2" style="color:#0d9488"></i>"Transparent dealings and legal documentation. Highly recommended!"</p>
+                                <p style="color:#1e293b;font-size:0.95rem;font-weight:600;margin:0;height:24px;line-height:24px"><i class="fas fa-quote-left me-2" style="color:#0d9488"></i>"From plot booking to registry, everything was smooth. Thank you APS!"</p>
+                                <p style="color:#1e293b;font-size:0.95rem;font-weight:600;margin:0;height:24px;line-height:24px"><i class="fas fa-quote-left me-2" style="color:#0d9488"></i>"The EMI calculator and payment plans made everything so easy."</p>
                             </div>
-                            <h5 class="fw-bold mb-2"><?= __('home_service_rental') ?></h5>
-                            <p class="text-muted small"><?= __('home_service_rental_desc') ?></p>
-                            <span
-                                class="badge bg-purple bg-opacity-10 text-purple px-3 py-2 rounded-pill"><?= __('home_service_rental_badge') ?></span>
                         </div>
                     </div>
+                    <div class="col-md-3 text-center text-md-end">
+                        <a href="<?= BASE_URL ?>/testimonials" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;padding:10px 24px;border-radius:10px;font-weight:600;font-size:0.85rem;text-decoration:none;transition:all 0.3s">
+                            View All Reviews <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm service-card icon-cyan" onclick="openServiceModal('tax')">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-wrapper mx-auto">
-                                <i class="fas fa-file-invoice-dollar fa-2x"></i>
-                            </div>
-                            <h5 class="fw-bold mb-2"><?= __('home_service_tax') ?></h5>
-                            <p class="text-muted small"><?= __('home_service_tax_desc') ?></p>
-                            <span
-                                class="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill"><?= __('home_service_tax_badge') ?></span>
+            </div>
+        </div>
+    </section>
+
+    <style>
+    @keyframes scrollTestimonials {
+        0% { transform: translateY(0); }
+        20% { transform: translateY(0); }
+        25% { transform: translateY(-24px); }
+        45% { transform: translateY(-24px); }
+        50% { transform: translateY(-48px); }
+        70% { transform: translateY(-48px); }
+        75% { transform: translateY(-72px); }
+        95% { transform: translateY(-72px); }
+        100% { transform: translateY(0); }
+    }
+    </style>
+
+    <style>
+    /* ===== PROJECTS SECTION — Mobile First ===== */
+    .projects-section {
+        padding: 2.5rem 0;
+        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+    .ps-section-header { margin-bottom: 1.5rem; }
+    .ps-heading {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 0.4rem;
+        letter-spacing: -0.5px;
+    }
+    .ps-subtitle {
+        color: #64748b;
+        font-size: 0.88rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Filter Tabs */
+    .ps-filter-scroll {
+        margin-bottom: 1.5rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding: 0 1rem;
+    }
+    .ps-filter-scroll::-webkit-scrollbar { display: none; }
+    .ps-filter-bar {
+        display: inline-flex;
+        gap: 6px;
+        padding: 4px;
+        background: #fff;
+        border-radius: 50px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        border: 1px solid #e2e8f0;
+        min-width: max-content;
+    }
+    .ps-filter-btn {
+        border: none;
+        background: transparent;
+        padding: 7px 14px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #64748b;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .ps-filter-btn i { font-size: 0.7rem; }
+    .ps-filter-btn:hover { color: #0d9488; background: rgba(13,148,136,0.06); }
+    .ps-filter-btn.active {
+        background: linear-gradient(135deg, #0d9488, #0f766e);
+        color: #fff;
+        box-shadow: 0 3px 12px rgba(13,148,136,0.3);
+    }
+
+    /* Card Grid */
+    .ps-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    /* Card */
+    .ps-card {
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        transition: all 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
+        display: flex;
+        flex-direction: column;
+    }
+    .ps-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+        border-color: #0d9488;
+    }
+
+    /* Card Image */
+    .ps-card-img {
+        position: relative;
+        height: 160px;
+        overflow: hidden;
+    }
+    .ps-card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .ps-card:hover .ps-card-img img { transform: scale(1.06); }
+    .ps-card-img-grad {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(15,23,42,0.55) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    /* Badges */
+    .ps-badge {
+        position: absolute;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        z-index: 2;
+        letter-spacing: 0.3px;
+    }
+    .ps-badge-status {
+        top: 10px;
+        right: 10px;
+        background: #10b981;
+        color: #fff;
+    }
+    .ps-badge-type {
+        top: 10px;
+        left: 10px;
+        background: rgba(255,255,255,0.92);
+        color: #0d9488;
+        backdrop-filter: blur(6px);
+    }
+    .ps-card-location-chip {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(6px);
+        color: #fff;
+        font-size: 0.68rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        z-index: 2;
+    }
+    .ps-card-location-chip i { color: #ef4444; font-size: 0.6rem; }
+
+    /* Card Body */
+    .ps-card-body {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .ps-card-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 8px;
+        line-height: 1.3;
+    }
+    .ps-card-stats {
+        display: flex;
+        gap: 14px;
+        padding: 8px 0;
+        border-top: 1px solid #f1f5f9;
+        margin-bottom: 10px;
+    }
+    .ps-card-stats span {
+        font-size: 0.72rem;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .ps-card-stats i { color: #0d9488; font-size: 0.65rem; }
+
+    /* Card Bottom */
+    .ps-card-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+        gap: 8px;
+    }
+    .ps-price {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #0d9488;
+        line-height: 1.2;
+    }
+    .ps-price small {
+        font-size: 0.62rem;
+        font-weight: 500;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .ps-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: linear-gradient(135deg, #0d9488, #0f766e);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 7px 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    .ps-btn:hover {
+        transform: translateX(3px);
+        box-shadow: 0 4px 12px rgba(13,148,136,0.3);
+        color: #fff;
+    }
+    .ps-btn i { font-size: 0.65rem; transition: transform 0.25s ease; }
+    .ps-btn:hover i { transform: translateX(2px); }
+
+    /* View All */
+    .ps-viewall-wrap { margin-top: 1.5rem; }
+    .ps-viewall-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #0d9488, #0f766e);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 700;
+        padding: 12px 24px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(13,148,136,0.25);
+    }
+    .ps-viewall-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(13,148,136,0.35);
+        color: #fff;
+    }
+    .ps-viewall-btn i:last-child { transition: transform 0.3s ease; }
+    .ps-viewall-btn:hover i:last-child { transform: translateX(3px); }
+
+    /* ===== TABLET (>= 576px) ===== */
+    @media (min-width: 576px) {
+        .projects-section { padding: 3.5rem 0; }
+        .ps-heading { font-size: 1.7rem; }
+        .ps-subtitle { font-size: 0.95rem; }
+        .ps-filter-btn { padding: 8px 18px; font-size: 0.8rem; }
+        .ps-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .ps-card-img { height: 170px; }
+        .ps-card-body { padding: 16px; }
+        .ps-card-title { font-size: 1rem; }
+        .ps-price { font-size: 1rem; }
+        .ps-btn { padding: 8px 16px; font-size: 0.72rem; }
+        .ps-viewall-btn { padding: 13px 28px; font-size: 0.9rem; }
+    }
+
+    /* ===== DESKTOP (>= 992px) ===== */
+    @media (min-width: 992px) {
+        .projects-section { padding: 5rem 0; }
+        .ps-section-header { margin-bottom: 2rem; }
+        .ps-heading { font-size: 2.2rem; }
+        .ps-subtitle { font-size: 1.05rem; }
+        .ps-filter-scroll { margin-left: 0; margin-right: 0; padding: 0; }
+        .ps-filter-bar { min-width: auto; }
+        .ps-filter-btn { padding: 10px 22px; font-size: 0.875rem; }
+        .ps-filter-btn i { font-size: 0.8rem; }
+        .ps-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .ps-card-img { height: 200px; }
+        .ps-card-body { padding: 20px; }
+        .ps-card-title { font-size: 1.1rem; }
+        .ps-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.12); }
+        .ps-card-bottom { flex-direction: column; align-items: flex-start; gap: 10px; }
+        .ps-btn { width: 100%; justify-content: center; padding: 10px; }
+        .ps-viewall-btn { padding: 14px 36px; font-size: 1rem; }
+    }
+    </style>
+
+    <!-- Services (Modern Cards) -->
+    <section class="py-5" style="background:linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);" aria-labelledby="services-title">
+        <div class="container">
+            <div class="text-center mb-5 reveal">
+                <span class="section-label" style="background:rgba(16,185,129,0.08);color:#059669;">Expertise</span>
+                <h2 id="services-title" class="fw-bold" style="font-size:2.2rem;"><?= __('our_services') ?></h2>
+                <p class="section-subtitle" style="color:var(--gray-500);"><?= __('services_tagline') ?></p>
+                <div class="section-divider-modern" style="background:linear-gradient(135deg,#10b981,#06b6d4);"></div>
+            </div>
+            <div class="row g-4 stagger-children">
+                <div class="col-lg-4 col-md-6 reveal">
+                    <div class="service-card-modern" onclick="openServiceModal('loan')" style="--service-color:#10b981;">
+                        <div class="service-icon" style="background:rgba(16,185,129,0.1);">
+                            <i class="fas fa-hand-holding-usd fa-2x" style="color:#10b981;"></i>
                         </div>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_home_loan') ?></h5>
+                        <p class="text-muted small mb-3"><?= __('home_service_home_loan_desc') ?></p>
+                        <span class="badge px-3 py-2 rounded-pill" style="background:rgba(16,185,129,0.1);color:#10b981;"><?= __('home_service_home_loan_badge') ?></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 reveal">
+                    <div class="service-card-modern" onclick="openServiceModal('legal')" style="--service-color:#6366f1;">
+                        <div class="service-icon" style="background:rgba(99,102,241,0.1);">
+                            <i class="fas fa-gavel fa-2x" style="color:#6366f1;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_legal') ?></h5>
+                        <p class="text-muted small mb-3"><?= __('home_service_legal_desc') ?></p>
+                        <span class="badge px-3 py-2 rounded-pill" style="background:rgba(99,102,241,0.1);color:#6366f1;"><?= __('home_service_legal_badge') ?></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 reveal">
+                    <div class="service-card-modern" onclick="openServiceModal('interior')" style="--service-color:#f59e0b;">
+                        <div class="service-icon" style="background:rgba(245,158,11,0.1);">
+                            <i class="fas fa-couch fa-2x" style="color:#f59e0b;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_interior') ?></h5>
+                        <p class="text-muted small mb-3"><?= __('home_service_interior_desc') ?></p>
+                        <span class="badge px-3 py-2 rounded-pill" style="background:rgba(245,158,11,0.1);color:#f59e0b;"><?= __('home_interior_badge') ?></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 reveal">
+                    <div class="service-card-modern" onclick="openServiceModal('registry')" style="--service-color:#ef4444;">
+                        <div class="service-icon" style="background:rgba(239,68,68,0.1);">
+                            <i class="fas fa-file-signature fa-2x" style="color:#ef4444;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_registry') ?></h5>
+                        <p class="text-muted small mb-3"><?= __('home_service_registry_desc') ?></p>
+                        <span class="badge px-3 py-2 rounded-pill" style="background:rgba(239,68,68,0.1);color:#ef4444;"><?= __('home_service_registry_badge') ?></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 reveal">
+                    <div class="service-card-modern" onclick="openServiceModal('rental')" style="--service-color:#14b8a6;">
+                        <div class="service-icon" style="background:rgba(20,184,166,0.1);">
+                            <i class="fas fa-file-contract fa-2x" style="color:#14b8a6;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_rental') ?></h5>
+                        <p class="text-muted small mb-3"><?= __('home_service_rental_desc') ?></p>
+                        <span class="badge px-3 py-2 rounded-pill" style="background:rgba(20,184,166,0.1);color:#14b8a6;"><?= __('home_service_rental_badge') ?></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 reveal">
+                    <div class="service-card-modern" onclick="openServiceModal('tax')" style="--service-color:#06b6d4;">
+                        <div class="service-icon" style="background:rgba(6,182,212,0.1);">
+                            <i class="fas fa-file-invoice-dollar fa-2x" style="color:#06b6d4;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2"><?= __('home_service_tax') ?></h5>
+                        <p class="text-muted small mb-3"><?= __('home_service_tax_desc') ?></p>
+                        <span class="badge px-3 py-2 rounded-pill" style="background:rgba(6,182,212,0.1);color:#06b6d4;"><?= __('home_service_tax_badge') ?></span>
                     </div>
                 </div>
             </div>
@@ -753,7 +1412,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 whatsapp: 'https://wa.me/919277121112'
             },
             legal: {
-                color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                color: 'linear-gradient(135deg, #6366f1, #0d9488)',
                 icon: 'fa-gavel',
                 title: t.service_legal,
                 subtitle: t.service_legal_sub,
@@ -800,7 +1459,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 ctaColor: 'danger'
             },
             rental: {
-                color: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                color: 'linear-gradient(135deg, #14b8a6, #0f766e)',
                 icon: 'fa-file-contract',
                 title: t.service_rental,
                 subtitle: t.service_rental_sub,
@@ -916,60 +1575,65 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     }
     </script>
 
-    <!-- Why Choose Us -->
+    <!-- Why Choose Us (Modern) -->
     <section class="py-5 bg-light" aria-labelledby="why-choose-title">
         <div class="container">
             <div class="row align-items-center g-5">
-                <div class="col-lg-6">
-                    <span class="section-label"><?= __('home_why_us') ?></span>
-                    <h2 id="why-choose-title" class="fw-bold mb-4"><?= __('section_why_choose_us') ?></h2>
-                    <div class="checklist-item">
-                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                <div class="col-lg-6 reveal-left">
+                    <span class="section-label" style="background:rgba(13,148,136,0.08);color:#0d9488;">Why Us</span>
+                    <h2 id="why-choose-title" class="fw-bold mb-4" style="font-size:2.2rem;"><?= __('section_why_choose_us') ?></h2>
+                    <div class="checklist-item" style="display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.25rem;">
+                        <div class="check-icon" style="width:44px;height:44px;min-width:44px;border-radius:12px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;color:#10b981;">
+                            <i class="fas fa-check"></i>
+                        </div>
                         <div>
-                            <h6><?= __('why_choose_15_years') ?></h6>
-                            <p><?= __('why_choose_15_years_desc') ?></p>
+                            <h6 class="fw-bold mb-1"><?= __('why_choose_15_years') ?></h6>
+                            <p class="text-muted small mb-0"><?= __('why_choose_15_years_desc') ?></p>
                         </div>
                     </div>
-                    <div class="checklist-item">
-                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                    <div class="checklist-item" style="display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.25rem;">
+                        <div class="check-icon" style="width:44px;height:44px;min-width:44px;border-radius:12px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;color:#6366f1;">
+                            <i class="fas fa-check"></i>
+                        </div>
                         <div>
-                            <h6><?= __('why_choose_rera') ?></h6>
-                            <p><?= __('why_choose_rera_desc') ?></p>
+                            <h6 class="fw-bold mb-1"><?= __('why_choose_rera') ?></h6>
+                            <p class="text-muted small mb-0"><?= __('why_choose_rera_desc') ?></p>
                         </div>
                     </div>
-                    <div class="checklist-item">
-                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                    <div class="checklist-item" style="display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.25rem;">
+                        <div class="check-icon" style="width:44px;height:44px;min-width:44px;border-radius:12px;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;color:#f59e0b;">
+                            <i class="fas fa-check"></i>
+                        </div>
                         <div>
-                            <h6><?= __('why_choose_transparent') ?></h6>
-                            <p><?= __('why_choose_transparent_desc') ?></p>
+                            <h6 class="fw-bold mb-1"><?= __('why_choose_transparent') ?></h6>
+                            <p class="text-muted small mb-0"><?= __('why_choose_transparent_desc') ?></p>
                         </div>
                     </div>
-                    <div class="checklist-item">
-                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                    <div class="checklist-item" style="display:flex;gap:1rem;align-items:flex-start;">
+                        <div class="check-icon" style="width:44px;height:44px;min-width:44px;border-radius:12px;background:rgba(239,68,68,0.1);display:flex;align-items:center;justify-content:center;color:#ef4444;">
+                            <i class="fas fa-check"></i>
+                        </div>
                         <div>
-                            <h6><?= __('why_choose_support') ?></h6>
-                            <p><?= __('why_choose_support_desc') ?></p>
+                            <h6 class="fw-bold mb-1"><?= __('why_choose_support') ?></h6>
+                            <p class="text-muted small mb-0"><?= __('why_choose_support_desc') ?></p>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-lg" style="border-radius:var(--radius-md);">
-                        <div class="card-body p-4 text-center">
-                            <div
-                                style="width:80px;height:80px;border-radius:50%;background:rgba(79,70,229,0.08);display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
-                                <i class="fas fa-headset fa-3x" style="color:#4f46e5;"></i>
-                            </div>
-                            <h4><?= __('need_help') ?></h4>
-                            <p class="text-muted mb-4"><?= __('need_help_desc') ?></p>
-                            <div class="d-grid gap-3">
-                                <a href="tel:<?= $phoneRaw ?>" class="btn btn-gradient btn-lg">
-                                    <i class="fas fa-phone me-2"></i><?= __('call_now') ?>
-                                </a>
-                                <a href="https://wa.me/919277121112" target="_blank"
-                                    class="btn btn-outline-dark btn-lg">
-                                    <i class="fab fa-whatsapp me-2"></i><?= __('home_whatsapp') ?>
-                                </a>
-                            </div>
+                <div class="col-lg-6 reveal-right">
+                    <div class="glass-card p-4 text-center" style="border-radius:20px;">
+                        <div style="width:80px;height:80px;border-radius:50%;background:rgba(13,148,136,0.1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.25rem;" class="float-slow">
+                            <i class="fas fa-headset fa-3x" style="color:#0d9488;"></i>
+                        </div>
+                        <h4 class="fw-bold"><?= __('need_help') ?></h4>
+                        <p class="text-muted mb-4"><?= __('need_help_desc') ?></p>
+                        <div class="d-grid gap-3">
+                            <a href="tel:<?= $phoneRaw ?>" class="btn btn-lg btn-glow btn-shine" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-radius:12px;">
+                                <i class="fas fa-phone me-2"></i><?= __('call_now') ?>
+                            </a>
+                            <a href="https://wa.me/919277121112" target="_blank"
+                                class="btn btn-outline-dark btn-lg btn-glow" style="border-radius:12px;">
+                                <i class="fab fa-whatsapp me-2"></i><?= __('home_whatsapp') ?>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1033,15 +1697,15 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="invest-card" style="border-top:4px solid #4f46e5;">
-                        <div class="icon-circle" style="background:rgba(79,70,229,0.08);">
-                            <i class="fas fa-ring fa-2x" style="color:#4f46e5;"></i>
+                    <div class="invest-card" style="border-top:4px solid #0d9488;">
+                        <div class="icon-circle" style="background:rgba(13,148,136,0.08);">
+                            <i class="fas fa-ring fa-2x" style="color:#0d9488;"></i>
                         </div>
-                        <h5 class="fw-bold" style="color:#4f46e5;"><?= __('home_invest_gold') ?></h5>
-                        <div class="return-pct" style="color:#4f46e5;">8-10%</div>
+                        <h5 class="fw-bold" style="color:#0d9488;"><?= __('home_invest_gold') ?></h5>
+                        <div class="return-pct" style="color:#0d9488;">8-10%</div>
                         <p class="text-muted small"><?= __('home_gold_desc') ?></p>
                         <div class="progress mb-2" style="height:6px;">
-                            <div class="progress-bar" style="width:35%;background:#4f46e5;"></div>
+                            <div class="progress-bar" style="width:35%;background:#0d9488;"></div>
                         </div>
                         <span class="badge"
                             style="background:rgba(6,182,212,0.15);color:#0891b2;"><?= __('home_safe_haven') ?></span>
@@ -1082,7 +1746,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         </div>
                         <div class="col-md-6">
                             <div class="checklist-item">
-                                <div class="check-icon" style="background:rgba(79,70,229,0.1);color:#4f46e5;">
+                                <div class="check-icon" style="background:rgba(13,148,136,0.1);color:#0d9488;">
                                     <i class="fas fa-building-columns"></i>
                                 </div>
                                 <div>
@@ -1421,7 +2085,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 
         var configs = {
             emi: {
-                color: 'linear-gradient(135deg, #667eea, #764ba2)',
+                color: 'linear-gradient(135deg, #0d9488, #0f766e)',
                 icon: 'fa-calculator',
                 title: T.emiCalc,
                 subtitle: T.emiCalcDesc,
@@ -1798,74 +2462,62 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         }
     </script>
 
-    <!-- Testimonials -->
-    <section class="py-5">
+    <!-- Testimonials (Modern Cards) -->
+    <section class="py-5" aria-labelledby="testimonials-title">
         <div class="container">
-            <div class="text-center mb-5">
-                <span class="section-label"><?= __('home_testimonials') ?></span>
-                <h2 class="fw-bold"><?= __('testimonials_title') ?></h2>
-                <div class="section-divider"></div>
+            <div class="text-center mb-5 reveal">
+                <span class="section-label" style="background:rgba(245,158,11,0.08);color:#d97706;">Testimonials</span>
+                <h2 id="testimonials-title" class="fw-bold" style="font-size:2.2rem;"><?= __('testimonials_title') ?></h2>
+                <div class="section-divider-modern" style="background:linear-gradient(135deg,#f59e0b,#ef4444);"></div>
             </div>
-            <div class="row card-stagger">
-                <div class="col-md-4 mb-4">
-                    <div class="testimonial-card">
-                        <div class="text-warning mb-3">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+            <div class="row g-4 stagger-children">
+                <div class="col-md-4 mb-4 reveal">
+                    <div class="testimonial-card-modern">
+                        <div class="text-warning mb-3" style="font-size:1.1rem;">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                         </div>
-                        <p class="card-text"><?= __('home_testimonial_1') ?></p>
+                        <p class="card-text mb-4" style="font-style:italic;color:var(--gray-600);line-height:1.7;"><?= __('home_testimonial_1') ?></p>
                         <div class="d-flex align-items-center">
                             <img src="<?php echo BASE_URL; ?>/assets/images/testimonials/testimonial-2.jpg"
                                 alt="<?= __('home_testimonial_1_name') ?>"
-                                class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;">
+                                class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;border:3px solid #f59e0b;">
                             <div>
-                                <h6 class="mb-0"><?= __('home_testimonial_1_name') ?></h6>
-                                <small class="text-muted"><?= __('home_testimonial_1_location') ?></small>
+                                <h6 class="mb-0 fw-bold"><?= __('home_testimonial_1_name') ?></h6>
+                                <small style="color:var(--gray-400);"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_1_location') ?></small>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="testimonial-card">
-                        <div class="text-warning mb-3">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                <div class="col-md-4 mb-4 reveal">
+                    <div class="testimonial-card-modern">
+                        <div class="text-warning mb-3" style="font-size:1.1rem;">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                         </div>
-                        <p class="card-text"><?= __('home_testimonial_2') ?></p>
+                        <p class="card-text mb-4" style="font-style:italic;color:var(--gray-600);line-height:1.7;"><?= __('home_testimonial_2') ?></p>
                         <div class="d-flex align-items-center">
                             <img src="<?php echo BASE_URL; ?>/assets/images/testimonials/testimonial-1.jpg"
                                 alt="<?= __('home_testimonial_2_name') ?>"
-                                class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;">
+                                class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;border:3px solid #10b981;">
                             <div>
-                                <h6 class="mb-0"><?= __('home_testimonial_2_name') ?></h6>
-                                <small class="text-muted"><?= __('home_testimonial_2_location') ?></small>
+                                <h6 class="mb-0 fw-bold"><?= __('home_testimonial_2_name') ?></h6>
+                                <small style="color:var(--gray-400);"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_2_location') ?></small>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="testimonial-card">
-                        <div class="text-warning mb-3">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
+                <div class="col-md-4 mb-4 reveal">
+                    <div class="testimonial-card-modern">
+                        <div class="text-warning mb-3" style="font-size:1.1rem;">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
                         </div>
-                        <p class="card-text"><?= __('home_testimonial_3') ?></p>
+                        <p class="card-text mb-4" style="font-style:italic;color:var(--gray-600);line-height:1.7;"><?= __('home_testimonial_3') ?></p>
                         <div class="d-flex align-items-center">
                             <img src="<?php echo BASE_URL; ?>/assets/images/testimonials/testimonial-3.jpg"
                                 alt="<?= __('home_testimonial_3_name') ?>"
-                                class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;">
+                                class="rounded-circle me-3" width="50" height="50" style="object-fit:cover;border:3px solid #6366f1;">
                             <div>
-                                <h6 class="mb-0"><?= __('home_testimonial_3_name') ?></h6>
-                                <small class="text-muted"><?= __('home_testimonial_3_location') ?></small>
+                                <h6 class="mb-0 fw-bold"><?= __('home_testimonial_3_name') ?></h6>
+                                <small style="color:var(--gray-400);"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_3_location') ?></small>
                             </div>
                         </div>
                     </div>
@@ -1986,8 +2638,8 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     <div class="career-card">
                         <div class="card-body p-4">
                             <div class="text-center mb-3">
-                                <div class="icon-circle mx-auto" style="background:rgba(79,70,229,0.08);">
-                                    <i class="fas fa-crown fa-2x" style="color:#4f46e5;"></i>
+                                <div class="icon-circle mx-auto" style="background:rgba(13,148,136,0.08);">
+                                    <i class="fas fa-crown fa-2x" style="color:#0d9488;"></i>
                                 </div>
                                 <h5 class="fw-bold mb-1 mt-3"><?= __('home_mlm_benefits') ?></h5>
                                 <p class="text-muted small mb-3"><?= __('home_mlm_benefits_desc') ?></p>
@@ -2014,11 +2666,11 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                         <?php endforeach; ?>
                                         <?php else: ?>
                                         <tr><td class="ps-2 fw-semibold">Associate</td><td>₹0+</td><td class="text-success fw-bold">5%</td><td class="text-end text-muted">Mobile Phone</td></tr>
-                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Sr. Associate</td><td>₹10L+</td><td class="text-success fw-bold">7%</td><td class="text-end text-muted">Tablet</td></tr>
+                                        <tr style="background:rgba(13,148,136,0.04);"><td class="ps-2 fw-semibold">Sr. Associate</td><td>₹10L+</td><td class="text-success fw-bold">7%</td><td class="text-end text-muted">Tablet</td></tr>
                                         <tr><td class="ps-2 fw-semibold">BDM</td><td>₹35L+</td><td class="text-success fw-bold">10%</td><td class="text-end text-muted">Laptop</td></tr>
-                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">Sr. BDM</td><td>₹70L+</td><td class="text-success fw-bold">12%</td><td class="text-end text-muted">Tour Package</td></tr>
+                                        <tr style="background:rgba(13,148,136,0.04);"><td class="ps-2 fw-semibold">Sr. BDM</td><td>₹70L+</td><td class="text-success fw-bold">12%</td><td class="text-end text-muted">Tour Package</td></tr>
                                         <tr><td class="ps-2 fw-semibold">Vice President</td><td>₹1.5Cr+</td><td class="text-success fw-bold">15%</td><td class="text-end text-muted">Pulsar Bike</td></tr>
-                                        <tr style="background:rgba(79,70,229,0.04);"><td class="ps-2 fw-semibold">President</td><td>₹3Cr+</td><td class="text-success fw-bold">18%</td><td class="text-end text-muted">Bullet Bike</td></tr>
+                                        <tr style="background:rgba(13,148,136,0.04);"><td class="ps-2 fw-semibold">President</td><td>₹3Cr+</td><td class="text-success fw-bold">18%</td><td class="text-end text-muted">Bullet Bike</td></tr>
                                         <tr><td class="ps-2 fw-semibold">Site Manager</td><td>₹5Cr+</td><td class="text-success fw-bold">20%</td><td class="text-end text-muted">Hatchback Car</td></tr>
                                         <?php endif; ?>
                                     </tbody>
@@ -2066,20 +2718,28 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         </div>
     </section>
 
-    <!-- CTA -->
-    <section class="py-5 text-white text-center cta-gradient bg-gradient-cta" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero/cta-bg.jpg');background-size:cover;background-position:center;background-repeat:no-repeat;">
-        <div class="container">
-            <span class="badge bg-white bg-opacity-15 text-white px-3 py-2 mb-3"
-                style="background:rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.3);"><?= __('home_get_in_touch') ?></span>
-            <h2 class="fw-bold mb-3"><?= __('cta_title') ?></h2>
-            <p class="mb-4" style="font-size:1.1rem;opacity:0.9;"><?= __('cta_subtitle') ?></p>
-            <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg px-4">
-                    <i class="fas fa-phone me-2"></i><?= __('home_call_now') ?>
-                </a>
-                <a href="https://wa.me/919277121112" target="_blank" class="btn btn-success btn-lg px-4">
-                    <i class="fab fa-whatsapp me-2"></i><?= __('home_whatsapp') ?>
-                </a>
+    <!-- CTA (Modern) -->
+    <section class="py-5 text-white text-center cta-modern" style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);position:relative;overflow:hidden;">
+        <!-- Decorative elements -->
+        <div style="position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;"></div>
+        <div style="position:absolute;bottom:-30px;left:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;"></div>
+        <div class="container" style="position:relative;z-index:1;">
+            <div class="reveal">
+                <span class="badge px-3 py-2 mb-3"
+                    style="background:rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); backdrop-filter:blur(8px);">
+                    <i class="fas fa-phone-volume me-1"></i>
+                    <?= __('home_get_in_touch') ?>
+                </span>
+                <h2 class="fw-bold mb-3" style="font-size:2.2rem;"><?= __('cta_title') ?></h2>
+                <p class="mb-4" style="font-size:1.1rem;opacity:0.9;"><?= __('cta_subtitle') ?></p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg px-4 btn-glow btn-shine" style="border-radius:12px;">
+                        <i class="fas fa-phone me-2"></i><?= __('home_call_now') ?>
+                    </a>
+                    <a href="https://wa.me/919277121112" target="_blank" class="btn btn-success btn-lg px-4 btn-glow" style="border-radius:12px;">
+                        <i class="fab fa-whatsapp me-2"></i><?= __('home_whatsapp') ?>
+                    </a>
+                </div>
             </div>
         </div>
     </section>

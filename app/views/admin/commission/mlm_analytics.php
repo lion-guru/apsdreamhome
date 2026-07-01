@@ -16,7 +16,7 @@
     <div class="card aps-cp-card">
         <div class="card-header aps-cp-card-header"><i class="fas fa-table"></i> Period-wise Analytics</div>
         <div class="card-body p-0">
-            <table class="table table-striped mb-0">
+            <div class="table-responsive"><table class="table table-striped mb-0">
                 <thead><tr><th>Associate</th><th>Period</th><th>Earned</th><th>Paid</th><th>Pending</th><th>Direct</th><th>Team</th><th>Bonus</th></tr></thead>
                 <tbody>
                     <?php foreach ($analytics ?? [] as $a): ?>
@@ -32,7 +32,7 @@
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

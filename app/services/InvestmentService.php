@@ -98,11 +98,120 @@ class InvestmentService
         $sipDate = $data['sip_date'] ?? null;
         $autoInvest = $monthly ? 1 : 0;
 
-        $stmt = $this->pdo->prepare("INSERT INTO investments (user_id, plan_id, investment_ref, principal_amount, current_value, monthly_amount, sip_date, start_date, maturity_date, status, auto_invest) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?)");
-        $stmt->execute([$userId, $planId, $ref, $amount, $amount, $monthly, $sipDate, $start, $maturity, $autoInvest]);
+        $promisedSqft = (int)($planRow['plot_promised_sqft'] ?? 0);
+        $promisedValue = (float)($planRow['plot_promised_value'] ?? 0);
+        $companyContrib = $promisedValue > 0 ? max(0.0, $promisedValue - $amount) : 0.0;
+
+        $stmt = $this->pdo->prepare("INSERT INTO investments (user_id, plan_id, investment_ref, principal_amount, current_value, monthly_amount, sip_date, start_date, maturity_date, status, auto_invest, company_contribution, plot_promised_sqft, plot_promised_value, maturity_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, 'pending')");
+        $stmt->execute([$userId, $planId, $ref, $amount, $amount, $monthly, $sipDate, $start, $maturity, $autoInvest, $companyContrib, $promisedSqft, $promisedValue]);
+        $investmentId = (int) $this->pdo->lastInsertId();
+
+        // Wire up commission: if a referrer is specified, pay 3% (2% agent + 0.7% L1 + 0.3% L2)
+        $referrerUserId = (int)($data['referrer_user_id'] ?? 0);
+        $commissionResult = null;
+        if ($referrerUserId > 0) {
+            try {
+                $engine = new HybridCommissionEngine($this->pdo);
+                $commissionResult = $engine->investmentSale($investmentId, $userId, $amount, $referrerUserId);
+            } catch (\Throwable $e) {
+                error_log("[InvestmentService] commission wiring failed for investment #{$investmentId}: " . $e->getMessage());
+                // Non-fatal — investment is recorded, commission failure logged
+            }
+        }
 
         $this->updateInvestorLevel($userId);
-        return ['success' => true, 'investment_id' => $this->pdo->lastInsertId(), 'investment_ref' => $ref];
+        return [
+            'success'        => true,
+            'investment_id'  => $investmentId,
+            'investment_ref' => $ref,
+            'commission'     => $commissionResult,
+        ];
+    }
+
+    /**
+     * Cancel an active investment with a 365-day lock-in period.
+     *
+     * If cancelled before 365 days: 10% service charge deducted from principal.
+     * If cancelled after 365 days: no charge (full refund).
+     *
+     * Commission reversal is triggered automatically if a referrer was paid.
+     *
+     * @param int   $userId   users.id
+     * @param int   $investmentId  investments.id
+     * @param string $reason   Cancellation reason
+     * @return array{success: bool, refund_amount: float, service_charge: float, error?: string}
+     */
+    public function cancelInvestment(int $userId, int $investmentId, string $reason = ''): array
+    {
+        // Fetch investment
+        $stmt = $this->pdo->prepare("SELECT * FROM investments WHERE id = ? AND user_id = ?");
+        $stmt->execute([$investmentId, $userId]);
+        $inv = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$inv) {
+            return ['success' => false, 'refund_amount' => 0, 'service_charge' => 0, 'error' => 'Investment not found'];
+        }
+        if ($inv['status'] !== 'active') {
+            return ['success' => false, 'refund_amount' => 0, 'service_charge' => 0, 'error' => 'Investment is not active (status: ' . $inv['status'] . ')'];
+        }
+
+        // Calculate lock-in: 365 days from start_date
+        $startDate  = new \DateTime($inv['start_date']);
+        $now        = new \DateTime();
+        $daysHeld   = (int) $startDate->diff($now)->days;
+        $lockInDays = 365;
+
+        $principal = (float) $inv['principal_amount'];
+        if ($daysHeld < $lockInDays) {
+            // Early cancellation: 10% service charge
+            $serviceCharge = round($principal * 0.10, 2);
+            $refundAmount  = round($principal - $serviceCharge, 2);
+        } else {
+            // After lock-in: full refund
+            $serviceCharge = 0.0;
+            $refundAmount  = $principal;
+        }
+
+        try {
+            $this->pdo->beginTransaction();
+
+            // Update investment status
+            $this->pdo->prepare("
+                UPDATE investments
+                SET status = 'cancelled', updated_at = NOW(), notes = CONCAT(COALESCE(notes,''), '\nCancelled: ', ?)
+                WHERE id = ?
+            ")->execute([$reason ?: 'User requested cancellation', $investmentId]);
+
+            // Reverse any commissions paid for this investment
+            $commissionReversal = ['reversed' => 0, 'total_reversed' => 0];
+            try {
+                $engine = new \App\Services\HybridCommissionEngine($this->pdo);
+                $commissionReversal = $engine->reverseInvestmentCommissions(
+                    $investmentId,
+                    $reason ?: 'Investment cancelled — commission reversed'
+                );
+            } catch (\Throwable $e) {
+                error_log("[InvestmentService] commission reversal failed (non-blocking): " . $e->getMessage());
+            }
+
+            $this->pdo->commit();
+
+            return [
+                'success'            => true,
+                'refund_amount'      => $refundAmount,
+                'service_charge'     => $serviceCharge,
+                'days_held'          => $daysHeld,
+                'principal'          => $principal,
+                'commissions_reversed' => $commissionReversal['reversed'] ?? 0,
+                'total_reversed'     => $commissionReversal['total_reversed'] ?? 0,
+            ];
+
+        } catch (\Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            error_log("[InvestmentService] cancelInvestment FAILED: " . $e->getMessage());
+            return ['success' => false, 'refund_amount' => 0, 'service_charge' => 0, 'error' => $e->getMessage()];
+        }
     }
 
     public function updateInvestorLevel(int $userId): void

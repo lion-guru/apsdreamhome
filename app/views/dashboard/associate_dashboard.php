@@ -21,15 +21,37 @@ $recent_commissions = $recent_commissions ?? [];
 $activities = $activities ?? [];
 
 $gamify = $gamify ?? [];
+$rank_progress = $rank_progress ?? [];
+$wallet_balance = $wallet_balance ?? 0;
+$recent_bookings = $recent_bookings ?? [];
+$emi_summary = $emi_summary ?? ['total_emi' => 0, 'paid_emi' => 0, 'pending_emi' => 0, 'overdue_emi' => 0];
+$property_views = $property_views ?? 0;
+$total_inquiries = $total_inquiries ?? 0;
+
+// Format raw DB rank names (e.g. "sr_bdm" → "Sr. BDM", "vice_president" → "Vice President")
+$formatRank = function (?string $rank): string {
+    if (!$rank) return '';
+    $map = [
+        'associate' => 'Associate',
+        'senior_associate' => 'Senior Associate',
+        'bdm' => 'BDM',
+        'sr_bdm' => 'Sr. BDM',
+        'vice_president' => 'Vice President',
+        'president' => 'President',
+        'site_manager' => 'Site Manager',
+    ];
+    $lower = strtolower(trim($rank));
+    return $map[$lower] ?? ucwords(str_replace('_', ' ', $lower));
+};
 ?>
 
 <!-- Referral Code Banner -->
-<div class="alert alert-info bg-gradient d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4 border-0 rounded-3" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4 border-0 rounded-3 p-3" style="background: linear-gradient(135deg, #6366f1, #14b8a6);">
     <div class="d-flex align-items-center gap-3">
         <i class="fas fa-ticket-alt fa-2x text-white opacity-75"></i>
         <div>
             <strong class="text-white d-block">Your Referral Code</strong>
-            <span class="text-white-50 small">Share this code to earn rewards when others join</span>
+            <span class="small" style="color: rgba(255,255,255,0.7);">Share this code to earn rewards when others join</span>
         </div>
     </div>
     <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -40,7 +62,7 @@ $gamify = $gamify ?? [];
             <i class="fas fa-copy me-1"></i> Copy
         </button>
         <a href="<?php echo BASE_URL; ?>/become-associate" class="btn btn-light btn-sm px-3" target="_blank">
-            <i class="fas fa-external-link-alt me-1"></i> Shared Page
+            <i class="fas fa-external-link-alt me-1"></i> Share
         </a>
     </div>
 </div>
@@ -54,17 +76,102 @@ $gamify = $gamify ?? [];
 </div>
 <?php endif; ?>
 
-<!-- Quick Stats Row -->
+<!-- Rank Progress Widget -->
+<?php if (!empty($rank_progress) && !empty($rank_progress['next_rank'])): ?>
 <div class="row g-3 mb-4">
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card">
-            <div class="stat-icon blue"><i class="fas fa-tag"></i></div>
-            <div class="stat-value"><?php echo $stats['mlm_level']; ?></div>
-            <div class="stat-label">Your Rank</div>
-            <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <?php echo number_format($stats['team_sales']); ?> team sales</div>
+    <div class="col-12">
+        <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); color: #fff;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="mb-1 text-white"><i class="fas fa-trophy me-2" style="color: #fbbf24;"></i>Rank Progress</h5>
+                        <p class="mb-0 text-white-50 small">Your journey to the next rank</p>
+                    </div>
+                    <div class="text-end">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge px-3 py-2" style="background: rgba(255,255,255,0.15); font-size: 0.85rem;">
+                                <i class="fas fa-medal me-1"></i><?php echo htmlspecialchars($formatRank($rank_progress['current_rank'])); ?>
+                            </span>
+                            <i class="fas fa-arrow-right text-white-50"></i>
+                            <span class="badge px-3 py-2" style="background: #fbbf24; color: #1e293b; font-size: 0.85rem;">
+                                <i class="fas fa-crown me-1"></i><?php echo htmlspecialchars($formatRank($rank_progress['next_rank'])); ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="text-white-50">Overall Progress</small>
+                        <small class="text-white fw-bold"><?php echo $rank_progress['progress_pct']; ?>%</small>
+                    </div>
+                    <div class="progress" style="height: 12px; background: rgba(255,255,255,0.15); border-radius: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: <?php echo $rank_progress['progress_pct']; ?>%; background: linear-gradient(90deg, #fbbf24, #f59e0b); border-radius: 6px;"></div>
+                    </div>
+                </div>
+
+                <!-- Requirements -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: rgba(255,255,255,0.08);">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: rgba(59,130,246,0.2);">
+                                    <i class="fas fa-rupee-sign text-info"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="text-white-50 small">Group Business Volume</div>
+                                <div class="fw-bold text-white">₹<?php echo number_format($rank_progress['current_gbv']); ?></div>
+                                <div class="text-white-50 small">Required: ₹<?php echo number_format($rank_progress['next_rank_gbv']); ?></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: rgba(255,255,255,0.08);">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; background: rgba(16,185,129,0.2);">
+                                    <i class="fas fa-users text-success"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="text-white-50 small">Direct Legs</div>
+                                <div class="fw-bold text-white"><?php echo $rank_progress['current_legs']; ?></div>
+                                <div class="text-white-50 small">Required: <?php echo $rank_progress['next_rank_legs']; ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-6">
+</div>
+<?php elseif (!empty($rank_progress) && empty($rank_progress['next_rank'])): ?>
+<!-- Already at highest rank -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #1e293b;">
+            <div class="card-body p-4 text-center">
+                <i class="fas fa-crown fa-3x mb-3" style="color: #92400e;"></i>
+                <h4 class="mb-1">You've Reached the Highest Rank!</h4>
+                <p class="mb-0">Congratulations! You are at <strong><?php echo htmlspecialchars($formatRank($rank_progress['current_rank'])); ?></strong> — the top of the pyramid.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
+<!-- Quick Stats Row -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon blue"><i class="fas fa-tag"></i></div>
+            <div class="stat-value"><?php echo htmlspecialchars($formatRank($stats['mlm_level'])); ?></div>
+            <div class="stat-label">Your Rank</div>
+            <div class="stat-trend up"><i class="fas fa-arrow-up"></i> ₹<?php echo number_format($stats['team_sales']); ?> team sales</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
         <a href="<?php echo BASE_URL; ?>/associate/leads" class="stat-card-link">
             <div class="stat-card clickable">
                 <div class="stat-icon green"><i class="fas fa-users"></i></div>
@@ -75,15 +182,18 @@ $gamify = $gamify ?? [];
             </div>
         </a>
     </div>
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card">
-            <div class="stat-icon orange"><i class="fas fa-money-bill-wave"></i></div>
-            <div class="stat-value">₹<?php echo number_format($stats['total_commission']); ?></div>
-            <div class="stat-label">Total Commission</div>
-            <div class="stat-trend up"><i class="fas fa-arrow-up"></i> ₹<?php echo number_format($stats['commission_this_month']); ?> this month</div>
-        </div>
+    <div class="col-6 col-md-3">
+        <a href="<?php echo BASE_URL; ?>/associate/commissions" class="stat-card-link">
+            <div class="stat-card clickable">
+                <div class="stat-icon orange"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="stat-value">₹<?php echo number_format($stats['total_commission']); ?></div>
+                <div class="stat-label">Total Commission</div>
+                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> ₹<?php echo number_format($stats['commission_this_month']); ?> this month</div>
+                <div class="click-hint"><i class="fas fa-external-link-alt"></i> View All</div>
+            </div>
+        </a>
     </div>
-    <div class="col-md-3 col-sm-6">
+    <div class="col-6 col-md-3">
         <a href="<?php echo BASE_URL; ?>/associate/genealogy" class="stat-card-link">
             <div class="stat-card clickable">
                 <div class="stat-icon purple"><i class="fas fa-sitemap"></i></div>
@@ -93,6 +203,55 @@ $gamify = $gamify ?? [];
                 <div class="click-hint"><i class="fas fa-external-link-alt"></i> View Network</div>
             </div>
         </a>
+    </div>
+</div>
+
+<!-- Wallet + Property Stats Row -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <a href="<?php echo BASE_URL; ?>/associate/wallet" class="stat-card-link">
+            <div class="stat-card clickable">
+                <div class="stat-icon" style="background: rgba(16,185,129,0.1); color: #10b981;"><i class="fas fa-wallet"></i></div>
+                <div class="stat-value">₹<?php echo number_format($wallet_balance ?? 0); ?></div>
+                <div class="stat-label">Wallet Balance</div>
+                <div class="click-hint"><i class="fas fa-external-link-alt"></i> View Wallet</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-md-3">
+        <a href="<?php echo BASE_URL; ?>/associate/properties" class="stat-card-link">
+            <div class="stat-card clickable">
+                <div class="stat-icon" style="background: rgba(59,130,246,0.1); color: #3b82f6;"><i class="fas fa-eye"></i></div>
+                <div class="stat-value"><?php echo number_format($property_views ?? 0); ?></div>
+                <div class="stat-label">Property Views</div>
+                <div class="stat-trend"><i class="fas fa-info-circle"></i> <?php echo number_format($total_inquiries ?? 0); ?> inquiries</div>
+                <div class="click-hint"><i class="fas fa-external-link-alt"></i> View Properties</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(245,158,11,0.1); color: #f59e0b;"><i class="fas fa-file-invoice-dollar"></i></div>
+            <div class="stat-value"><?php echo number_format($emi_summary['paid_emi'] ?? 0); ?>/<?php echo number_format($emi_summary['total_emi'] ?? 0); ?></div>
+            <div class="stat-label">EMI Paid/Total</div>
+            <?php if (($emi_summary['overdue_emi'] ?? 0) > 0): ?>
+                <div class="stat-trend" style="color: #ef4444;"><i class="fas fa-exclamation-triangle"></i> <?php echo $emi_summary['overdue_emi']; ?> overdue</div>
+            <?php elseif (($emi_summary['pending_emi'] ?? 0) > 0): ?>
+                <div class="stat-trend" style="color: #f59e0b;"><i class="fas fa-clock"></i> <?php echo $emi_summary['pending_emi']; ?> pending</div>
+            <?php else: ?>
+                <div class="stat-trend up"><i class="fas fa-check-circle"></i> All clear</div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(20,184,166,0.1); color: #14b8a6;"><i class="fas fa-hand-holding-usd"></i></div>
+            <div class="stat-value">₹<?php echo number_format($stats['pending_commission'] ?? 0); ?></div>
+            <div class="stat-label">Pending Commission</div>
+            <div class="stat-trend"><i class="fas fa-info-circle"></i> Awaiting approval</div>
+        </div>
+    </div>
+</div>
     </div>
 </div>
 
@@ -132,6 +291,37 @@ $gamify = $gamify ?? [];
                 </div>
             </div>
         </div>
+
+        <!-- Bookings by Referrals -->
+        <?php if (!empty($recent_bookings)): ?>
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i class="fas fa-calendar-check text-success me-2"></i>Recent Bookings (Your Referrals)</h5>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr><th>Customer</th><th>Plot</th><th>Amount</th><th>Status</th><th>Date</th></tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($recent_bookings as $b): ?>
+                            <tr>
+                                <td><strong><?php echo htmlspecialchars($b['customer_name'] ?? ''); ?></strong></td>
+                                <td><?php echo htmlspecialchars(($b['plot_name'] ?? '') . ' - ' . ($b['colony_name'] ?? '')); ?></td>
+                                <td><strong>₹<?php echo number_format($b['total_plot_value'] ?? 0); ?></strong></td>
+                                <td><span class="badge bg-<?php echo ($b['booking_status'] ?? '') === 'confirmed' ? 'success' : (($b['booking_status'] ?? '') === 'cancelled' ? 'danger' : 'warning'); ?>"><?php echo ucfirst($b['booking_status'] ?? 'pending'); ?></span></td>
+                                <td><?php echo date('M d, Y', strtotime($b['created_at'])); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <!-- Recent Leads -->
         <div class="card border-0 shadow-sm mb-4">
@@ -358,7 +548,7 @@ function copyReferralCode() {
     .stat-icon.blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
     .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: #10b981; }
     .stat-icon.orange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-    .stat-icon.purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+    .stat-icon.purple { background: rgba(139, 92, 246, 0.1); color: #14b8a6; }
     .stat-value { font-size: 1.75rem; font-weight: 700; color: #1e293b; margin-bottom: 5px; }
     .stat-label { font-size: 0.875rem; color: #64748b; }
     .stat-trend { font-size: 0.8rem; margin-top: 10px; display: flex; align-items: center; gap: 5px; }

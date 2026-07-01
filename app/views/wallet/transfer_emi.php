@@ -1,5 +1,5 @@
-<?php $this->layout = 'layouts/base'; ?>
-<?php $this->title = 'Transfer to EMI - APS Dream Home'; ?>
+
+<?php $page_title = $page_title ?? 'Transfer to EMI - APS Dream Home'; ?>
 
 <style>
 .emi-card {
@@ -8,7 +8,7 @@
     padding: 25px;
     margin-bottom: 20px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #0d9488;
 }
 
 .emi-card.overdue {
@@ -20,7 +20,7 @@
 }
 
 .wallet-balance {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     border-radius: 15px;
     padding: 30px;
@@ -35,12 +35,12 @@
 }
 
 .form-control:focus {
-    border-color: #667eea;
+    border-color: #0d9488;
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 
 .btn-transfer {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     border: none;
     padding: 15px 40px;
     border-radius: 25px;
@@ -86,7 +86,7 @@
 }
 
 .info-box i {
-    color: #667eea;
+    color: #0d9488;
     margin-right: 10px;
 }
 </style>
@@ -94,7 +94,7 @@
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-exchange-alt me-2 text-primary"></i>Transfer Wallet to EMI</h2>
-        <a href="/wallet" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
+        <a href="<?php echo BASE_URL; ?>/<?= ($_SESSION['role'] ?? '') === 'associate' ? 'associate/wallet' : 'wallet' ?>" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
     </div>
 
     <!-- Wallet Balance -->

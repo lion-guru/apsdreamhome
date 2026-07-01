@@ -647,6 +647,69 @@ class MLMCommissionController extends AdminController
         $this->render('admin/mlm/royalty-pool');
     }
 
+    /**
+     * Save updated MLM plan parameters (rank benefits + settings).
+     */
+    public function planUpdate()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        $saved = 0;
+        $errors = [];
+
+        // 1. Update mlm_rank_benefits per rank
+        // Differential Model: direct_sale_pct = rank's own rate; l1_pct/l2_pct/l3_pct = 0 (not used)
+        // Upline overrides computed dynamically: Upline Rate − Rate of Level Below
+        if (!empty($_POST['benefits'])) {
+            foreach ($_POST['benefits'] as $rankName => $data) {
+                try {
+                    $legs = max(0, (int)($data['min_legs'] ?? 0));
+                    $vol = max(0, (float)($data['min_volume'] ?? 0));
+                    $direct = max(0, min(100, (float)($data['direct_sale_pct'] ?? 1)));
+                    $l1 = 0; // Differential model: not used
+                    $l2 = 0;
+                    $l3 = 0;
+                    $order = (int)($data['rank_order'] ?? 0);
+
+                     $this->db->query(
+                        "UPDATE mlm_rank_benefits SET min_leg_count = ?, min_qualifying_volume = ?, direct_sale_pct = ?, l1_pct = ?, l2_pct = ?, l3_pct = ?, rank_order = ? WHERE rank_name = ?",
+                        [$legs, $vol, $direct, $l1, $l2, $l3, $order, $rankName]
+                    );
+                    $saved++;
+                } catch (\Throwable $e) {
+                    $errors[] = "Failed to update {$rankName}: " . $e->getMessage();
+                }
+            }
+        }
+
+        // 2. Update global settings
+        if (!empty($_POST['settings'])) {
+            foreach ($_POST['settings'] as $key => $value) {
+                $allowed = ['global_cap_pct', 'royalty_pool_pct', 'min_qualifying_volume', 'escrow_release_threshold'];
+                if (!in_array($key, $allowed, true)) continue;
+                try {
+                    $val = max(0, (float)$value);
+                    $this->db->query(
+                        "INSERT INTO mlm_settings (setting_key, setting_value, updated_at) VALUES (?, ?, NOW()) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()",
+                        [$key, (string)$val]
+                    );
+                    $saved++;
+                } catch (\Throwable $e) {
+                    // mlm_settings may not exist — skip gracefully
+                }
+            }
+        }
+
+        if (!empty($errors)) {
+            $this->setFlash('error', implode('<br>', $errors));
+        } else {
+            $this->setFlash('success', "MLM plan updated successfully ({$saved} fields saved).");
+        }
+
+        return $this->redirect('/admin/mlm/plan-editor');
+    }
+
     /* =============================================================
      *  HELPERS
      * ============================================================= */
@@ -673,5 +736,175 @@ class MLMCommissionController extends AdminController
             echo '<h2>Invalid CSRF token</h2>';
             exit;
         }
+    }
+
+    /* =============================================================
+     *  MLM PLAN EDITOR — full CRUD for rank benefits + mlm_settings
+     * ============================================================= */
+
+    /**
+     * GET /admin/mlm/plan-editor
+     * Renders the plan editor with:
+     *   - $benefits  : rank rows from mlm_rank_benefits
+     *   - $levels    : level rows from mlm_levels
+     *   - $settings  : all rows from mlm_settings as key=>value map
+     */
+    public function planEditor()
+    {
+        $this->requireAdmin();
+
+        $benefits = [];
+        $levels   = [];
+        $settings = [];
+
+        try {
+            if ($this->db) {
+                $benefits = $this->db->query(
+                    "SELECT * FROM mlm_rank_benefits ORDER BY rank_order ASC"
+                )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+                $levels = $this->db->query(
+                    "SELECT * FROM mlm_levels ORDER BY level_number ASC"
+                )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+                $rows = $this->db->query(
+                    "SELECT setting_key, setting_value FROM mlm_settings"
+                )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+                foreach ($rows as $r) {
+                    $settings[$r['setting_key']] = $r['setting_value'];
+                }
+            }
+        } catch (\Exception $e) {
+            error_log('[MLMCommissionController] planEditor DB error: ' . $e->getMessage());
+        }
+
+        $this->data = array_merge($this->data, [
+            'page_title'   => 'MLM Plan Editor',
+            'page_heading' => 'MLM Plan Editor — Rates, Ranks & Settings',
+            'benefits'     => $benefits,
+            'levels'       => $levels,
+            'settings'     => $settings,
+        ]);
+
+        return $this->render('admin/mlm/plan-editor', $this->data);
+    }
+
+    /**
+     * POST /admin/mlm/plan-editor/update
+     * Saves:
+     *   - $_POST['benefits'][rank_name] => [direct_sale_pct, min_volume, min_legs, badge_icon, color_code, rank_order]
+     *   - $_POST['settings'][key]       => value   (all mlm_settings rows)
+     */
+    public function planEditorUpdate()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        $errors = [];
+        $saved  = 0;
+
+        try {
+            if (!$this->db) {
+                throw new \Exception('Database not available');
+            }
+
+            // ── 1. Update rank benefits ──────────────────────────────
+            $benefitsPOST = $_POST['benefits'] ?? [];
+            foreach ($benefitsPOST as $rankName => $fields) {
+                $directPct  = max(0, min(100, (float)($fields['direct_sale_pct'] ?? 0)));
+                $minVolume  = max(0, (int)($fields['min_volume'] ?? 0));
+                $minLegs    = max(0, (int)($fields['min_legs'] ?? 0));
+                $rankOrder  = max(1, (int)($fields['rank_order'] ?? 1));
+                $badgeIcon  = preg_replace('/[^a-z0-9\-_]/', '', $fields['badge_icon'] ?? 'fa-user');
+                $colorCode  = preg_replace('/[^#a-fA-F0-9]/', '', $fields['color_code'] ?? '#94a3b8');
+
+                $stmt = $this->db->prepare("
+                    UPDATE mlm_rank_benefits
+                    SET direct_sale_pct = ?,
+                        min_qualifying_volume = ?,
+                        min_leg_count   = ?,
+                        rank_order      = ?,
+                        badge_icon      = ?,
+                        color_code      = ?,
+                        updated_at      = NOW()
+                    WHERE rank_name = ?
+                ");
+                $stmt->execute([$directPct, $minVolume, $minLegs, $rankOrder, $badgeIcon, $colorCode, $rankName]);
+                $saved += $stmt->rowCount();
+            }
+
+            // ── 2. Update mlm_settings ───────────────────────────────
+            $settingsPOST = $_POST['settings'] ?? [];
+            $allowedSettings = [
+                'global_cap_pct', 'royalty_pool_pct', 'min_qualifying_volume', 'escrow_release_threshold',
+                'generation_bonus_pct', 'generation_bonus_enabled',
+                'gen1_match_pct', 'gen2_match_pct', 'gen3_match_pct',
+                'infinity_override_pct', 'infinity_override_enabled', 'infinity_min_rank',
+                'matching_bonus_enabled', 'matching_max_levels',
+                'rank_bonus_enabled', 'rank_bonus_amounts',
+                'min_monthly_volume', 'qualification_required',
+            ];
+
+            foreach ($allowedSettings as $key) {
+                if (!array_key_exists($key, $settingsPOST)) {
+                    continue;
+                }
+                $value = trim($settingsPOST[$key]);
+
+                // Validate numeric fields
+                if (in_array($key, ['global_cap_pct','royalty_pool_pct','generation_bonus_pct',
+                    'gen1_match_pct','gen2_match_pct','gen3_match_pct','infinity_override_pct'])) {
+                    $value = (string)max(0, min(100, (float)$value));
+                }
+                if (in_array($key, ['min_qualifying_volume','escrow_release_threshold','min_monthly_volume'])) {
+                    $value = (string)max(0, (int)$value);
+                }
+                if (in_array($key, ['generation_bonus_enabled','infinity_override_enabled',
+                    'matching_bonus_enabled','rank_bonus_enabled','qualification_required'])) {
+                    $value = $value === '1' ? '1' : '0';
+                }
+                if ($key === 'matching_max_levels') {
+                    $value = (string)max(1, min(10, (int)$value));
+                }
+                if ($key === 'infinity_min_rank') {
+                    $valid = ['associate','sr_associate','bdm','sr_bdm','vice_president','president','site_manager'];
+                    if (!in_array($value, $valid)) {
+                        $value = 'vice_president';
+                    }
+                }
+                if ($key === 'rank_bonus_amounts') {
+                    // Validate JSON
+                    $decoded = json_decode($value, true);
+                    if (!is_array($decoded)) {
+                        $errors[] = "Invalid JSON for rank_bonus_amounts";
+                        continue;
+                    }
+                }
+
+                $stmt = $this->db->prepare("
+                    INSERT INTO mlm_settings (setting_key, setting_value)
+                    VALUES (?, ?)
+                    ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)
+                ");
+                $stmt->execute([$key, $value]);
+                $saved++;
+            }
+
+            if (!empty($errors)) {
+                \App\Core\Session::flash('error', 'Saved with warnings: ' . implode('; ', $errors));
+            } else {
+                \App\Core\Session::flash('success', "Plan saved successfully. {$saved} settings updated.");
+            }
+
+        } catch (\Exception $e) {
+            error_log('[MLMCommissionController] planEditorUpdate error: ' . $e->getMessage());
+            \App\Core\Session::flash('error', 'Save failed: ' . $e->getMessage());
+        }
+
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        header('Location: ' . $base . '/admin/mlm/plan-editor');
+        exit;
     }
 }

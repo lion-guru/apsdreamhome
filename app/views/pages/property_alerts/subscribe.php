@@ -6,12 +6,12 @@ $errors = $errors ?? [];
 $logged_in = $logged_in ?? false;
 ?>
 <style>
-.alert-hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 60px 0; }
+.alert-hero { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: #fff; padding: 60px 0; }
 .alert-card { border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-.alert-card .card-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.alert-card .card-header { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white; }
 .feature-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
 .match-card { border: 1px solid #e5e7eb; border-radius: 8px; transition: all 0.2s; }
-.match-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: #667eea; }
+.match-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: #0d9488; }
 </style>
 
 <section class="alert-hero">

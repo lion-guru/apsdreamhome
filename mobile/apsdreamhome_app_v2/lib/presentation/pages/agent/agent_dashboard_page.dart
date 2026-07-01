@@ -155,17 +155,17 @@ class AgentDashboardPage extends ConsumerWidget {
                 children: [
                   const Icon(Icons.star_outline, color: Colors.white),
                   const SizedBox(width: 12),
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Agent Status',
                           style: TextStyle(color: Colors.white70, fontSize: 12),
                         ),
                         Text(
                           'Active • Handling leads professionally',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,

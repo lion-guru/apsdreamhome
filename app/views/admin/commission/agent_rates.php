@@ -27,7 +27,7 @@
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Rate Cards</div>
                 <div class="card-body p-0">
-                    <table class="table table-striped mb-0">
+                    <div class="table-responsive"><table class="table table-striped mb-0">
                         <thead><tr><th>#</th><th>Sqft Range</th><th>Per Sqft</th><th>%</th><th>Status</th><th>Action</th></tr></thead>
                         <tbody>
                             <?php foreach ($rates ?? [] as $r): ?>
@@ -41,7 +41,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

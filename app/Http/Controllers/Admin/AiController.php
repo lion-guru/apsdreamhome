@@ -22,6 +22,21 @@ class AiController extends AdminController
     }
 
     /**
+     * Check if a table exists in the database
+     */
+    private function tableExists(string $table): bool
+    {
+        try {
+            $pdo = ($this->db instanceof \PDO) ? $this->db : ($this->db->getConnection() ?? null);
+            if (!$pdo) return false;
+            $stmt = $pdo->query("SHOW TABLES LIKE " . $pdo->quote($table));
+            return $stmt->fetchColumn() !== false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * AI Hub - Main dashboard for AI features
      */
     public function hub()
@@ -187,38 +202,45 @@ class AiController extends AdminController
      */
     private function getAIStats(): array
     {
+        $empty = [
+            'lead_scoring' => ['total_leads' => 0, 'avg_score' => 0],
+            'recommendations' => ['weekly_recommendations' => 0],
+            'chatbot' => ['daily_conversations' => 0]
+        ];
         try {
             $stats = [];
 
-            // Get lead scoring stats
-            $sql = "SELECT COUNT(*) as total_leads, AVG(score) as avg_score FROM ai_lead_scores";
-            $stmt = $this->db->query($sql);
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $stats['lead_scoring'] = [
-                'total_leads' => (int)($result['total_leads'] ?? 0),
-                'avg_score' => round((float)($result['avg_score'] ?? 0), 2)
-            ];
+            if ($this->tableExists('ai_lead_scores')) {
+                $stmt = $this->db->query("SELECT COUNT(*) as total_leads, AVG(score) as avg_score FROM ai_lead_scores");
+                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $stats['lead_scoring'] = [
+                    'total_leads' => (int)($result['total_leads'] ?? 0),
+                    'avg_score' => round((float)($result['avg_score'] ?? 0), 2)
+                ];
+            } else {
+                $stats['lead_scoring'] = $empty['lead_scoring'];
+            }
 
-            // Get recommendation stats
-            $sql = "SELECT COUNT(*) as total_recommendations FROM ai_property_recommendations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
-            $stmt = $this->db->query($sql);
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $stats['recommendations'] = [
-                'weekly_recommendations' => (int)($result['total_recommendations'] ?? 0)
-            ];
+            if ($this->tableExists('ai_property_recommendations')) {
+                $stmt = $this->db->query("SELECT COUNT(*) as total_recommendations FROM ai_property_recommendations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $stats['recommendations'] = ['weekly_recommendations' => (int)($result['total_recommendations'] ?? 0)];
+            } else {
+                $stats['recommendations'] = $empty['recommendations'];
+            }
 
-            // Get chatbot stats
-            $sql = "SELECT COUNT(*) as total_conversations FROM ai_chatbot_conversations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
-            $stmt = $this->db->query($sql);
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $stats['chatbot'] = [
-                'daily_conversations' => (int)($result['total_conversations'] ?? 0)
-            ];
+            if ($this->tableExists('ai_chatbot_conversations')) {
+                $stmt = $this->db->query("SELECT COUNT(*) as total_conversations FROM ai_chatbot_conversations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $stats['chatbot'] = ['daily_conversations' => (int)($result['total_conversations'] ?? 0)];
+            } else {
+                $stats['chatbot'] = $empty['chatbot'];
+            }
 
             return $stats;
         } catch (Exception $e) {
             $this->loggingService->error("Get AI Stats error: " . $e->getMessage());
-            return [];
+            return $empty;
         }
     }
 
@@ -227,6 +249,7 @@ class AiController extends AdminController
      */
     private function getRecentAIActivities(): array
     {
+        if (!$this->tableExists('ai_activity_log')) return [];
         try {
             $sql = "SELECT * FROM ai_activity_log 
                     ORDER BY created_at DESC 
@@ -247,24 +270,23 @@ class AiController extends AdminController
         try {
             $data = [];
 
-            // Sales prediction accuracy
-            $sql = "SELECT AVG(accuracy_percentage) as avg_accuracy FROM ai_prediction_accuracy 
-                    WHERE prediction_type = 'sales' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
-            $stmt = $this->db->query($sql);
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $data['prediction_accuracy'] = round((float)($result['avg_accuracy'] ?? 0), 2);
+            if ($this->tableExists('ai_prediction_accuracy')) {
+                $stmt = $this->db->query("SELECT AVG(accuracy_percentage) as avg_accuracy FROM ai_prediction_accuracy WHERE prediction_type = 'sales' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $data['prediction_accuracy'] = round((float)($result['avg_accuracy'] ?? 0), 2);
+            } else {
+                $data['prediction_accuracy'] = 0;
+            }
 
-            // Lead conversion rates
-            $sql = "SELECT 
-                        COUNT(CASE WHEN converted = 1 THEN 1 END) as converted,
-                        COUNT(*) as total
-                    FROM ai_lead_scores 
-                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
-            $stmt = $this->db->query($sql);
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $total = (int)($result['total'] ?? 0);
-            $converted = (int)($result['converted'] ?? 0);
-            $data['conversion_rate'] = $total > 0 ? round(($converted / $total) * 100, 2) : 0;
+            if ($this->tableExists('ai_lead_scores')) {
+                $stmt = $this->db->query("SELECT COUNT(CASE WHEN converted = 1 THEN 1 END) as converted, COUNT(*) as total FROM ai_lead_scores WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $total = (int)($result['total'] ?? 0);
+                $converted = (int)($result['converted'] ?? 0);
+                $data['conversion_rate'] = $total > 0 ? round(($converted / $total) * 100, 2) : 0;
+            } else {
+                $data['conversion_rate'] = 0;
+            }
 
             return $data;
         } catch (Exception $e) {
@@ -278,6 +300,7 @@ class AiController extends AdminController
      */
     private function getPredictions(): array
     {
+        if (!$this->tableExists('ai_predictions')) return [];
         try {
             $sql = "SELECT * FROM ai_predictions 
                     WHERE prediction_date >= CURDATE() 
@@ -315,6 +338,7 @@ class AiController extends AdminController
      */
     private function getScoringModels(): array
     {
+        if (!$this->tableExists('ai_scoring_models')) return [];
         try {
             $sql = "SELECT * FROM ai_scoring_models WHERE is_active = 1";
             $stmt = $this->db->query($sql);
@@ -330,6 +354,7 @@ class AiController extends AdminController
      */
     private function getPropertyRecommendations(): array
     {
+        if (!$this->tableExists('ai_property_recommendations')) return [];
         try {
             $sql = "SELECT pr.*, p.title, p.location, p.price
                     FROM ai_property_recommendations pr
@@ -350,6 +375,7 @@ class AiController extends AdminController
      */
     private function getCustomerSegments(): array
     {
+        if (!$this->tableExists('ai_customer_segments')) return [];
         try {
             $sql = "SELECT * FROM ai_customer_segments WHERE is_active = 1";
             $stmt = $this->db->query($sql);
@@ -365,25 +391,24 @@ class AiController extends AdminController
      */
     private function getChatbotStats(): array
     {
+        $stats = ['daily_conversations' => 0, 'avg_satisfaction' => 0];
         try {
-            $stats = [];
-
-            // Total conversations
-            $sql = "SELECT COUNT(*) as total FROM ai_chatbot_conversations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
-            $stmt = $this->db->query($sql);
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $stats['daily_conversations'] = (int)($result['total'] ?? 0);
-
-            // Average satisfaction
-            $sql = "SELECT AVG(satisfaction_score) as avg_satisfaction FROM ai_chatbot_feedback WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
-            $stmt = $this->db->query($sql);
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $stats['avg_satisfaction'] = round((float)($result['avg_satisfaction'] ?? 0), 2);
-
+            if ($this->tableExists('ai_chatbot_conversations')) {
+                $sql = "SELECT COUNT(*) as total FROM ai_chatbot_conversations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
+                $stmt = $this->db->query($sql);
+                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $stats['daily_conversations'] = (int)($result['total'] ?? 0);
+            }
+            if ($this->tableExists('ai_chatbot_feedback')) {
+                $sql = "SELECT AVG(satisfaction_score) as avg_satisfaction FROM ai_chatbot_feedback WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
+                $stmt = $this->db->query($sql);
+                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $stats['avg_satisfaction'] = round((float)($result['avg_satisfaction'] ?? 0), 2);
+            }
             return $stats;
         } catch (Exception $e) {
             $this->loggingService->error("Get Chatbot Stats error: " . $e->getMessage());
-            return [];
+            return $stats;
         }
     }
 
@@ -392,6 +417,7 @@ class AiController extends AdminController
      */
     private function getRecentConversations(): array
     {
+        if (!$this->tableExists('ai_chatbot_conversations')) return [];
         try {
             $sql = "SELECT cc.*, u.name as user_name
                     FROM ai_chatbot_conversations cc
@@ -411,6 +437,7 @@ class AiController extends AdminController
      */
     private function getAIConfig(): array
     {
+        if (!$this->tableExists('ai_config')) return [];
         try {
             $sql = "SELECT * FROM ai_config WHERE is_active = 1";
             return $this->db->fetchAll($sql) ?: [];
@@ -472,16 +499,19 @@ class AiController extends AdminController
             }
 
             // Get customer preferences
-            $sql = "SELECT * FROM users WHERE customer_id = ?";
+            $sql = "SELECT * FROM users WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$customerId]);
-            $preferences = $stmt->fetch();
+            $preferences = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$preferences) {
+                return ['error' => 'Customer not found'];
+            }
 
             // Get recommended properties
             $sql = "SELECT p.*, 
                            (CASE WHEN p.location LIKE ? THEN 30 ELSE 0 END +
-                            CASE WHEN p.price BETWEEN ? AND ? THEN 40 ELSE 0 END +
-                            CASE WHEN p.property_type = ? THEN 30 ELSE 0 END) as match_score
+                            CASE WHEN p.price BETWEEN ? AND ? THEN 40 ELSE 0 END) as match_score
                     FROM properties p
                     WHERE p.status = 'available'
                     ORDER BY match_score DESC
@@ -491,25 +521,25 @@ class AiController extends AdminController
             $stmt->execute([
                 '%' . ($preferences['preferred_location'] ?? '') . '%',
                 $preferences['min_budget'] ?? 0,
-                $preferences['max_budget'] ?? 999999999,
-                $preferences['property_type'] ?? ''
+                $preferences['max_budget'] ?? 999999999
             ]);
 
-            $recommendations = $stmt->fetchAll();
+            $recommendations = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-            // Save recommendations
-            foreach ($recommendations as $property) {
-                $sql = "INSERT INTO ai_property_recommendations (customer_id, property_id, confidence_score, recommendation_data, created_at)
-                        VALUES (?, ?, ?, ?, NOW())
-                        ON DUPLICATE KEY UPDATE confidence_score = VALUES(confidence_score), recommendation_data = VALUES(recommendation_data)";
-
-                $stmt = $this->db->prepare($sql);
-                $stmt->execute([
-                    $customerId,
-                    $property['id'],
-                    $property['match_score'],
-                    json_encode(['factors' => ['location', 'price', 'type']])
-                ]);
+            // Save recommendations if table exists
+            if ($this->tableExists('ai_property_recommendations')) {
+                foreach ($recommendations as $property) {
+                    $sql = "INSERT INTO ai_property_recommendations (customer_id, property_id, confidence_score, recommendation_data, created_at)
+                            VALUES (?, ?, ?, ?, NOW())
+                            ON DUPLICATE KEY UPDATE confidence_score = VALUES(confidence_score), recommendation_data = VALUES(recommendation_data)";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->execute([
+                        $customerId,
+                        $property['id'],
+                        $property['match_score'],
+                        json_encode(['factors' => ['location', 'price', 'type']])
+                    ]);
+                }
             }
 
             return ['recommendations' => $recommendations];

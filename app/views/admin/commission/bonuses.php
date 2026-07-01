@@ -31,7 +31,7 @@
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Bonus List</div>
                 <div class="card-body p-0">
-                    <table class="table table-striped mb-0">
+                    <div class="table-responsive"><table class="table table-striped mb-0">
                         <thead><tr><th>#</th><th>Associate</th><th>%</th><th>Amount</th><th>Achievement</th><th>Date</th><th>Action</th></tr></thead>
                         <tbody>
                             <?php foreach ($bonuses ?? [] as $b): ?>
@@ -46,7 +46,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

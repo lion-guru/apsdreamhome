@@ -4,7 +4,7 @@ $tickets = $tickets ?? [];
 $bookings = $bookings ?? [];
 $extraHead = '<style>
     .ticket-card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-    .ticket-reply { border-left: 3px solid #667eea; padding-left: 15px; margin-bottom: 12px; }
+    .ticket-reply { border-left: 3px solid #0d9488; padding-left: 15px; margin-bottom: 12px; }
     .ticket-reply.admin { border-left-color: #10b981; }
     .priority-badge { font-size: 0.75rem; }
     .expand-btn { cursor: pointer; }

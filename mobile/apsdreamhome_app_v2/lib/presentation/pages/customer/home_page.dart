@@ -475,51 +475,51 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
 
   Widget _buildQuickActions(BuildContext context) {
     final actions = [
-      _QuickAction(
+      const _QuickAction(
         icon: Icons.map_outlined,
         label: 'Colonies',
         route: '/colonies',
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [Color(0xFF43A047), Color(0xFF66BB6A)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
-      _QuickAction(
+      const _QuickAction(
         icon: Icons.grid_view_rounded,
         label: 'Plots',
         route: '/plots',
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
-      _QuickAction(
+      const _QuickAction(
         icon: Icons.apartment_rounded,
         label: 'Properties',
         route: '/properties',
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [Color(0xFFFB8C00), Color(0xFFFFB74D)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
-      _QuickAction(
+      const _QuickAction(
         icon: Icons.calculate_outlined,
         label: 'EMI Calc',
         route: '/emi-calculator',
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [Color(0xFF8E24AA), Color(0xFFBA68C8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
-      _QuickAction(
+      const _QuickAction(
         icon: Icons.add_home_outlined,
         label: 'Post',
         route: '/post-property',
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [Color(0xFFD81B60), Color(0xFFF06292)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -542,12 +542,12 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
 
   Widget _buildToolsSection(BuildContext context) {
     final tools = [
-      _ToolItem(Icons.calculate, 'Stamp Duty', '/stamp-duty-calculator', const Color(0xFF43A047)),
-      _ToolItem(Icons.straighten, 'Plot Convert', '/plot-converter', const Color(0xFF00897B)),
-      _ToolItem(Icons.question_answer, 'FAQs', '/faq', AppTheme.infoColor),
-      _ToolItem(Icons.star_border, 'Reviews', '/testimonials', AppTheme.accentColor),
-      _ToolItem(Icons.search, 'Saved Search', '/saved-searches', AppTheme.primaryColor),
-      _ToolItem(Icons.compare_arrows, 'Compare', '/compare', AppTheme.secondaryColor),
+      const _ToolItem(Icons.calculate, 'Stamp Duty', '/stamp-duty-calculator', Color(0xFF43A047)),
+      const _ToolItem(Icons.straighten, 'Plot Convert', '/plot-converter', Color(0xFF00897B)),
+      const _ToolItem(Icons.question_answer, 'FAQs', '/faq', AppTheme.infoColor),
+      const _ToolItem(Icons.star_border, 'Reviews', '/testimonials', AppTheme.accentColor),
+      const _ToolItem(Icons.search, 'Saved Search', '/saved-searches', AppTheme.primaryColor),
+      const _ToolItem(Icons.compare_arrows, 'Compare', '/compare', AppTheme.secondaryColor),
     ];
 
     return Padding(
@@ -1249,29 +1249,29 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
 
   Widget _buildWhyChooseUs(BuildContext context) {
     final features = [
-      _FeatureData(
+      const _FeatureData(
         icon: Icons.verified_outlined,
         title: 'RERA Registered',
         description: 'All projects are RERA approved',
-        color: const Color(0xFF4CAF50),
+        color: Color(0xFF4CAF50),
       ),
-      _FeatureData(
+      const _FeatureData(
         icon: Icons.security_outlined,
         title: 'Secure Investment',
         description: 'Legal verification of all plots',
-        color: const Color(0xFF2196F3),
+        color: Color(0xFF2196F3),
       ),
-      _FeatureData(
+      const _FeatureData(
         icon: Icons.location_city_outlined,
         title: 'Prime Locations',
         description: 'Best locations in Gorakhpur & beyond',
-        color: const Color(0xFFFF9800),
+        color: Color(0xFFFF9800),
       ),
-      _FeatureData(
+      const _FeatureData(
         icon: Icons.support_agent_outlined,
         title: '24/7 Support',
         description: 'Dedicated customer service',
-        color: const Color(0xFF9C27B0),
+        color: Color(0xFF9C27B0),
       ),
     ];
 

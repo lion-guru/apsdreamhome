@@ -31,7 +31,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                     <div class="card mb-4">
                         <div class="card-header bg-info text-white"><h5 class="mb-0"><i class="fas fa-th"></i> Plot Information</h5></div>
                         <div class="card-body aps-cp-card-body">
-                            <table class="table table-bordered">
+                            <div class="table-responsive"><table class="table table-bordered">
                                 <tr><th style="width:140px">Plot #</th><td><strong><?= htmlspecialchars($plot['plot_number'] ?? 'N/A') ?></strong></td></tr>
                                 <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? 'N/A') ?></td></tr>
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector']) : '' ?></td></tr>
@@ -39,7 +39,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                                 <tr><th>Area</th><td><?= number_format($plot['area_sqft'] ?? 0) ?> sqft</td></tr>
                                 <tr><th>Total Price</th><td><strong class="text-primary">₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></strong></td></tr>
                                 <tr><th>Current Status</th><td><span class="badge bg-<?= $plot['status'] === 'available' ? 'success' : ($plot['status'] === 'booked' ? 'warning' : ($plot['status'] === 'sold' ? 'danger' : 'secondary')) ?>"><?= ucfirst(htmlspecialchars($plot['status'] ?? 'available')) ?></span></td></tr>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
 
@@ -47,12 +47,12 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                         <div class="card-header bg-secondary text-white"><h5 class="mb-0"><i class="fas fa-user"></i> Current Owner</h5></div>
                         <div class="card-body aps-cp-card-body">
                             <?php if (!empty($plot['customer_id']) && !empty($plot['current_owner_name'])): ?>
-                                <table class="table table-bordered">
+                                <div class="table-responsive"><table class="table table-bordered">
                                     <tr><th style="width:140px">Name</th><td><?= htmlspecialchars($plot['current_owner_name'] ?? '') ?></td></tr>
                                     <tr><th>Email</th><td><?= htmlspecialchars($plot['current_owner_email'] ?? '') ?></td></tr>
                                     <tr><th>Phone</th><td><?= htmlspecialchars($plot['current_owner_phone'] ?? '') ?></td></tr>
                                     <tr><th>Booking Date</th><td><?= htmlspecialchars($plot['booking_date'] ?? 'N/A') ?></td></tr>
-                                </table>
+                                </table></div>
                             <?php else: ?>
                                 <p class="text-muted mb-0"><i class="fas fa-info-circle"></i> No current owner / Not yet booked.</p>
                             <?php endif; ?>
@@ -66,11 +66,11 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                             $transferFeeRate = 0.02; // 2% of total price
                             $transferFee = floatval($plot['total_price'] ?? 0) * $transferFeeRate;
                             ?>
-                            <table class="table table-bordered">
+                            <div class="table-responsive"><table class="table table-bordered">
                                 <tr><th style="width:140px">Transfer Fee</th><td><strong class="text-danger">₹<?= number_format($transferFee, 2) ?></strong></td></tr>
                                 <tr><th>Rate</th><td><?= ($transferFeeRate * 100) ?>% of total price</td></tr>
                                 <tr><th>Total Price</th><td>₹<?= number_format(intval($plot['total_price'] ?? 0)) ?></td></tr>
-                            </table>
+                            </table></div>
                             <div class="form-text">Transfer fee subject to change as per company policy.</div>
                         </div>
                     </div>

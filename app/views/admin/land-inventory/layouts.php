@@ -49,7 +49,7 @@ $colonyId = (int)($colony['id'] ?? 0);
                     <span class="badge bg-secondary">v<?= htmlspecialchars($l['version'] ?? '1') ?></span>
                 </div>
                 <div class="aps-cp-card-body">
-                    <table class="table table-sm mb-3">
+                    <div class="table-responsive"><table class="table table-sm mb-3">
                         <tr><th class="text-muted">Type</th><td><?= htmlspecialchars(ucwords($l['layout_type'] ?? '—')) ?></td></tr>
                         <tr><th class="text-muted">Total Plots</th><td><?= (int)($l['total_plots'] ?? 0) ?></td></tr>
                         <tr><th class="text-muted">Total Area</th><td><?= number_format((float)($l['total_area_sqft'] ?? 0), 0) ?> sqft</td></tr>
@@ -57,7 +57,7 @@ $colonyId = (int)($colony['id'] ?? 0);
                         <tr><th class="text-muted">Common %</th><td><?= number_format((float)($l['common_area_pct'] ?? 0), 1) ?>%</td></tr>
                         <tr><th class="text-muted">Approved</th><td><?= !empty($l['approval_date']) ? '✓ '.htmlspecialchars($l['approval_date']) : '<span class="text-muted">Pending</span>' ?></td></tr>
                         <tr><th class="text-muted">Auth #</th><td><?= htmlspecialchars($l['approval_number'] ?? '—') ?></td></tr>
-                    </table>
+                    </table></div>
                     <?php if (!empty($l['notes'])): ?>
                         <p class="small text-muted"><?= nl2br(htmlspecialchars($l['notes'])) ?></p>
                     <?php endif; ?>

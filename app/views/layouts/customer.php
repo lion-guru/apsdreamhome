@@ -26,7 +26,26 @@
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
-
+    <style>
+        /* ===== CUSTOMER PORTAL MOBILE RESPONSIVENESS ===== */
+        @media (max-width: 768px) {
+            .top-header { padding: 10px 12px 10px 65px !important; flex-wrap: wrap; }
+            .page-title { font-size: 1rem !important; }
+            .breadcrumb { font-size: 0.72rem !important; }
+            .header-actions { gap: 6px; }
+            .content-wrapper { padding: 12px !important; }
+            .sidebar-toggle { display: flex !important; }
+            .aps-cp-card, .card { border-radius: 10px !important; }
+            .table-responsive { font-size: 0.8rem; }
+            .table th, .table td { padding: 6px 8px !important; }
+            .btn { padding: 6px 12px !important; font-size: 0.8rem !important; }
+            .row.g-3 > [class*="col-"] { padding: 6px; }
+        }
+        @media (max-width: 480px) {
+            .breadcrumb { display: none !important; }
+            .page-title { font-size: 0.9rem !important; }
+        }
+    </style>
 
 </head>
 <body>

@@ -232,7 +232,7 @@ class APS_Email {
                 return [
                     'html' => "
                     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-                        <div style='background: linear-gradient(135deg, #1a237e, #3949ab); color: white; padding: 30px; text-align: center;'>
+                        <div style='background: linear-gradient(135deg, #0f172a, #0d9488); color: white; padding: 30px; text-align: center;'>
                             <h1>Welcome to APS Dream Homes!</h1>
                         </div>
                         <div style='padding: 30px; background: #f8f9fa;'>
@@ -246,7 +246,7 @@ class APS_Email {
                                 <li>Access your personalized dashboard</li>
                             </ul>
                             <div style='text-align: center; margin: 30px 0;'>
-                                <a href='{$dashboard_url}' style='background: #1a237e; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>Go to Dashboard</a>
+                                <a href='{$dashboard_url}' style='background: #0d9488; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>Go to Dashboard</a>
                             </div>
                             <p>If you have any questions, feel free to contact us!</p>
                             <p>Best regards,<br>APS Dream Homes Team</p>
@@ -286,7 +286,7 @@ class APS_Email {
                 return [
                     'html' => "
                     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-                        <div style='background: linear-gradient(135deg, #1a237e, #3949ab); color: white; padding: 30px; text-align: center;'>
+                        <div style='background: linear-gradient(135deg, #0f172a, #0d9488); color: white; padding: 30px; text-align: center;'>
                             <h1>{$newsletter_title}</h1>
                         </div>
                         <div style='padding: 30px; background: #f8f9fa;'>

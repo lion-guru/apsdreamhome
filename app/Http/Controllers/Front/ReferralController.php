@@ -56,6 +56,37 @@ class ReferralController extends BaseController
             'email' => 'mailto:?subject=' . urlencode('Join APS Dream Home') . '&body=' . urlencode("Use my referral code {$referralCode} to register: {$shareUrl}"),
         ];
 
+        // Share analytics
+        $shareStats = ['total' => 0, 'by_platform' => [], 'recent' => []];
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM whatsapp_lead_shares WHERE shared_by_user_id = ?");
+            $stmt->execute([$userId]);
+            $shareStats['total'] = (int)$stmt->fetchColumn();
+
+            $stmt2 = $this->db->prepare("SELECT share_method, COUNT(*) as cnt FROM whatsapp_lead_shares WHERE shared_by_user_id = ? GROUP BY share_method ORDER BY cnt DESC");
+            $stmt2->execute([$userId]);
+            $shareStats['by_platform'] = $stmt2->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            $stmt3 = $this->db->prepare("SELECT * FROM whatsapp_lead_shares WHERE shared_by_user_id = ? ORDER BY created_at DESC LIMIT 10");
+            $stmt3->execute([$userId]);
+            $shareStats['recent'] = $stmt3->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {}
+
+        // Referral leaderboard (top 10 referrers)
+        $leaderboard = [];
+        try {
+            $leaderboard = $this->db->fetchAll("
+                SELECT u.name, COUNT(DISTINCT ml.source_user_id) as referral_count,
+                       COALESCE(SUM(ml.amount), 0) as total_earned
+                FROM mlm_commission_ledger ml
+                JOIN users u ON u.id = ml.beneficiary_user_id
+                WHERE ml.commission_type = 'referral' AND ml.status IN ('paid', 'approved')
+                GROUP BY ml.beneficiary_user_id
+                ORDER BY referral_count DESC
+                LIMIT 10
+            ") ?: [];
+        } catch (\Throwable $e) {}
+
         $this->layout = 'layouts/customer';
         $this->render('pages/customer_referral', [
             'page_title' => 'Refer & Earn - APS Dream Home',
@@ -65,6 +96,8 @@ class ReferralController extends BaseController
             'referrals' => $referrals,
             'earnings' => $earnings,
             'share_links' => $shareLinks,
+            'share_stats' => $shareStats,
+            'leaderboard' => $leaderboard,
         ]);
     }
 

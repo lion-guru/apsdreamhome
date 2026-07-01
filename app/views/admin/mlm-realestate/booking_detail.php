@@ -27,7 +27,7 @@
                         </span>
                     </div>
                     <div class="card-body aps-cp-card-body">
-                        <table class="table table-bordered mb-0">
+                        <div class="table-responsive"><table class="table table-bordered mb-0">
                             <tr><th style="width:200px;">Booking ID</th><td>#<?= $b['id'] ?></td></tr>
                             <tr><th>Booking Number</th><td><?= htmlspecialchars($b['booking_number'] ?? 'N/A') ?></td></tr>
                             <tr><th>Customer</th><td>
@@ -71,7 +71,7 @@
                             <?php if ($b['notes'] ?? ''): ?>
                             <tr><th>Notes</th><td><?= nl2br(htmlspecialchars($b['notes'])) ?></td></tr>
                             <?php endif; ?>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>
@@ -85,7 +85,7 @@
                             <div class="progress-bar bg-success" style="width:<?= ($status['emi_count'] ?? 0) > 0 ? (($status['paid_emis'] ?? 0) * 100 / $status['emi_count']) : 0 ?>%"></div>
                         </div>
                         <?php if (!empty($status['emis'])): ?>
-                        <table class="table table-sm">
+                        <div class="table-responsive"><table class="table table-sm">
                             <thead><tr><th>#</th><th>Due</th><th>Amount</th><th>Status</th></tr></thead>
                             <tbody>
                             <?php foreach ($status['emis'] as $emi): ?>
@@ -97,7 +97,7 @@
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                         <?php endif; ?>
                     </div>
                 </div>

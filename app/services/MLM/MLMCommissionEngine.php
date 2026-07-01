@@ -18,7 +18,7 @@
  *
  * Reads / writes (existing, untouched):
  *   users, associates, mlm_profiles, mlm_network_tree, mlm_commission_ledger,
- *   booking_commissions, booking_payment_schedules, user_wallets
+ *   mlm_commission_ledger, booking_payment_schedules, user_wallets
  *
  * Every public method is wrapped in try/catch and returns a sensible default
  * (empty array, null, 0, or false) on failure so callers can rely on shape.
@@ -40,8 +40,8 @@ class MLMCommissionEngine
     /** Default minimum days overdue before a clawback is triggered. */
     public const DEFAULT_CLAWBACK_DAYS = 30;
 
-    /** Rank list in promotion order. */
-    public const RANK_ORDER = ['associate', 'bronze', 'silver', 'gold', 'platinum', 'diamond'];
+    /** Rank list in promotion order (7 tiers matching mlm_rank_benefits DB ENUM). */
+    public const RANK_ORDER = ['associate', 'senior_associate', 'bdm', 'sr_bdm', 'vice_president', 'president', 'site_manager'];
 
     public function __construct(?PDO $pdo = null)
     {
@@ -129,13 +129,19 @@ class MLMCommissionEngine
 
     protected function defaultRankBenefits(): array
     {
+        // Rates: 5%-20% differential model
+        // direct_sale_pct = rank's own commission rate
+        // l1_pct/l2_pct/l3_pct = NOT USED for differential calculation
+        //   (differentials are computed on-the-fly by walking the upline chain)
+        //   These columns exist for backward compatibility only.
         return [
-            ['rank_name' => 'associate', 'rank_order' => 1, 'min_leg_count' => 0, 'min_qualifying_volume' => 0,       'direct_sale_pct' => 1.0, 'l1_pct' => 2.0, 'l2_pct' => 1.0, 'l3_pct' => 0.5, 'color_code' => '#94a3b8', 'badge_icon' => 'fa-user',     'perks' => []],
-            ['rank_name' => 'bronze',    'rank_order' => 2, 'min_leg_count' => 2, 'min_qualifying_volume' => 50000,   'direct_sale_pct' => 2.0, 'l1_pct' => 3.0, 'l2_pct' => 1.5, 'l3_pct' => 0.5, 'color_code' => '#a16207', 'badge_icon' => 'fa-medal',    'perks' => []],
-            ['rank_name' => 'silver',    'rank_order' => 3, 'min_leg_count' => 3, 'min_qualifying_volume' => 200000,  'direct_sale_pct' => 2.5, 'l1_pct' => 3.0, 'l2_pct' => 1.5, 'l3_pct' => 1.0, 'color_code' => '#94a3b8', 'badge_icon' => 'fa-award',    'perks' => []],
-            ['rank_name' => 'gold',      'rank_order' => 4, 'min_leg_count' => 4, 'min_qualifying_volume' => 500000,  'direct_sale_pct' => 3.0, 'l1_pct' => 3.5, 'l2_pct' => 2.0, 'l3_pct' => 1.0, 'color_code' => '#ca8a04', 'badge_icon' => 'fa-trophy',   'perks' => []],
-            ['rank_name' => 'platinum',  'rank_order' => 5, 'min_leg_count' => 5, 'min_qualifying_volume' => 1000000, 'direct_sale_pct' => 3.5, 'l1_pct' => 4.0, 'l2_pct' => 2.5, 'l3_pct' => 1.5, 'color_code' => '#0891b2', 'badge_icon' => 'fa-gem',      'perks' => []],
-            ['rank_name' => 'diamond',   'rank_order' => 6, 'min_leg_count' => 6, 'min_qualifying_volume' => 2500000, 'direct_sale_pct' => 4.0, 'l1_pct' => 5.0, 'l2_pct' => 3.0, 'l3_pct' => 2.0, 'color_code' => '#7c3aed', 'badge_icon' => 'fa-crown',    'perks' => []],
+            ['rank_name' => 'associate',        'rank_order' => 1, 'min_leg_count' => 0, 'min_qualifying_volume' => 0,       'direct_sale_pct' => 5.0, 'l1_pct' => 0.0, 'l2_pct' => 0.0, 'l3_pct' => 0.0, 'color_code' => '#94a3b8', 'badge_icon' => 'fa-user',        'perks' => []],
+            ['rank_name' => 'senior_associate',  'rank_order' => 2, 'min_leg_count' => 1, 'min_qualifying_volume' => 25000,   'direct_sale_pct' => 7.0, 'l1_pct' => 0.0, 'l2_pct' => 0.0, 'l3_pct' => 0.0, 'color_code' => '#94a3b8', 'badge_icon' => 'fa-user-plus',  'perks' => []],
+            ['rank_name' => 'bdm',               'rank_order' => 3, 'min_leg_count' => 2, 'min_qualifying_volume' => 100000,  'direct_sale_pct' => 10.0, 'l1_pct' => 0.0, 'l2_pct' => 0.0, 'l3_pct' => 0.0, 'color_code' => '#a16207', 'badge_icon' => 'fa-briefcase',  'perks' => []],
+            ['rank_name' => 'sr_bdm',            'rank_order' => 4, 'min_leg_count' => 3, 'min_qualifying_volume' => 300000,  'direct_sale_pct' => 12.0, 'l1_pct' => 0.0, 'l2_pct' => 0.0, 'l3_pct' => 0.0, 'color_code' => '#ca8a04', 'badge_icon' => 'fa-medal',      'perks' => []],
+            ['rank_name' => 'vice_president',    'rank_order' => 5, 'min_leg_count' => 4, 'min_qualifying_volume' => 800000,  'direct_sale_pct' => 15.0, 'l1_pct' => 0.0, 'l2_pct' => 0.0, 'l3_pct' => 0.0, 'color_code' => '#0891b2', 'badge_icon' => 'fa-gem',        'perks' => []],
+            ['rank_name' => 'president',         'rank_order' => 6, 'min_leg_count' => 5, 'min_qualifying_volume' => 2000000, 'direct_sale_pct' => 18.0, 'l1_pct' => 0.0, 'l2_pct' => 0.0, 'l3_pct' => 0.0, 'color_code' => '#0f766e', 'badge_icon' => 'fa-trophy',     'perks' => []],
+            ['rank_name' => 'site_manager',      'rank_order' => 7, 'min_leg_count' => 6, 'min_qualifying_volume' => 5000000, 'direct_sale_pct' => 20.0, 'l1_pct' => 0.0, 'l2_pct' => 0.0, 'l3_pct' => 0.0, 'color_code' => '#dc2626', 'badge_icon' => 'fa-crown',      'perks' => []],
         ];
     }
 
@@ -355,6 +361,10 @@ class MLMCommissionEngine
                 $isManual ? 'Manual promotion by admin' : 'Auto promotion by cron',
             ]);
 
+            // ── RANK ADVANCEMENT BONUS ──
+            // One-time bonus when rank is promoted
+            $this->awardRankBonus($associateId, $safeOldRank, $newRank, (int)$stats['user_id'] ?? 0);
+
             $this->db->commit();
             return true;
         } catch (Exception $e) {
@@ -426,13 +436,16 @@ class MLMCommissionEngine
      */
     public static function getCanonicalRates(string $rank): array
     {
+        // Rates: 5%-20% differential model
+        // direct = rank's own rate, l1/l2/l3 = differentials from previous level
         $defaults = [
-            'associate' => ['direct' => 1.0, 'l1' => 2.0, 'l2' => 1.0, 'l3' => 0.5],
-            'bronze'    => ['direct' => 2.0, 'l1' => 3.0, 'l2' => 1.5, 'l3' => 0.5],
-            'silver'    => ['direct' => 2.5, 'l1' => 3.0, 'l2' => 1.5, 'l3' => 1.0],
-            'gold'      => ['direct' => 3.0, 'l1' => 3.5, 'l2' => 2.0, 'l3' => 1.0],
-            'platinum'  => ['direct' => 3.5, 'l1' => 4.0, 'l2' => 2.5, 'l3' => 1.5],
-            'diamond'   => ['direct' => 4.0, 'l1' => 5.0, 'l2' => 3.0, 'l3' => 2.0],
+            'associate'       => ['direct' => 5.0,  'l1' => 2.0, 'l2' => 3.0, 'l3' => 2.0],
+            'senior_associate'=> ['direct' => 7.0,  'l1' => 3.0, 'l2' => 2.0, 'l3' => 3.0],
+            'bdm'             => ['direct' => 10.0, 'l1' => 2.0, 'l2' => 3.0, 'l3' => 3.0],
+            'sr_bdm'          => ['direct' => 12.0, 'l1' => 3.0, 'l2' => 3.0, 'l3' => 3.0],
+            'vice_president'  => ['direct' => 15.0, 'l1' => 3.0, 'l2' => 3.0, 'l3' => 2.0],
+            'president'       => ['direct' => 18.0, 'l1' => 2.0, 'l2' => 3.0, 'l3' => 3.0],
+            'site_manager'    => ['direct' => 20.0, 'l1' => 0.0, 'l2' => 0.0, 'l3' => 0.0],
         ];
 
         $fallback = $defaults[$rank] ?? $defaults['associate'];
@@ -524,7 +537,7 @@ class MLMCommissionEngine
         try {
             $bStmt = $this->db->prepare("
                 SELECT id, customer_id, sales_manager_id, associate_id, channel,
-                       COALESCE(agreement_value, total_plot_value, 0) AS sale_value
+                       total_plot_value, booking_amount
                 FROM plot_bookings
                 WHERE id = ?
                 LIMIT 1
@@ -535,9 +548,65 @@ class MLMCommissionEngine
                 return $result;
             }
 
-            $saleValue = (float)$booking['sale_value'];
+            // ── FIX: Use ACTUAL payment received, not full plot value ──
+            // Sum all paid installments + token to get real money received
+            $paidStmt = $this->db->prepare("
+                SELECT 
+                    COALESCE((SELECT SUM(paid_amount) FROM booking_payment_schedules WHERE booking_id = ? AND status = 'paid'), 0) 
+                    + ? AS total_received
+            ");
+            $paidStmt->execute([$bookingId, (float)$booking['booking_amount']]);
+            $saleValue = (float)$paidStmt->fetchColumn();
+
             if ($saleValue <= 0) {
                 return $result;
+            }
+
+            // ── IDEMPOTENCY: Skip if commissions already exist for this booking ──
+            $existsStmt = $this->db->prepare("
+                SELECT COUNT(*) FROM mlm_commission_ledger 
+                WHERE booking_id = ? AND commission_type IN ('direct_sale','level_bonus')
+            ");
+            $existsStmt->execute([$bookingId]);
+            if ((int)$existsStmt->fetchColumn() > 0) {
+                $result['entries'] = [];
+                $result['total'] = 0.0;
+                $result['skipped'] = true;
+                $result['reason'] = 'commissions_already_exist';
+                return $result;
+            }
+
+            // ── QUALIFICATION GATE ──
+            // If qualification_required setting is enabled, check that the source
+            // associate has met minimum monthly qualifying volume before earning.
+            $qualRequired = $this->db->query("SELECT setting_value FROM mlm_settings WHERE setting_key = 'qualification_required'")->fetchColumn();
+            $minVolume = (float)($this->db->query("SELECT setting_value FROM mlm_settings WHERE setting_key = 'min_qualifying_volume'")->fetchColumn() ?: 50000);
+            if ($qualRequired === '1') {
+                // Resolve source associate's user_id
+                $qUserId = 0;
+                if (!empty($booking['associate_id'])) {
+                    $qa = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? AND status = 'active' LIMIT 1");
+                    $qa->execute([(int)$booking['associate_id']]);
+                    $qr = $qa->fetch(PDO::FETCH_ASSOC);
+                    if ($qr) $qUserId = (int)$qr['user_id'];
+                }
+                if ($qUserId > 0) {
+                    // Sum this month's qualifying volume from mlm_commission_ledger (direct_sale only)
+                    $qStmt = $this->db->prepare("
+                        SELECT COALESCE(SUM(sale_amount), 0) FROM mlm_commission_ledger
+                        WHERE source_user_id = ? AND commission_type = 'direct_sale'
+                          AND created_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+                    ");
+                    $qStmt->execute([$qUserId]);
+                    $monthlyVolume = (float)$qStmt->fetchColumn();
+                    if ($monthlyVolume < $minVolume) {
+                        $result['entries'] = [];
+                        $result['total'] = 0.0;
+                        $result['qualification_skipped'] = true;
+                        $result['qualification_reason'] = "Monthly volume Rs" . number_format($monthlyVolume, 0) . " < Rs" . number_format($minVolume, 0) . " minimum";
+                        return $result;
+                    }
+                }
             }
 
             // Resolve the source user_id for upline walk.
@@ -546,8 +615,8 @@ class MLMCommissionEngine
             if (!empty($booking['sales_manager_id'])) {
                 $sourceUserId = (int)$booking['sales_manager_id'];
             } elseif (!empty($booking['associate_id'])) {
-                // booking.associate_id stores the user_id, look up associates by user_id
-                $aStmt = $this->db->prepare("SELECT user_id FROM associates WHERE user_id = ? LIMIT 1");
+                // plot_bookings.associate_id references associates.id (table PK), not users.id
+                $aStmt = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? LIMIT 1");
                 $aStmt->execute([$booking['associate_id']]);
                 $ar = $aStmt->fetch(PDO::FETCH_ASSOC);
                 if ($ar && !empty($ar['user_id'])) {
@@ -558,51 +627,91 @@ class MLMCommissionEngine
                 $sourceUserId = (int)$booking['customer_id'];
             }
 
-            // If source user is itself a referred associate, use the source user's upline
-            $upline = $this->getUpline($sourceUserId, 3);
+            // ── DIFFERENTIAL MODEL ──
+            // Load rank rates from mlm_rank_benefits (or defaults)
+            $rankRates = $this->loadRankRates();
 
-            // Direct sale commission: source user gets a direct commission (1-4% by rank)
-            $directBenefit = $this->resolveDirectBenefit($sourceUserId);
+            // Get source user's rank and rate
+            $sourceRank = $this->getUserRank($sourceUserId);
+            $sourceRate = $rankRates[$sourceRank] ?? $rankRates['associate'];
+
+            // Build upline chain - 7 levels for differential model
+            $upline = $this->getUpline($sourceUserId, 7);
             $entries = [];
 
-            // Direct sale entry: sales_manager or booking associate
-            if ($sourceUserId > 0) {
-                $directAmt = round($saleValue * ((float)$directBenefit['direct_sale_pct'] / 100.0), 2);
+            // Direct sale: source user gets their full rank rate
+            if ($sourceUserId > 0 && $sourceRate > 0) {
+                $directAmt = round($saleValue * ($sourceRate / 100.0), 2);
                 $entries[] = [
                     'beneficiary_user_id' => $sourceUserId,
                     'source_user_id'      => $sourceUserId,
                     'commission_type'     => 'direct_sale',
                     'level'               => 0,
-                    'pct'                 => (float)$directBenefit['direct_sale_pct'],
+                    'pct'                 => $sourceRate,
                     'amount'              => $directAmt,
                 ];
             }
 
-            // L1/L2/L3 upline
-            $levelKeys = [1 => 'l1_pct', 2 => 'l2_pct', 3 => 'l3_pct'];
-            foreach ($levelKeys as $lvl => $key) {
-                if (!isset($upline[$lvl])) {
+            // Upline differential overrides
+            // Each upline gets: (their_rate − previous_level_rate)
+            $prevRate = $sourceRate;
+            $sameRankCount = 0;
+            foreach ($upline as $lvl => $up) {
+                $upUserId = (int)$up['id'];
+                $upRank = $this->getUserRank($upUserId);
+                $upRate = $rankRates[$upRank] ?? $rankRates['associate'];
+
+                // Same-rank breakaway safeguard
+                if ($upRate === $prevRate) {
+                    $sameRankCount++;
+                    $overridePct = ($sameRankCount === 1) ? 2.0 : (($sameRankCount === 2) ? 1.0 : 0.0);
+                    if ($overridePct > 0) {
+                        $amt = round($saleValue * ($overridePct / 100.0), 2);
+                        $entries[] = [
+                            'beneficiary_user_id' => $upUserId,
+                            'source_user_id'      => $sourceUserId,
+                            'commission_type'     => 'level_bonus',
+                            'level'               => $lvl,
+                            'pct'                 => $overridePct,
+                            'amount'              => $amt,
+                        ];
+                    }
                     continue;
                 }
-                $ben = (int)$upline[$lvl]['id'];
-                $benBenefit = $this->resolveDirectBenefit($ben);
-                $pct = (float)($benBenefit[$key] ?? 0.0);
-                if ($pct <= 0) {
-                    continue;
+
+                // Standard differential: upline_rate − rate of level below
+                $differential = $upRate - $prevRate;
+                if ($differential > 0) {
+                    $amt = round($saleValue * ($differential / 100.0), 2);
+                    $entries[] = [
+                        'beneficiary_user_id' => $upUserId,
+                        'source_user_id'      => $sourceUserId,
+                        'commission_type'     => 'level_bonus',
+                        'level'               => $lvl,
+                        'pct'                 => $differential,
+                        'amount'              => $amt,
+                    ];
                 }
-                $amt = round($saleValue * ($pct / 100.0), 2);
-                $entries[] = [
-                    'beneficiary_user_id' => $ben,
-                    'source_user_id'      => $sourceUserId,
-                    'commission_type'     => 'level_bonus',
-                    'level'               => $lvl,
-                    'pct'                 => $pct,
-                    'amount'              => $amt,
-                ];
+                $prevRate = $upRate;
+            }
+
+            // ── 20% GLOBAL CAP ENFORCEMENT ──
+            $totalPct = 0.0;
+            foreach ($entries as $e) {
+                $totalPct += (float)$e['pct'];
+            }
+            $maxCapPct = 20.0; // Hard cap from mlm_settings.global_cap_pct
+            if ($totalPct > $maxCapPct) {
+                // Scale down proportionally
+                $scale = $maxCapPct / $totalPct;
+                foreach ($entries as &$e) {
+                    $e['pct'] = round($e['pct'] * $scale, 4);
+                    $e['amount'] = round($saleValue * ($e['pct'] / 100.0), 2);
+                }
+                unset($e);
             }
 
             // Insert each entry into mlm_commission_ledger
-            // property_id is FK to properties table - use NULL for plot bookings
             $ins = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
                     (beneficiary_user_id, source_user_id, commission_type, level, amount, status, property_id, sale_amount, commission_percentage, notes, booking_id, receipt_id, hold_until, created_at)
@@ -627,7 +736,6 @@ class MLMCommissionEngine
                     $result['total'] += $e['amount'];
                 } catch (Exception $ee) {
                     error_log("[__CLASS__] __METHOD__() exception: " . $ee->getMessage());
-
                     // continue to next entry
                 }
             }
@@ -636,37 +744,121 @@ class MLMCommissionEngine
             return $result;
         } catch (Exception $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
-
             return $result;
         }
     }
 
     /**
-     * Resolve a beneficiary's rank benefit. They might be a customer (default = associate tier)
-     * or an associate/agent (use their current rank from associates table).
+     * Load rank rates from mlm_rank_benefits (or defaults).
+     * Returns [rank_name => rate] map.
      */
-    protected function resolveDirectBenefit(int $userId): array
+    protected function loadRankRates(): array
     {
-        if (!$this->db || $userId <= 0) {
-            return $this->getRankBenefitByName('associate') ?? $this->defaultRankBenefits()[0];
+        $rates = [
+            'associate'        => 5.0,
+            'senior_associate' => 7.0,
+            'bdm'              => 10.0,
+            'sr_bdm'           => 12.0,
+            'vice_president'   => 15.0,
+            'president'        => 18.0,
+            'site_manager'     => 20.0,
+        ];
+        if (!$this->db) {
+            return $rates;
         }
         try {
-            $stmt = $this->db->prepare("SELECT level FROM associates WHERE user_id = ? LIMIT 1");
-            $stmt->execute([$userId]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $rank = $row['level'] ?? null;
-            if ($rank && in_array($rank, self::RANK_ORDER, true)) {
-                $benefit = $this->getRankBenefitByName($rank);
-                if ($benefit) {
-                    return $benefit;
+            $rows = $this->db->query("SELECT rank_name, direct_sale_pct FROM mlm_rank_benefits WHERE is_active = 1")->fetchAll(PDO::FETCH_ASSOC);
+            if ($rows) {
+                foreach ($rows as $r) {
+                    $rates[$r['rank_name']] = (float)$r['direct_sale_pct'];
                 }
             }
-        } catch (Exception $e) {
-            error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
+        } catch (\Throwable $e) {
+            // fall through to defaults
+        }
+        return $rates;
+    }
 
+    /**
+     * Get a user's rank slug from associates table.
+     */
+    protected function getUserRank(int $userId): string
+    {
+        if (!$this->db || $userId <= 0) {
+            return 'associate';
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT level FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1");
+            $stmt->execute([$userId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row && !empty($row['level']) && in_array($row['level'], self::RANK_ORDER, true)) {
+                return $row['level'];
+            }
+        } catch (\Throwable $e) {
             // fall through
         }
-        return $this->getRankBenefitByName('associate') ?? $this->defaultRankBenefits()[0];
+        return 'associate';
+    }
+
+    /* =============================================================
+     *  RANK ADVANCEMENT BONUS
+     * ============================================================= */
+
+    /**
+     * Award a one-time rank bonus when an associate is promoted.
+     * Reads rank_bonus_amounts JSON from mlm_settings, checks for
+     * duplicate payment, inserts into mlm_rank_bonuses + mlm_commission_ledger.
+     */
+    protected function awardRankBonus(int $associateId, string $fromRank, string $toRank, int $userId): void
+    {
+        if (!$this->db || $userId <= 0) {
+            return;
+        }
+        try {
+            $enabled = $this->db->query("SELECT setting_value FROM mlm_settings WHERE setting_key = 'rank_bonus_enabled'")->fetchColumn();
+            if ($enabled !== '1') {
+                return;
+            }
+
+            $json = $this->db->query("SELECT setting_value FROM mlm_settings WHERE setting_key = 'rank_bonus_amounts'")->fetchColumn();
+            if (!$json) {
+                return;
+            }
+            $amounts = json_decode($json, true);
+            if (!is_array($amounts)) {
+                return;
+            }
+
+            $bonus = (float)($amounts[$toRank] ?? 0);
+            if ($bonus <= 0) {
+                return;
+            }
+
+            $dup = $this->db->prepare("SELECT COUNT(*) FROM mlm_rank_bonuses WHERE user_id = ? AND to_rank = ?");
+            $dup->execute([$userId, $toRank]);
+            if ((int)$dup->fetchColumn() > 0) {
+                return;
+            }
+
+            $ins = $this->db->prepare("
+                INSERT INTO mlm_rank_bonuses (user_id, from_rank, to_rank, bonus_amount, status, created_at)
+                VALUES (?, ?, ?, ?, 'pending', NOW())
+            ");
+            $ins->execute([$userId, $fromRank, $toRank, $bonus]);
+
+            $this->db->prepare("
+                INSERT INTO mlm_commission_ledger
+                    (beneficiary_user_id, source_user_id, commission_type, amount, status, notes, booking_id, created_at)
+                VALUES (?, ?, 'rank_bonus', ?, 'pending', ?, NULL, NOW())
+            ")->execute([
+                $userId,
+                $userId,
+                $bonus,
+                "Rank promotion bonus: $fromRank → $toRank",
+            ]);
+        } catch (\Throwable $e) {
+            error_log("[MLMCommissionEngine] awardRankBonus() error: " . $e->getMessage());
+        }
     }
 
     /* =============================================================
@@ -792,65 +984,7 @@ class MLMCommissionEngine
                         $result['errors'][] = "Ledger {$pr['id']}: " . $ie->getMessage();
                     }
                 }
-                // Also check booking_commissions (Module 2 table)
-                try {
-                    $bcStmt = $this->db->prepare("
-                        SELECT id, beneficiary_user_id, source_user_id, amount
-                        FROM booking_commissions
-                        WHERE status = 'paid'
-                          AND booking_id = ?
-                    ");
-                    $bcStmt->execute([$bookingId]);
-                    $bcRows = $bcStmt->fetchAll(PDO::FETCH_ASSOC);
-                    foreach ($bcRows as $bc) {
-                        try {
-                            $existingBc = $this->db->prepare("
-                                SELECT id FROM mlm_clawback_log
-                                WHERE original_ledger_id = ? AND status IN ('pending','debited')
-                                LIMIT 1
-                            ");
-                            $existingBc->execute([(int)$bc['id']]);
-                            if ($existingBc->fetchColumn()) {
-                                continue;
-                            }
-                            $cbAmt = (float)$bc['amount'];
-                            if ($cbAmt <= 0) {
-                                continue;
-                            }
-                            $this->db->prepare("
-                                INSERT INTO mlm_clawback_log
-                                    (original_ledger_id, beneficiary_user_id, source_user_id,
-                                     emi_installment_id, default_date, original_amount, clawback_amount,
-                                     reason, status, created_at)
-                                VALUES
-                                    (?, ?, ?, ?, ?, ?, ?, ?, 'debited', NOW())
-                            ")->execute([
-                                (int)$bc['id'],
-                                $bc['beneficiary_user_id'],
-                                $bc['source_user_id'],
-                                $installmentId,
-                                $defaultDate,
-                                $cbAmt,
-                                $cbAmt,
-                                "EMI default {$daysOverdue}d on booking #{$bookingId} (booking_commissions)",
-                            ]);
-                            try {
-                                $wStmt2 = $this->db->prepare("SELECT id, balance FROM user_wallets WHERE user_id = ? LIMIT 1");
-                                $wStmt2->execute([$bc['beneficiary_user_id']]);
-                                $w2 = $wStmt2->fetch(PDO::FETCH_ASSOC);
-                                if ($w2) {
-                                    $this->db->prepare("
-                                        UPDATE user_wallets SET balance = balance - ?, total_debited = total_debited + ?, updated_at = NOW() WHERE id = ?
-                                    ")->execute([$cbAmt, $cbAmt, $w2['id']]);
-                                }
-                            } catch (Exception $we2) {}
-                            $result['processed']++;
-                            $result['amount'] += $cbAmt;
-                        } catch (Exception $ie2) {
-                            $result['errors'][] = "BookingCommission {$bc['id']}: " . $ie2->getMessage();
-                        }
-                    }
-                } catch (Exception $bce) {}
+                // mlm_commission_ledger is the single source of truth — no legacy table to check
             }
         } catch (Exception $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
@@ -1186,6 +1320,48 @@ class MLMCommissionEngine
 
             // Rank distribution (from associates table, with sane fallback)
             $stats['rank_distribution'] = $this->getRankDistribution();
+
+            // Commission by type breakdown (for the dashboard)
+            $typeRows = $this->db->query("
+                SELECT commission_type, COUNT(*) AS cnt, COALESCE(SUM(amount), 0) AS total
+                FROM mlm_commission_ledger
+                GROUP BY commission_type
+                ORDER BY total DESC
+            ")->fetchAll(PDO::FETCH_ASSOC);
+            $stats['commission_by_type'] = [];
+            foreach ($typeRows as $tr) {
+                $stats['commission_by_type'][$tr['commission_type']] = [
+                    'count' => (int)$tr['cnt'],
+                    'total' => (float)$tr['total'],
+                ];
+            }
+
+            // This month's commission by type
+            $mTypeRows = $this->db->query("
+                SELECT commission_type, COUNT(*) AS cnt, COALESCE(SUM(amount), 0) AS total
+                FROM mlm_commission_ledger
+                WHERE created_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+                GROUP BY commission_type
+                ORDER BY total DESC
+            ")->fetchAll(PDO::FETCH_ASSOC);
+            $stats['commission_this_month_by_type'] = [];
+            foreach ($mTypeRows as $tr) {
+                $stats['commission_this_month_by_type'][$tr['commission_type']] = [
+                    'count' => (int)$tr['cnt'],
+                    'total' => (float)$tr['total'],
+                ];
+            }
+
+            // New streams this month (generation, infinity, matching)
+            $stats['generation_bonus_this_month'] = (float)($this->db->query(
+                "SELECT COALESCE(SUM(commission_amount), 0) FROM mlm_generation_commissions WHERE created_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01')"
+            )->fetchColumn() ?: 0);
+            $stats['infinity_override_this_month'] = (float)($this->db->query(
+                "SELECT COALESCE(SUM(commission_amount), 0) FROM mlm_infinity_overrides WHERE created_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01')"
+            )->fetchColumn() ?: 0);
+            $stats['matching_bonus_this_month'] = (float)($this->db->query(
+                "SELECT COALESCE(SUM(bonus_amount), 0) FROM mlm_matching_bonuses WHERE created_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01')"
+            )->fetchColumn() ?: 0);
 
             $cronStmt = $this->db->query("SELECT * FROM mlm_cron_log ORDER BY started_at DESC LIMIT 1");
             $stats['recent_cron'] = $cronStmt ? ($cronStmt->fetch(PDO::FETCH_ASSOC) ?: null) : null;

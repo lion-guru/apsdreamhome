@@ -195,6 +195,8 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Page-specific styles (deferred, non-critical) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-pages.css" rel="stylesheet">
 
+    <!-- Modern UI/UX Animations -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css" rel="stylesheet">
 
 </head>
 
@@ -276,6 +278,9 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         };
     </script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-system.js"></script>
+
+    <!-- Modern Effects Engine -->
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/modern-effects.js"></script>
 
     <!-- Custom JS -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>

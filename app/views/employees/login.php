@@ -143,7 +143,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
 <style>
     body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         min-height: 100vh;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
@@ -166,7 +166,7 @@ require_once __DIR__ . '/../layouts/header.php';
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+        background: linear-gradient(90deg, #0d9488, #0f766e, #0d9488);
         background-size: 200% 100%;
         animation: shimmer 3s ease-in-out infinite;
     }
@@ -190,7 +190,7 @@ require_once __DIR__ . '/../layouts/header.php';
         width: 80px;
         height: 80px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -217,7 +217,7 @@ require_once __DIR__ . '/../layouts/header.php';
     }
 
     .gradient-text {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -245,7 +245,7 @@ require_once __DIR__ . '/../layouts/header.php';
     }
 
     .login-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         border: none;
         border-radius: 12px;
         font-weight: 600;
@@ -272,7 +272,7 @@ require_once __DIR__ . '/../layouts/header.php';
     }
 
     .login-btn:hover {
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
         transform: translateY(-2px);
         box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
     }
@@ -286,7 +286,7 @@ require_once __DIR__ . '/../layouts/header.php';
     }
 
     .form-control:focus {
-        border-color: #667eea;
+        border-color: #0d9488;
         box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
         background-color: #f8f9ff;
     }
@@ -306,7 +306,7 @@ require_once __DIR__ . '/../layouts/header.php';
     }
 
     .input-group .btn:hover {
-        border-color: #667eea;
+        border-color: #0d9488;
         background-color: #e8eaff;
     }
 

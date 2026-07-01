@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:apsdreamhome_app_v2/core/utils/logger.dart';
-import 'package:apsdreamhome_app_v2/core/services/api_service.dart';
+import '../utils/logger.dart';
+import 'api_service.dart';
 
 /// Background message handler — must be a top-level function
 @pragma('vm:entry-point')
@@ -202,7 +202,7 @@ class NotificationService {
       icon: '@mipmap/ic_launcher',
     );
 
-    final details = NotificationDetails(android: androidDetails);
+    const details = NotificationDetails(android: androidDetails);
 
     await _localNotifications.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000,

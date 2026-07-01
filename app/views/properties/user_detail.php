@@ -109,26 +109,22 @@
                     <?php endif; ?>
 
                     <hr>
-                    <h6 class="fw-bold mb-3"><i class="fas fa-paper-plane me-2"></i>Send Inquiry</h6>
-                    <form method="POST" action="<?php echo BASE_URL; ?>/property/inquire">
-                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
-                        <div class="mb-3">
-                            <input type="text" name="name" class="form-control" placeholder="Your Name *" required value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>">
-                        </div>
-                        <div class="mb-3">
-                            <input type="email" name="email" class="form-control" placeholder="Your Email" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>">
-                        </div>
-                        <div class="mb-3">
-                            <input type="tel" name="phone" class="form-control" placeholder="Your Phone *" required value="<?php echo htmlspecialchars($_SESSION['user_phone'] ?? ''); ?>">
-                        </div>
-                        <div class="mb-3">
-                            <textarea name="message" class="form-control" rows="3" placeholder="I'm interested in this property. Please contact me."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-paper-plane me-2"></i>Send Inquiry
-                        </button>
-                    </form>
+                    <h6 class="fw-bold mb-3"><i class="fas fa-hand-pointer me-2"></i>Interested in this property?</h6>
+                    <p class="text-muted small mb-3">Click below and our team will contact you within 30 minutes.</p>
+                    <button type="button" class="btn btn-primary w-100 mb-3" onclick="showDetailInterestModal()" id="detailInterestBtn">
+                        <i class="fas fa-hand-pointer me-2"></i>I'm Interested
+                    </button>
+                    <div class="text-center">
+                        <small class="text-muted">or</small>
+                    </div>
+                    <div class="mt-3">
+                        <a href="tel:+919277121112" class="btn btn-success w-100 mb-2">
+                            <i class="fas fa-phone me-2"></i>Call Now
+                        </a>
+                        <a href="https://wa.me/919277121112?text=Hi, I'm interested in <?php echo urlencode($property['name'] ?? 'this property'); ?>" target="_blank" class="btn btn-outline-success w-100">
+                            <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -158,3 +154,97 @@
         </div>
     </div>
 </div>
+
+<!-- Interest Modal -->
+<div class="modal fade" id="detailInterestModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+        <div class="modal-content" style="border-radius:16px;">
+            <div class="modal-header border-0 pb-0">
+                <div>
+                    <h6 class="fw-bold mb-0">I'm Interested</h6>
+                    <small class="text-muted"><?php echo htmlspecialchars($property['name'] ?? ''); ?></small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="detailInterestForm" onsubmit="submitDetailInterest(event)">
+                    <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
+                    <input type="hidden" name="source" value="property_detail">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Phone Number *</label>
+                        <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required
+                               value="<?php echo htmlspecialchars($_SESSION['user_phone'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Your Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="Enter your name"
+                               value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Budget Range</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            <?php foreach (['Under 10L','10L-25L','25L-50L','50L-1Cr','1Cr+'] as $budget): ?>
+                            <button type="button" class="btn btn-outline-primary btn-sm detail-budget-chip" onclick="selectDetailBudget(this)"><?php echo $budget; ?></button>
+                            <?php endforeach; ?>
+                        </div>
+                        <input type="hidden" name="budget" id="detailInterestBudget">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" id="detailInterestSubmitBtn">
+                        <i class="fas fa-paper-plane me-1"></i>Submit Interest
+                    </button>
+                </form>
+                <div id="detailInterestSuccess" class="text-center py-3" style="display:none;">
+                    <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                    <h6 class="fw-bold">Interest Recorded!</h6>
+                    <p class="text-muted small mb-0">Our team will contact you shortly.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.detail-budget-chip.active { background: #c2410c; color: #fff; border-color: #c2410c; }
+</style>
+
+<script>
+function showDetailInterestModal() {
+    document.getElementById('detailInterestForm').style.display = 'block';
+    document.getElementById('detailInterestSuccess').style.display = 'none';
+    new bootstrap.Modal(document.getElementById('detailInterestModal')).show();
+}
+
+function selectDetailBudget(el) {
+    document.querySelectorAll('.detail-budget-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('detailInterestBudget').value = el.textContent;
+}
+
+function submitDetailInterest(e) {
+    e.preventDefault();
+    const form = document.getElementById('detailInterestForm');
+    const btn = document.getElementById('detailInterestSubmitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Submitting...';
+
+    const fd = new FormData(form);
+    fetch('<?php echo BASE_URL; ?>/property/interest', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                form.style.display = 'none';
+                document.getElementById('detailInterestSuccess').style.display = 'block';
+                setTimeout(() => bootstrap.Modal.getInstance(document.getElementById('detailInterestModal')).hide(), 2500);
+            } else {
+                alert(data.message || 'Something went wrong. Please try again.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Interest';
+            }
+        })
+        .catch(() => {
+            alert('Network error. Please try again.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Interest';
+        });
+}
+</script>

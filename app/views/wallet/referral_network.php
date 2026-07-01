@@ -1,9 +1,9 @@
-<?php $this->layout = 'layouts/base'; ?>
-<?php $this->title = 'Referral Network - APS Dream Home'; ?>
+
+<?php $page_title = $page_title ?? 'Referral Network - APS Dream Home'; ?>
 
 <style>
 .referral-stats {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     border-radius: 15px;
     padding: 30px;
@@ -46,7 +46,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     display: flex;
     align-items: center;
@@ -171,7 +171,7 @@
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-users me-2 text-primary"></i>Referral Network</h2>
-        <a href="/wallet" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
+        <a href="<?php echo BASE_URL; ?>/<?= ($_SESSION['role'] ?? '') === 'associate' ? 'associate/wallet' : 'wallet' ?>" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
     </div>
 
     <!-- Share Card -->

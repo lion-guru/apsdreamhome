@@ -71,7 +71,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <div class="row g-4">
                 <div class="col-lg-7">
                     <div class="aps-cp-card">
-                        <div class="aps-cp-card-header" style="background: linear-gradient(135deg, var(--aps-cp-primary) 0%, #764ba2 100%); border-bottom: none;">
+                        <div class="aps-cp-card-header" style="background: linear-gradient(135deg, var(--aps-cp-primary) 0%, #0f766e 100%); border-bottom: none;">
                             <h4 style="color: #fff;">
                                 <i class="fas <?= $bankAccount ? 'fa-edit' : 'fa-plus-circle' ?>" style="color: #fff;"></i>
                                 <?= $bankAccount ? __('bank_form_update_title', null, 'Update Bank Account') : __('bank_form_add_title', null, 'Add Bank Account') ?>

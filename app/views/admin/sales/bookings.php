@@ -65,11 +65,12 @@ $statusBadge = function ($s) {
                         <th class="text-end"><?= __('sale_agreement') ?></th>
                         <th class="text-end"><?= __('sale_paid') ?></th>
                         <th><?= __('sale_booking_date') ?></th>
+                        <th>Approval</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($bookings)): ?>
-                        <tr><td colspan="8" class="text-center py-4 text-muted"><?= __('sale_no_bookings') ?></td></tr>
+                        <tr><td colspan="9" class="text-center py-4 text-muted"><?= __('sale_no_bookings') ?></td></tr>
                     <?php else: foreach ($bookings as $b): ?>
                         <tr>
                             <td>
@@ -83,8 +84,21 @@ $statusBadge = function ($s) {
                             <td><span class="badge <?= $statusBadge($b['status'] ?? '') ?>"><?= htmlspecialchars((string)($b['status'] ?? '')) ?></span></td>
                             <td class="text-end">&#8377;<?= number_format((float)($b['agreement_value'] ?? 0)) ?></td>
                             <td class="text-end text-success">&#8377;<?= number_format((float)($b['amount_paid'] ?? 0)) ?></td>
-                            <td><?= htmlspecialchars((string)($b['booking_date'] ?? '')) ?></td>
-                        </tr>
+                                <td><?= htmlspecialchars((string)($b['booking_date'] ?? '')) ?></td>
+                                <td>
+                                    <?php
+                                    $apStatus = $b['approval_status'] ?? null;
+                                    $apBadge = match($apStatus) {
+                                        'approved' => 'bg-success',
+                                        'rejected' => 'bg-danger',
+                                        'pending' => 'bg-warning text-dark',
+                                        default => 'bg-light text-muted',
+                                    };
+                                    $apLabel = $apStatus ? ucfirst($apStatus) : '—';
+                                    ?>
+                                    <span class="badge <?= $apBadge ?>"><?= $apLabel ?></span>
+                                </td>
+                            </tr>
                     <?php endforeach; endif; ?>
                 </tbody>
             </table>

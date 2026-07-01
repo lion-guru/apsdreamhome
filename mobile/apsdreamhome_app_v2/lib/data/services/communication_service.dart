@@ -1,5 +1,5 @@
-import 'package:apsdreamhome_app_v2/core/utils/logger.dart';
-import 'package:apsdreamhome_app_v2/core/services/notification_service.dart';
+import '../../core/utils/logger.dart';
+import '../../core/services/notification_service.dart';
 
 /// Communication Service — push notifications via FCM, SMS/email are server-side
 class CommunicationService {

@@ -22,12 +22,12 @@
                         <div class="col-md-6"><strong>Phone:</strong> <?= htmlspecialchars($payment['employee_phone'] ?? '-') ?></div>
                         <div class="col-md-6"><strong>Payment Date:</strong> <?= htmlspecialchars($payment['payment_date'] ?? '') ?></div>
                     </div>
-                    <table class="table table-bordered mt-3">
+                    <div class="table-responsive"><table class="table table-bordered mt-3">
                         <tr><th>Description</th><th class="text-end">Amount</th></tr>
                         <tr><td>Gross Salary</td><td class="text-end">₹<?= number_format($payment['gross_salary'] ?? 0, 2) ?></td></tr>
                         <tr><td>Total Deductions</td><td class="text-end text-danger">- ₹<?= number_format($payment['total_deductions'] ?? 0, 2) ?></td></tr>
                         <tr class="table-success"><td><strong>Net Salary</strong></td><td class="text-end"><strong>₹<?= number_format($payment['net_salary'] ?? 0, 2) ?></strong></td></tr>
-                    </table>
+                    </table></div>
                     <div class="row mt-3">
                         <div class="col-md-4"><strong>Method:</strong> <?= ucfirst(str_replace('_',' ', $payment['payment_method'] ?? 'bank_transfer')) ?></div>
                         <div class="col-md-4"><strong>Transaction ID:</strong> <?= htmlspecialchars($payment['transaction_id'] ?? '-') ?></div>

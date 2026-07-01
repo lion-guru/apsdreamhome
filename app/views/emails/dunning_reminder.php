@@ -23,7 +23,7 @@
     </table>
 
     <p style="color: #475569; line-height: 1.6;">Please ensure timely payment to avoid late fees. You can pay online via the customer portal or visit our office.</p>
-    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #4f46e5;">{{company_phone}}</strong></p>
+    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #0d9488;">{{company_phone}}</strong></p>
 </div>
 <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
     <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>

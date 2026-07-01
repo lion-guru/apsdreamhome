@@ -126,7 +126,7 @@ function exportAsPDF($data) {
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
-        h2 { color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+        h2 { color: #333; border-bottom: 2px solid #0d9488; padding-bottom: 10px; }
         .section { margin: 30px 0; }
         .stats { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
     </style>
@@ -147,7 +147,7 @@ function exportAsPDF($data) {
     if (!empty($data['users'])) {
         echo '<div class="section">
             <h2>Recent Users</h2>
-            <table>
+            <div class="table-responsive"><table>
                 <thead>
                     <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th></tr>
                 </thead>
@@ -161,13 +161,13 @@ function exportAsPDF($data) {
                 <td>' . h($user['created_at']) . '</td>
             </tr>';
         }
-        echo '</tbody></table></div>';
+        echo '</tbody></table></div></div>';
     }
 
     if (!empty($data['properties'])) {
         echo '<div class="section">
             <h2>Recent Properties</h2>
-            <table>
+            <div class="table-responsive"><table>
                 <thead>
                     <tr><th>Title</th><th>Location</th><th>Price</th><th>Status</th><th>Created</th></tr>
                 </thead>
@@ -181,7 +181,7 @@ function exportAsPDF($data) {
                 <td>' . h($property['created_at']) . '</td>
             </tr>';
         }
-        echo '</tbody></table></div>';
+        echo '</tbody></table></div></div>';
     }
 
     echo '</body></html>';

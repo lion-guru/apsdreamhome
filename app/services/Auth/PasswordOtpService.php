@@ -314,7 +314,7 @@ class PasswordOtpService
             <td align="center">
                 <table width="500" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
                     <tr>
-                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 32px 40px; text-align: center;">
+                        <td style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); padding: 32px 40px; text-align: center;">
                             <h1 style="margin:0; color: #ffffff; font-size: 24px; font-weight: 700;">🔐 Verification Code</h1>
                             <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85); font-size: 14px;">APS Dream Home - Real Estate</p>
                         </td>
@@ -324,9 +324,9 @@ class PasswordOtpService
                             <p style="margin: 0 0 16px; color: #333; font-size: 16px; line-height: 1.5;">Hi <strong>{$name}</strong>,</p>
                             <p style="margin: 0 0 24px; color: #555; font-size: 15px; line-height: 1.5;">Use the following One-Time Password (OTP) to {$action}. This code is valid for <strong>10 minutes</strong>:</p>
 
-                            <div style="background: linear-gradient(135deg, #f6f8fc 0%, #e9ecf5 100%); border: 2px dashed #667eea; border-radius: 12px; padding: 32px; text-align: center; margin: 24px 0;">
+                            <div style="background: linear-gradient(135deg, #f6f8fc 0%, #e9ecf5 100%); border: 2px dashed #0d9488; border-radius: 12px; padding: 32px; text-align: center; margin: 24px 0;">
                                 <p style="margin: 0 0 8px; color: #888; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">Your OTP Code</p>
-                                <p style="margin: 0; font-size: 42px; font-weight: 700; color: #667eea; letter-spacing: 8px; font-family: 'Courier New', monospace;">{$otp}</p>
+                                <p style="margin: 0; font-size: 42px; font-weight: 700; color: #0d9488; letter-spacing: 8px; font-family: 'Courier New', monospace;">{$otp}</p>
                             </div>
 
                             <div style="background-color: #fff7ed; border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 8px; margin: 24px 0;">
@@ -337,7 +337,7 @@ class PasswordOtpService
 
                             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
 
-                            <p style="margin: 0; color: #999; font-size: 12px; text-align: center;">This is an automated email from <a href="{$baseUrl}" style="color: #667eea; text-decoration: none;">APS Dream Home</a>. Please do not reply.</p>
+                            <p style="margin: 0; color: #999; font-size: 12px; text-align: center;">This is an automated email from <a href="{$baseUrl}" style="color: #0d9488; text-decoration: none;">APS Dream Home</a>. Please do not reply.</p>
                         </td>
                     </tr>
                 </table>

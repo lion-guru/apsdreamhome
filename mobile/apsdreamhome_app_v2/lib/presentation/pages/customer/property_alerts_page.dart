@@ -162,7 +162,7 @@ class _PropertyAlertsPageState extends ConsumerState<PropertyAlertsPage> {
         ),
       ),
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(color: AppTheme.primaryColor),
             )
           : _error != null
@@ -789,7 +789,7 @@ class _PropertyAlertsPageState extends ConsumerState<PropertyAlertsPage> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppTheme.primaryColor,
+            activeThumbColor: AppTheme.primaryColor,
           ),
         ],
       ),

@@ -18,7 +18,7 @@
     <div class="card aps-cp-card">
         <div class="card-header aps-cp-card-header"><h5>All Properties</h5></div>
         <div class="card-body aps-cp-card-body">
-            <table class="table table-striped">
+            <div class="table-responsive"><table class="table table-striped">
                 <thead>
                     <tr><th>Plot #</th><th>Title</th><th>Location</th><th>Area (sqft)</th><th>Price</th><th>Status</th></tr>
                 </thead>
@@ -38,7 +38,7 @@
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

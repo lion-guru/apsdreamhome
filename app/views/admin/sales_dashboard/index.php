@@ -209,7 +209,7 @@
 </div>
 
 <style>
-.bg-gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.bg-gradient-primary { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); }
 .bg-gradient-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
 .bg-gradient-warning { background: linear-gradient(135deg, #f5af19 0%, #f12711 100%); }
 .bg-gradient-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
@@ -227,13 +227,13 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 label: 'Leads',
                 data: trendData.map(d => d.count),
-                borderColor: '#667eea',
+                borderColor: '#0d9488',
                 backgroundColor: 'rgba(102, 126, 234, 0.1)',
                 fill: true,
                 tension: 0.4,
                 borderWidth: 3,
                 pointRadius: 5,
-                pointBackgroundColor: '#667eea'
+                pointBackgroundColor: '#0d9488'
             }]
         },
         options: {

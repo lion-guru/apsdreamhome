@@ -55,11 +55,11 @@
         }
         .contact-item i {
             font-size: 1.5rem;
-            color: #667eea;
+            color: #0d9488;
             margin-bottom: 8px;
         }
         .btn-retry {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             border: none;
             padding: 15px 40px;
             font-size: 1.1rem;

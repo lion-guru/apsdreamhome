@@ -8,7 +8,7 @@ $location = $location ?? '';
 $locationName = ucfirst($location);
 ?>
 <!-- Hero Section -->
-<section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
     <div class="container text-center py-5">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-map-marker-alt me-3"></i><?php echo $locationName; ?> <?= __('projects_location_hero') ?></h1>
         <p class="lead"><?= __('projects_location_explore') ?> <?php echo $locationName; ?></p>
@@ -26,9 +26,9 @@ $locationName = ucfirst($location);
                     if (stripos($project->site_name, 'Suryoday') !== false) {
                         $imgPath = '/assets/images/projects/gorakhpur/suryoday.jpg';
                     } elseif (stripos($project->site_name, 'Raghunath') !== false) {
-                        $imgPath = '/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG';
+                        $imgPath = '/assets/images/projects/gorakhpur/raghunath-nagri.jpg';
                     } elseif (stripos($project->site_name, 'Braj') !== false || stripos($project->site_name, 'Radha') !== false) {
-                        $imgPath = '/assets/images/projects/gorakhpur/suryoday1.jpeg';
+                        $imgPath = '/assets/images/projects/lucknow/braj-radha-nagri.jpg';
                     } elseif (stripos($project->site_name, 'Budh') !== false) {
                         $imgPath = '/assets/images/projects/kushinagar/budh-bihar.jpg';
                     } elseif (stripos($project->site_name, 'Awadhpuri') !== false) {
@@ -104,7 +104,7 @@ $locationName = ucfirst($location);
 </section>
 
 <!-- CTA -->
-<section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
     <div class="container">
         <h3><?= __('projects_location_interested') ?> <?php echo $locationName; ?> <?= __('projects_location_properties') ?></h3>
         <p class="mb-4"><?= __('projects_location_cta_desc') ?></p>

@@ -72,13 +72,13 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     color: white;
 }
 
 .btn-outline {
-    border: 2px solid #667eea;
-    color: #667eea;
+    border: 2px solid #0d9488;
+    color: #0d9488;
 }
 
 .btn:hover {

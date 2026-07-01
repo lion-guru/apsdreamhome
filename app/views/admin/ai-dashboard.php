@@ -115,7 +115,7 @@ $content = ob_start();
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-chart-bar"></i> Top Detected Intents</div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table">
+                    <div class="table-responsive"><table class="table">
                         <thead><tr><th>Intent</th><th>Count</th></tr></thead>
                         <tbody>
                             <?php foreach ($topIntents as $i): ?>
@@ -125,7 +125,7 @@ $content = ob_start();
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -136,7 +136,7 @@ $content = ob_start();
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-fire"></i> Top Scored Leads (AI-Powered)</div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table">
+                    <div class="table-responsive"><table class="table">
                         <thead>
                             <tr>
                                 <th>Lead</th>
@@ -161,7 +161,7 @@ $content = ob_start();
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -172,7 +172,7 @@ $content = ob_start();
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-tags"></i> Price Prediction Models</div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table">
+                    <div class="table-responsive"><table class="table">
                         <thead>
                             <tr><th>Type</th><th>District</th><th>R²</th><th>Samples</th><th>Trained At</th></tr>
                         </thead>
@@ -187,7 +187,7 @@ $content = ob_start();
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

@@ -25,7 +25,7 @@ if (empty($grouped_projects) && !empty($projects)) {
 ?>
 
 <!-- Company Projects Hero -->
-<section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8 mx-auto text-center">
@@ -69,9 +69,9 @@ if (empty($grouped_projects) && !empty($projects)) {
                                 if (stripos($project->site_name, 'Suryoday') !== false) {
                                     $imgPath = '/assets/images/projects/gorakhpur/suryoday.jpg';
                                 } elseif (stripos($project->site_name, 'Raghunath') !== false) {
-                                    $imgPath = '/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG';
+                                    $imgPath = '/assets/images/projects/gorakhpur/raghunath-nagri.jpg';
                                 } elseif (stripos($project->site_name, 'Braj') !== false || stripos($project->site_name, 'Radha') !== false) {
-                                    $imgPath = '/assets/images/projects/gorakhpur/suryoday1.jpeg';
+                                    $imgPath = '/assets/images/projects/lucknow/braj-radha-nagri.jpg';
                                 } elseif (stripos($project->site_name, 'Budh') !== false || stripos($project->site_name, 'Bihar') !== false) {
                                     $imgPath = '/assets/images/projects/' . $district . '/budh-bihar.jpg';
                                 } elseif (stripos($project->site_name, 'Awadhpuri') !== false) {

@@ -80,7 +80,7 @@ $page_title = "Property Purchase - " . h($property['title']);
 
     .property-image {
         height: 300px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #0d9488, #0f766e);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -187,11 +187,11 @@ $page_title = "Property Purchase - " . h($property['title']);
 
     .form-control:focus {
         outline: none;
-        border-color: #667eea;
+        border-color: #0d9488;
     }
 
     .btn-purchase {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #0d9488, #0f766e);
         color: white;
         border: none;
         padding: 1rem 2rem;

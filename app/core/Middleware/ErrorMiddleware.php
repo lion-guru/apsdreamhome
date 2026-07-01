@@ -292,7 +292,7 @@ class ErrorMiddleware extends Middleware
             <style>
                 body { 
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); 
                     margin: 0; 
                     padding: 0; 
                     min-height: 100vh; 

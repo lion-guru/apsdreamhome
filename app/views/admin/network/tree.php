@@ -16,7 +16,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             text-align: center;
             min-width: 150px;
         }
-        .tree-node.active { border-color: #4f46e5; background: #eef2ff; }
+        .tree-node.active { border-color: #0d9488; background: #eef2ff; }
         .tree-level { display: flex; justify-content: center; margin: 10px 0; }
         .connectors { display: flex; justify-content: center; }
         .connector { width: 2px; height: 20px; background: #cbd5e1; margin: 0 75px; }

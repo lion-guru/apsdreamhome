@@ -67,7 +67,7 @@ class UnifiedAuthController extends BaseController
 
         try {
             $db = Database::getInstance();
-            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND status = 'active' LIMIT 1", [$email, $email]);
+            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND status = 'active' AND registration_status = 'approved' LIMIT 1", [$email, $email]);
 
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
@@ -174,6 +174,14 @@ class UnifiedAuthController extends BaseController
             // Set role based on user type
             $role = $user_type; // customer, associate, agent, employee, admin
 
+            // Hybrid approval: customers + associates with sponsor = auto-approve, agents = manual
+            $autoApproveRoles = ['customer'];
+            $needsApprovalRoles = ['agent'];
+            $sponsorAutoApprove = ($role === 'associate' && !empty($referrer_id));
+
+            $regStatus = (in_array($role, $autoApproveRoles) || $sponsorAutoApprove) ? 'approved' : 'pending';
+            $userStatus = ($regStatus === 'approved') ? 'active' : 'inactive';
+
             $db->insert('users', [
                 'customer_id' => $customer_id,
                 'name' => $name,
@@ -183,7 +191,9 @@ class UnifiedAuthController extends BaseController
                 'referral_code' => $referral_code,
                 'referred_by' => $referrer_id,
                 'role' => $role,
-                'status' => 'active',
+                'status' => $userStatus,
+                'registration_status' => $regStatus,
+                'approved_at' => ($regStatus === 'approved') ? date('Y-m-d H:i:s') : null,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
@@ -210,7 +220,11 @@ class UnifiedAuthController extends BaseController
                 $this->processReferralReward($db, $referrer_id, $newUserId, $name, $user_type, $referral);
             }
 
-            $_SESSION['success'] = "Registration successful! Your ID: $customer_id. Please login.";
+            if ($regStatus === 'approved') {
+                $_SESSION['success'] = "Registration successful! Your ID: $customer_id. Please login.";
+            } else {
+                $_SESSION['success'] = "Registration successful! Your ID: $customer_id. Your account is pending admin approval. You will be notified once approved.";
+            }
             header('Location: ' . BASE_URL . '/login');
             exit;
         } catch (\Exception $e) {

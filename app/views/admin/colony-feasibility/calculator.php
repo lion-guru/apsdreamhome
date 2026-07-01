@@ -83,7 +83,7 @@ $isSuccess   = $feasibility['success'] ?? false;
       <div class="card aps-cp-card">
         <div class="card-header"><strong>Cost Component Breakdown</strong></div>
         <div class="card-body">
-          <table class="table table-sm mb-0">
+          <div class="table-responsive"><table class="table table-sm mb-0">
             <thead><tr><th>Component</th><th class="text-end">Amount</th><th class="text-end">₹/sqft</th></tr></thead>
             <tbody>
               <tr>
@@ -122,7 +122,7 @@ $isSuccess   = $feasibility['success'] ?? false;
                 <td class="text-end">₹<?= number_format($feasibility['ga_per_sqft'] ?? 0, 0) ?></td>
               </tr>
             </tbody>
-          </table>
+          </table></div>
 
           <hr>
           <div class="row text-center">
@@ -227,7 +227,7 @@ $isSuccess   = $feasibility['success'] ?? false;
          class="btn btn-sm btn-outline-secondary">View All</a>
     </div>
     <div class="card-body p-0">
-      <table class="table table-sm table-hover mb-0">
+      <div class="table-responsive"><table class="table table-sm table-hover mb-0">
         <thead class="table-light">
           <tr><th>Date</th><th>By</th><th class="text-end">Cost ₹/sqft</th><th class="text-end">Recommended ₹/sqft</th><th class="text-end">Markup</th></tr>
         </thead>
@@ -242,7 +242,7 @@ $isSuccess   = $feasibility['success'] ?? false;
             </tr>
           <?php endforeach; ?>
         </tbody>
-      </table>
+      </table></div>
     </div>
   </div>
   <?php endif; ?>

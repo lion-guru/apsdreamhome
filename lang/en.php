@@ -296,15 +296,15 @@ return array(
   'career_insurance' => 'Free Insurance Cover',
   'career_insurance_desc' => 'Company aapke parivar ki suraksha ka khayal rakhti hai. Sabhi users ko free health aur life insurance cover diya jaata hai.',
   'career_mlm' => 'MLM Network Benefits',
-  'career_mlm_desc' => 'Naye users join karwaiye aur unki sales par residual commission paayein. 10 rank structure â€” har rank ke saath badti hai earning!',
+  'career_mlm_desc' => 'Naye users join karwaiye aur unki sales par residual commission paayein. 10 rank structure — har rank ke saath badti hai earning!',
   'career_more' => 'More Reasons to Join',
   'career_more_desc' => 'Aur bhi kai saare reasons jo APS Dream Home ko best banate hain',
   'career_opportunity' => 'Career Opportunity',
   'career_salary' => 'Fixed Monthly Salary',
   'career_salary_desc' => 'Real estate mein aam taur par sirf commission milta hai. Lekin APS Dream Home users ko fixed monthly salary bhi di jaati hai!',
-  'career_subtitle' => 'Real Estate mein ek nayi shuruaat â€” Salary + Commission + Insurance ke saath!',
+  'career_subtitle' => 'Real Estate mein ek nayi shuruaat — Salary + Commission + Insurance ke saath!',
   'career_training' => 'Free Training & Certification',
-  'career_training_desc' => 'Real estate experience nahi hai? Koi baat nahi! Company aapko free training degi â€” property knowledge, negotiation skills, aur sales techniques.',
+  'career_training_desc' => 'Real estate experience nahi hai? Koi baat nahi! Company aapko free training degi — property knowledge, negotiation skills, aur sales techniques.',
   'career_with_aps' => 'Why Join APS Dream Home?',
   'careers' => 'Careers',
   'careers_b1_desc' => 'Continuous learning and career advancement opportunities in a growing company',
@@ -412,7 +412,7 @@ return array(
   'crore' => 'Crore',
   'csrf_token_mismatch' => 'Security token mismatch. Please try again',
   'cta_services_subtitle' => 'Get started with our expert team today',
-  'cta_subtitle' => 'Get in touch today â€” our team will help you every step of the way',
+  'cta_subtitle' => 'Get in touch today — our team will help you every step of the way',
   'cta_title' => 'Ready to Find Your Dream Home?',
   'currency_inr' => 'Rs',
   'current_bid' => 'Current Bid',
@@ -546,7 +546,7 @@ return array(
   'email_sent' => 'Email sent successfully',
   'email_templates' => 'Email Templates',
   'email_us' => 'Email Us',
-  'emi_calc_desc' => 'Home loan, car loan â€” kisi bhi loan ka monthly EMI nikaalein. Principal, interest aur total payment dekhein.',
+  'emi_calc_desc' => 'Home loan, car loan — kisi bhi loan ka monthly EMI nikaalein. Principal, interest aur total payment dekhein.',
   'emi_calculator' => 'EMI Calculator',
   'emi_calculator_short' => 'EMI Calculator',
   'emi_subtitle' => 'Plan your home loan with our free EMI calculator',
@@ -733,7 +733,7 @@ return array(
   'free_service_100' => '100% FREE Service',
   'free_tools' => 'Free Tools',
   'free_tools_subtitle' => 'Apna property calculate karein, compare karein aur smart decision lein',
-  'free_tools_title' => 'Real Estate Tools â€” Bilkul Free!',
+  'free_tools_title' => 'Real Estate Tools — Bilkul Free!',
   'free_valuation' => 'Free property valuation',
   'from' => 'From',
   'full_address' => 'Full Address / Location',
@@ -774,7 +774,7 @@ return array(
   'hello' => 'Hello',
   'help_support' => 'Help & Support',
   'hero_cta' => 'Explore Projects',
-  'hero_subtitle' => 'Plots, flats, villas â€” verified properties across Gorakhpur, Lucknow & Uttar Pradesh',
+  'hero_subtitle' => 'Plots, flats, villas — verified properties across Gorakhpur, Lucknow & Uttar Pradesh',
   'hero_title' => 'Find Your Dream Home with APS',
   'high' => 'High',
   'highest_bid' => 'Highest Bid',
@@ -827,7 +827,7 @@ return array(
   'invalid_input' => 'Invalid input',
   'invalid_phone' => 'Please enter a valid phone number',
   'investment_amount' => 'Investment Amount',
-  'investment_calc_desc' => 'Real Estate vs FD vs Gold â€” kaunsa investment better hai? 5, 10, 15 saal ka growth compare karein.',
+  'investment_calc_desc' => 'Real Estate vs FD vs Gold — kaunsa investment better hai? 5, 10, 15 saal ka growth compare karein.',
   'investment_calculator' => 'Investment Calculator',
   'investment_growth_calculator' => 'Investment Growth Calculator',
   'investment_growth_subtitle' => 'See how your investment grows in real estate vs FD vs Gold:',
@@ -1187,7 +1187,7 @@ return array(
   'pan_number' => 'PAN Number',
   'pan_optional' => 'PAN (Optional)',
   'passive_income' => 'Passive Income',
-  'passive_income_desc' => 'Rent out property for monthly income. Unlike gold or FD, real estate gives dual benefits â€” growth + income.',
+  'passive_income_desc' => 'Rent out property for monthly income. Unlike gold or FD, real estate gives dual benefits — growth + income.',
   'passives' => 'Passives',
   'password' => 'Password',
   'password_changed' => 'Password changed successfully',
@@ -1221,7 +1221,7 @@ return array(
   'place_bid_btn' => 'Place Bid',
   'please_wait' => 'Please wait...',
   'plot' => 'Plot',
-  'plot_converter_desc' => 'Square feet, square meter, acre, hectare, bigha, gaj â€” sabhi units mein plot size convert karein.',
+  'plot_converter_desc' => 'Square feet, square meter, acre, hectare, bigha, gaj — sabhi units mein plot size convert karein.',
   'plot_land' => 'Plot / Land',
   'plot_land_label' => 'Plot / Land',
   'plot_size_converter' => 'Plot Size Converter',
@@ -1478,7 +1478,7 @@ return array(
   'services' => 'Services',
   'services_complete' => 'Complete Real Estate Solutions',
   'services_faq' => 'Services',
-  'services_hero_subtitle' => 'Home loans, legal services, interiors, registry and more â€” all in one place',
+  'services_hero_subtitle' => 'Home loans, legal services, interiors, registry and more — all in one place',
   'services_tagline' => 'Complete real estate solutions under one roof',
   'services_under_one_roof' => 'All services under one roof',
   'session_expired' => 'Session expired. Please login again',
@@ -1800,11 +1800,11 @@ return array(
   'why_choose_support' => '24/7 Customer Support',
   'why_choose_support_desc' => 'Dedicated relationship manager for every customer. Call, WhatsApp, or visit anytime.',
   'why_choose_transparent' => 'Transparent Pricing',
-  'why_choose_transparent_desc' => 'No hidden charges. What you see is what you pay â€” clear documentation always.',
+  'why_choose_transparent_desc' => 'No hidden charges. What you see is what you pay — clear documentation always.',
   'why_choose_us' => 'Why Choose Us',
   'why_choose_us_subtitle' => 'What makes us the most trusted real estate partner',
   'why_invest' => 'Why Real Estate?',
-  'why_invest_subtitle' => 'Compare real estate with other investment options â€” results speak louder than words!',
+  'why_invest_subtitle' => 'Compare real estate with other investment options — results speak louder than words!',
   'why_invest_title' => 'Land, Plot ya Property Mein Paisa Kyo Lagayein?',
   'widget_color' => 'Widget Color',
   'widget_position' => 'Widget Position',
@@ -1865,13 +1865,13 @@ return array(
   'home_our_portfolio' => 'Our Portfolio',
   'home_our_expertise' => 'Our Expertise',
   'home_service_home_loan' => 'Home Loan',
-  'home_service_home_loan_desc' => 'SBI, HDFC, ICICI, PNB, Axis â€” best rates, easy processing, doorstep service.',
+  'home_service_home_loan_desc' => 'SBI, HDFC, ICICI, PNB, Axis — best rates, easy processing, doorstep service.',
   'home_service_home_loan_badge' => 'Starting 8.5% p.a.',
   'home_service_legal' => 'Legal Services',
-  'home_service_legal_desc' => 'Registry, Mutation, Sale Deed, Agreement â€” complete property documentation legally verified.',
+  'home_service_legal_desc' => 'Registry, Mutation, Sale Deed, Agreement — complete property documentation legally verified.',
   'home_service_legal_badge' => '100% Legal',
   'home_service_interior' => 'Interior Design',
-  'home_service_interior_desc' => 'Modular kitchen, wardrobe, false ceiling, flooring â€” complete home interiors.',
+  'home_service_interior_desc' => 'Modular kitchen, wardrobe, false ceiling, flooring — complete home interiors.',
   'home_service_registry' => 'Property Registry',
   'home_service_registry_desc' => 'Complete property registration with sub-registrar. Mutation, certified copies, transfer.',
   'home_service_registry_badge' => 'Fast Track',
@@ -1886,7 +1886,7 @@ return array(
   'home_call_label' => 'Call:',
   'home_why_real_estate' => 'Why Real Estate?',
   'home_why_real_estate_title' => 'Why Invest in Land, Plot or Property?',
-  'home_why_real_estate_subtitle' => 'Compare real estate with other investment options â€” results speak louder than words!',
+  'home_why_real_estate_subtitle' => 'Compare real estate with other investment options — results speak louder than words!',
   'home_invest_real_estate' => 'Real Estate',
   'home_avg_annual_returns' => 'Average Annual Returns',
   'home_best_investment' => 'Best Investment',
@@ -1901,7 +1901,7 @@ return array(
   'home_capital_appreciation' => 'Capital Appreciation',
   'home_capital_appreciation_desc' => 'Land prices double every 5-7 years in developing areas. Plot value grows faster than any FD or gold.',
   'home_passive_income' => 'Passive Income',
-  'home_passive_income_desc' => 'Rent out property for monthly income. Unlike gold or FD, real estate gives dual benefits â€” growth + income.',
+  'home_passive_income_desc' => 'Rent out property for monthly income. Unlike gold or FD, real estate gives dual benefits — growth + income.',
   'home_loan_against_property' => 'Loan Against Property',
   'home_loan_against_property_desc' => 'Use your plot as collateral for business or personal loans at lower interest rates.',
   'home_inflation_hedge' => 'Inflation Hedge',
@@ -1918,16 +1918,16 @@ return array(
   'home_fd_cagr' => 'FD (6% CAGR)',
   'home_gold_cagr' => 'Gold (9% CAGR)',
   'home_free_tools' => 'Free Tools',
-  'home_free_tools_title' => 'Real Estate Tools â€” Absolutely Free!',
+  'home_free_tools_title' => 'Real Estate Tools — Absolutely Free!',
   'home_free_tools_subtitle' => 'Calculate your property, compare and make a smart decision',
   'home_tool_emi' => 'EMI Calculator',
-  'home_tool_emi_desc' => 'Home loan, car loan â€” calculate monthly EMI for any loan. See principal, interest and total payment.',
+  'home_tool_emi_desc' => 'Home loan, car loan — calculate monthly EMI for any loan. See principal, interest and total payment.',
   'home_tool_investment' => 'Investment Calculator',
-  'home_tool_investment_desc' => 'Real Estate vs FD vs Gold â€” which investment is better? Compare growth over 5, 10, 15 years.',
+  'home_tool_investment_desc' => 'Real Estate vs FD vs Gold — which investment is better? Compare growth over 5, 10, 15 years.',
   'home_tool_stamp' => 'Stamp Duty Calculator',
   'home_tool_stamp_desc' => 'Calculate stamp duty, registration fee and total cost based on property price. With state-wise rates.',
   'home_tool_converter' => 'Plot Size Converter',
-  'home_tool_converter_desc' => 'Square feet, square meter, acre, hectare, bigha, gaj â€” convert plot size in all units.',
+  'home_tool_converter_desc' => 'Square feet, square meter, acre, hectare, bigha, gaj — convert plot size in all units.',
   'home_tool_eligibility' => 'Loan Eligibility Check',
   'home_tool_eligibility_desc' => 'How much loan can you get based on your salary? With eligibility criteria of SBI, HDFC, ICICI all banks.',
   'home_tool_valuation' => 'Property Valuation',
@@ -1938,7 +1938,7 @@ return array(
   'home_testimonial_3' => 'Great investment opportunity! The team guided me at every step. Thank you APS Dream Home!',
   'home_career_opportunity' => 'Career Opportunity',
   'home_why_join_title' => 'Why Join APS Dream Home?',
-  'home_why_join_subtitle' => 'A new beginning in Real Estate â€” with Salary + Commission + Insurance!',
+  'home_why_join_subtitle' => 'A new beginning in Real Estate — with Salary + Commission + Insurance!',
   'home_fixed_salary' => 'Fixed Monthly Salary',
   'home_fixed_salary_desc' => 'In real estate usually only commission is given. But APS Dream Home also gives fixed monthly salary to its users!',
   'home_free_insurance' => 'Free Insurance Cover',
@@ -1946,9 +1946,9 @@ return array(
   'home_commission_plans' => 'Commission Plans',
   'home_commission_plans_desc' => 'Apart from salary, multiple commission plans on every sale. As the team grows, the commission rate also increases!',
   'home_free_training' => 'Free Training & Certification',
-  'home_free_training_desc' => 'No real estate experience? No problem! The company will give you free training â€” property knowledge, negotiation skills, and sales techniques.',
+  'home_free_training_desc' => 'No real estate experience? No problem! The company will give you free training — property knowledge, negotiation skills, and sales techniques.',
   'home_mlm_benefits' => 'MLM Network Benefits',
-  'home_mlm_benefits_desc' => 'Get new users to join and earn residual commission on their sales. 10 rank structure â€” earning increases with every rank!',
+  'home_mlm_benefits_desc' => 'Get new users to join and earn residual commission on their sales. 10 rank structure — earning increases with every rank!',
   'home_more_reasons' => 'More Reasons to Join',
   'home_more_reasons_desc' => 'Many more reasons that make APS Dream Home the best:',
   'home_ready_to_start' => 'Ready to start your real estate career with a fixed salary?',
@@ -1975,12 +1975,12 @@ return array(
   'rank_sr_executive' => 'Sr. Executive',
   'rank_director' => 'Director',
   'rank_global_director' => 'Global Director',
-  'home_target_15l' => 'â‚¹15L target',
-  'home_target_30l' => 'â‚¹30L target',
-  'home_target_50l' => 'â‚¹50L target',
-  'home_target_75l' => 'â‚¹75L target',
-  'home_target_1cr' => 'â‚¹1Cr target',
-  'home_target_2cr' => 'â‚¹2Cr target',
+  'home_target_15l' => '₹15L target',
+  'home_target_30l' => '₹30L target',
+  'home_target_50l' => '₹50L target',
+  'home_target_75l' => '₹75L target',
+  'home_target_1cr' => '₹1Cr target',
+  'home_target_2cr' => '₹2Cr target',
   'insurance_health' => 'Health Insurance',
   'insurance_life' => 'Life Cover',
   'insurance_accidental' => 'Accidental Cover',
@@ -2001,11 +2001,11 @@ return array(
 
   // Home page - Service modal JS strings
   'svc_home_loan' => 'Home Loan Assistance',
-  'svc_home_loan_sub' => 'Best rates from all major banks â€” SBI, HDFC, ICICI, PNB, Axis, Kotak',
+  'svc_home_loan_sub' => 'Best rates from all major banks — SBI, HDFC, ICICI, PNB, Axis, Kotak',
   'svc_legal' => 'Legal Services',
   'svc_legal_sub' => 'Complete legal support for all property transactions',
   'svc_interior' => 'Interior Design',
-  'svc_interior_sub' => 'Turnkey interiors â€” modern, modular, affordable',
+  'svc_interior_sub' => 'Turnkey interiors — modern, modular, affordable',
   'svc_registry' => 'Property Registry',
   'svc_registry_sub' => 'Fast, legal & transparent property registration',
   'svc_rental' => 'Rental Agreement',
@@ -2015,9 +2015,9 @@ return array(
 
   // Home page - Tool modal JS strings
   'tool_emi' => 'EMI Calculator',
-  'tool_emi_sub' => 'Home loan, car loan â€” monthly EMI instantly',
+  'tool_emi_sub' => 'Home loan, car loan — monthly EMI instantly',
   'tool_investment' => 'Investment Calculator',
-  'tool_investment_sub' => 'Real Estate vs FD vs Gold â€” compare growth',
+  'tool_investment_sub' => 'Real Estate vs FD vs Gold — compare growth',
   'tool_stamp' => 'Stamp Duty Calculator',
   'tool_stamp_sub' => 'Property price ke hisaab se total cost nikaalein',
   'tool_converter' => 'Plot Size Converter',
@@ -2032,7 +2032,7 @@ return array(
   'home_js_free_consultation' => 'Free loan consultation & eligibility check',
   'home_js_compare_rates' => 'Compare rates from 12+ banks',
   'home_js_doc_support' => 'Documentation & processing support',
-  'home_js_doorstep' => 'Doorstep service â€” aapke ghar aayenge',
+  'home_js_doorstep' => 'Doorstep service — aapke ghar aayenge',
   'home_js_preapproval' => 'Loan pre-approval in 24 hours',
   'home_js_current_rates' => 'Current Interest Rates',
   'home_js_calculate_emi' => 'Calculate EMI',
@@ -2117,7 +2117,7 @@ return array(
   'tool_js_quick_ref' => 'Quick Reference',
   'tool_js_result' => 'Result:',
 
-  // Admin i18n â€” Dashboard
+  // Admin i18n — Dashboard
   'admin_pending_bookings' => 'Pending Bookings',
   'admin_online' => 'Online',
   'admin_new_booking' => 'New Booking',
@@ -2132,7 +2132,7 @@ return array(
   'admin_system_health' => 'System Health',
   'admin_pending' => 'Pending',
 
-  // Admin i18n â€” CRM
+  // Admin i18n — CRM
   'admin_total_customers' => 'Total Customers',
   'admin_active_leads' => 'Active Leads',
   'admin_open_tickets' => 'Open Tickets',
@@ -2149,7 +2149,7 @@ return array(
   'admin_assigned' => 'Assigned',
   'admin_no_leads' => 'No leads yet',
 
-  // Admin i18n â€” Common
+  // Admin i18n — Common
   'admin_status' => 'Status',
   'admin_date' => 'Date',
   'admin_actions' => 'Actions',
@@ -2163,7 +2163,7 @@ return array(
   'admin_time' => 'Time',
   'admin_ip' => 'IP',
 
-  // Admin i18n â€” Expenses
+  // Admin i18n — Expenses
   'admin_expenses' => 'Expenses',
   'admin_add_expense' => 'Add Expense',
   'admin_total_expenses' => 'Total Expenses',
@@ -2175,7 +2175,7 @@ return array(
   'admin_description' => 'Description',
   'admin_payment' => 'Payment',
 
-  // Admin i18n â€” Activity Log
+  // Admin i18n — Activity Log
   'admin_activity_log' => 'Activity Log',
   'admin_total_events' => 'Total Events',
   'admin_today' => 'Today',
@@ -2185,16 +2185,16 @@ return array(
   'admin_recent_activity' => 'Recent Activity',
   'admin_no_activity' => 'No activity recorded',
 
-  // Admin i18n â€” Leads
+  // Admin i18n — Leads
   'admin_lead_status_overview' => 'Lead Status Overview',
   'admin_status_by_source' => 'Status by Source',
 
-  // Admin i18n â€” Services
+  // Admin i18n — Services
   'admin_home_loan_services' => 'Home Loan Services',
   'admin_home_loan_inquiries' => 'Home Loan Inquiries',
   'admin_no_home_loan' => 'No home loan inquiries yet',
 
-  // Admin i18n â€” Referrals
+  // Admin i18n — Referrals
   'admin_referrals_management' => 'Referrals Management',
   'admin_new_referral' => 'New Referral',
   'admin_converted' => 'Converted',
@@ -2204,7 +2204,7 @@ return array(
   'admin_referred_email' => 'Referred Email',
   'admin_code' => 'Code',
 
-  // Admin i18n â€” Bookings (batch 2)
+  // Admin i18n — Bookings (batch 2)
   'admin_name_label' => 'Name',
   'admin_email_label' => 'Email',
   'admin_phone_label' => 'Phone',
@@ -2247,7 +2247,7 @@ return array(
   'admin_month_label' => 'Month',
   'admin_year_label' => 'Year',
 
-  // Admin i18n â€” Bookings show
+  // Admin i18n — Bookings show
   'admin_booking_details' => 'Booking Details',
   'admin_back_to_bookings' => 'Back to Bookings',
   'admin_edit_booking' => 'Edit Booking',
@@ -2278,7 +2278,7 @@ return array(
   'admin_upi' => 'UPI',
   'admin_enter_transaction_id' => 'Enter transaction ID',
 
-  // Admin i18n â€” Bookings
+  // Admin i18n — Bookings
   'admin_bookings_management' => 'Bookings Management',
   'admin_total_bookings' => 'Total Bookings',
   'admin_confirmed' => 'Confirmed',
@@ -2304,7 +2304,7 @@ return array(
   'admin_cancel' => 'Cancel',
   'admin_delete' => 'Delete',
 
-  // Admin i18n â€” Colonies
+  // Admin i18n — Colonies
   'admin_colonies_projects' => 'Colonies / Projects',
   'admin_new_colony' => 'New Colony',
   'admin_slug' => 'Slug',
@@ -2318,7 +2318,7 @@ return array(
   'admin_no_colonies' => 'No colonies found.',
   'admin_create_one' => 'Create one',
 
-  // Admin i18n â€” NOC & Registry
+  // Admin i18n — NOC & Registry
   'admin_noc_registry_management' => 'NOC & Registry',
   'admin_registry_subtitle' => 'Sub-registrar tracking and property registration',
   'admin_new_registry' => 'New Registry',
@@ -2345,7 +2345,7 @@ return array(
   'admin_created_at' => 'Created At',
   'admin_cost_breakdown' => 'Cost Breakdown',
   'admin_plot_value' => 'Plot Value',
-  'admin_stamp_duty_up' => 'Stamp Duty (4% â€” UP)',
+  'admin_stamp_duty_up' => 'Stamp Duty (4% — UP)',
   'admin_registration_fee_capped' => 'Registration Fee (1%, capped)',
   'admin_total_registry_cost' => 'Total Registry Cost',
   'admin_update_status' => 'Update Status',
@@ -2361,7 +2361,7 @@ return array(
   'admin_reg_no' => 'Reg. No.',
   'admin_total_cost' => 'Total Cost',
 
-  // Admin i18n â€” NOC
+  // Admin i18n — NOC
   'admin_noc_management' => 'NOC Management',
   'admin_noc_subtitle' => 'No Objection Certificate requests and approvals',
   'admin_new_noc_request' => 'New NOC Request',
@@ -2389,16 +2389,16 @@ return array(
   'admin_eligibility_checks' => 'Eligibility Checks',
   'admin_no_checks_available' => 'No checks available',
   'admin_eligible_for_noc' => 'Eligible for NOC',
-  'admin_not_eligible_prefix' => 'Not eligible â€”',
+  'admin_not_eligible_prefix' => 'Not eligible —',
   'admin_checks_failed' => 'check(s) failed',
   'admin_approve_noc' => 'Approve NOC',
   'admin_rejection_reason_placeholder' => 'Rejection reason',
   'admin_reject_noc' => 'Reject NOC',
   'admin_reprocess' => 'Reprocess',
 
-  // Admin i18n â€” NOC/Registry Dashboard
+  // Admin i18n — NOC/Registry Dashboard
   'admin_noc_registry_pipeline' => 'NOC & Registry Pipeline',
-  'admin_pipeline_subtitle' => 'Property registration pipeline â€” NOC â†’ Registry',
+  'admin_pipeline_subtitle' => 'Property registration pipeline — NOC â†’ Registry',
   'admin_eligibility_check' => 'Eligibility Check',
   'admin_new_noc' => 'New NOC',
   'admin_noc_pending' => 'NOC Pending',
@@ -2424,11 +2424,11 @@ return array(
   'admin_noc_eligibility' => 'NOC Eligibility',
   'admin_registry_eligibility' => 'Registry Eligibility',
   'admin_registry_requires_noc' => 'Registry requires NOC approval + all NOC checks passed.',
-  'admin_checks_failed_resolve' => 'check(s) failed â€” resolve before requesting NOC',
+  'admin_checks_failed_resolve' => 'check(s) failed — resolve before requesting NOC',
   'admin_eligible' => 'Eligible',
   'admin_not_eligible' => 'Not Eligible',
 
-  // Admin i18n â€” Backoffice
+  // Admin i18n — Backoffice
   'admin_backoffice_management' => 'Backoffice',
   'admin_daily_operations_dashboard' => 'Daily Operations Dashboard',
   'admin_todays_operations' => "Today's Operations",
@@ -2468,7 +2468,7 @@ return array(
   'admin_type_colon' => 'Type:',
   'admin_search_placeholder' => 'Search...',
 
-  // Admin i18n â€” HR Module
+  // Admin i18n — HR Module
   'hr_dashboard' => 'HR Dashboard',
   'hr_module' => 'Human Resources',
   'hr_management' => 'HR Management',
@@ -3212,7 +3212,7 @@ return array(
   'hr_meeting_cancelled' => 'Cancelled',
   'hr_no_meetings' => 'No meetings found',
 
-  // Admin i18n â€” Finance Module
+  // Admin i18n — Finance Module
   'finance_petty_cash' => 'Petty Cash',
   'finance_cash_book' => 'Cash Book',
   'finance_bounced_cheques' => 'Bounced Cheques',
@@ -3576,7 +3576,7 @@ return array(
   'finance_difference' => 'Difference',
   'finance_reconciliation_items' => 'Reconciliation Items',
   'finance_matched_cashbook' => 'Matched Cashbook',
-  'finance_no_items_bank_statement' => 'No items â€” add some from the bank statement',
+  'finance_no_items_bank_statement' => 'No items — add some from the bank statement',
   'finance_cb_hash' => 'CB #',
   'finance_collection_reconciliation' => 'Collection Reconciliation',
   'finance_cash_collection_reconciliation' => 'Cash Collection Reconciliation',
@@ -3657,7 +3657,7 @@ return array(
   'finance_invoice_hash' => 'Invoice #',
   'finance_taxable_amount' => 'Taxable Amount',
   'finance_gst_summary' => 'GST Summary',
-  'finance_gst_summary_fy' => 'GST Summary â€” FY',
+  'finance_gst_summary_fy' => 'GST Summary — FY',
   'finance_output_tax_sales' => 'Output Tax (Sales)',
   'finance_input_tax_credit_itc' => 'Input Tax Credit (ITC)',
   'finance_net_gst_payable' => 'Net GST Payable',
@@ -3841,9 +3841,9 @@ return array(
 
   // Home Page - Tool Modal Configs
   'home_tool_emi' => 'EMI Calculator',
-  'home_tool_emi_desc' => 'Home loan, car loan â€” monthly EMI instantly',
+  'home_tool_emi_desc' => 'Home loan, car loan — monthly EMI instantly',
   'home_tool_investment' => 'Investment Calculator',
-  'home_tool_investment_desc' => 'Real Estate vs FD vs Gold â€” compare growth',
+  'home_tool_investment_desc' => 'Real Estate vs FD vs Gold — compare growth',
   'home_tool_stamp_duty' => 'Stamp Duty Calculator',
   'home_tool_stamp_duty_desc' => 'Property price ke hisaab se total cost nikaalein',
   'home_tool_plot_converter' => 'Plot Size Converter',
@@ -3958,7 +3958,7 @@ return array(
   'dash_pending_amount' => 'Pending Amount',
   'dash_btn_view_all_bookings' => 'View All Bookings',
   'dash_total_invested' => 'Total Invested',
-  'dash_invest_more_format' => 'Invest â‚¹%s more to reach %s',
+  'dash_invest_more_format' => 'Invest ₹%s more to reach %s',
   'dash_btn_upgrade' => 'Upgrade',
   'dash_need_help' => 'Need Help?',
   'dash_total_tickets_help' => 'Total Tickets',
@@ -4205,7 +4205,7 @@ return array(
   'id_calculate' => 'Calculate',
   'id_budget_planner' => 'Budget Planner',
   'id_budget_planner_desc' => 'Plan your interior design budget',
-  'id_total_budget' => 'Total Budget (â‚¹)',
+  'id_total_budget' => 'Total Budget (₹)',
   'id_home_type' => 'Home Type',
   'id_plan_budget' => 'Plan Budget',
   'id_recommended_allocation' => 'Recommended Allocation',
@@ -4238,7 +4238,7 @@ return array(
   'id_form_office' => 'Office/Commercial',
   'id_form_area' => 'Approx. Area (sq ft)',
   'id_form_area_placeholder' => 'e.g. 1200',
-  'id_form_budget' => 'Budget Range (â‚¹)',
+  'id_form_budget' => 'Budget Range (₹)',
   'id_form_budget_select' => 'Select range',
   'id_form_requirements' => 'Your Requirements',
   'id_form_requirements_placeholder' => 'Tell us about your interior design needs...',
@@ -4666,7 +4666,7 @@ return array(
   'const_type_renovation' => 'Renovation / Repair',
   'const_type_infrastructure' => 'Infrastructure',
   'const_type_turnkey' => 'Turnkey Project',
-  'const_budget_range' => 'Budget Range (â‚¹)',
+  'const_budget_range' => 'Budget Range (₹)',
   'const_budget_placeholder' => 'Approximate budget',
   'const_location' => 'Location',
   'const_location_placeholder' => 'Project location',
@@ -4703,7 +4703,7 @@ return array(
   'assoc_benefit_growth' => 'Growth Tracking',
   'assoc_benefit_growth_desc' => 'Monitor your performance with detailed analytics',
   'assoc_benefit_referral' => 'Referral Rewards',
-  'assoc_benefit_referral_desc' => 'Earn â‚¹200 for every associate you refer',
+  'assoc_benefit_referral_desc' => 'Earn ₹200 for every associate you refer',
   'assoc_earnings_title' => 'Potential Earnings',
   'assoc_per_associate' => 'Per Associate Referral',
   'assoc_per_agent' => 'Per Agent Referral',
@@ -4830,7 +4830,7 @@ return array(
   'events_title' => 'Upcoming Events',
   'events_empty' => 'No upcoming events at this time.',
 
-  // Batch 11 â€” Breadcrumbs & Common
+  // Batch 11 — Breadcrumbs & Common
   'breadcrumb_home' => 'Home',
   'breadcrumb_dashboard' => 'Dashboard',
   'common_search' => 'Search',
@@ -5037,7 +5037,7 @@ return array(
   'user_pay_token_netbanking' => 'Netbanking',
   'user_pay_token_wallet' => 'Wallet',
   'user_pay_token_init_error' => 'Unable to initialize payment. Please try again or contact support.',
-  'user_pay_token_test_mode' => 'Test Mode â€” No real money will be charged',
+  'user_pay_token_test_mode' => 'Test Mode — No real money will be charged',
   'user_pay_token_pay_now_prefix' => 'Pay',
   'user_pay_token_pay_now_suffix' => 'Now',
   'user_pay_token_secured_by' => 'Secured by Razorpay. Your payment information is encrypted end-to-end.',
@@ -5091,7 +5091,7 @@ return array(
   'user_pay_installment_netbanking' => 'Netbanking',
   'user_pay_installment_wallet' => 'Wallet',
   'user_pay_installment_init_error' => 'Unable to initialize payment. Please try again or contact support.',
-  'user_pay_installment_test_mode' => 'Test Mode â€” No real money will be charged',
+  'user_pay_installment_test_mode' => 'Test Mode — No real money will be charged',
   'user_pay_installment_pay_now_prefix' => 'Pay',
   'user_pay_installment_pay_now_suffix' => 'Now',
   'user_pay_installment_secured_by' => 'Secured by Razorpay. Your payment information is encrypted end-to-end.',
@@ -5164,7 +5164,7 @@ return array(
   'user_installment_success_view_booking' => 'Back to Booking',
   'user_installment_success_all_bookings' => 'All My Bookings',
 
-  // â”€â”€ Investment Plans page â”€â”€
+  // ------ Investment Plans page ------
   'user_investment_plans_title' => 'Investment Plans',
   'user_investment_plans_subtitle' => 'Grow your wealth with our curated investment opportunities.',
   'user_investment_plans_stat_total_invested' => 'Total Invested',
@@ -5172,7 +5172,7 @@ return array(
   'user_investment_plans_stat_returns' => 'Returns',
   'user_investment_plans_stat_active_plans' => 'Active Plans',
   'user_investment_plans_investor_level' => 'Investor Level',
-  'user_investment_plans_progress_text' => 'Invest â‚¹',
+  'user_investment_plans_progress_text' => 'Invest ₹',
   'user_investment_plans_progress_more' => 'more to reach',
   'user_investment_plans_your_investments' => 'Your Investments',
   'user_investment_plans_th_reference' => 'Reference',
@@ -5193,7 +5193,7 @@ return array(
   'user_investment_plans_pa' => 'p.a.',
   'user_investment_plans_invest_now_btn' => 'Invest',
   'user_investment_plans_modal_title' => 'Invest',
-  'user_investment_plans_label_principal' => 'Principal Amount (â‚¹)',
+  'user_investment_plans_label_principal' => 'Principal Amount (₹)',
   'user_investment_plans_label_sip_date' => 'SIP Date (1-28)',
   'user_investment_plans_auto_debit' => 'Enable auto-debit for SIP',
   'user_investment_plans_btn_cancel' => 'Cancel',
@@ -5204,7 +5204,7 @@ return array(
   'user_investment_plans_js_failed' => 'Investment failed',
   'user_investment_plans_js_network_error' => 'Network error: ',
 
-  // â”€â”€ Insurance page â”€â”€
+  // ------ Insurance page ------
   'user_insurance_title' => 'Insurance Plans',
   'user_insurance_subtitle' => 'Protect your property, family, and travels with our insurance partners.',
   'user_insurance_stat_home' => 'Home Insurance',
@@ -5567,12 +5567,12 @@ return array(
   'user_resell_submit_type_farmhouse' => 'Farmhouse',
   'user_resell_submit_type_commercial' => 'Commercial',
   'user_resell_submit_type_land' => 'Land',
-  'user_resell_submit_asking_price' => 'Asking Price (â‚¹)',
+  'user_resell_submit_asking_price' => 'Asking Price (₹)',
   'user_resell_submit_area' => 'Area (sqft)',
   'user_resell_submit_bedrooms' => 'Bedrooms',
   'user_resell_submit_bathrooms' => 'Bathrooms',
   'user_resell_submit_age' => 'Age (years)',
-  'user_resell_submit_original_price' => 'Original Price (â‚¹)',
+  'user_resell_submit_original_price' => 'Original Price (₹)',
   'user_resell_submit_optional' => 'Optional',
   'user_resell_submit_location' => 'Location/Address',
   'user_resell_submit_location_ph' => 'Full address or area name',
@@ -6065,25 +6065,25 @@ return array(
 
   // Tool Hub
   'tool_hub_title' => 'Tools Hub',
-  'tool_hub_subtitle' => 'Smart calculators for your property journey â€” all in one place',
+  'tool_hub_subtitle' => 'Smart calculators for your property journey — all in one place',
   'tool_emi_calc' => 'EMI Calculator',
   'tool_emi_calc_desc' => 'Calculate home loan EMI and total interest',
   'tool_stamp_calc' => 'Stamp Duty Calculator',
   'tool_stamp_calc_desc' => 'Know the total cost of property registration and stamp duty',
   'tool_plot_conv' => 'Plot Size Converter',
-  'tool_plot_conv_desc' => 'Convert between SQFT, Acre, Bigha, Gaj â€” all units',
+  'tool_plot_conv_desc' => 'Convert between SQFT, Acre, Bigha, Gaj — all units',
   'tool_loan_elig' => 'Home Loan Eligibility',
   'tool_loan_elig_desc' => 'Check how much loan you can get based on your salary',
   'tool_prop_val' => 'Property Valuation',
   'tool_prop_val_desc' => 'Estimate your property\'s market value instantly',
   'tool_rent_vs_buy' => 'Rent vs Buy Calculator',
-  'tool_rent_vs_buy_desc' => 'Which is better â€” renting or buying a property?',
+  'tool_rent_vs_buy_desc' => 'Which is better — renting or buying a property?',
   'tool_sip_vs_re' => 'SIP vs Real Estate',
   'tool_sip_vs_re_desc' => 'Compare SIP and property investment returns',
   'tool_cap_gains' => 'Capital Gains Calculator',
   'tool_cap_gains_desc' => 'Calculate tax on property sale',
   'tool_gst_calc' => 'GST Calculator',
-  'tool_gst_calc_desc' => 'Know GST on property â€” base price and GST separately',
+  'tool_gst_calc_desc' => 'Know GST on property — base price and GST separately',
   'tool_constr_cost' => 'Construction Cost Estimator',
   'tool_constr_cost_desc' => 'Estimate house construction cost based on plot area and quality',
   'tool_rental_yield' => 'Rental Yield Calculator',
@@ -6096,7 +6096,7 @@ return array(
   'tool_stamp_duty_subtitle' => 'Know the total government charges before buying a property',
   'tool_stamp_duty_calc_title' => 'Stamp Duty & Registration Calculator',
   'tool_stamp_duty_calc_subtitle' => 'Calculate total government charges before buying a property',
-  'property_value_rs' => 'Property Value (â‚¹)',
+  'property_value_rs' => 'Property Value (₹)',
   'state' => 'State',
   'up_stamp' => 'Uttar Pradesh (7% Stamp Duty)',
   'bihar' => 'Bihar',
@@ -6151,8 +6151,8 @@ return array(
   // Rent vs Buy
   'tool_rent_vs_buy_title' => 'Rent vs Buy Calculator',
   'tool_rent_vs_buy_subtitle' => 'Understand whether renting or buying is better for you',
-  'property_price_rs' => 'Property Price (â‚¹)',
-  'monthly_rent_rs' => 'Monthly Rent (â‚¹)',
+  'property_price_rs' => 'Property Price (₹)',
+  'monthly_rent_rs' => 'Monthly Rent (₹)',
   'tenure_years' => 'Tenure (Years)',
   'rent_growth' => 'Rent Growth (%)',
   'appreciation' => 'Appreciation (%)',
@@ -6162,8 +6162,8 @@ return array(
   // SIP vs Real Estate
   'tool_sip_vs_re_title' => 'SIP vs Real Estate Returns',
   'tool_sip_vs_re_subtitle' => 'Compare returns between Mutual Funds and Real Estate',
-  'monthly_sip_rs' => 'Monthly SIP (â‚¹)',
-  'property_investment_rs' => 'Property Investment (â‚¹)',
+  'monthly_sip_rs' => 'Monthly SIP (₹)',
+  'property_investment_rs' => 'Property Investment (₹)',
   'sip_return_pct' => 'SIP Return (%)',
   'property_appreciation' => 'Property Appreciation (%)',
   'sip_future_value' => 'SIP Future Value',
@@ -6199,8 +6199,8 @@ return array(
   // Loan Eligibility
   'tool_loan_eligibility_title' => 'Home Loan Eligibility Calculator',
   'tool_loan_eligibility_subtitle' => 'Find out how much home loan you can get',
-  'monthly_income_rs' => 'Monthly Income (â‚¹)',
-  'monthly_emi_rs' => 'Monthly Existing EMIs (â‚¹)',
+  'monthly_income_rs' => 'Monthly Income (₹)',
+  'monthly_emi_rs' => 'Monthly Existing EMIs (₹)',
   'interest_rate' => 'Interest Rate (%)',
   'foir_limit' => 'FOIR Limit (%)',
   'max_loan' => 'Max Loan Amount',
@@ -6216,8 +6216,8 @@ return array(
   // GST Calculator
   'tool_gst_calculator_title' => 'GST Calculator',
   'tool_gst_calculator_subtitle' => 'Calculate GST applicable on real estate property',
-  'base_price_rs' => 'Base Price (â‚¹)',
-  'affordable_housing' => 'Affordable Housing (Up to â‚¹45L, â‰¤60 sqm)',
+  'base_price_rs' => 'Base Price (₹)',
+  'affordable_housing' => 'Affordable Housing (Up to ₹45L, â‰¤60 sqm)',
   'under_construction' => 'Under Construction',
   'ready_to_move' => 'Ready to Move (No GST)',
   'commercial_property' => 'Commercial Property',
@@ -6235,10 +6235,10 @@ return array(
   'tool_construction_cost_subtitle' => 'Know the estimated cost of building a house',
   'built_area_sqft' => 'Built-up Area (sq ft)',
   'construction_quality' => 'Construction Quality',
-  'basic' => 'Basic (â‚¹1,400/sqft)',
-  'standard' => 'Standard (â‚¹1,800/sqft)',
-  'premium' => 'Premium (â‚¹2,400/sqft)',
-  'luxury' => 'Luxury (â‚¹3,200/sqft)',
+  'basic' => 'Basic (₹1,400/sqft)',
+  'standard' => 'Standard (₹1,800/sqft)',
+  'premium' => 'Premium (₹2,400/sqft)',
+  'luxury' => 'Luxury (₹3,200/sqft)',
   'num_floors' => 'Number of Floors',
   'single' => 'Single Floor',
   'double' => 'Double Floor',
@@ -6260,12 +6260,12 @@ return array(
   // Capital Gains
   'tool_capital_gains_title' => 'Capital Gains Tax Calculator',
   'tool_capital_gains_subtitle' => 'Know how much tax you\'ll pay on property sale',
-  'purchase_price_rs' => 'Purchase Price (â‚¹)',
-  'sale_price_rs' => 'Sale Price (â‚¹)',
+  'purchase_price_rs' => 'Purchase Price (₹)',
+  'sale_price_rs' => 'Sale Price (₹)',
   'holding_period' => 'Holding Period',
   'short_term' => 'Short Term (â‰¤ 2 years)',
   'long_term' => 'Long Term (> 2 years)',
-  'improvement_cost_rs' => 'Improvement Cost (â‚¹)',
+  'improvement_cost_rs' => 'Improvement Cost (₹)',
   'indexation' => 'Indexation Benefit?',
   'taxable_gain' => 'Taxable Gain',
   'tax_rate' => 'Tax Rate',
@@ -6273,7 +6273,7 @@ return array(
   'capital_gains_disclaimer' => 'Short-term capital gains are taxed at applicable income tax slab rate. Long-term capital gains with indexation are taxed at 20% with indexation benefit. Without indexation (new regime), the rate is 12.5% as per Budget 2024. Consult a CA for exact tax computation.',
 
 
-  // â”€â”€ Auth i18n (Batch 3: auth views + components) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ------ Auth i18n (Batch 3: auth views + components) ------------------------------------------------------------------------------
 
   // Stub pages
   'auth_page_under_construction' => 'This page is under construction.',
@@ -8145,4 +8145,27 @@ return array(
   'cp_no_data_export' => 'No data to export',
   'cp_no_matching' => 'No matching plots found',
   'cp_clear_filters' => 'Clear Filters',
+
+  // ── Backoffice: Payslip & Operations i18n ──
+  'bko_cancel' => 'Cancel',
+  'bko_paid_date' => 'Paid Date',
+  'bko_payment_mode' => 'Payment Mode',
+  'bko_transaction_ref' => 'Ref / Voucher',
+  'bko_process_payout' => 'Process Payout',
+  'bko_cash' => 'Cash',
+  'bko_bank_transfer' => 'Bank (Online Transfer)',
+  'bko_bank_account' => 'Bank Account',
+  'bko_select_bank_account' => '-- Select Bank Account --',
+  'bko_pay_salary' => 'Pay Salary',
+  'bko_amount' => 'Amount',
+  'bko_party' => 'Party',
+
+  // ── Colony Pipeline: Plots i18n ──
+  'cp_per_sqft' => '₹/sqft',
+  'cp_corner' => 'Corner',
+  'cp_park' => 'Park',
+  'cp_wide_road' => 'Wide Road',
+  'cp_unknown' => 'Unknown',
+  'cp_sqft' => 'sqft',
+  'cp_colony' => 'Colony',
 );

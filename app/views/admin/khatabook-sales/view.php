@@ -9,7 +9,7 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0">Transaction Details</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-bordered">
+                    <div class="table-responsive"><table class="table table-bordered">
                         <tr><th style="width:200px">Transaction Date</th><td><?= htmlspecialchars($sale['transaction_date']) ?></td></tr>
                         <tr><th>Customer Name</th><td><strong><?= htmlspecialchars($sale['customer_name']) ?></strong></td></tr>
                         <tr><th>Phone</th><td><?= htmlspecialchars($sale['customer_phone'] ?? '-') ?></td></tr>
@@ -23,7 +23,7 @@
                         <tr><th>Notes</th><td><?= nl2br(htmlspecialchars($sale['notes'] ?? '-')) ?></td></tr>
                         <tr><th>Import Batch</th><td><code><?= htmlspecialchars($sale['import_batch'] ?? '-') ?></code></td></tr>
                         <tr><th>Imported At</th><td><?= htmlspecialchars($sale['imported_at'] ?? '-') ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

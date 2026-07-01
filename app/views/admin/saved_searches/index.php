@@ -269,7 +269,7 @@
 </div>
 
 <style>
-.bg-gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.bg-gradient-primary { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); }
 .bg-gradient-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
 .bg-gradient-warning { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
 .bg-gradient-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }

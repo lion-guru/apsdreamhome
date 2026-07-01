@@ -19,22 +19,22 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <?php else: ?>
             <div class="row g-3">
                 <div class="col-md-6">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm">
                         <tr><th width="40%">Type</th><td><?= htmlspecialchars((string)($commission['commission_type'] ?? '')) ?></td></tr>
                         <tr><th>Level</th><td><?= (int)($commission['level'] ?? 0) ?></td></tr>
                         <tr><th>Status</th><td><span class="badge bg-info"><?= htmlspecialchars((string)($commission['status'] ?? '')) ?></span></td></tr>
                         <tr><th>Created</th><td><?= htmlspecialchars((string)($commission['created_at'] ?? '')) ?></td></tr>
                         <tr><th>Updated</th><td><?= htmlspecialchars((string)($commission['updated_at'] ?? '')) ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
                 <div class="col-md-6">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm">
                         <tr><th width="40%">Beneficiary</th><td><?= htmlspecialchars((string)($commission['beneficiary_name'] ?? '#'.($commission['beneficiary_user_id'] ?? ''))) ?> (UID <?= (int)($commission['beneficiary_user_id'] ?? 0) ?>)</td></tr>
                         <tr><th>Source</th><td><?= htmlspecialchars((string)($commission['source_name'] ?? '#'.($commission['source_user_id'] ?? ''))) ?> (UID <?= (int)($commission['source_user_id'] ?? 0) ?>)</td></tr>
                         <tr><th>Property (Booking)</th><td>#<?= (int)($commission['property_id'] ?? 0) ?></td></tr>
                         <tr><th>Sale Amount</th><td>&#8377;<?= number_format((float)($commission['sale_amount'] ?? 0), 2) ?></td></tr>
                         <tr><th>% Applied</th><td><?= number_format((float)($commission['commission_percentage'] ?? 0), 2) ?>%</td></tr>
-                    </table>
+                    </table></div>
                 </div>
                 <div class="col-12">
                     <div class="aps-cp-stat bg-success text-white">

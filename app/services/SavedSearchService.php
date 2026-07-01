@@ -487,7 +487,7 @@ class SavedSearchService
 
         return "
         <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
-            <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;'>
+            <div style='background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;'>
                 <h2 style='margin: 0;'>🔔 New Property Match!</h2>
             </div>
             <div style='background: #f9f9f9; padding: 20px;'>
@@ -505,7 +505,7 @@ class SavedSearchService
                             " . ($bedrooms > 0 ? "{$bedrooms} BHK • " : '') . "
                             {$furnished}
                         </p>
-                        <a href='{$propertyUrl}' style='display: inline-block; margin-top: 10px; background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;'>View Property</a>
+                        <a href='{$propertyUrl}' style='display: inline-block; margin-top: 10px; background: #0d9488; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;'>View Property</a>
                     </div>
                 </div>
                 <p style='text-align: center; margin-top: 20px;'>
@@ -513,7 +513,7 @@ class SavedSearchService
                 </p>
                 <p style='font-size: 0.85em; color: #888; margin-top: 30px;'>
                     You're receiving this because you saved a search with email alerts enabled.
-                    <a href='{$baseUrl}/user/saved-searches' style='color: #667eea;'>Manage saved searches</a>
+                    <a href='{$baseUrl}/user/saved-searches' style='color: #0d9488;'>Manage saved searches</a>
                 </p>
             </div>
         </div>

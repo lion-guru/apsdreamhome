@@ -59,12 +59,13 @@ class GamificationService
         } catch (\Throwable $e) {}
 
         $thresholds = [
-            ['name' => 'Associate', 'min' => 0,         'color' => 'secondary'],
-            ['name' => 'Bronze',    'min' => 50000,     'color' => 'orange'],
-            ['name' => 'Silver',    'min' => 200000,    'color' => 'secondary'],
-            ['name' => 'Gold',      'min' => 500000,    'color' => 'orange'],
-            ['name' => 'Platinum',  'min' => 1000000,   'color' => 'purple'],
-            ['name' => 'Diamond',   'min' => 2500000,   'color' => 'indigo'],
+            ['name' => 'Associate',       'min' => 0,          'color' => 'secondary'],
+            ['name' => 'Senior Associate', 'min' => 25000,     'color' => 'orange'],
+            ['name' => 'BDM',             'min' => 100000,    'color' => 'blue'],
+            ['name' => 'Sr. BDM',         'min' => 300000,    'color' => 'success'],
+            ['name' => 'Vice President',  'min' => 800000,    'color' => 'warning'],
+            ['name' => 'President',       'min' => 2000000,   'color' => 'purple'],
+            ['name' => 'Site Manager',    'min' => 5000000,   'color' => 'danger'],
         ];
         return $this->buildTieredWidget('MLM Rank', 'fa-medal', $teamSales, $thresholds, 'Team Sales (12 mo): ₹' . number_format($teamSales), '/associate/commissions', 'View Earnings', 'linear-gradient(135deg, #fff 0%, #dbeafe 100%)');
     }
@@ -204,7 +205,7 @@ class GamificationService
             'metric' => $metric,
             'progress_pct' => $pct,
             'next_label' => $next['name'],
-            'next_target' => $remaining > 0 ? 'Earn ' . number_format($remaining) . ' more' : 'Maxed out',
+            'next_target' => $remaining > 0 ? 'Earn ₹' . number_format($remaining) : 'Maxed out',
             'cta_url' => $ctaUrl,
             'cta_text' => $ctaText,
             'gradient' => $gradient,

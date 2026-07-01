@@ -12,7 +12,7 @@ $page_title = $page_title ?? 'HR Settings';
                 <h6 class="mb-0 fw-bold"><i class="fas fa-tags me-2 text-primary"></i>Leave Types</h6>
             </div>
             <div class="card-body p-0">
-                <table class="table table-sm mb-0">
+                <div class="table-responsive"><table class="table table-sm mb-0">
                     <thead class="table-light"><tr><th>Name</th><th>Code</th><th>Days/Year</th><th>Status</th></tr></thead>
                     <tbody>
                         <?php if (empty($leave_types ?? [])): ?>
@@ -28,7 +28,7 @@ $page_title = $page_title ?? 'HR Settings';
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
             <div class="card-footer bg-white">
                 <a href="<?= BASE_URL ?>/admin/hr/leave-types" class="btn btn-sm btn-primary">Manage Leave Types</a>
@@ -41,7 +41,7 @@ $page_title = $page_title ?? 'HR Settings';
                 <h6 class="mb-0 fw-bold"><i class="fas fa-clock me-2 text-info"></i>Shift Types</h6>
             </div>
             <div class="card-body p-0">
-                <table class="table table-sm mb-0">
+                <div class="table-responsive"><table class="table table-sm mb-0">
                     <thead class="table-light"><tr><th>Name</th><th>Start</th><th>End</th><th>Duration</th><th>Active</th></tr></thead>
                     <tbody>
                         <?php if (empty($shift_types ?? [])): ?>
@@ -58,7 +58,7 @@ $page_title = $page_title ?? 'HR Settings';
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
             <div class="card-footer bg-white">
                 <a href="<?= BASE_URL ?>/admin/hr/shifts" class="btn btn-sm btn-primary">Manage Shifts</a>

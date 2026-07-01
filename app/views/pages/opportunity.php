@@ -9,7 +9,7 @@
 <!-- Custom Premium Styling -->
 <style>
     :root {
-        --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        --primary-gradient: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         --secondary-gradient: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
         --accent-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
@@ -60,7 +60,7 @@
     }
 
     .btn-premium:hover {
-        background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+        background: linear-gradient(135deg, #4338ca 0%, #134e4a 100%);
         color: white;
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
@@ -87,7 +87,7 @@
 
     .plan-tab-btn.active {
         background: white;
-        color: #4f46e5;
+        color: #0d9488;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
@@ -98,7 +98,7 @@
     }
 
     .rank-badge-item:hover {
-        border-left-color: #4f46e5;
+        border-left-color: #0d9488;
         background: #fafafa;
     }
 

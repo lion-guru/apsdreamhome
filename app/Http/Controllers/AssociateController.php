@@ -88,24 +88,54 @@ class AssociateController extends BaseController
         $mlmLevel = 'Associate'; $teamSales = 0;
         $recentLeads = []; $recentCommissions = []; $activities = [];
 
-        try { $totalLeads = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate'", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+        // Lead counts from `leads` table (CRM)
+        try { $totalLeads = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM leads WHERE created_by = ? AND deleted_at IS NULL", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         try { $propertiesSold = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties WHERE user_id = ? AND status = 'approved'", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
-        // Commission stats from commissions table
-        try { $totalCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?)", [$userId, $userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
-        try { $pendingCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?) AND status = 'pending'", [$userId, $userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
-        try { $commissionThisMonth = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE (user_id = ? OR associate_id = ?) AND status = 'paid' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)", [$userId, $userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+        // Commission stats from mlm_commission_ledger
+        try { $totalCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ?", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+        try { $pendingCommission = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'pending'", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+        try { $commissionThisMonth = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status IN ('paid','approved') AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
 
         // MLM profile data
         try {
             $profile = $this->db->fetchOne("SELECT current_level, total_team_size, direct_referrals, lifetime_sales FROM mlm_profiles WHERE user_id = ?", [$userId]);
             if ($profile) {
-                $mlmLevel = $profile['current_level'] ?? 'Associate';
+                $mlmLevel = $profile['current_level'] ?? 'associate';
                 $networkSize = (int)($profile['total_team_size'] ?? 0);
                 $directReferrals = (int)($profile['direct_referrals'] ?? 0);
                 $teamSales = (float)($profile['lifetime_sales'] ?? 0);
             }
         } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+
+        // Recalculate rank from 12-month ledger (same logic as GamificationService)
+        // and auto-update stale mlm_profiles.current_level
+        try {
+            $ledgerSales12mo = (float)$this->db->fetchColumn(
+                "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)",
+                [$userId]
+            );
+            $rankBenefits = $this->db->fetchAll(
+                "SELECT rank_name, min_qualifying_volume FROM mlm_rank_benefits ORDER BY rank_order ASC"
+            );
+            $computedRank = 'associate';
+            foreach ($rankBenefits as $rb) {
+                if ($ledgerSales12mo >= (float)$rb['min_qualifying_volume']) {
+                    $computedRank = $rb['rank_name'];
+                }
+            }
+            // Use ledger-based sales for rank progress (consistent with gamification widget)
+            $teamSales = max($teamSales, $ledgerSales12mo);
+            // Auto-update if stale
+            if (strtolower($computedRank) !== strtolower($mlmLevel)) {
+                $this->db->execute(
+                    "UPDATE mlm_profiles SET current_level = ? WHERE user_id = ?",
+                    [$computedRank, $userId]
+                );
+                $mlmLevel = $computedRank;
+                error_log("AssociateController: Updated mlm_profiles.current_level for user_id=$userId from '{$profile['current_level']}' to '$computedRank'");
+            }
+        } catch (\Exception $e) { error_log('AssociateController rank recalc error: ' . $e->getMessage()); }
 
         // Network tree level breakdown
         try {
@@ -131,18 +161,18 @@ class AssociateController extends BaseController
             try { $networkSize = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users WHERE referred_by = ?", [$userId]); } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         }
 
-        // Recent leads
+        // Recent leads from `leads` table (CRM)
         try {
             $recentLeads = $this->db->fetchAll(
-                "SELECT name, phone, CONCAT('Lead #', id) as type, status, DATE(created_at) as date FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate' ORDER BY created_at DESC LIMIT 5",
+                "SELECT name, phone, property_interest as type, status, DATE(created_at) as date FROM leads WHERE created_by = ? AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 5",
                 [$userId]
             );
         } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
-        // Recent commissions
+        // Recent commissions from mlm_commission_ledger
         try {
             $recentCommissions = $this->db->fetchAll(
-                "SELECT c.id, c.commission_type as property, c.amount, c.status, DATE(c.created_at) as date FROM commissions c WHERE (c.user_id = ? OR c.associate_id = ?) ORDER BY c.created_at DESC LIMIT 5",
-                [$userId, $userId]
+                "SELECT id, commission_type, amount, status, notes as description, DATE(created_at) as date FROM mlm_commission_ledger WHERE beneficiary_user_id = ? ORDER BY created_at DESC LIMIT 5",
+                [$userId]
             );
         } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
         // Recent activities
@@ -155,6 +185,69 @@ class AssociateController extends BaseController
                 $activities[] = ['icon' => 'fa-clock', 'text' => $a['action'], 'time' => $this->timeAgo($a['created_at']), 'color' => 'blue'];
             }
         } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+
+        // ──── Enhanced Data: Bookings, EMI, Wallet, Property Views ────
+        $walletBalance = 0;
+        $recentBookings = [];
+        $emiSummary = ['total_emi' => 0, 'paid_emi' => 0, 'pending_emi' => 0, 'overdue_emi' => 0];
+        $propertyViews = 0;
+        $totalInquiries = 0;
+
+        // Wallet balance
+        try {
+            $walletBalance = (float)$this->db->fetchColumn("SELECT COALESCE(SUM(points), 0) FROM wallet_points WHERE user_id = ? AND status = 'active'", [$userId]);
+        } catch (\Exception $e) {}
+
+        // Bookings by associate's referred users
+        try {
+            $recentBookings = $this->db->fetchAll(
+                "SELECT pb.id, pb.booking_number, pb.total_plot_value, pb.status as booking_status, pb.created_at,
+                        u.name as customer_name, p.name as plot_name, c.name as colony_name
+                 FROM plot_bookings pb
+                 LEFT JOIN users u ON u.id = pb.user_id
+                 LEFT JOIN plots p ON p.id = pb.plot_id
+                 LEFT JOIN colonies c ON c.id = pb.colony_id
+                 WHERE pb.user_id IN (SELECT id FROM users WHERE referred_by = ?)
+                 ORDER BY pb.created_at DESC LIMIT 5",
+                [$userId]
+            ) ?: [];
+        } catch (\Exception $e) {}
+
+        // EMI summary for associate's referrals
+        try {
+            $emiRow = $this->db->fetchOne(
+                "SELECT 
+                    COUNT(*) as total_emi,
+                    SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid_emi,
+                    SUM(CASE WHEN status IN ('pending','overdue') THEN 1 ELSE 0 END) as pending_emi,
+                    SUM(CASE WHEN status = 'overdue' OR (status = 'pending' AND due_date < CURDATE()) THEN 1 ELSE 0 END) as overdue_emi
+                 FROM booking_payment_schedules 
+                 WHERE booking_id IN (SELECT id FROM plot_bookings WHERE user_id IN (SELECT id FROM users WHERE referred_by = ?))",
+                [$userId]
+            );
+            if ($emiRow) {
+                $emiSummary['total_emi'] = (int)($emiRow['total_emi'] ?? 0);
+                $emiSummary['paid_emi'] = (int)($emiRow['paid_emi'] ?? 0);
+                $emiSummary['pending_emi'] = (int)($emiRow['pending_emi'] ?? 0);
+                $emiSummary['overdue_emi'] = (int)($emiRow['overdue_emi'] ?? 0);
+            }
+        } catch (\Exception $e) {}
+
+        // Property views on associate's listings
+        try {
+            $propertyViews = (int)$this->db->fetchColumn(
+                "SELECT COALESCE(SUM(views), 0) FROM user_properties WHERE posted_by = ?",
+                [$userId]
+            );
+        } catch (\Exception $e) {}
+
+        // Total inquiries on associate's properties
+        try {
+            $totalInquiries = (int)$this->db->fetchColumn(
+                "SELECT COALESCE(SUM(inquiries), 0) FROM user_properties WHERE posted_by = ?",
+                [$userId]
+            );
+        } catch (\Exception $e) {}
 
         // Fallbacks
         if (empty($recentLeads)) {
@@ -175,6 +268,42 @@ class AssociateController extends BaseController
                 ['icon' => 'fa-building', 'text' => 'Share your referral code to grow your network', 'time' => '-', 'color' => 'orange'],
             ];
         }
+
+        // Rank progress data
+        $rankProgress = [
+            'current_rank' => $mlmLevel,
+            'current_gbv' => $teamSales,
+            'next_rank' => null,
+            'next_rank_gbv' => 0,
+            'next_rank_legs' => 0,
+            'current_legs' => $directReferrals,
+            'progress_pct' => 0,
+            'all_ranks' => [],
+        ];
+        try {
+            $benefits = $this->db->fetchAll("SELECT rank_name, min_leg_count, min_qualifying_volume, direct_sale_pct, rank_order FROM mlm_rank_benefits ORDER BY rank_order ASC");
+            $rankProgress['all_ranks'] = $benefits;
+            $currentOrder = 0;
+            foreach ($benefits as $b) {
+                if (strtolower($b['rank_name']) === strtolower($mlmLevel)) {
+                    $currentOrder = (int)$b['rank_order'];
+                    break;
+                }
+            }
+            foreach ($benefits as $b) {
+                if ((int)$b['rank_order'] === $currentOrder + 1) {
+                    $rankProgress['next_rank'] = $b['rank_name'];
+                    $rankProgress['next_rank_gbv'] = (float)$b['min_qualifying_volume'];
+                    $rankProgress['next_rank_legs'] = (int)$b['min_leg_count'];
+                    break;
+                }
+            }
+            if ($rankProgress['next_rank']) {
+                $gbvProg = $rankProgress['next_rank_gbv'] > 0 ? min(100, ($teamSales / $rankProgress['next_rank_gbv']) * 100) : 0;
+                $legsProg = $rankProgress['next_rank_legs'] > 0 ? min(100, ($directReferrals / $rankProgress['next_rank_legs']) * 100) : 0;
+                $rankProgress['progress_pct'] = round(min($gbvProg, $legsProg), 1);
+            }
+        } catch (\Exception $e) { error_log('Rank progress fetch error: ' . $e->getMessage()); }
 
         $stats = [
             'total_leads' => $totalLeads,
@@ -203,7 +332,13 @@ class AssociateController extends BaseController
             'activities' => $activities,
             'referral_code' => $referralCode,
             'associate_name' => $associateName,
+            'rank_progress' => $rankProgress,
             'gamify' => $this->safeGamify('forAssociate', (int)$userId, (int)($_SESSION['associate_id'] ?? 0)),
+            'wallet_balance' => $walletBalance,
+            'recent_bookings' => $recentBookings,
+            'emi_summary' => $emiSummary,
+            'property_views' => $propertyViews,
+            'total_inquiries' => $totalInquiries,
         ], 'layouts/associate');
     }
 
@@ -243,6 +378,181 @@ class AssociateController extends BaseController
     }
 
     /**
+     * Store new property from add-property form
+     */
+    public function storeAddProperty()
+    {
+        $this->requireAuth();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/associate/add-property');
+            return;
+        }
+
+        @session_start();
+        $associateId = $_SESSION['user_id'] ?? null;
+        $associateName = $_SESSION['user_name'] ?? '';
+
+        $title = trim($_POST['title'] ?? '');
+        $propertyType = trim($_POST['property_type'] ?? '');
+        $listingType = trim($_POST['listing_type'] ?? 'sell');
+        $price = (float)($_POST['price'] ?? 0);
+        $area = (int)($_POST['area'] ?? 0);
+        $stateId = (int)($_POST['state_id'] ?? 0);
+        $location = trim($_POST['location'] ?? '');
+        $address = trim($_POST['address'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+
+        if (empty($title) || empty($propertyType) || empty($location) || $price <= 0) {
+            $_SESSION['flash_error'] = 'Please fill in all required fields.';
+            $this->redirect('/associate/add-property');
+            return;
+        }
+
+        try {
+            // Handle image upload
+            $imagePath = null;
+            if (!empty($_FILES['property_image']['name']) && $_FILES['property_image']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = __DIR__ . '/../../../assets/images/properties/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $ext = pathinfo($_FILES['property_image']['name'], PATHINFO_EXTENSION);
+                $newName = 'prop_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                $targetPath = $uploadDir . $newName;
+                if (move_uploaded_file($_FILES['property_image']['tmp_name'], $targetPath)) {
+                    $imagePath = 'properties/' . $newName;
+                }
+            }
+
+            $db = \App\Core\Database\Database::getInstance();
+
+            $fullAddress = trim(($address ? $address . ', ' : '') . $location);
+
+            $stmt = $db->prepare("
+                INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, title, address, area_sqft, price, price_type, description, image, status, created_at)
+                VALUES (?, ?, 'associate', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+            ");
+            $stmt->execute([
+                $associateId,
+                $associateId,
+                $associateName,
+                $_SESSION['user_phone'] ?? '',
+                $_SESSION['user_email'] ?? '',
+                $propertyType,
+                $listingType,
+                $title,
+                $fullAddress,
+                $area,
+                $price,
+                $listingType === 'rent' ? 'month' : 'lakh',
+                $description,
+                $imagePath
+            ]);
+
+            $_SESSION['flash_success'] = 'Property submitted successfully! It will be verified before publishing.';
+        } catch (\Exception $e) {
+            error_log("Add property error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to submit. Please try again.';
+        }
+
+        $this->redirect('/associate/properties');
+    }
+
+    /**
+     * CRM Dashboard — Stats, pipeline summary, pending tasks
+     */
+    public function crmDashboard()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+        $stats = [];
+        $recentActivity = [];
+        $pendingTasks = [];
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $whereUser = "(l.created_by = ? OR l.assigned_to = ?)";
+            $params = [$userId, $userId];
+
+            // Total leads
+            $stats['total_leads'] = (int)$db->fetchColumn("SELECT COUNT(*) FROM leads l WHERE $whereUser AND l.deleted_at IS NULL", $params);
+
+            // By status
+            $statusRows = $db->fetchAll("SELECT l.status, COUNT(*) as cnt FROM leads l WHERE $whereUser AND l.deleted_at IS NULL GROUP BY l.status", $params);
+            $stats['by_status'] = [];
+            foreach ($statusRows as $r) $stats['by_status'][$r['status']] = (int)$r['cnt'];
+
+            // Hot leads (score >= 70)
+            $stats['hot_leads'] = (int)$db->fetchColumn("SELECT COUNT(*) FROM leads l WHERE $whereUser AND l.lead_score >= 70 AND l.deleted_at IS NULL", $params);
+
+            // Converted
+            $stats['converted'] = (int)$db->fetchColumn("SELECT COUNT(*) FROM leads l WHERE $whereUser AND l.is_converted = 1 AND l.deleted_at IS NULL", $params);
+
+            // Conversion rate
+            $stats['conversion_rate'] = $stats['total_leads'] > 0 ? round(($stats['converted'] / $stats['total_leads']) * 100, 1) : 0;
+
+            // Today's leads
+            $stats['today_leads'] = (int)$db->fetchColumn("SELECT COUNT(*) FROM leads l WHERE $whereUser AND DATE(l.created_at) = CURDATE() AND l.deleted_at IS NULL", $params);
+
+            // Pending tasks
+            $stats['pending_tasks'] = (int)$db->fetchColumn("SELECT COUNT(*) FROM crm_tasks ct WHERE ct.assigned_to = ? AND ct.status IN ('pending','in_progress')", [$userId]);
+
+            // Overdue tasks
+            $stats['overdue_tasks'] = (int)$db->fetchColumn("SELECT COUNT(*) FROM crm_tasks ct WHERE ct.assigned_to = ? AND ct.status IN ('pending','in_progress') AND ct.due_date < CURDATE()", [$userId]);
+
+            // Recent activity (last 5 interactions on user's leads)
+            $recentActivity = $db->fetchAll(
+                "SELECT ci.*, l.name as lead_name FROM crm_interactions ci
+                 JOIN leads l ON l.id = ci.lead_id
+                 WHERE ci.user_id = ? ORDER BY ci.created_at DESC LIMIT 5",
+                [$userId]
+            ) ?: [];
+
+            // Pending tasks list (next 5)
+            $pendingTasks = $db->fetchAll(
+                "SELECT ct.*, l.name as lead_name FROM crm_tasks ct
+                 LEFT JOIN leads l ON l.id = ct.lead_id
+                 WHERE ct.assigned_to = ? AND ct.status IN ('pending','in_progress')
+                 ORDER BY ct.due_date ASC LIMIT 5",
+                [$userId]
+            ) ?: [];
+
+            // Top sources
+            $stats['by_source'] = $db->fetchAll(
+                "SELECT l.source, COUNT(*) as cnt FROM leads l WHERE $whereUser AND l.deleted_at IS NULL GROUP BY l.source ORDER BY cnt DESC LIMIT 5",
+                $params
+            ) ?: [];
+
+            // Site visit stats
+            $stats['total_visits'] = (int)$db->fetchColumn("SELECT COUNT(*) FROM site_visits WHERE assigned_to = ? OR user_id = ?", [$userId, $userId]);
+            $stats['today_visits'] = (int)$db->fetchColumn("SELECT COUNT(*) FROM site_visits WHERE (assigned_to = ? OR user_id = ?) AND visit_date = CURDATE() AND status NOT IN ('cancelled','completed')", [$userId, $userId]);
+            $stats['upcoming_visits'] = (int)$db->fetchColumn("SELECT COUNT(*) FROM site_visits WHERE (assigned_to = ? OR user_id = ?) AND visit_date > CURDATE() AND status NOT IN ('cancelled','completed')", [$userId, $userId]);
+
+            // Upcoming site visits (next 5)
+            $upcomingVisits = $db->fetchAll(
+                "SELECT sv.*, l.name as lead_name FROM site_visits sv
+                 LEFT JOIN leads l ON l.id = sv.lead_id
+                 WHERE (sv.assigned_to = ? OR sv.user_id = ?) AND sv.visit_date >= CURDATE() AND sv.status NOT IN ('cancelled','completed')
+                 ORDER BY sv.visit_date ASC, sv.visit_time ASC LIMIT 5",
+                [$userId, $userId]
+            ) ?: [];
+
+        } catch (\Exception $e) {
+            error_log('AssociateController::crmDashboard error: ' . $e->getMessage());
+        }
+
+        $this->render('associate/crm_dashboard', [
+            'page_title' => 'CRM Dashboard - APS Dream Home',
+            'page_description' => 'Your lead management dashboard',
+            'current_page' => 'crm',
+            'stats' => $stats,
+            'recent_activity' => $recentActivity,
+            'pending_tasks' => $pendingTasks,
+            'upcoming_visits' => $upcomingVisits ?? [],
+        ], 'layouts/associate');
+    }
+
+    /**
      * View leads
      */
     public function leads()
@@ -251,21 +561,59 @@ class AssociateController extends BaseController
         $this->layout = 'layouts/associate';
         $userId = $_SESSION['user_id'] ?? 0;
 
+        // Filters
+        $statusFilter = $_GET['status'] ?? '';
+        $search = trim($_GET['q'] ?? '');
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 20;
+        $offset = ($page - 1) * $perPage;
+
+        $where = "WHERE (l.created_by = ? OR l.assigned_to = ?) AND l.deleted_at IS NULL";
+        $params = [$userId, $userId];
+
+        if ($statusFilter !== '' && in_array($statusFilter, ['new','contacted','qualified','site_visit','proposal','negotiation','closed_won','closed_lost','nurture'])) {
+            $where .= " AND l.status = ?";
+            $params[] = $statusFilter;
+        }
+        if ($search !== '') {
+            $where .= " AND (l.name LIKE ? OR l.phone LIKE ? OR l.email LIKE ?)";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+        }
+
         $leads = [];
+        $totalCount = 0;
+
         try {
+            $totalCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM leads l $where", $params);
             $leads = $this->db->fetchAll(
-                "SELECT id, name, email, phone, message, type, status, DATE(created_at) as date 
-                 FROM inquiries WHERE posted_by = ? AND posted_by_type = 'associate' 
-                 ORDER BY created_at DESC LIMIT 20",
-                [$userId]
+                "SELECT l.id, l.name, l.email, l.phone, l.property_interest, l.budget_range, l.location_preference,
+                        l.status, l.priority, l.lead_score, l.source, l.notes,
+                        DATE(l.created_at) as date, l.next_activity_date,
+                        (SELECT COUNT(*) FROM lead_activities la WHERE la.lead_id = l.id) as activity_count
+                 FROM leads l $where
+                 ORDER BY l.created_at DESC LIMIT $perPage OFFSET $offset",
+                $params
             );
-        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+        } catch (\Exception $e) { error_log('AssociateController leads exception: ' . $e->getMessage()); }
+
+        $totalPages = max(1, ceil($totalCount / $perPage));
+        $queryParams = $_GET;
+        unset($queryParams['page']);
+        $baseQuery = http_build_query($queryParams);
 
         $this->render('associate/leads', [
             'page_title' => 'My Leads - APS Dream Home',
             'page_description' => 'Manage your client leads',
             'leads' => $leads,
-            'current_page' => 'leads'
+            'total_count' => $totalCount,
+            'current_page' => 'leads',
+            'status_filter' => $statusFilter,
+            'search' => $search,
+            'current_page_no' => $page,
+            'total_pages' => $totalPages,
+            'pagination_url' => BASE_URL . '/associate/leads' . ($baseQuery ? '?' . $baseQuery . '&' : '?'),
         ], 'layouts/associate');
     }
 
@@ -287,23 +635,23 @@ class AssociateController extends BaseController
         $perPage = 20;
         $offset = ($page - 1) * $perPage;
 
-        $where = "WHERE c.associate_id = ?";
+        $where = "WHERE l.beneficiary_user_id = ?";
         $params = [$userId];
 
-        if ($statusFilter !== '' && in_array($statusFilter, ['pending', 'paid', 'cancelled'])) {
-            $where .= " AND c.status = ?";
+        if ($statusFilter !== '' && in_array($statusFilter, ['pending', 'paid', 'approved', 'cancelled'])) {
+            $where .= " AND l.status = ?";
             $params[] = $statusFilter;
         }
-        if ($typeFilter !== '' && in_array($typeFilter, ['direct', 'team', 'referral', 'bonus'])) {
-            $where .= " AND c.commission_type = ?";
+        if ($typeFilter !== '') {
+            $where .= " AND l.commission_type = ?";
             $params[] = $typeFilter;
         }
         if ($dateFrom !== '') {
-            $where .= " AND DATE(c.created_at) >= ?";
+            $where .= " AND DATE(l.created_at) >= ?";
             $params[] = $dateFrom;
         }
         if ($dateTo !== '') {
-            $where .= " AND DATE(c.created_at) <= ?";
+            $where .= " AND DATE(l.created_at) <= ?";
             $params[] = $dateTo;
         }
 
@@ -314,30 +662,43 @@ class AssociateController extends BaseController
 
         try {
             $totalCount = (int)$this->db->fetchColumn(
-                "SELECT COUNT(*) FROM commissions c $where",
+                "SELECT COUNT(*) FROM mlm_commission_ledger l $where",
                 $params
             );
 
             $commissions = $this->db->fetchAll(
-                "SELECT c.id, c.commission_type,
-                 COALESCE(p.title, p.name, CONCAT('Property #', c.property_id)) as property,
-                 c.amount, c.percentage, c.status, c.description, DATE(c.created_at) as date
-                 FROM commissions c
-                 LEFT JOIN user_properties p ON c.property_id = p.id
+                "SELECT l.id, l.commission_type,
+                 COALESCE(p.name, CONCAT('Property #', l.property_id)) as property,
+                 l.amount, l.commission_percentage as percentage, l.status, l.notes as description,
+                 DATE(l.created_at) as date, l.level, l.rank_at_time, l.source_user_name
+                 FROM mlm_commission_ledger l
+                 LEFT JOIN user_properties p ON l.property_id = p.id
                  $where
-                 ORDER BY c.created_at DESC LIMIT $perPage OFFSET $offset",
-                $params
+                 ORDER BY l.created_at DESC LIMIT $perPage OFFSET $offset",
+                 $params
             );
 
             $totalEarned = (float)$this->db->fetchColumn(
-                "SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE associate_id = ? AND status = 'paid'",
+                "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status IN ('paid','approved')",
                 [$userId]
             );
             $totalPending = (float)$this->db->fetchColumn(
-                "SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE associate_id = ? AND status = 'pending'",
+                "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'pending'",
                 [$userId]
             );
-        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+
+            // Commission breakdown by type
+            $breakdown = $this->db->fetchAll(
+                "SELECT commission_type,
+                        COUNT(*) as count,
+                        COALESCE(SUM(amount), 0) as total_amount,
+                        SUM(CASE WHEN status IN ('paid','approved') THEN amount ELSE 0 END) as paid_amount,
+                        SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) as pending_amount
+                 FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status != 'cancelled'
+                 GROUP BY commission_type ORDER BY total_amount DESC",
+                [$userId]
+            );
+        } catch (\Exception $e) { error_log('AssociateController commission exception: ' . $e->getMessage()); }
 
         $totalPages = max(1, ceil($totalCount / $perPage));
 
@@ -353,6 +714,7 @@ class AssociateController extends BaseController
             'commissions' => $commissions,
             'total_earned' => $totalEarned,
             'total_pending' => $totalPending,
+            'breakdown' => $breakdown ?? [],
             'current_page' => 'commissions',
             'status_filter' => $statusFilter,
             'type_filter' => $typeFilter,
@@ -365,7 +727,7 @@ class AssociateController extends BaseController
     }
 
     /**
-     * View properties
+     * View properties (My Properties - associate's own listings)
      */
     public function properties()
     {
@@ -377,7 +739,7 @@ class AssociateController extends BaseController
         try {
             $properties = $this->db->fetchAll(
                 "SELECT id, name as title, property_type, listing_type, price, address, 
-                 status, image, DATE(created_at) as date, views
+                 status, image, DATE(created_at) as date, views, area_sqft
                  FROM user_properties WHERE user_id = ? AND posted_by_type = 'associate'
                  ORDER BY created_at DESC LIMIT 20",
                 [$userId]
@@ -389,6 +751,233 @@ class AssociateController extends BaseController
             'page_description' => 'Manage your property listings',
             'properties' => $properties,
             'current_page' => 'properties'
+        ], 'layouts/associate');
+    }
+
+    /**
+     * Edit property form
+     */
+    public function editProperty($id)
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $property = null;
+        try {
+            $property = $this->db->fetchOne(
+                "SELECT * FROM user_properties WHERE id = ? AND user_id = ? AND posted_by_type = 'associate'",
+                [$id, $userId]
+            );
+        } catch (\Exception $e) { error_log('Edit property error: ' . $e->getMessage()); }
+
+        if (!$property) {
+            $_SESSION['flash_error'] = 'Property not found or access denied.';
+            $this->redirect('/associate/properties');
+            return;
+        }
+
+        $states = [];
+        try {
+            $states = $this->db->fetchAll("SELECT id, name FROM states ORDER BY name LIMIT 50");
+        } catch (\Exception $e) {}
+
+        $success = $_SESSION['flash_success'] ?? null;
+        $error = $_SESSION['flash_error'] ?? null;
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+        $this->render('associate/edit_property', [
+            'page_title' => 'Edit Property - APS Dream Home',
+            'property' => $property,
+            'states' => $states,
+            'current_page' => 'properties',
+            'success' => $success,
+            'error' => $error,
+        ], 'layouts/associate');
+    }
+
+    /**
+     * Update property
+     */
+    public function updateProperty($id)
+    {
+        $this->requireAuth();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect("/associate/properties/edit/{$id}");
+            return;
+        }
+
+        @session_start();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        // Verify ownership
+        $property = $this->db->fetchOne(
+            "SELECT id, image FROM user_properties WHERE id = ? AND user_id = ? AND posted_by_type = 'associate'",
+            [$id, $userId]
+        );
+        if (!$property) {
+            $_SESSION['flash_error'] = 'Property not found.';
+            $this->redirect('/associate/properties');
+            return;
+        }
+
+        $title = trim($_POST['title'] ?? '');
+        $propertyType = trim($_POST['property_type'] ?? '');
+        $listingType = trim($_POST['listing_type'] ?? 'sell');
+        $price = (float)str_replace([',', ' '], '', $_POST['price'] ?? 0);
+        $area = (int)str_replace([',', ' '], '', $_POST['area'] ?? 0);
+        $location = trim($_POST['location'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+
+        if (empty($title) || empty($propertyType) || $price <= 0) {
+            $_SESSION['flash_error'] = 'Please fill in all required fields.';
+            $this->redirect("/associate/properties/edit/{$id}");
+            return;
+        }
+
+        try {
+            // Handle new image upload
+            $imagePath = $property['image'];
+            if (!empty($_FILES['property_image']['name']) && $_FILES['property_image']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = __DIR__ . '/../../../assets/images/properties/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $ext = pathinfo($_FILES['property_image']['name'], PATHINFO_EXTENSION);
+                $newName = 'prop_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                $targetPath = $uploadDir . $newName;
+                if (move_uploaded_file($_FILES['property_image']['tmp_name'], $targetPath)) {
+                    $imagePath = 'properties/' . $newName;
+                }
+            }
+
+            $this->db->execute(
+                "UPDATE user_properties SET name = ?, property_type = ?, listing_type = ?, price = ?, 
+                 area_sqft = ?, address = ?, description = ?, image = ?, updated_at = NOW()
+                 WHERE id = ? AND user_id = ?",
+                [$title, $propertyType, $listingType, $price, $area, $location, $description, $imagePath, $id, $userId]
+            );
+
+            $_SESSION['flash_success'] = 'Property updated successfully!';
+        } catch (\Exception $e) {
+            error_log("Update property error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to update property.';
+        }
+
+        $this->redirect('/associate/properties');
+    }
+
+    /**
+     * Delete property (soft delete)
+     */
+    public function deleteProperty($id)
+    {
+        $this->requireAuth();
+        @session_start();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        try {
+            $result = $this->db->execute(
+                "UPDATE user_properties SET status = 'archived', updated_at = NOW() WHERE id = ? AND user_id = ? AND posted_by_type = 'associate'",
+                [$id, $userId]
+            );
+            if ($result) {
+                $_SESSION['flash_success'] = 'Property archived successfully.';
+            } else {
+                $_SESSION['flash_error'] = 'Property not found.';
+            }
+        } catch (\Exception $e) {
+            error_log("Delete property error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to archive property.';
+        }
+
+        $this->redirect('/associate/properties');
+    }
+
+    /**
+     * Browse all properties (stays inside associate portal)
+     */
+    public function browse()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $type = $_GET['type'] ?? '';
+        $listingType = $_GET['listing'] ?? '';
+        $location = $_GET['location'] ?? '';
+        $minPrice = (int)($_GET['min_price'] ?? 0);
+        $maxPrice = (int)($_GET['max_price'] ?? 0);
+        $keyword = trim($_GET['q'] ?? '');
+        $sortBy = $_GET['sort'] ?? 'newest';
+        $perPage = 12;
+        $offset = ($page - 1) * $perPage;
+
+        $where = "WHERE status = 'approved'";
+        $params = [];
+
+        if ($keyword !== '') {
+            $where .= " AND (name LIKE ? OR address LIKE ? OR description LIKE ?)";
+            $params[] = "%$keyword%";
+            $params[] = "%$keyword%";
+            $params[] = "%$keyword%";
+        }
+        if ($type !== '') {
+            $where .= " AND property_type = ?";
+            $params[] = $type;
+        }
+        if ($listingType !== '') {
+            $where .= " AND listing_type = ?";
+            $params[] = $listingType;
+        }
+        if ($location !== '') {
+            $where .= " AND address LIKE ?";
+            $params[] = "%$location%";
+        }
+        if ($minPrice > 0) {
+            $where .= " AND price >= ?";
+            $params[] = $minPrice;
+        }
+        if ($maxPrice > 0) {
+            $where .= " AND price <= ?";
+            $params[] = $maxPrice;
+        }
+
+        $orderBy = match($sortBy) {
+            'price_low' => 'price ASC',
+            'price_high' => 'price DESC',
+            'oldest' => 'created_at ASC',
+            default => 'created_at DESC',
+        };
+
+        $properties = [];
+        $total = 0;
+        try {
+            $total = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM user_properties $where", $params);
+            $properties = $this->db->fetchAll(
+                "SELECT id, name, property_type, listing_type, price, address, area_sqft,
+                        bedrooms, furnished, image, views, DATE(created_at) as date
+                 FROM user_properties $where ORDER BY $orderBy LIMIT $perPage OFFSET $offset",
+                $params
+            );
+        } catch (\Exception $e) {
+            error_log('AssociateController::browse exception: ' . $e->getMessage());
+        }
+
+        $totalPages = max(1, ceil($total / $perPage));
+        $queryParams = $_GET;
+        unset($queryParams['page']);
+        $baseQuery = http_build_query($queryParams);
+
+        $this->render('associate/browse', [
+            'page_title' => 'Browse Properties - APS Dream Home',
+            'page_description' => 'Browse all available properties',
+            'properties' => $properties,
+            'total' => $total,
+            'page' => $page,
+            'total_pages' => $totalPages,
+            'current_page' => 'browse',
+            'current_filters' => $_GET,
+            'pagination_url' => BASE_URL . '/associate/browse' . ($baseQuery ? '?' . $baseQuery . '&' : '?'),
         ], 'layouts/associate');
     }
 
@@ -608,12 +1197,21 @@ class AssociateController extends BaseController
         $propertyType = trim($_POST['property_type'] ?? '');
         $listingType = trim($_POST['listing_type'] ?? 'sell');
         $price = (float)str_replace([',', ' '], '', $_POST['price'] ?? 0);
+        $priceUnit = trim($_POST['price_unit'] ?? 'total');
         $location = trim($_POST['location'] ?? '');
         $stateId = (int)($_POST['state_id'] ?? 0);
         $districtId = (int)($_POST['district_id'] ?? 0);
         $cityName = trim($_POST['city_name'] ?? '');
         $area = (int)str_replace([',', ' '], '', $_POST['area'] ?? 0);
+        $areaUnit = trim($_POST['area_unit'] ?? 'sqft');
         $description = trim($_POST['description'] ?? '');
+        $bedrooms = (int)($_POST['bedrooms'] ?? 0);
+        $bathrooms = (int)($_POST['bathrooms'] ?? 0);
+        $furnishing = trim($_POST['furnishing'] ?? '');
+        $facing = trim($_POST['facing'] ?? '');
+        $floor = trim($_POST['floor'] ?? '');
+        $ownershipType = trim($_POST['ownership_type'] ?? 'freehold');
+        $possession = trim($_POST['possession'] ?? 'ready');
 
         if (empty($name) || empty($phone) || empty($propertyType)) {
             $_SESSION['flash_error'] = 'Please fill in all required fields.';
@@ -657,9 +1255,21 @@ class AssociateController extends BaseController
             // Save to user_properties table with associate tracking
             $db = \App\Core\Database\Database::getInstance();
 
+            $metadata = json_encode([
+                'bedrooms' => $bedrooms,
+                'bathrooms' => $bathrooms,
+                'furnishing' => $furnishing,
+                'facing' => $facing,
+                'floor' => $floor,
+                'ownership_type' => $ownershipType,
+                'possession' => $possession,
+                'price_unit' => $priceUnit,
+                'area_unit' => $areaUnit,
+            ]);
+
             $stmt = $db->prepare("
-                INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, created_at)
-                VALUES (?, ?, 'associate', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, status, metadata, created_at)
+                VALUES (?, ?, 'associate', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, NOW())
             ");
             $stmt->execute([
                 $associateId,
@@ -672,9 +1282,10 @@ class AssociateController extends BaseController
                 $location,
                 $area,
                 $price,
-                $listingType === 'rent' ? 'month' : 'lakh',
+                $priceUnit === 'rent' ? 'month' : 'lakh',
                 $description,
-                $imagePath
+                $imagePath,
+                $metadata
             ]);
 
             // Also save to inquiries for CRM tracking
@@ -696,6 +1307,9 @@ class AssociateController extends BaseController
                 error_log("Inquiry save error: " . $e2->getMessage());
             }
 
+            // Auto-wire to CRM lead
+            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property_listing','created_by'=>$associateId]); } catch (\Exception $e3) {}
+
             $_SESSION['flash_success'] = 'Thank you! Your property listing has been submitted. Our team will verify and publish it soon.';
         } catch (\Exception $e) {
             error_log("Associate property listing error: " . $e->getMessage());
@@ -711,19 +1325,36 @@ class AssociateController extends BaseController
     public function team()
     {
         $this->requireAuth();
+        $this->layout = 'layouts/associate';
         @session_start();
         $associateId = $_SESSION['user_id'] ?? null;
         $associateName = $_SESSION['user_name'] ?? '';
 
         $db = \App\Core\Database\Database::getInstance();
         $teamMembers = [];
+        $teamStats = ['total' => 0, 'active' => 0, 'total_sales' => 0, 'total_commission' => 0];
         try {
             $teamMembers = $db->fetchAll(
-                "SELECT id, name, email, phone, status, created_at FROM users WHERE referred_by = ? AND role = 'associate' ORDER BY created_at DESC",
+                "SELECT u.id, u.name, u.email, u.phone, u.status, u.created_at,
+                        COALESCE(ml.current_level, 'associate') as rank,
+                        COALESCE(ml.lifetime_sales, 0) as lifetime_sales,
+                        COALESCE(ml.total_team_size, 0) as team_size,
+                        (SELECT COUNT(*) FROM mlm_commission_ledger WHERE beneficiary_user_id = u.id) as commission_count,
+                        (SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = u.id) as total_earned
+                 FROM users u
+                 LEFT JOIN mlm_profiles ml ON ml.user_id = u.id
+                 WHERE u.referred_by = ? AND u.role = 'associate'
+                 ORDER BY u.created_at DESC",
                 [$associateId]
             );
+            $teamStats['total'] = count($teamMembers);
+            foreach ($teamMembers as $m) {
+                if (($m['status'] ?? '') === 'active') $teamStats['active']++;
+                $teamStats['total_sales'] += (float)($m['lifetime_sales'] ?? 0);
+                $teamStats['total_commission'] += (float)($m['total_earned'] ?? 0);
+            }
         } catch (\Exception $e) {
-            $teamMembers = [];
+            error_log('AssociateController::team error: ' . $e->getMessage());
         }
 
         $this->render('associate/team', [
@@ -731,7 +1362,9 @@ class AssociateController extends BaseController
             'page_description' => 'Manage your team members',
             'associate_name' => $associateName,
             'team' => $teamMembers,
-            'team_count' => count($teamMembers)
+            'team_count' => count($teamMembers),
+            'team_stats' => $teamStats,
+            'current_page' => 'team'
         ], 'layouts/associate');
     }
 
@@ -749,25 +1382,71 @@ class AssociateController extends BaseController
         $currentRank = 'Associate';
         $nextRank = null;
         $userProfile = null;
+        $rankBenefits = [];
+        $mlmSettings = [];
+        $userCommissionTotal = 0;
+        $userTeamSize = 0;
 
         try {
-            $currentPlan = $this->db->fetchOne("SELECT * FROM mlm_plans WHERE status = 'active' LIMIT 1");
-        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+            $currentPlan = $this->db->fetchOne("SELECT * FROM mlm_commission_plans WHERE status = 'active' LIMIT 1");
+        } catch (\Exception $e) { error_log('AssociateController mlmPlan: ' . $e->getMessage()); }
         try {
             $levels = $this->db->fetchAll("SELECT * FROM mlm_levels ORDER BY level_order");
-        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+        } catch (\Exception $e) { error_log('AssociateController mlmPlan: ' . $e->getMessage()); }
+        try {
+            $rankBenefits = $this->db->fetchAll("SELECT * FROM mlm_rank_benefits WHERE is_active = 1 ORDER BY rank_order");
+        } catch (\Exception $e) { error_log('AssociateController mlmPlan: ' . $e->getMessage()); }
         try {
             $userProfile = $this->db->fetchOne("SELECT current_level, total_team_size, direct_referrals, lifetime_sales FROM mlm_profiles WHERE user_id = ?", [$userId]);
-        } catch (\Exception $e) { error_log('AssociateController exception: ' . $e->getMessage()); }
+        } catch (\Exception $e) { error_log('AssociateController mlmPlan: ' . $e->getMessage()); }
+        try {
+            $mlmSettings = $this->db->fetchAll("SELECT setting_key, setting_value FROM mlm_settings");
+            $mlmSettings = array_column($mlmSettings, 'setting_value', 'setting_key');
+        } catch (\Exception $e) {}
 
-        if ($userProfile) {
-            $currentRank = $userProfile['current_level'] ?? 'Associate';
+        // Get user's actual commission data
+        try {
+            $userCommissionTotal = (float)$this->db->fetchColumn(
+                "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ?",
+                [$userId]
+            );
+            $userTeamSize = (int)$this->db->fetchColumn(
+                "SELECT COUNT(*) FROM users WHERE referred_by = ?",
+                [$userId]
+            );
+        } catch (\Exception $e) {}
+
+        // Recalculate rank from 12-month ledger (consistent with dashboard)
+        try {
+            $ledgerSales12mo = (float)$this->db->fetchColumn(
+                "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)",
+                [$userId]
+            );
+            $computedRank = 'associate';
+            foreach ($rankBenefits as $rb) {
+                if ($ledgerSales12mo >= (float)$rb['min_qualifying_volume']) {
+                    $computedRank = $rb['rank_name'];
+                }
+            }
+            $currentRank = ucwords(str_replace('_', ' ', $computedRank));
+            // Auto-update if stale
+            if ($userProfile && strtolower($computedRank) !== strtolower($userProfile['current_level'] ?? '')) {
+                $this->db->execute("UPDATE mlm_profiles SET current_level = ? WHERE user_id = ?", [$computedRank, $userId]);
+            }
+        } catch (\Exception $e) { error_log('MLM Plan rank recalc: ' . $e->getMessage()); }
+
+        if (!empty($rankBenefits)) {
+            foreach ($rankBenefits as $rb) {
+                if (strtolower($rb['rank_name']) === strtolower($currentRank)) {
+                    $currentRank = ucwords(str_replace('_', ' ', $rb['rank_name']));
+                }
+            }
         }
         if (!empty($levels)) {
             $found = false;
             foreach ($levels as $l) {
                 if ($found) { $nextRank = $l; break; }
-                if ($l['level_name'] === $currentRank) $found = true;
+                if (($l['level_name'] ?? '') === $currentRank) $found = true;
             }
         }
 
@@ -779,8 +1458,277 @@ class AssociateController extends BaseController
             'current_rank' => $currentRank,
             'next_rank' => $nextRank,
             'user_profile' => $userProfile,
+            'rank_benefits' => $rankBenefits,
+            'mlm_settings' => $mlmSettings,
+            'user_commission_total' => $userCommissionTotal,
+            'user_team_size' => $userTeamSize,
             'current_page' => 'mlm-plan'
         ], 'layouts/associate');
+    }
+
+    /**
+     * Document Locker
+     */
+    public function documents()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+
+        $this->render('associate/documents', [
+            'page_title' => 'Document Locker - APS Dream Home',
+            'page_description' => 'Manage your documents',
+            'current_page' => 'documents'
+        ], 'layouts/associate');
+    }
+
+    /**
+     * Add lead form
+     */
+    public function addLead()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        
+        @session_start();
+        $success = $_SESSION['flash_success'] ?? null;
+        $error = $_SESSION['flash_error'] ?? null;
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+        // Load available properties for interest dropdown
+        $properties = [];
+        try {
+            $properties = $this->db->fetchAll("SELECT id, name, property_type, colony_id FROM user_properties WHERE status = 'approved' ORDER BY name LIMIT 50");
+        } catch (\Exception $e) {}
+
+        $this->render('associate/add_lead', [
+            'page_title' => 'Add Lead - APS Dream Home',
+            'page_description' => 'Add a new client lead',
+            'current_page' => 'leads',
+            'success' => $success,
+            'error' => $error,
+            'properties' => $properties,
+        ], 'layouts/associate');
+    }
+
+    /**
+     * Store new lead in `leads` table (CRM)
+     */
+    public function storeLead()
+    {
+        $this->requireAuth();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/associate/leads');
+            return;
+        }
+
+        @session_start();
+        $userId = $_SESSION['user_id'] ?? 0;
+        
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $propertyInterest = trim($_POST['property_interest'] ?? '');
+        $budgetRange = trim($_POST['budget_range'] ?? '');
+        $locationPref = trim($_POST['location_preference'] ?? '');
+        $source = trim($_POST['source'] ?? 'associate');
+        $priority = trim($_POST['priority'] ?? 'medium');
+        $notes = trim($_POST['notes'] ?? '');
+
+        if (empty($name) || empty($phone)) {
+            $_SESSION['flash_error'] = 'Name and Phone Number are required.';
+            $this->redirect('/associate/leads/add');
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $stmt = $db->prepare("
+                INSERT INTO leads (name, email, phone, property_interest, budget_range, location_preference, 
+                    source, status, priority, notes, created_by, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, ?, NOW(), NOW())
+            ");
+            $stmt->execute([$name, $email, $phone, $propertyInterest, $budgetRange, $locationPref, $source, $priority, $notes, $userId]);
+            
+            // Log activity
+            $leadId = $db->lastInsertId();
+            try {
+                $db->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'created', 'Lead created by associate', ?, NOW())")
+                    ->execute([$leadId, $userId]);
+            } catch (\Exception $e) {}
+
+            $_SESSION['flash_success'] = 'Lead added successfully!';
+            $this->redirect('/associate/leads');
+        } catch (\Exception $e) {
+            error_log('Error storing lead: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to save lead. Please try again.';
+            $this->redirect('/associate/leads/add');
+        }
+    }
+
+    /**
+     * Lead detail / CRM view
+     */
+    public function leadDetail($id)
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $lead = null;
+        $activities = [];
+        try {
+            $lead = $this->db->fetchOne("SELECT * FROM leads WHERE id = ? AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL", [$id, $userId, $userId]);
+            if ($lead) {
+                $activities = $this->db->fetchAll(
+                    "SELECT * FROM lead_activities WHERE lead_id = ? ORDER BY created_at DESC LIMIT 20",
+                    [$id]
+                );
+                $siteVisits = $this->getLeadSiteVisits($id);
+            }
+        } catch (\Exception $e) { error_log('Lead detail error: ' . $e->getMessage()); }
+
+        if (!$lead) {
+            $this->redirect('/associate/leads');
+            return;
+        }
+
+        @session_start();
+        $success = $_SESSION['flash_success'] ?? null;
+        $error = $_SESSION['flash_error'] ?? null;
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+        // Get colonies for site visit form
+        $colonies = [];
+        try {
+            $colonies = $this->db->getConnection()->query("SELECT id, name FROM colonies WHERE status = 'active' ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {}
+
+        $this->render('associate/lead_detail', [
+            'page_title' => htmlspecialchars($lead['name']) . ' - Lead Details',
+            'page_description' => 'Lead CRM details',
+            'lead' => $lead,
+            'activities' => $activities,
+            'site_visits' => $siteVisits ?? [],
+            'colonies' => $colonies,
+            'current_page' => 'leads',
+            'success' => $success,
+            'error' => $error,
+        ], 'layouts/associate');
+    }
+
+    /**
+     * Update lead status (AJAX or POST)
+     */
+    public function updateLeadStatus($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Content-Type: application/json');
+            echo json_encode(['ok' => false]);
+            return;
+        }
+
+        $newStatus = trim($_POST['status'] ?? '');
+        $validStatuses = ['new','contacted','qualified','proposal','negotiation','closed_won','closed_lost','nurture'];
+        if (!in_array($newStatus, $validStatuses)) {
+            $_SESSION['flash_error'] = 'Invalid status.';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            // Verify ownership
+            $lead = $db->fetchOne("SELECT id, status FROM leads WHERE id = ? AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL", [$id, $userId, $userId]);
+            if (!$lead) {
+                $this->redirect('/associate/leads');
+                return;
+            }
+            $oldStatus = $lead['status'];
+            $db->execute("UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ?", [$newStatus, $id]);
+            // Log activity
+            try {
+                $db->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, old_value, new_value, created_by, created_at) VALUES (?, 'status_change', ?, ?, ?, ?, NOW())")
+                    ->execute([$id, "Status changed from $oldStatus to $newStatus", $oldStatus, $newStatus, $userId]);
+            } catch (\Exception $e) {}
+            $_SESSION['flash_success'] = 'Lead status updated to ' . ucfirst(str_replace('_', ' ', $newStatus));
+        } catch (\Exception $e) {
+            error_log('Update lead status error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to update status.';
+        }
+        $this->redirect("/associate/leads/{$id}");
+    }
+
+    /**
+     * Add follow-up note to a lead (and optionally schedule a follow-up task)
+     */
+    public function addLeadNote($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        $note = trim($_POST['note'] ?? '');
+        if (empty($note)) {
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $lead = $db->fetchOne("SELECT id FROM leads WHERE id = ? AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL", [$id, $userId, $userId]);
+            if ($lead) {
+                // Add note activity
+                $db->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'note', ?, ?, NOW())")
+                    ->execute([$id, $note, $userId]);
+                $db->execute("UPDATE leads SET notes = CONCAT(COALESCE(notes,''), CHAR(10), CHAR(10), '[', NOW(), '] ', ?), updated_at = NOW() WHERE id = ?", [$note, $id]);
+
+                // Schedule follow-up task if requested
+                if (!empty($_POST['schedule_followup']) && !empty($_POST['followup_date'])) {
+                    $followupDate = $_POST['followup_date'];
+                    $followupTime = $_POST['followup_time'] ?? null;
+                    $taskType = $_POST['task_type'] ?? 'follow_up';
+                    $taskPriority = $_POST['task_priority'] ?? 'medium';
+
+                    $db->query(
+                        "INSERT INTO crm_tasks (lead_id, assigned_to, created_by, task_type, title, description, priority, status, due_date, due_time, created_at)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, NOW())",
+                        [
+                            $id,
+                            $userId,
+                            $userId,
+                            $taskType,
+                            "Follow-up: " . mb_substr($note, 0, 80),
+                            $note,
+                            $taskPriority,
+                            $followupDate,
+                            $followupTime,
+                        ]
+                    );
+
+                    // Update lead's next_activity_date
+                    $db->query("UPDATE leads SET next_activity_date = ?, updated_at = NOW() WHERE id = ?", [$followupDate, $id]);
+
+                    $_SESSION['flash_success'] = 'Note added & follow-up scheduled for ' . date('M d, Y', strtotime($followupDate)) . '.';
+                } else {
+                    $_SESSION['flash_success'] = 'Note added.';
+                }
+
+                // Update last activity
+                $db->query("UPDATE leads SET last_activity_date = NOW(), updated_at = NOW() WHERE id = ?", [$id]);
+            }
+        } catch (\Exception $e) {
+            error_log('Add lead note error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to add note.';
+        }
+        $this->redirect("/associate/leads/{$id}");
     }
 
     private function safeGamify(string $method, int ...$args): array
@@ -802,5 +1750,1355 @@ class AssociateController extends BaseController
             error_log('Gamification error: ' . $e->getMessage());
             return [];
         }
+    }
+
+    /**
+     * Follow-ups / Tasks page
+     */
+    public function followups()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $followups = [];
+        try {
+            $stmt = $pdo->prepare("
+                SELECT t.*, l.name as lead_name, l.phone as lead_phone, l.email as lead_email
+                FROM crm_tasks t
+                LEFT JOIN leads l ON l.id = t.lead_id
+                WHERE t.assigned_to = ? OR t.created_by = ?
+                ORDER BY t.due_date ASC, t.priority DESC
+            ");
+            $stmt->execute([$userId, $userId]);
+            $followups = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('Followups error: ' . $e->getMessage());
+        }
+
+        $stats = [
+            'total' => count($followups),
+            'pending' => 0,
+            'completed' => 0,
+            'overdue' => 0,
+        ];
+        foreach ($followups as $f) {
+            if ($f['status'] === 'completed') $stats['completed']++;
+            elseif (strtotime($f['due_date'] ?? '') < time()) $stats['overdue']++;
+            else $stats['pending']++;
+        }
+
+        $this->render('associate/followups', [
+            'page_title' => 'Follow-ups - APS Dream Home',
+            'current_page' => 'followups',
+            'followups' => $followups,
+            'stats' => $stats,
+        ]);
+    }
+
+    /**
+     * Update a follow-up status
+     */
+    public function updateFollowup($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+        $status = $_POST['status'] ?? 'completed';
+
+        try {
+            $stmt = $pdo->prepare("UPDATE crm_tasks SET status = ?, updated_at = NOW() WHERE id = ? AND (assigned_to = ? OR created_by = ?)");
+            $stmt->execute([$status, $id, $userId, $userId]);
+            $_SESSION['flash_success'] = 'Follow-up updated successfully';
+        } catch (\Throwable $e) {
+            error_log('Update followup error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to update follow-up';
+        }
+
+        $this->redirect('/associate/followups');
+    }
+
+    /**
+     * My Schedule / Calendar page
+     */
+    public function schedule()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $events = [];
+        try {
+            // Tasks
+            $stmt = $pdo->prepare("
+                SELECT t.id, t.title, t.description, t.due_date as event_date, t.due_time as event_time,
+                       t.priority, t.status, l.name as lead_name, 'task' as event_type
+                FROM crm_tasks t
+                LEFT JOIN leads l ON l.id = t.lead_id
+                WHERE (t.assigned_to = ? OR t.created_by = ?)
+                  AND t.due_date IS NOT NULL
+                  AND t.due_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                ORDER BY t.due_date ASC
+                LIMIT 50
+            ");
+            $stmt->execute([$userId, $userId]);
+            $events = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            // Site visits
+            $stmt2 = $pdo->prepare("
+                SELECT sv.id, sv.visitor_name as title, sv.notes as description,
+                       sv.visit_date as event_date, sv.visit_time as event_time,
+                       sv.status, l.name as lead_name, 'site_visit' as event_type
+                FROM site_visits sv
+                LEFT JOIN leads l ON l.id = sv.lead_id
+                WHERE (sv.assigned_to = ? OR sv.user_id = ?)
+                  AND sv.visit_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                  AND sv.status NOT IN ('cancelled')
+                ORDER BY sv.visit_date ASC
+                LIMIT 50
+            ");
+            $stmt2->execute([$userId, $userId]);
+            $visits = $stmt2->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $events = array_merge($events, $visits);
+
+            // Sort by date
+            usort($events, function($a, $b) {
+                return strcmp($a['event_date'] ?? '', $b['event_date'] ?? '');
+            });
+        } catch (\Throwable $e) {
+            error_log('Schedule error: ' . $e->getMessage());
+        }
+
+        $this->render('associate/schedule', [
+            'page_title' => 'My Schedule - APS Dream Home',
+            'current_page' => 'schedule',
+            'events' => $events,
+        ]);
+    }
+
+    /**
+     * Referral page - share code and track referrals
+     */
+    public function referral()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $referralCode = '';
+        $referralCount = 0;
+        $referralEarnings = 0;
+        try {
+            $stmt = $pdo->prepare("SELECT referral_code FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $referralCode = $row['referral_code'] ?? '';
+
+            $stmt2 = $pdo->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
+            $stmt2->execute([$referralCode]);
+            $referralCount = (int) $stmt2->fetchColumn();
+
+            $stmt3 = $pdo->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE user_id = ? AND type = 'referral_bonus'");
+            $stmt3->execute([$userId]);
+            $referralEarnings = (float) $stmt3->fetchColumn();
+        } catch (\Throwable $e) {
+            error_log('Referral error: ' . $e->getMessage());
+        }
+
+        $this->render('associate/referral', [
+            'page_title' => 'Refer & Earn - APS Dream Home',
+            'current_page' => 'referral',
+            'referral_code' => $referralCode,
+            'referral_count' => $referralCount,
+            'referral_earnings' => $referralEarnings,
+        ]);
+    }
+
+    /**
+     * Compare properties side by side
+     */
+    public function compareProperties()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $properties = [];
+        try {
+            $ids = $_GET['ids'] ?? [];
+            if (!empty($ids)) {
+                $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                $stmt = $pdo->prepare("SELECT * FROM properties WHERE id IN ($placeholders) ORDER BY id DESC LIMIT 4");
+                $stmt->execute($ids);
+                $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            } else {
+                $stmt = $pdo->query("SELECT id, title, city, price, area_sqft, bedrooms, bathrooms, property_type FROM properties ORDER BY id DESC LIMIT 20");
+                $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
+        } catch (\Throwable $e) {
+            error_log('Compare error: ' . $e->getMessage());
+        }
+
+        $this->render('associate/compare', [
+            'page_title' => 'Compare Properties - APS Dream Home',
+            'current_page' => 'compare',
+            'properties' => $properties,
+            'selected' => $_GET['ids'] ?? [],
+        ]);
+    }
+
+    /**
+     * My Bookings - All bookings made by this associate
+     */
+    public function myBookings()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $bookings = [];
+        $stats = ['total' => 0, 'confirmed' => 0, 'pending' => 0, 'total_value' => 0];
+        try {
+            $stmt = $pdo->prepare("
+                SELECT b.*, p.title as property_title, p.price as property_price, p.city,
+                       u.name as customer_name, u.phone as customer_phone, u.email as customer_email,
+                       (SELECT COALESCE(SUM(amount), 0) FROM booking_payment_receipts WHERE booking_id = b.id) as total_paid
+                FROM plot_bookings b
+                LEFT JOIN properties p ON p.id = b.property_id
+                LEFT JOIN users u ON u.id = b.user_id
+                WHERE b.associate_id = ? OR b.created_by = ?
+                ORDER BY b.created_at DESC
+            ");
+            $stmt->execute([$userId, $userId]);
+            $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $stats['total'] = count($bookings);
+            foreach ($bookings as $b) {
+                $status = strtolower($b['status'] ?? '');
+                if ($status === 'confirmed' || $status === 'completed') $stats['confirmed']++;
+                else $stats['pending']++;
+                $stats['total_value'] += (float)($b['property_price'] ?? $b['total_amount'] ?? 0);
+            }
+        } catch (\Throwable $e) {
+            error_log('MyBookings error: ' . $e->getMessage());
+        }
+
+        $this->render('associate/my_bookings', [
+            'page_title' => 'My Bookings - APS Dream Home',
+            'current_page' => 'my-bookings',
+            'bookings' => $bookings,
+            'stats' => $stats,
+        ]);
+    }
+
+    /**
+     * My Customers - All customers associated with this associate
+     */
+    public function myCustomers()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $customers = [];
+        try {
+            $stmt = $pdo->prepare("
+                SELECT DISTINCT u.id, u.name, u.phone, u.email, u.address, u.created_at as registered_date,
+                       COUNT(DISTINCT b.id) as booking_count,
+                       COALESCE(SUM(b.total_amount), 0) as total_business,
+                       (SELECT COALESCE(SUM(r.amount), 0) FROM booking_payment_receipts r 
+                        INNER JOIN plot_bookings pb ON pb.id = r.booking_id WHERE pb.user_id = u.id) as total_paid,
+                       (SELECT MAX(created_at) FROM plot_bookings WHERE user_id = u.id) as last_booking_date,
+                       (SELECT role FROM users WHERE id = u.id) as user_role
+                FROM users u
+                INNER JOIN plot_bookings b ON b.user_id = u.id
+                WHERE b.associate_id = ? OR b.created_by = ?
+                GROUP BY u.id, u.name, u.phone, u.email, u.address, u.created_at
+                ORDER BY total_business DESC
+            ");
+            $stmt->execute([$userId, $userId]);
+            $customers = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Add plot details and associate status
+            foreach ($customers as &$c) {
+                $c['is_associate'] = (($c['user_role'] ?? '') === 'associate') ? 1 : 0;
+                $c['total_paid'] = $c['total_paid'] ?? 0;
+                
+                // Get plot details
+                $plotStmt = $pdo->prepare("
+                    SELECT p.plot_number, col.name as colony_name 
+                    FROM plot_bookings b 
+                    INNER JOIN plots p ON p.id = b.plot_id 
+                    LEFT JOIN colonies col ON col.id = p.colony_id 
+                    WHERE b.user_id = ?
+                    ORDER BY b.created_at DESC LIMIT 5
+                ");
+                $plotStmt->execute([$c['id']]);
+                $c['plots'] = $plotStmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
+            unset($c);
+        } catch (\Throwable $e) {
+            error_log('MyCustomers error: ' . $e->getMessage());
+        }
+
+        $this->render('associate/my_customers', [
+            'page_title' => 'My Customers - APS Dream Home',
+            'current_page' => 'my-customers',
+            'customers' => $customers,
+        ]);
+    }
+
+    /**
+     * Customer Detail - Full customer info with bookings, payments
+     */
+    public function customerDetail($id)
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+        $customerId = (int)$id;
+
+        $customer = null;
+        $bookings = [];
+        $receipts = [];
+
+        try {
+            // Get customer info (must have booking with this associate)
+            $stmt = $pdo->prepare("
+                SELECT u.*, 
+                       (SELECT role FROM users WHERE id = u.id) as user_role,
+                       (SELECT referral_code FROM users WHERE id = u.id) as referral_code
+                FROM users u
+                WHERE u.id = ? AND EXISTS (
+                    SELECT 1 FROM plot_bookings WHERE user_id = u.id AND (associate_id = ? OR created_by = ?)
+                )
+            ");
+            $stmt->execute([$customerId, $userId, $userId]);
+            $customer = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($customer) {
+                // Get bookings
+                $bookStmt = $pdo->prepare("
+                    SELECT b.*, p.plot_number, col.name as colony_name, p.area_sqft
+                    FROM plot_bookings b
+                    LEFT JOIN plots p ON p.id = b.plot_id
+                    LEFT JOIN colonies col ON col.id = p.colony_id
+                    WHERE b.user_id = ? AND (b.associate_id = ? OR b.created_by = ?)
+                    ORDER BY b.created_at DESC
+                ");
+                $bookStmt->execute([$customerId, $userId, $userId]);
+                $bookings = $bookStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+                // Get receipts
+                $receiptStmt = $pdo->prepare("
+                    SELECT r.* FROM booking_payment_receipts r
+                    INNER JOIN plot_bookings b ON b.id = r.booking_id
+                    WHERE b.user_id = ? AND (b.associate_id = ? OR b.created_by = ?)
+                    ORDER BY r.receipt_date DESC
+                ");
+                $receiptStmt->execute([$customerId, $userId, $userId]);
+                $receipts = $receiptStmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
+        } catch (\Throwable $e) {
+            error_log('CustomerDetail error: ' . $e->getMessage());
+        }
+
+        if (!$customer) {
+            $_SESSION['flash_error'] = 'Customer not found or access denied';
+            $this->redirect('/associate/my-customers');
+            return;
+        }
+
+        $this->render('associate/customer_detail', [
+            'page_title' => $customer['name'] . ' - Customer Detail',
+            'current_page' => 'my-customers',
+            'customer' => $customer,
+            'bookings' => $bookings,
+            'receipts' => $receipts,
+        ]);
+    }
+
+    /**
+     * EMI Tracker - Track customer EMI payments
+     */
+    public function emiTracker()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $emiData = [];
+        $stats = ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'total_amount' => 0];
+        try {
+            $stmt = $pdo->prepare("
+                SELECT s.*, b.id as booking_id, p.title as property_title, p.city,
+                       u.name as customer_name, u.phone as customer_phone,
+                       (SELECT COALESCE(SUM(amount), 0) FROM booking_payment_receipts WHERE booking_id = b.id AND installment_id = s.id) as paid_amount
+                FROM booking_payment_schedules s
+                INNER JOIN plot_bookings b ON b.id = s.booking_id
+                LEFT JOIN properties p ON p.id = b.property_id
+                LEFT JOIN users u ON u.id = b.user_id
+                WHERE (b.associate_id = ? OR b.created_by = ?)
+                  AND s.status != 'completed'
+                ORDER BY s.due_date ASC
+            ");
+            $stmt->execute([$userId, $userId]);
+            $emiData = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($emiData as $emi) {
+                $dueDate = strtotime($emi['due_date'] ?? '');
+                if ($dueDate < time() && $emi['status'] !== 'paid') {
+                    $stats['overdue']++;
+                } else {
+                    $stats['total_pending']++;
+                }
+                $stats['total_amount'] += (float)($emi['amount'] ?? 0);
+                $stats['collected'] += (float)($emi['paid_amount'] ?? 0);
+            }
+        } catch (\Throwable $e) {
+            error_log('EMITracker error: ' . $e->getMessage());
+        }
+
+        $this->render('associate/emi_tracker', [
+            'page_title' => 'EMI Tracker - APS Dream Home',
+            'current_page' => 'emi-tracker',
+            'emiData' => $emiData,
+            'stats' => $stats,
+        ]);
+    }
+
+    /**
+     * Payment History - All receipts and payments
+     */
+    public function paymentHistory()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $receipts = [];
+        try {
+            $stmt = $pdo->prepare("
+                SELECT r.*, b.id as booking_id, p.title as property_title, p.city,
+                       u.name as customer_name, u.phone as customer_phone
+                FROM booking_payment_receipts r
+                INNER JOIN plot_bookings b ON b.id = r.booking_id
+                LEFT JOIN properties p ON p.id = b.property_id
+                LEFT JOIN users u ON u.id = b.user_id
+                WHERE b.associate_id = ? OR b.created_by = ?
+                ORDER BY r.receipt_date DESC, r.id DESC
+            ");
+            $stmt->execute([$userId, $userId]);
+            $receipts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('PaymentHistory error: ' . $e->getMessage());
+        }
+
+        $this->render('associate/payment_history', [
+            'page_title' => 'Payment History - APS Dream Home',
+            'current_page' => 'payment-history',
+            'receipts' => $receipts,
+        ]);
+    }
+
+    /**
+     * Booking Receipt - View/Download receipt for a specific booking
+     */
+    public function bookingReceipt($id)
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $booking = null;
+        $receipts = [];
+        try {
+            $stmt = $pdo->prepare("
+                SELECT b.*, p.title as property_title, p.price as property_price, p.area_sqft,
+                       p.city, p.state, u.name as customer_name, u.phone as customer_phone, u.email as customer_email
+                FROM plot_bookings b
+                LEFT JOIN properties p ON p.id = b.property_id
+                LEFT JOIN users u ON u.id = b.user_id
+                WHERE b.id = ? AND (b.associate_id = ? OR b.created_by = ?)
+            ");
+            $stmt->execute([$id, $userId, $userId]);
+            $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($booking) {
+                $stmt2 = $pdo->prepare("SELECT * FROM booking_payment_receipts WHERE booking_id = ? ORDER BY receipt_date DESC");
+                $stmt2->execute([$id]);
+                $receipts = $stmt2->fetchAll(\PDO::FETCH_ASSOC);
+            }
+        } catch (\Throwable $e) {
+            error_log('BookingReceipt error: ' . $e->getMessage());
+        }
+
+        if (!$booking) {
+            $_SESSION['flash_error'] = 'Booking not found or access denied';
+            $this->redirect('/associate/my-bookings');
+            return;
+        }
+
+        $this->render('associate/booking_receipt', [
+            'page_title' => 'Booking Receipt - APS Dream Home',
+            'current_page' => 'my-bookings',
+            'booking' => $booking,
+            'receipts' => $receipts,
+        ]);
+    }
+
+    /**
+     * Rank Eligibility Dashboard
+     */
+    public function rankEligibility()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $currentRank = 'associate';
+        $lifetimeVolume = 0;
+        $monthlyVolume = 0;
+        $teamSize = 0;
+        $directLegs = 0;
+        $allRanks = [];
+
+        try {
+            // Get current rank from mlm_profiles
+            $stmt = $pdo->prepare("SELECT * FROM mlm_profiles WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            $profile = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $currentRank = strtolower($profile['rank'] ?? 'associate');
+
+            // Get lifetime volume
+            $stmt2 = $pdo->prepare("SELECT COALESCE(SUM(total_amount), 0) FROM plot_bookings WHERE (associate_id = ? OR created_by = ?) AND status NOT IN ('cancelled', 'refunded')");
+            $stmt2->execute([$userId, $userId]);
+            $lifetimeVolume = (float)$stmt2->fetchColumn();
+
+            // Get monthly volume
+            $stmt3 = $pdo->prepare("SELECT COALESCE(SUM(total_amount), 0) FROM plot_bookings WHERE (associate_id = ? OR created_by = ?) AND status NOT IN ('cancelled', 'refunded') AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())");
+            $stmt3->execute([$userId, $userId]);
+            $monthlyVolume = (float)$stmt3->fetchColumn();
+
+            // Get direct legs (team size)
+            $stmt4 = $pdo->prepare("SELECT COUNT(*) FROM mlm_network_tree WHERE parent_id = ?");
+            $stmt4->execute([$userId]);
+            $directLegs = (int)$stmt4->fetchColumn();
+
+            // Get total team size (recursive count)
+            $stmt5 = $pdo->prepare("SELECT COUNT(*) FROM mlm_network_tree WHERE parent_id = ?");
+            $stmt5->execute([$userId]);
+            $teamSize = (int)$stmt5->fetchColumn();
+
+            // Get all ranks
+            $allRanks = $pdo->query("SELECT * FROM mlm_rank_benefits ORDER BY rank_order")->fetchAll(\PDO::FETCH_ASSOC);
+
+        } catch (\Throwable $e) {
+            error_log('RankEligibility error: ' . $e->getMessage());
+        }
+
+        // Find next rank
+        $nextRank = null;
+        $rankOrder = ['associate', 'senior_associate', 'bdm', 'sr_bdm', 'vice_president', 'president', 'site_manager'];
+        $currentIdx = array_search($currentRank, $rankOrder);
+        if ($currentIdx !== false && $currentIdx < count($rankOrder) - 1) {
+            $nextRank = $rankOrder[$currentIdx + 1];
+        }
+
+        $this->render('associate/rank_eligibility', [
+            'page_title' => 'My Rank & Eligibility - APS Dream Home',
+            'current_page' => 'rank-eligibility',
+            'current_rank' => $currentRank,
+            'next_rank' => $nextRank,
+            'all_ranks' => $allRanks,
+            'lifetime_volume' => $lifetimeVolume,
+            'monthly_volume' => $monthlyVolume,
+            'team_size' => $teamSize,
+            'direct_legs' => $directLegs,
+        ]);
+    }
+
+    /**
+     * Book Plot - Form for associates to book plots for customers
+     */
+    public function bookPlot()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        // Sanitize inputs
+        $plotId = (int)($_POST['plot_id'] ?? 0);
+        $customerName = trim($_POST['customer_name'] ?? '');
+        $customerPhone = trim($_POST['customer_phone'] ?? '');
+        $customerEmail = trim($_POST['customer_email'] ?? '');
+        $customerAddress = trim($_POST['customer_address'] ?? '');
+        $aadharNumber = trim($_POST['aadhar_number'] ?? '');
+        $panNumber = trim($_POST['pan_number'] ?? '');
+        $bookingAmount = (float)($_POST['booking_amount'] ?? 0);
+        $paymentMode = trim($_POST['payment_mode'] ?? 'cash');
+        $notes = trim($_POST['notes'] ?? '');
+
+        // Validation
+        if (empty($plotId) || empty($customerName) || empty($customerPhone)) {
+            $_SESSION['flash_error'] = 'Please fill all required fields (Plot, Customer Name, Phone)';
+            $this->redirect('/associate/book-plot');
+            return;
+        }
+
+        try {
+            // Check plot availability
+            $plot = $pdo->prepare("SELECT * FROM plots WHERE id = ? AND status = 'available'");
+            $plot->execute([$plotId]);
+            $plotData = $plot->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$plotData) {
+                $_SESSION['flash_error'] = 'Selected plot is not available';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+
+            // Find or create customer
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE phone = ? LIMIT 1");
+            $stmt->execute([$customerPhone]);
+            $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($existing) {
+                $customerId = $existing['id'];
+            } else {
+                // Create new customer
+                $pdo->prepare("INSERT INTO users (name, phone, email, role, password, created_at) VALUES (?, ?, ?, 'customer', ?, NOW())")
+                    ->execute([$customerName, $customerPhone, $customerEmail, password_hash('customer123', PASSWORD_DEFAULT)]);
+                $customerId = $pdo->lastInsertId();
+            }
+
+            // Generate booking number
+            $bookingNumber = 'BK-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
+
+            // Create booking
+            $totalAmount = (float)$plotData['price'];
+            $pdo->prepare("
+                INSERT INTO plot_bookings 
+                (plot_id, customer_id, booking_number, booking_date, total_plot_value, booking_amount, status, associate_id, created_by, notes, created_at)
+                VALUES (?, ?, ?, CURDATE(), ?, ?, 'pending_approval', ?, ?, ?, NOW())
+            ")->execute([$plotId, $customerId, $bookingNumber, $totalAmount, $bookingAmount, $userId, $userId, $notes]);
+
+            $bookingId = $pdo->lastInsertId();
+
+            // Update plot status
+            $pdo->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = CURDATE(), updated_at = NOW() WHERE id = ?")->execute([$customerId, $plotId]);
+
+            // Handle document uploads
+            $uploadDir = __DIR__ . '/../../../uploads/booking_documents/' . $bookingId . '/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            $uploadedFiles = [];
+            $files = ['aadhar_doc', 'pan_doc', 'form_copy'];
+            foreach ($files as $fileKey) {
+                if (!empty($_FILES[$fileKey]['tmp_name']) && $_FILES[$fileKey]['error'] === UPLOAD_ERR_OK) {
+                    $ext = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION);
+                    $newName = $fileKey . '_' . time() . '.' . $ext;
+                    $target = $uploadDir . $newName;
+                    if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $target)) {
+                        $uploadedFiles[$fileKey] = 'booking_documents/' . $bookingId . '/' . $newName;
+                    }
+                }
+            }
+
+            // Save document references
+            if (!empty($uploadedFiles)) {
+                foreach ($uploadedFiles as $docType => $docPath) {
+                    $pdo->prepare("
+                        INSERT INTO booking_documents (booking_id, document_type, file_path, uploaded_by, created_at)
+                        VALUES (?, ?, ?, ?, NOW())
+                    ")->execute([$bookingId, $docType, $docPath, $userId]);
+                }
+            }
+
+            $_SESSION['flash_success'] = "Plot booked successfully! Booking #{$bookingNumber}. Awaiting admin approval.";
+            $this->redirect('/associate/my-bookings');
+
+        } catch (\Throwable $e) {
+            error_log('SubmitPlotBooking error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Error creating booking: ' . $e->getMessage();
+            $this->redirect('/associate/book-plot');
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // SITE VISITS — Full CRUD
+    // ═══════════════════════════════════════════════════════════════════
+
+    /**
+     * List site visits with tabs: today / upcoming / past / all
+     */
+    public function siteVisits()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+        $tab = $_GET['tab'] ?? 'upcoming';
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $stats = [
+            'total' => 0, 'today' => 0, 'upcoming' => 0,
+            'completed' => 0, 'cancelled' => 0, 'overdue' => 0,
+        ];
+        $visits = [];
+
+        try {
+            $where = "(sv.assigned_to = ? OR sv.user_id = ?)";
+
+            // Stats
+            $st = $pdo->prepare("SELECT COUNT(*) FROM site_visits sv WHERE $where");
+            $st->execute([$userId, $userId]);
+            $stats['total'] = (int)$st->fetchColumn();
+
+            $st = $pdo->prepare("SELECT COUNT(*) FROM site_visits sv WHERE $where AND sv.visit_date = CURDATE() AND sv.status NOT IN ('cancelled','completed')");
+            $st->execute([$userId, $userId]);
+            $stats['today'] = (int)$st->fetchColumn();
+
+            $st = $pdo->prepare("SELECT COUNT(*) FROM site_visits sv WHERE $where AND sv.visit_date > CURDATE() AND sv.status NOT IN ('cancelled','completed')");
+            $st->execute([$userId, $userId]);
+            $stats['upcoming'] = (int)$st->fetchColumn();
+
+            $st = $pdo->prepare("SELECT COUNT(*) FROM site_visits sv WHERE $where AND sv.status = 'completed'");
+            $st->execute([$userId, $userId]);
+            $stats['completed'] = (int)$st->fetchColumn();
+
+            $st = $pdo->prepare("SELECT COUNT(*) FROM site_visits sv WHERE $where AND sv.visit_date < CURDATE() AND sv.status NOT IN ('completed','cancelled')");
+            $st->execute([$userId, $userId]);
+            $stats['overdue'] = (int)$st->fetchColumn();
+
+            // Visit list
+            $sql = "SELECT sv.*, l.name as lead_name, l.phone as lead_phone
+                    FROM site_visits sv
+                    LEFT JOIN leads l ON l.id = sv.lead_id
+                    WHERE $where";
+
+            if ($tab === 'today') {
+                $sql .= " AND sv.visit_date = CURDATE() AND sv.status NOT IN ('cancelled','completed')";
+            } elseif ($tab === 'upcoming') {
+                $sql .= " AND sv.visit_date >= CURDATE() AND sv.status NOT IN ('cancelled','completed')";
+            } elseif ($tab === 'past') {
+                $sql .= " AND (sv.visit_date < CURDATE() OR sv.status IN ('completed','cancelled'))";
+            } elseif ($tab === 'completed') {
+                $sql .= " AND sv.status = 'completed'";
+            } elseif ($tab === 'overdue') {
+                $sql .= " AND sv.visit_date < CURDATE() AND sv.status NOT IN ('completed','cancelled')";
+            }
+
+            $sql .= " ORDER BY sv.visit_date DESC, sv.visit_time DESC LIMIT 50";
+            $st = $pdo->prepare($sql);
+            $st->execute([$userId, $userId]);
+            $visits = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('siteVisits error: ' . $e->getMessage());
+        }
+
+        $this->render('associate/site_visits', [
+            'page_title' => 'Site Visits - APS Dream Home',
+            'current_page' => 'site_visits',
+            'visits' => $visits,
+            'stats' => $stats,
+            'active_tab' => $tab,
+        ], 'layouts/associate');
+    }
+
+    /**
+     * Schedule a site visit (GET=form, POST=save)
+     */
+    public function scheduleSiteVisit()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        // Get leads for dropdown
+        $leads = [];
+        try {
+            $st = $pdo->prepare("SELECT id, name, phone FROM leads WHERE (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL ORDER BY name ASC");
+            $st->execute([$userId, $userId]);
+            $leads = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {}
+
+        // Get colonies for dropdown
+        $colonies = [];
+        try {
+            $colonies = $pdo->query("SELECT id, name FROM colonies WHERE status = 'active' ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {}
+
+        // Handle POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $leadId = (int)($_POST['lead_id'] ?? 0);
+            $visitorName = trim($_POST['visitor_name'] ?? '');
+            $visitorPhone = trim($_POST['visitor_phone'] ?? '');
+            $visitDate = $_POST['visit_date'] ?? '';
+            $visitTime = $_POST['visit_time'] ?? '';
+            $colonyId = (int)($_POST['colony_id'] ?? 0);
+            $duration = (int)($_POST['duration'] ?? 60);
+            $notes = trim($_POST['notes'] ?? '');
+
+            if (empty($visitorName) || empty($visitorPhone) || empty($visitDate) || empty($visitTime)) {
+                $_SESSION['flash_error'] = 'Please fill all required fields.';
+                $this->redirect('/associate/site-visits/schedule');
+                return;
+            }
+
+            try {
+                $st = $pdo->prepare("
+                    INSERT INTO site_visits (lead_id, colony_id, assigned_to, user_id, visitor_name, visitor_phone, visit_date, visit_time, duration_minutes, status, notes, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'scheduled', ?, NOW())
+                ");
+                $st->execute([
+                    $leadId ?: null, $colonyId ?: null, $userId, $userId,
+                    $visitorName, $visitorPhone, $visitDate, $visitTime,
+                    $duration, $notes
+                ]);
+
+                // Update lead status to site_visit if linked
+                if ($leadId) {
+                    try {
+                        $pdo->prepare("UPDATE leads SET status = 'site_visit', updated_at = NOW() WHERE id = ? AND status NOT IN ('closed_won','closed_lost')")->execute([$leadId]);
+                    } catch (\Throwable $e) {}
+                }
+
+                $_SESSION['flash_success'] = 'Site visit scheduled for ' . date('M d, Y', strtotime($visitDate)) . ' at ' . date('h:i A', strtotime($visitTime)) . '!';
+                $this->redirect('/associate/site-visits');
+                return;
+            } catch (\Throwable $e) {
+                error_log('scheduleSiteVisit error: ' . $e->getMessage());
+                $_SESSION['flash_error'] = 'Failed to schedule visit.';
+            }
+        }
+
+        $this->render('associate/schedule_site_visit', [
+            'page_title' => 'Schedule Site Visit - APS Dream Home',
+            'current_page' => 'site_visits',
+            'leads' => $leads,
+            'colonies' => $colonies,
+            'selected_lead' => $_GET['lead_id'] ?? '',
+        ], 'layouts/associate');
+    }
+
+    /**
+     * Complete a site visit with feedback
+     */
+    public function completeSiteVisit($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/associate/site-visits');
+            return;
+        }
+
+        $feedback = trim($_POST['feedback'] ?? '');
+        $rating = max(1, min(5, (int)($_POST['rating'] ?? 5)));
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = $db->getConnection();
+
+            $st = $pdo->prepare("UPDATE site_visits SET status = 'completed', feedback = ?, rating = ?, completed_at = NOW() WHERE id = ? AND (assigned_to = ? OR user_id = ?)");
+            $st->execute([$feedback, $rating, $id, $userId, $userId]);
+
+            if ($st->rowCount() > 0) {
+                // Log activity if linked to a lead
+                $visit = $pdo->prepare("SELECT lead_id FROM site_visits WHERE id = ?");
+                $visit->execute([$id]);
+                $v = $visit->fetch(\PDO::FETCH_ASSOC);
+                if ($v && !empty($v['lead_id'])) {
+                    try {
+                        $pdo->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'site_visit', ?, ?, NOW())")
+                            ->execute([$v['lead_id'], "Site visit completed. Rating: $rating/5. " . mb_substr($feedback, 0, 200), $userId]);
+                    } catch (\Throwable $e) {}
+                }
+
+                $_SESSION['flash_success'] = 'Site visit marked as completed!';
+            } else {
+                $_SESSION['flash_error'] = 'Visit not found.';
+            }
+        } catch (\Throwable $e) {
+            error_log('completeSiteVisit error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to complete visit.';
+        }
+        $this->redirect('/associate/site-visits');
+    }
+
+    /**
+     * Cancel a site visit
+     */
+    public function cancelSiteVisit($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/associate/site-visits');
+            return;
+        }
+
+        $reason = trim($_POST['reason'] ?? 'Cancelled');
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = $db->getConnection();
+            $st = $pdo->prepare("UPDATE site_visits SET status = 'cancelled', notes = CONCAT(COALESCE(notes,''), '\n\nCancelled: ', ?) WHERE id = ? AND (assigned_to = ? OR user_id = ?)");
+            $st->execute([$reason, $id, $userId, $userId]);
+
+            $_SESSION['flash_success'] = $st->rowCount() > 0 ? 'Site visit cancelled.' : 'Visit not found.';
+        } catch (\Throwable $e) {
+            error_log('cancelSiteVisit error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to cancel visit.';
+        }
+        $this->redirect('/associate/site-visits');
+    }
+
+    /**
+     * Reschedule a site visit
+     */
+    public function rescheduleSiteVisit($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/associate/site-visits');
+            return;
+        }
+
+        $newDate = $_POST['new_date'] ?? '';
+        $newTime = $_POST['new_time'] ?? '';
+
+        if (empty($newDate) || empty($newTime)) {
+            $_SESSION['flash_error'] = 'Please select new date and time.';
+            $this->redirect('/associate/site-visits');
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = $db->getConnection();
+            $st = $pdo->prepare("UPDATE site_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ? AND (assigned_to = ? OR user_id = ?)");
+            $st->execute([$newDate, $newTime, $id, $userId, $userId]);
+
+            $_SESSION['flash_success'] = $st->rowCount() > 0 ? 'Visit rescheduled to ' . date('M d, Y', strtotime($newDate)) . '!' : 'Visit not found.';
+        } catch (\Throwable $e) {
+            error_log('rescheduleSiteVisit error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to reschedule.';
+        }
+        $this->redirect('/associate/site-visits');
+    }
+
+    /**
+     * Calendar data AJAX endpoint — returns tasks + site visits for FullCalendar-style rendering
+     */
+    public function calendarData()
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $month = max(1, min(12, (int)($_GET['month'] ?? date('m'))));
+        $year = max(2024, (int)($_GET['year'] ?? date('Y')));
+        $startDate = sprintf('%04d-%02d-01', $year, $month);
+        $endDate = date('Y-m-t', strtotime($startDate));
+
+        $events = [];
+
+        try {
+            // Tasks
+            $st = $pdo->prepare("
+                SELECT t.id, t.title, t.due_date as date, t.priority, t.status,
+                       l.name as lead_name, 'task' as type
+                FROM crm_tasks t
+                LEFT JOIN leads l ON l.id = t.lead_id
+                WHERE (t.assigned_to = ? OR t.created_by = ?)
+                  AND t.due_date BETWEEN ? AND ?
+                ORDER BY t.due_date ASC
+            ");
+            $st->execute([$userId, $userId, $startDate, $endDate]);
+            foreach ($st->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+                $events[] = [
+                    'id' => 'task_' . $row['id'],
+                    'title' => $row['title'],
+                    'date' => $row['date'],
+                    'type' => 'task',
+                    'priority' => $row['priority'],
+                    'status' => $row['status'],
+                    'lead_name' => $row['lead_name'] ?? '',
+                ];
+            }
+
+            // Site visits
+            $st = $pdo->prepare("
+                SELECT sv.id, sv.visitor_name, sv.visit_date as date, sv.visit_time, sv.status,
+                       l.name as lead_name, 'site_visit' as type
+                FROM site_visits sv
+                LEFT JOIN leads l ON l.id = sv.lead_id
+                WHERE (sv.assigned_to = ? OR sv.user_id = ?)
+                  AND sv.visit_date BETWEEN ? AND ?
+                ORDER BY sv.visit_date ASC, sv.visit_time ASC
+            ");
+            $st->execute([$userId, $userId, $startDate, $endDate]);
+            foreach ($st->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+                $events[] = [
+                    'id' => 'visit_' . $row['id'],
+                    'title' => 'Visit: ' . $row['visitor_name'],
+                    'date' => $row['date'],
+                    'time' => $row['visit_time'],
+                    'type' => 'site_visit',
+                    'status' => $row['status'],
+                    'lead_name' => $row['lead_name'] ?? '',
+                ];
+            }
+        } catch (\Throwable $e) {
+            error_log('calendarData error: ' . $e->getMessage());
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($events);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ENHANCED LEAD DETAIL — site visits for a lead
+    // ═══════════════════════════════════════════════════════════════════
+
+    /**
+     * Get site visits for a lead (used in lead detail page)
+     */
+    private function getLeadSiteVisits($leadId): array
+    {
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = $db->getConnection();
+            $st = $pdo->prepare("SELECT * FROM site_visits WHERE lead_id = ? ORDER BY visit_date DESC, visit_time DESC");
+            $st->execute([$leadId]);
+            return $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CSV LEAD IMPORT — bulk import leads from CSV file
+    // ═══════════════════════════════════════════════════════════════════
+
+    public function importLeads()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $imported = 0;
+        $skipped = 0;
+        $errors = [];
+        $preview = [];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['csv_file']['tmp_name'])) {
+            $file = $_FILES['csv_file']['tmp_name'];
+            $handle = fopen($file, 'r');
+            if ($handle !== false) {
+                $db = \App\Core\Database\Database::getInstance();
+                $pdo = $db->getConnection();
+
+                // Skip header
+                $header = fgetcsv($handle);
+                $lineNum = 1;
+
+                while (($row = fgetcsv($handle)) !== false) {
+                    $lineNum++;
+                    // Expected columns: name, phone, email, source, budget, location, notes
+                    $name = trim($row[0] ?? '');
+                    $phone = trim($row[1] ?? '');
+                    $email = trim($row[2] ?? '');
+                    $source = trim($row[3] ?? 'csv_import');
+                    $budget = trim($row[4] ?? '');
+                    $location = trim($row[5] ?? '');
+                    $notes = trim($row[6] ?? '');
+
+                    if (empty($name) || empty($phone)) {
+                        $skipped++;
+                        $errors[] = "Line $lineNum: Missing name or phone";
+                        continue;
+                    }
+
+                    // Check duplicate by phone
+                    $dup = $pdo->prepare("SELECT id FROM leads WHERE phone = ? AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL");
+                    $dup->execute([$phone, $userId, $userId]);
+                    if ($dup->fetch()) {
+                        $skipped++;
+                        $errors[] = "Line $lineNum: Phone $phone already exists";
+                        continue;
+                    }
+
+                    try {
+                        $st = $pdo->prepare("
+                            INSERT INTO leads (name, phone, email, source, budget_range, location_preference, notes, status, priority, created_by, assigned_to, created_at, updated_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, 'new', 'medium', ?, ?, NOW(), NOW())
+                        ");
+                        $st->execute([$name, $phone, $email, $source ?: 'csv_import', $budget, $location, $notes, $userId, $userId]);
+                        $imported++;
+                    } catch (\Throwable $e) {
+                        $skipped++;
+                        $errors[] = "Line $lineNum: " . $e->getMessage();
+                    }
+                }
+                fclose($handle);
+
+                if ($imported > 0) {
+                    $_SESSION['flash_success'] = "Imported $imported leads successfully!" . ($skipped > 0 ? " $skipped skipped." : '');
+                } else {
+                    $_SESSION['flash_error'] = "No leads imported. " . ($skipped > 0 ? "$skipped rows skipped." : 'Check CSV format.');
+                }
+                $this->redirect('/associate/leads');
+                return;
+            }
+        }
+
+        $this->render('associate/import_leads', [
+            'page_title' => 'Import Leads - APS Dream Home',
+            'current_page' => 'leads',
+            'imported' => $imported,
+            'skipped' => $skipped,
+            'errors' => $errors,
+        ], 'layouts/associate');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // BULK WHATSAPP — send WhatsApp to multiple leads at once
+    // ═══════════════════════════════════════════════════════════════════
+
+    public function bulkWhatsApp()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $leads = [];
+        $sent = 0;
+        $selectedIds = $_POST['lead_ids'] ?? ($_GET['ids'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+
+        // Get selected leads
+        if (!empty($selectedIds)) {
+            $ids = array_map('intval', is_array($selectedIds) ? $selectedIds : explode(',', $selectedIds));
+            $ids = array_filter($ids);
+            if (!empty($ids)) {
+                $db = \App\Core\Database\Database::getInstance();
+                $pdo = $db->getConnection();
+                $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                $st = $pdo->prepare("SELECT id, name, phone FROM leads WHERE id IN ($placeholders) AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL");
+                $params = array_merge($ids, [$userId, $userId]);
+                $st->execute($params);
+                $leads = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            }
+        }
+
+        // If POST with message, generate WhatsApp links
+        $whatsappLinks = [];
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($message) && !empty($leads)) {
+            foreach ($leads as $l) {
+                $phone = preg_replace('/[^0-9]/', '', $l['phone'] ?? '');
+                if (strlen($phone) >= 10) {
+                    $personalized = str_replace(
+                        ['{name}', '{phone}'],
+                        [$l['name'] ?? '', $l['phone'] ?? ''],
+                        $message
+                    );
+                    $whatsappLinks[] = [
+                        'name' => $l['name'],
+                        'phone' => $phone,
+                        'url' => 'https://wa.me/91' . $phone . '?text=' . urlencode($personalized),
+                    ];
+                    $sent++;
+                }
+            }
+        }
+
+        $this->render('associate/bulk_whatsapp', [
+            'page_title' => 'Bulk WhatsApp - APS Dream Home',
+            'current_page' => 'leads',
+            'leads' => $leads,
+            'whatsappLinks' => $whatsappLinks,
+            'sent' => $sent,
+            'message' => $message,
+        ], 'layouts/associate');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // LEAD ASSIGNMENT — share leads with team members
+    // ═══════════════════════════════════════════════════════════════════
+
+    public function assignLead($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        $assignTo = (int)($_POST['assign_to'] ?? 0);
+        if ($assignTo <= 0) {
+            $_SESSION['flash_error'] = 'Please select a team member.';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = $db->getConnection();
+
+            // Verify lead ownership
+            $lead = $pdo->prepare("SELECT id, name FROM leads WHERE id = ? AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL");
+            $lead->execute([$id, $userId, $userId]);
+            if (!$lead->fetch()) {
+                $_SESSION['flash_error'] = 'Lead not found.';
+                $this->redirect('/associate/leads');
+                return;
+            }
+
+            // Verify assignee is in same team (simplified: same role = associate)
+            $assignee = $pdo->prepare("SELECT id, name FROM users WHERE id = ? AND role = 'associate'");
+            $assignee->execute([$assignTo]);
+            if (!$assignee->fetch()) {
+                $_SESSION['flash_error'] = 'Invalid team member.';
+                $this->redirect("/associate/leads/{$id}");
+                return;
+            }
+
+            // Assign
+            $pdo->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?")->execute([$assignTo, $id]);
+
+            // Log activity
+            $assigneeName = $pdo->prepare("SELECT name FROM users WHERE id = ?");
+            $assigneeName->execute([$assignTo]);
+            $aName = $assigneeName->fetchColumn() ?: 'Unknown';
+
+            $pdo->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'assignment', ?, ?, NOW())")
+                ->execute([$id, "Lead assigned to $aName", $userId]);
+
+            $_SESSION['flash_success'] = "Lead assigned to $aName successfully!";
+        } catch (\Throwable $e) {
+            error_log('assignLead error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to assign lead.';
+        }
+        $this->redirect("/associate/leads/{$id}");
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // LEAD SCORE RECALCULATION — AI scoring via LeadScoringService
+    // ═══════════════════════════════════════════════════════════════════
+
+    public function recalculateScore($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = $db->getConnection();
+
+            // Verify lead ownership
+            $lead = $pdo->prepare("SELECT id, name FROM leads WHERE id = ? AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL");
+            $lead->execute([$id, $userId, $userId]);
+            if (!$lead->fetch()) {
+                $_SESSION['flash_error'] = 'Lead not found.';
+                $this->redirect('/associate/leads');
+                return;
+            }
+
+            $scoringService = new \App\Services\LeadScoringService();
+            $scores = $scoringService->calculateScore($id);
+            if ($scores) {
+                $scoringService->saveScore($id, $scores);
+                $_SESSION['flash_success'] = "Score recalculated: {$scores['total']}/100 ({$scores['rank']})";
+            } else {
+                $_SESSION['flash_error'] = 'Could not calculate score for this lead.';
+            }
+        } catch (\Throwable $e) {
+            error_log('recalculateScore error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to recalculate score.';
+        }
+        $this->redirect("/associate/leads/{$id}");
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // BATCH RECALCULATE SCORES — recalculate AI scores for all leads
+    // ═══════════════════════════════════════════════════════════════════
+
+    public function recalculateAllScores()
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/associate/leads');
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = $db->getConnection();
+
+            $leads = $pdo->prepare("SELECT id FROM leads WHERE (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL");
+            $leads->execute([$userId, $userId]);
+            $leadIds = $leads->fetchAll(\PDO::FETCH_COLUMN) ?: [];
+
+            $scoringService = new \App\Services\LeadScoringService();
+            $processed = 0;
+            foreach ($leadIds as $lid) {
+                $scores = $scoringService->calculateScore($lid);
+                if ($scores) {
+                    $scoringService->saveScore($lid, $scores);
+                    $processed++;
+                }
+            }
+
+            $_SESSION['flash_success'] = "Scores recalculated for {$processed} leads.";
+        } catch (\Throwable $e) {
+            error_log('recalculateAllScores error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to recalculate scores.';
+        }
+        $this->redirect('/associate/leads');
     }
 }

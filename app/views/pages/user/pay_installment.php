@@ -247,7 +247,7 @@ document.getElementById('pay-btn').addEventListener('click', function() {
             contact: <?= json_encode(htmlspecialchars($user['phone'] ?? '')) ?>
         },
         theme: {
-            color: '#4f46e5'
+            color: '#0d9488'
         },
         modal: {
             ondismiss: function() {

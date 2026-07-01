@@ -607,7 +607,7 @@ document.querySelectorAll('#commissionCalculator input').forEach(input => {
 }
 
 .calculator-card .card-header {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     color: white;
     padding: 1.5rem;
     border: none;
@@ -634,7 +634,7 @@ document.querySelectorAll('#commissionCalculator input').forEach(input => {
 }
 
 .result-card.main-result {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     color: white;
 }
 

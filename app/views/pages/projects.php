@@ -6,7 +6,7 @@ $base = $base ?? BASE_URL;
 ?>
 
 <section class="py-5 bg-gradient-warning text-white position-relative overflow-hidden">
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #232526 0%, #414345 50%, #667eea 100%);"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #232526 0%, #414345 50%, #0d9488 100%);"></div>
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">

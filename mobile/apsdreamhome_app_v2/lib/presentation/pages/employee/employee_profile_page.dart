@@ -21,8 +21,8 @@ class EmployeeProfilePage extends ConsumerWidget {
           Container(
             width: 80,
             height: 80,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
                 colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
               ),
               shape: BoxShape.circle,

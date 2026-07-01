@@ -5,31 +5,34 @@ import 'package:intl/intl.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/logger.dart';
 
-final _commissionsProvider = FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
-  try {
-    final api = ApiService();
-    final response = await api.get('/admin/sales/commissions');
-    if (response['success'] == true && response['data'] != null) {
-      return (response['data'] as List).cast<Map<String, dynamic>>();
-    }
-    if (response['data'] is List) {
-      return (response['data'] as List).cast<Map<String, dynamic>>();
-    }
-    return [];
-  } catch (e) {
-    AppLogger.error('Error fetching commissions', e);
-    return [];
-  }
-});
+final _commissionsProvider =
+    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+      try {
+        final api = ApiService();
+        final response = await api.get('/admin/commissions');
+        if (response['success'] == true && response['data'] != null) {
+          return (response['data'] as List).cast<Map<String, dynamic>>();
+        }
+        if (response['data'] is List) {
+          return (response['data'] as List).cast<Map<String, dynamic>>();
+        }
+        return [];
+      } catch (e) {
+        AppLogger.error('Error fetching commissions', e);
+        return [];
+      }
+    });
 
 class CommissionApprovalsPage extends ConsumerStatefulWidget {
   const CommissionApprovalsPage({super.key});
 
   @override
-  ConsumerState<CommissionApprovalsPage> createState() => _CommissionApprovalsPageState();
+  ConsumerState<CommissionApprovalsPage> createState() =>
+      _CommissionApprovalsPageState();
 }
 
-class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPage> {
+class _CommissionApprovalsPageState
+    extends ConsumerState<CommissionApprovalsPage> {
   String _filterStatus = 'all';
   String _filterType = 'all';
 
@@ -47,10 +50,14 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
             data: (commissions) {
               var filtered = commissions;
               if (_filterStatus != 'all') {
-                filtered = filtered.where((c) => c['status'] == _filterStatus).toList();
+                filtered = filtered
+                    .where((c) => c['status'] == _filterStatus)
+                    .toList();
               }
               if (_filterType != 'all') {
-                filtered = filtered.where((c) => c['commission_type'] == _filterType).toList();
+                filtered = filtered
+                    .where((c) => c['commission_type'] == _filterType)
+                    .toList();
               }
               if (filtered.isEmpty) return _buildEmptyState();
               return _buildCommissionsList(filtered);
@@ -72,11 +79,19 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Commission Approvals',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  'Commission Approvals',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text('Review agent commissions and payouts',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600])),
+                Text(
+                  'Review agent commissions and payouts',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                ),
               ],
             ),
           ),
@@ -90,13 +105,22 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
     );
   }
 
-  Widget _buildStatsRow(AsyncValue<List<Map<String, dynamic>>> commissionsAsync) {
+  Widget _buildStatsRow(
+    AsyncValue<List<Map<String, dynamic>>> commissionsAsync,
+  ) {
     return commissionsAsync.when(
       data: (commissions) {
         final total = commissions.length;
-        final pending = commissions.where((c) => c['status'] == 'pending').length;
-        final approved = commissions.where((c) => c['status'] == 'approved').length;
-    final totalAmount = commissions.fold<double>(0, (sum, c) => sum + ((c['amount'] as num?)?.toDouble() ?? 0));
+        final pending = commissions
+            .where((c) => c['status'] == 'pending')
+            .length;
+        final approved = commissions
+            .where((c) => c['status'] == 'approved')
+            .length;
+        final totalAmount = commissions.fold<double>(
+          0,
+          (sum, c) => sum + ((c['amount'] as num?)?.toDouble() ?? 0),
+        );
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           child: Row(
@@ -107,7 +131,11 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
               const SizedBox(width: 8),
               _buildStatCard('Approved', '$approved', Colors.green),
               const SizedBox(width: 8),
-              _buildStatCard('Paid', '₹${_formatAmount(totalAmount)}', Colors.purple),
+              _buildStatCard(
+                'Paid',
+                '₹${_formatAmount(totalAmount)}',
+                Colors.purple,
+              ),
             ],
           ),
         );
@@ -128,9 +156,22 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
         ),
         child: Column(
           children: [
-            Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
             const SizedBox(height: 2),
-            Text(label, style: TextStyle(fontSize: 11, color: color.withValues(alpha: 0.7))),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                color: color.withValues(alpha: 0.7),
+              ),
+            ),
           ],
         ),
       ),
@@ -164,11 +205,20 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: FilterChip(
-        label: Text(label, style: TextStyle(fontSize: 12, color: selected ? Colors.white : Colors.grey[700])),
+        label: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: selected ? Colors.white : Colors.grey[700],
+          ),
+        ),
         selected: selected,
         onSelected: (_) => setState(() {
-          if (group == 'status') _filterStatus = value;
-          else _filterType = value;
+          if (group == 'status') {
+            _filterStatus = value;
+          } else {
+            _filterType = value;
+          }
         }),
         selectedColor: Colors.blue,
         backgroundColor: Colors.grey[100],
@@ -183,11 +233,21 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.account_balance_wallet_outlined, size: 64, color: Colors.grey[400]),
+          Icon(
+            Icons.account_balance_wallet_outlined,
+            size: 64,
+            color: Colors.grey[400],
+          ),
           const SizedBox(height: 16),
-          Text('No commissions found', style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+          Text(
+            'No commissions found',
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+          ),
           const SizedBox(height: 8),
-          Text('Commissions will appear here once bookings are processed', style: TextStyle(fontSize: 13, color: Colors.grey[500])),
+          Text(
+            'Commissions will appear here once bookings are processed',
+            style: TextStyle(fontSize: 13, color: Colors.grey[500]),
+          ),
         ],
       ),
     );
@@ -204,8 +264,12 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
   Widget _buildCommissionCard(Map<String, dynamic> commission) {
     final status = commission['status']?.toString() ?? 'unknown';
     final statusColor = _statusColor(status);
-    final type = (commission['commission_type']?.toString() ?? 'N/A').replaceAll('_', ' ');
-    final agent = commission['agent_name']?.toString() ?? commission['beneficiary_name']?.toString() ?? 'N/A';
+    final type = (commission['commission_type']?.toString() ?? 'N/A')
+        .replaceAll('_', ' ');
+    final agent =
+        commission['agent_name']?.toString() ??
+        commission['beneficiary_name']?.toString() ??
+        'N/A';
     final amount = (commission['amount'] as num?)?.toDouble() ?? 0;
     final booking = commission['booking_number']?.toString() ?? '';
     final createdAt = commission['created_at']?.toString();
@@ -222,27 +286,50 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: statusColor.withValues(alpha: 0.3),
+                    ),
                   ),
-                  child: Text(status.toUpperCase(),
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: statusColor)),
+                  child: Text(
+                    status.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: statusColor,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.blueGrey.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: Text(type, style: const TextStyle(fontSize: 11, color: Colors.blueGrey)),
+                  child: Text(
+                    type,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.blueGrey,
+                    ),
+                  ),
                 ),
                 const Spacer(),
                 if (createdAt != null)
-                  Text(_formatDate(createdAt), style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+                  Text(
+                    _formatDate(createdAt),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                  ),
               ],
             ),
             const SizedBox(height: 12),
@@ -250,16 +337,31 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
               children: [
                 Icon(Icons.person_outline, size: 18, color: Colors.grey[600]),
                 const SizedBox(width: 8),
-                Expanded(child: Text(agent, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15))),
+                Expanded(
+                  child: Text(
+                    agent,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
               ],
             ),
             if (booking.isNotEmpty) ...[
               const SizedBox(height: 6),
               Row(
                 children: [
-                  Icon(Icons.receipt_long_outlined, size: 18, color: Colors.grey[600]),
+                  Icon(
+                    Icons.receipt_long_outlined,
+                    size: 18,
+                    color: Colors.grey[600],
+                  ),
                   const SizedBox(width: 8),
-                  Text('Booking: $booking', style: const TextStyle(fontSize: 13)),
+                  Text(
+                    'Booking: $booking',
+                    style: const TextStyle(fontSize: 13),
+                  ),
                 ],
               ),
             ],
@@ -268,8 +370,14 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
               children: [
                 Icon(Icons.currency_rupee, size: 18, color: Colors.green[600]),
                 const SizedBox(width: 8),
-                Text('₹${_formatAmount(amount)}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.green)),
+                Text(
+                  '₹${_formatAmount(amount)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.green,
+                  ),
+                ),
               ],
             ),
             if (status == 'pending') ...[
@@ -278,17 +386,24 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton.icon(
-                    onPressed: () => _handleCommissionAction(commission, 'rejected'),
+                    onPressed: () =>
+                        _handleCommissionAction(commission, 'rejected'),
                     icon: const Icon(Icons.close, size: 16),
                     label: const Text('Reject'),
-                    style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton.icon(
-                    onPressed: () => _handleCommissionAction(commission, 'approved'),
+                    onPressed: () =>
+                        _handleCommissionAction(commission, 'approved'),
                     icon: const Icon(Icons.check, size: 16),
                     label: const Text('Approve'),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                    ),
                   ),
                 ],
               ),
@@ -299,17 +414,29 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
     );
   }
 
-  Future<void> _handleCommissionAction(Map<String, dynamic> commission, String action) async {
+  Future<void> _handleCommissionAction(
+    Map<String, dynamic> commission,
+    String action,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(action == 'rejected' ? 'Reject Commission?' : 'Approve Commission?'),
-        content: Text('Commission of ₹${_formatAmount((commission['amount'] as num?)?.toDouble() ?? 0)} for ${commission['agent_name'] ?? 'N/A'}'),
+        title: Text(
+          action == 'rejected' ? 'Reject Commission?' : 'Approve Commission?',
+        ),
+        content: Text(
+          'Commission of ₹${_formatAmount((commission['amount'] as num?)?.toDouble() ?? 0)} for ${commission['agent_name'] ?? 'N/A'}',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: action == 'rejected' ? Colors.red : Colors.green),
+            style: TextButton.styleFrom(
+              foregroundColor: action == 'rejected' ? Colors.red : Colors.green,
+            ),
             child: Text(action == 'rejected' ? 'Reject' : 'Approve'),
           ),
         ],
@@ -319,27 +446,41 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
 
     try {
       final api = ApiService();
-      await api.post('/admin/commission/action', data: {'commission_id': commission['id'], 'action': action});
+      await api.post(
+        '/admin/commissions/${commission['id']}/action',
+        data: {'action': action},
+      );
       ref.invalidate(_commissionsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Commission ${action == 'rejected' ? 'rejected' : 'approved'}')),
+          SnackBar(
+            content: Text(
+              'Commission ${action == 'rejected' ? 'rejected' : 'approved'}',
+            ),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     }
   }
 
   Color _statusColor(String status) {
     switch (status) {
-      case 'pending': return Colors.orange;
-      case 'approved': return Colors.blue;
-      case 'paid': return Colors.green;
-      case 'rejected': return Colors.red;
-      default: return Colors.grey;
+      case 'pending':
+        return Colors.orange;
+      case 'approved':
+        return Colors.blue;
+      case 'paid':
+        return Colors.green;
+      case 'rejected':
+        return Colors.red;
+      default:
+        return Colors.grey;
     }
   }
 
@@ -352,7 +493,8 @@ class _CommissionApprovalsPageState extends ConsumerState<CommissionApprovalsPag
   }
 
   String _formatAmount(double amount) {
-    if (amount >= 10000000) return '${(amount / 10000000).toStringAsFixed(2)} Cr';
+    if (amount >= 10000000)
+      return '${(amount / 10000000).toStringAsFixed(2)} Cr';
     if (amount >= 100000) return '${(amount / 100000).toStringAsFixed(2)} L';
     if (amount >= 1000) return '${(amount / 1000).toStringAsFixed(1)}K';
     return amount.toStringAsFixed(0);

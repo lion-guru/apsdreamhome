@@ -38,11 +38,11 @@ $gGradient = $gamify['gradient'] ?? 'linear-gradient(135deg, #fff 0%, #ede9fe 10
         <small class="text-muted d-block mb-3"><?= htmlspecialchars($gMetric) ?></small>
         <?php endif; ?>
         <div class="aps-cp-progress" style="height:12px;">
-            <div class="aps-cp-progress-bar" style="width:<?= number_format($gPct, 1) ?>%; background: linear-gradient(90deg, var(--aps-cp-<?= htmlspecialchars($gColor) ?>), var(--aps-cp-purple, #8b5cf6));"></div>
+            <div class="aps-cp-progress-bar" style="width:<?= number_format($gPct, 1) ?>%; background: linear-gradient(90deg, var(--aps-cp-<?= htmlspecialchars($gColor) ?>), var(--aps-cp-purple, #14b8a6));"></div>
         </div>
         <p class="text-muted small mt-2 mb-0">
             <?php if ($gNextTarget !== ''): ?>
-                <?= htmlspecialchars($gNextTarget) ?> __('component_more_to_reach', 'more to reach') <strong><?= htmlspecialchars($gNextLabel) ?></strong>
+                <?= htmlspecialchars($gNextTarget) ?> <?= __('component_more_to_reach', 'more to reach') ?> <strong><?= htmlspecialchars($gNextLabel) ?></strong>
             <?php else: ?>
                 Reach <strong><?= htmlspecialchars($gNextLabel) ?></strong>
             <?php endif; ?>

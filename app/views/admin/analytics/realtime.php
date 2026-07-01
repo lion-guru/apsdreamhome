@@ -70,13 +70,13 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     </div>
 
     <!-- Revenue This Month -->
-    <div class="aps-cp-card" style="border-left:4px solid #8b5cf6;transition:transform 0.15s;">
+    <div class="aps-cp-card" style="border-left:4px solid #14b8a6;transition:transform 0.15s;">
         <div class="aps-cp-card-body" style="padding:18px 20px;">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
                 <div style="width:40px;height:40px;border-radius:10px;background:#f5f3ff;display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-rupee-sign" style="color:#8b5cf6;font-size:1rem;"></i>
+                    <i class="fas fa-rupee-sign" style="color:#14b8a6;font-size:1rem;"></i>
                 </div>
-                <span style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#8b5cf6;letter-spacing:0.05em;">Revenue This Month</span>
+                <span style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#14b8a6;letter-spacing:0.05em;">Revenue This Month</span>
             </div>
             <div id="rt-kpi-revenue" style="font-size:2rem;font-weight:800;color:#1e293b;"><?= $fmt($m['revenue_month'] ?? 0) ?></div>
             <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">Booking value booked</div>
@@ -126,7 +126,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     <!-- Chart 3: Lead Sources (Doughnut) -->
     <div class="aps-cp-card">
         <div class="aps-cp-card-header" style="font-weight:700;">
-            <span><i class="fas fa-chart-pie" style="color:#8b5cf6;margin-right:6px;"></i>Lead Sources Breakdown</span>
+            <span><i class="fas fa-chart-pie" style="color:#14b8a6;margin-right:6px;"></i>Lead Sources Breakdown</span>
             <span class="badge bg-purple-subtle text-purple-emphasis" style="font-size:0.65rem;">DOUGHNUT</span>
         </div>
         <div class="aps-cp-card-body" style="padding:16px;height:260px;">
@@ -195,13 +195,13 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     const COLORS = {
         primary:   '#3b82f6',
         success:   '#10b981',
-        purple:    '#8b5cf6',
+        purple:    '#14b8a6',
         warning:   '#f59e0b',
         danger:    '#ef4444',
         teal:      '#06b6d4',
         pink:      '#ec4899',
         lime:      '#84cc16',
-        palette:   ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#84cc16']
+        palette:   ['#3b82f6','#10b981','#f59e0b','#ef4444','#14b8a6','#06b6d4','#ec4899','#84cc16']
     };
 
     function fmt(n) { return '₹' + Number(n).toLocaleString('en-IN', {maximumFractionDigits:0}); }

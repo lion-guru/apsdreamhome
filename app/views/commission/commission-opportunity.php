@@ -29,7 +29,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             color: white;
             padding: 4rem 0;
         }
@@ -45,7 +45,7 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
         .commission-mlm {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             color: white;
         }
         .commission-traditional {

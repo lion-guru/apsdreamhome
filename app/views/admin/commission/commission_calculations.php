@@ -6,7 +6,7 @@
 
     <div class="card aps-cp-card">
         <div class="card-body p-0">
-            <table class="table table-striped mb-0">
+            <div class="table-responsive"><table class="table table-striped mb-0">
                 <thead><tr><th>#</th><th>Agent</th><th>Type</th><th>Rate</th><th>Base</th><th>Amount</th><th>Bonus</th><th>Final</th><th>Status</th><th>Paid</th><th>Date</th></tr></thead>
                 <tbody>
                     <?php foreach ($calculations ?? [] as $c): ?>
@@ -28,7 +28,7 @@
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

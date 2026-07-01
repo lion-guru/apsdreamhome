@@ -1,4 +1,4 @@
-<section class="py-5" style="background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);">
+<section class="py-5" style="background: linear-gradient(135deg, #0f172a, #1e3a5f, #1e293b);">
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-file-invoice-dollar me-2"></i><?php echo __('tool_stamp_duty_calc_title', [], 'Stamp Duty & Registration Calculator'); ?></h1>

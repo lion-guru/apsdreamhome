@@ -49,6 +49,6 @@
       <div class="row"><div class="col-6 mb-3"><label class="form-label"><?= __('admin_month_label') ?></label><input type="number" name="period_month" class="form-control" value="<?= date('n') ?>" min="1" max="12" required></div>
       <div class="col-6 mb-3"><label class="form-label"><?= __('admin_year_label') ?></label><input type="number" name="period_year" class="form-control" value="<?= date('Y') ?>" required></div></div>
     </div>
-    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary"><?= __('admin_generate_button') ?></button></div>
+    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('bko_cancel') ?></button><button class="btn btn-primary"><?= __('admin_generate_button') ?></button></div>
   </form>
 </div></div></div>

@@ -10,50 +10,67 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 
 $rankDist = $stats['rank_distribution'] ?? [];
 $totalActive = (int)($stats['active_associates'] ?? 0);
+$byType = $stats['commission_by_type'] ?? [];
+$monthByType = $stats['commission_this_month_by_type'] ?? [];
 ?>
-<div class="aps-cp-card mb-4">
-    <div class="aps-cp-card-header d-flex justify-content-between align-items-center">
-        <h5 class="m-0"><i class="fas fa-network-wired me-2"></i>Module 4: MLM Commission Engine</h5>
-        <div>
-            <a href="<?= htmlspecialchars($base) ?>/admin/mlm/payouts/batches/create" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus me-1"></i>New Payout Batch
-            </a>
-            <a href="<?= htmlspecialchars($base) ?>/admin/mlm/associate-ranks" class="btn btn-outline-primary btn-sm">
-                <i class="fas fa-trophy me-1"></i>Associate Ranks
-            </a>
+<!-- ROW 1: Core Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="aps-cp-stat bg-primary text-white">
+            <div class="aps-cp-stat-value"><?= $totalActive ?></div>
+            <div class="aps-cp-stat-label">Active Associates</div>
         </div>
     </div>
-    <div class="aps-cp-card-body">
-        <div class="row g-3">
-            <div class="col-md-3 col-6">
-                <div class="aps-cp-stat bg-primary text-white">
-                    <div class="aps-cp-stat-value"><?= (int)($stats['active_associates'] ?? 0) ?></div>
-                    <div class="aps-cp-stat-label">Active Associates</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="aps-cp-stat bg-success text-white">
-                    <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['commission_this_month'] ?? 0) / 1000, 1) ?>K</div>
-                    <div class="aps-cp-stat-label">Commission This Month</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="aps-cp-stat bg-warning text-dark">
-                    <div class="aps-cp-stat-value"><?= (int)($stats['pending_payouts'] ?? 0) ?></div>
-                    <div class="aps-cp-stat-label">Pending Payouts</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="aps-cp-stat bg-danger text-white">
-                    <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['total_clawback'] ?? 0) / 1000, 1) ?>K</div>
-                    <div class="aps-cp-stat-label">Total Clawback</div>
-                </div>
-            </div>
+    <div class="col-md-3 col-6">
+        <div class="aps-cp-stat bg-success text-white">
+            <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['commission_this_month'] ?? 0) / 1000, 1) ?>K</div>
+            <div class="aps-cp-stat-label">Commission This Month</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="aps-cp-stat bg-warning text-dark">
+            <div class="aps-cp-stat-value"><?= (int)($stats['pending_payouts'] ?? 0) ?></div>
+            <div class="aps-cp-stat-label">Pending Payouts</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="aps-cp-stat bg-danger text-white">
+            <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['total_clawback'] ?? 0) / 1000, 1) ?>K</div>
+            <div class="aps-cp-stat-label">Total Clawback</div>
+        </div>
+    </div>
+</div>
+
+<!-- ROW 2: 4 New Commission Streams (This Month) -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="aps-cp-stat" style="background:linear-gradient(135deg,#6366f1,#14b8a6);color:#fff;">
+            <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['generation_bonus_this_month'] ?? 0) / 1000, 1) ?>K</div>
+            <div class="aps-cp-stat-label">Generation Bonus (Month)</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="aps-cp-stat" style="background:linear-gradient(135deg,#0891b2,#06b6d4);color:#fff;">
+            <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['infinity_override_this_month'] ?? 0) / 1000, 1) ?>K</div>
+            <div class="aps-cp-stat-label">Infinity Override (Month)</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="aps-cp-stat" style="background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;">
+            <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['matching_bonus_this_month'] ?? 0) / 1000, 1) ?>K</div>
+            <div class="aps-cp-stat-label">Matching Bonus (Month)</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="aps-cp-stat" style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;">
+            <div class="aps-cp-stat-value">&#8377;<?= number_format((float)($stats['commission_this_month'] ?? 0) / 10000000, 2) ?>Cr</div>
+            <div class="aps-cp-stat-label">Total Commission (Month)</div>
         </div>
     </div>
 </div>
 
 <div class="row g-4">
+    <!-- LEFT: Rank Distribution -->
     <div class="col-lg-7">
         <div class="aps-cp-card">
             <div class="aps-cp-card-header">
@@ -69,8 +86,7 @@ $totalActive = (int)($stats['active_associates'] ?? 0);
                                 <th class="text-end">Associates</th>
                                 <th class="text-end">Min Legs</th>
                                 <th class="text-end">Min Volume</th>
-                                <th class="text-end">Direct %</th>
-                                <th class="text-end">L1 / L2 / L3 %</th>
+                                <th class="text-end">Rate</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -82,18 +98,13 @@ $totalActive = (int)($stats['active_associates'] ?? 0);
                                 <td>
                                     <span class="badge" style="background:<?= htmlspecialchars((string)($rb['color_code'] ?? '#94a3b8')) ?>;color:#fff;">
                                         <i class="fas <?= htmlspecialchars((string)($rb['badge_icon'] ?? 'fa-user')) ?> me-1"></i>
-                                        <?= htmlspecialchars(ucfirst((string)($rb['rank_name'] ?? ''))) ?>
+                                        <?= htmlspecialchars(ucfirst(str_replace('_', ' ', (string)($rb['rank_name'] ?? '')))) ?>
                                     </span>
                                 </td>
                                 <td class="text-end"><?= $count ?> (<?= $pct ?>%)</td>
                                 <td class="text-end"><?= (int)($rb['min_leg_count'] ?? 0) ?></td>
                                 <td class="text-end">&#8377;<?= number_format((float)($rb['min_qualifying_volume'] ?? 0) / 1000, 0) ?>K</td>
                                 <td class="text-end"><?= number_format((float)($rb['direct_sale_pct'] ?? 0), 1) ?>%</td>
-                                <td class="text-end">
-                                    <?= number_format((float)($rb['l1_pct'] ?? 0), 1) ?> /
-                                    <?= number_format((float)($rb['l2_pct'] ?? 0), 1) ?> /
-                                    <?= number_format((float)($rb['l3_pct'] ?? 0), 1) ?>
-                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -101,7 +112,83 @@ $totalActive = (int)($stats['active_associates'] ?? 0);
                 </div>
             </div>
         </div>
+
+        <!-- Commission by Type Breakdown -->
+        <div class="aps-cp-card mt-4">
+            <div class="aps-cp-card-header">
+                <h5 class="m-0"><i class="fas fa-layer-group me-2"></i>Commission Streams — All Time</h5>
+            </div>
+            <div class="aps-cp-card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm m-0">
+                        <thead>
+                            <tr>
+                                <th>Stream</th>
+                                <th class="text-end">Count</th>
+                                <th class="text-end">Total (All Time)</th>
+                                <th class="text-end">This Month</th>
+                                <th class="text-end">% of Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $allTotal = array_sum(array_column($byType, 'total'));
+                            $streamLabels = [
+                                'direct_sale' => ['Direct Sale', 'fa-handshake', 'text-primary'],
+                                'level_bonus' => ['Level Bonus (Upline)', 'fa-layer-group', 'text-info'],
+                                'override' => ['Override', 'fa-code-branch', 'text-success'],
+                                'rank_bonus' => ['Rank Advancement', 'fa-trophy', 'text-warning'],
+                                'generation_bonus' => ['Generation Bonus', 'fa-sitemap', 'text-purple'],
+                                'infinity_override' => ['Infinity Override', 'fa-infinity', 'text-info'],
+                                'matching_bonus' => ['Matching Bonus', 'fa-equals', 'text-orange'],
+                                'royalty_pool' => ['Royalty Pool', 'fa-crown', 'text-danger'],
+                                'team_bonus' => ['Team Bonus', 'fa-users', 'text-secondary'],
+                                'performance_bonus' => ['Performance Bonus', 'fa-chart-line', 'text-muted'],
+                                'clawback' => ['Clawback', 'fa-undo', 'text-danger'],
+                                'investment_sale' => ['Investment Sale', 'fa-coins', 'text-success'],
+                                'mlm_level_1' => ['MLM L1', 'fa-arrow-up', 'text-primary'],
+                                'mlm_level_2' => ['MLM L2', 'fa-arrow-up', 'text-info'],
+                                'mlm_level_3' => ['MLM L3', 'fa-arrow-up', 'text-secondary'],
+                            ];
+                            foreach ($byType as $type => $data):
+                                if ($data['total'] <= 0) continue;
+                                $label = $streamLabels[$type] ?? [$type, 'fa-circle', 'text-muted'];
+                                $monthTotal = $monthByType[$type]['total'] ?? 0;
+                                $pctTotal = $allTotal > 0 ? round(($data['total'] / $allTotal) * 100, 1) : 0;
+                            ?>
+                            <tr>
+                                <td>
+                                    <i class="fas <?= $label[1] ?> me-1 <?= $label[2] ?>"></i>
+                                    <?= $label[0] ?>
+                                </td>
+                                <td class="text-end"><?= $data['count'] ?></td>
+                                <td class="text-end fw-bold">&#8377;<?= number_format($data['total'], 0) ?></td>
+                                <td class="text-end">&#8377;<?= number_format($monthTotal, 0) ?></td>
+                                <td class="text-end">
+                                    <div class="progress" style="height:6px;width:60px;display:inline-block;">
+                                        <div class="progress-bar bg-<?= $label[2] === 'text-danger' ? 'danger' : ($label[2] === 'text-primary' ? 'primary' : ($label[2] === 'text-success' ? 'success' : 'secondary')) ?>" style="width:<?= $pctTotal ?>%"></div>
+                                    </div>
+                                    <?= $pctTotal ?>%
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-active fw-bold">
+                                <td>TOTAL</td>
+                                <td class="text-end"><?= array_sum(array_column($byType, 'count')) ?></td>
+                                <td class="text-end">&#8377;<?= number_format($allTotal, 0) ?></td>
+                                <td class="text-end">&#8377;<?= number_format(array_sum(array_column($monthByType, 'total')), 0) ?></td>
+                                <td class="text-end">100%</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- RIGHT: Cron + Quick Actions -->
     <div class="col-lg-5">
         <div class="aps-cp-card mb-4">
             <div class="aps-cp-card-header">
@@ -136,6 +223,26 @@ $totalActive = (int)($stats['active_associates'] ?? 0);
                         <?php endforeach; endif; ?>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <div class="aps-cp-card mb-4">
+            <div class="aps-cp-card-header">
+                <h5 class="m-0"><i class="fas fa-calculator me-2"></i>Commission Model</h5>
+            </div>
+            <div class="aps-cp-card-body">
+                <div class="mb-2"><strong>Model:</strong> Differential (upline earns gap between their rate & downline's)</div>
+                <div class="mb-2"><strong>Global Cap:</strong> 20% per sale</div>
+                <div class="mb-2"><strong>Depth:</strong> 7-level upline walk</div>
+                <div class="mb-2"><strong>Same-Rank Breakaway:</strong> 2% Gen1 → 1% Gen2 → 0% Gen3+</div>
+                <hr>
+                <div class="mb-1"><strong>Monthly Streams:</strong></div>
+                <ul class="list-unstyled ps-3">
+                    <li>💎 <strong>Generation Bonus</strong> — 5% of gen volume (President/SM only)</li>
+                    <li>♾️ <strong>Infinity Override</strong> — 1% of deep downline (VP+ only)</li>
+                    <li>🤝 <strong>Matching Bonus</strong> — 100%/50%/25% match (President+ only)</li>
+                    <li>👑 <strong>Royalty Pool</strong> — 2% of sales (Site Manager only)</li>
+                </ul>
             </div>
         </div>
 

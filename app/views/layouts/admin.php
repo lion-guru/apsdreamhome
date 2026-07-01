@@ -35,6 +35,18 @@
                 background: var(--body-bg);
                 overflow-x: hidden;
             }
+
+            /* Responsive grid for inline grid-template-columns:repeat(4,1fr) */
+            @media (max-width: 992px) {
+                [style*="grid-template-columns:repeat(4"] {
+                    grid-template-columns: repeat(2, 1fr) !important;
+                }
+            }
+            @media (max-width: 576px) {
+                [style*="grid-template-columns:repeat(4"] {
+                    grid-template-columns: 1fr !important;
+                }
+            }
         </style>
 
         <!-- CRITICAL: Sidebar functions in HEAD - load before body -->

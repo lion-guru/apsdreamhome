@@ -93,7 +93,7 @@ $colonyId = (int)($colony['id'] ?? 0);
             <th><?= __('cp_area') ?> (sqft)</th>
             <th><?= __('cp_dimensions') ?></th>
             <th><?= __('cp_facing') ?></th>
-            <th>₹/sqft</th>
+            <th><?= __('cp_per_sqft') ?></th>
             <th><?= __('cp_total_price') ?></th>
             <th><?= __('cp_status') ?></th>
             <th><?= __('cp_flags') ?></th>
@@ -118,9 +118,9 @@ $colonyId = (int)($colony['id'] ?? 0);
                   default => 'info'
                 };
                 $flags = [];
-                if (!empty($plot['corner_plot'])) $flags[] = '<span class="badge bg-warning text-dark" title="' . __('cp_corner_plot') . '"><i class="fas fa-angle-double-up"></i> Corner</span>';
-                if (!empty($plot['park_facing'])) $flags[] = '<span class="badge bg-success" title="' . __('cp_park_facing') . '"><i class="fas fa-tree"></i> Park</span>';
-                if (!empty($plot['road_width_ft']) && $plot['road_width_ft'] >= 40) $flags[] = '<span class="badge bg-info" title="' . __('cp_wide_road') . '"><i class="fas fa-road"></i> Wide Road</span>';
+                if (!empty($plot['corner_plot'])) $flags[] = '<span class="badge bg-warning text-dark" title="' . __('cp_corner_plot') . '"><i class="fas fa-angle-double-up"></i> ' . __('cp_corner') . '</span>';
+                if (!empty($plot['park_facing'])) $flags[] = '<span class="badge bg-success" title="' . __('cp_park_facing') . '"><i class="fas fa-tree"></i> ' . __('cp_park') . '</span>';
+                if (!empty($plot['road_width_ft']) && $plot['road_width_ft'] >= 40) $flags[] = '<span class="badge bg-info" title="' . __('cp_wide_road') . '"><i class="fas fa-road"></i> ' . __('cp_wide_road') . '</span>';
               ?>
               <tr>
                 <td><strong><?= htmlspecialchars($plot['plot_number'] ?? '') ?></strong></td>

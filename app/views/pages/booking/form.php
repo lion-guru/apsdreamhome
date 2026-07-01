@@ -179,7 +179,7 @@ $csrfToken = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
 
             <!-- Right: Plot Summary -->
             <div class="col-lg-5">
-                <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; border: none;">
+                <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; border: none;">
                     <div class="aps-cp-card-body">
                         <h5 class="fw-bold mb-3">
                             <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name']) ?>

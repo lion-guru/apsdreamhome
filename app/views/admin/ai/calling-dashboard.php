@@ -111,7 +111,7 @@ $recentCalls = $recentCalls ?? [];
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
 new Chart(document.getElementById('weeklyChart'), {
-    type: 'bar', data: { labels: <?= json_encode($weekLabels) ?>, datasets: [{ label: 'Calls', data: <?= json_encode(array_map('intval', $weekData)) ?>, backgroundColor: '#4f46e5aa', borderColor: '#4f46e5', borderWidth: 1 }] },
+    type: 'bar', data: { labels: <?= json_encode($weekLabels) ?>, datasets: [{ label: 'Calls', data: <?= json_encode(array_map('intval', $weekData)) ?>, backgroundColor: '#0d9488aa', borderColor: '#0d9488', borderWidth: 1 }] },
     options: { responsive: true, scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of Calls' } } }, plugins: { legend: { display: false } } }
 });
 </script>

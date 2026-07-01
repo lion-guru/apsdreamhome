@@ -192,7 +192,43 @@ $base = BASE_URL;
                         <span class="input-group-text toggle-password" style="cursor: pointer;" onclick="togglePassword()">
                             <i class="fas fa-eye" id="toggleIcon"></i>
                         </span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-login w-100 mb-3">
+                    <i class="fas fa-sign-in-alt me-2"></i><?php echo __('auth_login', 'Login'); ?>
+                </button>
+
+                <div class="text-center">
+                    <a href="<?php echo BASE_URL; ?>/associate/forgot-password" class="link-text small"><?php echo __('auth_forgot_password', 'Forgot Password?'); ?></a>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="text-center">
+                    <p class="mb-0 text-muted"><?php echo __('auth_not_registered_yet', 'Not registered yet?'); ?>
+                        <a href="<?php echo BASE_URL; ?>/associate/register" class="link-text"><?php echo __('auth_register_as_associate', 'Register as Associate'); ?></a>
+                    </p>
+                </div>
+            </form>
+        </div>
     </div>
-<?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
+
+    <?php include __DIR__ . '/../partials/_chatbot_icons.php'; ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+    </script>
 </body>
 </html>

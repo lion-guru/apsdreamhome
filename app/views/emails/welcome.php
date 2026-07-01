@@ -10,7 +10,7 @@ body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
 table,td{mso-table-lspace:0;mso-table-rspace:0}
 img{-ms-interpolation-mode:bicubic;border:0;height:auto;line-height:100%;outline:none;text-decoration:none}
 body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:Arial,Helvetica,sans-serif;background-color:#f4f6fb;color:#333}
-a{color:#667eea;text-decoration:none}
+a{color:#0d9488;text-decoration:none}
 a:hover{text-decoration:underline}
 @media screen and (max-width:600px){
   .container{width:100%!important;max-width:100%!important}
@@ -28,7 +28,7 @@ a:hover{text-decoration:underline}
       <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
         <!-- Header -->
         <tr>
-          <td bgcolor="#667eea" align="center" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:40px 30px;">
+          <td bgcolor="#0d9488" align="center" style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);padding:40px 30px;">
             <img src="{{logo_url}}" alt="APS Dream Home" width="180" style="display:block;margin:0 auto 15px;max-width:180px;">
             <h1 class="h1-mobile" style="color:#ffffff;margin:0;font-size:28px;font-weight:700;line-height:34px;">Welcome to APS Dream Home</h1>
             <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:15px;">India's Premier Real Estate Platform</p>
@@ -61,7 +61,7 @@ a:hover{text-decoration:underline}
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <td align="center" style="padding:10px 0 30px;">
-                  <a href="{{login_url}}" class="button-mobile" style="display:inline-block;padding:14px 36px;background:#667eea;color:#ffffff;text-decoration:none;border-radius:6px;font-size:16px;font-weight:600;">Get Started</a>
+                  <a href="{{login_url}}" class="button-mobile" style="display:inline-block;padding:14px 36px;background:#0d9488;color:#ffffff;text-decoration:none;border-radius:6px;font-size:16px;font-weight:600;">Get Started</a>
                 </td>
               </tr>
             </table>

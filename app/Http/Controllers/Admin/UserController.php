@@ -116,7 +116,7 @@ class UserController extends AdminController
             $data = [
                 'page_title' => 'Create User - APS Dream Home',
                 'active_page' => 'users',
-                'roles' => ['admin', 'manager', 'associate', 'customer', 'user']
+                'roles' => ['admin', 'manager', 'associate', 'agent', 'customer', 'user']
             ];
 
             return $this->render('admin/users/create', $data);
@@ -153,7 +153,7 @@ class UserController extends AdminController
             }
 
             // Validate role
-            $validRoles = ['admin', 'manager', 'associate', 'customer', 'user'];
+            $validRoles = ['admin', 'manager', 'associate', 'agent', 'customer', 'user'];
             if (!in_array($data['role'], $validRoles)) {
                 return $this->jsonError('Invalid role', 400);
             }
@@ -278,7 +278,7 @@ class UserController extends AdminController
                 'page_title' => 'Edit User - APS Dream Home',
                 'active_page' => 'users',
                 'user' => $user,
-                'roles' => ['admin', 'manager', 'associate', 'customer', 'user']
+                'roles' => ['admin', 'manager', 'associate', 'agent', 'customer', 'user']
             ];
 
             return $this->render('admin/users/edit', $data);
@@ -353,7 +353,7 @@ class UserController extends AdminController
             }
 
             if (isset($data['role'])) {
-                $validRoles = ['admin', 'manager', 'associate', 'customer', 'user'];
+                $validRoles = ['admin', 'manager', 'associate', 'agent', 'customer', 'user'];
                 if (in_array($data['role'], $validRoles)) {
                     $updateFields[] = "role = ?";
                     $updateValues[] = $data['role'];
@@ -457,6 +457,188 @@ class UserController extends AdminController
         } catch (Exception $e) {
             $this->loggingService->error("User Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete user', 500);
+        }
+    }
+
+    /**
+     * Display pending registrations awaiting approval
+     */
+    public function pending()
+    {
+        try {
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = (int)($_GET['per_page'] ?? 20);
+            $offset = ($page - 1) * $perPage;
+
+            $sql = "SELECT u.*,
+                           COUNT(p.id) as property_count,
+                           (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count
+                    FROM users u
+                    LEFT JOIN properties p ON u.id = p.created_by
+                    WHERE u.registration_status = 'pending'
+                    ORDER BY u.created_at DESC";
+
+            $countSql = "SELECT COUNT(*) as total FROM users WHERE registration_status = 'pending'";
+            $countResult = $this->db->fetchOne($countSql);
+            $total = (int)($countResult['total'] ?? 0);
+
+            $sql .= " LIMIT ?, ?";
+            $params = [$offset, $perPage];
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $data = [
+                'page_title' => 'Pending Registrations - APS Dream Home',
+                'active_page' => 'users',
+                'users' => $users ?? [],
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage)
+            ];
+
+            return $this->render('admin/users/pending', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Pending Users error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load pending registrations');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Approve a pending user registration
+     */
+    public function approve($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $userId = intval($id);
+            if ($userId <= 0) {
+                return $this->jsonError('Invalid user ID', 400);
+            }
+
+            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
+            if (!$user) {
+                return $this->jsonError('User not found', 404);
+            }
+
+            if ($user['registration_status'] !== 'pending') {
+                return $this->jsonError('User is not pending approval', 400);
+            }
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            $this->db->query(
+                "UPDATE users SET registration_status = 'approved', status = 'active', approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id = ?",
+                [$adminId, $userId]
+            );
+
+            $this->loggingService->logUserActivity($adminId, 'user_approved', [
+                'user_id' => $userId,
+                'user_name' => $user['name'],
+                'user_email' => $user['email'],
+                'user_role' => $user['role']
+            ]);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'User approved successfully'
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Approve User error: " . $e->getMessage());
+            return $this->jsonError('Failed to approve user', 500);
+        }
+    }
+
+    /**
+     * Reject a pending user registration
+     */
+    public function reject($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $userId = intval($id);
+            if ($userId <= 0) {
+                return $this->jsonError('Invalid user ID', 400);
+            }
+
+            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
+            if (!$user) {
+                return $this->jsonError('User not found', 404);
+            }
+
+            if ($user['registration_status'] !== 'pending') {
+                return $this->jsonError('User is not pending approval', 400);
+            }
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $reason = trim($_POST['reason'] ?? '');
+
+            $this->db->query(
+                "UPDATE users SET registration_status = 'rejected', status = 'inactive', rejection_reason = ?, approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id = ?",
+                [$reason, $adminId, $userId]
+            );
+
+            $this->loggingService->logUserActivity($adminId, 'user_rejected', [
+                'user_id' => $userId,
+                'user_name' => $user['name'],
+                'user_email' => $user['email'],
+                'reason' => $reason
+            ]);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'User rejected'
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Reject User error: " . $e->getMessage());
+            return $this->jsonError('Failed to reject user', 500);
+        }
+    }
+
+    /**
+     * Bulk approve pending users
+     */
+    public function bulkApprove()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $userIds = $_POST['user_ids'] ?? [];
+            if (empty($userIds)) {
+                return $this->jsonError('No users selected', 400);
+            }
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+
+            $this->db->query(
+                "UPDATE users SET registration_status = 'approved', status = 'active', approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id IN ($placeholders) AND registration_status = 'pending'",
+                array_merge([$adminId], $userIds)
+            );
+
+            $this->loggingService->logUserActivity($adminId, 'bulk_user_approved', [
+                'user_ids' => $userIds,
+                'count' => count($userIds)
+            ]);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => count($userIds) . ' users approved'
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Bulk Approve error: " . $e->getMessage());
+            return $this->jsonError('Failed to bulk approve', 500);
         }
     }
 

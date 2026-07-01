@@ -122,12 +122,18 @@ class DifferentialCommissionCalculator
 
     protected function getAgentRankData($userId)
     {
-        // Get level from mlm_profiles — current_level stores the level_number (1-10)
+        // Get level from mlm_profiles — current_level stores rank name (e.g. 'associate')
         $stmt = $this->db->prepare("SELECT current_level FROM mlm_profiles WHERE user_id = ?");
         $stmt->execute([$userId]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$row) return null;
-        return ['level' => (int)$row['current_level']];
+        // Map rank name to numeric level (1-7)
+        $rankMap = [
+            'associate' => 1, 'senior_associate' => 2, 'bdm' => 3,
+            'sr_bdm' => 4, 'vice_president' => 5, 'president' => 6, 'site_manager' => 7,
+        ];
+        $level = $rankMap[strtolower($row['current_level'] ?? '')] ?? 1;
+        return ['level' => $level];
     }
 
     protected function recordCommission($beneficiaryId, $sourceId, $propertyId, $amount, $percent, $type)

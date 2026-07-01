@@ -12,7 +12,7 @@ if (!defined('BASE_URL')) {
 ?>
 
 <!-- Hero Section -->
-<section class="favorites-hero py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="favorites-hero py-5" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">

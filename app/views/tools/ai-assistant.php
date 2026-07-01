@@ -92,7 +92,7 @@ include __DIR__ . '/../layouts/base.php';
 }
 
 .ai-header {
-    background: var(--primary-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+    background: var(--primary-gradient, linear-gradient(135deg, #0d9488 0%, #0f766e 100%));
     color: white;
     padding: 30px;
     text-align: center;
@@ -143,7 +143,7 @@ include __DIR__ . '/../layouts/base.php';
 }
 
 .ai-message .message-avatar {
-    background: var(--primary-color, #1a237e);
+    background: var(--primary-color, #0d9488);
     color: white;
 }
 
@@ -162,7 +162,7 @@ include __DIR__ . '/../layouts/base.php';
 }
 
 .user-message .message-content {
-    background: var(--primary-color, #1a237e);
+    background: var(--primary-color, #0d9488);
     color: white;
     order: 1;
 }
@@ -225,11 +225,11 @@ include __DIR__ . '/../layouts/base.php';
 }
 
 .chat-input input:focus {
-    border-color: var(--primary-color, #1a237e);
+    border-color: var(--primary-color, #0d9488);
 }
 
 .chat-input button {
-    background: var(--primary-color, #1a237e);
+    background: var(--primary-color, #0d9488);
     color: white;
     border: none;
     border-radius: 50%;

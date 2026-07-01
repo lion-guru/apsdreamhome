@@ -16,7 +16,7 @@ $file = $file ?? ['id' => 0, 'original_name' => '', 'file_type' => '', 'size_byt
             <div class="card shadow mb-4">
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary"><?= htmlspecialchars($file['original_name'] ?? '') ?></h6></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-bordered">
+                    <div class="table-responsive"><table class="table table-bordered">
                         <tr><th style="width:180px">File Name</th><td><?= htmlspecialchars($file['original_name'] ?? '') ?></td></tr>
                         <tr><th>Type</th><td><span class="badge bg-info"><?= htmlspecialchars($file['mime_type'] ?? $file['file_type'] ?? '') ?></span></td></tr>
                         <tr><th>Category</th><td><span class="badge bg-primary"><?= htmlspecialchars($file['file_category'] ?? '') ?></span></td></tr>
@@ -25,7 +25,7 @@ $file = $file ?? ['id' => 0, 'original_name' => '', 'file_type' => '', 'size_byt
                         <tr><th>Uploaded Date</th><td><?= htmlspecialchars($file['created_at'] ?? '') ?></td></tr>
                         <tr><th>Downloads</th><td><?= number_format($file['download_count'] ?? 0) ?></td></tr>
                         <tr><th>Description</th><td><?= htmlspecialchars($file['description'] ?? 'N/A') ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

@@ -106,7 +106,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                         </div>
                     </div>
 
-                    <table class="table table-sm table-borderless mb-0">
+                    <div class="table-responsive"><table class="table table-sm table-borderless mb-0">
                         <tr>
                             <td class="text-muted">Messages Logged:</td>
                             <td class="text-end fw-bold"><?php echo $messageCount; ?></td>
@@ -115,7 +115,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                             <td class="text-muted">API Version:</td>
                             <td class="text-end"><?php echo htmlspecialchars($_ENV['WHATSAPP_API_VERSION'] ?? 'v18.0'); ?></td>
                         </tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
 

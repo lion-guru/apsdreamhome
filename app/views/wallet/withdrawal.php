@@ -1,9 +1,15 @@
-<?php $this->layout = 'layouts/base'; ?>
-<?php $this->title = 'Withdrawal Request - APS Dream Home'; ?>
+
+<?php
+$page_title = $page_title ?? 'Withdrawal Request - APS Dream Home';
+$wallet = $wallet ?? ['points_balance' => 0];
+$bankAccounts = $bankAccounts ?? [];
+$withdrawals = $withdrawals ?? [];
+$base = defined('BASE_URL') ? BASE_URL : '';
+?>
 
 <style>
 .wallet-balance {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     border-radius: 15px;
     padding: 30px;
@@ -25,7 +31,7 @@
 }
 
 .withdrawal-info i {
-    color: #667eea;
+    color: #0d9488;
     margin-right: 10px;
 }
 
@@ -42,7 +48,7 @@
 
 .bank-card:hover,
 .bank-card.selected {
-    border-color: #667eea;
+    border-color: #0d9488;
     transform: translateY(-2px);
 }
 
@@ -54,7 +60,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     display: flex;
     align-items: center;
@@ -108,7 +114,7 @@
 }
 
 .btn-withdraw {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     border: none;
     padding: 15px 40px;
     border-radius: 25px;
@@ -134,7 +140,7 @@
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-wallet me-2 text-primary"></i>Withdrawal Request</h2>
-        <a href="/wallet" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
+        <a href="<?php echo BASE_URL; ?>/<?= ($_SESSION['role'] ?? '') === 'associate' ? 'associate/wallet' : 'wallet' ?>" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
     </div>
 
     <!-- Wallet Balance -->
@@ -179,7 +185,7 @@
                             <?php else: ?>
                                 <div class="text-center py-3">
                                     <p class="text-muted mb-2">No bank accounts added</p>
-                                    <a href="/wallet/bank-accounts" class="btn btn-primary btn-sm">
+                                    <a href="<?= $base ?>/associate/wallet/bank-accounts" class="btn btn-primary btn-sm">
                                         <i class="fas fa-plus me-2"></i>Add Bank Account
                                     </a>
                                 </div>
@@ -369,7 +375,7 @@ function processWithdrawal() {
         formData.append('bank_account_id', bankAccountId);
         formData.append('amount', amount);
         
-        fetch('/wallet/withdrawal/process', {
+        fetch('<?= $base ?>/wallet/withdrawal/process', {
             method: 'POST',
             body: formData
         })
@@ -377,7 +383,7 @@ function processWithdrawal() {
         .then(data => {
             if (data.success) {
                 alert('Withdrawal request submitted successfully!');
-                window.location.href = '/wallet/withdrawal';
+                window.location.href = '<?= $base ?>/associate/wallet/withdraw';
             } else {
                 alert('Withdrawal failed: ' + data.message);
             }

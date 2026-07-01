@@ -6,7 +6,7 @@
 .status-reserved { background: #fef3c7; color: #d97706; }
 .status-booked { background: #e0e7ff; color: #4338ca; }
 .status-sold { background: #d1fae5; color: #059669; }
-.status-under_development { background: #f3e8ff; color: #7c3aed; }
+.status-under_development { background: #f3e8ff; color: #0f766e; }
 .status-hold { background: #fce7f3; color: #be185d; }
 .status-blocked { background: #fef2f2; color: #b91c1c; }
 .status-under_construction { background: #fff7ed; color: #c2410c; }

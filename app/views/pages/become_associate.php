@@ -19,7 +19,7 @@
         }
 
         .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             color: white;
             padding: 100px 0;
             text-align: center;
@@ -48,7 +48,7 @@
         }
 
         .referral-code-display {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             color: white;
             padding: 30px;
             border-radius: 15px;
@@ -101,7 +101,7 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             color: white;
             display: flex;
             align-items: center;
@@ -149,7 +149,7 @@
         }
 
         .btn-join {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             border: none;
             padding: 20px 50px;
             border-radius: 30px;

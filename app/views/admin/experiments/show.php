@@ -120,7 +120,7 @@ $variantNames = array_keys($results);
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-table me-1"></i> Per-Variant Stats</h5></div>
                 <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
+                    <div class="table-responsive"><table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>Variant</th>
@@ -149,7 +149,7 @@ $variantNames = array_keys($results);
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
 

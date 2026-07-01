@@ -126,7 +126,7 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
 <style>
     .reset-password-section {
         min-height: 100vh;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         padding: 2rem 0;
         display: flex;
         align-items: center;
@@ -142,7 +142,7 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
     }
 
     .reset-header {
-        background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%);
+        background: linear-gradient(135deg, #0f766e 0%, #f093fb 100%);
         color: white;
         padding: 2rem;
         text-align: center;
@@ -194,7 +194,7 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
     }
 
     .form-control:focus {
-        border-color: #764ba2;
+        border-color: #0f766e;
         box-shadow: 0 0 0 0.2rem rgba(118, 75, 162, 0.25);
     }
 
@@ -248,7 +248,7 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
     }
 
     .help-link:hover {
-        color: #764ba2;
+        color: #0f766e;
     }
 
     .invalid-feedback {

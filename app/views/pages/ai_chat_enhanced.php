@@ -9,7 +9,7 @@ $base = $base ?? BASE_URL;
 ?>
 
 <section class="py-5 bg-gradient-primary text-white position-relative overflow-hidden">
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0d9488 100%);"></div>
     <div class="container position-relative">
         <div class="row align-items-center">
             <div class="col-lg-8">
@@ -227,7 +227,7 @@ function showEnhancedLeadNotification(data) {
 }
 .typing-indicator { display: flex; gap: 4px; padding: 4px 0; }
 .typing-indicator span {
-    width: 8px; height: 8px; border-radius: 50%; background: #667eea;
+    width: 8px; height: 8px; border-radius: 50%; background: #0d9488;
     animation: typingBounce 1.4s infinite ease-in-out;
 }
 .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }

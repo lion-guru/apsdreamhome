@@ -58,7 +58,7 @@ class ModernThemeService
         ],
         'purple' => [
             'name' => 'Royal Purple',
-            'primary' => '#8b5cf6',
+            'primary' => '#14b8a6',
             'secondary' => '#a78bfa',
             'background' => '#2e1065',
             'surface' => '#4c1d95',

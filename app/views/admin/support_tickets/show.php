@@ -105,7 +105,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                         ?>
                         <div class="d-flex mb-3 <?= $isAdmin ? '' : 'flex-row-reverse' ?>">
                             <div class="flex-shrink-0 ms-3">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;background:<?= $isAdmin ? '#10b981' : '#4f46e5' ?>;color:#fff;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;background:<?= $isAdmin ? '#10b981' : '#0d9488' ?>;color:#fff;">
                                     <i class="fas fa-<?= $isAdmin ? 'shield-alt' : 'user' ?>"></i>
                                 </div>
                             </div>
@@ -220,7 +220,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                     <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Details</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm mb-0">
+                    <div class="table-responsive"><table class="table table-sm mb-0">
                         <tr><td class="text-muted">Number</td><td><strong><?= htmlspecialchars($ticket['ticket_number'] ?? '') ?></strong></td></tr>
                         <tr><td class="text-muted">Priority</td><td><span class="badge bg-<?= $priorityBadge ?>"><?= ucfirst($ticket['priority']) ?></span></td></tr>
                         <tr><td class="text-muted">Category</td><td><?= ucfirst($ticket['category']) ?></td></tr>
@@ -229,7 +229,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                         <?php if (!empty($ticket['booking_id'])): ?>
                         <tr><td class="text-muted">Booking</td><td>#<?= (int)$ticket['booking_id'] ?></td></tr>
                         <?php endif; ?>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

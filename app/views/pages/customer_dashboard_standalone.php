@@ -23,7 +23,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <style>
         body { background: #f8fafc; }
         .dashboard-card { border: none; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .stat-card { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white; }
         .table-container { background: white; border-radius: 12px; padding: 20px; }
     </style>
 </head>

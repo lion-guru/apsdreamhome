@@ -177,7 +177,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri" />
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/braj-radha-nagri.jpg" class="card-img-top" alt="Braj Radha Nagri" />
                         <div class="card-body aps-cp-card-body">
                             <h5 class="card-title">Braj Radha Nagri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>

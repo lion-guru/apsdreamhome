@@ -138,7 +138,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label text-muted small"><?= __('user_agreement_detail_value', null, 'Agreement Value') ?></label>
-                            <div class="fw-semibold" style="font-size:1.1em;color:#4f46e5;">&#8377;<?= $totalValue ?></div>
+                            <div class="fw-semibold" style="font-size:1.1em;color:#0d9488;">&#8377;<?= $totalValue ?></div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -273,7 +273,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
 <div class="modal fade" id="signModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius:16px;overflow:hidden;">
-            <div class="modal-header" style="background:#4f46e5;color:#fff;border:none;">
+            <div class="modal-header" style="background:#0d9488;color:#fff;border:none;">
                 <h5 class="modal-title"><i class="fas fa-pen-fancy me-2"></i><?= __('user_agreement_detail_sign_heading', null, 'Sign Agreement') ?></h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>

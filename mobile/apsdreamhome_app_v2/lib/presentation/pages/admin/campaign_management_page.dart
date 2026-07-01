@@ -62,15 +62,15 @@ class _CampaignManagementPageState
           ),
         ],
       ),
-      child: Row(
+      child: const Row(
         children: [
-          const Icon(
+          Icon(
             Icons.campaign,
             size: 32,
             color: AppTheme.primaryColor,
           ),
-          const SizedBox(width: 16),
-          const Expanded(
+          SizedBox(width: 16),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -449,7 +449,7 @@ class _CampaignManagementPageState
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: selectedType,
+                  initialValue: selectedType,
                   decoration: const InputDecoration(
                       labelText: 'Campaign Type'),
                   items: const [

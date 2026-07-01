@@ -232,7 +232,7 @@ $page_description = $page_description ?? 'Premium residential plots in Gorakhpur
             </div>
             <div class="col-md-6 col-lg-4">
                 <div class="gallery-item">
-                    <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday2.jpeg" class="img-fluid rounded" alt="Suyoday Colony View 3" />
+                    <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="img-fluid rounded" alt="Suyoday Colony View 3" />
                 </div>
             </div>
         </div>
@@ -261,7 +261,7 @@ $page_description = $page_description ?? 'Premium residential plots in Gorakhpur
 
 <style>
 .project-hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
 }
 
 .double-down-line {

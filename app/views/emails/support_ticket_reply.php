@@ -25,7 +25,7 @@ body{margin:0;padding:0;width:100%!important;height:100%!important;font-family:A
       <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
         <!-- Header -->
         <tr>
-          <td bgcolor="#6366f1" align="center" style="background:linear-gradient(135deg,#6366f1 0%,#4f46e5 100%);padding:40px 30px;">
+          <td bgcolor="#6366f1" align="center" style="background:linear-gradient(135deg,#6366f1 0%,#0d9488 100%);padding:40px 30px;">
             <div style="width:64px;height:64px;background:rgba(255,255,255,0.2);border-radius:50%;margin:0 auto 16px;line-height:64px;font-size:36px;color:#fff;text-align:center;">&#9993;</div>
             <h1 class="h1-mobile" style="color:#ffffff;margin:0;font-size:28px;font-weight:700;line-height:34px;">New Reply on Ticket</h1>
             <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:15px;">{{agent_name}} replied</p>

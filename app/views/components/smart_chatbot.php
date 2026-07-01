@@ -105,7 +105,7 @@ if (isset($_SESSION['associate_id'])) {
     }
 
     .chatbot-toggle {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         color: white;
         border: none;
         border-radius: 50px;
@@ -160,7 +160,7 @@ if (isset($_SESSION['associate_id'])) {
     }
 
     .chatbot-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         color: white;
         padding: 15px 20px;
         display: flex;
@@ -249,7 +249,7 @@ if (isset($_SESSION['associate_id'])) {
     .message-avatar {
         width: 35px;
         height: 35px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -276,7 +276,7 @@ if (isset($_SESSION['associate_id'])) {
     }
 
     .user-message .message-content {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         color: white;
     }
 
@@ -341,12 +341,12 @@ if (isset($_SESSION['associate_id'])) {
     }
 
     #chatbot-input:focus {
-        border-color: #667eea;
+        border-color: #0d9488;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
     .send-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         color: white;
         border: none;
         width: 45px;
@@ -376,7 +376,7 @@ if (isset($_SESSION['associate_id'])) {
     .typing-indicator span {
         width: 8px;
         height: 8px;
-        background: #667eea;
+        background: #0d9488;
         border-radius: 50%;
         animation: typing 1.4s infinite;
     }

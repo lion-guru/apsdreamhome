@@ -3,10 +3,10 @@
 .plot-gallery-img { width: 100%; height: 350px; object-fit: cover; border-radius: 12px; }
 .detail-card { border: 1px solid #e8e8e8; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
 .detail-label { color: #666; font-size: 0.85rem; }
-.detail-value { font-size: 1.1rem; font-weight: 600; color: #1a237e; }
+.detail-value { font-size: 1.1rem; font-weight: 600; color: #0d9488; }
 .price-tag { font-size: 2rem; font-weight: 800; color: #2e7d32; }
 .spec-item { padding: 16px; text-align: center; border: 1px solid #e8e8e8; border-radius: 10px; }
-.spec-item i { font-size: 1.5rem; color: #1a237e; margin-bottom: 8px; }
+.spec-item i { font-size: 1.5rem; color: #0d9488; margin-bottom: 8px; }
 </style>
 
 <div class="container py-4">

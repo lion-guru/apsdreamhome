@@ -213,7 +213,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 
 <style>
     .drop-zone {
-        border: 3px dashed #4f46e5;
+        border: 3px dashed #0d9488;
         border-radius: 16px;
         padding: 60px 20px;
         text-align: center;
@@ -224,14 +224,14 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 
     .drop-zone:hover,
     .drop-zone.dragover {
-        border-color: #7c3aed;
+        border-color: #0f766e;
         background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%);
         transform: scale(1.02);
     }
 
     .drop-zone i {
         font-size: 4rem;
-        color: #4f46e5;
+        color: #0d9488;
         margin-bottom: 20px;
     }
 
@@ -288,7 +288,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 
     .progress-bar .progress {
         height: 100%;
-        background: linear-gradient(90deg, #4f46e5, #7c3aed);
+        background: linear-gradient(90deg, #0d9488, #0f766e);
         transition: width 0.3s ease;
     }
 
@@ -314,7 +314,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
 
     .caption-input:focus {
         outline: none;
-        border-color: #4f46e5;
+        border-color: #0d9488;
     }
 
     /* Sidebar */

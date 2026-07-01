@@ -1,7 +1,7 @@
 <?php require_once __DIR__ . '/../../Helpers/TranslationHelper.php'; ?>
 <style>
 .booking-form-section { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px; margin-bottom: 20px; }
-.plot-summary-card { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 12px; padding: 24px; }
+.plot-summary-card { background: linear-gradient(135deg, #0d9488, #0f766e); color: white; border-radius: 12px; padding: 24px; }
 .plot-summary-card .price { font-size: 1.8rem; font-weight: 800; }
 .plot-summary-card .detail { opacity: 0.9; font-size: 0.9rem; }
 .emi-note { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 12px 16px; }

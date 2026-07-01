@@ -328,9 +328,9 @@ function copyReferralLink() {
 }
 
 .tree-node.root {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
-    border-color: #667eea;
+    border-color: #0d9488;
 }
 
 .tree-node .node-content {

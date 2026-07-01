@@ -21,8 +21,8 @@
     </div>
 
     <p style="color: #475569; line-height: 1.6;">Late payment charges accrue at <strong>18% per annum</strong> on the overdue amount. Please pay immediately to avoid further escalation.</p>
-    <p style="color: #475569; line-height: 1.6;">Pay online: <a href="{{payment_url}}" style="color: #4f46e5; font-weight: bold;">Click Here to Pay</a></p>
-    <p style="color: #475569; line-height: 1.6;">For queries, call <strong style="color: #4f46e5;">{{company_phone}}</strong></p>
+    <p style="color: #475569; line-height: 1.6;">Pay online: <a href="{{payment_url}}" style="color: #0d9488; font-weight: bold;">Click Here to Pay</a></p>
+    <p style="color: #475569; line-height: 1.6;">For queries, call <strong style="color: #0d9488;">{{company_phone}}</strong></p>
 </div>
 <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
     <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>

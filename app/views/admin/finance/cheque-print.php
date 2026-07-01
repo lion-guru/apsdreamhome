@@ -75,7 +75,7 @@ $amountFigures = number_format($amount, 2);
         transition: opacity 0.2s;
     }
     .print-actions .btn-print {
-        background: #4f46e5;
+        background: #0d9488;
         color: #fff;
     }
     .print-actions .btn-print:hover { opacity: 0.9; }

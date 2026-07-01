@@ -296,7 +296,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
     }
 
     .form-control:focus {
-        border-color: #667eea;
+        border-color: #0d9488;
         box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
     }
 
@@ -309,12 +309,12 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         border: none;
     }
 
     .btn-primary:hover {
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
         transform: translateY(-2px);
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }

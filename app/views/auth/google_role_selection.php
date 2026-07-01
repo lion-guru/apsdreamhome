@@ -16,7 +16,7 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             align-items: center;
@@ -45,7 +45,7 @@
             height: 80px;
             border-radius: 50%;
             margin: 0 auto 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -64,13 +64,13 @@
         }
 
         .role-option:hover {
-            border-color: #667eea;
+            border-color: #0d9488;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
         }
 
         .role-option.selected {
-            border-color: #667eea;
+            border-color: #0d9488;
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
         }
 
@@ -78,7 +78,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             color: white;
             display: flex;
             align-items: center;
@@ -126,7 +126,7 @@
         }
 
         .btn-complete {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             border: none;
             padding: 15px 40px;
             border-radius: 25px;
@@ -162,7 +162,7 @@
             width: 40px;
             height: 40px;
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border-top: 4px solid #0d9488;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 15px;

@@ -13,7 +13,7 @@ unset($_SESSION['kyc_verify_results']);
             <div class="card shadow-sm mb-4">
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>KYC Details</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm">
                         <tr><th style="width:140px">ID</th><td>#<?= $r['id'] ?? '' ?></td></tr>
                         <tr><th>Legal Name</th><td><strong><?= htmlspecialchars($r['legal_name'] ?? '—') ?></strong></td></tr>
                         <tr><th>PAN</th><td><code><?= htmlspecialchars($r['pan_number'] ?? '—') ?></code></td></tr>
@@ -33,19 +33,19 @@ unset($_SESSION['kyc_verify_results']);
                         <?php if (!empty($r['verified_at'])): ?>
                         <tr><th>Verified At</th><td><?= date('M j, Y H:i', strtotime($r['verified_at'])) ?></td></tr>
                         <?php endif; ?>
-                    </table>
+                    </table></div>
                 </div>
             </div>
 
             <div class="card shadow-sm mb-4">
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-user me-2"></i>User Info</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm">
                         <tr><th style="width:140px">Name</th><td><?= htmlspecialchars($r['user_name'] ?? '') ?></td></tr>
                         <tr><th>Email</th><td><?= htmlspecialchars($r['user_email'] ?? '') ?></td></tr>
                         <tr><th>Phone</th><td><?= htmlspecialchars($r['user_phone'] ?? '') ?></td></tr>
                         <tr><th>User ID</th><td><?= (int)($r['user_id'] ?? 0) ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

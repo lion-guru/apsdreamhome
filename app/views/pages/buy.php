@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="py-5 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
     <div class="container text-center py-5">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-search me-3"></i><?= __('buy_hero_title') ?></h1>
         <p class="lead"><?= __('buy_hero_desc') ?></p>
@@ -89,7 +89,7 @@
 </section>
 
 <!-- CTA -->
-<section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
     <div class="container">
         <h3><?= __('buy_sell_cta_title') ?></h3>
         <p class="mb-4"><?= __('buy_sell_cta_desc') ?></p>

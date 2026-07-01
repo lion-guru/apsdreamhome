@@ -65,7 +65,7 @@ $distAt      = $pool['distributed_at'] ?? null;
                         <h6 class="m-0">Pool Status</h6>
                     </div>
                     <div class="aps-cp-card-body">
-                        <table class="table table-sm mb-0">
+                        <div class="table-responsive"><table class="table table-sm mb-0">
                             <tbody>
                                 <tr><td class="text-muted">Month</td><td class="fw-bold"><?= htmlspecialchars($monthYear) ?></td></tr>
                                 <tr><td class="text-muted">Total Contributed</td><td class="fw-bold">&#8377;<?= number_format($contribTotal, 2) ?></td></tr>
@@ -84,7 +84,7 @@ $distAt      = $pool['distributed_at'] ?? null;
                                 <tr><td class="text-muted">Qualification Threshold</td><td>&#8377;50,00,000 (₹50 Lakhs GBV)</td></tr>
                                 <tr><td class="text-muted">Distribution Method</td><td>Equal split among qualifying Site Managers</td></tr>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

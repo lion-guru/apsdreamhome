@@ -197,7 +197,7 @@ $nextStatuses = [
                     <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Generated Documents (<?= count($documents) ?>)</h5>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-hover table-striped mb-0">
+                    <div class="table-responsive"><table class="table table-hover table-striped mb-0">
                         <thead>
                             <tr><th>Doc #</th><th>Type</th><th>Generated</th><th class="text-center">Actions</th></tr>
                         </thead>
@@ -217,7 +217,7 @@ $nextStatuses = [
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         <?php endif; ?>

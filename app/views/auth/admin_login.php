@@ -33,7 +33,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e293b 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -91,7 +91,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
         .brand-icon {
             width: 64px;
             height: 64px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, #6366f1, #14b8a6);
             border-radius: 16px;
             display: inline-flex;
             align-items: center;
@@ -245,7 +245,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
             font-size: 0.95rem;
             font-weight: 700;
             color: #fff;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+            background: linear-gradient(135deg, #6366f1 0%, #14b8a6 50%, #5eead4 100%);
             border: none;
             border-radius: 12px;
             cursor: pointer;
@@ -386,7 +386,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
 
             <!-- Google Login Button -->
             <div style="margin-top: 1.5rem; text-align: center; color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-bottom: 1rem; position: relative;">
-                <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 0 1rem; position: relative; z-index: 1;"><?php echo __('auth_or_continue_with', 'or continue with'); ?></span>
+                <span style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); padding: 0 1rem; position: relative; z-index: 1;"><?php echo __('auth_or_continue_with', 'or continue with'); ?></span>
                 <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.2); z-index: 0;"></div>
             </div>
             <a href="<?php echo BASE_URL; ?>/auth/google" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; height: 50px; border: 2px solid rgba(255,255,255,0.3); border-radius: 12px; background: rgba(255,255,255,0.1); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; margin-bottom: 1.5rem;">

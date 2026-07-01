@@ -599,9 +599,12 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     <style>
     /* Premium Header Styling */
     .premium-header {
-        background: #ffffff;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-        transition: background 0.3s ease, box-shadow 0.3s ease;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
     }
 
     .premium-header::after {
@@ -612,40 +615,34 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
         left: 0;
         width: 100%;
         height: 3px;
-        background: linear-gradient(90deg, #4f46e5, #7c3aed, #a855f7, #4f46e5);
+        background: linear-gradient(90deg, #0d9488, #0f766e, #10b981, #0d9488);
         background-size: 300% 100%;
         animation: gradientSlide 4s ease infinite;
         pointer-events: none;
     }
 
     @keyframes gradientSlide {
-        0% {
-            background-position: 0% 50%;
-        }
-
-        50% {
-            background-position: 100% 50%;
-        }
-
-        100% {
-            background-position: 0% 50%;
-        }
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
     .premium-header.header-scrolled {
-        background: rgba(255, 255, 255, 0.97);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.12);
     }
 
     /* Desktop nav links */
     .premium-header .navbar-nav .nav-link {
-        font-weight: 500;
-        font-size: 14px;
+        font-weight: 600;
+        font-size: 13.5px;
         padding: 24px 12px !important;
         color: #1e293b;
         position: relative;
         transition: color 0.2s;
+        letter-spacing: 0.2px;
     }
 
     .premium-header .navbar-nav .nav-link::after {
@@ -655,7 +652,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
         left: 50%;
         width: 0;
         height: 2px;
-        background: linear-gradient(90deg, #4f46e5, #7c3aed);
+        background: linear-gradient(90deg, #0d9488, #0f766e);
         transition: all 0.3s ease;
         transform: translateX(-50%);
         border-radius: 2px;
@@ -667,11 +664,11 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     }
 
     .premium-header .navbar-nav .nav-link:hover {
-        color: #4f46e5;
+        color: #0d9488;
     }
 
     .premium-header .navbar-nav .nav-link.active {
-        color: #4f46e5;
+        color: #0d9488;
     }
 
     /* Premium dropdown menus */
@@ -696,14 +693,14 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     }
 
     .premium-header .dropdown-menu .dropdown-item:hover {
-        background: #f1f5f9;
-        color: #4f46e5;
+        background: #f0fdfa;
+        color: #0d9488;
         transform: translateX(4px);
     }
 
     .premium-header .dropdown-menu .dropdown-item i {
         width: 20px;
-        color: #4f46e5;
+        color: #0d9488;
     }
 
     .premium-header .dropdown-menu .dropdown-header {
@@ -790,7 +787,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
         font-family: 'Font Awesome 6 Free';
         font-weight: 900;
         font-size: 1.3rem;
-        color: #4f46e5;
+        color: #0d9488;
     }
 
     .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
@@ -830,7 +827,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
             top: 0;
             left: 0;
             width: 85%;
-            max-width: 320px;
+            max-width: 350px;
             height: 100vh;
             background: #fff;
             z-index: 9998;
@@ -850,16 +847,19 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
             margin-left: 0 !important;
             flex-direction: column;
             width: 100%;
+            align-items: flex-start;
         }
 
         .premium-header .navbar-nav .nav-item {
             width: 100%;
+            margin-bottom: 4px;
         }
 
         .premium-header .navbar-nav .nav-link {
-            padding: 12px 10px !important;
+            padding: 14px 12px !important;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 15px;
+            justify-content: flex-start;
         }
 
         .premium-header .navbar-nav .nav-link::after {
@@ -917,7 +917,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
             display: block;
             font-weight: 700;
             font-size: 18px;
-            color: #4f46e5;
+            color: #0d9488;
             padding: 12px 0 16px;
             margin-bottom: 8px;
             border-bottom: 1px solid #e2e8f0;
@@ -990,7 +990,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     }
 
     .quick-search-result i {
-        color: #4f46e5;
+        color: #0d9488;
         width: 18px;
     }
 
@@ -1003,8 +1003,8 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     .quick-search-result .type-tag {
         font-size: 10px;
         text-transform: uppercase;
-        background: #e0e7ff;
-        color: #4f46e5;
+        background: #ccfbf1;
+        color: #0d9488;
         padding: 2px 6px;
         border-radius: 4px;
     }

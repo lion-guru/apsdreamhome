@@ -247,7 +247,7 @@ class CampaignDeliveryService
         <html>
         <body style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;'>
             <div style='background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);'>
-                <h2 style='color: #667eea; text-align: center; margin-bottom: 30px;'>APS Dream Home</h2>
+                <h2 style='color: #0d9488; text-align: center; margin-bottom: 30px;'>APS Dream Home</h2>
                 <h3 style='color: #333;'>{$campaign['name']}</h3>
                 <p style='font-size: 16px; color: #666; line-height: 1.6;'>{$campaign['description']}</p>";
         
@@ -258,7 +258,7 @@ class CampaignDeliveryService
         $template .= "
                 <div style='text-align: center; margin-top: 30px;'>
                     <a href='{$baseUrl}/campaigns/{$campaign['campaign_id']}' 
-                       style='background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;'>
+                       style='background-color: #0d9488; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;'>
                         Learn More
                     </a>
                 </div>

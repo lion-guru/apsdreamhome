@@ -47,13 +47,13 @@ class RankService
             'label' => 'Sr. Associate',
             'min' => 1000000,
             'reward' => 'Tablet',
-            'color' => '#6c5ce7'
+            'color' => '#0f766e'
         ],
         [
             'label' => 'Associate',
             'min' => 0,
             'reward' => 'Mobile',
-            'color' => '#a29bfe'
+            'color' => '#14b8a6'
         ],
     ];
 

@@ -34,7 +34,7 @@
 
     <div class="aps-cp-card">
         <div class="aps-cp-card-body p-0">
-            <table class="table table-hover align-middle mb-0">
+            <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr><th><?php echo __('finance_date'); ?></th><th><?php echo __('finance_voucher'); ?></th><th><?php echo __('finance_type'); ?></th><th><?php echo __('finance_party'); ?></th><th><?php echo __('finance_mode'); ?></th><th><?php echo __('finance_narration'); ?></th><th class="text-end"><?php echo __('finance_amount'); ?></th></tr>
                 </thead>
@@ -53,7 +53,7 @@
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

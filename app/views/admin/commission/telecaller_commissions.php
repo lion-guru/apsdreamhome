@@ -11,7 +11,7 @@
 
     <div class="card aps-cp-card">
         <div class="card-body p-0">
-            <table class="table table-striped mb-0">
+            <div class="table-responsive"><table class="table table-striped mb-0">
                 <thead><tr><th>#</th><th>Telecaller</th><th>Lead</th><th>Rule</th><th>Type</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
                 <tbody>
                     <?php foreach ($commissions ?? [] as $c): ?>
@@ -39,7 +39,7 @@
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

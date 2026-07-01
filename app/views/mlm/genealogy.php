@@ -6,7 +6,7 @@
     <title>My Network | APS Dream Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -99,17 +99,17 @@
         }
         
         .node circle {
-            fill: #4f46e5;
+            fill: #0d9488;
             stroke: #fff;
             stroke-width: 3px;
             cursor: pointer;
             transition: all 0.3s;
         }
         .node circle:hover {
-            fill: #7c3aed;
+            fill: #0f766e;
             stroke: #fbbf24;
             stroke-width: 4px;
-            filter: drop-shadow(0 0 10px rgba(124,58,237,0.6));
+            filter: drop-shadow(0 0 10px rgba(13,148,136,0.6));
         }
         .node circle.root {
             fill: #fbbf24;
@@ -171,7 +171,7 @@
             transform: scale(1.1);
         }
         .control-btn.active {
-            background: #4f46e5;
+            background: #0d9488;
         }
         
         /* Search Box */
@@ -196,7 +196,7 @@
         }
         .search-box:focus {
             outline: none;
-            border-color: #4f46e5;
+            border-color: #0d9488;
             background: rgba(255,255,255,0.15);
         }
         .search-results {
@@ -264,7 +264,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #0d9488, #0f766e);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -329,7 +329,7 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #0d9488, #0f766e);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -524,11 +524,11 @@
                 <span>You (Root)</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: #4f46e5;"></div>
+                <div class="legend-color" style="background: #0d9488;"></div>
                 <span>Direct Referral</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background: #7c3aed;"></div>
+                <div class="legend-color" style="background: #0f766e;"></div>
                 <span>Extended Network</span>
             </div>
         </div>
@@ -744,7 +744,7 @@
             // Update the circle attributes
             nodeUpdate.select('circle')
                 .attr('r', d => d.depth === 0 ? 25 : 18)
-                .style('fill', d => d._children ? '#7c3aed' : (d.depth === 0 ? '#fbbf24' : '#4f46e5'))
+                .style('fill', d => d._children ? '#0f766e' : (d.depth === 0 ? '#fbbf24' : '#0d9488'))
                 .attr('cursor', 'pointer');
             
             // Update text

@@ -23,7 +23,7 @@ $statusBadge = function ($s) {
         </form>
     </div>
     <div class="aps-cp-card-body p-0">
-        <table class="table table-hover m-0">
+        <div class="table-responsive"><table class="table table-hover m-0">
             <thead>
                 <tr>
                     <th>Date</th>
@@ -54,6 +54,6 @@ $statusBadge = function ($s) {
                     </tr>
                 <?php endforeach; endif; ?>
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>

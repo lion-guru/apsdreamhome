@@ -8,7 +8,7 @@ $extraHead = '<style>
 .stat-icon-f.green { background:rgba(22,163,74,0.12); color:#16a34a; }
 .stat-icon-f.blue { background:rgba(37,99,235,0.12); color:#2563eb; }
 .stat-icon-f.orange { background:rgba(234,88,12,0.12); color:#ea580c; }
-.stat-icon-f.purple { background:rgba(124,58,237,0.12); color:#7c3aed; }
+.stat-icon-f.purple { background:rgba(13,148,136,0.12); color:#0f766e; }
 .stat-value-f { font-size:1.6rem; font-weight:700; color:#1e293b; }
 .stat-label-f { font-size:0.85rem; color:#64748b; }
 </style>';

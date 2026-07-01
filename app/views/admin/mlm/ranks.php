@@ -51,7 +51,7 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
                     <?php $highestRank = '-'; $maxOrder = 0; foreach ($benefits as $b) { if (($rankCounts[strtolower($b['rank_name'])] ?? 0) > 0 && $b['rank_order'] > $maxOrder) { $maxOrder = $b['rank_order']; $highestRank = ucfirst($b['rank_name']); } } ?>
-                    <div style="font-size:1.4rem;font-weight:700;color:#7c3aed;"><i class="fas fa-crown me-1"></i><?= htmlspecialchars($highestRank) ?></div>
+                    <div style="font-size:1.4rem;font-weight:700;color:#0f766e;"><i class="fas fa-crown me-1"></i><?= htmlspecialchars($highestRank) ?></div>
                     <div class="text-muted small">Highest Rank Achieved</div>
                 </div>
             </div>

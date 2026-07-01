@@ -241,7 +241,7 @@ $active_page = 'login';
 <style>
     .universal-login-section {
         min-height: 100vh;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
         padding: 2rem 0;
         display: flex;
         align-items: center;
@@ -257,7 +257,7 @@ $active_page = 'login';
     }
 
     .login-header {
-        background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%);
+        background: linear-gradient(135deg, #0f766e 0%, #f093fb 100%);
         color: white;
         padding: 2rem;
         text-align: center;
@@ -332,7 +332,7 @@ $active_page = 'login';
     }
 
     .quick-link:hover {
-        color: #764ba2;
+        color: #0f766e;
         background: rgba(118, 75, 162, 0.1);
         text-decoration: none;
     }

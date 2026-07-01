@@ -59,7 +59,7 @@ class CustomerAuthController extends BaseController
 
         try {
             $db = Database::getInstance();
-            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND status = 'active' LIMIT 1", [$email, $email]);
+            $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND status = 'active' AND registration_status = 'approved' LIMIT 1", [$email, $email]);
 
             if ($user && password_verify($password, $user['password'])) {
                 // Check 2FA: re-query the focused columns so we don't rely on
@@ -220,15 +220,17 @@ class CustomerAuthController extends BaseController
             $hashed = password_hash($password, PASSWORD_DEFAULT);
 
             $db->insert('users', [
-                'customer_id' => $customer_id,
+                'customer_id' => $customerId,
                 'name' => $name,
                 'email' => $email,
                 'phone' => $phone,
-                'password' => $hashed,
-                'referral_code' => $referral_code,
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'referral_code' => $referralCode,
                 'referred_by' => $referrer_id,
                 'role' => 'customer',
                 'status' => 'active',
+                'registration_status' => 'approved',
+                'approved_at' => date('Y-m-d H:i:s'),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);

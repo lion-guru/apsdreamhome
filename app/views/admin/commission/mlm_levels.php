@@ -28,7 +28,7 @@
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Levels (Plan <?= ($levels[0]['plan_id'] ?? '?') ?>)</div>
                 <div class="card-body p-0">
-                    <table class="table table-striped mb-0">
+                    <div class="table-responsive"><table class="table table-striped mb-0">
                         <thead><tr><th>Plan</th><th>Level</th><th>Name</th><th>Rate %</th><th>Min Assoc</th><th>Direct %</th><th>Min Biz</th><th>Action</th></tr></thead>
                         <tbody>
                             <?php foreach ($levels ?? [] as $l): ?>
@@ -44,7 +44,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

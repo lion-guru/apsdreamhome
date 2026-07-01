@@ -1,5 +1,5 @@
-<?php $this->layout = 'layouts/base'; ?>
-<?php $this->title = 'Transaction History - APS Dream Home'; ?>
+
+<?php $page_title = $page_title ?? 'Transaction History - APS Dream Home'; ?>
 
 <style>
 .transaction-card {
@@ -116,9 +116,9 @@
 
 .filter-btn:hover,
 .filter-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
-    border-color: #667eea;
+    border-color: #0d9488;
 }
 
 .pagination {
@@ -140,7 +140,7 @@
 
 .pagination a:hover,
 .pagination .active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
 }
 
@@ -169,7 +169,7 @@
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-history me-2 text-primary"></i>Transaction History</h2>
-        <a href="/wallet" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
+        <a href="<?php echo BASE_URL; ?>/<?= ($_SESSION['role'] ?? '') === 'associate' ? 'associate/wallet' : 'wallet' ?>" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
     </div>
 
     <!-- Filters -->

@@ -443,9 +443,9 @@ class EmailService
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .header { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
         .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-        .button { display: inline-block; background: #4f46e5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+        .button { display: inline-block; background: #0d9488; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
         .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
     </style>
 </head>
@@ -497,9 +497,9 @@ HTML;
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
         .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-        .referral-box { background: #4f46e5; color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0; }
+        .referral-box { background: #0d9488; color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0; }
         .referral-code { font-size: 24px; font-weight: bold; letter-spacing: 2px; }
-        .button { display: inline-block; background: #4f46e5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 10px; }
+        .button { display: inline-block; background: #0d9488; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 10px; }
     </style>
 </head>
 <body>
@@ -558,7 +558,7 @@ HTML;
         .details { background: white; padding: 20px; border-radius: 10px; margin: 20px 0; }
         .details table { width: 100%; }
         .details td { padding: 10px; border-bottom: 1px solid #e5e7eb; }
-        .button { display: inline-block; background: #4f46e5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; }
+        .button { display: inline-block; background: #0d9488; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -610,7 +610,7 @@ HTML;
         .header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
         .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
         .approved-box { background: #fef3c7; border: 2px solid #f59e0b; padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center; }
-        .button { display: inline-block; background: #4f46e5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; }
+        .button { display: inline-block; background: #0d9488; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -656,9 +656,9 @@ HTML;
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .header { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
         .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-        .commission-box { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; margin: 20px 0; }
+        .commission-box { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; margin: 20px 0; }
         .amount { font-size: 36px; font-weight: bold; }
-        .button { display: inline-block; background: #4f46e5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 10px; }
+        .button { display: inline-block; background: #0d9488; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 10px; }
     </style>
 </head>
 <body>
@@ -701,9 +701,9 @@ HTML;
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #4f46e5; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .header { background: #0d9488; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
         .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-        .button { display: inline-block; background: #4f46e5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+        .button { display: inline-block; background: #0d9488; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
         .warning { background: #fef3c7; padding: 15px; border-radius: 5px; margin: 20px 0; }
     </style>
 </head>
@@ -742,7 +742,7 @@ HTML;
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; text-align: center; }
-        .otp-box { background: #4f46e5; color: white; padding: 40px; border-radius: 10px; margin: 30px 0; }
+        .otp-box { background: #0d9488; color: white; padding: 40px; border-radius: 10px; margin: 30px 0; }
         .otp-code { font-size: 48px; font-weight: bold; letter-spacing: 10px; }
     </style>
 </head>
@@ -774,12 +774,12 @@ HTML;
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .header { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
         .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
         .stats { display: flex; justify-content: space-around; margin: 30px 0; }
         .stat-box { text-align: center; padding: 20px; background: white; border-radius: 10px; min-width: 120px; }
-        .stat-number { font-size: 32px; font-weight: bold; color: #4f46e5; }
-        .button { display: inline-block; background: #4f46e5; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; }
+        .stat-number { font-size: 32px; font-weight: bold; color: #0d9488; }
+        .button { display: inline-block; background: #0d9488; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; }
     </style>
 </head>
 <body>

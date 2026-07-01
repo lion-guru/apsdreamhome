@@ -171,7 +171,7 @@ class RealtimeAnalyticsController extends AdminController
                  FROM daily_cash_book
                  ORDER BY created_at DESC LIMIT 5"
             ) ?: [];
-            foreach ($payments as &$p) { $p['icon'] = 'fa-rupee-sign'; $p['color'] = '#8b5cf6'; }
+            foreach ($payments as &$p) { $p['icon'] = 'fa-rupee-sign'; $p['color'] = '#14b8a6'; }
             $activities = array_merge($activities, $payments);
         } catch (\Exception $e) {}
 

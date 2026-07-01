@@ -1,5 +1,11 @@
-<?php $this->layout = 'layouts/base'; ?>
-<?php $this->title = 'Bank Accounts - APS Dream Home'; ?>
+
+<?php
+$page_title = $page_title ?? 'Bank Accounts - APS Dream Home';
+$isAssociate = (($_SESSION['role'] ?? '') === 'associate');
+$bankBase = $isAssociate ? '/associate' : '';
+$bankListUrl = $isAssociate ? '/associate/bank-details' : '/wallet/bank-accounts';
+$bankAddUrl = '/wallet/bank-accounts/add';
+?>
 
 <style>
 .bank-card {
@@ -8,7 +14,7 @@
     padding: 25px;
     margin-bottom: 20px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #0d9488;
     position: relative;
 }
 
@@ -20,7 +26,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     display: flex;
     align-items: center;
@@ -55,7 +61,7 @@
 }
 
 .btn-add-bank {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     border: none;
     padding: 15px 30px;
     border-radius: 25px;
@@ -83,14 +89,34 @@
     background: #218838;
 }
 
+.btn-edit-bank {
+    background: #0d6efd;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.btn-edit-bank:hover {
+    background: #0b5ed7;
+    color: white;
+}
+
 .btn-delete {
     background: #dc3545;
     border: none;
     padding: 8px 20px;
-    border-radius: 15px;
+    border-radius: 20px;
     color: white;
-    font-weight: 600;
+    font-size: 0.85rem;
     transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+    color: white;
 }
 
 .btn-delete:hover {
@@ -98,7 +124,7 @@
 }
 
 .form-control:focus {
-    border-color: #667eea;
+    border-color: #0d9488;
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 
@@ -137,7 +163,7 @@
 }
 
 .info-box i {
-    color: #667eea;
+    color: #0d9488;
     margin-right: 10px;
 }
 </style>
@@ -146,7 +172,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-university me-2 text-primary"></i>Bank Accounts</h2>
         <div>
-            <a href="/wallet" class="btn btn-outline-primary me-2"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
+            <a href="<?php echo BASE_URL; ?>/<?= $isAssociate ? 'associate/wallet' : 'wallet' ?>" class="btn btn-outline-primary me-2"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
             <button class="btn btn-add-bank" onclick="showAddBankModal()">
                 <i class="fas fa-plus me-2"></i>Add Bank Account
             </button>
@@ -162,37 +188,37 @@
     <!-- Bank Accounts List -->
     <?php if (!empty($bankAccounts)): ?>
         <?php foreach ($bankAccounts as $account): ?>
-            <div class="bank-card <?php echo $account['is_primary'] ? 'primary' : ''; ?>">
+            <div class="bank-card <?php echo !empty($account['is_primary']) ? 'primary' : ''; ?>">
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="d-flex align-items-center">
                         <div class="bank-icon">
                             <i class="fas fa-university"></i>
                         </div>
                         <div>
-                            <h4 class="mb-2"><?php echo htmlspecialchars($account['bank_name']); ?></h4>
+                            <h4 class="mb-2"><?php echo htmlspecialchars($account['bank_name'] ?? ''); ?></h4>
                             <p class="mb-1">
-                                <strong>Account Holder:</strong> <?php echo htmlspecialchars($account['account_holder']); ?>
+                                <strong>Account Holder:</strong> <?php echo htmlspecialchars($account['account_holder_name'] ?? ''); ?>
                             </p>
                             <p class="mb-1">
                                 <strong>Account Number:</strong> 
-                                <span class="account-number">XXXXXX<?php echo substr($account['account_number'], -4); ?></span>
+                                <span class="account-number">XXXXXX<?php echo substr($account['account_number'] ?? '', -4); ?></span>
                             </p>
                             <p class="mb-1">
-                                <strong>IFSC Code:</strong> <?php echo htmlspecialchars($account['ifsc_code']); ?>
+                                <strong>IFSC Code:</strong> <?php echo htmlspecialchars($account['ifsc_code'] ?? ''); ?>
                             </p>
-                            <?php if ($account['branch_name']): ?>
+                            <?php if (!empty($account['branch_name'])): ?>
                                 <p class="mb-1">
-                                    <strong>Branch:</strong> <?php echo htmlspecialchars($account['branch_name']); ?>
+                                    <strong>Branch:</strong> <?php echo htmlspecialchars($account['branch_name'] ?? ''); ?>
                                 </p>
                             <?php endif; ?>
                             <p class="mb-0">
-                                <strong>Account Type:</strong> <?php echo ucfirst($account['account_type']); ?>
+                                <strong>Account Type:</strong> <?php echo ucfirst($account['account_type'] ?? ''); ?>
                             </p>
                             <div class="mt-2">
-                                <?php if ($account['is_primary']): ?>
+                                <?php if (!empty($account['is_primary'])): ?>
                                     <span class="primary-badge"><i class="fas fa-star me-1"></i>Primary</span>
                                 <?php endif; ?>
-                                <?php if ($account['is_verified']): ?>
+                                <?php if (!empty($account['is_verified'])): ?>
                                     <span class="verified-badge"><i class="fas fa-check me-1"></i>Verified</span>
                                 <?php else: ?>
                                     <span class="badge bg-warning text-dark">Not Verified</span>
@@ -201,7 +227,10 @@
                         </div>
                     </div>
                     <div class="text-end">
-                        <?php if (!$account['is_primary']): ?>
+                        <button class="btn btn-edit-bank mb-2" onclick="editBank(<?= $account['id'] ?>, <?= json_encode($account) ?>)">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </button>
+                        <?php if (empty($account['is_primary'])): ?>
                             <button class="btn btn-set-primary mb-2" onclick="setPrimary(<?php echo $account['id']; ?>)">
                                 <i class="fas fa-star me-1"></i>Set Primary
                             </button>
@@ -291,6 +320,68 @@
     </div>
 </div>
 
+<!-- Edit Bank Account Modal -->
+<div class="bank-modal" id="editBankModal">
+    <div class="bank-modal-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0"><i class="fas fa-edit me-2 text-primary"></i>Edit Bank Account</h4>
+            <button type="button" class="btn-close" onclick="hideEditBankModal()"></button>
+        </div>
+        
+        <div class="alert alert-warning d-flex align-items-center mb-3">
+            <i class="fas fa-shield-alt me-2"></i>
+            <small>Bank detail changes require verification. Changes will be reviewed by admin.</small>
+        </div>
+        
+        <form id="editBankForm">
+            <input type="hidden" id="editBankId" name="bank_id">
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">Bank Name *</label>
+                <input type="text" class="form-control" id="editBankName" name="bank_name" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">Account Number *</label>
+                <input type="text" class="form-control" id="editAccountNumber" name="account_number" required pattern="[0-9]{9,18}">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">Confirm Account Number *</label>
+                <input type="text" class="form-control" id="editConfirmAccountNumber" required pattern="[0-9]{9,18}">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">Account Holder Name *</label>
+                <input type="text" class="form-control" id="editAccountHolder" name="account_holder" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">IFSC Code *</label>
+                <input type="text" class="form-control" id="editIfscCode" name="ifsc_code" required pattern="[A-Z]{4}[0-9]{7}" style="text-transform: uppercase;">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">Branch Name</label>
+                <input type="text" class="form-control" id="editBranchName" name="branch_name">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">Account Type</label>
+                <select class="form-select" id="editAccountType" name="account_type">
+                    <option value="savings">Savings</option>
+                    <option value="current">Current</option>
+                    <option value="salary">Salary</option>
+                </select>
+            </div>
+            
+            <button type="button" class="btn btn-primary w-100" onclick="updateBankAccount()">
+                <i class="fas fa-save me-2"></i>Update Bank Account
+            </button>
+        </form>
+    </div>
+</div>
+
 <script>
 function showAddBankModal() {
     document.getElementById('addBankModal').classList.add('show');
@@ -336,7 +427,7 @@ function addBankAccount() {
     formData.append('account_type', accountType);
     formData.append('is_primary', isPrimary);
     
-    fetch('/wallet/bank-accounts/add', {
+    fetch('<?= $bankAddUrl ?>', {
         method: 'POST',
         body: formData
     })
@@ -344,7 +435,7 @@ function addBankAccount() {
     .then(data => {
         if (data.success) {
             alert('Bank account added successfully!');
-            window.location.href = '/wallet/bank-accounts';
+            window.location.href = '<?= $bankListUrl ?>';
         } else {
             alert('Failed to add bank account: ' + data.message);
         }
@@ -355,11 +446,84 @@ function addBankAccount() {
 }
 
 function setPrimary(bankAccountId) {
-    showToast('Set primary account feature coming soon', 'info');
+    if (!confirm('Set this as your primary bank account?')) return;
+    var fd = new FormData();
+    fd.append('account_id', bankAccountId);
+    fetch('<?= $bankAddUrl ?>/../set-primary', { method: 'POST', body: fd })
+        .then(r => r.json()).then(d => { if (d.success) { window.location.reload(); } else { alert(d.message); } });
 }
 
 function deleteBank(bankAccountId) {
-    showToast('Delete bank account feature coming soon', 'info');
+    if (!confirm('Delete this bank account? This cannot be undone.')) return;
+    var fd = new FormData();
+    fd.append('account_id', bankAccountId);
+    fetch('<?= $bankAddUrl ?>/../delete', { method: 'POST', body: fd })
+        .then(r => r.json()).then(d => { if (d.success) { window.location.reload(); } else { alert(d.message); } });
+}
+
+function editBank(id, data) {
+    document.getElementById('editBankId').value = id;
+    document.getElementById('editBankName').value = data.bank_name || '';
+    document.getElementById('editAccountNumber').value = data.account_number || '';
+    document.getElementById('editConfirmAccountNumber').value = data.account_number || '';
+    document.getElementById('editAccountHolder').value = data.account_holder_name || data.account_holder || '';
+    document.getElementById('editIfscCode').value = data.ifsc_code || '';
+    document.getElementById('editBranchName').value = data.branch_name || '';
+    document.getElementById('editAccountType').value = data.account_type || 'savings';
+    document.getElementById('editBankModal').classList.add('show');
+}
+
+function hideEditBankModal() {
+    document.getElementById('editBankModal').classList.remove('show');
+}
+
+function updateBankAccount() {
+    const bankId = document.getElementById('editBankId').value;
+    const bankName = document.getElementById('editBankName').value;
+    const accountNumber = document.getElementById('editAccountNumber').value;
+    const confirmAccountNumber = document.getElementById('editConfirmAccountNumber').value;
+    const accountHolder = document.getElementById('editAccountHolder').value;
+    const ifscCode = document.getElementById('editIfscCode').value;
+    const branchName = document.getElementById('editBranchName').value;
+    const accountType = document.getElementById('editAccountType').value;
+    
+    if (!bankName || !accountNumber || !confirmAccountNumber || !accountHolder || !ifscCode) {
+        alert('Please fill all required fields');
+        return;
+    }
+    
+    if (accountNumber !== confirmAccountNumber) {
+        alert('Account numbers do not match');
+        return;
+    }
+    
+    if (!confirm('Update bank account? This change will be reviewed by admin.')) return;
+    
+    const formData = new FormData();
+    formData.append('bank_id', bankId);
+    formData.append('bank_name', bankName);
+    formData.append('account_number', accountNumber);
+    formData.append('account_holder', accountHolder);
+    formData.append('ifsc_code', ifscCode);
+    formData.append('branch_name', branchName);
+    formData.append('account_type', accountType);
+    
+    fetch('<?= BASE_URL ?>/wallet/bank-accounts/update', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Bank account updated successfully!');
+            window.location.reload();
+        } else {
+            alert('Failed: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+    });
 }
 
 // Close modal when clicking outside

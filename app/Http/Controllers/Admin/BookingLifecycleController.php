@@ -44,7 +44,7 @@ class BookingLifecycleController extends AdminController
                 $this->db = $this->db->getPdo();
             }
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] __construct() db exception: " . $e->getMessage());
 
             $this->db = null;
         }
@@ -53,7 +53,7 @@ class BookingLifecycleController extends AdminController
                 $this->db instanceof \PDO ? $this->db : null
             );
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] __construct() service exception: " . $e->getMessage());
 
             $this->service = new BookingLifecycleService();
         }
@@ -245,7 +245,7 @@ class BookingLifecycleController extends AdminController
             ]);
             $this->setFlash('success', 'Booking updated');
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $this->setFlash('error', 'Update failed: ' . $e->getMessage());
         }
@@ -360,7 +360,7 @@ class BookingLifecycleController extends AdminController
             $row->execute([$installmentId]);
             $letter = $row->fetch(\PDO::FETCH_ASSOC) ?: null;
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
 }
         $this->render('admin/sales/demand-letter', [
             'page_title'   => 'Demand Letter',
@@ -446,6 +446,148 @@ class BookingLifecycleController extends AdminController
     }
 
     /* =========================================================
+     *  Booking Approval (associate-submitted bookings)
+     * ========================================================= */
+
+    public function approvalList()
+    {
+        $this->requireAdmin();
+        $status = $_GET['status'] ?? 'pending';
+        $search = $_GET['search'] ?? '';
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 20;
+
+        try {
+            $where = "WHERE pb.created_by IS NOT NULL";
+            $params = [];
+
+            if ($status === 'pending') {
+                $where .= " AND (pb.approval_status IS NULL OR pb.approval_status = 'pending')";
+            } elseif ($status !== 'all') {
+                $where .= " AND pb.approval_status = ?";
+                $params[] = $status;
+            }
+
+            if ($search) {
+                $where .= " AND (pb.booking_number LIKE ? OR u.name LIKE ? OR p.plot_code LIKE ?)";
+                $searchParam = "%{$search}%";
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+            }
+
+            $countStmt = $this->db->prepare(
+                "SELECT COUNT(*) FROM plot_bookings pb
+                 LEFT JOIN users u ON u.id = pb.customer_id
+                 LEFT JOIN plots p ON p.id = pb.plot_id
+                 {$where}"
+            );
+            $countStmt->execute($params);
+            $total = (int)$countStmt->fetchColumn();
+            $pages = max(1, ceil($total / $perPage));
+            $offset = ($page - 1) * $perPage;
+
+            $stmt = $this->db->prepare(
+                "SELECT pb.*, u.name AS customer_name, p.plot_code, a.name AS associate_name,
+                        cbu.name AS created_by_name
+                 FROM plot_bookings pb
+                 LEFT JOIN users u ON u.id = pb.customer_id
+                 LEFT JOIN plots p ON p.id = pb.plot_id
+                 LEFT JOIN associates a ON a.id = pb.associate_id
+                 LEFT JOIN users cbu ON cbu.id = pb.created_by
+                 {$where}
+                 ORDER BY pb.id DESC
+                 LIMIT {$perPage} OFFSET {$offset}"
+            );
+            $stmt->execute($params);
+            $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Pending count for badge
+            $pendingStmt = $this->db->query(
+                "SELECT COUNT(*) FROM plot_bookings WHERE approval_status IS NULL OR approval_status = 'pending'"
+            );
+            $pendingCount = (int)$pendingStmt->fetchColumn();
+        } catch (Exception $e) {
+            error_log("[BookingLifecycleController] approvalList() exception: " . $e->getMessage());
+            $bookings = [];
+            $pages = 1;
+            $total = 0;
+            $pendingCount = 0;
+        }
+
+        $this->render('admin/sales/booking-approvals', [
+            'page_title'    => 'Booking Approvals',
+            'page_heading'  => 'Booking Approval Queue',
+            'bookings'      => $bookings,
+            'pagination'    => ['page' => $page, 'pages' => $pages, 'total' => $total],
+            'filters'       => ['status' => $status, 'search' => $search],
+            'pendingCount'  => $pendingCount,
+        ]);
+    }
+
+    public function approveBooking($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $id = (int)$id;
+
+        try {
+            $booking = $this->service->getBookingById($id);
+            if (!$booking) {
+                $this->setFlash('error', 'Booking not found');
+                return $this->redirect('/admin/sales/approvals');
+            }
+
+            $notes = (string)($_POST['approval_notes'] ?? 'Approved by admin');
+            $this->db->prepare(
+                "UPDATE plot_bookings SET approval_status = 'approved', approval_notes = ?, approved_by = ?, approved_at = NOW() WHERE id = ?"
+            )->execute([$notes, $_SESSION['admin_id'] ?? null, $id]);
+
+            // Log status history
+            $this->db->prepare(
+                "INSERT INTO booking_status_history (booking_id, old_status, new_status, changed_by, notes, created_at) VALUES (?, ?, 'approved', ?, ?, NOW())"
+            )->execute([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes]);
+
+            $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' approved');
+        } catch (Exception $e) {
+            error_log("[BookingLifecycleController] approveBooking() exception: " . $e->getMessage());
+            $this->setFlash('error', 'Approval failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/sales/approvals');
+    }
+
+    public function rejectBooking($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $id = (int)$id;
+
+        try {
+            $booking = $this->service->getBookingById($id);
+            if (!$booking) {
+                $this->setFlash('error', 'Booking not found');
+                return $this->redirect('/admin/sales/approvals');
+            }
+
+            $notes = (string)($_POST['rejection_reason'] ?? 'Rejected by admin');
+            $this->db->prepare(
+                "UPDATE plot_bookings SET approval_status = 'rejected', approval_notes = ?, approved_by = ?, approved_at = NOW() WHERE id = ?"
+            )->execute([$notes, $_SESSION['admin_id'] ?? null, $id]);
+
+            // Log status history
+            $this->db->prepare(
+                "INSERT INTO booking_status_history (booking_id, old_status, new_status, changed_by, notes, created_at) VALUES (?, ?, 'rejected', ?, ?, NOW())"
+            )->execute([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes]);
+
+            $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' rejected');
+        } catch (Exception $e) {
+            error_log("[BookingLifecycleController] rejectBooking() exception: " . $e->getMessage());
+            $this->setFlash('error', 'Rejection failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/sales/approvals');
+    }
+
+    /* =========================================================
      *  Commissions
      * ========================================================= */
 
@@ -473,7 +615,7 @@ class BookingLifecycleController extends AdminController
                 }
             }
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
         }
         $this->render('admin/sales/commissions', [
             'page_title'   => 'Commissions',
@@ -510,7 +652,7 @@ class BookingLifecycleController extends AdminController
                 }
             }
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
 }
         $this->render('admin/sales/refunds', [
             'page_title'   => 'Refunds',
@@ -625,7 +767,7 @@ class BookingLifecycleController extends AdminController
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
 
@@ -639,7 +781,7 @@ class BookingLifecycleController extends AdminController
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
 
@@ -653,7 +795,7 @@ class BookingLifecycleController extends AdminController
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
 
@@ -670,7 +812,7 @@ class BookingLifecycleController extends AdminController
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
 
@@ -687,7 +829,7 @@ class BookingLifecycleController extends AdminController
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
         return []; }
     }
 
@@ -699,7 +841,7 @@ class BookingLifecycleController extends AdminController
             $row = $s->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return null; }
     }
 
@@ -714,7 +856,7 @@ class BookingLifecycleController extends AdminController
                     LIMIT 200";
             return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
 
@@ -729,7 +871,7 @@ class BookingLifecycleController extends AdminController
             $s->execute();
             return $s->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
 
@@ -741,7 +883,7 @@ class BookingLifecycleController extends AdminController
                  WHERE status = 'active' ORDER BY name LIMIT 200"
             )->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
 
@@ -756,7 +898,7 @@ class BookingLifecycleController extends AdminController
             $s->execute();
             return $s->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log("[{$className}] {$methodName}() exception: " . $e->getMessage());
+            error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
 
@@ -771,7 +913,7 @@ class BookingLifecycleController extends AdminController
                 return $this->db->query("SELECT id, name FROM colonies ORDER BY name LIMIT 50")
                                 ->fetchAll(\PDO::FETCH_ASSOC);
             } catch (Exception $e2) {
-                error_log("[{$className}] {$methodName}() exception: " . $e2->getMessage());
+                error_log("[BookingLifecycleController] fetchColonies() exception: " . $e2->getMessage());
  return []; }
         }
     }

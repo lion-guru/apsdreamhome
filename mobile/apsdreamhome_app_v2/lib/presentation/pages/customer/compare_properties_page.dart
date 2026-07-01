@@ -196,7 +196,7 @@ class _ComparePropertiesPageState extends ConsumerState<ComparePropertiesPage> {
         ],
       ),
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(color: AppTheme.primaryColor),
             )
           : _error != null

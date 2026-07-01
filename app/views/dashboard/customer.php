@@ -54,7 +54,7 @@ $page_description = $page_description ?? 'Your personalized real estate dashboar
             margin-bottom: 1rem;
         }
 
-        .bg-gradient-blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .bg-gradient-blue { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); }
         .bg-gradient-green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
         .bg-gradient-orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
         .bg-gradient-purple { background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); }

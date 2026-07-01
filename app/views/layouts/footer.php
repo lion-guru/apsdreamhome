@@ -91,7 +91,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                         transition: all 0.3s ease;
                     }
                     .social-icon:hover {
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
                         transform: translateY(-3px);
                     }
                 </style>

@@ -236,7 +236,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     display: flex; align-items: center; justify-content: center;
     font-size: 1.4rem; color: white;
 }
-.stat-icon.blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.stat-icon.blue { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); }
 .stat-icon.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
 .stat-icon.orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
 .stat-value { font-weight: 700; line-height: 1; }

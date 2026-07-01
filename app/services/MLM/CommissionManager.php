@@ -5,7 +5,7 @@
  * Single gateway for all commission operations. Prevents double-counting by:
  *   1. Checking if commissions already exist before calculating
  *   2. Routing to the correct engine based on project type
- *   3. Writing to both mlm_commission_ledger AND booking_commissions atomically
+ *   3. Writing to mlm_commission_ledger (single source of truth)
  *   4. Tracking which engine was used for each booking
  *
  * Engines:
@@ -22,6 +22,7 @@ namespace App\Services\MLM;
 
 use PDO;
 use Exception;
+use App\Services\HybridCommissionEngine;
 
 class CommissionManager
 {
@@ -126,7 +127,6 @@ class CommissionManager
     /**
      * Calculate via HybridCommissionEngine.
      * This engine writes to mlm_commission_ledger internally.
-     * We then add the legacy booking_commissions row.
      */
     private function calculateViaHybrid(int $bookingId): array
     {
@@ -189,8 +189,7 @@ class CommissionManager
                     pb.booking_amount,
                     pb.agreement_value,
                     pb.associate_id,
-                    a.user_id as agent_user_id,
-                    COALESCE(pb.agreement_value, pb.total_plot_value, 0) AS amount
+                    a.user_id as agent_user_id
                 FROM plot_bookings pb
                 LEFT JOIN associates a ON a.id = pb.associate_id
                 WHERE pb.id = ? LIMIT 1
@@ -204,9 +203,23 @@ class CommissionManager
 
             $agentId = (int)($row['agent_user_id'] ?? $row['associate_id'] ?? 0);
 
+            // ── FIX: Use ACTUAL payment received, not full plot value ──
+            $paidStmt = $this->db->prepare("
+                SELECT 
+                    COALESCE((SELECT SUM(paid_amount) FROM booking_payment_schedules WHERE booking_id = ? AND status = 'paid'), 0)
+                    + ? AS total_received
+            ");
+            $paidStmt->execute([$bookingId, (float)$row['booking_amount']]);
+            $amountReceived = (float)$paidStmt->fetchColumn();
+
+            if ($amountReceived <= 0) {
+                return null;
+            }
+
+            // Get the latest paid receipt_id for idempotency
             $receiptStmt = $this->db->prepare("
                 SELECT id FROM booking_payment_schedules 
-                WHERE booking_id = ? ORDER BY id DESC LIMIT 1
+                WHERE booking_id = ? AND status = 'paid' ORDER BY id DESC LIMIT 1
             ");
             $receiptStmt->execute([$bookingId]);
             $receiptRow = $receiptStmt->fetch(PDO::FETCH_ASSOC);
@@ -214,7 +227,7 @@ class CommissionManager
 
             return [
                 'receipt_id' => $receiptId,
-                'amount'     => (float)$row['amount'],
+                'amount'     => $amountReceived,
                 'agent_id'   => $agentId,
             ];
         } catch (Exception $e) {
@@ -226,7 +239,7 @@ class CommissionManager
     /**
      * Calculate via MLMCommissionEngine.
      * This engine also writes to mlm_commission_ledger internally.
-     * We then add the legacy booking_commissions row.
+     * We then add the row to mlm_commission_ledger.
      */
     private function calculateViaMLM(int $bookingId): array
     {
@@ -265,37 +278,11 @@ class CommissionManager
     }
 
     /**
-     * Write legacy backward-compat rows to booking_commissions.
-     * These rows allow legacy dashboard queries to keep working.
+     * Legacy writeLegacyRows removed — mlm_commission_ledger is the single source of truth.
      */
     private function writeLegacyRows(int $bookingId, array $entries): int
     {
-        $count = 0;
-        $ins = $this->db->prepare(
-            "INSERT IGNORE INTO booking_commissions
-             (booking_id, beneficiary_user_id, source_user_id, commission_type, amount, percent, level, status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')"
-        );
-
-        foreach ($entries as $r) {
-            try {
-                $ins->execute([
-                    $bookingId,
-                    $r['beneficiary_user_id'],
-                    $r['source_user_id'],
-                    $r['commission_type'],
-                    $r['amount'],
-                    $r['pct'] ?? 0,
-                    $r['level'] ?? 1,
-                ]);
-                $count++;
-            } catch (Exception $e) {
-                // Non-fatal: booking_commissions is legacy compat
-                error_log('[CommissionManager] legacy insert skip: ' . $e->getMessage());
-            }
-        }
-
-        return $count;
+        return count($entries);
     }
 
     /**
@@ -322,6 +309,7 @@ class CommissionManager
 
     /**
      * Check if commissions already exist for a booking.
+     * Only counts active commissions (not cancelled/clawed_back).
      */
     public function getExistingCommissions(int $bookingId): array
     {
@@ -333,7 +321,7 @@ class CommissionManager
             $stmt = $this->db->prepare("
                 SELECT id, beneficiary_user_id, commission_type, amount, status, created_at
                 FROM mlm_commission_ledger
-                WHERE booking_id = ?
+                WHERE booking_id = ? AND status NOT IN ('cancelled', 'clawed_back')
                 ORDER BY id
             ");
             $stmt->execute([$bookingId]);
@@ -390,12 +378,7 @@ class CommissionManager
                 $reversed++;
             }
 
-            // Update legacy booking_commissions
-            $upd = $this->db->prepare("
-                UPDATE booking_commissions SET status = 'clawed_back'
-                WHERE booking_id = ? AND status IN ('pending', 'approved', 'paid')
-            ");
-            $upd->execute([$bookingId]);
+            // mlm_commission_ledger is the single source of truth — no legacy table to update
 
             return [
                 'success' => true,
@@ -478,15 +461,7 @@ class CommissionManager
                     WHERE id IN ({$placeholders})
                 ")->execute($data['ids']);
 
-                // Update legacy table
-                try {
-                    $this->db->prepare("
-                        UPDATE booking_commissions SET status = 'paid', paid_at = NOW()
-                        WHERE mlm_ledger_id IN ({$placeholders})
-                    ")->execute($data['ids']);
-                } catch (Exception $e) {
-                    // Non-fatal: legacy table
-                }
+                // mlm_commission_ledger is the single source of truth — status already updated above
 
                 $credited += count($data['ids']);
                 $totalCredited += $amount;

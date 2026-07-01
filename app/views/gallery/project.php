@@ -468,7 +468,7 @@ $project_id = $project_id ?? 0;
 .feature-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -479,7 +479,7 @@ $project_id = $project_id ?? 0;
 }
 
 .bg-gradient-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
 }
 
 .map-container {

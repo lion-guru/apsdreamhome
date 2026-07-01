@@ -29,7 +29,7 @@
     </div>
 
     <p style="color: #475569; line-height: 1.6;">You are requested to clear all outstanding dues within <strong>15 days</strong> to avoid cancellation of your booking.</p>
-    <p style="color: #475569; line-height: 1.6;">Contact us: <strong style="color: #4f46e5;">{{company_phone}}</strong> | <strong style="color: #4f46e5;">finance@apsdreamhome.com</strong></p>
+    <p style="color: #475569; line-height: 1.6;">Contact us: <strong style="color: #0d9488;">{{company_phone}}</strong> | <strong style="color: #0d9488;">finance@apsdreamhome.com</strong></p>
 </div>
 <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
     <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>

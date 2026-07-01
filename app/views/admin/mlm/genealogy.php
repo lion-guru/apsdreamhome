@@ -11,7 +11,7 @@ $maxDepth = (int)($stats['max_depth'] ?? 0);
 
 $rankColors = [
     'associate' => '#94a3b8', 'bronze' => '#a16207', 'silver' => '#94a3b8',
-    'gold' => '#ca8a04', 'platinum' => '#0891b2', 'diamond' => '#7c3aed',
+    'gold' => '#ca8a04', 'platinum' => '#0891b2', 'diamond' => '#0f766e',
 ];
 $rankIcons = [
     'associate' => 'fa-user', 'bronze' => 'fa-medal', 'silver' => 'fa-award',
@@ -94,7 +94,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
         <div class="col-md-3 col-6">
             <div class="aps-cp-card">
                 <div class="aps-cp-card-body text-center">
-                    <div style="font-size:1.8rem;font-weight:700;color:#7c3aed;"><?= $maxDepth ?></div>
+                    <div style="font-size:1.8rem;font-weight:700;color:#0f766e;"><?= $maxDepth ?></div>
                     <div class="text-muted small">Generation Depth</div>
                 </div>
             </div>

@@ -99,6 +99,44 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
         </div>
     </div>
 
+    <!-- Pending Approvals Alerts -->
+    <?php $pendingCount = $pendingCount ?? 0; ?>
+    <?php if ($pendingCount > 0): ?>
+    <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+        <i class="fas fa-user-clock me-3 fa-2x"></i>
+        <div class="flex-grow-1">
+            <strong><?php echo $pendingCount; ?> pending registration<?php echo $pendingCount > 1 ? 's' : ''; ?> awaiting approval.</strong>
+            <span class="ms-2">Agent registrations require manual approval before they can login.</span>
+        </div>
+        <a href="<?php echo BASE_URL; ?>/admin/users/pending" class="btn btn-warning btn-sm">
+            <i class="fas fa-eye me-1"></i>Review Now
+        </a>
+    </div>
+    <?php endif; ?>
+
+    <?php
+    $pendingBookings = 0;
+    try {
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+        $stmt = $pdo->query("SELECT COUNT(*) FROM plot_bookings WHERE approval_status IS NULL OR approval_status = 'pending'");
+        $pendingBookings = (int)$stmt->fetchColumn();
+    } catch (\Throwable $e) {}
+    ?>
+    <?php if ($pendingBookings > 0): ?>
+    <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+        <i class="fas fa-clipboard-check me-3 fa-2x"></i>
+        <div class="flex-grow-1">
+            <strong><?php echo $pendingBookings; ?> booking<?php echo $pendingBookings > 1 ? 's' : ''; ?> pending approval.</strong>
+            <span class="ms-2">Associate-submitted bookings need your review before processing.</span>
+        </div>
+        <a href="<?php echo BASE_URL; ?>/admin/sales/approvals" class="btn btn-info btn-sm text-white">
+            <i class="fas fa-eye me-1"></i>Review
+        </a>
+    </div>
+    <?php endif; ?>
+    </div>
+
     <!-- Stats Cards Row 2 -->
     <div class="row g-4 mb-4">
         <div class="col-md-6 col-xl-3">

@@ -96,37 +96,37 @@ $totalAreaSqft = (float)($total_area_sqft ?? 0);
                 <div class="col-md-4">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="plot_sizes[]" value="1200" id="sz1200" checked>
-                    <label class="form-check-label" for="sz1200">1200 sqft <small class="text-muted">(30x40)</small></label>
+                    <label class="form-check-label" for="sz1200">1200 <?= __('cp_sqft') ?> <small class="text-muted">(30x40)</small></label>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="plot_sizes[]" value="1500" id="sz1500" checked>
-                    <label class="form-check-label" for="sz1500">1500 sqft <small class="text-muted">(30x50)</small></label>
+                    <label class="form-check-label" for="sz1500">1500 <?= __('cp_sqft') ?> <small class="text-muted">(30x50)</small></label>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="plot_sizes[]" value="1800" id="sz1800">
-                    <label class="form-check-label" for="sz1800">1800 sqft <small class="text-muted">(30x60)</small></label>
+                    <label class="form-check-label" for="sz1800">1800 <?= __('cp_sqft') ?> <small class="text-muted">(30x60)</small></label>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="plot_sizes[]" value="2000" id="sz2000">
-                    <label class="form-check-label" for="sz2000">2000 sqft <small class="text-muted">(40x50)</small></label>
+                    <label class="form-check-label" for="sz2000">2000 <?= __('cp_sqft') ?> <small class="text-muted">(40x50)</small></label>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="plot_sizes[]" value="2400" id="sz2400">
-                    <label class="form-check-label" for="sz2400">2400 sqft <small class="text-muted">(40x60)</small></label>
+                    <label class="form-check-label" for="sz2400">2400 <?= __('cp_sqft') ?> <small class="text-muted">(40x60)</small></label>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="plot_sizes[]" value="3000" id="sz3000">
-                    <label class="form-check-label" for="sz3000">3000 sqft <small class="text-muted">(50x60)</small></label>
+                    <label class="form-check-label" for="sz3000">3000 <?= __('cp_sqft') ?> <small class="text-muted">(50x60)</small></label>
                   </div>
                 </div>
               </div>
@@ -160,20 +160,20 @@ $totalAreaSqft = (float)($total_area_sqft ?? 0);
           <hr>
           <div class="d-flex justify-content-between mb-2">
             <span class="text-muted"><?= __('cp_park_area') ?> (7%)</span>
-            <strong><?= number_format($totalAreaSqft * 0.07, 0) ?> sqft</strong>
+            <strong><?= number_format($totalAreaSqft * 0.07, 0) ?> <?= __('cp_sqft') ?></strong>
           </div>
           <div class="d-flex justify-content-between mb-2">
             <span class="text-muted"><?= __('cp_amenity_area') ?> (3%)</span>
-            <strong><?= number_format($totalAreaSqft * 0.03, 0) ?> sqft</strong>
+            <strong><?= number_format($totalAreaSqft * 0.03, 0) ?> <?= __('cp_sqft') ?></strong>
           </div>
           <div class="d-flex justify-content-between mb-2">
             <span class="text-muted"><?= __('cp_road_area') ?> (15%)</span>
-            <strong><?= number_format($totalAreaSqft * 0.15, 0) ?> sqft</strong>
+            <strong><?= number_format($totalAreaSqft * 0.15, 0) ?> <?= __('cp_sqft') ?></strong>
           </div>
           <hr>
           <div class="d-flex justify-content-between">
             <span class="text-muted"><?= __('cp_buildable_area') ?></span>
-            <strong class="text-success"><?= number_format($totalAreaSqft * 0.75, 0) ?> sqft</strong>
+            <strong class="text-success"><?= number_format($totalAreaSqft * 0.75, 0) ?> <?= __('cp_sqft') ?></strong>
           </div>
           <div class="d-flex justify-content-between mt-2">
             <span class="text-muted"><?= __('cp_existing_plots') ?></span>
@@ -255,14 +255,14 @@ document.addEventListener('DOMContentLoaded', function() {
             else if (isPark) { bg = '#dcfce7'; border = '#86efac'; color = '#166534'; icon = '<i class="fas fa-tree me-1"></i>'; }
             html += '<div style="flex:0 0 calc(12.5% - 8px);background:' + bg + ';border:1px solid ' + border + ';color:' + color + ';padding:10px;border-radius:10px;text-align:center;font-size:0.75rem;min-height:75px;display:flex;flex-direction:column;justify-content:center;transition:all 0.15s ease;" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
                 '<div style="font-weight:700;margin-bottom:2px;">' + icon + p.plot_no + '</div>' +
-                '<div class="text-muted" style="font-size:0.62rem;font-weight:500;">' + p.area_sqft + ' sqft</div>' +
+                '<div class="text-muted" style="font-size:0.62rem;font-weight:500;">' + p.area_sqft + ' <?= __('cp_sqft') ?></div>' +
                 '<div style="font-size:0.55rem;opacity:0.8;margin-top:2px;">' + p.front + 'x' + p.depth + ' ft</div>' +
                 '</div>';
           });
           html += '</div>';
 
           html += '<h6 class="mb-3 fw-bold text-secondary"><i class="fas fa-list-ul me-1"></i><?= __('cp_plots_inventory') ?></h6>';
-          html += '<div class="table-responsive"><table class="table table-sm table-hover align-middle"><thead><tr><th>#</th><th><?= __('cp_plot_no') ?></th><th><?= __('cp_block') ?></th><th><?= __('cp_area') ?> (sqft)</th><th><?= __('cp_type') ?></th><th><?= __('cp_front_ft') ?></th><th><?= __('cp_depth_ft') ?></th></tr></thead><tbody>';
+          html += '<div class="table-responsive"><table class="table table-sm table-hover align-middle"><thead><tr><th>#</th><th><?= __('cp_plot_no') ?></th><th><?= __('cp_block') ?></th><th><?= __('cp_area') ?> (<?= __('cp_sqft') ?>)</th><th><?= __('cp_type') ?></th><th><?= __('cp_front_ft') ?></th><th><?= __('cp_depth_ft') ?></th></tr></thead><tbody>';
           data.plots.forEach(function(p, i) {
             html += '<tr><td>' + (i+1) + '</td><td><strong>' + p.plot_no + '</strong></td><td>' + p.block_name + '</td><td>' + p.area_sqft + '</td><td>' + p.plot_type + '</td><td>' + p.front + '</td><td>' + p.depth + '</td></tr>';
           });

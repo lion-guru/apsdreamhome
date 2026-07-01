@@ -41,7 +41,7 @@ function statusColor($status) {
       <div class="card shadow-sm h-100">
         <div class="card-header bg-white"><h5 class="mb-0"><i class="fab fa-php me-2"></i>PHP Environment</h5></div>
         <div class="card-body aps-cp-card-body">
-          <table class="table table-sm mb-0">
+          <div class="table-responsive"><table class="table table-sm mb-0">
             <tr><th>Version</th><td><code><?= htmlspecialchars($php['version'] ?? '') ?></code></td></tr>
             <tr><th>OS</th><td><?= htmlspecialchars($php['os'] ?? '') ?></td></tr>
             <tr><th>SAPI</th><td><code><?= htmlspecialchars($php['sapi'] ?? '') ?></code></td></tr>
@@ -49,7 +49,7 @@ function statusColor($status) {
             <tr><th>Memory Limit</th><td><?= htmlspecialchars($php['memory_limit'] ?? '') ?></td></tr>
             <tr><th>Upload Max</th><td><?= htmlspecialchars($php['upload_max_filesize'] ?? '') ?></td></tr>
             <tr><th>POST Max</th><td><?= htmlspecialchars($php['post_max_size'] ?? '') ?></td></tr>
-          </table>
+          </table></div>
           <h6 class="mt-3">Loaded Extensions</h6>
           <div>
             <?php foreach (($php['extensions'] ?? []) as $ext => $loaded): ?>
@@ -64,13 +64,13 @@ function statusColor($status) {
       <div class="card shadow-sm h-100">
         <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-database me-2"></i>Database</h5></div>
         <div class="card-body aps-cp-card-body">
-          <table class="table table-sm mb-0">
+          <div class="table-responsive"><table class="table table-sm mb-0">
             <tr><th>Version</th><td><code><?= htmlspecialchars($db['version'] ?? 'unknown') ?></code></td></tr>
             <tr><th>Total Tables</th><td><strong><?= $db['tables'] ?? 0 ?></strong></td></tr>
             <tr><th>Database Size</th><td><?= $db['size_mb'] ?? 0 ?> MB</td></tr>
             <tr><th>Throughput</th><td><?= $db['queries_per_sec'] ?? 0 ?> queries/sec</td></tr>
             <tr><th>Uptime</th><td><?= $db['uptime_days'] ?? 0 ?> days</td></tr>
-          </table>
+          </table></div>
         </div>
       </div>
     </div>
@@ -86,12 +86,12 @@ function statusColor($status) {
             </div>
           </div>
           <h6>Cache</h6>
-          <table class="table table-sm mb-0">
+          <div class="table-responsive"><table class="table table-sm mb-0">
             <tr><th>Files</th><td><?= $cache['files'] ?? 0 ?></td></tr>
             <tr><th>Size</th><td><?= $cache['size_mb'] ?? 0 ?> MB</td></tr>
             <tr><th>Writable</th><td><span class="badge bg-<?= ($cache['writable'] ?? false) ? 'success' : 'danger' ?>"><?= ($cache['writable'] ?? false) ? 'Yes' : 'No' ?></span></td></tr>
             <tr><th>Path</th><td><code class="small"><?= htmlspecialchars($cache['path'] ?? '') ?></code></td></tr>
-          </table>
+          </table></div>
         </div>
       </div>
     </div>
@@ -100,7 +100,7 @@ function statusColor($status) {
       <div class="card shadow-sm h-100">
         <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Services Loaded</h5></div>
         <div class="card-body p-0">
-          <table class="table table-sm mb-0">
+          <div class="table-responsive"><table class="table table-sm mb-0">
             <thead class="table-light">
               <tr><th>Service</th><th>Status</th><th>Size</th><th>Path</th></tr>
             </thead>
@@ -114,7 +114,7 @@ function statusColor($status) {
                 </tr>
               <?php endforeach; ?>
             </tbody>
-          </table>
+          </table></div>
         </div>
       </div>
     </div>

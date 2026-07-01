@@ -38,8 +38,11 @@
                         <label for="role" class="form-label fw-semibold">Role</label>
                         <select class="form-select" id="role" name="role">
                             <option value="user">User</option>
+                            <option value="customer">Customer</option>
+                            <option value="agent">Agent</option>
+                            <option value="associate">Associate</option>
+                            <option value="manager">Manager</option>
                             <option value="admin">Admin</option>
-                            <option value="employee">Employee</option>
                         </select>
                     </div>
 

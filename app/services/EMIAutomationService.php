@@ -325,10 +325,10 @@ class EMIAutomationService
 
                 $this->logDunning($row, $tier['tier'], 'email', $sent ? 'sent' : 'failed');
 
-                // At 90+ days, mark as defaulted in the booking
+                // At 90+ days, mark as defaulted in the booking (RERA compliance: 'cancelled' hides from regulatory tracking)
                 if ($tier['tier'] === 'overdue_90') {
                     $this->db->prepare(
-                        "UPDATE plot_bookings SET status = 'cancelled', updated_at = NOW()
+                        "UPDATE plot_bookings SET status = 'defaulted', updated_at = NOW()
                          WHERE id = ? AND status = 'emi_active'"
                     )->execute([$row['booking_id']]);
                 }

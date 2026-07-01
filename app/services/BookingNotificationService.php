@@ -324,7 +324,7 @@ class BookingNotificationService
 <html>
 <head><meta charset="utf-8"></head>
 <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f1f5f9;">
-<div style="background: #4f46e5; color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
+<div style="background: #0d9488; color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0;">
     <h1 style="margin: 0; font-size: 24px;">APS Dream Home</h1>
     <p style="margin: 6px 0 0; font-size: 14px; opacity: 0.9;">Booking Confirmation</p>
 </div>
@@ -341,7 +341,7 @@ class BookingNotificationService
         <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Token Paid</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">₹{$tokenAmount}</td></tr>
     </table>
     <p style="color: #475569; line-height: 1.6;">Thank you for choosing APS Dream Home! Our team will contact you shortly for the next steps.</p>
-    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #4f46e5;">+91 92771 21112</strong></p>
+    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #0d9488;">+91 92771 21112</strong></p>
 </div>
 <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
     <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>
@@ -384,7 +384,7 @@ HTML;
         <tr><td style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: bold; color: #334155;">Payment Date</td><td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b;">{$paymentDate}</td></tr>
     </table>
     <p style="color: #475569; line-height: 1.6;">This receipt confirms your payment has been successfully processed.</p>
-    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #4f46e5;">+91 92771 21112</strong></p>
+    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #0d9488;">+91 92771 21112</strong></p>
 </div>
 <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
     <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>
@@ -406,14 +406,14 @@ HTML;
         $statusColors = [
             'token_paid' => '#f59e0b',
             'agreement_signed' => '#3b82f6',
-            'emi_active' => '#8b5cf6',
+            'emi_active' => '#14b8a6',
             'partially_paid' => '#f97316',
             'fully_paid' => '#059669',
             'cancelled' => '#ef4444',
             'transferred' => '#6366f1',
             'registration_done' => '#10b981',
         ];
-        $newColor = $statusColors[$newStatus] ?? '#4f46e5';
+        $newColor = $statusColors[$newStatus] ?? '#0d9488';
 
         return <<<HTML
 <!DOCTYPE html>
@@ -436,7 +436,7 @@ HTML;
         </table>
     </div>
     <p style="color: #475569; line-height: 1.6;">If you have any questions, please contact our support team.</p>
-    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #4f46e5;">+91 92771 21112</strong></p>
+    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #0d9488;">+91 92771 21112</strong></p>
 </div>
 <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
     <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>
@@ -479,7 +479,7 @@ HTML;
         </table>
     </div>
     <p style="color: #475569; line-height: 1.6;">Please make the payment at the earliest to avoid further penalties.</p>
-    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #4f46e5;">+91 92771 21112</strong></p>
+    <p style="color: #475569; line-height: 1.6;">For any queries, call us at <strong style="color: #0d9488;">+91 92771 21112</strong></p>
 </div>
 <div style="background: #1e293b; color: #94a3b8; padding: 16px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
     <p style="margin: 0;">&copy; APS Dream Home. All rights reserved.</p>

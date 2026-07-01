@@ -24,7 +24,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <h4 class="m-0 mb-1"><?= htmlspecialchars(ucfirst((string)$rb['rank_name'])) ?></h4>
                             <small class="text-muted">Tier <?= (int)$rb['rank_order'] ?></small>
                             <hr class="my-2">
-                            <table class="table table-sm m-0">
+                            <div class="table-responsive"><table class="table table-sm m-0">
                                 <tbody>
                                     <tr>
                                         <th>Direct %</th>
@@ -51,7 +51,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                         <td class="text-end"><?= (int)($rb['min_leg_count'] ?? 0) ?></td>
                                     </tr>
                                 </tbody>
-                            </table>
+                            </table></div>
                             <?php if (!empty($benefits)): ?>
                                 <div class="mt-2">
                                     <small class="text-muted">Benefits:</small>

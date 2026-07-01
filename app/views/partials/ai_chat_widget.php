@@ -94,7 +94,7 @@ $user_role = $this->getUserRole() ?? 'customer';
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     border: none;
     color: white;
     font-size: 24px;
@@ -148,7 +148,7 @@ $user_role = $this->getUserRole() ?? 'customer';
 }
 
 .ai-chat-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     padding: 15px;
     display: flex;
@@ -222,7 +222,7 @@ $user_role = $this->getUserRole() ?? 'customer';
 }
 
 .ai-message.ai-welcome {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
     padding: 12px;
     border-radius: 8px;
@@ -279,14 +279,14 @@ $user_role = $this->getUserRole() ?? 'customer';
 }
 
 .ai-chat-input input:focus {
-    border-color: #667eea;
+    border-color: #0d9488;
 }
 
 .ai-send-btn {
     width: 35px;
     height: 35px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     border: none;
     color: white;
     cursor: pointer;
@@ -554,7 +554,7 @@ style.textContent = `
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #667eea;
+    background: #0d9488;
     animation: aiTyping 1.4s infinite;
 }
 

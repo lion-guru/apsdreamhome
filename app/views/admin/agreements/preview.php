@@ -13,7 +13,7 @@
     <style>
         body { font-family: 'Georgia', 'Times New Roman', serif; font-size: 12pt; color: #333; margin: 0; padding: 20px; }
         .header { text-align: center; margin-bottom: 10px; border-bottom: 3px solid #c8a01e; padding-bottom: 10px; }
-        .header .company-name { font-size: 18pt; font-weight: bold; color: #1a237e; }
+        .header .company-name { font-size: 18pt; font-weight: bold; color: #0d9488; }
         .header .company-details { font-size: 9pt; color: #666; margin-top: 3px; }
         .header .doc-title { font-size: 16pt; font-weight: bold; color: #c8a01e; margin-top: 8px; letter-spacing: 2px; }
         .header .doc-meta { font-size: 9pt; color: #666; margin-top: 5px; }
@@ -52,7 +52,7 @@
     </div>
 
     <div class="section-title">PARTY DETAILS</div>
-    <table class="details">
+    <div class="table-responsive"><table class="details">
         <tr>
             <td class="label">Buyer Name:</td>
             <td><?= htmlspecialchars($data['customer_name'] ?? 'N/A') ?></td>
@@ -77,10 +77,10 @@
             <td class="label">Email:</td>
             <td><?= htmlspecialchars($companyEmail) ?></td>
         </tr>
-    </table>
+    </table></div>
 
     <div class="section-title">PROPERTY DETAILS</div>
-    <table class="details">
+    <div class="table-responsive"><table class="details">
         <tr>
             <td class="label">Plot No:</td>
             <td><?= htmlspecialchars($data['plot_number'] ?? 'N/A') ?></td>
@@ -113,10 +113,10 @@
             <td class="label"></td>
             <td></td>
         </tr>
-    </table>
+    </table></div>
 
     <div class="section-title">PAYMENT SUMMARY</div>
-    <table class="details">
+    <div class="table-responsive"><table class="details">
         <tr>
             <td class="label">Total Price:</td>
             <td>Rs. <?= number_format(floatval($data['total_amount'] ?? $data['total_price'] ?? 0), 2) ?></td>
@@ -135,11 +135,11 @@
             <td class="label">Total Paid:</td>
             <td>Rs. <?= number_format(floatval($data['total_paid'] ?? 0), 2) ?></td>
         </tr>
-    </table>
+    </table></div>
 
     <?php if (!empty($data['payments'])): ?>
     <div class="section-title">PAYMENT HISTORY</div>
-    <table class="payments">
+    <div class="table-responsive"><table class="payments">
         <tr>
             <th>#</th>
             <th>Date</th>
@@ -157,7 +157,7 @@
             <td>Rs. <?= number_format(floatval($pmt['payment_amount'] ?? 0), 2) ?></td>
         </tr>
         <?php endforeach; ?>
-    </table>
+    </table></div>
     <?php endif; ?>
 
     <?php if ($type === 'payment_plan'): ?>
@@ -169,7 +169,7 @@
     $numInstallments = max(1, ceil($remainingAmount / max(1, $totalPriceVal * 0.2)));
     $installmentAmount = $remainingAmount / max(1, $numInstallments);
     ?>
-    <table class="installments">
+    <div class="table-responsive"><table class="installments">
         <tr>
             <th>#</th>
             <th>Installment Type</th>
@@ -200,7 +200,7 @@
             <td>Rs. <?= number_format($totalPriceVal, 2) ?></td>
             <td></td>
         </tr>
-    </table>
+    </table></div>
     <?php endif; ?>
 
     <div class="section-title">TERMS AND CONDITIONS</div>
@@ -230,7 +230,7 @@
 
     <div class="section-title">SIGNATURES</div>
     <div class="signatures">
-        <table>
+        <div class="table-responsive"><table>
             <tr>
                 <td>
                     <div style="margin-top: 25px;">
@@ -261,7 +261,7 @@
                     </div>
                 </td>
             </tr>
-        </table>
+        </table></div>
     </div>
 
     <div class="footer">

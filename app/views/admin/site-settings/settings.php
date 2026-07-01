@@ -150,12 +150,12 @@ $tabs = [
                 </div>
                 <div class="settings-group">
                     <h6><i class="fas fa-info-circle me-2"></i>Current Values</h6>
-                    <table class="table table-sm table-borderless mb-0">
+                    <div class="table-responsive"><table class="table table-sm table-borderless mb-0">
                         <tr><td class="text-muted">Name:</td><td class="fw-bold"><?= sc($settings, 'company_name', '-') ?></td></tr>
                         <tr><td class="text-muted">Tagline:</td><td><?= sc($settings, 'company_tagline', '-') ?></td></tr>
                         <tr><td class="text-muted">Reg #:</td><td class="small"><?= sc($settings, 'company_reg_number', '-') ?></td></tr>
                         <tr><td class="text-muted">GST:</td><td class="small"><?= sc($settings, 'company_gst', '-') ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

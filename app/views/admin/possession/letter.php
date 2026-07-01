@@ -71,7 +71,7 @@ $price = htmlspecialchars(number_format(floatval($booking['property_price'] ?? 0
 
         <p>The property has been inspected and is found to be in complete accordance with the agreed specifications and approved layout plans. All amenities and utilities as per the agreement have been provided.</p>
 
-        <table class="letter-table">
+        <div class="table-responsive"><table class="letter-table">
             <tr><th>Booking Number</th><td><?= $bookingNumber ?></td></tr>
             <tr><th>Property Title</th><td><?= $propertyTitle ?></td></tr>
             <tr><th>Location</th><td><?= $propertyLocation ?></td></tr>
@@ -83,7 +83,7 @@ $price = htmlspecialchars(number_format(floatval($booking['property_price'] ?? 0
             <tr><th>Possession Date</th><td><?= $possessionDate ?></td></tr>
             <tr><th>Handover By</th><td><?= $handoverByName ?></td></tr>
             <tr><th>Defect Liability Period</th><td><?= $defectPeriod ?> days (until <?= $defectEndDate ?>)</td></tr>
-        </table>
+        </table></div>
 
         <div class="terms-box">
             <h4>Terms &amp; Conditions</h4>
@@ -101,7 +101,7 @@ $price = htmlspecialchars(number_format(floatval($booking['property_price'] ?? 0
     </div>
 
     <div class="signatures">
-        <table>
+        <div class="table-responsive"><table>
             <tr>
                 <td>
                     <div class="signature-line"><?= $handoverByName ?></div>
@@ -112,7 +112,7 @@ $price = htmlspecialchars(number_format(floatval($booking['property_price'] ?? 0
                     <div style="font-size:9pt; color:#666;">Allottee / Buyer</div>
                 </td>
             </tr>
-        </table>
+        </table></div>
     </div>
 
     <div class="letter-footer">

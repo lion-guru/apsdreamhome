@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\Communication\NotificationService;
+use App\Services\Sales\BookingLifecycleService;
 
 class UserController extends BaseController
 {
@@ -839,7 +840,7 @@ class UserController extends BaseController
             header('Location: ' . BASE_URL . '/login?redirect=/user/address');
             exit;
         }
-        $this->layout = 'layouts/customer';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/customer';
         $this->render('pages/user/address', ['page_title' => 'My Address - APS Dream Home', 'current_page' => 'address']);
     }
 
@@ -854,7 +855,7 @@ class UserController extends BaseController
             header('Location: ' . BASE_URL . '/login?redirect=/user/insurance');
             exit;
         }
-        $this->layout = 'layouts/customer';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/customer';
         $this->render('pages/user/insurance', ['page_title' => 'Insurance - APS Dream Home', 'current_page' => 'insurance']);
     }
 
@@ -869,7 +870,7 @@ class UserController extends BaseController
             header('Location: ' . BASE_URL . '/login?redirect=/user/investment-plans');
             exit;
         }
-        $this->layout = 'layouts/customer';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/customer';
         $this->render('pages/user/investment_plans', ['page_title' => 'Investment Plans - APS Dream Home', 'current_page' => 'investment']);
     }
 
@@ -1085,7 +1086,7 @@ class UserController extends BaseController
         $notifications = $notifService->getCustomerNotifications($user['id']);
         $unreadCount = $notifService->getUnreadCount($user['id']);
 
-        $this->layout = 'layouts/customer';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/customer';
         $this->render('pages/user_notifications', [
             'page_title' => 'Notifications - APS Dream Home',
             'user' => $user,
@@ -1907,9 +1908,10 @@ class UserController extends BaseController
 
         try {
             $notifier = new \App\Services\BookingNotificationService();
+            $notifyUser = $this->db->fetch("SELECT * FROM users WHERE id = ?", [$userId]) ?: ['id' => $userId, 'name' => '', 'email' => ''];
             $notifier->sendPaymentReceipt(
                 ['booking_number' => $installment['booking_number'], 'id' => $bookingId],
-                $user,
+                $notifyUser,
                 $amountDue,
                 $razorpay_payment_id
             );
@@ -2259,8 +2261,8 @@ class UserController extends BaseController
         body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; color: #1e293b; line-height: 1.7; background: #fff; }
         .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-35deg); font-size: 72px; font-weight: 900; color: rgba(0,0,0,0.03); letter-spacing: 12px; text-transform: uppercase; pointer-events: none; z-index: 0; white-space: nowrap; }
         .page { max-width: 800px; margin: 0 auto; padding: 40px 50px; position: relative; z-index: 1; }
-        .header { text-align: center; border-bottom: 3px solid #4f46e5; padding-bottom: 20px; margin-bottom: 30px; }
-        .header h1 { color: #4f46e5; font-size: 26px; margin-bottom: 4px; }
+        .header { text-align: center; border-bottom: 3px solid #0d9488; padding-bottom: 20px; margin-bottom: 30px; }
+        .header h1 { color: #0d9488; font-size: 26px; margin-bottom: 4px; }
         .header .tagline { color: #6b7280; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
         .header .contact { font-size: 12px; color: #6b7280; margin-top: 8px; }
         .header .contact span { margin: 0 8px; }
@@ -2269,23 +2271,23 @@ class UserController extends BaseController
         .agr-meta .row { display: flex; }
         .agr-meta .label { font-weight: 600; color: #6b7280; min-width: 160px; }
         .agr-meta .value { color: #1e293b; font-weight: 500; }
-        .section-title { font-size: 16px; font-weight: 700; color: #4f46e5; margin: 24px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+        .section-title { font-size: 16px; font-weight: 700; color: #0d9488; margin: 24px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
         .body-text { margin: 12px 0; line-height: 1.8; }
         .body-text p { margin-bottom: 10px; text-align: justify; }
         .clause { margin-bottom: 14px; }
-        .clause-num { font-weight: 700; color: #4f46e5; }
+        .clause-num { font-weight: 700; color: #0d9488; }
         .parties-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
         .party-card { padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f8fafc; }
-        .party-card h4 { color: #4f46e5; margin-bottom: 8px; font-size: 14px; }
+        .party-card h4 { color: #0d9488; margin-bottom: 8px; font-size: 14px; }
         .party-card p { font-size: 13px; line-height: 1.6; }
-        .plot-box { padding: 16px; border: 2px solid #4f46e5; border-radius: 8px; margin: 16px 0; background: #f5f3ff; }
-        .plot-box h4 { color: #4f46e5; margin-bottom: 8px; }
+        .plot-box { padding: 16px; border: 2px solid #0d9488; border-radius: 8px; margin: 16px 0; background: #f5f3ff; }
+        .plot-box h4 { color: #0d9488; margin-bottom: 8px; }
         .plot-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; }
         .plot-detail .label { font-weight: 600; color: #6b7280; }
         .payment-box { padding: 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin: 16px 0; }
         .payment-box h4 { color: #166534; margin-bottom: 8px; }
         table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-        table th { background: #4f46e5; color: #fff; padding: 10px 12px; text-align: left; font-size: 13px; }
+        table th { background: #0d9488; color: #fff; padding: 10px 12px; text-align: left; font-size: 13px; }
         table td { padding: 10px 12px; border-bottom: 1px solid #e5e7eb; font-size: 13px; }
         .signature-section { margin-top: 50px; display: flex; justify-content: space-between; }
         .sig-block { text-align: center; width: 220px; }
@@ -2293,10 +2295,10 @@ class UserController extends BaseController
         .sig-block .sub { font-size: 11px; color: #6b7280; }
         .signed-badge { text-align: center; padding: 12px; background: #dcfce7; border: 1px solid #86efac; border-radius: 8px; margin: 20px 0; }
         .signed-badge i { color: #16a34a; margin-right: 8px; }
-        .footer { margin-top: 30px; border-top: 2px solid #4f46e5; padding-top: 16px; font-size: 12px; color: #6b7280; text-align: center; }
+        .footer { margin-top: 30px; border-top: 2px solid #0d9488; padding-top: 16px; font-size: 12px; color: #6b7280; text-align: center; }
         .no-print { text-align: center; margin-top: 24px; }
-        .no-print button { background: #4f46e5; color: #fff; border: none; padding: 10px 28px; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600; margin: 0 6px; }
-        .no-print a { display: inline-block; padding: 10px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid #4f46e5; color: #4f46e5; margin: 0 6px; }
+        .no-print button { background: #0d9488; color: #fff; border: none; padding: 10px 28px; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600; margin: 0 6px; }
+        .no-print a { display: inline-block; padding: 10px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid #0d9488; color: #0d9488; margin: 0 6px; }
         @media print {
             body { background: #fff; margin: 0; }
             .page { padding: 20px 30px; max-width: 100%; }
@@ -2476,5 +2478,262 @@ class UserController extends BaseController
             error_log('Investor stats error: ' . $e->getMessage());
             return ['level' => 'Bronze', 'next_level' => 'Silver', 'progress_pct' => 0, 'next_threshold' => 50000, 'total_invested' => 0, 'total' => 0, 'active' => 0, 'principal' => 0, 'current_value' => 0, 'returns' => 0];
         }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CUSTOMER EMI TRACKER — full payment schedule view
+    // ═══════════════════════════════════════════════════════════════════
+
+    public function emiTracker()
+    {
+        $this->requireCustomerLogin();
+        $this->layout = 'layouts/customer';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $bookings = [];
+        $installments = [];
+        $stats = ['total_bookings' => 0, 'active_emis' => 0, 'total_paid' => 0, 'total_pending' => 0, 'overdue_count' => 0, 'next_payment' => null];
+
+        try {
+            // Get user's bookings
+            $st = $pdo->prepare("
+                SELECT b.*, p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
+                       c.name as colony_name
+                FROM plot_bookings b
+                LEFT JOIN plots p ON b.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                WHERE b.customer_id = ?
+                ORDER BY b.created_at DESC
+            ");
+            $st->execute([$userId]);
+            $bookings = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $stats['total_bookings'] = count($bookings);
+
+            // Get all installments for user's bookings
+            if (!empty($bookings)) {
+                $bookingIds = array_column($bookings, 'id');
+                $placeholders = implode(',', array_fill(0, count($bookingIds), '?'));
+
+                $st = $pdo->prepare("
+                    SELECT ips.*, b.booking_number, p.plot_number, c.name as colony_name
+                    FROM booking_payment_schedules ips
+                    JOIN plot_bookings b ON b.id = ips.booking_id
+                    LEFT JOIN plots p ON b.plot_id = p.id
+                    LEFT JOIN colonies c ON p.colony_id = c.id
+                    WHERE ips.booking_id IN ($placeholders)
+                    ORDER BY ips.due_date ASC
+                ");
+                $st->execute($bookingIds);
+                $installments = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+                $today = date('Y-m-d');
+                $nextPayment = null;
+
+                foreach ($installments as $inst) {
+                    $amount = (float)($inst['amount'] ?? 0);
+                    $paid = (float)($inst['paid_amount'] ?? 0);
+                    $status = $inst['status'] ?? 'pending';
+                    $penalty = (float)($inst['accrued_penalty'] ?? 0);
+
+                    if ($status === 'paid' || $status === 'completed') {
+                        $stats['total_paid'] += $paid;
+                    } else {
+                        $stats['total_pending'] += ($amount - $paid + $penalty);
+                        if ($status !== 'paid' && strtotime($inst['due_date'] ?? '') < strtotime($today)) {
+                            $stats['overdue_count']++;
+                        }
+                        if (!$nextPayment && strtotime($inst['due_date'] ?? '') >= strtotime($today)) {
+                            $nextPayment = $inst;
+                        }
+                    }
+
+                    if ($status !== 'paid' && $status !== 'completed') {
+                        $stats['active_emis']++;
+                    }
+                }
+                $stats['next_payment'] = $nextPayment;
+            }
+        } catch (\Throwable $e) {
+            error_log('EMI Tracker error: ' . $e->getMessage());
+        }
+
+        $this->render('pages/user_emi_tracker', [
+            'page_title' => 'EMI Tracker - APS Dream Home',
+            'page_description' => 'Track your EMI payments',
+            'current_page' => 'emi-tracker',
+            'bookings' => $bookings,
+            'installments' => $installments,
+            'stats' => $stats,
+        ]);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CUSTOMER PAYMENT HISTORY
+    // ═══════════════════════════════════════════════════════════════════
+
+    public function paymentHistory()
+    {
+        $this->requireCustomerLogin();
+        $this->layout = 'layouts/customer';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $payments = [];
+        $stats = ['total_paid' => 0, 'total_count' => 0, 'this_month' => 0, 'last_payment' => null];
+
+        try {
+            // Payment receipts
+            $st = $pdo->prepare("
+                SELECT bpr.*, b.booking_number, p.plot_number, c.name as colony_name,
+                       ips.installment_number, ips.due_date
+                FROM booking_payment_receipts bpr
+                JOIN plot_bookings b ON b.id = bpr.booking_id
+                LEFT JOIN plots p ON b.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN booking_payment_schedules ips ON ips.id = bpr.installment_id
+                WHERE b.customer_id = ?
+                ORDER BY bpr.payment_date DESC, bpr.created_at DESC
+            ");
+            $st->execute([$userId]);
+            $payments = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            $thisMonth = date('Y-m');
+            foreach ($payments as $p) {
+                $amt = (float)($p['amount'] ?? 0);
+                $stats['total_paid'] += $amt;
+                $stats['total_count']++;
+                if (date('Y-m', strtotime($p['payment_date'] ?? $p['created_at'])) === $thisMonth) {
+                    $stats['this_month'] += $amt;
+                }
+                if (!$stats['last_payment']) {
+                    $stats['last_payment'] = $p;
+                }
+            }
+
+            // Also check booking_payment_schedules for paid installments
+            $st2 = $pdo->prepare("
+                SELECT ips.*, b.booking_number, p.plot_number, c.name as colony_name
+                FROM booking_payment_schedules ips
+                JOIN plot_bookings b ON b.id = ips.booking_id
+                LEFT JOIN plots p ON b.plot_id = p.id
+                LEFT JOIN colonies c ON p.colony_id = c.id
+                WHERE b.customer_id = ? AND ips.status IN ('paid', 'completed')
+                ORDER BY ips.paid_date DESC
+            ");
+            $st2->execute([$userId]);
+            $paidInstallments = $st2->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            // Merge if receipts table is empty
+            if (empty($payments) && !empty($paidInstallments)) {
+                $payments = $paidInstallments;
+            }
+        } catch (\Throwable $e) {
+            error_log('Payment history error: ' . $e->getMessage());
+        }
+
+        $this->render('pages/user_payment_history', [
+            'page_title' => 'Payment History - APS Dream Home',
+            'page_description' => 'Your payment records',
+            'current_page' => 'payment-history',
+            'payments' => $payments,
+            'stats' => $stats,
+        ]);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CUSTOMER SITE VISIT BOOKING
+    // ═══════════════════════════════════════════════════════════════════
+
+    public function mySiteVisits()
+    {
+        $this->requireCustomerLogin();
+        $this->layout = 'layouts/customer';
+        $userId = $_SESSION['user_id'];
+        $db = \App\Core\Database\Database::getInstance();
+        $pdo = $db->getConnection();
+
+        $visits = [];
+        $stats = ['total' => 0, 'upcoming' => 0, 'completed' => 0];
+
+        try {
+            $st = $pdo->prepare("
+                SELECT sv.*, c.name as colony_name, p.plot_number
+                FROM site_visits sv
+                LEFT JOIN colonies c ON c.id = sv.colony_id
+                LEFT JOIN plots p ON p.id = sv.plot_id
+                WHERE sv.user_id = ?
+                ORDER BY sv.visit_date DESC, sv.visit_time DESC
+            ");
+            $st->execute([$userId]);
+            $visits = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            $today = date('Y-m-d');
+            foreach ($visits as $v) {
+                $stats['total']++;
+                if ($v['status'] === 'completed') $stats['completed']++;
+                elseif ($v['visit_date'] >= $today && $v['status'] !== 'cancelled') $stats['upcoming']++;
+            }
+        } catch (\Throwable $e) {
+            error_log('mySiteVisits error: ' . $e->getMessage());
+        }
+
+        // Get colonies for booking form
+        $colonies = [];
+        try {
+            $colonies = $pdo->query("SELECT id, name FROM colonies WHERE status = 'active' ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {}
+
+        $this->render('pages/user_site_visits', [
+            'page_title' => 'My Site Visits - APS Dream Home',
+            'page_description' => 'Your site visit appointments',
+            'current_page' => 'site-visits',
+            'visits' => $visits,
+            'stats' => $stats,
+            'colonies' => $colonies,
+        ]);
+    }
+
+    public function bookSiteVisitAction()
+    {
+        $this->requireCustomerLogin();
+        $userId = $_SESSION['user_id'];
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/user/site-visits');
+            return;
+        }
+
+        $visitorName = trim($_POST['visitor_name'] ?? '');
+        $visitorPhone = trim($_POST['visitor_phone'] ?? '');
+        $visitDate = $_POST['visit_date'] ?? '';
+        $visitTime = $_POST['visit_time'] ?? '';
+        $colonyId = (int)($_POST['colony_id'] ?? 0);
+        $notes = trim($_POST['notes'] ?? '');
+
+        if (empty($visitorName) || empty($visitorPhone) || empty($visitDate) || empty($visitTime)) {
+            $_SESSION['flash_error'] = 'Please fill all required fields.';
+            $this->redirect('/user/site-visits');
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = $db->getConnection();
+
+            $st = $pdo->prepare("
+                INSERT INTO site_visits (colony_id, user_id, visitor_name, visitor_phone, visit_date, visit_time, status, notes, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, 'scheduled', ?, NOW())
+            ");
+            $st->execute([$colonyId ?: null, $userId, $visitorName, $visitorPhone, $visitDate, $visitTime, $notes]);
+
+            $_SESSION['flash_success'] = 'Site visit scheduled for ' . date('M d, Y', strtotime($visitDate)) . ' at ' . date('h:i A', strtotime($visitTime)) . '!';
+        } catch (\Throwable $e) {
+            error_log('bookSiteVisitAction error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to schedule visit.';
+        }
+        $this->redirect('/user/site-visits');
     }
 }

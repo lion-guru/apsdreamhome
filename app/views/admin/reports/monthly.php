@@ -66,7 +66,7 @@
                     <h5 class="card-title mb-0">Monthly Summary</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-bordered mb-0">
+                    <div class="table-responsive"><table class="table table-bordered mb-0">
                         <thead class="table-light">
                             <tr><th>Metric</th><th>Value</th></tr>
                         </thead>
@@ -76,7 +76,7 @@
                             <tr><td>Sales</td><td><?php echo $report_data['sales_count'] ?? 0; ?></td></tr>
                             <tr><td>Revenue</td><td>₹<?php echo number_format($report_data['revenue'] ?? 0); ?></td></tr>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -88,7 +88,7 @@
             <h5 class="card-title mb-0">Top Performers</h5>
         </div>
         <div class="card-body aps-cp-card-body">
-            <table class="table table-hover mb-0">
+            <div class="table-responsive"><table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>#</th>
@@ -110,7 +110,7 @@
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
     <?php endif; ?>

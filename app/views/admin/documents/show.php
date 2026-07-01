@@ -20,7 +20,7 @@
                         <h4><?= htmlspecialchars($document['title'] ?? 'Untitled') ?></h4>
                         <p class="text-muted"><?= htmlspecialchars($document['description'] ?? 'No description') ?></p>
 
-                        <table class="table table-bordered mt-3">
+                        <div class="table-responsive"><table class="table table-bordered mt-3">
                             <tr><th style="width:200px;">Document Type</th><td><span class="badge bg-info"><?= htmlspecialchars(ucfirst($document['type'] ?? 'N/A')) ?></span></td></tr>
                             <tr><th>File Name</th><td><?= htmlspecialchars(basename($document['file_path'] ?? 'N/A')) ?></td></tr>
                             <tr><th>File Size</th><td><?= isset($document['file_size']) ? number_format($document['file_size'] / 1024, 1) . ' KB' : 'N/A' ?></td></tr>
@@ -28,7 +28,7 @@
                             <tr><th>Uploaded By</th><td><?= htmlspecialchars($document['uploaded_by_name'] ?? 'N/A') ?></td></tr>
                             <tr><th>Uploaded At</th><td><?= htmlspecialchars($document['created_at'] ?? 'N/A') ?></td></tr>
                             <tr><th>Status</th><td><span class="badge bg-<?= ($document['status'] ?? 'active') === 'active' ? 'success' : 'secondary' ?>"><?= htmlspecialchars($document['status'] ?? 'active') ?></span></td></tr>
-                        </table>
+                        </table></div>
                     </div>
                     <div class="col-md-4">
                         <div class="card bg-light">

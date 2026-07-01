@@ -61,7 +61,7 @@
             <h5 class="card-title mb-0">Daily Summary — <?php echo htmlspecialchars($report_data['date'] ?? date('Y-m-d')); ?></h5>
         </div>
         <div class="card-body aps-cp-card-body">
-            <table class="table table-bordered">
+            <div class="table-responsive"><table class="table table-bordered">
                 <thead class="table-light">
                     <tr>
                         <th>Metric</th>
@@ -75,7 +75,7 @@
                     <tr><td>Revenue</td><td>₹<?php echo number_format($report_data['revenue'] ?? 0); ?></td></tr>
                     <tr><td>New Customers</td><td><?php echo $report_data['new_customers'] ?? 0; ?></td></tr>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

@@ -64,7 +64,7 @@ include __DIR__ . '/../layouts/base.php';
                     
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="text-<?php echo $property['status'] == 'ready-to-move' ? 'success' : 'warning'; ?> small fw-bold uppercase">
-                            â— <?php echo ucfirst(str_replace('-', ' ', $property['status'])); ?>
+                            — <?php echo ucfirst(str_replace('-', ' ', $property['status'])); ?>
                         </span>
                         <a href="/properties/<?php echo $property['id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill px-4">View Details</a>
                     </div>

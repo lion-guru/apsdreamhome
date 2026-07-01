@@ -36,7 +36,7 @@ $ratingBadge = function($rating) {
                     <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Task Information</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-bordered">
+                    <div class="table-responsive"><table class="table table-bordered">
                         <tr>
                             <th style="width: 200px;" class="text-muted">Telecaller</th>
                             <td><strong><?php echo htmlspecialchars($task['telecaller_name'] ?? 'N/A'); ?></strong></td>
@@ -85,7 +85,7 @@ $ratingBadge = function($rating) {
                             <th class="text-muted">Target Calls</th>
                             <td><?php echo number_format($task['target_calls'] ?? 0); ?></td>
                         </tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

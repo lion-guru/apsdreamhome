@@ -5,7 +5,7 @@
     </div>
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
-            <table class="table table-hover mb-0">
+            <div class="table-responsive"><table class="table table-hover mb-0">
                 <thead class="table-light"><tr><th>ID</th><th>Name</th><th>Price</th><th>Direct Reward</th><th>Level Reward</th><th>Daily Cap</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody>
                     <?php foreach ($packages as $p): ?>
@@ -21,7 +21,7 @@
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

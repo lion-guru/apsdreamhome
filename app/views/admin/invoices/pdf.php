@@ -10,11 +10,11 @@
     body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; color: #1e293b; line-height: 1.5; }
     .invoice-box { max-width: 800px; margin: 0 auto; padding: 30px; }
 
-    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #4f46e5; padding-bottom: 20px; margin-bottom: 20px; }
-    .header-left h1 { font-size: 22px; color: #4f46e5; margin-bottom: 4px; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #0d9488; padding-bottom: 20px; margin-bottom: 20px; }
+    .header-left h1 { font-size: 22px; color: #0d9488; margin-bottom: 4px; }
     .header-left .subtitle { font-size: 11px; color: #64748b; }
     .header-right { text-align: right; }
-    .header-right .inv-label { font-size: 20px; font-weight: 700; color: #4f46e5; text-transform: uppercase; }
+    .header-right .inv-label { font-size: 20px; font-weight: 700; color: #0d9488; text-transform: uppercase; }
     .header-right .inv-number { font-size: 14px; font-weight: 600; }
 
     .parties { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 30px; }
@@ -40,7 +40,7 @@
     .totals-table { width: 320px; }
     .totals-table table { width: 100%; border-collapse: collapse; }
     .totals-table td { padding: 5px 10px; font-size: 11px; }
-    .totals-table .total-row { background: #4f46e5; color: #fff; font-weight: 700; font-size: 13px; }
+    .totals-table .total-row { background: #0d9488; color: #fff; font-weight: 700; font-size: 13px; }
     .totals-table .total-row td { padding: 8px 10px; }
 
     .gst-breakdown { background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 12px; margin-bottom: 20px; }
@@ -61,7 +61,7 @@
 
     .footer { text-align: center; border-top: 2px solid #e2e8f0; padding-top: 15px; margin-top: 25px; }
     .footer p { font-size: 10px; color: #64748b; }
-    .footer .thanks { font-size: 14px; font-weight: 700; color: #4f46e5; margin-bottom: 5px; }
+    .footer .thanks { font-size: 14px; font-weight: 700; color: #0d9488; margin-bottom: 5px; }
 
     .stamp-area { display: flex; justify-content: space-between; margin-top: 30px; }
     .stamp-box { width: 200px; border-top: 1px solid #94a3b8; text-align: center; padding-top: 5px; }
@@ -73,7 +73,7 @@
         .no-print { display: none !important; }
     }
 
-    .print-btn { position: fixed; bottom: 30px; right: 30px; background: #4f46e5; color: #fff; border: none; border-radius: 50%; width: 56px; height: 56px; font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(79,70,229,0.4); z-index: 999; }
+    .print-btn { position: fixed; bottom: 30px; right: 30px; background: #0d9488; color: #fff; border: none; border-radius: 50%; width: 56px; height: 56px; font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(13,148,136,0.4); z-index: 999; }
     .print-btn:hover { background: #4338ca; }
 </style>
 </head>
@@ -124,7 +124,7 @@
         <div class="item"><label>Currency</label><span><?= htmlspecialchars($invoice['currency'] ?? 'INR') ?></span></div>
     </div>
 
-    <table class="items">
+    <div class="table-responsive"><table class="items">
         <thead>
             <tr>
                 <th style="width:5%">#</th>
@@ -154,11 +154,11 @@
                 </tr>
             <?php endforeach; ?>
         </tbody>
-    </table>
+    </table></div>
 
     <div class="totals">
         <div class="totals-table">
-            <table>
+            <div class="table-responsive"><table>
                 <tr><td>Subtotal</td><td class="text-right">₹<?= number_format($invoice['subtotal'] ?? 0, 2) ?></td></tr>
                 <?php if (($invoice['discount_amount'] ?? 0) > 0): ?>
                     <tr><td style="color:#dc2626">Discount</td><td class="text-right" style="color:#dc2626">-₹<?= number_format($invoice['discount_amount'], 2) ?></td></tr>
@@ -167,7 +167,7 @@
                     <tr><td>Tax (GST)</td><td class="text-right">₹<?= number_format($invoice['tax_amount'], 2) ?></td></tr>
                 <?php endif; ?>
                 <tr class="total-row"><td>TOTAL</td><td class="text-right">₹<?= number_format($invoice['total_amount'] ?? 0, 2) ?></td></tr>
-            </table>
+            </table></div>
         </div>
     </div>
 

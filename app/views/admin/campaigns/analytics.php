@@ -89,7 +89,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Campaign Details</h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
-                        <table class="table table-borderless">
+                        <div class="table-responsive"><table class="table table-borderless">
                             <tr>
                                 <td class="text-muted">Campaign ID</td>
                                 <td class="text-end fw-semibold"><?php echo $campaign['campaign_id'] ?? 'N/A'; ?></td>
@@ -114,7 +114,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                 <td class="text-muted">Expected Revenue</td>
                                 <td class="text-end fw-semibold">₹<?php echo number_format(floatval(campaign['expected_revenue'] ?? 0) ?? 0); ?></td>
                             </tr>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             </div>

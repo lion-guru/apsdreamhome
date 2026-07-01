@@ -4,7 +4,7 @@ $indian_states = ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattis
 $current_year = date('Y');
 ?>
 <style>
-.builder-reg-wrapper { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px 0; }
+.builder-reg-wrapper { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); min-height: 100vh; padding: 40px 0; }
 .builder-reg-card { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); overflow: hidden; max-width: 1000px; margin: 0 auto; }
 .builder-reg-header { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 2rem; text-align: center; }
 .builder-reg-body { padding: 2rem; }

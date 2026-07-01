@@ -74,7 +74,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 
         <div class="tab-content">
             <div class="tab-pane fade show active" id="tab-history">
-                <table class="table table-sm">
+                <div class="table-responsive"><table class="table table-sm">
                     <thead>
                         <tr><th>Date</th><th>From</th><th>To</th><th class="text-end">Volume</th><th>Legs</th><th>Type</th></tr>
                     </thead>
@@ -92,11 +92,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             </tr>
                         <?php endforeach; endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
 
             <div class="tab-pane fade" id="tab-payouts">
-                <table class="table table-sm">
+                <div class="table-responsive"><table class="table table-sm">
                     <thead>
                         <tr><th>Batch</th><th>Period</th><th class="text-end">Gross</th><th class="text-end">TDS</th><th class="text-end">Net</th><th>Status</th></tr>
                     </thead>
@@ -114,11 +114,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             </tr>
                         <?php endforeach; endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
 
             <div class="tab-pane fade" id="tab-clawback">
-                <table class="table table-sm">
+                <div class="table-responsive"><table class="table table-sm">
                     <thead>
                         <tr><th>Date</th><th>EMI Installment</th><th class="text-end">Original</th><th class="text-end">Clawback</th><th>Status</th><th>Recovered</th></tr>
                     </thead>
@@ -136,7 +136,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             </tr>
                         <?php endforeach; endif; ?>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>

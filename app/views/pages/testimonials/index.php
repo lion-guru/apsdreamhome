@@ -12,7 +12,7 @@ $stats = $stats ?? [];
 .testimonial-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
 .testimonial-card::before { content: '"'; position: absolute; top: 16px; left: 20px; font-size: 64px; color: #f59e0b; opacity: 0.2; font-family: Georgia, serif; line-height: 1; }
 .testimonial-rating { color: #f59e0b; }
-.testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; }
+.testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; }
 </style>
 
 <section class="testimonial-hero">
@@ -125,7 +125,7 @@ $stats = $stats ?? [];
     <?php endif; ?>
 
     <div class="text-center py-5 mt-4">
-        <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white;">
             <div class="card-body p-5">
                 <h2 class="fw-bold mb-3"><?= __('testi_cta_heading', [], 'Bought a property from us?') ?></h2>
                 <p class="lead mb-4 opacity-90"><?= __('testi_cta_subtitle', [], 'Share your experience and help other customers make the right decision') ?></p>

@@ -30,7 +30,7 @@ $groupCount = count($groups);
     #swagger-wrapper .swagger-ui .opblock-post { border-color: #22c55e; }
     #swagger-wrapper .swagger-ui .opblock-put { border-color: #f59e0b; }
     #swagger-wrapper .swagger-ui .opblock-delete { border-color: #ef4444; }
-    #swagger-wrapper .swagger-ui .opblock-patch { border-color: #a855f7; }
+    #swagger-wrapper .swagger-ui .opblock-patch { border-color: #14b8a6; }
 
     .doc-stats-card {
         background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -70,7 +70,7 @@ $groupCount = count($groups);
     .method-POST   { background: #14532d; color: #4ade80; }
     .method-PUT    { background: #451a03; color: #fbbf24; }
     .method-DELETE { background: #450a0a; color: #f87171; }
-    .method-PATCH  { background: #3b0764; color: #c084fc; }
+    .method-PATCH  { background: #3b0764; color: #5eead4; }
 
     .endpoint-row { padding: 4px 12px; border-bottom: 1px solid #1e293b; font-family: 'Fira Code', monospace; font-size: 0.78rem; }
     .endpoint-row:hover { background: #253348; }
@@ -173,7 +173,7 @@ $groupCount = count($groups);
         </div>
         <div class="col-md-2">
             <div class="doc-stats-card">
-                <div class="stat-value" style="color:#c084fc"><?= $groupCount ?></div>
+                <div class="stat-value" style="color:#5eead4"><?= $groupCount ?></div>
                 <div class="stat-label">Groups</div>
             </div>
         </div>

@@ -42,7 +42,7 @@
                         <div class="col-sm-4"><strong>Currency:</strong> <?= htmlspecialchars($invoice['currency'] ?? 'INR') ?></div>
                     </div>
 
-                    <table class="table table-bordered">
+                    <div class="table-responsive"><table class="table table-bordered">
                         <thead class="table-dark">
                             <tr><th>#</th><th>Item</th><th>Qty</th><th>Rate</th><th>Discount</th><th>Tax</th><th>Total</th></tr>
                         </thead>
@@ -68,7 +68,7 @@
                             <?php $due = ($invoice['total_amount'] ?? 0) - ($invoice['paid_amount'] ?? 0); ?>
                             <?php if ($due > 0): ?><tr class="table-danger"><td colspan="6" class="text-end"><strong>Due:</strong></td><td><strong>₹<?= number_format($due, 2) ?></strong></td></tr><?php endif; ?>
                         </tfoot>
-                    </table>
+                    </table></div>
 
                     <?php if (!empty($invoice['notes'])): ?>
                         <div class="mt-3"><h6>Notes:</h6><p class="text-muted"><?= nl2br(htmlspecialchars($invoice['notes'])) ?></p></div>
@@ -82,7 +82,7 @@
                 <div class="card shadow-sm mb-4">
                     <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-money-bill me-1"></i>Payments</h5></div>
                     <div class="card-body p-0">
-                        <table class="table table-sm mb-0">
+                        <div class="table-responsive"><table class="table table-sm mb-0">
                             <thead><tr><th>Date</th><th>Amount</th><th>Method</th></tr></thead>
                             <tbody>
                                 <?php foreach ($invoice['payments'] as $p): ?>
@@ -93,7 +93,7 @@
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                 </div>
             <?php endif; ?>

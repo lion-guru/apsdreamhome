@@ -20,7 +20,7 @@ $agreement = $agreement ?? [];
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Agreement Info</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm table-borderless">
+                    <div class="table-responsive"><table class="table table-sm table-borderless">
                         <tr><td class="text-muted">Agreement #</td><td><strong><code><?php echo htmlspecialchars($agreement['agreement_number'] ?? 'N/A'); ?></code></strong></td></tr>
                         <tr><td class="text-muted">Farmer</td><td><strong><?php echo htmlspecialchars($agreement['farmer_name'] ?? 'N/A'); ?></strong></td></tr>
                         <tr><td class="text-muted">Mobile</td><td><?php echo htmlspecialchars($agreement['farmer_mobile'] ?? ''); ?></td></tr>
@@ -38,7 +38,7 @@ $agreement = $agreement ?? [];
                         <tr><td class="text-muted">Start Date</td><td><?php echo htmlspecialchars($agreement['start_date'] ?? '-'); ?></td></tr>
                         <tr><td class="text-muted">End Date</td><td><?php echo htmlspecialchars($agreement['end_date'] ?? '-'); ?></td></tr>
                         <tr><td class="text-muted">Signed Date</td><td><?php echo htmlspecialchars($agreement['signed_date'] ?? '-'); ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -47,11 +47,11 @@ $agreement = $agreement ?? [];
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Financial Details</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm table-borderless">
+                    <div class="table-responsive"><table class="table table-sm table-borderless">
                         <tr><td class="text-muted">Total Amount</td><td><strong>₹<?php echo number_format($agreement['total_amount'] ?? 0); ?></strong></td></tr>
                         <tr><td class="text-muted">Advance Amount</td><td class="text-warning"><strong>₹<?php echo number_format($agreement['advance_amount'] ?? 0); ?></strong></td></tr>
                         <tr><td class="text-muted">Commission Rate</td><td><?php echo htmlspecialchars($agreement['commission_rate'] ?? '0'); ?>%</td></tr>
-                    </table>
+                    </table></div>
 
                     <h6 class="mt-3">Signing Status</h6>
                     <div class="d-flex gap-3">

@@ -29,7 +29,7 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                 <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <table class="table table-borderless">
+                            <div class="table-responsive"><table class="table table-borderless">
                                 <tr>
                                     <td width="30%"><strong>Name:</strong></td>
                                     <td><?php echo htmlspecialchars($t['name'] ?? 'N/A'); ?></td>
@@ -46,10 +46,10 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                                     <td><strong>Location:</strong></td>
                                     <td><?php echo htmlspecialchars($t['location'] ?? 'N/A'); ?></td>
                                 </tr>
-                            </table>
+                            </table></div>
                         </div>
                         <div class="col-md-6">
-                            <table class="table table-borderless">
+                            <div class="table-responsive"><table class="table table-borderless">
                                 <tr>
                                     <td width="30%"><strong>Property:</strong></td>
                                     <td><?php echo htmlspecialchars($t['property_type'] ?? 'N/A'); ?></td>
@@ -75,7 +75,7 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                                         </span>
                                     </td>
                                 </tr>
-                            </table>
+                            </table></div>
                         </div>
                     </div>
                 </div>

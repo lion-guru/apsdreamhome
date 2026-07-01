@@ -46,7 +46,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 ?>
 
 <!-- Hero Section -->
-<section class="hero-section position-relative" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 60vh;">
+<section class="hero-section position-relative" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); min-height: 60vh;">
     <div class="container-fluid h-100">
         <div class="row h-100 align-items-center">
             <div class="col-lg-6 text-white">

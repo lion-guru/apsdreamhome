@@ -1,4 +1,4 @@
-<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= htmlspecialchars($phoneDisplay) ?>'); $emailDisplay = $sc('contact_email', '<?= htmlspecialchars($emailDisplay) ?>'); ?>
+<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '+91 92771 21112'); $emailDisplay = $sc('contact_email', 'support@apsdreamhome.com'); ?>
 <?php
 /**
  * Associate Settings Page
@@ -31,7 +31,7 @@
                 <h5 class="mb-0"><i class="fas fa-user me-2"></i><?= __('assoc_settings_profile', [], 'Account Information') ?></h5>
             </div>
             <div class="card-body aps-cp-card-body">
-                <form action="/associate/settings/update" method="POST">
+                <form action="<?= defined('BASE_URL') ? BASE_URL : '' ?>/associate/settings/update" method="POST">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('assoc_label_name', [], 'Name') ?></label>
@@ -61,7 +61,7 @@
                 <h5 class="mb-0"><i class="fas fa-bell me-2"></i><?= __('assoc_settings_notifications', [], 'Notification Preferences') ?></h5>
             </div>
             <div class="card-body aps-cp-card-body">
-                <form action="/associate/settings/notifications" method="POST">
+                <form action="<?= defined('BASE_URL') ? BASE_URL : '' ?>/associate/settings/notifications" method="POST">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" name="email_leads" id="email_leads" <?php echo $notifications['email_leads'] ? 'checked' : ''; ?>>
@@ -104,7 +104,7 @@
                 <h5 class="mb-0"><i class="fas fa-lock me-2"></i><?= __('assoc_change_password', [], 'Change Password') ?></h5>
             </div>
             <div class="card-body aps-cp-card-body">
-                <form action="/associate/settings/password" method="POST">
+                <form action="<?= defined('BASE_URL') ? BASE_URL : '' ?>/associate/settings/password" method="POST">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('assoc_label_current_password', [], 'Current Password') ?></label>
@@ -148,7 +148,7 @@
                         Mon-Sat, 9AM-6PM
                     </li>
                 </ul>
-                <a href="/contact" class="btn btn-outline-success btn-sm">
+                <a href="<?= defined('BASE_URL') ? BASE_URL : '' ?>/contact" class="btn btn-outline-success btn-sm">
                     <i class="fas fa-paper-plane me-2"></i><?= __('assoc_contact_support', [], 'Contact Support') ?>
                 </a>
             </div>

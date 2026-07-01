@@ -84,7 +84,7 @@ $flash = $flash ?? [];
             <h2 class="h5 mb-0">Recent PDFs</h2>
         </div>
         <div class="card-body p-0">
-            <table class="table table-sm table-hover mb-0">
+            <div class="table-responsive"><table class="table table-sm table-hover mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>Type</th>
@@ -106,7 +106,7 @@ $flash = $flash ?? [];
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

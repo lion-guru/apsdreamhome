@@ -80,7 +80,8 @@ class AgentAuthController extends BaseController
                 'referred_by' => $referrer_id,
                 'role' => 'agent',
                 'experience' => $experience,
-                'status' => 'active',
+                'status' => 'inactive',
+                'registration_status' => 'pending',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
@@ -152,7 +153,7 @@ class AgentAuthController extends BaseController
                 }
             }
 
-            $_SESSION['success'] = "Agent registration successful! ID: $agent_id. Please login.";
+            $_SESSION['success'] = "Agent registration successful! ID: $agent_id. Your account is pending admin approval. You will be able to login once approved.";
             header('Location: ' . BASE_URL . '/agent/login');
             exit;
         } catch (\Exception $e) {
@@ -195,6 +196,23 @@ class AgentAuthController extends BaseController
             $db = Database::getInstance();
             $user = $db->fetchOne("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role = 'agent' LIMIT 1", [$email, $email]);
             if ($user && password_verify($password, $user['password'])) {
+                // Check registration status first
+                if (($user['registration_status'] ?? 'approved') === 'pending') {
+                    $_SESSION['errors'] = ["Your account is pending admin approval. You will be notified once approved."];
+                    header('Location: ' . BASE_URL . '/agent/login');
+                    exit;
+                }
+                if (($user['status'] ?? 'active') !== 'active') {
+                    $_SESSION['errors'] = ["Your account has been " . ($user['status'] ?? 'inactive') . ". Please contact support."];
+                    header('Location: ' . BASE_URL . '/agent/login');
+                    exit;
+                }
+                if (($user['registration_status'] ?? 'approved') === 'rejected') {
+                    $_SESSION['errors'] = ["Your registration has been rejected. Please contact support."];
+                    header('Location: ' . BASE_URL . '/agent/login');
+                    exit;
+                }
+
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['agent_id'] = $user['customer_id'];
                 $_SESSION['user_name'] = $user['name'];

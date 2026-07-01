@@ -153,7 +153,7 @@
 
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        dropZone.style.borderColor = '#4f46e5';
+        dropZone.style.borderColor = '#0d9488';
         dropZone.style.backgroundColor = '#f0f0ff';
     });
 

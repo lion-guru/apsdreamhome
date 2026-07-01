@@ -38,7 +38,7 @@
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Rules</div>
                 <div class="card-body p-0">
-                    <table class="table table-striped mb-0">
+                    <div class="table-responsive"><table class="table table-striped mb-0">
                         <thead><tr><th>Rule</th><th>Type</th><th>Amount</th><th>%</th><th>Min Calls</th><th>Target</th><th>Active</th><th>Action</th></tr></thead>
                         <tbody>
                             <?php foreach ($rules ?? [] as $r): ?>
@@ -57,7 +57,7 @@
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

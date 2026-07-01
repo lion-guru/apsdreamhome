@@ -230,7 +230,7 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -382,7 +382,7 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down, color: AppTheme.primaryColor),
           decoration: InputDecoration(

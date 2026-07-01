@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                <div class="card-header bg-gradient text-white p-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-header bg-gradient text-white p-4" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <i class="fas fa-robot fa-2x"></i>
@@ -16,7 +16,7 @@
                 
                 <div class="chat-container" style="height: 450px; display: flex; flex-direction: column; background: #f8f9fa;">
                     <div class="chat-messages p-4" id="chatMessages" style="flex: 1; overflow-y: auto;">
-                        <div class="message bot-message mb-3 p-3 rounded-4 bg-white shadow-sm" style="max-width: 85%; margin-right: auto; border-left: 4px solid #667eea;">
+                        <div class="message bot-message mb-3 p-3 rounded-4 bg-white shadow-sm" style="max-width: 85%; margin-right: auto; border-left: 4px solid #0d9488;">
                             Namaste! 🙏 Welcome to <strong>APS Dream Home</strong>! I'm your property assistant.\n\nHow can I help you today? Try these quick options below! 👇
                         </div>
                     </div>
@@ -64,7 +64,7 @@
 
 <style>
     .user-message {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
         color: white !important;
         margin-left: auto !important;
         border-radius: 18px 18px 4px 18px !important;
@@ -74,7 +74,7 @@
         color: #333 !important;
         margin-right: auto !important;
         border-radius: 18px 18px 18px 4px !important;
-        border-left: 4px solid #667eea;
+        border-left: 4px solid #0d9488;
     }
     .message {
         animation: fadeIn 0.3s ease;

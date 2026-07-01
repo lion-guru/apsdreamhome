@@ -129,17 +129,17 @@ function removePopupTyping() {
     width: 55px;
     height: 55px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     border: none;
     color: white;
     font-size: 24px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    box-shadow: 0 4px 15px rgba(13,148,136,0.4);
     transition: all 0.3s;
 }
 .ai-popup-toggle:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(102,126,234,0.6);
+    box-shadow: 0 6px 20px rgba(13,148,136,0.6);
 }
 .ai-popup-chat {
     position: absolute;
@@ -155,7 +155,7 @@ function removePopupTyping() {
     border: 1px solid #e0e0e0;
 }
 .ai-popup-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     padding: 12px 15px;
     display: flex;
     justify-content: space-between;
@@ -186,7 +186,7 @@ function removePopupTyping() {
     display: inline-block;
     width: 6px; height: 6px;
     border-radius: 50%;
-    background: #667eea;
+    background: #0d9488;
     margin: 0 2px;
     animation: popupDot 1.4s infinite;
 }

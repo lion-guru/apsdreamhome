@@ -23,7 +23,7 @@
   <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th><?= __('admin_type_label') ?></th><th><?= __('admin_colony_label') ?></th><th><?= __('admin_description_label') ?></th><th>Amount</th><th>Party</th><th><?= __('admin_status_label') ?></th><th><?= __('admin_priority_label') ?></th><th><?= __('admin_date_label') ?></th></tr></thead>
+        <thead><tr><th><?= __('admin_type_label') ?></th><th><?= __('admin_colony_label') ?></th><th><?= __('admin_description_label') ?></th><th><?= __('bko_amount') ?></th><th><?= __('bko_party') ?></th><th><?= __('admin_status_label') ?></th><th><?= __('admin_priority_label') ?></th><th><?= __('admin_date_label') ?></th></tr></thead>
         <tbody>
           <?php if (empty($logs)): ?>
             <tr><td colspan="8" class="text-center text-muted py-4"><?= __('admin_no_operations_for_date') ?></td></tr>

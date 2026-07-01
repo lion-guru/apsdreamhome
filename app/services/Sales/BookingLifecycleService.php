@@ -16,14 +16,14 @@
  *                                              registration_done
  *   any → cancelled | transferred
  *
- * The MLM commission flow (booking_commissions):
+ * The MLM commission flow (mlm_commission_ledger):
  *   - commission_type=direct_sale: sales manager receives the headline %
  *   - commission_type=associate_referral: linked associate (channel='associate')
  *   - commission_type=mlm_level_1/2/3: walk the sponsor chain up to 3 levels
  *
  * Companion tables: booking_payment_schedules, booking_payment_receipts,
  *   booking_demand_letters, booking_documents, booking_status_history,
- *   booking_refunds, booking_transfers, booking_commissions, rera_compliance_log
+ *   booking_refunds, booking_transfers, rera_compliance_log
  */
 
 namespace App\Services\Sales;
@@ -834,10 +834,7 @@ class BookingLifecycleService
      * DELEGATES to MLMCommissionEngine::calculateBookingCommission() which:
      *   - Reads rates from mlm_rank_benefits DB table via getCanonicalRates()
      *   - Walks the upline via users.referred_by
-     *   - Writes to mlm_commission_ledger (canonical table)
-     *
-     * This method also writes a backward-compat row to booking_commissions
-     * for any legacy code that reads from that table.
+     *   - Writes to mlm_commission_ledger (single source of truth)
      *
      * @return array ['success'=>true, 'created'=>N, 'total_amount'=>X, 'rows'=>[...]]
      */
@@ -857,8 +854,7 @@ class BookingLifecycleService
             $rows = $engineResult['entries'] ?? [];
             $totalAmt = (float)($engineResult['total'] ?? 0.0);
 
-            // mlm_commission_ledger is now the single source of truth
-            // booking_commissions table is deprecated (migrated)
+            // mlm_commission_ledger is the single source of truth
             $created = count($rows);
 
             $out = [
@@ -980,8 +976,9 @@ class BookingLifecycleService
                     OR (status = 'pending' AND due_date < CURDATE())"
             )->fetchColumn();
             $commissionEarned = (float)$this->db->query(
-                "SELECT COALESCE(SUM(amount),0) FROM booking_commissions
-                 WHERE status IN ('approved','paid')"
+                "SELECT COALESCE(SUM(amount),0) FROM mlm_commission_ledger
+                 WHERE commission_type IN ('direct_sale','l1_override','l2_override','l3_override','team_bonus')
+                   AND status IN ('approved','paid')"
             )->fetchColumn();
             $refundPending = (int)$this->db->query(
                 "SELECT COUNT(*) FROM booking_refunds WHERE status = 'pending'"
@@ -1070,12 +1067,12 @@ class BookingLifecycleService
 
             $totalValue = (float)$row['total_plot_value'];
             $paid       = $this->totalPaid($bookingId);
-            $pending    = (int)$this->db->prepare(
+            $stmt       = $this->db->prepare(
                 "SELECT COUNT(*) FROM booking_payment_schedules
                  WHERE booking_id = ? AND status IN ('pending','overdue','partial')"
             );
-            $pending->execute([$bookingId]);
-            $pendingCount = (int)$pending->fetchColumn();
+            $stmt->execute([$bookingId]);
+            $pendingCount = (int)$stmt->fetchColumn();
 
             $new = $cur;
             if ($pendingCount === 0 && $paid >= $totalValue) {
@@ -1167,17 +1164,17 @@ class BookingLifecycleService
     public function clawbackBookingCommissions(int $bookingId): void
     {
         try {
-            // 1. Mark pending commissions as cancelled in booking_commissions
+            // 1. Mark pending commissions as cancelled in mlm_commission_ledger
             $stmt = $this->db->prepare("
-                UPDATE booking_commissions 
-                SET status = 'cancelled' 
+                UPDATE mlm_commission_ledger
+                SET status = 'cancelled'
                 WHERE booking_id = ? AND status = 'pending'
             ");
             $stmt->execute([$bookingId]);
 
             // 2. Query all commissions related to this booking that are approved or paid
             $stmt = $this->db->prepare("
-                SELECT * FROM booking_commissions 
+                SELECT * FROM mlm_commission_ledger
                 WHERE booking_id = ? AND status IN ('approved', 'paid')
             ");
             $stmt->execute([$bookingId]);
@@ -1189,9 +1186,9 @@ class BookingLifecycleService
 
                 if ($amount <= 0) continue;
 
-                // Create a debit entry in mlm_commission_ledger
+                // Create a clawback debit entry
                 $ledgerStmt = $this->db->prepare("
-                    INSERT INTO mlm_commission_ledger 
+                    INSERT INTO mlm_commission_ledger
                     (beneficiary_user_id, source_user_id, commission_type, amount, level, sale_amount, commission_percentage, status, notes, created_at)
                     VALUES (?, ?, 'clawback', ?, ?, 0.00, 0.00, 'approved', ?, NOW())
                 ");
@@ -1200,8 +1197,8 @@ class BookingLifecycleService
 
                 // Deduct from wallet balance (allows negative balance)
                 $walletStmt = $this->db->prepare("
-                    UPDATE user_wallets 
-                    SET balance = balance - ?, 
+                    UPDATE user_wallets
+                    SET balance = balance - ?,
                         updated_at = NOW()
                     WHERE user_id = ? AND user_type = 'associate'
                 ");

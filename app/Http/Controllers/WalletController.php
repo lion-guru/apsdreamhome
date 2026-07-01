@@ -94,7 +94,7 @@ class WalletController extends BaseController
             'page_title' => 'Wallet Dashboard'
         ];
 
-        $this->layout = 'layouts/base';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
         $this->render('wallet/dashboard', $data);
     }
 
@@ -153,7 +153,7 @@ class WalletController extends BaseController
             'user_name' => $_SESSION['user_name'] ?? 'User'
         ];
 
-        $this->layout = 'layouts/base';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
         $this->render('wallet/transactions', $data);
     }
 
@@ -191,7 +191,7 @@ class WalletController extends BaseController
             'user_name' => $_SESSION['user_name'] ?? 'User'
         ];
 
-        $this->layout = 'layouts/base';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
         $this->render('wallet/transfer_emi', $data);
     }
 
@@ -308,10 +308,11 @@ class WalletController extends BaseController
             'wallet' => $wallet,
             'bankAccounts' => $bankAccounts,
             'withdrawals' => $withdrawals,
-            'user_name' => $_SESSION['user_name'] ?? 'User'
+            'user_name' => $_SESSION['user_name'] ?? 'User',
+            'page_title' => 'Withdrawal Request'
         ];
 
-        $this->layout = 'layouts/base';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
         $this->render('wallet/withdrawal', $data);
     }
 
@@ -395,7 +396,7 @@ class WalletController extends BaseController
             'user_name' => $_SESSION['user_name'] ?? 'User'
         ];
 
-        $this->layout = 'layouts/base';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
         $this->render('wallet/bank_accounts', $data);
     }
 
@@ -468,6 +469,128 @@ class WalletController extends BaseController
     }
 
     /**
+     * Set bank account as primary (AJAX)
+     */
+    public function setPrimaryBank()
+    {
+        @session_start();
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Not logged in']);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        $accountId = (int)($_POST['account_id'] ?? 0);
+
+        if ($accountId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid account ID']);
+            exit;
+        }
+
+        try {
+            $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ?", [$userId]);
+            $this->db->query("UPDATE user_bank_accounts SET is_primary = 1 WHERE id = ? AND user_id = ?", [$accountId, $userId]);
+            echo json_encode(['success' => true, 'message' => 'Primary account updated']);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Failed: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Delete bank account (AJAX)
+     */
+    public function deleteBankAccount()
+    {
+        @session_start();
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Not logged in']);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        $accountId = (int)($_POST['account_id'] ?? 0);
+
+        if ($accountId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid account ID']);
+            exit;
+        }
+
+        try {
+            $this->db->query("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ?", [$accountId, $userId]);
+            echo json_encode(['success' => true, 'message' => 'Bank account deleted']);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Failed: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Update bank account (AJAX)
+     */
+    public function updateBankAccount()
+    {
+        @session_start();
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Not logged in']);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+        $bankId = (int)($_POST['bank_id'] ?? 0);
+        $bankName = trim($_POST['bank_name'] ?? '');
+        $accountNumber = trim($_POST['account_number'] ?? '');
+        $ifscCode = trim($_POST['ifsc_code'] ?? '');
+        $accountHolder = trim($_POST['account_holder'] ?? '');
+        $branchName = trim($_POST['branch_name'] ?? '');
+        $accountType = trim($_POST['account_type'] ?? 'savings');
+
+        if ($bankId <= 0 || empty($bankName) || empty($accountNumber) || empty($ifscCode) || empty($accountHolder)) {
+            echo json_encode(['success' => false, 'message' => 'All required fields must be filled']);
+            exit;
+        }
+
+        try {
+            // Verify ownership
+            $existing = $this->db->fetchOne("SELECT id FROM user_bank_accounts WHERE id = ? AND user_id = ?", [$bankId, $userId]);
+            if (!$existing) {
+                echo json_encode(['success' => false, 'message' => 'Bank account not found or access denied']);
+                exit;
+            }
+
+            // Log the change for audit
+            $oldData = $this->db->fetchOne("SELECT * FROM user_bank_accounts WHERE id = ?", [$bankId]);
+            
+            $this->db->query("
+                UPDATE user_bank_accounts 
+                SET bank_name = ?, account_number = ?, ifsc_code = ?, account_holder = ?, branch_name = ?, account_type = ?, updated_at = NOW()
+                WHERE id = ? AND user_id = ?
+            ", [$bankName, $accountNumber, $ifscCode, $accountHolder, $branchName, $accountType, $bankId, $userId]);
+
+            // Log activity
+            try {
+                $this->db->query("
+                    INSERT INTO user_activity_log (user_id, action, details, ip_address, created_at)
+                    VALUES (?, 'bank_account_updated', ?, ?, NOW())
+                ", [$userId, json_encode(['bank_id' => $bankId, 'changes' => 'Bank details updated']), $_SERVER['REMOTE_ADDR'] ?? '']);
+            } catch (\Throwable $e) {
+                // Activity log table might not exist, ignore
+            }
+
+            echo json_encode(['success' => true, 'message' => 'Bank account updated successfully']);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Failed to update: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
      * Referral Network Page
      */
     public function referralNetwork()
@@ -513,7 +636,7 @@ class WalletController extends BaseController
             'user_referral_code' => $this->db->fetchOne("SELECT referral_code FROM users WHERE id = ?", [$userId])['referral_code'] ?? ''
         ];
 
-        $this->layout = 'layouts/base';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
         $this->render('wallet/referral_network', $data);
     }
 
@@ -566,7 +689,7 @@ class WalletController extends BaseController
             'user_name' => $_SESSION['user_name'] ?? 'User'
         ];
 
-        $this->layout = 'layouts/base';
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
         $this->render('wallet/analytics', $data);
     }
 
@@ -610,13 +733,13 @@ class WalletController extends BaseController
             [$associateId]
         );
 
-        // Get commission earnings from commissions table
+        // Get commission earnings from mlm_commission_ledger
         $commissionStats = $this->db->fetchOne(
             "SELECT 
                 COUNT(*) as total_commissions,
                 COALESCE(SUM(amount), 0) as total_earned
-            FROM commissions 
-            WHERE user_id = ? AND status = 'approved'",
+            FROM mlm_commission_ledger 
+            WHERE beneficiary_user_id = ? AND status IN ('paid','approved')",
             [$associateId]
         );
 
@@ -628,6 +751,7 @@ class WalletController extends BaseController
             [$associateId, $associateId, $associateId]
         );
 
+        $config = [];
         try {
             // Get wallet configuration
             $config = $this->db->fetchAll("SELECT * FROM wallet_configuration");

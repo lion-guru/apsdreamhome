@@ -25,7 +25,7 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 .plot-card { border:1px solid #e2e8f0; border-radius:12px; padding:16px; transition:all .2s; }
 .plot-card:hover { box-shadow:0 4px 15px rgba(0,0,0,0.1); }
 .plot-card .price { font-size:1.2rem; font-weight:700; color:#2563eb; }
-.contact-card { background:linear-gradient(135deg,#667eea,#764ba2); border-radius:16px; padding:32px; color:#fff; }
+.contact-card { background:linear-gradient(135deg,#0d9488,#0f766e); border-radius:16px; padding:32px; color:#fff; }
 .contact-card a { color:#fff; text-decoration:none; }
 .gallery-img { border-radius:12px; width:100%; height:200px; object-fit:cover; }
 </style>

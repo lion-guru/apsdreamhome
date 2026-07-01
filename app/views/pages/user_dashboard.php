@@ -127,7 +127,7 @@ $dashBookingCount = count($dashBookings);
     <div class="col-12">
         <div class="aps-cp-card" style="background: linear-gradient(135deg, #fff 0%, #ede9fe 100%);">
             <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(79, 70, 229, 0.15);">
-                <h5><i class="fas fa-file-invoice-dollar" style="color:#4f46e5;"></i> <?= __('dash_my_bookings', null, 'My Bookings') ?></h5>
+                <h5><i class="fas fa-file-invoice-dollar" style="color:#0d9488;"></i> <?= __('dash_my_bookings', null, 'My Bookings') ?></h5>
                 <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-primary"><?= __('dash_btn_view_all', null, 'View All') ?></a>
             </div>
             <div class="aps-cp-card-body">
@@ -445,13 +445,13 @@ $dashBookingCount = count($dashBookings);
         ?>
         <div class="aps-cp-card mb-4" style="background: linear-gradient(135deg, #fff 0%, #ede9fe 100%);">
             <div class="aps-cp-card-header" style="background: transparent; border-bottom: 1px solid rgba(139, 92, 246, 0.2);">
-                <h5><i class="fas fa-trophy" style="color:#8b5cf6"></i> <?= __('dash_investor_level', null, 'Investor Level') ?></h5>
+                <h5><i class="fas fa-trophy" style="color:#14b8a6"></i> <?= __('dash_investor_level', null, 'Investor Level') ?></h5>
             </div>
             <div class="aps-cp-card-body text-center">
                 <div class="display-5 fw-bold mb-1" style="color: var(--aps-cp-<?= $lvlColor ?>);"><?= htmlspecialchars($lvl) ?></div>
                 <small class="text-muted d-block mb-3"><?= __('dash_total_invested', null, 'Total Invested') ?>: ₹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
                 <div class="aps-cp-progress" style="height:12px;">
-                    <div class="aps-cp-progress-bar" style="width:<?= (float)($invStats['progress_pct'] ?? 0) ?>%; background: linear-gradient(90deg, #4f46e5, #8b5cf6);"></div>
+                    <div class="aps-cp-progress-bar" style="width:<?= (float)($invStats['progress_pct'] ?? 0) ?>%; background: linear-gradient(90deg, #0d9488, #14b8a6);"></div>
                 </div>
                 <p class="text-muted small mt-2 mb-0"><?= sprintf(__('dash_invest_more_format', null, 'Invest ₹%%s more to reach %%s'), number_format((float)($invStats['next_threshold'] ?? 50000)), htmlspecialchars($invStats['next_level'] ?? 'Silver')) ?></strong></p>
                 <a href="<?= BASE_URL ?>/user/investment-plans" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary mt-3"><i class="fas fa-arrow-up"></i> <?= __('dash_btn_upgrade', null, 'Upgrade') ?></a>
@@ -760,7 +760,7 @@ $dashBookingCount = count($dashBookings);
             </div>
             <div class="aps-cp-card-body">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="aps-cp-stat-icon" style="background: var(--aps-cp-<?= $kycColor ?>-light, #f0f4ff); color: var(--aps-cp-<?= $kycColor ?>, #4f46e5);"><i class="<?= $kycIcon ?>"></i></div>
+                    <div class="aps-cp-stat-icon" style="background: var(--aps-cp-<?= $kycColor ?>-light, #f0f4ff); color: var(--aps-cp-<?= $kycColor ?>, #0d9488);"><i class="<?= $kycIcon ?>"></i></div>
                     <div class="ms-3">
                         <p class="mb-0 fw-bold text-<?= $kycColor ?>"><?= $kycLabel ?></p>
                         <small class="text-muted"><?= $kycDesc ?></small>

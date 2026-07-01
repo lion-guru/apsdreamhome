@@ -118,6 +118,165 @@ $payout_history = $payout_history ?? [];
         </div>
     </div>
 
+    <?php
+    // Rank progress variables (set by controller)
+    $currentRank       = $current_rank       ?? 'associate';
+    $currentRankLabel  = $current_rank_label ?? 'Associate';
+    $currentRankColor  = $current_rank_color ?? '#94a3b8';
+    $currentRankRate   = $current_rank_rate  ?? 5;
+    $nextRankLabel     = $next_rank_label    ?? 'Sr. Associate';
+    $nextRankColor     = $next_rank_color    ?? '#64748b';
+    $nextRankRate      = $next_rank_rate     ?? 7;
+    $rankProgressPct   = $rank_progress_pct  ?? 0;
+    $amountToNext      = $amount_to_next_rank ?? 0;
+    $lifetimeSales     = $lifetime_sales_volume ?? 0;
+    $commByType        = $commission_by_type ?? [];
+    $totalCommEarned   = $commission_earned  ?? 0;
+    $rankBenefits      = $rank_benefits      ?? [];
+    ?>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MY RANK PROGRESS SECTION
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="row g-4 mb-4">
+
+        <!-- LEFT: Rank Progress Card -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100" style="background: linear-gradient(145deg,#fff,#f8faff);">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-dark mb-4"><i class="fas fa-trophy me-2" style="color:<?= htmlspecialchars($currentRankColor) ?>;"></i>My Rank Progress</h6>
+
+                    <!-- Current Rank Badge -->
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center me-3" style="width:60px;height:60px;background:<?= htmlspecialchars($currentRankColor) ?>20;border:2px solid <?= htmlspecialchars($currentRankColor) ?>40;">
+                            <i class="fas fa-medal fa-xl" style="color:<?= htmlspecialchars($currentRankColor) ?>;"></i>
+                        </div>
+                        <div>
+                            <div class="badge px-3 py-2 mb-1 fw-bold fs-6" style="background:<?= htmlspecialchars($currentRankColor) ?>;color:#fff;">
+                                <?= htmlspecialchars($currentRankLabel) ?>
+                            </div>
+                            <div class="small text-muted">Commission Rate: <strong class="text-dark"><?= $currentRankRate ?>%</strong> on your plot sales</div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <?php if ($amountToNext > 0): ?>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="fw-semibold text-dark">Progress to <span style="color:<?= htmlspecialchars($nextRankColor) ?>;"><?= htmlspecialchars($nextRankLabel) ?></span></small>
+                            <span class="badge rounded-pill" style="background:<?= htmlspecialchars($nextRankColor) ?>20;color:<?= htmlspecialchars($nextRankColor) ?>;font-size:.8rem;"><?= $rankProgressPct ?>%</span>
+                        </div>
+                        <div class="progress" style="height:14px;border-radius:10px;background:#f1f5f9;">
+                            <div class="progress-bar" role="progressbar"
+                                 style="width:<?= $rankProgressPct ?>%;background:linear-gradient(90deg,<?= htmlspecialchars($currentRankColor) ?>,<?= htmlspecialchars($nextRankColor) ?>);border-radius:10px;transition:width 1.2s ease;"
+                                 aria-valuenow="<?= $rankProgressPct ?>" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <small class="text-muted">Your GBV: <strong class="text-dark">₹<?= number_format($lifetimeSales) ?></strong></small>
+                            <small class="text-muted">Need: <strong class="text-danger">₹<?= number_format($amountToNext) ?> more</strong></small>
+                        </div>
+                    </div>
+
+                    <!-- Next Rank Unlock Preview -->
+                    <div class="rounded-3 p-3" style="background:<?= htmlspecialchars($nextRankColor) ?>10;border:1px solid <?= htmlspecialchars($nextRankColor) ?>30;">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-lock me-2" style="color:<?= htmlspecialchars($nextRankColor) ?>;"></i>
+                            <div>
+                                <div class="fw-semibold small" style="color:<?= htmlspecialchars($nextRankColor) ?>;">Unlock <?= htmlspecialchars($nextRankLabel) ?></div>
+                                <small class="text-muted">Earn <strong><?= $nextRankRate ?>%</strong> on plot sales (+<?= round($nextRankRate - $currentRankRate, 1) ?>% uplift)</small>
+                            </div>
+                        </div>
+                    </div>
+                    <?php else: ?>
+                    <div class="alert alert-success py-2 mb-3">
+                        <i class="fas fa-crown me-2"></i>
+                        <strong>Congratulations!</strong> You are at the highest rank — <strong>Site Manager (20%)</strong>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Rank Ladder (mini) -->
+                    <?php if (!empty($rankBenefits)): ?>
+                    <div class="mt-3">
+                        <small class="text-muted fw-semibold d-block mb-2">RANK LADDER</small>
+                        <div class="d-flex flex-wrap gap-1">
+                            <?php foreach ($rankBenefits as $rb):
+                                $isActive = $rb['rank_name'] === $currentRank;
+                                $isPassed = ($rb['rank_order'] ?? 99) < ($rankBenefits[array_search($currentRank, array_column($rankBenefits,'rank_name'))]['rank_order'] ?? 0);
+                            ?>
+                            <span class="badge px-2 py-1" style="font-size:.7rem;background:<?= $isActive ? htmlspecialchars($rb['color_code'] ?? '#94a3b8') : '#f1f5f9' ?>;color:<?= $isActive ? '#fff' : '#94a3b8' ?>;border:1px solid <?= htmlspecialchars($rb['color_code'] ?? '#e2e8f0') ?>50;">
+                                <?= htmlspecialchars($rb['rank_name'] === $currentRank ? '★ ' : '') ?><?= (float)$rb['direct_sale_pct'] ?>%
+                            </span>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Commission Breakdown by Type -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h6 class="fw-bold text-dark mb-0"><i class="fas fa-chart-bar text-success me-2"></i>My Earnings Breakdown</h6>
+                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">Total: ₹<?= number_format($totalCommEarned) ?></span>
+                    </div>
+
+                    <?php
+                    $typeLabels = [
+                        'direct_sale'       => ['label'=>'Direct Sale Commission',    'icon'=>'fa-handshake',        'color'=>'#0d9488'],
+                        'override'          => ['label'=>'Upline Override',           'icon'=>'fa-layer-group',      'color'=>'#6366f1'],
+                        'matching_bonus'    => ['label'=>'Matching Bonus',            'icon'=>'fa-hands-helping',    'color'=>'#f59e0b'],
+                        'generation_bonus'  => ['label'=>'Generation Bonus',          'icon'=>'fa-network-wired',    'color'=>'#0891b2'],
+                        'rank_bonus'        => ['label'=>'Rank Promotion Bonus',      'icon'=>'fa-medal',            'color'=>'#dc2626'],
+                        'royalty_pool'      => ['label'=>'Royalty Pool',              'icon'=>'fa-crown',            'color'=>'#0f766e'],
+                        'infinity_override' => ['label'=>'Infinity Override',         'icon'=>'fa-infinity',         'color'=>'#059669'],
+                        'level_bonus'       => ['label'=>'Level Bonus',               'icon'=>'fa-sitemap',          'color'=>'#d97706'],
+                        'team_bonus'        => ['label'=>'Team Bonus',                'icon'=>'fa-users',            'color'=>'#2563eb'],
+                        'performance_bonus' => ['label'=>'Performance Bonus',         'icon'=>'fa-bolt',             'color'=>'#db2777'],
+                        'investment_sale'   => ['label'=>'Investment Sale',           'icon'=>'fa-chart-line',       'color'=>'#10b981'],
+                    ];
+                    ?>
+
+                    <?php if (!empty($commByType)): ?>
+                    <div class="d-flex flex-column gap-2">
+                        <?php foreach ($commByType as $ct):
+                            $typeMeta  = $typeLabels[$ct['commission_type']] ?? ['label'=>ucfirst(str_replace('_',' ',$ct['commission_type'])),'icon'=>'fa-coins','color'=>'#64748b'];
+                            $pct       = $totalCommEarned > 0 ? round(($ct['total'] / $totalCommEarned) * 100, 1) : 0;
+                        ?>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
+                                 style="width:34px;height:34px;background:<?= $typeMeta['color'] ?>18;">
+                                <i class="fas <?= $typeMeta['icon'] ?> small" style="color:<?= $typeMeta['color'] ?>;"></i>
+                            </div>
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <small class="fw-semibold text-dark text-truncate"><?= htmlspecialchars($typeMeta['label']) ?></small>
+                                    <small class="fw-bold ms-2 flex-shrink-0" style="color:<?= $typeMeta['color'] ?>;">₹<?= number_format($ct['total']) ?></small>
+                                </div>
+                                <div class="progress" style="height:5px;border-radius:4px;">
+                                    <div class="progress-bar" style="width:<?= $pct ?>%;background:<?= $typeMeta['color'] ?>;border-radius:4px;"></div>
+                                </div>
+                            </div>
+                            <div class="text-end flex-shrink-0" style="min-width:40px;">
+                                <small class="text-muted"><?= $pct ?>%</small>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php else: ?>
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-chart-bar fa-3x mb-3 opacity-25"></i>
+                        <p class="mb-0">No commission earnings yet.<br>Start closing plots to see your breakdown here.</p>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Actions -->
     <div class="row mb-4">
         <div class="col-12">

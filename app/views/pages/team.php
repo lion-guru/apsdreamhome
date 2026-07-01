@@ -1,7 +1,7 @@
 <?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <style>
 .team-hero {
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d9488 100%);
     position: relative;
     overflow: hidden;
     min-height: 50vh;
@@ -15,8 +15,8 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle at 30% 50%, rgba(99,102,241,0.15) 0%, transparent 50%),
-                radial-gradient(circle at 70% 30%, rgba(168,85,247,0.1) 0%, transparent 50%);
+    background: radial-gradient(circle at 30% 50%, rgba(13,148,136,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(16,185,129,0.1) 0%, transparent 50%);
     animation: heroGlow 10s ease-in-out infinite alternate;
 }
 @keyframes heroGlow {
@@ -27,7 +27,7 @@
 .team-hero h1 {
     font-size: clamp(2.5rem, 6vw, 4rem);
     font-weight: 800;
-    background: linear-gradient(135deg, #fff 0%, #c4b5fd 50%, #a78bfa 100%);
+    background: linear-gradient(135deg, #fff 0%, #5eead4 50%, #10b981 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -60,7 +60,7 @@
 }
 
 .team-stats {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     padding: 4rem 0;
     position: relative;
 }
@@ -102,10 +102,10 @@
     transition: all 0.3s ease;
 }
 .filter-btn:hover, .filter-btn.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     border-color: transparent;
     color: #fff;
-    box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    box-shadow: 0 4px 15px rgba(13,148,136,0.4);
     transform: translateY(-2px);
 }
 
@@ -129,7 +129,7 @@
 }
 .team-card-photo {
     height: 220px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     position: relative;
     overflow: hidden;
 }
@@ -170,13 +170,13 @@
     color: #1f2937;
 }
 .team-card-body .position {
-    color: #667eea;
+    color: #0d9488;
     font-weight: 600;
     font-size: 0.85rem;
     margin-bottom: 0.75rem;
     display: inline-block;
     padding: 0.2rem 0.8rem;
-    background: rgba(102,126,234,0.08);
+    background: rgba(13,148,136,0.08);
     border-radius: 50px;
 }
 .team-card-body .bio {
@@ -219,7 +219,7 @@
     font-size: 0.9rem;
 }
 .team-card-footer a:hover {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     color: #fff;
     transform: translateY(-2px);
 }
@@ -239,25 +239,24 @@
 }
 .value-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(102,126,234,0.15);
+    box-shadow: 0 10px 30px rgba(13,148,136,0.15);
 }
 .value-card .icon {
-    width: 70px;
-    height: 70px;
-    margin: 0 auto 1.5rem;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.8rem;
     border-radius: 20px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     color: #fff;
 }
 .value-card h4 { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.75rem; color: #1f2937; }
 .value-card p { font-size: 0.9rem; color: #6b7280; line-height: 1.7; margin-bottom: 0; }
 
 .cta-section {
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d9488 100%);
     padding: 5rem 0;
     text-align: center;
 }
@@ -273,7 +272,7 @@
     font-size: 1.1rem;
     font-weight: 600;
     border-radius: 50px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #0d9488, #0f766e);
     border: none;
     color: #fff;
     transition: all 0.3s;
@@ -282,7 +281,7 @@
 }
 .cta-section .btn-cta:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+    box-shadow: 0 10px 30px rgba(13,148,136,0.4);
 }
 
 .cms-banner {
@@ -476,7 +475,7 @@
             <a href="<?php echo BASE_URL; ?>/contact" class="btn-cta me-2 mb-2">
                 <i class="fas fa-calendar-check me-2"></i><?php echo __('team_get_in_touch', [], 'Get in Touch'); ?>
             </a>
-            <a href="tel:<?= $phoneRaw ?>" class="btn-cta mb-2" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);">
+            <a href="tel:<?= $phoneRaw ?>" class="btn-cta mb-2" style="background:linear-gradient(135deg,#0d9488,#0f766e);">
                 <i class="fas fa-phone-alt me-2"></i><?php echo __('team_call_now', [], 'Call Now'); ?>
             </a>
         </div>

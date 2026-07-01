@@ -2,7 +2,7 @@
 
 <style>
 :root {
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --primary-gradient: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -94,7 +94,7 @@
 }
 
 .stat-icon.referrals {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     color: white;
 }
 
@@ -192,7 +192,7 @@
 }
 
 .referral-box {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
     border-radius: 15px;
     padding: 25px;
     color: white;
@@ -212,7 +212,7 @@
 
 .copy-btn {
     background: white;
-    color: #667eea;
+    color: #0d9488;
     border: none;
     padding: 10px 25px;
     border-radius: 25px;
@@ -238,7 +238,7 @@
 
 .section-title i {
     margin-right: 10px;
-    color: #667eea;
+    color: #0d9488;
 }
 
 @media (max-width: 768px) {

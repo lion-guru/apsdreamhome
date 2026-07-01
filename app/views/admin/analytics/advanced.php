@@ -84,9 +84,9 @@ $bookingData = $bookingData ?? [];
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
-const colors = ['#4f46e5','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6'];
+const colors = ['#0d9488','#06b6d4','#10b981','#f59e0b','#ef4444','#14b8a6','#ec4899','#14b8a6'];
 new Chart(document.getElementById('revenueChart'), {
-    type: 'bar', data: { labels: <?= json_encode($monthLabels) ?>, datasets: [{ label: 'Revenue (₹)', data: <?= json_encode(array_map('floatval', $revenueData)) ?>, backgroundColor: '#4f46e5aa', borderColor: '#4f46e5', borderWidth: 1 }, { label: 'Bookings', data: <?= json_encode(array_map('intval', $bookingCountData)) ?>, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y1', tension: 0.3 }] },
+    type: 'bar', data: { labels: <?= json_encode($monthLabels) ?>, datasets: [{ label: 'Revenue (₹)', data: <?= json_encode(array_map('floatval', $revenueData)) ?>, backgroundColor: '#0d9488aa', borderColor: '#0d9488', borderWidth: 1 }, { label: 'Bookings', data: <?= json_encode(array_map('intval', $bookingCountData)) ?>, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y1', tension: 0.3 }] },
     options: { responsive: true, scales: { y: { beginAtZero: true, title: { display: true, text: 'Revenue (₹)' } }, y1: { position: 'right', beginAtZero: true, title: { display: true, text: 'Bookings' }, grid: { drawOnChartArea: false } } } }
 });
 new Chart(document.getElementById('sourceChart'), {

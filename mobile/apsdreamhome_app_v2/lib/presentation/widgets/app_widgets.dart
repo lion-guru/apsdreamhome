@@ -232,7 +232,7 @@ class AppWidgets {
   }) {
     final formattedAmount = _formatCurrency(amount);
     final symbol = prefix ?? AppConstants.currencySymbol;
-    final defaultStyle = const TextStyle(
+    const defaultStyle = TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.bold,
       color: AppTheme.primaryColor,

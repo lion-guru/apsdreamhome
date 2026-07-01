@@ -30,6 +30,7 @@ class KycController extends BaseController
             'aadhaarMasked' => $existing ? $this->maskAadhaar($existing['aadhaar_number'] ?? '') : null,
             'panMasked' => $existing ? $this->maskPan($existing['pan_number'] ?? '') : null,
         ];
+        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/customer';
         $this->render('pages/user/kyc', $data);
     }
 

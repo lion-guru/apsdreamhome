@@ -45,7 +45,7 @@ $report = $report ?? null;
                     <h6 class="mb-0 fw-bold"><i class="fas fa-calendar-check me-2 text-success"></i>Attendance (Last 30 Records)</h6>
                 </div>
                 <div class="card-body p-0" style="max-height:300px;overflow-y:auto;">
-                    <table class="table table-sm mb-0">
+                    <div class="table-responsive"><table class="table table-sm mb-0">
                         <thead class="table-light"><tr><th>Date</th><th>Status</th><th>In</th><th>Out</th></tr></thead>
                         <tbody>
                             <?php if (empty($attendances ?? [])): ?>
@@ -61,7 +61,7 @@ $report = $report ?? null;
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@ $report = $report ?? null;
                     <h6 class="mb-0 fw-bold"><i class="fas fa-umbrella-beach me-2 text-warning"></i>Leave History</h6>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-sm mb-0">
+                    <div class="table-responsive"><table class="table table-sm mb-0">
                         <thead class="table-light"><tr><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead>
                         <tbody>
                             <?php if (empty($leaves ?? [])): ?>
@@ -91,7 +91,7 @@ $report = $report ?? null;
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -101,7 +101,7 @@ $report = $report ?? null;
                     <h6 class="mb-0 fw-bold"><i class="fas fa-gift me-2 text-success"></i>Bonuses</h6>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-sm mb-0">
+                    <div class="table-responsive"><table class="table table-sm mb-0">
                         <thead class="table-light"><tr><th>Type</th><th>Amount</th><th>Month</th><th>Status</th></tr></thead>
                         <tbody>
                             <?php if (empty($bonuses ?? [])): ?>
@@ -117,7 +117,7 @@ $report = $report ?? null;
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

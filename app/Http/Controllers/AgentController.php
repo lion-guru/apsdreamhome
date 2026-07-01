@@ -120,50 +120,36 @@ class AgentController extends BaseController
      */
     public function handleRegister()
     {
+        // Use the modern ValidatorService for cleaner code
+        $validator = new \App\Services\ValidatorService($_POST);
+        $validator->validateRequired(['name', 'email', 'phone', 'password', 'confirm_password']);
+        $validator->validateEmail('email');
+        $validator->validatePhone('phone');
+        $validator->validateMinLength('password', 6);
+        $validator->validateMatch('password', 'confirm_password');
+
+        if ($validator->hasErrors()) {
+            $_SESSION['form_errors'] = $validator->getErrors();
+            $this->redirect('/agent/register');
+            return;
+        }
+
         try {
             $name = $this->sanitizeInput($_POST['name'] ?? '');
             $email = $this->sanitizeInput($_POST['email'] ?? '');
             $phone = $this->sanitizeInput($_POST['phone'] ?? '');
             $password = $this->sanitizeInput($_POST['password'] ?? '');
-            $confirmPassword = $this->sanitizeInput($_POST['confirm_password'] ?? '');
 
-            // Validate input
-            $errors = [];
-
-            if (empty($name)) {
-                $errors[] = 'Name is required';
-            }
-
-            if (empty($email)) {
-                $errors[] = 'Email is required';
-            } elseif (!$this->validateEmail($email)) {
-                $errors[] = 'Please enter a valid email address';
-            }
-
-            if (empty($phone)) {
-                $errors[] = 'Phone number is required';
-            } elseif (!$this->validatePhone($phone)) {
-                $errors[] = 'Please enter a valid phone number';
-            }
-
-            if (empty($password)) {
-                $errors[] = 'Password is required';
-            } elseif (strlen($password) < 6) {
-                $errors[] = 'Password must be at least 6 characters';
-            }
-
-            if ($password !== $confirmPassword) {
-                $errors[] = 'Passwords do not match';
-            }
-
-            if (!empty($errors)) {
-                $this->setFlash('error', implode(', ', $errors));
+            // Check if email already exists
+            $agentModel = $this->model('Agent');
+            $existingAgent = $agentModel->findByEmail($email);
+            if ($existingAgent) {
+                $this->setFlash('error', 'This email address is already registered.');
                 $this->redirect('/agent/register');
                 return;
             }
 
             // Register agent
-            $agentModel = $this->model('Agent');
             $agentId = $agentModel->register([
                 'name' => $name,
                 'email' => $email,
@@ -188,6 +174,128 @@ class AgentController extends BaseController
     {
         session_destroy();
         $this->setFlash('success', 'You have been logged out successfully.');
+        $this->redirect('/agent/login');
+    }
+
+    /**
+     * Show forgot password page
+     */
+    public function forgotPassword()
+    {
+        $this->render('auth/agent_forgot_password', [
+            'page_title' => 'Forgot Password - Agent',
+            'csrf_token' => $this->getCsrfToken()
+        ]);
+    }
+
+    /**
+     * Handle forgot password request
+     */
+    public function handleForgotPassword()
+    {
+        try {
+            $email = $this->sanitizeInput($_POST['email'] ?? '', 'email');
+            if (!$this->validateEmail($email)) {
+                $this->setFlash('error', 'Please enter a valid email address.');
+                $this->redirect('/agent/forgot-password');
+                return;
+            }
+
+            $agentModel = $this->model('Agent');
+            $agent = $agentModel->findByEmail($email);
+
+            if ($agent) {
+                // Generate a secure token
+                $token = bin2hex(random_bytes(32));
+                $agentModel->storePasswordResetToken($email, $token);
+
+                // Send reset email
+                $resetLink = BASE_URL . '/agent/reset-password/' . $token;
+                $emailService = new \App\Services\UniversalServiceWrapper();
+                $emailService->sendEmail(
+                    $email,
+                    'Password Reset Request - APS Dream Home',
+                    "Hello, <br><br>Please click the following link to reset your password: <a href='{$resetLink}'>{$resetLink}</a><br><br>This link is valid for 1 hour."
+                );
+            }
+
+            // Always show the same message to prevent email enumeration
+            $this->setFlash('success', 'If an account with that email exists, a password reset link has been sent.');
+            $this->redirect('/agent/login');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'An unexpected error occurred. Please try again.');
+            $this->redirect('/agent/forgot-password');
+        }
+    }
+
+    /**
+     * Show password reset form
+     */
+    public function resetPassword($token = null)
+    {
+        if (empty($token)) {
+            $this->setFlash('error', 'Invalid reset token.');
+            $this->redirect('/agent/login');
+            return;
+        }
+
+        $agentModel = $this->model('Agent');
+        $record = $agentModel->findResetToken($token);
+
+        if (!$record) {
+            $this->setFlash('error', 'Invalid or expired password reset token.');
+            $this->redirect('/agent/login');
+            return;
+        }
+
+        $this->render('auth/agent_reset_password', [
+            'page_title' => 'Reset Password - Agent',
+            'csrf_token' => $this->getCsrfToken(),
+            'token' => $token
+        ]);
+    }
+
+    /**
+     * Handle password reset submission
+     */
+    public function handleResetPassword()
+    {
+        $token = $this->sanitizeInput($_POST['token'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+
+        if (empty($token) || empty($password) || empty($confirmPassword)) {
+            $this->setFlash('error', 'All fields are required.');
+            $this->redirect('/agent/reset-password/' . $token);
+            return;
+        }
+
+        if ($password !== $confirmPassword) {
+            $this->setFlash('error', 'Passwords do not match.');
+            $this->redirect('/agent/reset-password/' . $token);
+            return;
+        }
+
+        if (strlen($password) < 6) {
+            $this->setFlash('error', 'Password must be at least 6 characters long.');
+            $this->redirect('/agent/reset-password/' . $token);
+            return;
+        }
+
+        $agentModel = $this->model('Agent');
+        $record = $agentModel->findResetToken($token);
+
+        if (!$record) {
+            $this->setFlash('error', 'Invalid or expired password reset token.');
+            $this->redirect('/agent/login');
+            return;
+        }
+
+        // Update password and delete token
+        $agentModel->updatePassword($record['email'], $password);
+        $agentModel->deleteResetToken($record['email']);
+
+        $this->setFlash('success', 'Your password has been reset successfully. Please login.');
         $this->redirect('/agent/login');
     }
 }

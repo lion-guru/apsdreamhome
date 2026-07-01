@@ -27,14 +27,95 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
             exit;
         }
         $this->db = Database::getInstance();
+
+        // Override admin layout for associate/agent/customer roles
+        $role = $_SESSION['role'] ?? '';
+        if (in_array($role, ['associate', 'agent'])) {
+            $this->layout = 'layouts/associate';
+        } elseif (!$isAdmin) {
+            $this->layout = 'layouts/base';
+        }
     }
 
     /**
-     * Show MLM tree page
+     * Show MLM tree page — role-aware layout
      */
     public function tree()
     {
-        return $this->render('admin/mlm/tree', ['page_title' => 'MLM Tree']);
+        $role = $_SESSION['role'] ?? '';
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        // Fetch network tree data for this user
+        $treeData = ['nodes' => [], 'stats' => []];
+        try {
+            // Get downline members from mlm_network_tree
+            $nodes = $this->db->fetchAll(
+                "SELECT n.id, n.associate_id as id, u.name, u.email, 
+                        n.level, n.position, n.parent_id,
+                        COALESCE(ml.current_level, 'associate') as current_level,
+                        COALESCE(ml.total_team_size, 0) as personal_bv,
+                        COALESCE(ml.lifetime_sales, 0) as total_commission,
+                        n.created_at as joined_at,
+                        CASE WHEN u.status = 'active' THEN 1 ELSE 0 END as is_active
+                 FROM mlm_network_tree n
+                 LEFT JOIN users u ON u.id = n.associate_id
+                 LEFT JOIN mlm_profiles ml ON ml.user_id = n.associate_id
+                 WHERE n.parent_id = ?
+                 ORDER BY n.level ASC, n.position ASC",
+                [$userId]
+            );
+
+            // Also include self as root
+            $self = $this->db->fetchOne(
+                "SELECT u.id, u.name, u.email, 
+                        COALESCE(ml.current_level, 'associate') as current_level,
+                        COALESCE(ml.total_team_size, 0) as personal_bv,
+                        COALESCE(ml.lifetime_sales, 0) as total_commission,
+                        u.created_at as joined_at,
+                        1 as is_active
+                 FROM users u
+                 LEFT JOIN mlm_profiles ml ON ml.user_id = u.id
+                 WHERE u.id = ?",
+                [$userId]
+            );
+
+            $allNodes = $nodes;
+            if ($self) {
+                $self['parent_id'] = null;
+                $allNodes = array_merge([$self], $nodes);
+            }
+
+            $totalDownline = count($nodes);
+            $leftCount = 0;
+            $rightCount = 0;
+            foreach ($nodes as $n) {
+                if (($n['position'] ?? '') === 'left') $leftCount++;
+                elseif (($n['position'] ?? '') === 'right') $rightCount++;
+            }
+
+            $treeData = [
+                'nodes' => $allNodes,
+                'stats' => [
+                    'total_downline' => $totalDownline,
+                    'left_count' => $leftCount,
+                    'right_count' => $rightCount,
+                    'pairing_bonus' => 0,
+                ]
+            ];
+        } catch (\Exception $e) {
+            error_log('MLMTreeController tree error: ' . $e->getMessage());
+        }
+
+        $this->render('associate/network_tree', [
+            'page_title' => 'Network Tree',
+            'treeData' => $treeData,
+            'current_page' => 'network',
+        ]);
     }
 
     /**

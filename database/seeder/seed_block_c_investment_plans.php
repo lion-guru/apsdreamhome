@@ -1,4 +1,8 @@
 <?php
+echo "TESTING RECENT EDIT\n";
+if (function_exists('opcache_reset')) {
+    opcache_reset();
+}
 /**
  * Seeder: Block-C Investment Plans (per APS Dream Home brochure)
  *
@@ -95,8 +99,7 @@ try {
             plot_promised_value   = VALUES(plot_promised_value),
             block_restriction     = VALUES(block_restriction),
             cancellation_lock_days= VALUES(cancellation_lock_days),
-            is_active             = 1,
-            updated_at            = NOW()
+            is_active             = 1
     ");
 
     foreach ($plans as $i => $p) {

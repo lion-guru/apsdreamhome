@@ -290,4 +290,77 @@ class LeadController extends AdminController
     }
     public function uploadDocument($id) { try { $this->setFlashMessage('info', 'Document upload feature available'); } catch (\Exception $e) {} return $this->redirect("/admin/leads/show/$id"); }
     public function deleteDocument($id, $docId) { try { $this->db->query("DELETE FROM lead_documents WHERE id = ? AND lead_id = ?", [$docId, $id]); $this->setFlashMessage('success', 'Document deleted'); } catch (\Exception $e) { $this->setFlashMessage('error', $e->getMessage()); } return $this->redirect("/admin/leads/show/$id"); }
+
+    /**
+     * Lead Assignment Page — Assign/transfer leads to associates/telecallers
+     */
+    public function assignPage()
+    {
+        $this->requireAdmin();
+        $db = \App\Core\Database\Database::getInstance()->getConnection();
+
+        // Get unassigned leads
+        $unassigned = $db->query("SELECT l.id, l.name, l.phone, l.email, l.source, l.status, l.lead_score, l.created_at,
+            u.name as created_by_name
+            FROM leads l
+            LEFT JOIN users u ON u.id = l.created_by
+            WHERE l.assigned_to IS NULL AND l.deleted_at IS NULL
+            ORDER BY l.created_at DESC LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+        // Get assignable users (associates, agents, telecallers)
+        $assignees = $db->query("SELECT id, name, email, role FROM users WHERE role IN ('associate','agent','employee') AND deleted_at IS NULL ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+        // Get recent assignments
+        $recentAssignments = $db->query("SELECT ca.*, l.name as lead_name, u1.name as from_name, u2.name as to_name, u3.name as by_name
+            FROM crm_assignments ca
+            LEFT JOIN leads l ON l.id = ca.lead_id
+            LEFT JOIN users u1 ON u1.id = ca.assigned_from
+            LEFT JOIN users u2 ON u2.id = ca.assigned_to
+            LEFT JOIN users u3 ON u3.id = ca.assigned_by
+            ORDER BY ca.created_at DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+        // Load CRMService for assignment
+        $crm = new \App\Services\CRMService();
+
+        return $this->render('admin/leads/assign', [
+            'unassigned' => $unassigned,
+            'assignees' => $assignees,
+            'recent_assignments' => $recentAssignments,
+        ]);
+    }
+
+    /**
+     * Process single or bulk lead assignment
+     */
+    public function processAssignment()
+    {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->redirect('/admin/leads/assign');
+        }
+
+        $leadIds = $_POST['lead_ids'] ?? [];
+        $assignedTo = !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
+        $reason = trim($_POST['reason'] ?? '');
+
+        if (empty($leadIds) || !$assignedTo) {
+            $this->setFlashMessage('error', 'Please select leads and an assignee.');
+            return $this->redirect('/admin/leads/assign');
+        }
+
+        if (!is_array($leadIds)) $leadIds = [$leadIds];
+
+        $crm = new \App\Services\CRMService();
+        $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+        $assigned = 0;
+
+        foreach ($leadIds as $leadId) {
+            $result = $crm->assignLead((int)$leadId, $assignedTo, $adminId, $reason ?: 'Admin assignment');
+            if ($result['success']) $assigned++;
+        }
+
+        $this->setFlashMessage('success', "{$assigned} lead(s) assigned successfully.");
+        return $this->redirect('/admin/leads/assign');
+    }
 }

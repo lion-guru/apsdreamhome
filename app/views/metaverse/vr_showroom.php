@@ -18,7 +18,7 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body p-0 position-relative">
-                    <div class="vr-viewport" style="height: 500px; background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);">
+                    <div class="vr-viewport" style="height: 500px; background: linear-gradient(135deg, #0a0a1a, #0f172a, #24243e);">
                         <div class="d-flex align-items-center justify-content-center h-100">
                             <div class="text-center text-white">
                                 <i class="fas fa-vr-cardboard fa-5x mb-3 opacity-50"></i>

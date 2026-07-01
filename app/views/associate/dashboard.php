@@ -28,48 +28,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             justify-content: center;
         }
     </style>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="<?php echo $base; ?>/associate/dashboard">
-                <i class="fas fa-home me-2"></i>APS Dream Home
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="<?php echo $base; ?>/associate/dashboard">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo $base; ?>/team/genealogy">My Network</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo $base; ?>/admin/commission">Commissions</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-1"></i><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Associate'); ?>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="<?php echo $base; ?>/customer/profile">Profile</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="<?php echo $base; ?>/logout">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container py-4">
+    <div class="container-fluid px-4 py-3">
         <!-- Welcome Banner -->
-        <div class="card bg-gradient-primary text-white mb-4 border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="card bg-gradient-primary text-white mb-4 border-0" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -154,7 +115,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i>Network Overview</h5>
-                        <a href="<?php echo $base; ?>/team/genealogy" class="btn btn-sm btn-primary">View Full Tree</a>
+                        <a href="<?php echo $base; ?>/associate/genealogy" class="btn btn-sm btn-primary">View Full Tree</a>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <?php if (!empty($network)): ?>
@@ -184,7 +145,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <div class="text-center py-4">
                                 <i class="fas fa-sitemap fa-3x text-muted mb-3"></i>
                                 <p class="text-muted">No network data available</p>
-                                <a href="<?php echo $base; ?>/register?ref=<?php echo $_SESSION['user_id'] ?? ''; ?>" class="btn btn-primary">
+                                <a href="<?php echo $base; ?>/associate/register?ref=<?php echo $_SESSION['referral_code'] ?? ''; ?>" class="btn btn-primary">
                                     <i class="fas fa-share-alt me-2"></i>Invite Members
                                 </a>
                             </div>
@@ -225,14 +186,14 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="d-grid gap-2">
-                            <a href="<?php echo $base; ?>/register?ref=<?php echo $_SESSION['user_id'] ?? ''; ?>" class="btn btn-outline-primary">
+                            <a href="<?php echo $base; ?>/associate/register?ref=<?php echo $_SESSION['referral_code'] ?? ''; ?>" class="btn btn-outline-primary">
                                 <i class="fas fa-user-plus me-2"></i>Invite Member
                             </a>
-                            <a href="<?php echo $base; ?>/admin/payouts" class="btn btn-outline-success">
+                            <a href="<?php echo $base; ?>/associate/wallet/withdraw" class="btn btn-outline-success">
                                 <i class="fas fa-wallet me-2"></i>Request Payout
                             </a>
-                            <a href="<?php echo $base; ?>/customer/documents" class="btn btn-outline-info">
-                                <i class="fas fa-file me-2"></i>My Documents
+                            <a href="<?php echo $base; ?>/associate/profile" class="btn btn-outline-info">
+                                <i class="fas fa-file me-2"></i>My Profile
                             </a>
                         </div>
                     </div>

@@ -20,7 +20,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\BaseController;
 use App\Services\MLM\CommissionManager;
 use App\Services\MLM\TdsConfigService;
-use App\Services\MLM\HybridCommissionEngine;
+use App\Services\HybridCommissionEngine;
 use App\Services\MLM\MLMCommissionEngine;
 
 class CommissionSimulationController extends BaseController
@@ -166,7 +166,16 @@ class CommissionSimulationController extends BaseController
         try {
             // Use HybridCommissionEngine for colony projects
             $engine = new HybridCommissionEngine();
-            $calculation = $engine->calculateBookingCommission($bookingId);
+            $bookingCtx = $this->resolveBookingContext($bookingId);
+            if (!$bookingCtx) {
+                return $this->json(['success' => false, 'error' => 'Booking not found or missing data'], 404);
+            }
+            $calculation = $engine->processPipelineCommission(
+                $bookingId,
+                $bookingCtx['receipt_id'],
+                $bookingCtx['amount'],
+                $bookingCtx['agent_id']
+            );
 
             $tdsService = new TdsConfigService();
             $tdsResults = [];
@@ -245,6 +254,49 @@ class CommissionSimulationController extends BaseController
         $results['net_payable'] = $tds['net_payable'];
 
         return $results;
+    }
+
+    /**
+     * Resolve booking context needed by HybridCommissionEngine::processPipelineCommission().
+     *
+     * @return array{receipt_id: int, amount: float, agent_id: int}|null
+     */
+    private function resolveBookingContext(int $bookingId): ?array
+    {
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = method_exists($db, 'getPdo') ? $db->getPdo() : $db;
+
+            $stmt = $pdo->prepare("
+                SELECT 
+                    pb.id,
+                    pb.total_plot_value,
+                    pb.booking_amount,
+                    pb.total_amount,
+                    pb.associate_id,
+                    IFNULL(pb.booking_amount, pb.total_amount * 0.1) AS amount,
+                    u.id AS agent_id
+                FROM plot_bookings pb
+                JOIN users u ON u.id = pb.associate_id
+                WHERE pb.id = ?
+                LIMIT 1
+            ");
+            $stmt->execute([$bookingId]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                return null;
+            }
+
+            return [
+                'receipt_id' => (int)$row['id'],
+                'amount'     => (float)($row['amount'] ?? $row['booking_amount'] ?? 0),
+                'agent_id'   => (int)$row['agent_id'],
+            ];
+        } catch (\Exception $e) {
+            error_log('[CommissionSimulationController] resolveBookingContext failed: ' . $e->getMessage());
+            return null;
+        }
     }
 
     /**

@@ -1365,7 +1365,7 @@ class Customer extends Model
         $customerStats = $this->getCustomerStats($customerId);
 
         $benefits = [
-            'current_level' => 'Bronze',
+            'current_level' => 'associate',
             'potential_earnings' => 0,
             'team_building_opportunity' => false,
             'rewards_eligible' => false,
@@ -1377,17 +1377,17 @@ class Customer extends Model
         $referralCount = $customerStats['total_bookings'] ?? 0;
 
         if ($totalSpent >= 100000) {
-            $benefits['current_level'] = 'Silver';
+            $benefits['current_level'] = 'senior_associate';
             $benefits['potential_earnings'] = $totalSpent * 0.05; // 5% commission potential
         }
 
         if ($totalSpent >= 500000) {
-            $benefits['current_level'] = 'Gold';
+            $benefits['current_level'] = 'bdm';
             $benefits['potential_earnings'] = $totalSpent * 0.10; // 10% commission potential
         }
 
         if ($totalSpent >= 1000000) {
-            $benefits['current_level'] = 'Diamond';
+            $benefits['current_level'] = 'sr_bdm';
             $benefits['potential_earnings'] = $totalSpent * 0.15; // 15% commission potential
         }
 
@@ -1409,7 +1409,7 @@ class Customer extends Model
 
         // Referral benefits
         $benefits['referral_benefits'] = [
-            'commission_rate' => $benefits['current_level'] === 'Bronze' ? '5%' : ($benefits['current_level'] === 'Silver' ? '7%' : '10%'),
+            'commission_rate' => $benefits['current_level'] === 'associate' ? '1%' : ($benefits['current_level'] === 'senior_associate' ? '1.5%' : '2%'),
             'monthly_earnings_potential' => round($benefits['potential_earnings'] / 12),
             'team_building_bonus' => $benefits['team_building_opportunity'] ? '₹10,000 per referral' : 'Not eligible yet'
         ];

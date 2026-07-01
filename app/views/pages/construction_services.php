@@ -1,8 +1,8 @@
 <?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <style>
-:root { --primary: #1a237e; --secondary: #ff6f00; --accent: #00c853; }
+:root { --primary: #0d9488; --secondary: #ff6f00; --accent: #00c853; }
 .construction-hero {
-    background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d9488 100%);
     color: #fff; padding: 100px 0 80px; position: relative; overflow: hidden;
 }
 .construction-hero::before {

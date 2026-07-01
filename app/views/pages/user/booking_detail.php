@@ -180,7 +180,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                         <span class="fw-bold text-<?= $payPct >= 100 ? 'success' : 'primary' ?>"><?= $payPct ?>%</span>
                     </div>
                     <div class="aps-cp-progress" style="height:12px;">
-                        <div class="aps-cp-progress-bar" style="width:<?= min(100, $payPct) ?>%; background: <?= $payPct >= 100 ? 'var(--aps-cp-success, #10b981)' : 'var(--aps-cp-primary, #4f46e5)' ?>;"></div>
+                        <div class="aps-cp-progress-bar" style="width:<?= min(100, $payPct) ?>%; background: <?= $payPct >= 100 ? 'var(--aps-cp-success, #10b981)' : 'var(--aps-cp-primary, #0d9488)' ?>;"></div>
                     </div>
                     <div class="d-flex justify-content-between mt-1">
                         <small class="text-success"><?= __('user_booking_detail_paid', 'Paid') ?>: ₹<?= number_format($total_paid) ?></small>
@@ -206,7 +206,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
                         $hColor = $statusColors[$h['to_status']] ?? 'secondary';
                     ?>
                     <div class="position-relative mb-3">
-                        <div class="position-absolute" style="left:-24px; top:2px; width:16px; height:16px; border-radius:50%; background: var(--aps-cp-<?= $hColor ?>, #4f46e5); border:2px solid #fff; z-index:1;"></div>
+                        <div class="position-absolute" style="left:-24px; top:2px; width:16px; height:16px; border-radius:50%; background: var(--aps-cp-<?= $hColor ?>, #0d9488); border:2px solid #fff; z-index:1;"></div>
                         <div>
                             <strong class="text-<?= $hColor ?>"><?= $statusLabels[$h['to_status']] ?? ucfirst($h['to_status']) ?></strong>
                             <small class="text-muted ms-2"><?= date('d M Y, h:i A', strtotime($h['created_at'] ?? 'now')) ?></small>

@@ -2,14 +2,14 @@
 <style>
 .plot-card { transition: all 0.3s ease; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; }
 .plot-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
-.plot-card .plot-number { font-size: 1.1rem; font-weight: 700; color: #1a237e; }
+.plot-card .plot-number { font-size: 1.1rem; font-weight: 700; color: #0d9488; }
 .plot-card .plot-price { font-size: 1.3rem; font-weight: 700; color: #2e7d32; }
 .plot-card .plot-detail { font-size: 0.9rem; color: #555; }
 .plot-card .status-badge { position: absolute; top: 12px; right: 12px; }
-.plot-card .amenity-tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.78rem; background: #e8eaf6; color: #283593; margin: 2px; }
+.plot-card .amenity-tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.78rem; background: #f0fdfa; color: #0d9488; margin: 2px; }
 .dimension-btn { padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; border: 1px solid #c5cae9; cursor: pointer; transition: all 0.2s; background: white; color: #333; }
-.dimension-btn:hover, .dimension-btn.active { background: #1a237e; color: white; border-color: #1a237e; }
-.filter-section { background: #f5f7ff; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+.dimension-btn:hover, .dimension-btn.active { background: #0d9488; color: white; border-color: #0d9488; }
+.filter-section { background: #f0fdfa; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
 .stat-card { padding: 16px; border-radius: 10px; text-align: center; }
 .stat-card h3 { font-size: 1.8rem; font-weight: 800; margin: 0; }
 .stat-card p { font-size: 0.85rem; margin: 4px 0 0; opacity: 0.85; }

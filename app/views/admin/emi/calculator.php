@@ -103,7 +103,7 @@ function calculateEMI() {
     if (emiChart) emiChart.destroy();
     emiChart = new Chart(document.getElementById('emiPieChart'), {
         type: 'doughnut',
-        data: { labels: ['Principal', 'Interest'], datasets: [{ data: [P, totalInterest], backgroundColor: ['#4f46e5', '#ef4444'] }] },
+        data: { labels: ['Principal', 'Interest'], datasets: [{ data: [P, totalInterest], backgroundColor: ['#0d9488', '#ef4444'] }] },
         options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
     });
 

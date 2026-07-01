@@ -20,7 +20,7 @@ $loan = $loan ?? [];
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Loan Info</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm table-borderless">
+                    <div class="table-responsive"><table class="table table-sm table-borderless">
                         <tr><td class="text-muted">Loan #</td><td><strong><code><?php echo htmlspecialchars($loan['loan_number'] ?? 'N/A'); ?></code></strong></td></tr>
                         <tr><td class="text-muted">Farmer</td><td><strong><?php echo htmlspecialchars($loan['farmer_name'] ?? 'N/A'); ?></strong></td></tr>
                         <tr><td class="text-muted">Mobile</td><td><?php echo htmlspecialchars($loan['farmer_mobile'] ?? ''); ?></td></tr>
@@ -39,7 +39,7 @@ $loan = $loan ?? [];
                         <tr><td class="text-muted">Sanction Date</td><td><?php echo htmlspecialchars($loan['sanction_date'] ?? '-'); ?></td></tr>
                         <tr><td class="text-muted">Disbursement Date</td><td><?php echo htmlspecialchars($loan['disbursement_date'] ?? '-'); ?></td></tr>
                         <tr><td class="text-muted">Maturity Date</td><td><?php echo htmlspecialchars($loan['maturity_date'] ?? '-'); ?></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>
@@ -48,13 +48,13 @@ $loan = $loan ?? [];
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Financial Details</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm table-borderless">
+                    <div class="table-responsive"><table class="table table-sm table-borderless">
                         <tr><td class="text-muted">Loan Amount</td><td><strong>₹<?php echo number_format($loan['loan_amount'] ?? 0); ?></strong></td></tr>
                         <tr><td class="text-muted">Interest Rate</td><td><?php echo htmlspecialchars($loan['interest_rate'] ?? '0'); ?>%</td></tr>
                         <tr><td class="text-muted">Tenure</td><td><?php echo htmlspecialchars($loan['loan_tenure'] ?? '0'); ?> months</td></tr>
                         <tr><td class="text-muted">EMI Amount</td><td><strong>₹<?php echo number_format($loan['emi_amount'] ?? 0); ?></strong></td></tr>
                         <tr><td class="text-muted">Outstanding</td><td class="text-danger"><strong>₹<?php echo number_format($loan['outstanding_amount'] ?? 0); ?></strong></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
         </div>

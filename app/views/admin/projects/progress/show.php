@@ -42,13 +42,13 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Project Info</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <table class="table table-sm">
+                    <div class="table-responsive"><table class="table table-sm">
                         <tr><th>District</th><td><?= htmlspecialchars($project['district_name'] ?? '') ?></td></tr>
                         <tr><th>State</th><td><?= htmlspecialchars($project['state_name'] ?? '') ?></td></tr>
                         <tr><th>Colony</th><td><?= htmlspecialchars($project['colony_name'] ?? '') ?></td></tr>
                         <tr><th>Last Updated</th><td><?= isset($project['progress_last_updated']) ? date('d M Y', strtotime($project['progress_last_updated'])) : '—' ?></td></tr>
                         <tr><th>Risk Flags</th><td><span class="badge bg-<?= empty($project['risk_flags'] ?? '') ? 'success' : 'danger' ?>"><?= empty($project['risk_flags'] ?? '') ? 'None' : htmlspecialchars($project['risk_flags'] ?? '') ?></span></td></tr>
-                    </table>
+                    </table></div>
                 </div>
             </div>
             <div class="card shadow-sm mb-4">

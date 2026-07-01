@@ -131,7 +131,7 @@
             <span><i class="fas fa-list me-1"></i><?= __('pen_overdue_installments') ?></span>
         </div>
         <div class="aps-cp-card-body p-0">
-            <table class="table table-hover align-middle mb-0">
+            <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th><?= __('pen_booking') ?></th>
@@ -169,7 +169,7 @@
                     </tr>
                 <?php endforeach; endif; ?>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>

@@ -56,8 +56,8 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
                     Text('Accounts & Finance',
                         style: TextStyle(
                             fontSize: ResponsiveHelper.fontSize(context, 24), fontWeight: FontWeight.bold)),
-                    SizedBox(height: 4),
-                    Text('Manage payments, invoices, and financial records',
+                    const SizedBox(height: 4),
+                    const Text('Manage payments, invoices, and financial records',
                         style: TextStyle(color: Colors.grey)),
                   ],
                 ),
