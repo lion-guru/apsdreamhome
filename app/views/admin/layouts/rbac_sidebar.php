@@ -360,6 +360,11 @@ $sectionNames = [
                     <i class="fas fa-phone-volume"></i> SIM Calling
                 </a>
             </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/agentic-ai" class="sidebar-link <?php echo $currentPage == 'agentic-ai' ? 'active' : ''; ?>">
+                    <i class="fas fa-brain"></i> Agentic AI
+                </a>
+            </li>
         </ul>
 
         <div class="sidebar-sec" onclick="toggleSidebarSection('sec-financial')">

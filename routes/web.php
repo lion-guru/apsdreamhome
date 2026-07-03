@@ -2870,6 +2870,18 @@ $router->post('/admin/sim-calling/api/make-call',       'App\\Http\\Controllers\
 $router->get('/admin/sim-calling/api/status',           'App\\Http\\Controllers\\Admin\\SIMCallingController@status');
 $router->post('/admin/sim-calling/api/hangup',          'App\\Http\\Controllers\\Admin\\SIMCallingController@hangup');
 
+// ═══════════════════════════════════════════════════
+// AGENTIC AI — Auto-Reply Agent System
+// ═══════════════════════════════════════════════════
+$router->get('/admin/agentic-ai',                     'App\\Http\\Controllers\\Admin\\AgenticAIController@index');
+$router->get('/admin/agentic-ai/auto-reply',          'App\\Http\\Controllers\\Admin\\AgenticAIController@autoReply');
+$router->post('/admin/agentic-ai/auto-reply',         'App\\Http\\Controllers\\Admin\\AgenticAIController@autoReply');
+$router->get('/admin/agentic-ai/conversation/{id}',   'App\\Http\\Controllers\\Admin\\AgenticAIController@conversation');
+$router->post('/admin/agentic-ai/api/send',           'App\\Http\\Controllers\\Admin\\AgenticAIController@sendMessage');
+$router->post('/admin/agentic-ai/api/claim',          'App\\Http\\Controllers\\Admin\\AgenticAIController@claimConversation');
+$router->post('/admin/agentic-ai/api/resolve',        'App\\Http\\Controllers\\Admin\\AgenticAIController@resolveConversation');
+$router->get('/admin/agentic-ai/api/messages',        'App\\Http\\Controllers\\Admin\\AgenticAIController@getMessages');
+
 // PDF Service (Cluster 2 - 2026-06-05)
 $router->get('/pdf/download/{type}/{id}',                          'App\\Http\\Controllers\\Front\\PdfController@download');
 $router->get('/admin/pdfs',                                        'App\\Http\\Controllers\\Front\\PdfController@adminIndex');

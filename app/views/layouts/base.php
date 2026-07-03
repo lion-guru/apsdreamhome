@@ -263,12 +263,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Main AI Chatbot Integration -->
     <?php include __DIR__ . '/chat_widget.php'; ?>
 
-    <!-- WhatsApp Button (Right Side - Manual Chat) -->
-    <?php if ($sc('whatsapp_enabled', '1') === '1' && $sc('contact_whatsapp')): ?>
-    <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $sc('contact_whatsapp')) ?>?text=<?= urlencode($sc('whatsapp_message', 'Hi, I\'m interested in APS Dream Home properties')) ?>" target="_blank" class="whatsapp-float-btn" title="Chat on WhatsApp">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-    <?php endif; ?>
+    <!-- WhatsApp button is now inside chat_widget.php (combined toggle) -->
 
     <!-- Real-time WebSocket Notifications -->
     <script>

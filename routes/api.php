@@ -250,6 +250,23 @@ $router->get('/api/gemini/chatbot/health', 'Api\GeminiChatbotController@health')
 $router->post('/api/sharing/generate', 'Api\SharingController@generate');
 $router->post('/api/sharing/track', 'Api\SharingController@trackClick');
 
+// WhatsApp Click Tracking
+$router->post('/api/track/whatsapp-click', function() {
+    header('Content-Type: application/json');
+    $input = json_decode(file_get_contents('php://input'), true);
+    $source = $input['source'] ?? 'unknown';
+    $page = $input['page'] ?? '';
+    $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
+    try {
+        $db = \App\Core\Database\Database::getInstance();
+        $db->execute("INSERT INTO whatsapp_click_log (user_id, source_page, referral_page, clicked_at) VALUES (?, ?, ?, NOW())",
+            [$userId, $source, $page]);
+    } catch (\Exception $e) {
+        error_log("WA track error: " . $e->getMessage());
+    }
+    echo json_encode(['success' => true]);
+});
+
 // Workflow API
 $router->get('/api/workflow', 'Api\WorkflowController@index');
 $router->get('/api/workflow/{id}', 'Api\WorkflowController@show');
