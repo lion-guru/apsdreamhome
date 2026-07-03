@@ -4155,3 +4155,37 @@ $router->get('/admin/legal/dashboard',       function() { header('Location: ' . 
 $router->get('/admin/legal/noc',             function() { header('Location: ' . BASE_URL . '/admin/legal/noc-index'); exit; });
 $router->get('/admin/ai/training',           function() { header('Location: ' . BASE_URL . '/admin/ai-training'); exit; });
 $router->get('/admin/realtime-analytics',    function() { header('Location: ' . BASE_URL . '/admin/analytics/realtime'); exit; });
+
+// ============================================================
+// VOICE BOT (Option A — Browser-based, 100% free)
+// ============================================================
+$router->get('/voice-bot',  'Front\\VoiceBotController@index');
+$router->get('/admin/voice-bot', 'Front\\VoiceBotController@adminDashboard');
+
+// API Routes
+$router->post('/api/voice-bot/chat', 'Front\\VoiceBotController@chat');
+
+// ============================================================
+// WHATSAPP WEBHOOK
+// ============================================================
+$router->get('/api/whatsapp/webhook', function() {
+    $mode = $_GET['hub_mode'] ?? '';
+    $token = $_GET['hub_verify_token'] ?? '';
+    $challenge = $_GET['hub_challenge'] ?? '';
+    if ($mode === 'subscribe' && $token === (getenv('WHATSAPP_VERIFY_TOKEN') ?: 'aps_dream_homes_verify')) {
+        http_response_code(200);
+        echo $challenge;
+    } else {
+        http_response_code(403);
+        echo 'Forbidden';
+    }
+});
+
+$router->post('/api/whatsapp/webhook', function() {
+    $payload = json_decode(file_get_contents('php://input'), true);
+    require_once __DIR__ . '/../app/Services/Auc/WhatsAppService.php';
+    $wa = new \App\Services\Auc\WhatsAppService();
+    $wa->handleIncomingMessage($payload);
+    http_response_code(200);
+    echo 'ok';
+});
