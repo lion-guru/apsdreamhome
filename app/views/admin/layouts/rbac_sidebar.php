@@ -355,6 +355,11 @@ $sectionNames = [
                     <i class="fas fa-chart-area"></i> AI Analytics
                 </a>
             </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/sim-calling" class="sidebar-link <?php echo $currentPage == 'sim-calling' ? 'active' : ''; ?>">
+                    <i class="fas fa-phone-volume"></i> SIM Calling
+                </a>
+            </li>
         </ul>
 
         <div class="sidebar-sec" onclick="toggleSidebarSection('sec-financial')">

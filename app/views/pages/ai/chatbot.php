@@ -44,6 +44,17 @@
                     </div>
                     
                     <div class="chat-input p-3 bg-white border-top">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <button class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" id="voiceToggle" onclick="toggleVoiceMode()" style="width:32px;height:32px;background:rgba(13,148,136,0.1);border:1px solid rgba(13,148,136,0.3);color:#0d9488;" title="Voice mode ON/OFF">
+                                <i class="fas fa-volume-up" id="voiceToggleIcon"></i>
+                            </button>
+                            <small class="text-muted" id="voiceModeLabel" style="font-size:0.7rem;">Voice: OFF</small>
+                            <div class="ms-auto d-flex align-items-center gap-2">
+                                <button class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" id="micBtn" onclick="toggleMic()" style="width:32px;height:32px;background:#0d9488;color:#fff;border:none;display:none;" title="Speak">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                        </div>
                         <div class="input-group">
                             <input type="text" id="userInput" class="form-control rounded-start-pill border-end-0 py-2" placeholder="Type your message..." />
                             <button class="btn btn-primary rounded-end-pill px-4" onclick="sendMessage()">
@@ -185,4 +196,118 @@ function hideQuickReplies() {
 document.getElementById('userInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
+
+// ============================================================
+// VOICE SYSTEM — STT + TTS (Web Speech API, 100% free)
+// ============================================================
+let voiceMode = false;
+let recognition = null;
+let isListening = false;
+
+function toggleVoiceMode() {
+    voiceMode = !voiceMode;
+    const icon = document.getElementById('voiceToggleIcon');
+    const label = document.getElementById('voiceModeLabel');
+    const micBtn = document.getElementById('micBtn');
+    const toggleBtn = document.getElementById('voiceToggle');
+
+    if (voiceMode) {
+        icon.className = 'fas fa-volume-up';
+        toggleBtn.style.background = '#0d9488';
+        toggleBtn.style.color = '#fff';
+        toggleBtn.style.borderColor = '#0d9488';
+        label.textContent = 'Voice: ON';
+        label.style.color = '#0d9488';
+        micBtn.style.display = 'flex';
+        initSpeechRecognition();
+    } else {
+        icon.className = 'fas fa-volume-up';
+        toggleBtn.style.background = 'rgba(13,148,136,0.1)';
+        toggleBtn.style.color = '#0d9488';
+        toggleBtn.style.borderColor = 'rgba(13,148,136,0.3)';
+        label.textContent = 'Voice: OFF';
+        label.style.color = '';
+        micBtn.style.display = 'none';
+        if (recognition) { recognition.stop(); recognition = null; }
+        window.speechSynthesis?.cancel();
+    }
+}
+
+function initSpeechRecognition() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+        document.getElementById('voiceModeLabel').textContent = 'Voice: Not supported';
+        document.getElementById('voiceModeLabel').style.color = '#ef4444';
+        return;
+    }
+    recognition = new SR();
+    recognition.lang = 'hi-IN';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.continuous = false;
+
+    recognition.onstart = () => {
+        isListening = true;
+        const micBtn = document.getElementById('micBtn');
+        micBtn.style.background = '#ef4444';
+        micBtn.innerHTML = '<i class="fas fa-stop"></i>';
+    };
+
+    recognition.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        document.getElementById('userInput').value = transcript;
+        sendMessage();
+    };
+
+    recognition.onerror = (e) => {
+        console.error('STT:', e.error);
+        resetMic();
+    };
+
+    recognition.onend = () => { isListening = false; resetMic(); };
+}
+
+function toggleMic() {
+    if (!recognition) initSpeechRecognition();
+    if (!recognition) return;
+
+    if (isListening) {
+        recognition.stop();
+    } else {
+        recognition.start();
+    }
+}
+
+function resetMic() {
+    const micBtn = document.getElementById('micBtn');
+    micBtn.style.background = '#0d9488';
+    micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+}
+
+function speakBotReply(text) {
+    if (!voiceMode || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const clean = text.replace(/<[^>]+>/g, '').replace(/[\*#_`]/g, '').replace(/\s+/g, ' ').trim();
+    const utter = new SpeechSynthesisUtterance(clean);
+    utter.lang = 'hi-IN';
+    utter.rate = 0.95;
+    utter.pitch = 1.0;
+    const voices = window.speechSynthesis.getVoices();
+    const hi = voices.find(v => v.lang.startsWith('hi')) || voices.find(v => v.lang.startsWith('en'));
+    if (hi) utter.voice = hi;
+    window.speechSynthesis.speak(utter);
+}
+
+// Auto-speak bot replies
+const origAddMessage = addMessage;
+window.addMessage = function(text, isUser) {
+    origAddMessage(text, isUser);
+    if (!isUser && voiceMode) {
+        setTimeout(() => speakBotReply(text), 300);
+    }
+};
+
+// Preload voices
+window.speechSynthesis?.getVoices();
+window.speechSynthesis?.addEventListener('voiceschanged', () => {});
 </script>

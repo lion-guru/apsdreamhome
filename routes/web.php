@@ -2859,6 +2859,17 @@ $router->get('/admin/voice-agents/live', 'App\\Http\\Controllers\\Admin\\VoiceAg
 $router->post('/admin/voice-agents/transfer-call', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@transferCall');
 $router->post('/admin/voice-agents/hangup-call', 'App\\Http\\Controllers\\Admin\\VoiceAgentAdminController@hangupCall');
 
+// ═══════════════════════════════════════════════════
+// SIM CALLING — Asterisk + GSM Gateway (Option C)
+// ═══════════════════════════════════════════════════
+$router->get('/admin/sim-calling',                      'App\\Http\\Controllers\\Admin\\SIMCallingController@dashboard');
+$router->get('/admin/sim-calling/settings',             'App\\Http\\Controllers\\Admin\\SIMCallingController@settings');
+$router->post('/admin/sim-calling/settings',            'App\\Http\\Controllers\\Admin\\SIMCallingController@settings');
+$router->get('/admin/sim-calling/generate-dialplan',    'App\\Http\\Controllers\\Admin\\SIMCallingController@generateDialplan');
+$router->post('/admin/sim-calling/api/make-call',       'App\\Http\\Controllers\\Admin\\SIMCallingController@makeCall');
+$router->get('/admin/sim-calling/api/status',           'App\\Http\\Controllers\\Admin\\SIMCallingController@status');
+$router->post('/admin/sim-calling/api/hangup',          'App\\Http\\Controllers\\Admin\\SIMCallingController@hangup');
+
 // PDF Service (Cluster 2 - 2026-06-05)
 $router->get('/pdf/download/{type}/{id}',                          'App\\Http\\Controllers\\Front\\PdfController@download');
 $router->get('/admin/pdfs',                                        'App\\Http\\Controllers\\Front\\PdfController@adminIndex');
