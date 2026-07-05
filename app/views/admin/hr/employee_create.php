@@ -25,7 +25,7 @@ $page_title = $page_title ?? 'Add Employee';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Department</label>
-                    <input type="text" name="department" class="form-control" value="General">
+                    <input type="text" name="department" class="form-control" value="General" placeholder="e.g. General, HR, IT, Operations, Sales, Marketing, Marketplace">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Designation</label>

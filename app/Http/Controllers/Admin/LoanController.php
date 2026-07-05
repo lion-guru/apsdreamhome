@@ -27,7 +27,7 @@ class LoanController extends AdminController
                 $overdueCount = (int)($this->db->query("SELECT COUNT(*) FROM booking_payment_schedules WHERE status = 'overdue'")->fetchColumn());
                 $overdueAmount = (float)($this->db->query("SELECT COALESCE(SUM(amount - paid_amount),0) FROM booking_payment_schedules WHERE status = 'overdue'")->fetchColumn());
                 $penaltyAmount = (float)($this->db->query("SELECT COALESCE(SUM(accrued_penalty),0) FROM booking_payment_schedules WHERE accrued_penalty > 0")->fetchColumn());
-                $emiPlans = $this->db->query("SELECT ep.*, u.name as customer_name, p.plot_no, c.name as colony_name FROM emi_plans ep LEFT JOIN users u ON ep.customer_id = u.id LEFT JOIN plots p ON ep.property_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id ORDER BY ep.created_at DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
+                $emiPlans = $this->db->query("SELECT ep.*, u.name as customer_name, p.plot_no, c.name as colony_name FROM emi_plans ep LEFT JOIN users u ON ep.customer_id = u.id LEFT JOIN plots p ON ep.property_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id ORDER BY ep.created_at DESC LIMIT 15")->fetchAll(\PDO::FETCH_ASSOC);
             } catch (\Exception $e) {
                 error_log('LoanController::index() query error: ' . $e->getMessage());
             }

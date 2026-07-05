@@ -38,8 +38,7 @@ class NotificationService {
   List<Map<String, dynamic>> get notifications =>
       List.unmodifiable(_notifications);
 
-  int get unreadCount =>
-      _notifications.where((n) => n['read'] == false).length;
+  int get unreadCount => _notifications.where((n) => n['read'] == false).length;
 
   /// Initialize FCM: request permission, get token, set up listeners
   Future<void> initialize() async {
@@ -54,8 +53,7 @@ class NotificationService {
     }
 
     // Register background handler
-    FirebaseMessaging.onBackgroundMessage(
-        _firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     // Request permission
     await requestPermission();
@@ -119,7 +117,9 @@ class NotificationService {
       try {
         apiService.getToken(); // Will throw if not initialized
       } catch (_) {
-        AppLogger.warning('FCM token save skipped — ApiService not initialized');
+        AppLogger.warning(
+          'FCM token save skipped — ApiService not initialized',
+        );
         return;
       }
 
@@ -128,10 +128,7 @@ class NotificationService {
       await apiService.request(
         method: 'POST',
         endpoint: 'fcm/register',
-        data: {
-          'token': token,
-          'platform': platform,
-        },
+        data: {'token': token, 'platform': platform},
       );
       AppLogger.info('FCM token saved to backend');
     } catch (e) {
@@ -150,7 +147,42 @@ class NotificationService {
       criticalAlert: true,
     );
 
-    AppLogger.info('Notification permission status: ${settings.authorizationStatus}');
+    AppLogger.info(
+      'Notification permission status: ${settings.authorizationStatus}',
+    );
+  }
+
+  /// Subscribe to FCM topics for targeted notifications
+  Future<void> subscribeToTopics(int userId, String role) async {
+    if (_messaging == null) return;
+    try {
+      // Subscribe to user-specific topic
+      await _messaging!.subscribeToTopic('user_$userId');
+      AppLogger.info('Subscribed to topic: user_$userId');
+
+      // Subscribe to role-specific topic
+      await _messaging!.subscribeToTopic('role_$role');
+      AppLogger.info('Subscribed to topic: role_$role');
+
+      // Subscribe to all-users topic
+      await _messaging!.subscribeToTopic('all_users');
+      AppLogger.info('Subscribed to topic: all_users');
+    } catch (e) {
+      AppLogger.warning('Failed to subscribe to topics: $e');
+    }
+  }
+
+  /// Unsubscribe from FCM topics
+  Future<void> unsubscribeFromTopics(int userId, String role) async {
+    if (_messaging == null) return;
+    try {
+      await _messaging!.unsubscribeFromTopic('user_$userId');
+      await _messaging!.unsubscribeFromTopic('role_$role');
+      await _messaging!.unsubscribeFromTopic('all_users');
+      AppLogger.info('Unsubscribed from topics');
+    } catch (e) {
+      AppLogger.warning('Failed to unsubscribe from topics: $e');
+    }
   }
 
   /// Handle incoming foreground messages
@@ -174,10 +206,7 @@ class NotificationService {
   /// Handle notification tap (app in background or cold start)
   void _handleNotificationTap(RemoteMessage message) {
     AppLogger.info('Notification tapped: ${message.data}');
-    _notifications.insert(0, {
-      ..._messageToMap(message),
-      'read': true,
-    });
+    _notifications.insert(0, {..._messageToMap(message), 'read': true});
     // Navigation logic can be added here based on message.data
   }
 
@@ -188,8 +217,9 @@ class NotificationService {
     Map<String, dynamic>? payload,
   }) async {
     // Initialize local notifications if not already done
-    const androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const initSettings = InitializationSettings(android: androidSettings);
     await _localNotifications.initialize(initSettings);
 
@@ -246,7 +276,8 @@ class NotificationService {
   /// Convert RemoteMessage to a Map for storage
   Map<String, dynamic> _messageToMap(RemoteMessage message) {
     return {
-      'id': message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      'id':
+          message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
       'title': message.notification?.title ?? '',
       'body': message.notification?.body ?? '',
       'data': message.data,
@@ -257,7 +288,8 @@ class NotificationService {
 
   void markAsRead(String notificationId) {
     final index = _notifications.indexWhere(
-        (n) => n['id'].toString() == notificationId);
+      (n) => n['id'].toString() == notificationId,
+    );
     if (index != -1) {
       _notifications[index]['read'] = true;
     }

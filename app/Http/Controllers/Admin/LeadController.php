@@ -56,7 +56,7 @@ class LeadController extends AdminController
             $location_pref = trim($_POST['location_preference'] ?? '');
 
             if (empty($name)) {
-                $this->setFlashMessage('error', 'Lead name is required');
+                $this->setFlash('error', 'Lead name is required');
                 return $this->redirect('/admin/leads/create');
             }
 
@@ -71,9 +71,9 @@ class LeadController extends AdminController
                 error_log('LeadController::store automation error: ' . $e->getMessage());
             }
 
-            $this->setFlashMessage('success', 'Lead created successfully');
+            $this->setFlash('success', 'Lead created successfully');
         } catch (\Exception $e) {
-            $this->setFlashMessage('error', 'Failed to create lead: ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to create lead: ' . $e->getMessage());
         }
         return $this->redirect('/admin/leads');
     }
@@ -84,8 +84,52 @@ class LeadController extends AdminController
     public function show($id)
     {
         $this->requireAdmin();
-        $lead = \App\Models\Lead::find($id);
-        return $this->render('admin/leads/show', ['lead' => $lead]);
+        $service = new \App\Services\CRMService();
+        $lead = $service->getLeadById((int)$id);
+        if (!$lead) {
+            $this->setFlash('error', 'Lead not found');
+            return $this->redirect('/admin/leads');
+        }
+
+        $timeline = $service->getLeadTimeline((int)$id, 100);
+        $interactions = $service->getLeadInteractions((int)$id, 50);
+        $tasks = $service->getLeadTasks((int)$id);
+        $deals = $service->getDeals(['lead_id' => (int)$id]);
+        $scoreBreakdown = $service->getScoreBreakdown((int)$id);
+        $commission = $service->estimateCommission((int)$id);
+        $sourceDetails = $service->getLeadSourceDetails((int)$id);
+        $assignments = $service->getLeadAssignments((int)$id);
+
+        // Notes
+        $notes = [];
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT n.*, u.name as created_by_name FROM lead_notes n LEFT JOIN users u ON n.created_by = u.id WHERE n.lead_id = ? ORDER BY n.created_at DESC LIMIT 50");
+            $stmt->execute([(int)$id]);
+            $notes = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {}
+
+        // Available agents for reassignment
+        $agents = [];
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $agents = $db->query("SELECT id, name FROM users WHERE role IN ('associate','employee','agent') AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {}
+
+        return $this->render('admin/leads/show', [
+            'lead' => $lead,
+            'timeline' => $timeline,
+            'interactions' => $interactions,
+            'tasks' => $tasks,
+            'deals' => $deals,
+            'score_breakdown' => $scoreBreakdown,
+            'commission' => $commission,
+            'source_details' => $sourceDetails,
+            'assignments' => $assignments,
+            'notes' => $notes,
+            'agents' => $agents,
+            'page_title' => 'Lead: ' . ($lead['name'] ?? ''),
+        ]);
     }
     
     /**
@@ -254,7 +298,7 @@ class LeadController extends AdminController
     }
 
     public function update($id) { return $this->render('admin/leads/edit', ['lead' => \App\Models\Lead::find($id)]); }
-    public function destroy($id) { try { \App\Models\Lead::delete($id); $this->setFlashMessage('success', 'Lead deleted'); } catch (\Exception $e) { $this->setFlashMessage('error', $e->getMessage()); } return $this->redirect('/admin/leads'); }
+    public function destroy($id) { try { \App\Models\Lead::delete($id); $this->setFlash('success', 'Lead deleted'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect('/admin/leads'); }
     public function addNote($id) {
         try {
             \App\Models\LeadNote::create([
@@ -288,8 +332,8 @@ class LeadController extends AdminController
         }
         return $this->redirect("/admin/leads/show/$id");
     }
-    public function uploadDocument($id) { try { $this->setFlashMessage('info', 'Document upload feature available'); } catch (\Exception $e) {} return $this->redirect("/admin/leads/show/$id"); }
-    public function deleteDocument($id, $docId) { try { $this->db->query("DELETE FROM lead_documents WHERE id = ? AND lead_id = ?", [$docId, $id]); $this->setFlashMessage('success', 'Document deleted'); } catch (\Exception $e) { $this->setFlashMessage('error', $e->getMessage()); } return $this->redirect("/admin/leads/show/$id"); }
+    public function uploadDocument($id) { try { $this->setFlash('info', 'Document upload feature available'); } catch (\Exception $e) {} return $this->redirect("/admin/leads/show/$id"); }
+    public function deleteDocument($id, $docId) { try { $this->db->query("DELETE FROM lead_documents WHERE id = ? AND lead_id = ?", [$docId, $id]); $this->setFlash('success', 'Document deleted'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/leads/show/$id"); }
 
     /**
      * Lead Assignment Page — Assign/transfer leads to associates/telecallers
@@ -345,7 +389,7 @@ class LeadController extends AdminController
         $reason = trim($_POST['reason'] ?? '');
 
         if (empty($leadIds) || !$assignedTo) {
-            $this->setFlashMessage('error', 'Please select leads and an assignee.');
+            $this->setFlash('error', 'Please select leads and an assignee.');
             return $this->redirect('/admin/leads/assign');
         }
 
@@ -360,7 +404,7 @@ class LeadController extends AdminController
             if ($result['success']) $assigned++;
         }
 
-        $this->setFlashMessage('success', "{$assigned} lead(s) assigned successfully.");
+        $this->setFlash('success', "{$assigned} lead(s) assigned successfully.");
         return $this->redirect('/admin/leads/assign');
     }
 }

@@ -84,6 +84,36 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="land_cost" class="form-label">Land Cost (₹)</label>
+                                    <input type="number" class="form-control" id="land_cost" name="land_cost" min="0" step="0.01" placeholder="Total land acquisition cost">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="min_price_per_sqft" class="form-label">Min Price Per Sqft (₹) — Floor Price</label>
+                                    <input type="number" class="form-control" id="min_price_per_sqft" name="min_price_per_sqft" min="0" step="0.01" placeholder="Auto-calculated from pricing">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="block_count" class="form-label">Block Count</label>
+                                    <input type="number" class="form-control" id="block_count" name="block_count" min="0" placeholder="Number of blocks/sectors">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="phase" class="form-label">Phase</label>
+                                    <input type="text" class="form-control" id="phase" name="phase" placeholder="e.g. Phase 1, Phase 2">
+                                </div>
+                            </div>
+                        </div>
                         
                         <div class="mb-3">
                             <label for="map_link" class="form-label">Google Maps Link</label>

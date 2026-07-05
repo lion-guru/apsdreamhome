@@ -73,5 +73,5 @@ class PropertyController extends BaseController
 
     public function sell() { return $this->render('pages/list_property', ['mode' => 'sell']); }
     public function buy($id = null) { return $this->render('properties/detail', ['page_title' => 'Buy Property']); }
-    public function scheduleVisit($id) { $this->setFlashMessage('info', 'Site visit scheduled'); return $this->redirect("/properties/$id"); }
+    public function scheduleVisit($id) { $this->setFlash('info', 'Site visit scheduled'); return $this->redirect("/properties/$id"); }
 }

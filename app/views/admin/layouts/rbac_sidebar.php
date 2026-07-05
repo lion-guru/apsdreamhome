@@ -216,6 +216,16 @@ $sectionNames = [
                 </a>
             </li>
             <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/marketplace" class="sidebar-link <?php echo strpos($currentPage, 'marketplace') !== false && strpos($currentPage, 'premium-packages') === false ? 'active' : ''; ?>">
+                    <i class="fas fa-store"></i> Marketplace
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/admin/premium-packages" class="sidebar-link <?php echo strpos($currentPage, 'premium-packages') !== false ? 'active' : ''; ?>">
+                    <i class="fas fa-crown"></i> Premium Packages
+                </a>
+            </li>
+            <li class="sidebar-item">
                 <a href="<?php echo $base; ?>/admin/properties/plot" class="sidebar-link <?php echo $currentPage == 'plot' ? 'active' : ''; ?>">
                     <i class="fas fa-map"></i> Plot Inventory
                 </a>

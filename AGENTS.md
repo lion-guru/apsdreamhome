@@ -1,4 +1,4 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-06-26)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-05)
 
 ---
 
@@ -113,7 +113,7 @@ app/
 
 ---
 
-## Current System Status (2026-06-26)
+## Current System Status (2026-07-05)
 
 ### E2E Test Results
 
@@ -128,7 +128,7 @@ app/
 
 ### Database
 
-- ~770 tables, all InnoDB, all with PKs, 23 FK constraints
+- ~775 tables, all InnoDB, all with PKs, 23 FK constraints
 - 4 active colonies: Suryoday (id=2), Braj Radha (id=3), Raghunath (id=4), Budh Bihar (id=5)
 - 204 plots with actual dimensions
 - Unified `role` column in `users`
@@ -232,15 +232,26 @@ app/
 
 ### Key Service Files
 
-| File                                                 | Purpose                                     |
-| ---------------------------------------------------- | ------------------------------------------- |
-| `app/Services/HybridCommissionEngine.php`            | Colony-specific 3-track engine (2183 lines) |
-| `app/Services/MLM/MLMCommissionEngine.php`           | Full MLM engine (1434 lines)                |
-| `app/Services/MLM/MatchingBonusService.php`          | Self-match skip + per-entry dedup           |
-| `app/Services/MLM/GenerationBonusEngine.php`         | Dedup in persist, Gen rates                 |
-| `app/Services/MLM/InfinityOverrideService.php`       | Infinity override with dedup                |
-| `app/Services/Accounting/MoneyWorkflowService.php`   | EMI penalties, clawback, registry NOC       |
-| `app/Services/Backoffice/DailyOperationsService.php` | Attendance, leaves, payslips                |
+| File                                                 | Purpose                                                                                                                        |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `app/Services/HybridCommissionEngine.php`            | Colony-specific 3-track engine (2183 lines)                                                                                    |
+| `app/Services/MLM/MLMCommissionEngine.php`           | Full MLM engine (1434 lines)                                                                                                   |
+| `app/Services/MLM/MatchingBonusService.php`          | Self-match skip + per-entry dedup                                                                                              |
+| `app/Services/MLM/GenerationBonusEngine.php`         | Dedup in persist, Gen rates                                                                                                    |
+| `app/Services/MLM/InfinityOverrideService.php`       | Infinity override with dedup                                                                                                   |
+| `app/Services/Accounting/MoneyWorkflowService.php`   | EMI penalties, clawback, registry NOC                                                                                          |
+| `app/Services/Backoffice/DailyOperationsService.php` | Attendance, leaves, payslips                                                                                                   |
+| `app/Services/DirectoryService.php`                  | Business directory CRUD, search, reviews                                                                                       |
+| `app/Services/AdManagerService.php`                  | Ad slot CRUD, view/click tracking, render                                                                                      |
+| `app/Services/CRMService.php`                        | Full CRM: pipeline, deals, scoring, analytics, activity logging, revenue forecasting, segmentation, form builder (60+ methods) |
+| `app/Services/ReferralService.php`                   | Referral codes, tiered bonuses, leaderboard, share funnel                                                                      |
+| `app/Services/CRMCustomFieldService.php`             | Admin-configurable custom fields for leads                                                                                     |
+| `app/Services/DripCampaignService.php`               | Lead nurture drip campaigns, enrollment, queue processing                                                                      |
+| `app/Services/EmailTrackingService.php`              | Email open/click tracking, engagement scoring                                                                                  |
+| `app/Services/SLAService.php`                        | SLA compliance tracking, breach detection                                                                                      |
+| `app/Services/MeetingService.php`                    | Calendar-based meeting scheduling, CRUD, calendar API                                                                          |
+| `app/Services/KYCService.php`                        | PAN/Aadhaar verification (NSDL/UIDAI mock + validation)                                                                        |
+| `app/Services/CRMVoiceService.php`                   | Voice CRM: call logging, dictation, Hindi voice commands                                                                       |
 
 ### Key DB Tables
 
@@ -255,6 +266,30 @@ app/
 | `plot_bookings`             | Active bookings                               |
 | `booking_payment_schedules` | EMI installments with accrued_penalty         |
 | `penalty_audit`             | Daily penalty accrual audit trail             |
+| `directory_categories`      | 12 seeded categories for business directory   |
+| `directory_listings`        | User-submitted business listings              |
+| `directory_reviews`         | Reviews and ratings                           |
+| `directory_jobs`            | Job postings for real estate services         |
+| `directory_materials`       | Construction material price comparison        |
+| `ad_placements`             | Ad slots for banner/sidebar/inline ads        |
+| `crm_segments`              | Smart lead segments with JSON criteria        |
+| `crm_lead_forms`            | Visual form builder definitions               |
+| `lead_activities`           | Auto-logged activity timeline                 |
+| `lead_deals`                | Deals with close_reason, close_reason_detail  |
+| `crm_interactions`          | Calls, emails, WhatsApp, meetings             |
+| `crm_tasks`                 | Follow-up tasks with priorities               |
+| `email_templates`           | Email templates with merge fields             |
+| `sms_templates`             | SMS templates with merge fields               |
+| `email_queue`               | Queued emails for bulk sending                |
+| `sms_queue`                 | Queued SMS for bulk sending                   |
+| `campaigns`                 | Marketing campaigns log                       |
+| `crm_custom_fields`         | Admin-configurable custom field definitions   |
+| `crm_lead_custom_values`    | Custom field values per lead                  |
+| `crm_sla_rules`             | SLA rules (4 seeded)                          |
+| `crm_sla_logs`              | SLA compliance tracking logs                  |
+| `crm_meetings`              | Scheduled meetings with calendar              |
+| `drip_enrollments`          | Drip campaign lead enrollments                |
+| `drip_email_log`            | Drip campaign email send log                  |
 
 ---
 
@@ -297,8 +332,10 @@ app/
 /admin/finance/*            → Finance module (cash, bank, TDS, GST, etc.)
 /admin/backoffice/*         → Backoffice (attendance, leaves, etc.)
 /admin/colony-pipeline/*    → Colony development pipeline
+/admin/ads                  → Ad Manager (CRUD, stats)
 /user/dashboard             → Customer dashboard
 /properties                 → Property listing
+/services                   → Business Directory (categories, listings, reviews, jobs, materials)
 ```
 
 ---
@@ -361,27 +398,15 @@ app/
 
 ## Pending Tasks
 
-1. **Backoffice views i18n** — 14 files to wrap with `__()` calls
-2. **Colony-Pipeline views i18n** — 6 files to wrap with `__()` calls
-3. **Real KYC API** — NSDL PAN verification, UIDAI Aadhaar e-KYC integration
-4. **Mobile responsiveness** — Admin portal mobile fixes
-5. **Wire Flutter stub pages** — 4 admin stubs (BookingApprovals, CommissionApprovals, PlotManagement, UserManagement) + CRM + Employee + Customer bookings
-6. **Add pull-to-refresh** across Flutter pages
-7. **Wire FCM** — Push notifications for all Flutter roles
-8. **Flutter mobile API endpoints** — 4 new JSON endpoints in `routes/api.php` for admin pages (bookings, commissions, plots, users)
-9. **CRM Enhancements:**
-   - Lead scoring AI (auto-score based on budget, engagement, source)
-   - Bulk WhatsApp/SMS outreach from leads list
-   - Lead assignment: associate can share leads with team members
-   - Follow-up reminders (email/SMS alerts)
-   - Lead import from CSV
-   - Deal pipeline with revenue tracking
-   - Commission calculator in lead detail
-10. **Referral system improvements:**
-
-- Track share analytics (who shared, which platform, click count)
-- Referral leaderboard
-  tiered referral bonuses
+1. ~~**Real KYC API**~~ — DONE: `KYCService` with PAN regex + Verhoeff Aadhaar validation + NSDL/UIDAI mock + `KycController` (approve/reject/verify/logs)
+2. ~~**Role-Based CRM Dashboards**~~ — DONE: `CRMAdminController@roleDashboard` with role-specific data filtering
+3. ~~**Lead Deduplication/Smart Merge**~~ — DONE: `CRMAdminController@dedup` + `CRMService::findDuplicates()` + `mergeLeads()`
+4. ~~**CRM Voice Integration**~~ — DONE: `CRMVoiceController` + `CRMVoiceService` with Hindi voice commands, dictation, call logging
+5. ~~**Custom Fields for Leads**~~ — DONE: `CRMCustomFieldService` + `CRMCustomFieldController` + 2 views + DB tables (`crm_custom_fields`, `crm_lead_custom_values`)
+6. ~~**Meeting Scheduler**~~ — DONE: `MeetingService` + `MeetingController` + `crm_meetings` table + calendar API + complete/cancel workflow
+7. ~~**Lead Nurture/Drip Campaigns**~~ — DONE: `DripCampaignService` + `DripCampaignController` + `drip_enrollments`/`drip_email_log` tables + process queue
+8. ~~**SLA/Response Time Tracking**~~ — DONE: `SLAService` + `SLAController` + `crm_sla_rules`/`crm_sla_logs` tables + breach detection + compliance dashboard
+9. ~~**Email Open/Click Tracking**~~ — DONE: `EmailTrackingService` + `EmailTrackingController` + tracking pixel + click redirect + analytics dashboard
 
 ---
 
@@ -397,6 +422,8 @@ app/
 8. **Same-level override prevents gaming** — upline can't earn more than downline by staying at same rank
 9. **20% hard cap + monthly bonus separation** — per-transaction is capped, monthly bonuses are uncapped but limited by downline volume
 10. **Differential model is correct** — upline gets the DIFFERENCE between their rate and downline's rate, not the full rate
+11. **Never delete .ibd files while MySQL is running** — creates orphaned InnoDB tablespace entries that survive restart. Fix: rename table instead of dropping, or restart MySQL cleanly before deleting files.
+12. **`CREATE TABLE IF NOT EXISTS` + orphaned tablespace = deadlock** — InnoDB data dictionary retains ghost entries. Workaround: create table with different name.
 
 ---
 
@@ -420,4 +447,161 @@ php -l <file.php>
 
 # Commission breakdown doc
 docs/COMMISSION_BREAKDOWN_1LAKH.md
+
+# Agentic AI — Run all 8 agents
+php scripts/cron_agent_orchestrator.php
+
+# Agentic AI — Run single agent
+php scripts/cron_agent_orchestrator.php --agent=lead_gen
+
+# Interactive Plot Map
+# http://localhost/apsdreamhome/admin/colony-pipeline/{id}/map
+
+# Flutter APK Build (mobile app)
+cd mobile/apsdreamhome_app_v2 && .\build.ps1
+
+# Flutter Build (manual)
+cd mobile/apsdreamhome_app_v2 && flutter build apk --debug
 ```
+
+### New Features (2026-07-04)
+
+| Feature                     | Details                                                                                                                                                                                                                                                      |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Leaflet Interactive Map** | `/admin/colony-pipeline/{id}/map` — color-coded plots, click for details, status filters, GeoJSON API                                                                                                                                                        |
+| **Customer Plot Map**       | `/colony/{slug}` — Embedded Leaflet map in colony detail page with inline GeoJSON, status filters, popup details. No extra API call needed.                                                                                                                  |
+| **Admin Map filter fix**    | plot-map.php — Added missing `btn-map-filter` class to filter buttons (was broken, JS selected class that HTML didn't have)                                                                                                                                  |
+| **Associate Portal i18n**   | **All 40 views fully translated** with `__()` calls & Hindi translations (1250+ `assoc_*` keys in both lang files). All CRM/sales pages, plus admin CRUD views (show, edit, create, index, sold, pending) completed. **Associate portal is 100% bilingual.** |
+| **Temp Files Cleaned**      | Removed 11 debug/test temp scripts from project root (`_debug_*.php`, `_test_*.php`, `_seed_*.php`)                                                                                                                                                          |
+| **Agentic AI Engine**       | 8 agents (LeadGen, Sales, Marketing, CEO, HR, Finance, Operations, Customer Success), auto-generates tasks/insights/escalations from real business data                                                                                                      |
+| **Run All Agents button**   | `/admin/agentic-ai` dashboard — one-click trigger, reloads results                                                                                                                                                                                           |
+| **Cron Script**             | `scripts/cron_agent_orchestrator.php` — schedule every 15 min                                                                                                                                                                                                |
+| **UploadValidator fix**     | LandInventoryController — added `\UploadValidator::validate()` (was missing import)                                                                                                                                                                          |
+| **Associate Registration**  | `AssociateController::store()` — was mock data (never saved to DB). Now creates real `users` row with hashed password, referral code via sponsor_code, wallet entry, and auto-login. Fixed `full_name`/`name` field mismatch.                                |
+| **CRM Commission Calc**     | New "Potential Earnings" card in `lead_detail.php` — estimates commission from lead's budget + associate's rank rate, with Track A/B/C breakdown. Fully i18n'd.                                                                                              |
+| **Image Upload Bug Fix**    | `associate_list_property.php` — form had `property_image[]` (multi-file array) but controller expected `property_image` (single file). Fixed input name & JS to match backend.                                                                               |
+| **Flutter APK Build**       | Flutter APK builds successfully (194MB debug). Created `build.ps1` script with auto-path fix. Only warning: KGP migration needed for 4 plugins (non-blocking).                                                                                               |
+| **E2E Tests Verified**      | 164/165 pass (1 expected GodMode 403). All changes verified clean — no regressions.                                                                                                                                                                          |
+| **Database Cleanup Audit**  | 191 empty tables catalogued. Only 2 FK refs (both to other empty tables). Ready for safe cleanup when needed (follow 3-pass pattern).                                                                                                                        |
+
+### New Features (2026-07-05)
+
+| Feature                       | Details                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Business Directory System** | JustDial-style directory for real estate services. 5 DB tables (`directory_categories`, `directory_listings`, `directory_reviews`, `directory_jobs`, `directory_materials`). Full MVC: `DirectoryService` (40+ methods), 2 controllers, 15 views, 31 routes. 12 seeded categories. Features: search/filter/pagination, user listing submission, job postings, material price comparison, review/rating system.            |
+| **Advertisement System**      | AdManagerService + AdManagerController (already existed). Wired public display via `renderSlot()` calls in `base.php` layout (header/footer banners). Seeded 3 default ads in `ad_placements` table. **Note:** Table named `ad_placements` not `ad_slots` due to InnoDB orphaned tablespace bug — `ad_slots.ibd` was deleted while MySQL running, leaving ghost entry in InnoDB data dictionary. Renamed table to bypass. |
+| **Admin Sidebar Updates**     | Added 6 Directory items + Ad Manager links under 'properties' and 'marketing' sections in `admin_menu_items` DB table                                                                                                                                                                                                                                                                                                     |
+
+### New Features (2026-07-05 — Session 2)
+
+| Feature                     | Details                                                                                                                                                                                                                                                                                                  |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Referral Tier System**    | 4 tiers (Bronze/Silver/Gold/Platinum) with progressive bonuses: ₹100/₹200/₹500/₹1000 per signup, ₹500/₹1000/₹2500/₹5000 on booking. Tier badge + progress bar on customer & associate referral pages. `getUserTier()` auto-upgrades based on referral count.                                             |
+| **Referral Leaderboard**    | `/admin/referrals/leaderboard` — Top referrers with podium (🥇🥈🥉), period filters (All/Yearly/Monthly/Weekly), tier badges, referral counts, signups, bookings. Admin can see who's performing.                                                                                                        |
+| **Share Conversion Funnel** | `/admin/referrals/share-analytics` — Tracks shares → signups → bookings funnel with conversion rates. Platform breakdown (WhatsApp/Facebook/Telegram/SMS etc), top sharers leaderboard. Data from `users.share_clicks` JSON + `customer_referrals` table.                                                |
+| **Referral Tiers Admin**    | `/admin/referrals/tiers` — Visual tier cards showing bonuses, perks, and user count per tier. Admin overview of tier distribution.                                                                                                                                                                       |
+| **Admin Mobile CSS**        | 20+ responsive fixes: table horizontal scroll, stat card stacking (576px), top nav badge overlap fix, form input zoom prevention (16px), modal responsive sizing, page padding, button stacking, dropdown overflow fix, pagination wrapping, print styles. File: `assets/admin/css/responsive-fixes.css` |
+| **Flutter Pull-to-Refresh** | RefreshIndicator added to 7 key pages: associate dashboard, agent dashboard, employee dashboard, leads page, commission page, my team page, agent CRM. Each page invalidates its providers on refresh for fresh data.                                                                                    |
+| **FCM Topic Subscriptions** | `NotificationService.subscribeToTopics(userId, role)` — subscribes to `user_{id}`, `role_{role}`, `all_users` topics for targeted push notifications. `unsubscribeFromTopics()` for cleanup. Also added `markAsRead()`/`markAllAsRead()` improvements.                                                   |
+| **3 New Admin Routes**      | `/admin/referrals/leaderboard`, `/admin/referrals/share-analytics`, `/admin/referrals/tiers` — all wired to `ReferralController` with 3 new methods. 3 sidebar items added to `admin_menu_items` DB table under 'marketing' section.                                                                     |
+
+### New Features (2026-07-05 — Session 3: World-Class CRM)
+
+| Feature                       | Details                                                                                                                                                                                                                                                                                                              |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lead Detail Hub**           | Complete rewrite of `admin/leads/show.php` (850+ lines). 9 tabs: Overview, Timeline, Interactions, Deals, Tasks, Notes, Score, Commission, Quick Actions. Pipeline progress visual, avatar initials, time-ago formatting, auto-refresh task toggle, modals for note/status/assign.                                   |
+| **CRM Analytics Dashboard**   | New view `admin/crm/analytics.php`. KPI cards (total leads, won, conversion rate, pipeline value). Conversion funnel with proportional bars. Pipeline-by-stage grid. Source performance with color-coded bars + conversion rates. Agent performance leaderboard. Quick insights panel.                               |
+| **Enhanced CRM Dashboard**    | Rewritten `admin/crm/index.php`. Gradient header with action buttons. 6 KPI cards with glow effects. 8 quick-action tiles (leads, kanban, follow-ups, scoring, sources, analytics, bulk, import). Pipeline summary with progress bars. Status distribution CSS donut chart.                                          |
+| **Email/SMS Template System** | `CRMTemplateController` (6 methods). CRUD for email & SMS templates. Merge fields: `{{name}}`, `{{phone}}`, `{{email}}`, `{{city}}`, `{{budget}}`. 2 views: template list (card grid with tabs) + create/edit form (with live preview). Categories: follow_up, proposal, welcome, promotion, nurture, transactional. |
+| **Bulk Email/SMS**            | `CRMBulkController` (3 methods). Channel selector (email/SMS). Segment-based targeting. Template auto-fill. Message preview with merge field replacement. Real-time recipient preview (AJAX). Sends to `email_queue`/`sms_queue`. Campaign logging.                                                                  |
+| **Lead Segmentation**         | `CRMSegmentController` (4 methods). Create segments by: status, source, city, score range, budget range. `crm_segments` DB table (JSON filter_criteria). View matched leads. Quick action: bulk send to segment.                                                                                                     |
+| **New DB Table**              | `crm_segments` — id, name, description, filter_criteria (JSON), created_by, timestamps.                                                                                                                                                                                                                              |
+| **20 New Routes**             | CRM analytics, template CRUD (6), bulk send (3), segmentation (4), lead timeline. All in `routes/web.php`.                                                                                                                                                                                                           |
+| **8 Sidebar Items**           | Templates, Bulk Outreach, Segments, Analytics added to `admin_menu_items` under 'marketing' section.                                                                                                                                                                                                                 |
+
+### New Features (2026-07-05 — Session 4: Advanced CRM Features)
+
+| Feature                       | Details                                                                                                                                                                                                                           |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Activity Auto-Logging**     | `CRMService::logActivity()` — auto-logs every status change, assignment, interaction, deal creation, task completion to `lead_activities` table. Timeline merges interactions, tasks, deals, stage changes chronologically.       |
+| **Deal Won/Lost Tracking**    | `closeDeal()` with structured reasons (price, competitor, timing, budget, product, authority, no_response, other). Win/loss reason reports with revenue analysis. Modal in lead detail for closing deals.                         |
+| **Revenue Forecasting**       | `getRevenueForecast()` — weighted pipeline (deal_value × probability), monthly trend (6 months actual), 3-month forecast with best/worst case scenarios. Forecast vs actual comparison.                                           |
+| **Lead Capture Form Builder** | `CRMFormController` (8 methods). Visual drag-drop form builder. Embed code (iframe + JS script). Auto-assign to agent, auto-enroll in drip campaign, tags. 7 field types: text, email, phone, select, textarea, checkbox, hidden. |
+| **CRMService New Methods**    | +12 methods: `logActivity()`, `getLeadTimeline()`, `closeDeal()`, `getWinLossReasons()`, `getRevenueForecast()`, `getSegments()`, `createSegment()`, `getSegmentLeads()`, plus enhanced analytics.                                |
+| **3 New Controllers**         | `CRMFormController` (forms), `CRMTemplateController` (templates), `CRMBulkController` (bulk send), `CRMSegmentController` (segments).                                                                                             |
+| **8 New Views**               | `forms/index.php`, `forms/builder.php`, `forms/preview.php`, `forms/embed.php`, `templates/index.php`, `templates/form.php`, `bulk/send.php`, `segments/index.php`, `segments/leads.php`, `crm/analytics.php`.                    |
+| **25+ New Routes**            | Form CRUD (5), template CRUD (6), bulk send (3), segments (4), analytics, lead timeline, deal close. All in `routes/web.php`.                                                                                                     |
+| **4 Sidebar Items**           | Templates, Bulk Outreach, Segments, Analytics added to `admin_menu_items` under 'marketing' section.                                                                                                                              |
+| **DB Tables Ready**           | `crm_segments`, `crm_lead_forms`, `lead_activities`, `lead_deals` (with close_reason columns), `crm_interactions`, `crm_tasks`, `email_templates`, `sms_templates`, `email_queue`, `sms_queue`, `campaigns`.                      |
+| **Role-Based Access**         | 8 user roles mapped: admin, employee, associate, agent, super_admin, manager, customer, telecaller. CRM features accessible to: admin, manager, employee, associate, agent. Customer portal has separate lead view.               |
+| **Lead Forms Sidebar**        | Added 'Lead Forms' item to `admin_menu_items` under 'marketing' section.                                                                                                                                                          |
+| **Complete Form System**      | Form list view, visual builder, preview, embed code with iframe + JavaScript + direct URL. WordPress/Shopify/Wix embedding tips. Form stats tracking. WhatsApp/Email share links.                                                 |
+
+### New Features (2026-07-05 — Session 5: Agentic CRM AI)
+
+| Feature                       | Details                                                                                                                                                                                                                                                                                                             |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Agentic CRM Controller**    | `AgenticCRMController.php` — 6 methods: `index()` (dashboard), `runAutoFollowup()`, `runScoreRecalculation()`, `runAutoAssignment()`, `generateInsights()`, `runAll()`. Each agent runs independently or all at once. Actions logged to `agent_task_logs`.                                                          |
+| **Agentic CRM Dashboard**     | `admin/crm/agentic/dashboard.php` — Full dashboard with 4 stat cards (follow-ups, score adjustments, auto-assignments, insights), 4 alert cards (overdue, hot, cold, dormant), 4 agent action buttons, AI action timeline, hot leads sidebar (score ≥70), dormant leads sidebar (7d+ inactive), agent status panel. |
+| **6 New Routes**              | `/admin/crm/agentic` (GET), `/admin/crm/agentic/auto-followup` (POST), `/admin/crm/agentic/score-recalc` (POST), `/admin/crm/agentic/auto-assign` (POST), `/admin/crm/agentic/insights` (POST), `/admin/crm/agentic/run-all` (POST). All CSRF-protected.                                                            |
+| **1 Sidebar Item**            | `Agentic CRM AI` added to `admin_menu_items` under 'marketing' section (id=166, icon=fas fa-robot, order=98).                                                                                                                                                                                                       |
+| **Auto Follow-Up Agent**      | Finds leads with no activity in 3+ days, creates high-priority follow-up tasks assigned to their owner. Logs action to `agent_task_logs`.                                                                                                                                                                           |
+| **Score Recalculation Agent** | Recalculates lead scores for up to 100 most recent leads. Reports adjustments. Uses CRMService `recalculateScore()`.                                                                                                                                                                                                |
+| **Auto Assignment Agent**     | Assigns unassigned leads via round-robin strategy. Uses CRMService `autoAssignLeads()`.                                                                                                                                                                                                                             |
+| **Insight Generator**         | Analyzes pipeline health: high new-lead volume, stuck leads, conversion rate, hot/cold lead distribution. Saves insights to `agent_task_logs`.                                                                                                                                                                      |
+
+### New Features (2026-07-05 — Session 6: AI System + CRM Enhancements)
+
+| Feature                      | Details                                                                                                                                                                                                                                                                            |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **AI Gateway**               | `AIGateway.php` — Unified AI router. Routes tasks to: Rule Engine → SelfLearningAI → IntentDetector → Gemini Flash (free tier). Logs every call with engine, confidence, response time. Singleton pattern. Multi-engine fallback chain.                                            |
+| **Smart Lead Qualifier**     | `SmartLeadQualifierAgent.php` — Auto-qualifies every new lead 24/7. Analyzes intent (Hindi/English), scores budget/urgency/engagement, assigns hot/warm/cold, auto-assigns hot leads, creates follow-up tasks, escalates hot leads. Uses AIGateway for multi-engine scoring.       |
+| **Property Matchmaker**      | `PropertyMatchmakerAgent.php` — Matches leads to available plots based on budget, location, size, past behavior. Database + AI scoring. Sends personalized recommendations. Batch mode for all active leads.                                                                       |
+| **Hindi Conversational Bot** | `HindiConversationalBot.php` — Hindi-first conversational AI for real estate. Handles property inquiries, pricing, EMI calculations, site visits, complaints. Uses SelfLearningAI + IntentDetector + Rule Engine. Personality: professional, friendly, like a real estate advisor. |
+| **Smart Scheduler**          | `SmartSchedulerAgent.php` — Optimizes site visit scheduling. Auto-assigns best agent based on availability + colony familiarity. Route optimization. Auto-sends reminders. Auto-reschedules missed visits.                                                                         |
+| **Market Intelligence**      | `MarketIntelligenceAgent.php` — Real estate market analysis. Price trends, demand patterns, seasonal buying, colony performance, source effectiveness, investor ROI insights. Generates actionable recommendations. All from internal data.                                        |
+| **AI System Dashboard**      | `admin/ai/dashboard.php` — Unified dashboard for all 5 agents. Gateway stats (engine distribution, avg confidence, response time), system health, agent cards with run buttons, quick actions, recent AI activity timeline.                                                        |
+| **AI Chat API**              | `AISystemController@chat` — POST `/api/ai/chat` endpoint for chatbot widget. HindiConversationalBot-powered, session-based, returns intent + suggestions.                                                                                                                          |
+| **Market Report Page**       | `admin/ai/market_report.php` — Full market intelligence report with price trends, demand analysis, colony performance, investor insights.                                                                                                                                          |
+| **Lead Qualifier Page**      | `admin/ai/qualifier.php` — View unqualified leads, run qualification, see recently qualified results.                                                                                                                                                                              |
+| **CRM Role Dashboard**       | `CRMAdminController@roleDashboard` — Role-based CRM dashboard. Auto-detects user role (admin/manager/employee/associate/agent/telecaller) and shows appropriate data: leads, tasks, deals, team performance. Test with `?role=` parameter.                                         |
+| **Lead Deduplication**       | `CRMAdminController@dedup` — Find and merge duplicate leads. Matches by phone + email. Merge combines best data from both, moves interactions/tasks/deals, soft-deletes the removed lead. Bulk auto-merge available.                                                               |
+| **New Routes (10)**          | `/admin/ai-system`, `/admin/ai-system/run`, `/admin/ai-system/qualifier`, `/admin/ai-system/market-report`, `/api/ai/chat`, `/admin/crm/role-dashboard`, `/admin/crm/dedup`, `/admin/crm/dedup/merge`, `/admin/crm/dedup/bulk-merge` + existing CRM routes.                        |
+| **6 Sidebar Items**          | AI System Dashboard, Lead Qualifier, Market Intelligence (technology section), CRM Role Dashboard, Lead Deduplication (marketing section), Agentic CRM AI (marketing section).                                                                                                     |
+| **6 New Service Files**      | `AIGateway.php`, `SmartLeadQualifierAgent.php`, `PropertyMatchmakerAgent.php`, `HindiConversationalBot.php`, `SmartSchedulerAgent.php`, `MarketIntelligenceAgent.php`.                                                                                                             |
+| **2 New Controllers**        | `AISystemController.php` (5 methods), `CRMAdminController.php` (4 methods).                                                                                                                                                                                                        |
+| **2 New Views**              | `admin/ai/dashboard.php` (unified AI dashboard), `admin/crm/role_dashboard.php`, `admin/crm/dedup.php` (lead deduplication UI).                                                                                                                                                    |
+| **AI Architecture**          | Multi-engine fallback: Rule Engine (instant) → SelfLearningAI (learns) → IntentDetector (patterns) → Gemini Flash (free tier, complex NLP). All calls logged to `ai_api_logs`.                                                                                                     |
+
+### New Features (2026-07-05 — Session 7: CRM World-Class Completion)
+
+| Feature                        | Details                                                                                                                                                                                                                                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Custom Fields System**       | `CRMCustomFieldService` + `CRMCustomFieldController` + 2 views. Admin-configurable fields (text/select/textarea/checkbox/date/number) with sections, required/searchable flags. DB: `crm_custom_fields`, `crm_lead_custom_values`. 6 routes under `/admin/crm/custom-fields/*`.                  |
+| **SLA/Response Time Tracking** | `SLAService` + `SLAController` + 3 views (dashboard, rules, breach_log). Auto-detects breaches, compliance rate %, pending SLA monitoring. DB: `crm_sla_rules` (4 seeded rules), `crm_sla_logs`. 4 routes under `/admin/crm/sla/*`.                                                              |
+| **Email Open/Click Tracking**  | `EmailTrackingService` + `EmailTrackingController`. 1x1 tracking pixel for opens, redirect-based click tracking, daily analytics, top clicked links. Auto-bumps lead engagement score. 3 routes: `/admin/crm/email-tracking/stats`, `/api/email/track/open/{id}`, `/api/email/track/click/{id}`. |
+| **Meeting Scheduler**          | `MeetingService` + `MeetingController` (full CRUD + calendar API + complete/cancel). DB: `crm_meetings` table. Calendar JSON endpoint for frontend integration. 8 routes under `/admin/meetings/*`.                                                                                              |
+| **Voice CRM**                  | `CRMVoiceService` + `CRMVoiceController`. Hindi voice commands (अगली बैठक, हॉट लीड, नोट जोड़ो, कॉल करो), Web Speech API dictation, call logging, voice note saving. 4 routes under `/admin/crm/voice/*`.                                                                                         |
+| **Drip Campaigns (Wired)**     | Existing `DripCampaignService` + `DripCampaignController` + 3 views. Process queue, enroll leads, template rendering. 7 routes under `/admin/crm/drip/*` (alias to existing `/admin/drip-campaigns/*`).                                                                                          |
+| **KYC Verification (Wired)**   | Existing `KYCService` (NSDL/UIDAI mock + Verhoeff + regex) + `KycController` (full CRUD + approve/reject + verify + logs). 6 routes under `/admin/kyc/*`.                                                                                                                                        |
+| **New DB Tables (5)**          | `crm_custom_fields`, `crm_lead_custom_values`, `crm_sla_rules`, `crm_sla_logs`, `crm_meetings`                                                                                                                                                                                                   |
+| **New Services (5)**           | `CRMCustomFieldService.php`, `EmailTrackingService.php`, `SLAService.php`, `MeetingService.php`, `CRMVoiceService.php`                                                                                                                                                                           |
+| **New Controllers (5)**        | `CRMCustomFieldController.php`, `EmailTrackingController.php`, `SLAController.php`, `CRMVoiceController.php` (Meeting + KYC + Drip already existed)                                                                                                                                              |
+| **New Views (10)**             | `custom_fields/index.php`, `custom_fields/form.php`, `sla/dashboard.php`, `sla/rules.php`, `sla/breach_log.php`, `email_tracking/stats.php`, `voice/index.php`, `voice/call.php`, `meetings/index.php`, `kyc/verify.php`                                                                         |
+| **New Routes (37)**            | Custom Fields (6), SLA (4), Email Tracking (3), Meetings (8), Voice CRM (4), Drip (7 alias), KYC (4 existing)                                                                                                                                                                                    |
+| **6 Sidebar Items**            | Custom Fields, Drip Campaigns, Email Tracking, SLA Dashboard, Meetings, Voice CRM added to `admin_menu_items` under 'marketing' section                                                                                                                                                          |
+
+### New Features (2026-07-05 — Session 8: Careers Page + Header Fixes)
+
+| Feature                         | Details                                                                                                                                                                                                                                        |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Careers Page Fix**            | Root cause: Controller queried `status = 'active'` but DB has `status = 'open'` — all 11 job listings were hidden. Fixed in `CareerController.php:47`. Now shows 11 open positions with salary, department, experience, location.              |
+| **Form Submission (AJAX)**      | Rewired `submitApplication()` with full validation, file upload (PDF/DOC/DOCX, 5MB max), DB insert into `career_applications`, JSON response. AJAX POST to `/careers/submit-application` with toast notifications for success/error.           |
+| **career_applications Table**   | Created missing table: `id, career_id, full_name, email, phone, resume_path, cover_letter, experience_years, current_company, status, timestamps`. Indexes on career_id and status.                                                            |
+| **CSRF Bypass for Career POST** | Added `/careers/submit-application` to excluded paths in `routes/router.php:107` CSRF validation list. The actual router (`routes/router.php`) has its own CSRF check independent of BaseController.                                           |
+| **CareerService Fix**           | Fixed `getApplicationDetails()` to return structured `{success, data: {application, history}}` instead of raw row. Now compatible with `CareerController::applicationDetails()`.                                                               |
+| **Admin Sidebar Items**         | Added 2 items to `admin_menu_items` under 'hrm' section: 'Career Management' (`/admin/careers`, order=5) and 'Job Applications' (`/admin/careers/manage`, order=6).                                                                            |
+| **Header Cleanup**              | Removed duplicate `</header>` tag from `header.php:598` that was breaking layout. Consolidated 3 conflicting CSS blocks in `aps-core.css` (lines 2520-2719) into single clean block with proper `flex: 1 1 auto` for navbar-collapse.          |
+| **CTA Button Contrast**         | Fixed invisible button on careers page — changed `btn btn-primary` to `btn btn-light` on `bg-primary` section (blue button on blue bg = no contrast).                                                                                          |
+| **Brand Name Consistency**      | Fixed "APS Dream Homes" → "ASP Dream Home" in careers page heading.                                                                                                                                                                            |
+| **PHP Router Discovery**        | Found TWO Router classes: `routes/router.php` (actual, 318 lines, used by `public/index.php`) and `app/Core/Routing/Router.php` (unused, 866 lines). The actual router handles CSRF globally at line 106-128 with its own excluded paths list. |

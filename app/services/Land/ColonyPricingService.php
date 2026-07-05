@@ -121,7 +121,10 @@ class ColonyPricingService
             $markupFactor      = 1.0 / (1.0 - $totalOverheadPct);
             $basePrice         = round($rawCostPerSqft * $markupFactor, 2);
 
-            $this->logger->info('Colony pricing calculated', [
+            // Store min_price_per_sqft on colony (cost floor)
+        $this->storeMinPrice($colonyId, $landCost, $totalDev, $saleableArea, $rawCostPerSqft);
+
+        $this->logger->info('Colony pricing calculated', [
                 'colony_id'         => $colonyId,
                 'land_cost'         => $landCost,
                 'total_development' => $totalDev,
@@ -129,6 +132,7 @@ class ColonyPricingService
                 'raw_cost_per_sqft' => round($rawCostPerSqft, 2),
                 'markup_factor'     => round($markupFactor, 4),
                 'base_price_per_sqft' => $basePrice,
+                'min_price_per_sqft' => round($rawCostPerSqft, 2),
             ]);
 
             return [
@@ -145,6 +149,7 @@ class ColonyPricingService
                 'ga_overhead_pct'        => $gaOverheadPct * 100,
                 'profit_margin_pct'      => $profitMarginPct * 100,
                 'base_price_per_sqft'    => $basePrice,
+                'min_price_per_sqft'     => round($rawCostPerSqft, 2),
             ];
         } catch (Exception $e) {
             $this->logger->error('calculateColonyPricing failed', ['error' => $e->getMessage()]);
@@ -156,9 +161,12 @@ class ColonyPricingService
      * Apply a base price (with optional premium overrides) to every plot
      * in the colony and update the colony's starting_price.
      *
+     * Enforces minimum rate guard: if colony.min_price_per_sqft > 0,
+     * base price cannot be below it (unless approval flow is used).
+     *
      * @param int   $colonyId
      * @param float $basePricePerSqft   The calculated base price
-     * @param array $premiums           Optional overrides, e.g. ['corner_plot' => 0.12]
+     * @param array $premiums           Optional overrides, e.g. ['corner_plot' => 0.12, 'block' => ['A'=>5, 'B'=>3]]
      * @return array{
      *     success: bool,
      *     plots_updated: int,
@@ -175,15 +183,34 @@ class ColonyPricingService
                 return ['success' => false, 'error' => 'Base price must be greater than zero'];
             }
 
+            // ── Minimum rate guard ─────────────────────────────
+            $colony = $this->db->fetch(
+                "SELECT id, name, min_price_per_sqft FROM colonies WHERE id = :cid",
+                ['cid' => $colonyId]
+            );
+            if (!$colony) {
+                return ['success' => false, 'error' => 'Colony not found'];
+            }
+
+            $minPpsf = (float) ($colony['min_price_per_sqft'] ?? 0);
+            if ($minPpsf > 0 && $basePricePerSqft < $minPpsf) {
+                return [
+                    'success' => false,
+                    'error'   => "Cannot price below minimum rate of ₹{$minPpsf}/sqft. Use discount approval for lower pricing.",
+                ];
+            }
+
             // Merge caller premiums with defaults
             $cornerPct      = $premiums['corner_plot']      ?? self::PREMIUM_CORNER;
             $parkPct        = $premiums['park_facing']      ?? self::PREMIUM_PARK_FACING;
             $wideRoadPct    = $premiums['road_width_ft']    ?? self::PREMIUM_WIDE_ROAD;
             $wideRoadThresh = $premiums['wide_road_threshold'] ?? self::WIDE_ROAD_THRESHOLD;
+            $blockPremiums  = $premiums['block']            ?? [];
+            $phasePremiums  = $premiums['phase']            ?? [];
 
             // Fetch all plots for this colony
             $plots = $this->db->fetchAll(
-                "SELECT id, area_sqft, corner_plot, park_facing, road_width_ft
+                "SELECT id, area_sqft, corner_plot, park_facing, road_width_ft, block, phase
                  FROM plots WHERE colony_id = :cid",
                 ['cid' => $colonyId]
             );
@@ -218,6 +245,18 @@ class ColonyPricingService
                 }
                 if ((float) ($plot['road_width_ft'] ?? 0) >= $wideRoadThresh) {
                     $premiumMultiplier += $wideRoadPct;
+                }
+
+                // Per-block premium
+                $block = $plot['block'] ?? '';
+                if (!empty($block) && isset($blockPremiums[$block])) {
+                    $premiumMultiplier += (float) $blockPremiums[$block] / 100;
+                }
+
+                // Per-phase premium
+                $phase = $plot['phase'] ?? '';
+                if (!empty($phase) && isset($phasePremiums[$phase])) {
+                    $premiumMultiplier += (float) $phasePremiums[$phase] / 100;
                 }
 
                 $pricePerSqft = round($basePricePerSqft * $premiumMultiplier, 2);
@@ -478,8 +517,363 @@ class ColonyPricingService
     }
 
     // ================================================================
+    //  PUBLIC — PRICE OVERRIDE & DISCOUNT APPROVAL
+    // ================================================================
+
+    /**
+     * Update a single plot's price (individual override).
+     *
+     * @param int   $plotId
+     * @param float $newPricePerSqft
+     * @param string $reason
+     * @return array
+     */
+    public function updatePlotPrice(int $plotId, float $newPricePerSqft, string $reason = ''): array
+    {
+        try {
+            $plot = $this->tryFetch(
+                "SELECT id, colony_id, area_sqft, price_per_sqft, total_price
+                 FROM plots WHERE id = :pid",
+                ['pid' => $plotId]
+            );
+            if (!$plot) {
+                return ['success' => false, 'error' => 'Plot not found'];
+            }
+
+            $colonyId = (int) $plot['colony_id'];
+            $areaSqft = (float) ($plot['area_sqft'] ?? 0);
+            $oldPpsf  = (float) ($plot['price_per_sqft'] ?? 0);
+            $oldTotal = (float) ($plot['total_price'] ?? 0);
+            $newTotal = round($newPricePerSqft * $areaSqft, 2);
+
+            // Minimum rate guard
+            $colony = $this->tryFetch(
+                "SELECT min_price_per_sqft FROM colonies WHERE id = :cid",
+                ['cid' => $colonyId]
+            );
+            $minPpsf = (float) ($colony['min_price_per_sqft'] ?? 0);
+            if ($minPpsf > 0 && $newPricePerSqft < $minPpsf) {
+                return [
+                    'success' => false,
+                    'error'   => "Cannot set price ₹{$newPricePerSqft}/sqft below minimum ₹{$minPpsf}/sqft. Use discount approval.",
+                ];
+            }
+
+            $this->db->execute(
+                "UPDATE plots SET
+                    price_per_sqft = :pps, total_price = :tot,
+                    negotiated_price = :tot, price_override_reason = :reason,
+                    price_overridden_by = :by, price_overridden_at = NOW(),
+                    updated_at = NOW()
+                 WHERE id = :pid",
+                [
+                    'pps'    => $newPricePerSqft,
+                    'tot'    => $newTotal,
+                    'reason' => $reason,
+                    'by'     => $_SESSION['user_id'] ?? 0,
+                    'pid'    => $plotId,
+                ]
+            );
+
+            $this->insertPriceHistory(
+                $plotId, $colonyId,
+                $oldPpsf, $newPricePerSqft,
+                $oldTotal, $newTotal,
+                'override', $reason,
+                (int) ($_SESSION['user_id'] ?? 0)
+            );
+
+            $this->logger->info('Plot price overridden', [
+                'plot_id' => $plotId, 'old' => $oldPpsf, 'new' => $newPricePerSqft,
+            ]);
+
+            return [
+                'success'          => true,
+                'old_price_per_sqft' => $oldPpsf,
+                'new_price_per_sqft' => $newPricePerSqft,
+                'old_total'        => $oldTotal,
+                'new_total'        => $newTotal,
+            ];
+        } catch (Exception $e) {
+            $this->logger->error('updatePlotPrice failed', ['error' => $e->getMessage()]);
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Record a discount request (below minimum rate).
+     *
+     * @param int    $plotId
+     * @param float  $requestedPricePerSqft
+     * @param string $reason
+     * @return array
+     */
+    public function requestDiscount(int $plotId, float $requestedPricePerSqft, string $reason = ''): array
+    {
+        try {
+            $plot = $this->tryFetch(
+                "SELECT id, colony_id, area_sqft, price_per_sqft, total_price
+                 FROM plots WHERE id = :pid",
+                ['pid' => $plotId]
+            );
+            if (!$plot) {
+                return ['success' => false, 'error' => 'Plot not found'];
+            }
+
+            $colonyId = (int) $plot['colony_id'];
+            $currentPpsf = (float) ($plot['price_per_sqft'] ?? 0);
+
+            // Check if it's actually below min price
+            $colony = $this->tryFetch(
+                "SELECT min_price_per_sqft FROM colonies WHERE id = :cid",
+                ['cid' => $colonyId]
+            );
+            $minPpsf = (float) ($colony['min_price_per_sqft'] ?? 0);
+            if ($minPpsf <= 0 || $requestedPricePerSqft >= $minPpsf) {
+                return [
+                    'success' => false,
+                    'error'   => 'Discount request not needed — price is above minimum. Use direct price update.',
+                ];
+            }
+
+            $existingApproval = $this->tryFetch(
+                "SELECT id, status FROM pricing_approvals
+                 WHERE plot_id = :pid AND status = 'pending'
+                 ORDER BY id DESC LIMIT 1",
+                ['pid' => $plotId]
+            );
+            if ($existingApproval) {
+                return [
+                    'success' => false,
+                    'error'   => 'A pending discount request already exists for this plot.',
+                ];
+            }
+
+            $this->db->insert('pricing_approvals', [
+                'plot_id'               => $plotId,
+                'colony_id'             => $colonyId,
+                'request_type'          => 'discount',
+                'requested_price'       => $requestedPricePerSqft * (float) ($plot['area_sqft'] ?? 0),
+                'requested_price_per_sqft' => $requestedPricePerSqft,
+                'current_price'         => $currentPpsf * (float) ($plot['area_sqft'] ?? 0),
+                'current_price_per_sqft'   => $currentPpsf,
+                'reason'                => $reason,
+                'requested_by'          => $_SESSION['user_id'] ?? 0,
+                'requested_at'          => date('Y-m-d H:i:s'),
+                'status'                => 'pending',
+                'created_at'            => date('Y-m-d H:i:s'),
+            ]);
+
+            $this->logger->info('Discount request created', [
+                'plot_id' => $plotId, 'requested' => $requestedPricePerSqft,
+            ]);
+
+            return ['success' => true, 'message' => 'Discount request submitted for approval.'];
+        } catch (Exception $e) {
+            $this->logger->error('requestDiscount failed', ['error' => $e->getMessage()]);
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Approve a pending discount/override request.
+     *
+     * @param int    $approvalId
+     * @param string $notes
+     * @return array
+     */
+    public function approveDiscount(int $approvalId, string $notes = ''): array
+    {
+        return $this->processApproval($approvalId, 'approved', $notes);
+    }
+
+    /**
+     * Reject a pending discount/override request.
+     *
+     * @param int    $approvalId
+     * @param string $notes
+     * @return array
+     */
+    public function rejectDiscount(int $approvalId, string $notes = ''): array
+    {
+        return $this->processApproval($approvalId, 'rejected', $notes);
+    }
+
+    /**
+     * Get pending pricing approvals, optionally filtered by colony.
+     *
+     * @param int|null $colonyId
+     * @return array
+     */
+    public function getPendingApprovals(?int $colonyId = null): array
+    {
+        try {
+            $sql = "SELECT pa.*, p.plot_number, p.block, p.area_sqft,
+                           c.name AS colony_name,
+                           u1.name AS requested_by_name,
+                           u2.name AS approved_by_name
+                    FROM pricing_approvals pa
+                    LEFT JOIN plots p ON pa.plot_id = p.id
+                    LEFT JOIN colonies c ON pa.colony_id = c.id
+                    LEFT JOIN users u1 ON pa.requested_by = u1.id
+                    LEFT JOIN users u2 ON pa.approved_by = u2.id
+                    WHERE pa.status = 'pending'";
+            $params = [];
+            if ($colonyId) {
+                $sql .= " AND pa.colony_id = :cid";
+                $params['cid'] = $colonyId;
+            }
+            $sql .= " ORDER BY pa.requested_at DESC LIMIT 100";
+            return $this->db->fetchAll($sql, $params);
+        } catch (Exception $e) {
+            $this->logger->error('getPendingApprovals failed', ['error' => $e->getMessage()]);
+            return [];
+        }
+    }
+
+    /**
+     * Get all approvals (with filter by status), optionally by colony.
+     *
+     * @param string|null $status
+     * @param int|null $colonyId
+     * @return array
+     */
+    public function getAllApprovals(?string $status = null, ?int $colonyId = null): array
+    {
+        try {
+            $sql = "SELECT pa.*, p.plot_number, p.block, p.area_sqft,
+                           c.name AS colony_name,
+                           u1.name AS requested_by_name,
+                           u2.name AS approved_by_name
+                    FROM pricing_approvals pa
+                    LEFT JOIN plots p ON pa.plot_id = p.id
+                    LEFT JOIN colonies c ON pa.colony_id = c.id
+                    LEFT JOIN users u1 ON pa.requested_by = u1.id
+                    LEFT JOIN users u2 ON pa.approved_by = u2.id
+                    WHERE 1=1";
+            $params = [];
+            if ($status) {
+                $sql .= " AND pa.status = :status";
+                $params['status'] = $status;
+            }
+            if ($colonyId) {
+                $sql .= " AND pa.colony_id = :cid";
+                $params['cid'] = $colonyId;
+            }
+            $sql .= " ORDER BY pa.requested_at DESC LIMIT 200";
+            return $this->db->fetchAll($sql, $params);
+        } catch (Exception $e) {
+            $this->logger->error('getAllApprovals failed', ['error' => $e->getMessage()]);
+            return [];
+        }
+    }
+
+    // ================================================================
+    //  PRIVATE — APPROVAL PROCESSING
+    // ================================================================
+
+    /**
+     * Process approval (approve or reject).
+     */
+    private function processApproval(int $approvalId, string $action, string $notes = ''): array
+    {
+        try {
+            $approval = $this->tryFetch(
+                "SELECT * FROM pricing_approvals WHERE id = :aid",
+                ['aid' => $approvalId]
+            );
+            if (!$approval) {
+                return ['success' => false, 'error' => 'Approval request not found'];
+            }
+            if ($approval['status'] !== 'pending') {
+                return [
+                    'success' => false,
+                    'error'   => "Request already {$approval['status']}.",
+                ];
+            }
+
+            $now = date('Y-m-d H:i:s');
+            $userId = (int) ($_SESSION['user_id'] ?? 0);
+
+            $this->db->execute(
+                "UPDATE pricing_approvals SET
+                    status = :status, approved_by = :by,
+                    approved_at = :at, notes = :notes, updated_at = NOW()
+                 WHERE id = :aid",
+                [
+                    'status' => $action,
+                    'by'     => $userId,
+                    'at'     => $now,
+                    'notes'  => $notes,
+                    'aid'    => $approvalId,
+                ]
+            );
+
+            // If approved, update the plot price
+            if ($action === 'approved') {
+                $plotId = (int) $approval['plot_id'];
+                $newPpsf = (float) ($approval['requested_price_per_sqft'] ?? 0);
+                $areaSqft = (float) ($this->tryFetch(
+                    "SELECT area_sqft FROM plots WHERE id = :pid", ['pid' => $plotId]
+                )['area_sqft'] ?? 0);
+                $newTotal = round($newPpsf * $areaSqft, 2);
+
+                $this->db->execute(
+                    "UPDATE plots SET
+                        negotiated_price = :tot, negotiated_price_approved = 1,
+                        negotiated_price_approved_by = :by,
+                        negotiated_price_approved_at = :at,
+                        price_override_reason = CONCAT(COALESCE(price_override_reason,''), ' | Discount approved #', :aid),
+                        updated_at = NOW()
+                     WHERE id = :pid",
+                    [
+                        'tot'  => $newTotal,
+                        'by'   => $userId,
+                        'at'   => $now,
+                        'aid'  => $approvalId,
+                        'pid'  => $plotId,
+                    ]
+                );
+            }
+
+            $this->logger->info("Discount request {$action}", [
+                'approval_id' => $approvalId, 'plot_id' => $approval['plot_id'],
+            ]);
+
+            return [
+                'success' => true,
+                'message' => "Discount request #{$approvalId} {$action}.",
+                'action'  => $action,
+            ];
+        } catch (Exception $e) {
+            $this->logger->error("processApproval failed", ['error' => $e->getMessage()]);
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    // ================================================================
     //  PRIVATE — DATA LOOKUP
     // ================================================================
+
+    /**
+     * Store the minimum price (breakeven cost) on the colonies table.
+     * Called automatically during calculateColonyPricing().
+     */
+    private function storeMinPrice(int $colonyId, float $landCost, float $totalDev, float $saleableArea, float $rawCostPerSqft): void
+    {
+        try {
+            $this->db->execute(
+                "UPDATE colonies SET land_cost = :lc, min_price_per_sqft = :mp WHERE id = :cid",
+                [
+                    'lc'  => round($landCost + $totalDev, 2),
+                    'mp'  => round($rawCostPerSqft, 2),
+                    'cid' => $colonyId,
+                ]
+            );
+        } catch (Exception $e) {
+            $this->logger->warning('storeMinPrice failed', ['error' => $e->getMessage()]);
+        }
+    }
 
     /**
      * Retrieve the total land acquisition cost for a colony.

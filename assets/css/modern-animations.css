@@ -862,11 +862,12 @@
 }
 
 /* ---- Modern Navbar Scroll Effect ---- */
-.premium-header.scrolled {
-  background: rgba(15, 23, 42, 0.95) !important;
+.premium-header.scrolled,
+.premium-header.header-scrolled {
+  background: rgba(255, 255, 255, 0.98) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* ---- Image Hover Zoom ---- */

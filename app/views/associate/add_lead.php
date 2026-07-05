@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Add Lead - APS Dream Home';
+$page_title = $page_title ?? __('assoc_al_title', [], 'Add Lead');
 $success = $success ?? null;
 $error = $error ?? null;
 $properties = $properties ?? [];
@@ -16,14 +16,13 @@ $properties = $properties ?? [];
 </style>
 
 <div class="container-fluid px-4 py-3 crm-form">
-    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="mb-1"><i class="fas fa-user-plus text-primary me-2"></i>Add New Lead</h4>
-            <small class="text-muted">Fill in the details to add a lead to your pipeline</small>
+            <h4 class="mb-1"><i class="fas fa-user-plus text-primary me-2"></i><?= __('assoc_al_title', [], 'Add New Lead') ?></h4>
+            <small class="text-muted"><?= __('assoc_al_subtitle', [], 'Fill in the details to add a lead to your pipeline') ?></small>
         </div>
         <a href="<?= BASE_URL ?>/associate/leads" class="btn btn-outline-secondary btn-sm">
-            <i class="fas fa-arrow-left me-1"></i> Back to Leads
+            <i class="fas fa-arrow-left me-1"></i> <?= __('assoc_al_back', [], 'Back to Leads') ?>
         </a>
     </div>
 
@@ -44,105 +43,101 @@ $properties = $properties ?? [];
     <form action="<?= BASE_URL ?>/associate/leads/store" method="POST" id="addLeadForm">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
-        <!-- Contact Info -->
         <div class="form-section">
-            <div class="form-section-title"><i class="fas fa-user"></i>Contact Information</div>
+            <div class="form-section-title"><i class="fas fa-user"></i><?= __('assoc_al_contact_info', [], 'Contact Information') ?></div>
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Full Name <span class="required-star">*</span></label>
-                    <input type="text" class="form-control" name="name" required placeholder="e.g. Rajesh Kumar" id="leadName">
+                    <label class="form-label"><?= __('assoc_al_full_name', [], 'Full Name') ?> <span class="required-star">*</span></label>
+                    <input type="text" class="form-control" name="name" required placeholder="<?= __('assoc_al_name_placeholder', [], 'e.g. Rajesh Kumar') ?>" id="leadName">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Phone Number <span class="required-star">*</span></label>
-                    <input type="tel" class="form-control" name="phone" required placeholder="10-digit mobile number" pattern="[0-9]{10}" maxlength="10" id="leadPhone">
+                    <label class="form-label"><?= __('assoc_al_phone', [], 'Phone Number') ?> <span class="required-star">*</span></label>
+                    <input type="tel" class="form-control" name="phone" required placeholder="<?= __('assoc_al_phone_placeholder', [], '10-digit mobile number') ?>" pattern="[0-9]{10}" maxlength="10" id="leadPhone">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Email Address</label>
+                    <label class="form-label"><?= __('assoc_al_email', [], 'Email Address') ?></label>
                     <input type="email" class="form-control" name="email" placeholder="name@example.com">
                 </div>
             </div>
         </div>
 
-        <!-- Property Interest -->
         <div class="form-section">
-            <div class="form-section-title"><i class="fas fa-home"></i>Property Interest</div>
+            <div class="form-section-title"><i class="fas fa-home"></i><?= __('assoc_al_property_interest', [], 'Property Interest') ?></div>
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Property Type</label>
+                    <label class="form-label"><?= __('assoc_al_property_type', [], 'Property Type') ?></label>
                     <select class="form-select" name="property_interest">
-                        <option value="">— Select Type —</option>
-                        <option value="Residential Plot">Residential Plot</option>
-                        <option value="Commercial Plot">Commercial Plot</option>
-                        <option value="Villa">Premium Villa</option>
-                        <option value="Apartment">Apartment</option>
-                        <option value="Farm Land">Farm Land</option>
-                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="">— <?= __('assoc_al_select', [], 'Select') ?> —</option>
+                        <option value="Residential Plot"><?= __('assoc_al_type_residential', [], 'Residential Plot') ?></option>
+                        <option value="Commercial Plot"><?= __('assoc_al_type_commercial', [], 'Commercial Plot') ?></option>
+                        <option value="Villa"><?= __('assoc_al_type_villa', [], 'Premium Villa') ?></option>
+                        <option value="Apartment"><?= __('assoc_al_type_apartment', [], 'Apartment') ?></option>
+                        <option value="Farm Land"><?= __('assoc_al_type_farm', [], 'Farm Land') ?></option>
+                        <option value="General Inquiry"><?= __('assoc_al_type_inquiry', [], 'General Inquiry') ?></option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Budget Range</label>
+                    <label class="form-label"><?= __('assoc_al_budget', [], 'Budget Range') ?></label>
                     <select class="form-select" name="budget_range">
-                        <option value="">— Select Budget —</option>
-                        <option value="Under ₹5 Lakh">Under ₹5 Lakh</option>
-                        <option value="₹5-10 Lakh">₹5 - 10 Lakh</option>
-                        <option value="₹10-25 Lakh">₹10 - 25 Lakh</option>
-                        <option value="₹25-50 Lakh">₹25 - 50 Lakh</option>
-                        <option value="₹50 Lakh - 1 Cr">₹50 Lakh - 1 Cr</option>
+                        <option value="">— <?= __('assoc_al_select_budget', [], 'Select Budget') ?> —</option>
+                        <option value="Under ₹5 Lakh"><?= __('assoc_al_budget_1', [], 'Under ₹5 Lakh') ?></option>
+                        <option value="₹5-10 Lakh">₹5 - 10 <?= __('assoc_al_lakh', [], 'Lakh') ?></option>
+                        <option value="₹10-25 Lakh">₹10 - 25 <?= __('assoc_al_lakh', [], 'Lakh') ?></option>
+                        <option value="₹25-50 Lakh">₹25 - 50 <?= __('assoc_al_lakh', [], 'Lakh') ?></option>
+                        <option value="₹50 Lakh - 1 Cr">₹50 <?= __('assoc_al_lakh', [], 'Lakh') ?> - 1 Cr</option>
                         <option value="₹1-2 Cr">₹1 - 2 Cr</option>
                         <option value="₹2-5 Cr">₹2 - 5 Cr</option>
-                        <option value="Above ₹5 Cr">Above ₹5 Cr</option>
+                        <option value="Above ₹5 Cr"><?= __('assoc_al_budget_above', [], 'Above') ?> ₹5 Cr</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Preferred Location</label>
-                    <input type="text" class="form-control" name="location_preference" placeholder="e.g. Suryoday Colony">
+                    <label class="form-label"><?= __('assoc_al_location', [], 'Preferred Location') ?></label>
+                    <input type="text" class="form-control" name="location_preference" placeholder="<?= __('assoc_al_location_placeholder', [], 'e.g. Suryoday Colony') ?>">
                 </div>
             </div>
         </div>
 
-        <!-- Lead Details -->
         <div class="form-section">
-            <div class="form-section-title"><i class="fas fa-clipboard-list"></i>Lead Details</div>
+            <div class="form-section-title"><i class="fas fa-clipboard-list"></i><?= __('assoc_al_lead_details', [], 'Lead Details') ?></div>
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Lead Source</label>
+                    <label class="form-label"><?= __('assoc_al_source', [], 'Lead Source') ?></label>
                     <select class="form-select" name="source">
-                        <option value="associate">Self Generated</option>
-                        <option value="referral">Referral</option>
-                        <option value="walk_in">Walk-in</option>
-                        <option value="phone_call">Phone Call</option>
-                        <option value="website">Website</option>
-                        <option value="social_media">Social Media</option>
-                        <option value="advertisement">Advertisement</option>
-                        <option value="existing_customer">Existing Customer</option>
+                        <option value="associate"><?= __('assoc_al_source_self', [], 'Self Generated') ?></option>
+                        <option value="referral"><?= __('assoc_al_source_referral', [], 'Referral') ?></option>
+                        <option value="walk_in"><?= __('assoc_al_source_walkin', [], 'Walk-in') ?></option>
+                        <option value="phone_call"><?= __('assoc_al_source_phone', [], 'Phone Call') ?></option>
+                        <option value="website"><?= __('assoc_al_source_website', [], 'Website') ?></option>
+                        <option value="social_media"><?= __('assoc_al_source_social', [], 'Social Media') ?></option>
+                        <option value="advertisement"><?= __('assoc_al_source_ad', [], 'Advertisement') ?></option>
+                        <option value="existing_customer"><?= __('assoc_al_source_existing', [], 'Existing Customer') ?></option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Priority</label>
+                    <label class="form-label"><?= __('assoc_al_priority', [], 'Priority') ?></label>
                     <select class="form-select" name="priority">
-                        <option value="medium" selected>Medium</option>
-                        <option value="high">High — Hot Lead</option>
-                        <option value="low">Low — Can Wait</option>
+                        <option value="medium" selected><?= __('assoc_al_priority_medium', [], 'Medium') ?></option>
+                        <option value="high"><?= __('assoc_al_priority_high', [], 'High — Hot Lead') ?></option>
+                        <option value="low"><?= __('assoc_al_priority_low', [], 'Low — Can Wait') ?></option>
                     </select>
                 </div>
                 <div class="col-12">
-                    <label class="form-label">Notes & Requirements</label>
-                    <textarea class="form-control" name="notes" rows="3" placeholder="Client requirements, preferences, special notes..."></textarea>
+                    <label class="form-label"><?= __('assoc_al_notes', [], 'Notes & Requirements') ?></label>
+                    <textarea class="form-control" name="notes" rows="3" placeholder="<?= __('assoc_al_notes_placeholder', [], 'Client requirements, preferences, special notes...') ?>"></textarea>
                 </div>
             </div>
         </div>
 
-        <!-- Submit -->
         <div class="d-flex justify-content-between align-items-center">
             <a href="<?= BASE_URL ?>/associate/leads" class="btn btn-outline-secondary">
-                <i class="fas fa-times me-1"></i> Cancel
+                <i class="fas fa-times me-1"></i> <?= __('assoc_al_cancel', [], 'Cancel') ?>
             </a>
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary px-4">
-                    <i class="fas fa-save me-1"></i> Save Lead
+                    <i class="fas fa-save me-1"></i> <?= __('assoc_al_save', [], 'Save Lead') ?>
                 </button>
                 <button type="submit" class="btn btn-success px-4" onclick="document.getElementById('addLeadForm').setAttribute('data-redirect', 'add-another')">
-                    <i class="fas fa-plus me-1"></i> Save & Add Another
+                    <i class="fas fa-plus me-1"></i> <?= __('assoc_al_save_add', [], 'Save & Add Another') ?>
                 </button>
             </div>
         </div>

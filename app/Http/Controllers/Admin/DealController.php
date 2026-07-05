@@ -576,5 +576,5 @@ class DealController extends AdminController
         }
     }
 
-    public function updateStage($id) { try { $stage = $_POST['stage'] ?? 'new'; $this->db->query("UPDATE deals SET stage = ? WHERE id = ?", [$stage, $id]); $this->setFlashMessage('success', 'Stage updated'); } catch (\Exception $e) { $this->setFlashMessage('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id"); }
+    public function updateStage($id) { try { $stage = $_POST['stage'] ?? 'new'; $this->db->query("UPDATE deals SET stage = ? WHERE id = ?", [$stage, $id]); $this->setFlash('success', 'Stage updated'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id"); }
 }

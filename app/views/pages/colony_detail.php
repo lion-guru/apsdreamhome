@@ -140,6 +140,81 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
 </section>
 <?php endif; ?>
 
+<!-- Interactive Plot Map -->
+<?php if (!empty($mapData['features'])): ?>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<section class="py-5 bg-white">
+    <div class="container">
+        <h2 class="text-center mb-4"><i class="fas fa-map-marked-alt text-primary me-2"></i><?= __('colony_plot_map_heading') ?? 'Plot Map' ?></h2>
+        <div class="d-flex flex-wrap gap-2 mb-3 justify-content-center" id="plotFilterBar">
+            <button class="btn btn-sm btn-outline-secondary active" data-filter="all">All</button>
+            <button class="btn btn-sm btn-outline-success" data-filter="available">Available</button>
+            <button class="btn btn-sm btn-outline-warning" data-filter="booked">Booked</button>
+            <button class="btn btn-sm btn-outline-danger" data-filter="sold">Sold</button>
+            <button class="btn btn-sm btn-outline-secondary" data-filter="hold">On Hold</button>
+        </div>
+        <div style="position:relative; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+            <div id="customerPlotMap" style="height:500px; width:100%;"></div>
+        </div>
+        <div class="d-flex flex-wrap gap-3 justify-content-center mt-3 small text-muted">
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#22c55e;margin-right:4px;vertical-align:middle"></span> Available</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#eab308;margin-right:4px;vertical-align:middle"></span> Booked</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#ef4444;margin-right:4px;vertical-align:middle"></span> Sold</span>
+            <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#6b7280;margin-right:4px;vertical-align:middle"></span> On Hold</span>
+        </div>
+    </div>
+</section>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function() {
+    var mapData = <?php echo json_encode($mapData ?? []); ?>;
+    var container = document.getElementById('customerPlotMap');
+    if (!container || !mapData.features || !mapData.features.length) return;
+    var map = L.map('customerPlotMap', { zoomControl: true, attributionControl: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+    var geojsonLayer = L.geoJSON(mapData, {
+        style: function(f) {
+            var colors = { available: '#22c55e', booked: '#eab308', sold: '#ef4444', hold: '#6b7280', reserved: '#f97316' };
+            return { fillColor: colors[f.properties.status] || '#94a3b8', color: '#1e293b', weight: 1, fillOpacity: 0.7 };
+        },
+        onEachFeature: function(f, layer) {
+            var p = f.properties;
+            var statusBadge = { available: 'success', booked: 'warning text-dark', sold: 'danger', hold: 'secondary', reserved: 'warning' };
+            var html = '<div style="min-width:200px;font-family:sans-serif">' +
+                '<h6 style="margin-bottom:6px;font-weight:600">Plot #' + p.plot_number +
+                ' <span class="badge bg-' + (statusBadge[p.status] || 'secondary') + '">' + p.status + '</span></h6>' +
+                '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px"><span style="color:#64748b">Block</span><span style="font-weight:500">' + (p.block || '-') + '</span></div>' +
+                '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px"><span style="color:#64748b">Area</span><span style="font-weight:500">' + (p.area_sqft || 0) + ' sqft</span></div>' +
+                '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px"><span style="color:#64748b">Size</span><span style="font-weight:500">' + (p.width_ft || '-') + 'x' + (p.length_ft || '-') + '</span></div>' +
+                (p.corner_plot ? '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px"><span style="color:#64748b">Corner Plot</span><span style="color:#16a34a;font-weight:500">&#10003;</span></div>' : '') +
+                (p.park_facing ? '<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:13px"><span style="color:#64748b">Park Facing</span><span style="color:#16a34a;font-weight:500">&#10003;</span></div>' : '') +
+                '<hr style="margin:6px 0"><div style="display:flex;justify-content:space-between;padding:2px 0;font-size:14px"><span style="color:#64748b">Price</span><span style="font-weight:700;color:#0d9488">&#8377;' + Number(p.total_price || 0).toLocaleString() + '</span></div></div>';
+            layer.bindPopup(html, { maxWidth: 300 });
+            layer.on('mouseover', function() { this.setStyle({ fillOpacity: 0.95, weight: 2 }); });
+            layer.on('mouseout', function() { geojsonLayer.resetStyle(this); });
+        }
+    }).addTo(map);
+    if (mapData.features.length) {
+        map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30], maxZoom: 18 });
+    } else {
+        map.setView([26.76, 83.37], 13);
+    }
+    document.querySelectorAll('#plotFilterBar .btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#plotFilterBar .btn').forEach(function(b) { b.classList.remove('active'); });
+            this.classList.add('active');
+            var filter = this.getAttribute('data-filter');
+            geojsonLayer.eachLayer(function(layer) {
+                var s = layer.feature.properties.status;
+                var match = filter === 'all' || s === filter || (filter === 'hold' && (s === 'hold' || s === 'reserved'));
+                if (layer._path) layer._path.style.display = match ? '' : 'none';
+            });
+        });
+    });
+})();
+</script>
+<?php endif; ?>
+
 <!-- Gallery -->
 <?php if (!empty($galleryImages)): ?>
 <section class="py-5 bg-white">

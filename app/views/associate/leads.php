@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'My Leads - APS Dream Home';
+$page_title = $page_title ?? __('assoc_leads_title', [], 'My Leads - APS Dream Home');
 $leads = $leads ?? [];
 $total_count = $total_count ?? 0;
 $status_filter = $status_filter ?? '';
@@ -9,15 +9,15 @@ $total_pages = $total_pages ?? 1;
 $pagination_url = $pagination_url ?? '';
 
 $statuses = [
-    'new' => ['label' => 'New', 'color' => 'primary', 'icon' => 'fa-star'],
-    'contacted' => ['label' => 'Contacted', 'color' => 'info', 'icon' => 'fa-phone'],
-    'qualified' => ['label' => 'Qualified', 'color' => 'warning', 'icon' => 'fa-check-circle'],
-    'site_visit' => ['label' => 'Site Visit', 'color' => 'purple', 'icon' => 'fa-map-marker-alt'],
-    'proposal' => ['label' => 'Proposal', 'color' => 'pink', 'icon' => 'fa-file-alt'],
-    'negotiation' => ['label' => 'Negotiation', 'color' => 'orange', 'icon' => 'fa-handshake'],
-    'closed_won' => ['label' => 'Won', 'color' => 'success', 'icon' => 'fa-trophy'],
-    'closed_lost' => ['label' => 'Lost', 'color' => 'secondary', 'icon' => 'fa-times-circle'],
-    'nurture' => ['label' => 'Nurture', 'color' => 'teal', 'icon' => 'fa-seedling'],
+    'new' => ['label' => __('assoc_status_new', [], 'New'), 'color' => 'primary', 'icon' => 'fa-star'],
+    'contacted' => ['label' => __('assoc_status_contacted', [], 'Contacted'), 'color' => 'info', 'icon' => 'fa-phone'],
+    'qualified' => ['label' => __('assoc_status_qualified', [], 'Qualified'), 'color' => 'warning', 'icon' => 'fa-check-circle'],
+    'site_visit' => ['label' => __('assoc_status_site_visit', [], 'Site Visit'), 'color' => 'purple', 'icon' => 'fa-map-marker-alt'],
+    'proposal' => ['label' => __('assoc_status_proposal', [], 'Proposal'), 'color' => 'pink', 'icon' => 'fa-file-alt'],
+    'negotiation' => ['label' => __('assoc_status_negotiation', [], 'Negotiation'), 'color' => 'orange', 'icon' => 'fa-handshake'],
+    'closed_won' => ['label' => __('assoc_status_won', [], 'Won'), 'color' => 'success', 'icon' => 'fa-trophy'],
+    'closed_lost' => ['label' => __('assoc_status_lost', [], 'Lost'), 'color' => 'secondary', 'icon' => 'fa-times-circle'],
+    'nurture' => ['label' => __('assoc_status_nurture', [], 'Nurture'), 'color' => 'teal', 'icon' => 'fa-seedling'],
 ];
 
 $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
@@ -46,18 +46,18 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="mb-1"><i class="fas fa-funnel-dollar text-primary me-2"></i>Lead Pipeline</h4>
-            <small class="text-muted"><?= number_format($total_count) ?> total leads</small>
+            <h4 class="mb-1"><i class="fas fa-funnel-dollar text-primary me-2"></i><?= __('assoc_leads_pipeline', [], 'Lead Pipeline') ?></h4>
+            <small class="text-muted"><?= number_format($total_count) ?> <?= __('assoc_leads_total_leads', [], 'total leads') ?></small>
         </div>
         <div class="d-flex gap-2">
             <form method="POST" action="<?= BASE_URL ?>/associate/leads/recalculate-all-scores" class="d-inline">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <button type="submit" class="btn btn-outline-purple btn-sm" style="border-color:#14b8a6;color:#14b8a6;" onclick="return confirm('Recalculate AI scores for all your leads?')">
-                    <i class="fas fa-brain me-1"></i> Score All
+                    <i class="fas fa-brain me-1"></i> <?= __('assoc_leads_score_all', [], 'Score All') ?>
                 </button>
             </form>
             <a href="<?= BASE_URL ?>/associate/leads/add" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i> Add New Lead
+                <i class="fas fa-plus me-1"></i> <?= __('assoc_leads_add_new', [], 'Add New Lead') ?>
             </a>
         </div>
     </div>
@@ -74,7 +74,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         } catch (\Exception $e) {}
         ?>
         <div class="crm-stage" style="background: #eff6ff; color: #2563eb;" onclick="filterLeads('')">
-            <i class="fas fa-layer-group"></i> All
+            <i class="fas fa-layer-group"></i> <?= __('assoc_leads_all', [], 'All') ?>
             <span class="count"><?= number_format($total_count) ?></span>
         </div>
         <?php foreach ($statuses as $key => $s): ?>
@@ -92,14 +92,14 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         <form class="d-flex gap-2" method="GET" action="<?= BASE_URL ?>/associate/leads">
             <div class="input-group search-box">
                 <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" class="form-control border-start-0" name="q" placeholder="Search name, phone, email..." value="<?= htmlspecialchars($search) ?>">
+                <input type="text" class="form-control border-start-0" name="q" placeholder="<?= __('assoc_leads_search_placeholder', [], 'Search name, phone, email...') ?>" value="<?= htmlspecialchars($search) ?>">
             </div>
             <?php if ($status_filter): ?>
                 <input type="hidden" name="status" value="<?= htmlspecialchars($status_filter) ?>">
             <?php endif; ?>
-            <button type="submit" class="btn btn-outline-primary btn-sm">Search</button>
+            <button type="submit" class="btn btn-outline-primary btn-sm"><?= __('assoc_leads_search_btn', [], 'Search') ?></button>
             <?php if ($search || $status_filter): ?>
-                <a href="<?= BASE_URL ?>/associate/leads" class="btn btn-outline-secondary btn-sm"><i class="fas fa-times"></i> Clear</a>
+                <a href="<?= BASE_URL ?>/associate/leads" class="btn btn-outline-secondary btn-sm"><i class="fas fa-times"></i> <?= __('assoc_leads_clear', [], 'Clear') ?></a>
             <?php endif; ?>
         </form>
     </div>
@@ -110,12 +110,12 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
             <?php if (empty($leads)): ?>
                 <div class="empty-state">
                     <i class="fas fa-funnel-dollar text-muted d-block"></i>
-                    <h5 class="text-muted">No leads found</h5>
+                    <h5 class="text-muted"><?= __('assoc_leads_empty', [], 'No leads found') ?></h5>
                     <p class="text-muted mb-3">
-                        <?= $search ? 'No results for "' . htmlspecialchars($search) . '"' : 'Start building your pipeline by adding leads' ?>
+                        <?= $search ? __('assoc_leads_empty_search', [], 'No results for') . ' "' . htmlspecialchars($search) . '"' : __('assoc_leads_empty_add', [], 'Start building your pipeline by adding leads') ?>
                     </p>
                     <a href="<?= BASE_URL ?>/associate/leads/add" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i> Add Your First Lead
+                        <i class="fas fa-plus me-1"></i> <?= __('assoc_leads_add_first', [], 'Add Your First Lead') ?>
                     </a>
                 </div>
             <?php else: ?>
@@ -123,14 +123,14 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th>Lead</th>
-                                <th>Contact</th>
-                                <th>Interest</th>
-                                <th>Status</th>
-                                <th>Priority</th>
-                                <th>Score</th>
-                                <th>Follow-up</th>
-                                <th>Actions</th>
+                                <th><?= __('assoc_leads_th_lead', [], 'Lead') ?></th>
+                                <th><?= __('assoc_leads_th_contact', [], 'Contact') ?></th>
+                                <th><?= __('assoc_leads_th_interest', [], 'Interest') ?></th>
+                                <th><?= __('assoc_leads_th_status', [], 'Status') ?></th>
+                                <th><?= __('assoc_leads_th_priority', [], 'Priority') ?></th>
+                                <th><?= __('assoc_leads_th_score', [], 'Score') ?></th>
+                                <th><?= __('assoc_leads_th_followup', [], 'Follow-up') ?></th>
+                                <th><?= __('assoc_leads_th_actions', [], 'Actions') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -185,7 +185,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                                         ?>
                                         <small class="<?= $isOverdue ? 'text-danger fw-bold' : 'text-muted' ?>">
                                             <i class="fas fa-clock me-1"></i><?= date('M d', $nextDate) ?>
-                                            <?php if ($isOverdue): ?><span class="badge bg-danger ms-1">Overdue</span><?php endif; ?>
+                                            <?php if ($isOverdue): ?><span class="badge bg-danger ms-1"><?= __('assoc_leads_overdue', [], 'Overdue') ?></span><?php endif; ?>
                                         </small>
                                     <?php else: ?>
                                         <small class="text-muted">—</small>
@@ -210,13 +210,13 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                 <!-- Pagination -->
                 <?php if ($total_pages > 1): ?>
                 <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
-                    <small class="text-muted">Page <?= $current_page_no ?> of <?= $total_pages ?></small>
+                    <small class="text-muted"><?= __('assoc_leads_page_of', [], 'Page') ?> <?= $current_page_no ?> <?= __('assoc_leads_of', [], 'of') ?> <?= $total_pages ?></small>
                     <div class="d-flex gap-1">
                         <?php if ($current_page_no > 1): ?>
-                            <a href="<?= $pagination_url ?>page=<?= $current_page_no - 1 ?>" class="btn btn-sm btn-outline-secondary">Prev</a>
+                            <a href="<?= $pagination_url ?>page=<?= $current_page_no - 1 ?>" class="btn btn-sm btn-outline-secondary"><?= __('assoc_leads_prev', [], 'Prev') ?></a>
                         <?php endif; ?>
                         <?php if ($current_page_no < $total_pages): ?>
-                            <a href="<?= $pagination_url ?>page=<?= $current_page_no + 1 ?>" class="btn btn-sm btn-outline-secondary">Next</a>
+                            <a href="<?= $pagination_url ?>page=<?= $current_page_no + 1 ?>" class="btn btn-sm btn-outline-secondary"><?= __('assoc_leads_next', [], 'Next') ?></a>
                         <?php endif; ?>
                     </div>
                 </div>

@@ -342,6 +342,23 @@ class RegistrationController extends BaseController
 
             // Add to network tree
             $this->addToNetworkTree($referrer['mlm_profile_id'], $userId);
+
+            // Set referred_by in users table
+            $db->execute(
+                "UPDATE users SET referred_by = ? WHERE id = ?",
+                [$referrer['id'], $userId]
+            );
+
+            // Log to customer_referrals
+            try {
+                $db->execute(
+                    "INSERT INTO customer_referrals (referrer_user_id, referred_user_id, referral_code, source, status, registered_at, created_at) 
+                     VALUES (?, ?, ?, ?, 'registered', NOW(), NOW())",
+                    [$referrer['id'], $userId, $referralCode, $_POST['referral_source'] ?? 'direct']
+                );
+            } catch (\Throwable $e) {
+                error_log('customer_referrals insert: ' . $e->getMessage());
+            }
         }
     }
 

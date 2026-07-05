@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Add Property';
+$page_title = $page_title ?? __('assoc_ap_title', [], 'Add Property');
 $base = defined('BASE_URL') ? BASE_URL : '';
 $states = $states ?? [];
 $success = $_SESSION['flash_success'] ?? null;
@@ -30,8 +30,8 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 
 <div class="container-fluid px-3 py-3" style="max-width: 700px; margin: 0 auto;">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="m-0 fw-bold"><i class="fas fa-plus-circle me-2 text-primary"></i>Add Property</h5>
-        <a href="<?= $base ?>/associate/properties" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>My Properties</a>
+        <h5 class="m-0 fw-bold"><i class="fas fa-plus-circle me-2 text-primary"></i><?= __('assoc_ap_title', [], 'Add Property') ?></h5>
+        <a href="<?= $base ?>/associate/properties" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('assoc_ap_my_properties', [], 'My Properties') ?></a>
     </div>
 
     <?php if ($success): ?>
@@ -44,41 +44,38 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
     <form action="<?= $base ?>/associate/add-property" method="POST" enctype="multipart/form-data" class="prop-form">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
-        <!-- Property Type -->
         <div class="prop-section">
-            <h6><i class="fas fa-building"></i>Property Type</h6>
+            <h6><i class="fas fa-building"></i><?= __('assoc_ap_property_type', [], 'Property Type') ?></h6>
             <div class="type-selector" id="typeSelector">
-                <label class="type-option active" data-value="plot"><input type="radio" name="property_type" value="plot" checked><i class="fas fa-map text-success"></i><span>Plot</span></label>
-                <label class="type-option" data-value="house"><input type="radio" name="property_type" value="house"><i class="fas fa-home text-primary"></i><span>House</span></label>
-                <label class="type-option" data-value="flat"><input type="radio" name="property_type" value="flat"><i class="fas fa-building text-info"></i><span>Flat</span></label>
-                <label class="type-option" data-value="shop"><input type="radio" name="property_type" value="shop"><i class="fas fa-store text-warning"></i><span>Shop</span></label>
+                <label class="type-option active" data-value="plot"><input type="radio" name="property_type" value="plot" checked><i class="fas fa-map text-success"></i><span><?= __('assoc_ap_type_plot', [], 'Plot') ?></span></label>
+                <label class="type-option" data-value="house"><input type="radio" name="property_type" value="house"><i class="fas fa-home text-primary"></i><span><?= __('assoc_ap_type_house', [], 'House') ?></span></label>
+                <label class="type-option" data-value="flat"><input type="radio" name="property_type" value="flat"><i class="fas fa-building text-info"></i><span><?= __('assoc_ap_type_flat', [], 'Flat') ?></span></label>
+                <label class="type-option" data-value="shop"><input type="radio" name="property_type" value="shop"><i class="fas fa-store text-warning"></i><span><?= __('assoc_ap_type_shop', [], 'Shop') ?></span></label>
             </div>
         </div>
 
-        <!-- Listing Type -->
         <div class="prop-section">
-            <h6><i class="fas fa-tag"></i>Purpose</h6>
+            <h6><i class="fas fa-tag"></i><?= __('assoc_ap_purpose', [], 'Purpose') ?></h6>
             <div class="d-flex gap-3">
-                <div class="form-check flex-fill"><input class="form-check-input" type="radio" name="listing_type" value="sell" id="sell" checked><label class="form-check-label fw-bold" for="sell"><i class="fas fa-indian-rupee-sign text-success me-1"></i>Sell</label></div>
-                <div class="form-check flex-fill"><input class="form-check-input" type="radio" name="listing_type" value="rent" id="rent"><label class="form-check-label fw-bold" for="rent"><i class="fas fa-key text-primary me-1"></i>Rent</label></div>
+                <div class="form-check flex-fill"><input class="form-check-input" type="radio" name="listing_type" value="sell" id="sell" checked><label class="form-check-label fw-bold" for="sell"><i class="fas fa-indian-rupee-sign text-success me-1"></i><?= __('assoc_ap_sell', [], 'Sell') ?></label></div>
+                <div class="form-check flex-fill"><input class="form-check-input" type="radio" name="listing_type" value="rent" id="rent"><label class="form-check-label fw-bold" for="rent"><i class="fas fa-key text-primary me-1"></i><?= __('assoc_ap_rent', [], 'Rent') ?></label></div>
             </div>
         </div>
 
-        <!-- Title & Price -->
         <div class="prop-section">
-            <h6><i class="fas fa-info-circle"></i>Details</h6>
+            <h6><i class="fas fa-info-circle"></i><?= __('assoc_ap_details', [], 'Details') ?></h6>
             <div class="mb-3">
-                <label class="form-label">Property Title *</label>
-                <input type="text" name="title" class="form-control" placeholder="e.g. 3BHK House in Civil Lines" required>
+                <label class="form-label"><?= __('assoc_ap_title_label', [], 'Property Title') ?> *</label>
+                <input type="text" name="title" class="form-control" placeholder="<?= __('assoc_ap_title_placeholder', [], 'e.g. 3BHK House in Civil Lines') ?>" required>
             </div>
             <div class="row g-3">
                 <div class="col-8">
-                    <label class="form-label">Price (₹) *</label>
-                    <input type="text" name="price" id="price" class="form-control" placeholder="e.g. 25,00,000" required inputmode="numeric">
+                    <label class="form-label"><?= __('assoc_ap_price', [], 'Price (₹)') ?> *</label>
+                    <input type="text" name="price" id="price" class="form-control" placeholder="<?= __('assoc_ap_price_placeholder', [], 'e.g. 25,00,000') ?>" required inputmode="numeric">
                 </div>
                 <div class="col-4">
-                    <label class="form-label">Area (sq.ft.)</label>
-                    <input type="text" name="area" class="form-control" placeholder="e.g. 1000" inputmode="numeric">
+                    <label class="form-label"><?= __('assoc_ap_area', [], 'Area (sq.ft.)') ?></label>
+                    <input type="text" name="area" class="form-control" placeholder="<?= __('assoc_ap_area_placeholder', [], 'e.g. 1000') ?>" inputmode="numeric">
                 </div>
             </div>
             <div class="quick-price">
@@ -91,53 +88,49 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             </div>
         </div>
 
-        <!-- Location -->
         <div class="prop-section">
-            <h6><i class="fas fa-map-marker-alt"></i>Location</h6>
+            <h6><i class="fas fa-map-marker-alt"></i><?= __('assoc_ap_location', [], 'Location') ?></h6>
             <div class="row g-3">
                 <div class="col-6">
-                    <label class="form-label">State</label>
+                    <label class="form-label"><?= __('assoc_ap_state', [], 'State') ?></label>
                     <select name="state_id" class="form-select">
-                        <option value="">Select</option>
+                        <option value=""><?= __('assoc_ap_select', [], 'Select') ?></option>
                         <?php foreach ($states as $s): ?>
                             <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-6">
-                    <label class="form-label">City/Location *</label>
-                    <input type="text" name="location" class="form-control" placeholder="e.g. Mathura" required>
+                    <label class="form-label"><?= __('assoc_ap_city', [], 'City/Location') ?> *</label>
+                    <input type="text" name="location" class="form-control" placeholder="<?= __('assoc_ap_city_placeholder', [], 'e.g. Mathura') ?>" required>
                 </div>
             </div>
             <div class="mt-3">
-                <label class="form-label">Full Address</label>
-                <textarea name="address" class="form-control" rows="2" placeholder="Plot no, street, landmark..."></textarea>
+                <label class="form-label"><?= __('assoc_ap_address', [], 'Full Address') ?></label>
+                <textarea name="address" class="form-control" rows="2" placeholder="<?= __('assoc_ap_address_placeholder', [], 'Plot no, street, landmark...') ?>"></textarea>
             </div>
         </div>
 
-        <!-- Description -->
         <div class="prop-section">
-            <h6><i class="fas fa-align-left"></i>Description</h6>
-            <textarea name="description" class="form-control" rows="3" placeholder="Plot size, road width, nearby landmarks, features..."></textarea>
+            <h6><i class="fas fa-align-left"></i><?= __('assoc_ap_description', [], 'Description') ?></h6>
+            <textarea name="description" class="form-control" rows="3" placeholder="<?= __('assoc_ap_desc_placeholder', [], 'Plot size, road width, nearby landmarks, features...') ?>"></textarea>
         </div>
 
-        <!-- Photo -->
         <div class="prop-section">
-            <h6><i class="fas fa-camera"></i>Photo</h6>
+            <h6><i class="fas fa-camera"></i><?= __('assoc_ap_photo', [], 'Photo') ?></h6>
             <div class="photo-upload-zone">
                 <input type="file" name="property_image" accept="image/*">
                 <i class="fas fa-cloud-upload-alt d-block"></i>
-                <div class="fw-bold text-primary">Tap to Add Photo</div>
-                <div class="text-muted small">Take photo or choose from gallery</div>
+                <div class="fw-bold text-primary"><?= __('assoc_ap_tap_photo', [], 'Tap to Add Photo') ?></div>
+                <div class="text-muted small"><?= __('assoc_ap_tap_desc', [], 'Take photo or choose from gallery') ?></div>
             </div>
         </div>
 
-        <!-- Submit -->
         <div class="prop-section text-center">
             <button type="submit" class="btn btn-primary btn-lg w-100 py-3" style="border-radius:14px;font-weight:700;">
-                <i class="fas fa-paper-plane me-2"></i>Submit Property
+                <i class="fas fa-paper-plane me-2"></i><?= __('assoc_ap_submit', [], 'Submit Property') ?>
             </button>
-            <div class="text-muted small mt-2"><i class="fas fa-shield-alt me-1"></i>Verified before publishing</div>
+            <div class="text-muted small mt-2"><i class="fas fa-shield-alt me-1"></i><?= __('assoc_ap_verified', [], 'Verified before publishing') ?></div>
         </div>
     </form>
 </div>

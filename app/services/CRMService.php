@@ -930,4 +930,986 @@ class CRMService
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
+
+    // ─────────── CSV Lead Import ──────────────────────────────────────
+
+    public function importLeadsFromCsv(array $rows, int $userId): array
+    {
+        $imported = 0;
+        $skipped = 0;
+        $errors = [];
+        $duplicates = 0;
+
+        foreach ($rows as $idx => $row) {
+            $name = trim($row['name'] ?? $row['Name'] ?? '');
+            $phone = trim($row['phone'] ?? $row['Phone'] ?? $row['mobile'] ?? '');
+            $email = trim($row['email'] ?? $row['Email'] ?? '');
+            $source = trim($row['source'] ?? $row['Source'] ?? 'csv_import');
+            $budget = (float)($row['budget'] ?? $row['Budget'] ?? 0);
+            $notes = trim($row['notes'] ?? $row['Notes'] ?? '');
+
+            if (!$name && !$phone && !$email) {
+                $skipped++;
+                $errors[] = "Row " . ($idx + 1) . ": No name, phone, or email";
+                continue;
+            }
+
+            $leadNum = 'LEAD-CSV-' . date('Ymd') . '-' . str_pad($idx + 1, 4, '0', STR_PAD_LEFT);
+
+            try {
+                $existingPhone = $phone ? $this->db->query("SELECT id FROM leads WHERE phone = ?", [$phone])->fetch() : null;
+                $existingEmail = $email ? $this->db->query("SELECT id FROM leads WHERE email = ?", [$email])->fetch() : null;
+
+                if ($existingPhone || $existingEmail) {
+                    $duplicates++;
+                    continue;
+                }
+
+                $this->db->query(
+                    "INSERT INTO leads (lead_number, name, phone, email, source, budget_min, status, assigned_to, created_by, lead_score, created_at, updated_at)
+                     VALUES (?, ?, ?, ?, ?, ?, 'new', ?, ?, 0, NOW(), NOW())",
+                    [$leadNum, $name, $phone, $email, $source, $budget, $userId, $userId]
+                );
+                $imported++;
+            } catch (\Exception $e) {
+                $errors[] = "Row " . ($idx + 1) . ": " . $e->getMessage();
+            }
+        }
+
+        return [
+            'success' => true,
+            'imported' => $imported,
+            'skipped' => $skipped,
+            'duplicates' => $duplicates,
+            'errors' => $errors,
+            'total_rows' => count($rows),
+        ];
+    }
+
+    // ─────────── Deal Pipeline ────────────────────────────────────────
+
+    public function getDeals(array $filters = []): array
+    {
+        $where = "1=1";
+        $params = [];
+
+        if (!empty($filters['stage'])) {
+            $where .= " AND d.stage = ?";
+            $params[] = $filters['stage'];
+        }
+        if (!empty($filters['assigned_to'])) {
+            $where .= " AND d.assigned_to = ?";
+            $params[] = $filters['assigned_to'];
+        }
+        if (!empty($filters['date_from'])) {
+            $where .= " AND d.created_at >= ?";
+            $params[] = $filters['date_from'];
+        }
+        if (!empty($filters['date_to'])) {
+            $where .= " AND d.created_at <= ?";
+            $params[] = $filters['date_to'] . ' 23:59:59';
+        }
+
+        $page = max(1, (int)($filters['page'] ?? 1));
+        $perPage = min(100, max(1, (int)($filters['per_page'] ?? 25)));
+        $offset = ($page - 1) * $perPage;
+
+        $total = $this->db->query("SELECT COUNT(*) FROM lead_deals d WHERE $where", $params)->fetchColumn();
+
+        $stmt = $this->db->query(
+            "SELECT d.*, l.name as lead_name, l.phone as lead_phone, l.email as lead_email,
+                    l.lead_score, u.name as assigned_name
+             FROM lead_deals d
+             LEFT JOIN leads l ON d.lead_id = l.id
+             LEFT JOIN users u ON d.assigned_to = u.id
+             WHERE $where
+             ORDER BY d.expected_close_date ASC, d.deal_value DESC
+             LIMIT $perPage OFFSET $offset",
+            $params
+        );
+
+        return [
+            'deals' => $stmt->fetchAll() ?: [],
+            'total' => (int)$total,
+            'page' => $page,
+            'per_page' => $perPage,
+            'total_pages' => (int)ceil($total / $perPage),
+        ];
+    }
+
+    public function getDealById(int $id): ?array
+    {
+        $stmt = $this->db->query(
+            "SELECT d.*, l.name as lead_name, l.phone as lead_phone, l.email as lead_email,
+                    l.lead_score, u.name as assigned_name
+             FROM lead_deals d
+             LEFT JOIN leads l ON d.lead_id = l.id
+             LEFT JOIN users u ON d.assigned_to = u.id
+             WHERE d.id = ?",
+            [$id]
+        );
+        return $stmt->fetch() ?: null;
+    }
+
+    public function createDeal(array $data): array
+    {
+        try {
+            $this->db->query(
+                "INSERT INTO lead_deals (lead_id, deal_name, deal_value, stage, assigned_to, created_by,
+                    expected_close_date, probability, notes, property_type, colony_id, plot_id, created_at, updated_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
+                [
+                    $data['lead_id'],
+                    $data['deal_name'] ?? 'New Deal',
+                    $data['deal_value'] ?? 0,
+                    $data['stage'] ?? 'qualification',
+                    $data['assigned_to'] ?? null,
+                    $data['created_by'] ?? null,
+                    $data['expected_close_date'] ?? null,
+                    $data['probability'] ?? 25,
+                    $data['notes'] ?? null,
+                    $data['property_type'] ?? null,
+                    $data['colony_id'] ?? null,
+                    $data['plot_id'] ?? null,
+                ]
+            );
+            $dealId = $this->db->lastInsertId();
+            return ['success' => true, 'deal_id' => (int)$dealId, 'message' => 'Deal created'];
+        } catch (\Exception $e) {
+            error_log('CRMService::createDeal error: ' . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    public function updateDeal(int $id, array $data): array
+    {
+        $allowed = ['deal_name', 'deal_value', 'stage', 'assigned_to', 'expected_close_date', 'probability', 'notes', 'property_type', 'colony_id', 'plot_id'];
+        $sets = [];
+        $params = [];
+
+        foreach ($allowed as $field) {
+            if (array_key_exists($field, $data)) {
+                $sets[] = "$field = ?";
+                $params[] = $data[$field];
+            }
+        }
+
+        if (empty($sets)) {
+            return ['success' => false, 'error' => 'No fields to update'];
+        }
+
+        $sets[] = "updated_at = NOW()";
+        $params[] = $id;
+
+        try {
+            $this->db->query("UPDATE lead_deals SET " . implode(', ', $sets) . " WHERE id = ?", $params);
+            return ['success' => true, 'message' => 'Deal updated'];
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    public function moveDealStage(int $id, string $stage): array
+    {
+        try {
+            $this->db->query("UPDATE lead_deals SET stage = ?, updated_at = NOW() WHERE id = ?", [$stage, $id]);
+            if ($stage === 'won') {
+                $this->db->query("UPDATE lead_deals SET closed_at = NOW() WHERE id = ?", [$id]);
+            }
+            return ['success' => true, 'message' => "Deal moved to $stage"];
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    public function deleteDeal(int $id): array
+    {
+        try {
+            $this->db->query("DELETE FROM lead_deals WHERE id = ?", [$id]);
+            return ['success' => true, 'message' => 'Deal deleted'];
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    public function getDealPipelineSummary(): array
+    {
+        try {
+            $stages = $this->db->query(
+                "SELECT stage, COUNT(*) as count, COALESCE(SUM(deal_value),0) as total_value,
+                        COALESCE(AVG(probability),0) as avg_probability
+                 FROM lead_deals GROUP BY stage ORDER BY FIELD(stage, 'qualification','proposal','negotiation','commitment','won','lost')"
+            )->fetchAll() ?: [];
+
+            $totalValue = array_sum(array_column($stages, 'total_value'));
+            $weightedValue = 0;
+            foreach ($stages as $s) {
+                $weightedValue += $s['total_value'] * ($s['avg_probability'] / 100);
+            }
+
+            return [
+                'stages' => $stages,
+                'total_pipeline_value' => $totalValue,
+                'weighted_pipeline_value' => $weightedValue,
+                'total_deals' => array_sum(array_column($stages, 'count')),
+            ];
+        } catch (\Exception $e) {
+            return ['stages' => [], 'total_pipeline_value' => 0, 'weighted_pipeline_value' => 0, 'total_deals' => 0];
+        }
+    }
+
+    // ─────────── Lead Score Breakdown ─────────────────────────────────
+
+    public function getScoreBreakdown(int $leadId): array
+    {
+        try {
+            $lead = $this->getLeadById($leadId);
+            if (!$lead) return ['error' => 'Lead not found'];
+
+            $breakdown = [];
+
+            $budgetScore = 0;
+            $budget = (float)($lead['budget_max'] ?? $lead['budget_min'] ?? 0);
+            if ($budget >= 10000000) $budgetScore = 25;
+            elseif ($budget >= 5000000) $budgetScore = 20;
+            elseif ($budget >= 3000000) $budgetScore = 15;
+            elseif ($budget >= 1000000) $budgetScore = 10;
+            else $budgetScore = 5;
+            $breakdown['budget'] = ['score' => $budgetScore, 'max' => 25, 'label' => "Budget: ₹" . number_format($budget)];
+
+            $sourceScores = ['referral' => 20, 'website' => 12, 'walk_in' => 15, 'call' => 10, 'social_media' => 8, 'csv_import' => 3, 'other' => 5];
+            $source = strtolower($lead['source'] ?? 'other');
+            $sourceScore = $sourceScores[$source] ?? 5;
+            $breakdown['source'] = ['score' => $sourceScore, 'max' => 20, 'label' => "Source: $source"];
+
+            $interactionCount = 0;
+            try {
+                $interactionCount = (int)$this->db->query(
+                    "SELECT COUNT(*) FROM crm_interactions WHERE lead_id = ?", [$leadId]
+                )->fetchColumn();
+            } catch (\Exception $e) {}
+            $engagementScore = min(25, $interactionCount * 5);
+            $breakdown['engagement'] = ['score' => $engagementScore, 'max' => 25, 'label' => "Interactions: $interactionCount"];
+
+            $recencyScore = 0;
+            if (!empty($lead['last_contacted_at'])) {
+                $daysSince = (int)((time() - strtotime($lead['last_contacted_at'])) / 86400);
+                if ($daysSince <= 1) $recencyScore = 15;
+                elseif ($daysSince <= 3) $recencyScore = 12;
+                elseif ($daysSince <= 7) $recencyScore = 8;
+                elseif ($daysSince <= 30) $recencyScore = 4;
+                else $recencyScore = 0;
+            }
+            $breakdown['recency'] = ['score' => $recencyScore, 'max' => 15, 'label' => "Last contact recency"];
+
+            $profileScore = 0;
+            if (!empty($lead['phone'])) $profileScore += 3;
+            if (!empty($lead['email'])) $profileScore += 3;
+            if (!empty($lead['budget_min'])) $profileScore += 3;
+            if (!empty($lead['preferred_location'])) $profileScore += 3;
+            if (!empty($lead['property_type'])) $profileScore += 3;
+            $breakdown['profile'] = ['score' => $profileScore, 'max' => 15, 'label' => "Profile completeness"];
+
+            $totalScore = array_sum(array_column($breakdown, 'score'));
+
+            return [
+                'lead_id' => $leadId,
+                'total_score' => $totalScore,
+                'breakdown' => $breakdown,
+                'grade' => $totalScore >= 80 ? 'S' : ($totalScore >= 65 ? 'A' : ($totalScore >= 50 ? 'B' : ($totalScore >= 30 ? 'C' : 'D'))),
+            ];
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    // ─────────── Follow-up Reminders ──────────────────────────────────
+
+    public function getFollowUpReminders(int $userId, string $role = 'associate'): array
+    {
+        try {
+            $where = "t.status = 'pending' AND t.due_date <= DATE_ADD(CURDATE(), INTERVAL 3 DAY)";
+            $params = [];
+
+            if (!in_array($role, ['admin', 'manager'])) {
+                $where .= " AND t.assigned_to = ?";
+                $params[] = $userId;
+            }
+
+            $stmt = $this->db->query(
+                "SELECT t.*, l.name as lead_name, l.phone as lead_phone, l.lead_score,
+                        u.name as assigned_name
+                 FROM crm_tasks t
+                 LEFT JOIN leads l ON t.lead_id = l.id
+                 LEFT JOIN users u ON t.assigned_to = u.id
+                 WHERE $where
+                 ORDER BY t.due_date ASC, t.due_time ASC
+                 LIMIT 50",
+                $params
+            );
+
+            return $stmt->fetchAll() ?: [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    public function getOverdueRemindersCount(int $userId, string $role = 'associate'): int
+    {
+        try {
+            $where = "t.status = 'pending' AND t.due_date < CURDATE()";
+            $params = [];
+
+            if (!in_array($role, ['admin', 'manager'])) {
+                $where .= " AND t.assigned_to = ?";
+                $params[] = $userId;
+            }
+
+            return (int)$this->db->query(
+                "SELECT COUNT(*) FROM crm_tasks t WHERE $where",
+                $params
+            )->fetchColumn();
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    // ─────────── Bulk Lead Update ─────────────────────────────────────
+
+    public function bulkUpdateLeads(array $leadIds, array $updates, int $userId): array
+    {
+        $allowed = ['status', 'assigned_to', 'priority', 'lead_category', 'source'];
+        $sets = [];
+        $params = [];
+
+        foreach ($allowed as $field) {
+            if (array_key_exists($field, $updates)) {
+                $sets[] = "$field = ?";
+                $params[] = $updates[$field];
+            }
+        }
+
+        if (empty($sets) || empty($leadIds)) {
+            return ['success' => false, 'error' => 'No valid fields or leads'];
+        }
+
+        $sets[] = "updated_at = NOW()";
+        $placeholders = implode(',', array_fill(0, count($leadIds), '?'));
+
+        try {
+            $this->db->query(
+                "UPDATE leads SET " . implode(', ', $sets) . " WHERE id IN ($placeholders)",
+                array_merge($params, $leadIds)
+            );
+            return ['success' => true, 'updated' => count($leadIds)];
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    // ─────────── Commission Calculator ────────────────────────────────
+
+    public function estimateCommission(int $leadId): array
+    {
+        try {
+            $lead = $this->getLeadById($leadId);
+            if (!$lead) return ['error' => 'Lead not found'];
+
+            $budget = (float)($lead['budget_max'] ?? $lead['budget_min'] ?? 0);
+            if ($budget <= 0) return ['error' => 'No budget set for this lead'];
+
+            $rankSlabs = [
+                'associate' => 5, 'sr_associate' => 7, 'bdm' => 10,
+                'sr_bdm' => 12, 'vice_president' => 15, 'president' => 18, 'site_manager' => 20,
+            ];
+
+            $results = [];
+            foreach ($rankSlabs as $rank => $pct) {
+                $commission = round($budget * $pct / 100);
+                $trackA = round($commission * 0.75);
+                $trackB = round($commission * 0.15);
+                $trackC = round($commission * 0.10);
+
+                $results[] = [
+                    'rank' => $rank,
+                    'rate_pct' => $pct,
+                    'total_commission' => $commission,
+                    'track_a_slab_differential' => $trackA,
+                    'track_b_performance_rollup' => $trackB,
+                    'track_c_milestone_escrow' => $trackC,
+                ];
+            }
+
+            return [
+                'lead_id' => $leadId,
+                'lead_name' => $lead['name'] ?? '',
+                'budget' => $budget,
+                'commission_by_rank' => $results,
+            ];
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    // ─────────── Activity Auto-Logging ───────────────────────────────────
+
+    public function logActivity(int $leadId, int $userId, string $type, string $subject, string $body = '', array $meta = []): array
+    {
+        try {
+            $this->db->query(
+                "INSERT INTO lead_activities (lead_id, user_id, activity_type, subject, description, meta_data, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, NOW())",
+                [$leadId, $userId, $type, $subject, $body, json_encode($meta)]
+            );
+            
+            // Also add to crm_interactions if it's an interaction type
+            if (in_array($type, ['call', 'email', 'whatsapp', 'meeting', 'site_visit', 'sms'])) {
+                $this->addInteraction($leadId, $userId, $type, [
+                    'subject' => $subject,
+                    'body' => $body,
+                    'direction' => $meta['direction'] ?? 'outbound',
+                    'outcome' => $meta['outcome'] ?? null,
+                ]);
+            }
+            
+            // Update lead's last_activity_date
+            $this->db->query("UPDATE leads SET last_activity_date = NOW() WHERE id = ?", [$leadId]);
+            
+            // Auto-score
+            $this->recalculateScore($leadId);
+            
+            return ['success' => true, 'activity_id' => $this->db->lastInsertId()];
+        } catch (\Exception $e) {
+            error_log('CRMService::logActivity error: ' . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    public function getLeadTimeline(int $leadId, int $limit = 100): array
+    {
+        try {
+            $stmt = $this->db->query(
+                "SELECT * FROM lead_activities WHERE lead_id = ? ORDER BY created_at DESC LIMIT ?",
+                [$leadId, $limit]
+            );
+            return $stmt->fetchAll() ?: [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    // ─────────── Deal Won/Lost Reason Tracking ────────────────────────────
+
+    public function closeDeal(int $dealId, string $outcome, string $reason = '', string $reasonDetail = '', int $closedBy = 0): array
+    {
+        try {
+            $validOutcomes = ['won', 'lost'];
+            if (!in_array($outcome, $validOutcomes)) {
+                return ['success' => false, 'error' => 'Invalid outcome'];
+            }
+            
+            $validReasons = [
+                'price' => 'Pricing/Budget',
+                'competitor' => 'Lost to Competitor',
+                'timing' => 'Timing/Not Ready',
+                'budget' => 'Budget Constraints',
+                'product' => 'Product/Feature Gap',
+                'authority' => 'Decision Maker Changed',
+                'no_response' => 'No Response/Ghosted',
+                'other' => 'Other'
+            ];
+            
+            $this->db->query(
+                "UPDATE lead_deals SET stage = ?, closed_at = NOW(), close_reason = ?, close_reason_detail = ?, closed_by = ? WHERE id = ?",
+                [$outcome, $reason, $reasonDetail, $closedBy, $dealId]
+            );
+            
+            // Get deal info for activity log
+            $deal = $this->db->fetchOne("SELECT lead_id, deal_name, deal_value FROM lead_deals WHERE id = ?", [$dealId]);
+            if ($deal) {
+                $this->logActivity(
+                    $deal['lead_id'],
+                    $closedBy,
+                    'deal_' . $outcome,
+                    'Deal ' . ucfirst($outcome) . ': ' . $deal['deal_name'],
+                    "Value: ₹" . number_format($deal['deal_value']) . " | Reason: " . ($validReasons[$reason] ?? $reason) . ($reasonDetail ? " — $reasonDetail" : ''),
+                    ['deal_id' => $dealId, 'value' => $deal['deal_value'], 'reason' => $reason]
+                );
+            }
+            
+            return ['success' => true];
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    public function getWinLossReasons(string $period = '30d'): array
+    {
+        $days = (int)str_replace('d', '', $period);
+        try {
+            $won = $this->db->fetchAll(
+                "SELECT ld.close_reason, COUNT(*) as cnt, SUM(ld.deal_value) as total_value
+                 FROM lead_deals ld
+                 WHERE ld.stage = 'won' AND ld.closed_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+                 GROUP BY ld.close_reason",
+                [$days]
+            ) ?: [];
+            
+            $lost = $this->db->fetchAll(
+                "SELECT ld.close_reason, COUNT(*) as cnt, SUM(ld.deal_value) as total_value
+                 FROM lead_deals ld
+                 WHERE ld.stage = 'lost' AND ld.closed_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+                 GROUP BY ld.close_reason",
+                [$days]
+            ) ?: [];
+            
+            return ['won' => $won, 'lost' => $lost];
+        } catch (\Exception $e) {
+            return ['won' => [], 'lost' => []];
+        }
+    }
+
+    // ─────────── Revenue Forecasting ──────────────────────────────────────
+
+    public function getRevenueForecast(int $months = 3): array
+    {
+        try {
+            // Current weighted pipeline
+            $weightedPipeline = 0;
+            $byStage = [];
+            $stages = $this->db->fetchAll(
+                "SELECT stage, SUM(deal_value) as total_value, COUNT(*) as cnt,
+                        AVG(probability) as avg_prob
+                 FROM lead_deals
+                 WHERE stage IN ('qualified','site_visit','proposal','negotiation','booking')
+                 GROUP BY stage"
+            ) ?: [];
+            
+            foreach ($stages as $s) {
+                $prob = (float)($s['avg_prob'] ?? 0) / 100;
+                $weighted = (float)$s['total_value'] * $prob;
+                $weightedPipeline += $weighted;
+                $byStage[] = [
+                    'stage' => $s['stage'],
+                    'total_value' => (float)$s['total_value'],
+                    'weighted_value' => $weighted,
+                    'count' => (int)$s['cnt'],
+                    'probability' => (float)$s['avg_prob'],
+                ];
+            }
+            
+            // Monthly trend (last 6 months actual)
+            $trend = $this->db->fetchAll(
+                "SELECT DATE_FORMAT(closed_at, '%Y-%m') as month, 
+                        SUM(CASE WHEN stage='won' THEN deal_value ELSE 0 END) as won_value,
+                        COUNT(CASE WHEN stage='won' THEN 1 END) as won_count
+                 FROM lead_deals
+                 WHERE closed_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                 GROUP BY month
+                 ORDER BY month ASC"
+            ) ?: [];
+            
+            // Simple forecast: average monthly close rate × weighted pipeline
+            $avgMonthlyClose = $trend ? array_sum(array_column($trend, 'won_value')) / count($trend) : 0;
+            $forecast = [];
+            for ($i = 1; $i <= $months; $i++) {
+                $month = date('Y-m', strtotime("+$i months"));
+                $forecast[] = [
+                    'month' => $month,
+                    'forecast' => round($avgMonthlyClose * $i / $months),
+                    'best_case' => round($avgMonthlyClose * 1.5 * $i / $months),
+                    'worst_case' => round($avgMonthlyClose * 0.5 * $i / $months),
+                ];
+            }
+            
+            return [
+                'weighted_pipeline' => $weightedPipeline,
+                'by_stage' => $byStage,
+                'monthly_trend' => $trend,
+                'forecast' => $forecast,
+                'avg_monthly_close' => $avgMonthlyClose,
+            ];
+        } catch (\Exception $e) {
+            return ['weighted_pipeline' => 0, 'by_stage' => [], 'monthly_trend' => [], 'forecast' => []];
+        }
+    }
+
+    // ─────────── Lead Segmentation ────────────────────────────────────────
+
+    public function getSegments(): array
+    {
+        try {
+            $segments = $this->db->fetchAll("SELECT * FROM crm_segments ORDER BY created_at DESC") ?: [];
+            foreach ($segments as &$seg) {
+                $criteria = json_decode($seg['filter_criteria'] ?? '{}', true) ?? [];
+                $where = ["deleted_at IS NULL"];
+                $params = [];
+                if (!empty($criteria['status'])) { $where[] = "status = ?"; $params[] = $criteria['status']; }
+                if (!empty($criteria['source'])) { $where[] = "source = ?"; $params[] = $criteria['source']; }
+                if (!empty($criteria['min_score'])) { $where[] = "lead_score >= ?"; $params[] = (int)$criteria['min_score']; }
+                if (!empty($criteria['city'])) { $where[] = "city = ?"; $params[] = $criteria['city']; }
+                if (!empty($criteria['min_budget'])) { $where[] = "budget >= ?"; $params[] = (float)$criteria['min_budget']; }
+                if (!empty($criteria['max_budget'])) { $where[] = "budget <= ?"; $params[] = (float)$criteria['max_budget']; }
+                $seg['lead_count'] = (int)$this->db->fetchOne("SELECT COUNT(*) FROM leads WHERE " . implode(' AND ', $where), $params)['cnt'] ?? 0;
+            }
+            return $segments;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    public function createSegment(string $name, string $description, array $criteria, int $createdBy): array
+    {
+        try {
+            $this->db->query(
+                "INSERT INTO crm_segments (name, description, filter_criteria, created_by, created_at)
+                 VALUES (?, ?, ?, ?, NOW())",
+                [$name, $description, json_encode($criteria), $createdBy]
+            );
+            return ['success' => true, 'segment_id' => $this->db->lastInsertId()];
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    public function getSegmentLeads(int $segmentId, int $limit = 200): array
+    {
+        try {
+            $seg = $this->db->fetchOne("SELECT * FROM crm_segments WHERE id = ?", [$segmentId]);
+            if (!$seg) return [];
+            
+            $criteria = json_decode($seg['filter_criteria'] ?? '{}', true) ?? [];
+            $where = ["l.deleted_at IS NULL"];
+            $params = [];
+            if (!empty($criteria['status'])) { $where[] = "l.status = ?"; $params[] = $criteria['status']; }
+            if (!empty($criteria['source'])) { $where[] = "l.source = ?"; $params[] = $criteria['source']; }
+            if (!empty($criteria['min_score'])) { $where[] = "l.lead_score >= ?"; $params[] = (int)$criteria['min_score']; }
+            if (!empty($criteria['city'])) { $where[] = "l.city = ?"; $params[] = $criteria['city']; }
+            if (!empty($criteria['min_budget'])) { $where[] = "l.budget >= ?"; $params[] = (float)$criteria['min_budget']; }
+            if (!empty($criteria['max_budget'])) { $where[] = "l.budget <= ?"; $params[] = (float)$criteria['max_budget']; }
+            
+            $stmt = $this->db->query(
+                "SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id 
+                 WHERE " . implode(' AND ', $where) . " ORDER BY l.created_at DESC LIMIT ?",
+                array_merge($params, [$limit])
+            );
+            return $stmt->fetchAll() ?: [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    public function getSourceAnalytics(string $period = '30d'): array
+    {
+        $days = (int)str_replace('d', '', $period);
+        try {
+            $sources = $this->db->fetchAll(
+                "SELECT source, COUNT(*) as count,
+                        SUM(CASE WHEN status IN ('qualified','proposal','won') THEN 1 ELSE 0 END) as converted,
+                        ROUND(AVG(lead_score),1) as avg_score,
+                        MIN(created_at) as first_lead, MAX(created_at) as last_lead
+                 FROM leads
+                 WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+                 GROUP BY source
+                 ORDER BY count DESC",
+                [$days]
+            ) ?: [];
+
+            foreach ($sources as &$s) {
+                $s['conversion_rate'] = $s['count'] > 0 ? round($s['converted'] / $s['count'] * 100, 1) : 0;
+            }
+
+            return ['sources' => $sources, 'period_days' => $days];
+        } catch (\Exception $e) {
+            return ['sources' => [], 'period_days' => $days];
+        }
+    }
+
+    public function getConversionFunnel(): array
+    {
+        try {
+            $stages = $this->db->fetchAll(
+                "SELECT status, COUNT(*) as count FROM leads GROUP BY status ORDER BY FIELD(status, 'new','contacted','qualified','site_visit','proposal','negotiation','won','lost','nurture')"
+            ) ?: [];
+
+            $total = array_sum(array_column($stages, 'count'));
+            $funnel = [];
+            foreach ($stages as $s) {
+                $funnel[] = [
+                    'stage' => $s['status'],
+                    'count' => (int)$s['count'],
+                    'pct_of_total' => $total > 0 ? round($s['count'] / $total * 100, 1) : 0,
+                ];
+            }
+
+            return ['funnel' => $funnel, 'total_leads' => $total];
+        } catch (\Exception $e) {
+            return ['funnel' => [], 'total_leads' => 0];
+        }
+    }
+
+    public function getAgentPerformance(): array
+    {
+        try {
+            $performance = $this->db->fetchAll(
+                "SELECT u.id, u.name,
+                        COUNT(l.id) as total_leads,
+                        SUM(CASE WHEN l.status IN ('qualified','proposal','won') THEN 1 ELSE 0 END) as converted,
+                        SUM(CASE WHEN l.lead_category = 'hot' THEN 1 ELSE 0 END) as hot_leads,
+                        ROUND(AVG(l.lead_score),1) as avg_score,
+                        MAX(l.updated_at) as last_activity
+                 FROM users u
+                 LEFT JOIN leads l ON l.assigned_to = u.id AND l.created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                 WHERE u.role IN ('associate','employee','agent') AND u.deleted_at IS NULL
+                 GROUP BY u.id, u.name
+                 ORDER BY converted DESC
+                 LIMIT 50"
+            ) ?: [];
+
+            foreach ($performance as &$p) {
+                $p['conversion_rate'] = $p['total_leads'] > 0 ? round($p['converted'] / $p['total_leads'] * 100, 1) : 0;
+            }
+
+            return $performance;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    // ─────────── Lead Deduplication ──────────────────────────────────────
+
+    public function findDuplicates(): array
+    {
+        try {
+            // Find leads sharing the same phone or email
+            $phoneDupes = $this->db->fetchAll(
+                "SELECT l1.id as id1, l1.name as name1, l1.phone as phone1, l1.email as email1, l1.lead_score as score1, l1.created_at as created1,
+                        l2.id as id2, l2.name as name2, l2.phone as phone2, l2.email as email2, l2.lead_score as score2, l2.created_at as created2,
+                        'phone' as match_type, l1.phone as match_value
+                 FROM leads l1
+                 JOIN leads l2 ON l1.phone = l2.phone AND l1.id < l2.id
+                 WHERE l1.phone IS NOT NULL AND l1.phone != '' AND l1.deleted_at IS NULL AND l2.deleted_at IS NULL"
+            ) ?: [];
+
+            $emailDupes = $this->db->fetchAll(
+                "SELECT l1.id as id1, l1.name as name1, l1.phone as phone1, l1.email as email1, l1.lead_score as score1, l1.created_at as created1,
+                        l2.id as id2, l2.name as name2, l2.phone as phone2, l2.email as email2, l2.lead_score as score2, l2.created_at as created2,
+                        'email' as match_type, l1.email as match_value
+                 FROM leads l1
+                 JOIN leads l2 ON l1.email = l2.email AND l1.id < l2.id
+                 WHERE l1.email IS NOT NULL AND l1.email != '' AND l1.deleted_at IS NULL AND l2.deleted_at IS NULL"
+            ) ?: [];
+
+            // Deduplicate pairs (same pair might match on both phone + email)
+            $seen = [];
+            $duplicates = [];
+            foreach (array_merge($phoneDupes, $emailDupes) as $d) {
+                $key = min($d['id1'], $d['id2']) . '-' . max($d['id1'], $d['id2']);
+                if (!isset($seen[$key])) {
+                    $seen[$key] = true;
+                    $duplicates[] = $d;
+                }
+            }
+
+            return $duplicates;
+        } catch (\Exception $e) {
+            error_log('CRMService::findDuplicates error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function mergeLeads(int $keepId, int $removeId): array
+    {
+        try {
+            $keep = $this->getLeadById($keepId);
+            $remove = $this->getLeadById($removeId);
+            if (!$keep || !$remove) {
+                return ['success' => false, 'error' => 'One or both leads not found'];
+            }
+
+            $db = $this->db->getConnection();
+
+            // Merge: keep the better data from both
+            $updates = [];
+            $fields = ['email', 'phone', 'company', 'budget', 'location_preference', 'notes', 'source', 'assigned_to'];
+            foreach ($fields as $f) {
+                if (empty($keep[$f]) && !empty($remove[$f])) {
+                    $updates[$f] = $remove[$f];
+                }
+            }
+            // Keep higher score
+            if (($remove['lead_score'] ?? 0) > ($keep['lead_score'] ?? 0)) {
+                $updates['lead_score'] = $remove['lead_score'];
+            }
+            // Keep higher priority
+            $priorityRank = ['urgent' => 5, 'high' => 4, 'medium' => 3, 'low' => 2];
+            $keepPri = $priorityRank[$keep['priority'] ?? 'medium'] ?? 3;
+            $removePri = $priorityRank[$remove['priority'] ?? 'medium'] ?? 3;
+            if ($removePri > $keepPri) {
+                $updates['priority'] = $remove['priority'];
+            }
+
+            if (!empty($updates)) {
+                $setClauses = [];
+                $params = [];
+                foreach ($updates as $k => $v) {
+                    $setClauses[] = "$k = ?";
+                    $params[] = $v;
+                }
+                $params[] = $keepId;
+                $db->prepare("UPDATE leads SET " . implode(', ', $setClauses) . ", updated_at = NOW() WHERE id = ?")->execute($params);
+            }
+
+            // Move interactions from remove → keep
+            $db->prepare("UPDATE crm_interactions SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+            // Move tasks
+            $db->prepare("UPDATE crm_tasks SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+            // Move activities
+            $db->prepare("UPDATE lead_activities SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+            // Move deals
+            $db->prepare("UPDATE lead_deals SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+            // Move notes
+            try {
+                $db->prepare("UPDATE lead_notes SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+            } catch (\Throwable $e) { /* table may not exist */ }
+            // Move scores
+            try {
+                $db->prepare("UPDATE lead_scores SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+            } catch (\Throwable $e) { /* table may not exist */ }
+
+            // Soft-delete the removed lead
+            $db->prepare("UPDATE leads SET deleted_at = NOW(), name = CONCAT(name, ' [MERGED INTO #$keepId]') WHERE id = ?")->execute([$removeId]);
+
+            // Log merge activity
+            $this->logActivity($keepId, 1, 'merge', "Merged duplicate lead #$removeId into this lead");
+
+            return [
+                'success' => true,
+                'kept' => $keep['name'] ?? "Lead #$keepId",
+                'removed' => $remove['name'] ?? "Lead #$removeId",
+                'fields_merged' => array_keys($updates),
+            ];
+        } catch (\Exception $e) {
+            error_log('CRMService::mergeLeads error: ' . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    // ─────────── Role-Based Dashboard ───────────────────────────────────
+
+    public function getRoleDashboardData(int $userId, string $role): array
+    {
+        try {
+            $data = ['role' => $role, 'user_id' => $userId];
+
+            // Role-specific lead filter
+            $leadFilter = '';
+            $taskFilter = '';
+            switch ($role) {
+                case 'admin':
+                case 'super_admin':
+                    // See everything
+                    break;
+                case 'manager':
+                    // See team leads (assigned to their reports)
+                    $leadFilter = "AND l.assigned_to IN (SELECT id FROM users WHERE reports_to = $userId)";
+                    break;
+                case 'employee':
+                case 'agent':
+                case 'telecaller':
+                    // See own leads only
+                    $leadFilter = "AND l.assigned_to = $userId";
+                    $taskFilter = "AND ct.assigned_to = $userId";
+                    break;
+                case 'associate':
+                    $leadFilter = "AND l.assigned_to = $userId";
+                    $taskFilter = "AND ct.assigned_to = $userId";
+                    break;
+                case 'customer':
+                    // Customers don't see CRM dashboard
+                    return ['role' => $role, 'error' => 'Customers do not have CRM access'];
+            }
+
+            // Lead counts
+            $data['total_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter")['cnt'];
+            $data['today_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE DATE(l.created_at) = CURDATE() $leadFilter")['cnt'];
+            $data['hot_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.lead_score >= 70 AND l.deleted_at IS NULL $leadFilter")['cnt'];
+            $data['converted'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.is_converted = 1 $leadFilter")['cnt'];
+            $data['conversion_rate'] = $data['total_leads'] > 0 ? round(($data['converted'] / $data['total_leads']) * 100, 1) : 0;
+
+            // Pipeline by status
+            $data['pipeline'] = $this->db->fetchAll(
+                "SELECT l.status, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter GROUP BY l.status ORDER BY cnt DESC"
+            ) ?: [];
+
+            // Tasks
+            $data['pending_tasks'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status IN ('pending','in_progress') $taskFilter")['cnt'];
+            $data['overdue_tasks'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status = 'pending' AND ct.due_date < CURDATE() $taskFilter")['cnt'];
+
+            // Upcoming follow-ups (next 7 days)
+            $data['upcoming_followups'] = $this->db->fetchAll(
+                "SELECT l.id, l.name, l.phone, l.lead_score, l.next_activity_date, u.name as assignee_name
+                 FROM leads l LEFT JOIN users u ON l.assigned_to = u.id
+                 WHERE l.next_activity_date IS NOT NULL AND l.next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+                   AND l.status NOT IN ('converted','closed','dead') AND l.deleted_at IS NULL $leadFilter
+                 ORDER BY l.next_activity_date ASC LIMIT 10"
+            ) ?: [];
+
+            // Recent leads
+            $data['recent_leads'] = $this->db->fetchAll(
+                "SELECT l.id, l.name, l.phone, l.email, l.status, l.lead_score, l.source, l.created_at, u.name as assigned_to_name
+                 FROM leads l LEFT JOIN users u ON l.assigned_to = u.id
+                 WHERE l.deleted_at IS NULL $leadFilter
+                 ORDER BY l.created_at DESC LIMIT 10"
+            ) ?: [];
+
+            // My interactions (last 7 days)
+            $data['recent_interactions'] = $this->db->fetchAll(
+                "SELECT ci.*, l.name as lead_name FROM crm_interactions ci
+                 LEFT JOIN leads l ON ci.lead_id = l.id
+                 WHERE ci.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                 ORDER BY ci.created_at DESC LIMIT 10"
+            ) ?: [];
+
+            // Deals (if applicable)
+            if (in_array($role, ['admin', 'super_admin', 'manager', 'associate', 'agent'])) {
+                $data['deals'] = $this->db->fetchAll(
+                    "SELECT ld.*, l.name as lead_name FROM lead_deals ld
+                     LEFT JOIN leads l ON ld.lead_id = l.id
+                     WHERE ld.stage NOT IN ('won','lost')
+                     ORDER BY ld.updated_at DESC LIMIT 10"
+                ) ?: [];
+                $data['deal_summary'] = $this->getDealPipelineSummary();
+            }
+
+            // Team performance (admin/manager only)
+            if (in_array($role, ['admin', 'super_admin', 'manager'])) {
+                $data['team_performance'] = $this->getAgentPerformance();
+                $data['top_assignees'] = $this->db->fetchAll(
+                    "SELECT u.name, l.assigned_to, COUNT(*) as lead_count,
+                            SUM(CASE WHEN l.status IN ('won','booking') THEN 1 ELSE 0 END) as won_count
+                     FROM leads l JOIN users u ON u.id = l.assigned_to
+                     WHERE l.deleted_at IS NULL AND l.assigned_to IS NOT NULL
+                     GROUP BY l.assigned_to ORDER BY lead_count DESC LIMIT 5"
+                ) ?: [];
+            }
+
+            // Source breakdown
+            $data['by_source'] = $this->db->fetchAll(
+                "SELECT source, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter GROUP BY source ORDER BY cnt DESC"
+            ) ?: [];
+
+            // 7-day trend
+            $data['weekly_trend'] = $this->db->fetchAll(
+                "SELECT DATE(l.created_at) as date, COUNT(*) as cnt
+                 FROM leads l WHERE l.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $leadFilter
+                 GROUP BY DATE(l.created_at) ORDER BY date ASC"
+            ) ?: [];
+
+            return $data;
+        } catch (\Exception $e) {
+            error_log('CRMService::getRoleDashboardData error: ' . $e->getMessage());
+            return ['role' => $role, 'error' => $e->getMessage()];
+        }
+    }
 }

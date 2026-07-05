@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Lead Details';
+$page_title = $page_title ?? __('assoc_lead_detail_title', [], 'Lead Details');
 $lead = $lead ?? [];
 $activities = $activities ?? [];
 $site_visits = $site_visits ?? [];
@@ -8,15 +8,15 @@ $success = $success ?? null;
 $error = $error ?? null;
 
 $statuses = [
-    'new' => ['label' => 'New', 'color' => 'primary', 'icon' => 'fa-star'],
-    'contacted' => ['label' => 'Contacted', 'color' => 'info', 'icon' => 'fa-phone'],
-    'qualified' => ['label' => 'Qualified', 'color' => 'warning', 'icon' => 'fa-check-circle'],
-    'site_visit' => ['label' => 'Site Visit', 'color' => 'purple', 'icon' => 'fa-map-marker-alt'],
-    'proposal' => ['label' => 'Proposal Sent', 'color' => 'pink', 'icon' => 'fa-file-alt'],
-    'negotiation' => ['label' => 'Negotiation', 'color' => 'orange', 'icon' => 'fa-handshake'],
-    'closed_won' => ['label' => 'Closed Won', 'color' => 'success', 'icon' => 'fa-trophy'],
-    'closed_lost' => ['label' => 'Closed Lost', 'color' => 'secondary', 'icon' => 'fa-times-circle'],
-    'nurture' => ['label' => 'Nurture', 'color' => 'teal', 'icon' => 'fa-seedling'],
+    'new' => ['label' => __('assoc_status_new', [], 'New'), 'color' => 'primary', 'icon' => 'fa-star'],
+    'contacted' => ['label' => __('assoc_status_contacted', [], 'Contacted'), 'color' => 'info', 'icon' => 'fa-phone'],
+    'qualified' => ['label' => __('assoc_status_qualified', [], 'Qualified'), 'color' => 'warning', 'icon' => 'fa-check-circle'],
+    'site_visit' => ['label' => __('assoc_status_site_visit', [], 'Site Visit'), 'color' => 'purple', 'icon' => 'fa-map-marker-alt'],
+    'proposal' => ['label' => __('assoc_status_proposal_sent', [], 'Proposal Sent'), 'color' => 'pink', 'icon' => 'fa-file-alt'],
+    'negotiation' => ['label' => __('assoc_status_negotiation', [], 'Negotiation'), 'color' => 'orange', 'icon' => 'fa-handshake'],
+    'closed_won' => ['label' => __('assoc_status_closed_won', [], 'Closed Won'), 'color' => 'success', 'icon' => 'fa-trophy'],
+    'closed_lost' => ['label' => __('assoc_status_closed_lost', [], 'Closed Lost'), 'color' => 'secondary', 'icon' => 'fa-times-circle'],
+    'nurture' => ['label' => __('assoc_status_nurture', [], 'Nurture'), 'color' => 'teal', 'icon' => 'fa-seedling'],
 ];
 $pipelineOrder = ['new','contacted','qualified','site_visit','proposal','negotiation','closed_won'];
 $currentStatus = $lead['status'] ?? 'new';
@@ -70,7 +70,7 @@ $today = date('Y-m-d');
 <div class="container-fluid px-4 py-3">
     <!-- Back link -->
     <a href="<?= BASE_URL ?>/associate/leads" class="text-decoration-none mb-3 d-inline-block">
-        <i class="fas fa-arrow-left me-1"></i> Back to Leads
+        <i class="fas fa-arrow-left me-1"></i> <?= __('assoc_lead_back', [], 'Back to Leads') ?>
     </a>
 
     <?php if ($success): ?>
@@ -90,21 +90,21 @@ $today = date('Y-m-d');
                     <?php if (!empty($lead['email'])): ?>
                         &nbsp;&bull;&nbsp;<i class="fas fa-envelope me-1"></i><?= htmlspecialchars($lead['email']) ?>
                     <?php endif; ?>
-                    &nbsp;&bull;&nbsp;<i class="fas fa-calendar me-1"></i>Added <?= date('M d, Y', strtotime($lead['created_at'])) ?>
+                    &nbsp;&bull;&nbsp;<i class="fas fa-calendar me-1"></i><?= __('assoc_lead_added', [], 'Added') ?> <?= date('M d, Y', strtotime($lead['created_at'])) ?>
                     <?php
                     $score = (int)($lead['lead_score'] ?? 0);
                     $scoreColor = $score >= 70 ? '#10b981' : ($score >= 40 ? '#f59e0b' : '#94a3b8');
                     ?>
-                    &nbsp;&bull;&nbsp;<span style="color:<?= $scoreColor ?>;font-weight:700;">Score: <?= $score ?>/100</span>
+                    &nbsp;&bull;&nbsp;<span style="color:<?= $scoreColor ?>;font-weight:700;"><?= __('assoc_lead_score', [], 'Score') ?>: <?= $score ?>/100</span>
                 </div>
             </div>
             <div class="d-flex gap-2 flex-wrap">
-                <a href="tel:<?= $leadPhone ?>" class="btn btn-light btn-sm"><i class="fas fa-phone me-1"></i>Call</a>
+                <a href="tel:<?= $leadPhone ?>" class="btn btn-light btn-sm"><i class="fas fa-phone me-1"></i><?= __('assoc_lead_call', [], 'Call') ?></a>
                 <?php if (!empty($lead['email'])): ?>
-                    <a href="mailto:<?= htmlspecialchars($lead['email']) ?>" class="btn btn-light btn-sm"><i class="fas fa-envelope me-1"></i>Email</a>
+                    <a href="mailto:<?= htmlspecialchars($lead['email']) ?>" class="btn btn-light btn-sm"><i class="fas fa-envelope me-1"></i><?= __('assoc_lead_email', [], 'Email') ?></a>
                 <?php endif; ?>
-                <a href="https://wa.me/91<?= $phone ?>" class="btn btn-light btn-sm" target="_blank" style="color:#25d366;"><i class="fab fa-whatsapp me-1"></i>WhatsApp</a>
-                <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal"><i class="fas fa-map-marker-alt me-1"></i>Schedule Visit</button>
+                <a href="https://wa.me/91<?= $phone ?>" class="btn btn-light btn-sm" target="_blank" style="color:#25d366;"><i class="fab fa-whatsapp me-1"></i><?= __('assoc_lead_whatsapp', [], 'WhatsApp') ?></a>
+                <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal"><i class="fas fa-map-marker-alt me-1"></i><?= __('assoc_lead_schedule_visit', [], 'Schedule Visit') ?></button>
             </div>
         </div>
     </div>
@@ -128,18 +128,18 @@ $today = date('Y-m-d');
         <div class="col-lg-8">
             <!-- Lead Details -->
             <div class="detail-card">
-                <h6><i class="fas fa-info-circle text-primary me-2"></i>Lead Details</h6>
+                <h6><i class="fas fa-info-circle text-primary me-2"></i><?= __('assoc_lead_details', [], 'Lead Details') ?></h6>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="detail-row"><span class="detail-label">Property Interest</span><span class="detail-value"><?= htmlspecialchars($lead['property_interest'] ?: '—') ?></span></div>
-                        <div class="detail-row"><span class="detail-label">Budget Range</span><span class="detail-value"><?= htmlspecialchars($lead['budget_range'] ?: '—') ?></span></div>
-                        <div class="detail-row"><span class="detail-label">Preferred Location</span><span class="detail-value"><?= htmlspecialchars($lead['location_preference'] ?: '—') ?></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_property_interest', [], 'Property Interest') ?></span><span class="detail-value"><?= htmlspecialchars($lead['property_interest'] ?: '—') ?></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_budget_range', [], 'Budget Range') ?></span><span class="detail-value"><?= htmlspecialchars($lead['budget_range'] ?: '—') ?></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_preferred_location', [], 'Preferred Location') ?></span><span class="detail-value"><?= htmlspecialchars($lead['location_preference'] ?: '—') ?></span></div>
                     </div>
                     <div class="col-md-6">
-                        <div class="detail-row"><span class="detail-label">Source</span><span class="detail-value"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $lead['source'] ?? ''))) ?></span></div>
-                        <div class="detail-row"><span class="detail-label">Priority</span><span class="detail-value"><span class="badge bg-<?= $lead['priority'] === 'high' ? 'danger' : ($lead['priority'] === 'low' ? 'info' : 'warning') ?>"><?= ucfirst($lead['priority'] ?? 'medium') ?></span></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_source', [], 'Source') ?></span><span class="detail-value"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $lead['source'] ?? ''))) ?></span></div>
+                        <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_priority', [], 'Priority') ?></span><span class="detail-value"><span class="badge bg-<?= $lead['priority'] === 'high' ? 'danger' : ($lead['priority'] === 'low' ? 'info' : 'warning') ?>"><?= ucfirst($lead['priority'] ?? 'medium') ?></span></span></div>
                         <div class="detail-row">
-                            <span class="detail-label">Lead Score</span>
+                            <span class="detail-label"><?= __('assoc_lead_lead_score', [], 'Lead Score') ?></span>
                             <span class="detail-value">
                                 <span style="font-weight:700;color:<?= $scoreColor ?>"><?= $score ?></span>/100
                                 <div class="score-bar mt-1" style="width:120px;">
@@ -151,7 +151,7 @@ $today = date('Y-m-d');
                 </div>
                 <?php if (!empty($lead['notes'])): ?>
                     <hr>
-                    <div class="detail-label mb-1">Notes</div>
+                    <div class="detail-label mb-1"><?= __('assoc_lead_notes', [], 'Notes') ?></div>
                     <p class="mb-0" style="white-space: pre-line; font-size: 0.9rem; color: #334155;"><?= htmlspecialchars($lead['notes']) ?></p>
                 <?php endif; ?>
             </div>
@@ -159,18 +159,18 @@ $today = date('Y-m-d');
             <!-- Site Visits for this Lead -->
             <div class="detail-card">
                 <h6 class="d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-map-marker-alt text-purple me-2"></i>Site Visits (<?= count($site_visits) ?>)</span>
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal"><i class="fas fa-plus me-1"></i>New Visit</button>
+                    <span><i class="fas fa-map-marker-alt text-purple me-2"></i><?= __('assoc_lead_site_visits', [], 'Site Visits') ?> (<?= count($site_visits) ?>)</span>
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal"><i class="fas fa-plus me-1"></i><?= __('assoc_lead_new_visit', [], 'New Visit') ?></button>
                 </h6>
                 <?php if (empty($site_visits)): ?>
-                    <p class="text-muted text-center py-3 mb-0">No site visits scheduled yet. <a href="#" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal">Schedule one now</a>.</p>
+                    <p class="text-muted text-center py-3 mb-0"><?= __('assoc_lead_no_visits', [], 'No site visits scheduled yet.') ?> <a href="#" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal"><?= __('assoc_lead_schedule_one', [], 'Schedule one now') ?></a>.</p>
                 <?php else: ?>
                     <?php foreach ($site_visits as $sv):
                         $svStatus = match($sv['status'] ?? 'scheduled') {
-                            'completed' => ['color'=>'success','icon'=>'fa-check-circle','label'=>'Completed'],
-                            'cancelled' => ['color'=>'secondary','icon'=>'fa-times-circle','label'=>'Cancelled'],
-                            'rescheduled' => ['color'=>'warning','icon'=>'fa-calendar-alt','label'=>'Rescheduled'],
-                            default => ['color'=>'primary','icon'=>'fa-calendar-check','label'=>'Scheduled'],
+                            'completed' => ['color'=>'success','icon'=>'fa-check-circle','label'=>__('assoc_lead_visit_completed', [], 'Completed')],
+                            'cancelled' => ['color'=>'secondary','icon'=>'fa-times-circle','label'=>__('assoc_lead_visit_cancelled', [], 'Cancelled')],
+                            'rescheduled' => ['color'=>'warning','icon'=>'fa-calendar-alt','label'=>__('assoc_lead_visit_rescheduled', [], 'Rescheduled')],
+                            default => ['color'=>'primary','icon'=>'fa-calendar-check','label'=>__('assoc_lead_visit_scheduled', [], 'Scheduled')],
                         };
                         $svDate = date('D, d M Y', strtotime($sv['visit_date']));
                         $svTime = date('h:i A', strtotime($sv['visit_time']));
@@ -181,7 +181,7 @@ $today = date('Y-m-d');
                             <div>
                                 <div class="sv-date" style="color:<?= $isTodayVisit ? '#0d9488' : '#1e293b' ?>">
                                     <i class="fas fa-calendar me-1"></i><?= $svDate ?> at <?= $svTime ?>
-                                    <?php if ($isTodayVisit): ?><span class="badge bg-primary ms-1">Today</span><?php endif; ?>
+                                    <?php if ($isTodayVisit): ?><span class="badge bg-primary ms-1"><?= __('assoc_lead_today', [], 'Today') ?></span><?php endif; ?>
                                 </div>
                                 <small class="text-muted"><i class="fas fa-user me-1"></i><?= htmlspecialchars($sv['visitor_name']) ?></small>
                                 <?php if (!empty($sv['notes'])): ?>
@@ -200,20 +200,20 @@ $today = date('Y-m-d');
 
             <!-- Activity Timeline -->
             <div class="detail-card">
-                <h6><i class="fas fa-history text-primary me-2"></i>Activity Timeline</h6>
+                <h6><i class="fas fa-history text-primary me-2"></i><?= __('assoc_lead_activity_timeline', [], 'Activity Timeline') ?></h6>
                 <?php if (empty($activities)): ?>
-                    <p class="text-muted text-center py-3">No activities yet</p>
+                    <p class="text-muted text-center py-3"><?= __('assoc_lead_no_activities', [], 'No activities yet') ?></p>
                 <?php else: ?>
                     <div class="activity-timeline">
                         <?php foreach ($activities as $act):
                             $actClass = 'created';
                             $actIcon = 'fa-circle';
                             $actLabel = ucfirst(str_replace('_', ' ', $act['activity_type']));
-                            if ($act['activity_type'] === 'note') { $actClass = 'note'; $actIcon = 'fa-sticky-note'; $actLabel = 'Note Added'; }
-                            elseif ($act['activity_type'] === 'status_change') { $actClass = 'status'; $actIcon = 'fa-sync'; $actLabel = 'Status Updated'; }
-                            elseif ($act['activity_type'] === 'site_visit') { $actClass = 'site_visit'; $actIcon = 'fa-map-marker-alt'; $actLabel = 'Site Visit'; }
-                            elseif ($act['activity_type'] === 'call') { $actClass = 'call'; $actIcon = 'fa-phone'; $actLabel = 'Call'; }
-                            elseif ($act['activity_type'] === 'email') { $actClass = 'email'; $actIcon = 'fa-envelope'; $actLabel = 'Email'; }
+                            if ($act['activity_type'] === 'note') { $actClass = 'note'; $actIcon = 'fa-sticky-note'; $actLabel = __('assoc_lead_act_note', [], 'Note Added'); }
+                            elseif ($act['activity_type'] === 'status_change') { $actClass = 'status'; $actIcon = 'fa-sync'; $actLabel = __('assoc_lead_act_status', [], 'Status Updated'); }
+                            elseif ($act['activity_type'] === 'site_visit') { $actClass = 'site_visit'; $actIcon = 'fa-map-marker-alt'; $actLabel = __('assoc_lead_act_visit', [], 'Site Visit'); }
+                            elseif ($act['activity_type'] === 'call') { $actClass = 'call'; $actIcon = 'fa-phone'; $actLabel = __('assoc_lead_act_call', [], 'Call'); }
+                            elseif ($act['activity_type'] === 'email') { $actClass = 'email'; $actIcon = 'fa-envelope'; $actLabel = __('assoc_lead_act_email', [], 'Email'); }
                         ?>
                         <div class="activity-item <?= $actClass ?>">
                             <div class="d-flex justify-content-between">
@@ -232,45 +232,45 @@ $today = date('Y-m-d');
 
             <!-- Add Note / Schedule Follow-up -->
             <div class="detail-card">
-                <h6><i class="fas fa-sticky-note text-warning me-2"></i>Add Note / Schedule Follow-up</h6>
+                <h6><i class="fas fa-sticky-note text-warning me-2"></i><?= __('assoc_lead_add_note', [], 'Add Note / Schedule Follow-up') ?></h6>
                 <form action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/note" method="POST">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="mb-3">
-                        <textarea class="form-control" name="note" rows="3" placeholder="Add a note about this lead, follow-up details, client feedback..." required></textarea>
+                        <textarea class="form-control" name="note" rows="3" placeholder="<?= __('assoc_lead_note_placeholder', [], 'Add a note about this lead, follow-up details, client feedback...') ?>" required></textarea>
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label" style="font-size: 0.8rem;"><i class="fas fa-calendar me-1"></i>Follow-up Date</label>
+                            <label class="form-label" style="font-size: 0.8rem;"><i class="fas fa-calendar me-1"></i><?= __('assoc_lead_followup_date', [], 'Follow-up Date') ?></label>
                             <input type="date" class="form-control form-control-sm" name="followup_date" min="<?= $today ?>">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" style="font-size: 0.8rem;"><i class="fas fa-clock me-1"></i>Time</label>
+                            <label class="form-label" style="font-size: 0.8rem;"><i class="fas fa-clock me-1"></i><?= __('assoc_lead_time', [], 'Time') ?></label>
                             <input type="time" class="form-control form-control-sm" name="followup_time">
                         </div>
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label" style="font-size: 0.8rem;">Task Type</label>
+                            <label class="form-label" style="font-size: 0.8rem;"><?= __('assoc_lead_task_type', [], 'Task Type') ?></label>
                             <select class="form-select form-select-sm" name="task_type">
-                                <option value="follow_up">Follow-up Call</option>
-                                <option value="visit">Site Visit</option>
-                                <option value="email">Email</option>
-                                <option value="meeting">Meeting</option>
-                                <option value="whatsapp">WhatsApp</option>
+                                <option value="follow_up"><?= __('assoc_lead_call', [], 'Call') ?></option>
+                                <option value="visit"><?= __('assoc_status_site_visit', [], 'Site Visit') ?></option>
+                                <option value="email"><?= __('assoc_lead_email', [], 'Email') ?></option>
+                                <option value="meeting"><?= __('assoc_lead_meeting', [], 'Meeting') ?></option>
+                                <option value="whatsapp"><?= __('assoc_lead_whatsapp', [], 'WhatsApp') ?></option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label" style="font-size: 0.8rem;">Priority</label>
+                            <label class="form-label" style="font-size: 0.8rem;"><?= __('assoc_lead_priority_label', [], 'Priority') ?></label>
                             <select class="form-select form-select-sm" name="task_priority">
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                                <option value="urgent">Urgent</option>
-                                <option value="low">Low</option>
+                                <option value="medium"><?= __('assoc_priority_medium', [], 'Medium') ?></option>
+                                <option value="high"><?= __('assoc_priority_high', [], 'High') ?></option>
+                                <option value="urgent"><?= __('assoc_priority_urgent', [], 'Urgent') ?></option>
+                                <option value="low"><?= __('assoc_priority_low', [], 'Low') ?></option>
                             </select>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-plus me-1"></i> Add Note</button>
-                    <button type="submit" class="btn btn-primary btn-sm ms-1" name="schedule_followup" value="1"><i class="fas fa-calendar-plus me-1"></i> Schedule Follow-up</button>
+                    <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-plus me-1"></i> <?= __('assoc_lead_add_note_btn', [], 'Add Note') ?></button>
+                    <button type="submit" class="btn btn-primary btn-sm ms-1" name="schedule_followup" value="1"><i class="fas fa-calendar-plus me-1"></i> <?= __('assoc_lead_schedule_followup', [], 'Schedule Follow-up') ?></button>
                 </form>
             </div>
         </div>
@@ -279,7 +279,7 @@ $today = date('Y-m-d');
         <div class="col-lg-4">
             <!-- Status Update -->
             <div class="detail-card">
-                <h6><i class="fas fa-sync text-primary me-2"></i>Update Status</h6>
+                <h6><i class="fas fa-sync text-primary me-2"></i><?= __('assoc_lead_update_status', [], 'Update Status') ?></h6>
                 <form action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/status" method="POST">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="mb-3">
@@ -289,41 +289,41 @@ $today = date('Y-m-d');
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i> Update Status</button>
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i> <?= __('assoc_lead_update_status_btn', [], 'Update Status') ?></button>
                 </form>
             </div>
 
             <!-- Quick Actions -->
             <div class="detail-card">
-                <h6><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h6>
+                <h6><i class="fas fa-bolt text-warning me-2"></i><?= __('assoc_lead_quick_actions', [], 'Quick Actions') ?></h6>
                 <div class="d-grid gap-2">
                     <a href="tel:<?= $leadPhone ?>" class="btn btn-outline-success">
-                        <i class="fas fa-phone me-2"></i>Call Client
+                        <i class="fas fa-phone me-2"></i><?= __('assoc_lead_call_client', [], 'Call Client') ?>
                     </a>
                     <?php if (!empty($lead['email'])): ?>
                     <a href="mailto:<?= htmlspecialchars($lead['email']) ?>?subject=APS Dream Home - Property Inquiry" class="btn btn-outline-info">
-                        <i class="fas fa-envelope me-2"></i>Send Email
+                        <i class="fas fa-envelope me-2"></i><?= __('assoc_lead_send_email', [], 'Send Email') ?>
                     </a>
                     <?php endif; ?>
                     <a href="https://wa.me/91<?= $phone ?>" class="btn btn-outline-success" target="_blank" style="border-color: #25d366; color: #25d366;">
-                        <i class="fab fa-whatsapp me-2"></i>WhatsApp
+                        <i class="fab fa-whatsapp me-2"></i><?= __('assoc_lead_whatsapp', [], 'WhatsApp') ?>
                     </a>
                     <button class="btn btn-outline-purple" style="border-color:#14b8a6;color:#14b8a6;" data-bs-toggle="modal" data-bs-target="#scheduleVisitModal">
-                        <i class="fas fa-map-marker-alt me-2"></i>Schedule Site Visit
+                        <i class="fas fa-map-marker-alt me-2"></i><?= __('assoc_lead_schedule_site_visit', [], 'Schedule Site Visit') ?>
                     </button>
                     <hr>
                     <a href="<?= BASE_URL ?>/associate/leads" class="btn btn-outline-secondary">
-                        <i class="fas fa-list me-2"></i>All Leads
+                        <i class="fas fa-list me-2"></i><?= __('assoc_lead_all_leads', [], 'All Leads') ?>
                     </a>
                     <a href="<?= BASE_URL ?>/associate/leads/add" class="btn btn-outline-primary">
-                        <i class="fas fa-plus me-2"></i>Add New Lead
+                        <i class="fas fa-plus me-2"></i><?= __('assoc_leads_add_new', [], 'Add New Lead') ?>
                     </a>
                 </div>
             </div>
 
             <!-- WhatsApp Templates -->
             <div class="detail-card">
-                <h6><i class="fab fa-whatsapp me-2" style="color:#25d366;"></i>Quick Messages</h6>
+                <h6><i class="fab fa-whatsapp me-2" style="color:#25d366;"></i><?= __('assoc_lead_quick_messages', [], 'Quick Messages') ?></h6>
                 <?php
                 $waTemplates = [
                     ['label'=>'Follow-up', 'msg'=>"Hi {$leadName}, just checking in regarding your property inquiry at APS Dream Home. Do you have any questions?"],
@@ -343,9 +343,44 @@ $today = date('Y-m-d');
                 <?php endforeach; ?>
             </div>
 
+    <!-- Commission Calculator -->
+    <div class="detail-card">
+        <h6><i class="fas fa-rupee-sign text-success me-2"></i><?= __('assoc_lead_potential_earnings', [], 'Potential Earnings') ?></h6>
+        <?php if (isset($commission_estimate) && $commission_estimate['budget_mid'] > 0): ?>
+            <div class="mb-3 text-center">
+                <div style="font-size:2rem;font-weight:800;color:#059669;">₹<?= number_format($commission_estimate['estimated_commission'], 0) ?></div>
+                <small class="text-muted"><?= __('assoc_lead_est_commission_at', [], 'Est. commission at') ?> ₹<?= number_format($commission_estimate['budget_mid'], 0) ?></small>
+                <div><span class="badge bg-success mt-1"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $commission_estimate['rank']))) ?> (<?= $commission_estimate['rate'] ?>%)</span></div>
+            </div>
+            <?php if (!empty($commission_estimate['breakdown'])): ?>
+                <div style="font-size:0.8rem;">
+                    <?php foreach ($commission_estimate['breakdown'] as $b): ?>
+                        <div class="d-flex justify-content-between py-1 border-bottom">
+                            <span style="color:#475569;"><?= htmlspecialchars($b['label']) ?></span>
+                            <span style="font-weight:600;">₹<?= number_format($b['amount'], 0) ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                    <div class="d-flex justify-content-between py-1 fw-bold" style="color:#059669;">
+                        <span><?= __('assoc_lead_total_commission', [], 'Total Est. Commission') ?></span>
+                        <span>₹<?= number_format(array_sum(array_column($commission_estimate['breakdown'], 'amount')), 0) ?></span>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <hr>
+            <div style="font-size:0.75rem;color:#94a3b8;">
+                <i class="fas fa-info-circle me-1"></i><?= __('assoc_lead_commission_note', [], 'Based on current rank & budget. Actual may vary.') ?>
+            </div>
+        <?php else: ?>
+            <p class="text-muted text-center py-2 mb-0"><?= __('assoc_lead_no_budget', [], 'Set a budget range to see estimated earnings.') ?></p>
+        <?php endif; ?>
+        <a href="<?= BASE_URL ?>/associate/mlm-plan" class="btn btn-sm btn-outline-success w-100 mt-2">
+            <i class="fas fa-chart-bar me-1"></i><?= __('assoc_lead_view_commission_structure', [], 'View Full Commission Structure') ?>
+        </a>
+    </div>
+
     <!-- AI Score Breakdown -->
     <div class="detail-card">
-        <h6><i class="fas fa-brain text-purple me-2"></i>AI Score Breakdown</h6>
+        <h6><i class="fas fa-brain text-purple me-2"></i><?= __('assoc_lead_ai_score', [], 'AI Score Breakdown') ?></h6>
         <?php
         $scoreBreakdown = null;
         try {
@@ -356,7 +391,7 @@ $today = date('Y-m-d');
         <?php if ($scoreBreakdown): ?>
             <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span style="font-size:0.85rem;font-weight:600;color:#1e293b;">Total Score</span>
+                    <span style="font-size:0.85rem;font-weight:600;color:#1e293b;"><?= __('assoc_lead_total_score', [], 'Total Score') ?></span>
                     <span style="font-size:1.2rem;font-weight:700;color:<?= $scoreBreakdown['total'] >= 70 ? '#10b981' : ($scoreBreakdown['total'] >= 40 ? '#f59e0b' : '#94a3b8') ?>"><?= $scoreBreakdown['total'] ?>/100</span>
                 </div>
                 <div class="score-bar mb-3" style="height:10px;">
@@ -366,25 +401,25 @@ $today = date('Y-m-d');
             <div class="row g-2 mb-3">
                 <div class="col-6">
                     <div style="padding:8px 12px;border-radius:8px;background:#f0f9ff;border:1px solid #bae6fd;">
-                        <div style="font-size:0.75rem;color:#0369a1;font-weight:500;">Demographics</div>
+                        <div style="font-size:0.75rem;color:#0369a1;font-weight:500;"><?= __('assoc_lead_demographics', [], 'Demographics') ?></div>
                         <div style="font-size:1.1rem;font-weight:700;color:#0c4a6e;"><?= $scoreBreakdown['demographics'] ?>/40</div>
                     </div>
                 </div>
                 <div class="col-6">
                     <div style="padding:8px 12px;border-radius:8px;background:#fef3c7;border:1px solid #fde68a;">
-                        <div style="font-size:0.75rem;color:#92400e;font-weight:500;">Engagement</div>
+                        <div style="font-size:0.75rem;color:#92400e;font-weight:500;"><?= __('assoc_lead_engagement', [], 'Engagement') ?></div>
                         <div style="font-size:1.1rem;font-weight:700;color:#78350f;"><?= $scoreBreakdown['engagement'] ?>/40</div>
                     </div>
                 </div>
                 <div class="col-6">
                     <div style="padding:8px 12px;border-radius:8px;background:#ede9fe;border:1px solid #99f6e4;">
-                        <div style="font-size:0.75rem;color:#134e4a;font-weight:500;">Behavior</div>
+                        <div style="font-size:0.75rem;color:#134e4a;font-weight:500;"><?= __('assoc_lead_behavior', [], 'Behavior') ?></div>
                         <div style="font-size:1.1rem;font-weight:700;color:#5b21b6;"><?= $scoreBreakdown['behavior'] ?>/40</div>
                     </div>
                 </div>
                 <div class="col-6">
                     <div style="padding:8px 12px;border-radius:8px;background:#fce7f3;border:1px solid #f9a8d4;">
-                        <div style="font-size:0.75rem;color:#be185d;font-weight:500;">AI Analysis</div>
+                        <div style="font-size:0.75rem;color:#be185d;font-weight:500;"><?= __('assoc_lead_ai_analysis', [], 'AI Analysis') ?></div>
                         <div style="font-size:1.1rem;font-weight:700;color:#9d174d;"><?= $scoreBreakdown['ai_analysis'] ?>/40</div>
                     </div>
                 </div>
@@ -394,16 +429,16 @@ $today = date('Y-m-d');
                     <?= ucfirst(str_replace('_', ' ', $scoreBreakdown['rank'])) ?>
                 </span>
                 <?php if ($scoreBreakdown['is_hot']): ?>
-                    <span class="badge bg-danger" style="font-size:0.7rem;"><i class="fas fa-fire me-1"></i>Hot Lead</span>
+                    <span class="badge bg-danger" style="font-size:0.7rem;"><i class="fas fa-fire me-1"></i><?= __('assoc_lead_hot_lead', [], 'Hot Lead') ?></span>
                 <?php endif; ?>
             </div>
         <?php else: ?>
-            <p class="text-muted mb-2" style="font-size:0.85rem;">Score not yet calculated for this lead.</p>
+            <p class="text-muted mb-2" style="font-size:0.85rem;"><?= __('assoc_lead_score_not_calc', [], 'Score not yet calculated for this lead.') ?></p>
         <?php endif; ?>
         <form method="POST" action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/recalculate-score" class="mt-2">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <button type="submit" class="btn btn-outline-purple btn-sm w-100" style="border-color:#14b8a6;color:#14b8a6;">
-                <i class="fas fa-sync me-1"></i> Recalculate Score
+                <i class="fas fa-sync me-1"></i> <?= __('assoc_lead_recalculate_score', [], 'Recalculate Score') ?>
             </button>
         </form>
     </div>
@@ -411,7 +446,7 @@ $today = date('Y-m-d');
     <!-- Revenue & Commission -->
     <?php if (!empty($lead['budget_range']) || !empty($lead['budget'])): ?>
     <div class="detail-card">
-        <h6><i class="fas fa-coins text-success me-2"></i>Revenue & Commission</h6>
+        <h6><i class="fas fa-coins text-success me-2"></i><?= __('assoc_lead_revenue_commission', [], 'Revenue & Commission') ?></h6>
         <?php
         $budget = (float)($lead['budget'] ?? 0);
         $budgetRange = $lead['budget_range'] ?? '';
@@ -429,43 +464,43 @@ $today = date('Y-m-d');
         <div class="row g-2 mb-2">
             <div class="col-6">
                 <div style="padding:8px 12px;border-radius:8px;background:#f0fdf4;border:1px solid #bbf7d0;">
-                    <div style="font-size:0.75rem;color:#166534;font-weight:500;">Estimated Budget</div>
+                    <div style="font-size:0.75rem;color:#166534;font-weight:500;"><?= __('assoc_lead_est_budget', [], 'Estimated Budget') ?></div>
                     <div style="font-size:1rem;font-weight:700;color:#14532d;">₹<?= number_format($budget) ?></div>
                 </div>
             </div>
             <div class="col-6">
                 <div style="padding:8px 12px;border-radius:8px;background:#fef3c7;border:1px solid #fde68a;">
-                    <div style="font-size:0.75rem;color:#92400e;font-weight:500;">Your Commission (<?= number_format($myRate * 100, 0) ?>%)</div>
+                    <div style="font-size:0.75rem;color:#92400e;font-weight:500;"><?= __('assoc_lead_your_commission', [], 'Your Commission') ?> (<?= number_format($myRate * 100, 0) ?>%)</div>
                     <div style="font-size:1rem;font-weight:700;color:#78350f;">₹<?= number_format($estCommission) ?></div>
                 </div>
             </div>
         </div>
         <div style="font-size:0.78rem;color:#64748b;">
-            <i class="fas fa-info-circle me-1"></i>Commission based on your current rank. Actual commission depends on booking value and payment status.
+            <i class="fas fa-info-circle me-1"></i><?= __('assoc_lead_commission_note', [], 'Commission based on your current rank. Actual commission depends on booking value and payment status.') ?>
         </div>
     </div>
     <?php endif; ?>
 
     <!-- Timeline -->
     <div class="detail-card">
-        <h6><i class="fas fa-clock text-info me-2"></i>Timeline</h6>
-                <div class="detail-row"><span class="detail-label">Created</span><span class="detail-value"><?= date('M d, Y', strtotime($lead['created_at'])) ?></span></div>
-                <div class="detail-row"><span class="detail-label">Updated</span><span class="detail-value"><?= date('M d, Y', strtotime($lead['updated_at'])) ?></span></div>
+        <h6><i class="fas fa-clock text-info me-2"></i><?= __('assoc_lead_timeline', [], 'Timeline') ?></h6>
+                <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_created', [], 'Created') ?></span><span class="detail-value"><?= date('M d, Y', strtotime($lead['created_at'])) ?></span></div>
+                <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_updated', [], 'Updated') ?></span><span class="detail-value"><?= date('M d, Y', strtotime($lead['updated_at'])) ?></span></div>
                 <?php if (!empty($lead['next_activity_date'])): ?>
                     <?php
                     $nextDate = strtotime($lead['next_activity_date']);
                     $isOverdue = $nextDate < time();
                     ?>
-                    <div class="detail-row"><span class="detail-label">Next Follow-up</span><span class="detail-value <?= $isOverdue ? 'text-danger fw-bold' : '' ?>"><?= date('M d, Y', $nextDate) ?> <?= $isOverdue ? '(Overdue)' : '' ?></span></div>
+                    <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_next_followup', [], 'Next Follow-up') ?></span><span class="detail-value <?= $isOverdue ? 'text-danger fw-bold' : '' ?>"><?= date('M d, Y', $nextDate) ?> <?= $isOverdue ? __('assoc_lead_overdue', [], '(Overdue)') : '' ?></span></div>
                 <?php endif; ?>
                 <?php if (!empty($lead['last_activity_date'])): ?>
-                    <div class="detail-row"><span class="detail-label">Last Activity</span><span class="detail-value"><?= date('M d, Y', strtotime($lead['last_activity_date'])) ?></span></div>
+                    <div class="detail-row"><span class="detail-label"><?= __('assoc_lead_last_activity', [], 'Last Activity') ?></span><span class="detail-value"><?= date('M d, Y', strtotime($lead['last_activity_date'])) ?></span></div>
                 <?php endif; ?>
             </div>
 
             <!-- Assign Lead -->
             <div class="detail-card">
-                <h6><i class="fas fa-user-friends text-primary me-2"></i>Assign to Team Member</h6>
+                <h6><i class="fas fa-user-friends text-primary me-2"></i><?= __('assoc_lead_assign_team', [], 'Assign to Team Member') ?></h6>
                 <?php
                 $teamMembers = [];
                 try {
@@ -481,16 +516,16 @@ $today = date('Y-m-d');
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="input-group">
                         <select class="form-select form-select-sm" name="assign_to">
-                            <option value="">— Select member —</option>
+                            <option value=""><?= __('assoc_lead_select_member', [], '— Select member —') ?></option>
                             <?php foreach ($teamMembers as $tm): ?>
                                 <option value="<?= $tm['id'] ?>"><?= htmlspecialchars($tm['name']) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-share me-1"></i>Assign</button>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-share me-1"></i><?= __('assoc_lead_assign_btn', [], 'Assign') ?></button>
                     </div>
                 </form>
                 <?php else: ?>
-                    <p class="text-muted mb-0" style="font-size:0.85rem;">No other team members to assign to.</p>
+                    <p class="text-muted mb-0" style="font-size:0.85rem;"><?= __('assoc_lead_no_team', [], 'No other team members to assign to.') ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -507,21 +542,21 @@ $today = date('Y-m-d');
                 <input type="hidden" name="visitor_name" value="<?= $leadName ?>">
                 <input type="hidden" name="visitor_phone" value="<?= $leadPhone ?>">
                 <div class="modal-header">
-                    <h6 class="modal-title"><i class="fas fa-map-marker-alt text-primary me-2"></i>Schedule Site Visit for <?= $leadName ?></h6>
+                    <h6 class="modal-title"><i class="fas fa-map-marker-alt text-primary me-2"></i><?= __('assoc_lead_modal_title', [], 'Schedule Site Visit for') ?> <?= $leadName ?></h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Visit Date *</label>
+                            <label class="form-label fw-bold"><?= __('assoc_lead_modal_visit_date', [], 'Visit Date *') ?></label>
                             <input type="date" class="form-control" name="visit_date" min="<?= $today ?>" required value="<?= $today ?>">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Visit Time *</label>
+                            <label class="form-label fw-bold"><?= __('assoc_lead_modal_visit_time', [], 'Visit Time *') ?></label>
                             <input type="time" class="form-control" name="visit_time" required value="10:00">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Duration</label>
+                            <label class="form-label fw-bold"><?= __('assoc_lead_modal_duration', [], 'Duration') ?></label>
                             <select class="form-select" name="duration">
                                 <option value="30">30 min</option>
                                 <option value="60" selected>1 hour</option>
@@ -530,23 +565,23 @@ $today = date('Y-m-d');
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Colony</label>
+                            <label class="form-label fw-bold"><?= __('assoc_lead_modal_colony', [], 'Colony') ?></label>
                             <select class="form-select" name="colony_id">
-                                <option value="">— Select —</option>
+                                <option value=""><?= __('assoc_lead_modal_select', [], '— Select —') ?></option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-bold">Notes</label>
-                            <textarea class="form-control" name="notes" rows="2" placeholder="What to show, special instructions..."></textarea>
+                            <label class="form-label fw-bold"><?= __('assoc_lead_modal_notes', [], 'Notes') ?></label>
+                            <textarea class="form-control" name="notes" rows="2" placeholder="<?= __('assoc_lead_modal_notes_placeholder', [], 'What to show, special instructions...') ?>"></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-calendar-check me-1"></i> Schedule Visit</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"><?= __('assoc_lead_modal_cancel', [], 'Cancel') ?></button>
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-calendar-check me-1"></i> <?= __('assoc_lead_modal_schedule', [], 'Schedule Visit') ?></button>
                 </div>
             </form>
         </div>
@@ -555,7 +590,7 @@ $today = date('Y-m-d');
 
 <script>
 function changeStatus(status) {
-    if (confirm('Change lead status to "' + status.replace('_', ' ') + '"?')) {
+    if (confirm('<?= __('assoc_lead_change_status_confirm', [], 'Change lead status to') ?> "' + status.replace('_', ' ') + '"?')) {
         var form = document.createElement('form');
         form.method = 'POST';
         form.action = '<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/status';

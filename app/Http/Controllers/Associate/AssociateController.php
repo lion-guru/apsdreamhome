@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Associate;
 
 use App\Services\Associate\AssociateService;
 use App\Http\Controllers\Admin\AdminController;
+use Exception;
+use App\Core\Database\Database;
 
 /**
  * Associate Controller - APS Dream Home
@@ -26,15 +28,100 @@ class AssociateController extends AdminController
     public function dashboard()
     {
         try {
-            $users = $this->associateService->getAllAssociates();
-            $activeAssociates = $this->associateService->getActiveAssociates();
+            $associateId = $_SESSION['associate_id'] ?? $_SESSION['user_id'] ?? 1;
+            
+            // Get associate info
+            $associate = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$associateId]);
+            
+            // Get rank info
+            $rank = $associate['rank'] ?? 'associate';
+            $rankInfo = $this->db->fetchOne("SELECT * FROM mlm_rank_benefits WHERE rank_name = ?", [$rank]);
+            
+            // Calculate total earnings from commission ledger
+            $totalEarnings = $this->db->fetchOne(
+                "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE associate_id = ?",
+                [$associateId]
+            );
+            
+            // Calculate this month earnings
+            $monthEarnings = $this->db->fetchOne(
+                "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger 
+                 WHERE associate_id = ? AND MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())",
+                [$associateId]
+            );
+            
+            // Get network size (downline count)
+            $networkSize = $this->db->fetchOne(
+                "SELECT COUNT(*) as cnt FROM mlm_network_tree WHERE parent_id = ?",
+                [$associateId]
+            );
+            
+            // Get direct referrals
+            $directReferrals = $this->db->fetchOne(
+                "SELECT COUNT(*) as cnt FROM mlm_network_tree WHERE parent_id = ? AND level = 1",
+                [$associateId]
+            );
+            
+            // Get network by level
+            $networkByLevel = $this->db->fetchAll(
+                "SELECT level, COUNT(*) as members,
+                        SUM(CASE WHEN nt.associate_id IN (SELECT id FROM users WHERE status = 'active') THEN 1 ELSE 0 END) as active,
+                        COALESCE(SUM((SELECT SUM(amount) FROM mlm_commission_ledger WHERE associate_id = nt.associate_id)), 0) as commission
+                 FROM mlm_network_tree nt
+                 WHERE nt.parent_id = ?
+                 GROUP BY level
+                 ORDER BY level",
+                [$associateId]
+            );
+            
+            // Get recent commissions
+            $recentCommissions = $this->db->fetchAll(
+                "SELECT commission_type as type, amount, created_at as date
+                 FROM mlm_commission_ledger
+                 WHERE associate_id = ?
+                 ORDER BY created_at DESC
+                 LIMIT 10",
+                [$associateId]
+            );
+            
+            // Get pending payouts
+            $pendingPayouts = $this->db->fetchOne(
+                "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger 
+                 WHERE associate_id = ? AND status = 'pending'",
+                [$associateId]
+            );
+            
+            // Get rank progress
+            $nextRank = $this->db->fetchOne(
+                "SELECT * FROM mlm_rank_benefits WHERE gbv_threshold > ? ORDER BY gbv_threshold ASC LIMIT 1",
+                [$rankInfo['gbv_threshold'] ?? 0]
+            );
+            
+            // Calculate GBV (Group Business Volume) for current associate
+            $gbv = $this->db->fetchOne(
+                "SELECT COALESCE(SUM(total_plot_value), 0) as gbv FROM plot_bookings pb
+                 JOIN plots p ON pb.plot_id = p.id
+                 WHERE pb.associate_id = ? AND pb.status NOT IN ('cancelled')",
+                [$associateId]
+            );
             
             $data = [
                 'page_title' => 'Associate Dashboard - APS Dream Home',
-                'users' => $users,
-                'active_associates' => $activeAssociates,
-                'total_associates' => count($users),
-                'active_count' => count($activeAssociates)
+                'associate' => $associate,
+                'rank' => $rank,
+                'rank_info' => $rankInfo,
+                'next_rank' => $nextRank,
+                'stats' => [
+                    'total_earnings' => $totalEarnings['total'] ?? 0,
+                    'month_earnings' => $monthEarnings['total'] ?? 0,
+                    'network_size' => $networkSize['cnt'] ?? 0,
+                    'direct_referrals' => $directReferrals['cnt'] ?? 0,
+                    'pending_payouts' => $pendingPayouts['total'] ?? 0,
+                    'gbv' => $gbv['gbv'] ?? 0,
+                    'next_rank_threshold' => $nextRank['gbv_threshold'] ?? 0,
+                ],
+                'network' => $networkByLevel,
+                'commissions' => $recentCommissions,
             ];
             
             $this->render('associate/dashboard', $data);

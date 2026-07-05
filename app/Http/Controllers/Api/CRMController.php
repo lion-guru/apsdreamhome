@@ -521,4 +521,176 @@ class CRMController extends BaseController
         $stmt = $this->db->query("SELECT id, lead_number, name, phone, email, status, lead_score, assigned_to FROM leads WHERE $where ORDER BY lead_score DESC LIMIT 20", $params);
         $this->json(['success' => true, 'results' => $stmt->fetchAll() ?: []]);
     }
+
+    // ─── CSV Import ────────────────────────────────────────────────────
+
+    public function importCsv() {
+        $user = $this->getUser();
+        if (!in_array($user['role'] ?? '', ['admin', 'manager'])) {
+            $this->json(['success' => false, 'error' => 'Admin only'], 403);
+            return;
+        }
+
+        if (empty($_FILES['csv_file'])) {
+            $this->json(['success' => false, 'error' => 'No CSV file uploaded'], 400);
+            return;
+        }
+
+        $file = $_FILES['csv_file'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $this->json(['success' => false, 'error' => 'Upload error: ' . $file['error']], 400);
+            return;
+        }
+
+        $handle = fopen($file['tmp_name'], 'r');
+        if (!$handle) {
+            $this->json(['success' => false, 'error' => 'Cannot read CSV file'], 400);
+            return;
+        }
+
+        $headers = fgetcsv($handle);
+        $rows = [];
+        while (($row = fgetcsv($handle)) !== false) {
+            if (count($row) === count($headers)) {
+                $rows[] = array_combine($headers, $row);
+            }
+        }
+        fclose($handle);
+
+        $result = $this->crm->importLeadsFromCsv($rows, $user['id']);
+        $this->json($result, $result['success'] ? 201 : 400);
+    }
+
+    // ─── Deals Pipeline ──────────────────────────────────────────────
+
+    public function deals() {
+        $filters = [
+            'stage' => $_GET['stage'] ?? null,
+            'assigned_to' => $_GET['assigned_to'] ?? null,
+            'date_from' => $_GET['date_from'] ?? null,
+            'date_to' => $_GET['date_to'] ?? null,
+            'page' => (int)($_GET['page'] ?? 1),
+            'per_page' => (int)($_GET['per_page'] ?? 25),
+        ];
+        $result = $this->crm->getDeals($filters);
+        $this->json(['success' => true] + $result);
+    }
+
+    public function dealDetail($id) {
+        $deal = $this->crm->getDealById($id);
+        if (!$deal) {
+            $this->json(['success' => false, 'error' => 'Deal not found'], 404);
+            return;
+        }
+        $this->json(['success' => true, 'deal' => $deal]);
+    }
+
+    public function createDeal() {
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $user = $this->getUser();
+        $input['created_by'] = $user['id'];
+        if (empty($input['lead_id'])) {
+            $this->json(['success' => false, 'error' => 'lead_id required'], 400);
+            return;
+        }
+        $result = $this->crm->createDeal($input);
+        $this->json($result, $result['success'] ? 201 : 400);
+    }
+
+    public function updateDeal($id) {
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $result = $this->crm->updateDeal($id, $input);
+        $this->json($result);
+    }
+
+    public function moveDealStage($id) {
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        if (empty($input['stage'])) {
+            $this->json(['success' => false, 'error' => 'stage required'], 400);
+            return;
+        }
+        $result = $this->crm->moveDealStage($id, $input['stage']);
+        $this->json($result);
+    }
+
+    public function deleteDeal($id) {
+        $result = $this->crm->deleteDeal($id);
+        $this->json($result);
+    }
+
+    public function dealPipeline() {
+        $summary = $this->crm->getDealPipelineSummary();
+        $this->json(['success' => true] + $summary);
+    }
+
+    // ─── Score Breakdown ─────────────────────────────────────────────
+
+    public function scoreBreakdown($leadId) {
+        $breakdown = $this->crm->getScoreBreakdown($leadId);
+        $this->json(['success' => true] + $breakdown);
+    }
+
+    // ─── Follow-up Reminders ─────────────────────────────────────────
+
+    public function followUpReminders() {
+        $user = $this->getUser();
+        $reminders = $this->crm->getFollowUpReminders($user['id'], $user['role'] ?? 'associate');
+        $overdueCount = $this->crm->getOverdueRemindersCount($user['id'], $user['role'] ?? 'associate');
+        $this->json(['success' => true, 'reminders' => $reminders, 'overdue_count' => $overdueCount]);
+    }
+
+    // ─── Bulk Operations ─────────────────────────────────────────────
+
+    public function bulkUpdate() {
+        $user = $this->getUser();
+        if (!in_array($user['role'] ?? '', ['admin', 'manager'])) {
+            $this->json(['success' => false, 'error' => 'Admin only'], 403);
+            return;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $leadIds = $input['lead_ids'] ?? [];
+        $updates = $input['updates'] ?? [];
+
+        if (empty($leadIds) || empty($updates)) {
+            $this->json(['success' => false, 'error' => 'lead_ids and updates required'], 400);
+            return;
+        }
+
+        $result = $this->crm->bulkUpdateLeads($leadIds, $updates, $user['id']);
+        $this->json($result);
+    }
+
+    // ─── Timeline ────────────────────────────────────────────────────
+
+    public function leadTimeline($leadId) {
+        $limit = (int)($_GET['limit'] ?? 50);
+        $timeline = $this->crm->getLeadTimeline($leadId, $limit);
+        $this->json(['success' => true, 'timeline' => $timeline]);
+    }
+
+    // ─── Commission Calculator ───────────────────────────────────────
+
+    public function commissionEstimate($leadId) {
+        $estimate = $this->crm->estimateCommission($leadId);
+        $this->json(['success' => true] + $estimate);
+    }
+
+    // ─── Analytics ───────────────────────────────────────────────────
+
+    public function sourceAnalytics() {
+        $period = $_GET['period'] ?? '30d';
+        $result = $this->crm->getSourceAnalytics($period);
+        $this->json(['success' => true] + $result);
+    }
+
+    public function conversionFunnel() {
+        $result = $this->crm->getConversionFunnel();
+        $this->json(['success' => true] + $result);
+    }
+
+    public function agentPerformance() {
+        $result = $this->crm->getAgentPerformance();
+        $this->json(['success' => true, 'performance' => $result]);
+    }
 }

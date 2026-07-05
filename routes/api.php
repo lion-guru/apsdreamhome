@@ -357,6 +357,38 @@ $router->post("$crmPrefix/rescore-all", 'Api\CRMController@rescoreAll');
 $router->post("$crmPrefix/rescore/{id}", 'Api\CRMController@rescoreLead');
 $router->post("$crmPrefix/auto-assign", 'Api\CRMController@autoAssign');
 
+// ─── CSV Import ──────────────────────────────────────────────────────
+$router->post("$crmPrefix/import-csv", 'Api\CRMController@importCsv')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ─── Deal Pipeline ───────────────────────────────────────────────────
+$router->get("$crmPrefix/deals", 'Api\CRMController@deals')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post("$crmPrefix/deals", 'Api\CRMController@createDeal')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get("$crmPrefix/deals/pipeline", 'Api\CRMController@dealPipeline')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get("$crmPrefix/deals/{id}", 'Api\CRMController@dealDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->put("$crmPrefix/deals/{id}", 'Api\CRMController@updateDeal')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post("$crmPrefix/deals/{id}/move-stage", 'Api\CRMController@moveDealStage')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->delete("$crmPrefix/deals/{id}", 'Api\CRMController@deleteDeal')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ─── Score Breakdown ─────────────────────────────────────────────────
+$router->get("$crmPrefix/leads/{id}/score-breakdown", 'Api\CRMController@scoreBreakdown')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ─── Lead Timeline ───────────────────────────────────────────────────
+$router->get("$crmPrefix/leads/{id}/timeline", 'Api\CRMController@leadTimeline')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ─── Commission Estimate ─────────────────────────────────────────────
+$router->get("$crmPrefix/leads/{id}/commission-estimate", 'Api\CRMController@commissionEstimate')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ─── Follow-up Reminders ─────────────────────────────────────────────
+$router->get("$crmPrefix/reminders", 'Api\CRMController@followUpReminders')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ─── Bulk Operations ─────────────────────────────────────────────────
+$router->post("$crmPrefix/bulk-update", 'Api\CRMController@bulkUpdate')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ─── Analytics ───────────────────────────────────────────────────────
+$router->get("$crmPrefix/analytics/sources", 'Api\CRMController@sourceAnalytics')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get("$crmPrefix/analytics/funnel", 'Api\CRMController@conversionFunnel')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get("$crmPrefix/analytics/agents", 'Api\CRMController@agentPerformance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 // ══════════════════════════════════════════════════════════════
 // FLUTTER ROUTE ALIASES — Map /api/v2/mobile/* to existing routes
 // Flutter app sends ALL requests under /api/v2/mobile/ prefix

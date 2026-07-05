@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'My Schedule';
+$page_title = $page_title ?? __('assoc_sched_title', [], 'My Schedule');
 $current_page = 'schedule';
 $events = $events ?? [];
 $month = (int)($_GET['month'] ?? date('m'));
@@ -28,25 +28,24 @@ $today = date('Y-m-d');
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white py-3">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2 text-primary"></i>My Schedule</h5>
+            <h5 class="mb-0"><i class="fas fa-calendar-alt me-2 text-primary"></i><?= __('assoc_sched_title', [], 'My Schedule') ?></h5>
             <div class="d-flex gap-2">
                 <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-primary active" id="listViewBtn" onclick="showView('list')"><i class="fas fa-list me-1"></i> List</button>
-                    <button type="button" class="btn btn-outline-primary" id="calendarViewBtn" onclick="showView('calendar')"><i class="fas fa-calendar me-1"></i> Calendar</button>
+                    <button type="button" class="btn btn-outline-primary active" id="listViewBtn" onclick="showView('list')"><i class="fas fa-list me-1"></i> <?= __('assoc_sched_list', [], 'List') ?></button>
+                    <button type="button" class="btn btn-outline-primary" id="calendarViewBtn" onclick="showView('calendar')"><i class="fas fa-calendar me-1"></i> <?= __('assoc_sched_calendar', [], 'Calendar') ?></button>
                 </div>
-                <a href="<?= BASE_URL ?>/associate/crm" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i> Add Task</a>
+                <a href="<?= BASE_URL ?>/associate/crm" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i> <?= __('assoc_sched_add_task', [], 'Add Task') ?></a>
             </div>
         </div>
     </div>
     <div class="card-body">
-        <!-- List View -->
         <div id="listView">
             <?php if (empty($events)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-calendar-check fa-3x text-muted mb-3" style="opacity:0.2"></i>
-                    <h5 class="text-muted">No scheduled events</h5>
-                    <p class="text-muted">Your upcoming tasks and site visits will appear here.</p>
-                    <a href="<?= BASE_URL ?>/associate/crm" class="btn btn-primary"><i class="fas fa-plus me-1"></i> Add Task</a>
+                    <h5 class="text-muted"><?= __('assoc_sched_empty', [], 'No scheduled events') ?></h5>
+                    <p class="text-muted"><?= __('assoc_sched_empty_desc', [], 'Your upcoming tasks and site visits will appear here.') ?></p>
+                    <a href="<?= BASE_URL ?>/associate/crm" class="btn btn-primary"><i class="fas fa-plus me-1"></i> <?= __('assoc_sched_add_task', [], 'Add Task') ?></a>
                 </div>
             <?php else: ?>
                 <?php
@@ -64,9 +63,9 @@ $today = date('Y-m-d');
                     <div class="mb-3">
                         <div class="d-flex align-items-center gap-2 mb-2">
                             <?php if ($isToday): ?>
-                                <span class="badge bg-primary">Today</span>
+                                <span class="badge bg-primary"><?= __('assoc_sched_today', [], 'Today') ?></span>
                             <?php elseif ($isPast): ?>
-                                <span class="badge bg-secondary">Past</span>
+                                <span class="badge bg-secondary"><?= __('assoc_sched_past', [], 'Past') ?></span>
                             <?php else: ?>
                                 <span class="badge bg-light text-dark"><?= date('d M Y', strtotime($eventDate)) ?></span>
                             <?php endif; ?>
@@ -82,7 +81,7 @@ $today = date('Y-m-d');
                                 <div>
                                     <strong class="<?= $isPast ? 'text-muted' : '' ?>"><?= htmlspecialchars($event['title']) ?></strong>
                                     <?php if (!empty($event['lead_name'])): ?>
-                                        <br><small class="text-muted">Lead: <?= htmlspecialchars($event['lead_name']) ?></small>
+                                        <br><small class="text-muted"><?= __('assoc_sched_lead', [], 'Lead') ?>: <?= htmlspecialchars($event['lead_name']) ?></small>
                                     <?php endif; ?>
                                     <?php if ($isVisit && !empty($event['event_time'])): ?>
                                         <br><small class="text-warning"><i class="fas fa-clock me-1"></i><?= date('h:i A', strtotime($event['event_time'])) ?></small>
@@ -97,7 +96,7 @@ $today = date('Y-m-d');
                                     <br><span class="badge bg-<?= $priorityClass ?> mt-1"><?= ucfirst($event['priority']) ?></span>
                                 <?php endif; ?>
                                 <?php if ($isVisit): ?>
-                                    <br><span class="badge bg-warning text-dark mt-1"><i class="fas fa-map-marker-alt me-1"></i>Visit</span>
+                                    <br><span class="badge bg-warning text-dark mt-1"><i class="fas fa-map-marker-alt me-1"></i><?= __('assoc_sched_visit', [], 'Visit') ?></span>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -106,19 +105,18 @@ $today = date('Y-m-d');
             <?php endif; ?>
         </div>
 
-        <!-- Calendar View -->
         <div id="calendarView" style="display: none;">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <a href="?month=<?= $month == 1 ? 12 : $month - 1 ?>&year=<?= $month == 1 ? $year - 1 : $year ?>" class="btn btn-outline-secondary btn-sm"><i class="fas fa-chevron-left"></i></a>
                 <h5 class="mb-0"><?= date('F Y', mktime(0, 0, 0, $month, 1, $year)) ?></h5>
                 <div class="d-flex gap-2">
-                    <a href="?month=<?= date('m') ?>&year=<?= date('Y') ?>" class="btn btn-outline-primary btn-sm">Today</a>
+                    <a href="?month=<?= date('m') ?>&year=<?= date('Y') ?>" class="btn btn-outline-primary btn-sm"><?= __('assoc_sched_today', [], 'Today') ?></a>
                     <a href="?month=<?= $month == 12 ? 1 : $month + 1 ?>&year=<?= $month == 12 ? $year + 1 : $year ?>" class="btn btn-outline-secondary btn-sm"><i class="fas fa-chevron-right"></i></a>
                 </div>
             </div>
 
             <div class="cal-grid">
-                <?php foreach (['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] as $d): ?>
+                <?php foreach ([__('assoc_sched_sun', [], 'Sun'),__('assoc_sched_mon', [], 'Mon'),__('assoc_sched_tue', [], 'Tue'),__('assoc_sched_wed', [], 'Wed'),__('assoc_sched_thu', [], 'Thu'),__('assoc_sched_fri', [], 'Fri'),__('assoc_sched_sat', [], 'Sat')] as $d): ?>
                     <div class="cal-header"><?= $d ?></div>
                 <?php endforeach; ?>
 
@@ -129,21 +127,18 @@ $today = date('Y-m-d');
                 $prevYear = $month == 1 ? $year - 1 : $year;
                 $daysInPrev = date('t', mktime(0, 0, 0, $prevMonth, 1, $prevYear));
 
-                // Build events by date
                 $eventsByDate = [];
                 foreach ($events as $ev) {
                     $d = date('Y-m-d', strtotime($ev['event_date']));
                     $eventsByDate[$d][] = $ev;
                 }
 
-                // Previous month fill
                 for ($i = 0; $i < $firstDay; $i++) {
                     $day = $daysInPrev - $firstDay + 1 + $i;
                     $dateStr = sprintf('%04d-%02d-%02d', $prevYear, $prevMonth, $day);
                     echo "<div class='cal-day other-month'><div class='day-num'>$day</div></div>";
                 }
 
-                // Current month
                 for ($day = 1; $day <= $daysInMonth; $day++) {
                     $dateStr = sprintf('%04d-%02d-%02d', $year, $month, $day);
                     $isToday = ($dateStr === $today);
@@ -158,12 +153,11 @@ $today = date('Y-m-d');
                         echo "<div class='cal-event $cls' title='" . htmlspecialchars($ev['title']) . "'>" . htmlspecialchars(mb_substr($ev['title'], 0, 20)) . "</div>";
                     }
                     if (count($dayEvents) > 3) {
-                        echo "<div class='text-muted' style='font-size:0.65rem;'>+" . (count($dayEvents) - 3) . " more</div>";
+                        echo "<div class='text-muted' style='font-size:0.65rem;'>+" . (count($dayEvents) - 3) . " <?= __('assoc_sched_more', [], 'more') ?></div>";
                     }
                     echo "</div>";
                 }
 
-                // Next month fill
                 $totalCells = $firstDay + $daysInMonth;
                 $remaining = (7 - ($totalCells % 7)) % 7;
                 for ($i = 1; $i <= $remaining; $i++) {
@@ -172,11 +166,10 @@ $today = date('Y-m-d');
                 ?>
             </div>
 
-            <!-- Legend -->
             <div class="d-flex gap-3 mt-3 justify-content-center">
-                <small><span class="cal-event task" style="display:inline;">Task</span></small>
-                <small><span class="cal-event site_visit" style="display:inline;">Site Visit</span></small>
-                <small><span class="cal-event overdue" style="display:inline;">Overdue</span></small>
+                <small><span class="cal-event task" style="display:inline;"><?= __('assoc_sched_task', [], 'Task') ?></span></small>
+                <small><span class="cal-event site_visit" style="display:inline;"><?= __('assoc_sched_visit', [], 'Site Visit') ?></span></small>
+                <small><span class="cal-event overdue" style="display:inline;"><?= __('assoc_sched_overdue', [], 'Overdue') ?></span></small>
             </div>
         </div>
     </div>

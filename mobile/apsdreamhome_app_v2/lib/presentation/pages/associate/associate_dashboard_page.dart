@@ -30,133 +30,137 @@ class AssociateDashboardPage extends ConsumerWidget {
           final rankProgressAsync = ref.watch(rankProgressProvider);
           final recentCommissionsAsync = ref.watch(commissionsProvider(null));
 
-          return CustomScrollView(
-            slivers: [
-              // App Bar
-              SliverToBoxAdapter(
-                child: _buildAppBar(context, user),
-              ),
+          return RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(currentUserDataProvider);
+              ref.invalidate(mlmSummaryProvider);
+              ref.invalidate(rankProgressProvider);
+              ref.invalidate(commissionsProvider(null));
+              await Future.delayed(const Duration(milliseconds: 500));
+            },
+            color: AppTheme.primaryColor,
+            child: CustomScrollView(
+              slivers: [
+                // App Bar
+                SliverToBoxAdapter(child: _buildAppBar(context, user)),
 
-              // Stats Cards
-              commissionAsync.when(
-                data: (summary) => SliverToBoxAdapter(
-                  child: _buildStatsCards(context, summary),
-                ),
-                loading: () => SliverToBoxAdapter(
-                  child: AppWidgets.shimmerLoading(
-                    child: Container(
-                      height: 120,
-                      margin: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
+                // Stats Cards
+                commissionAsync.when(
+                  data: (summary) => SliverToBoxAdapter(
+                    child: _buildStatsCards(context, summary),
                   ),
-                ),
-                error: (error, stack) => SliverToBoxAdapter(
-                  child: AppWidgets.errorWidget(
-                    message: error.toString(),
-                    onRetry: () =>
-                        ref.refresh(mlmSummaryProvider),
-                  ),
-                ),
-              ),
-
-              // Quick Actions
-              SliverToBoxAdapter(
-                child: _buildQuickActions(context),
-              ),
-
-              // Rank Progress (from API)
-              rankProgressAsync.when(
-                data: (rankData) => SliverToBoxAdapter(
-                  child: _buildRankProgressFromAPI(context, rankData),
-                ),
-                loading: () => SliverToBoxAdapter(
-                  child: AppWidgets.shimmerLoading(
-                    child: Container(
-                      height: 160,
-                      margin: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                  ),
-                ),
-                error: (error, stack) => SliverToBoxAdapter(
-                  child: _buildRankProgressFallback(context),
-                ),
-              ),
-
-              // Recent Commissions Header
-              SliverToBoxAdapter(
-                child: AppWidgets.sectionHeader(
-                  title: 'Recent Commissions',
-                  onSeeAll: () => context.push('/associate/commission'),
-                ),
-              ),
-
-              // Recent Commissions List
-              recentCommissionsAsync.when(
-                data: (commissions) {
-                  if (commissions.isEmpty) {
-                    return SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: AppWidgets.emptyState(
-                          title: 'No Commissions Yet',
-                          subtitle: 'Start making sales to earn commissions',
-                          icon: Icons.account_balance_wallet_outlined,
+                  loading: () => SliverToBoxAdapter(
+                    child: AppWidgets.shimmerLoading(
+                      child: Container(
+                        height: 120,
+                        margin: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                    );
-                  }
-                  return SliverToBoxAdapter(
-                    child: _buildRecentCommissionsFromAPI(context, commissions),
-                  );
-                },
-                loading: () => SliverToBoxAdapter(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 3,
-                    itemBuilder: (context, index) {
-                      return AppWidgets.shimmerLoading(
-                        child: Container(
-                          height: 80,
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  error: (error, stack) => SliverToBoxAdapter(
+                    child: AppWidgets.errorWidget(
+                      message: error.toString(),
+                      onRetry: () => ref.refresh(mlmSummaryProvider),
+                    ),
+                  ),
+                ),
+
+                // Quick Actions
+                SliverToBoxAdapter(child: _buildQuickActions(context)),
+
+                // Rank Progress (from API)
+                rankProgressAsync.when(
+                  data: (rankData) => SliverToBoxAdapter(
+                    child: _buildRankProgressFromAPI(context, rankData),
+                  ),
+                  loading: () => SliverToBoxAdapter(
+                    child: AppWidgets.shimmerLoading(
+                      child: Container(
+                        height: 160,
+                        margin: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ),
+                  ),
+                  error: (error, stack) => SliverToBoxAdapter(
+                    child: _buildRankProgressFallback(context),
+                  ),
+                ),
+
+                // Recent Commissions Header
+                SliverToBoxAdapter(
+                  child: AppWidgets.sectionHeader(
+                    title: 'Recent Commissions',
+                    onSeeAll: () => context.push('/associate/commission'),
+                  ),
+                ),
+
+                // Recent Commissions List
+                recentCommissionsAsync.when(
+                  data: (commissions) {
+                    if (commissions.isEmpty) {
+                      return SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: AppWidgets.emptyState(
+                            title: 'No Commissions Yet',
+                            subtitle: 'Start making sales to earn commissions',
+                            icon: Icons.account_balance_wallet_outlined,
                           ),
                         ),
                       );
-                    },
+                    }
+                    return SliverToBoxAdapter(
+                      child: _buildRecentCommissionsFromAPI(
+                        context,
+                        commissions,
+                      ),
+                    );
+                  },
+                  loading: () => SliverToBoxAdapter(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return AppWidgets.shimmerLoading(
+                          child: Container(
+                            height: 80,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  error: (error, stack) => SliverToBoxAdapter(
+                    child: AppWidgets.errorWidget(
+                      message: 'Failed to load commissions',
+                      onRetry: () => ref.refresh(commissionsProvider(null)),
+                    ),
                   ),
                 ),
-                error: (error, stack) => SliverToBoxAdapter(
-                  child: AppWidgets.errorWidget(
-                    message: 'Failed to load commissions',
-                    onRetry: () => ref.refresh(commissionsProvider(null)),
-                  ),
-                ),
-              ),
 
-              // Bottom Padding
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 32),
-              ),
-            ],
+                // Bottom Padding
+                const SliverToBoxAdapter(child: SizedBox(height: 32)),
+              ],
+            ),
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => AppWidgets.errorWidget(
           message: error.toString(),
           onRetry: () => ref.refresh(currentUserDataProvider),
@@ -172,9 +176,7 @@ class AssociateDashboardPage extends ConsumerWidget {
         gradient: LinearGradient(
           colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
         ),
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(24),
-        ),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
       ),
       child: SafeArea(
         child: Column(
@@ -272,16 +274,11 @@ class AssociateDashboardPage extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.3),
-                ),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.card_giftcard,
-                    color: Colors.white,
-                  ),
+                  const Icon(Icons.card_giftcard, color: Colors.white),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -289,10 +286,7 @@ class AssociateDashboardPage extends ConsumerWidget {
                       children: [
                         const Text(
                           'Your Referral Code',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: Colors.white70, fontSize: 12),
                         ),
                         Text(
                           user.referralCode ?? 'APSXXXXXX',
@@ -427,10 +421,7 @@ class AssociateDashboardPage extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 stat['title'] as String,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
             ],
           ),
@@ -474,9 +465,9 @@ class AssociateDashboardPage extends ConsumerWidget {
         children: [
           Text(
             'Quick Actions',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Row(
@@ -490,8 +481,9 @@ class AssociateDashboardPage extends ConsumerWidget {
                       width: 70,
                       height: 70,
                       decoration: BoxDecoration(
-                        color:
-                            (action['color'] as Color).withValues(alpha: 0.1),
+                        color: (action['color'] as Color).withValues(
+                          alpha: 0.1,
+                        ),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Icon(
@@ -518,7 +510,10 @@ class AssociateDashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecentCommissionsFromAPI(BuildContext context, List<Commission> commissions) {
+  Widget _buildRecentCommissionsFromAPI(
+    BuildContext context,
+    List<Commission> commissions,
+  ) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -526,7 +521,9 @@ class AssociateDashboardPage extends ConsumerWidget {
       itemCount: commissions.length > 5 ? 5 : commissions.length,
       itemBuilder: (context, index) {
         final commission = commissions[index];
-        final typeLabel = commission.type.isNotEmpty ? commission.type : 'Commission';
+        final typeLabel = commission.type.isNotEmpty
+            ? commission.type
+            : 'Commission';
         final dateLabel = _formatDate(commission.date);
 
         return AppWidgets.customCard(
@@ -550,10 +547,10 @@ class AssociateDashboardPage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      commission.description.isNotEmpty ? commission.description : typeLabel,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      commission.description.isNotEmpty
+                          ? commission.description
+                          : typeLabel,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -581,10 +578,7 @@ class AssociateDashboardPage extends ConsumerWidget {
                   const SizedBox(height: 4),
                   Text(
                     dateLabel,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey.shade500,
-                    ),
+                    style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                   ),
                 ],
               ),
@@ -615,23 +609,41 @@ class AssociateDashboardPage extends ConsumerWidget {
     return amount.toStringAsFixed(0);
   }
 
-  Widget _buildRankProgressFromAPI(BuildContext context, Map<String, dynamic> rankData) {
+  Widget _buildRankProgressFromAPI(
+    BuildContext context,
+    Map<String, dynamic> rankData,
+  ) {
     final currentRank = rankData['current_rank'] as String? ?? 'Associate';
     final nextRank = rankData['next_rank'] as String?;
-    final overallProgress = (rankData['overall_progress_pct'] as num?)?.toDouble() ?? 0.0;
-    final salesRemaining = (rankData['sales_remaining'] as num?)?.toDouble() ?? 0.0;
-    final commissionRemaining = (rankData['commission_remaining'] as num?)?.toDouble() ?? 0.0;
+    final overallProgress =
+        (rankData['overall_progress_pct'] as num?)?.toDouble() ?? 0.0;
+    final salesRemaining =
+        (rankData['sales_remaining'] as num?)?.toDouble() ?? 0.0;
+    final commissionRemaining =
+        (rankData['commission_remaining'] as num?)?.toDouble() ?? 0.0;
     final directsRemaining = (rankData['directs_remaining'] as int?) ?? 0;
 
     if (nextRank == null || overallProgress >= 100) {
       return AppWidgets.customCard(
         child: Column(
           children: [
-            const Icon(Icons.emoji_events, color: AppTheme.successColor, size: 48),
+            const Icon(
+              Icons.emoji_events,
+              color: AppTheme.successColor,
+              size: 48,
+            ),
             const SizedBox(height: 12),
-            Text('Congratulations!', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              'Congratulations!',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 4),
-            Text('You have reached the highest rank - $currentRank!', textAlign: TextAlign.center),
+            Text(
+              'You have reached the highest rank - $currentRank!',
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       );
@@ -644,11 +656,28 @@ class AssociateDashboardPage extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Rank Progress', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                'Rank Progress',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(color: AppTheme.accentColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
-                child: Text('${overallProgress.toStringAsFixed(0)}%', style: const TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.bold)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${overallProgress.toStringAsFixed(0)}%',
+                  style: const TextStyle(
+                    color: AppTheme.accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
@@ -656,8 +685,20 @@ class AssociateDashboardPage extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(currentRank, style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
-              Text(nextRank, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade600)),
+              Text(
+                currentRank,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
+              Text(
+                nextRank,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade600,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -666,13 +707,17 @@ class AssociateDashboardPage extends ConsumerWidget {
             child: LinearProgressIndicator(
               value: (overallProgress / 100).clamp(0.0, 1.0),
               backgroundColor: Colors.grey.shade200,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                AppTheme.primaryColor,
+              ),
               minHeight: 10,
             ),
           ),
           const SizedBox(height: 12),
-          Text('₹${_formatCurrency(salesRemaining)} sales • ₹${_formatCurrency(commissionRemaining)} commission • $directsRemaining directs to reach $nextRank',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+          Text(
+            '₹${_formatCurrency(salesRemaining)} sales • ₹${_formatCurrency(commissionRemaining)} commission • $directsRemaining directs to reach $nextRank',
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+          ),
         ],
       ),
     );
@@ -686,21 +731,48 @@ class AssociateDashboardPage extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Rank Progress', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                'Rank Progress',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(color: AppTheme.accentColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
-                child: const Text('--', style: TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.bold)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  '--',
+                  style: TextStyle(
+                    color: AppTheme.accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(value: 0, backgroundColor: Colors.grey.shade200, valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryColor), minHeight: 10),
+            child: LinearProgressIndicator(
+              value: 0,
+              backgroundColor: Colors.grey.shade200,
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                AppTheme.primaryColor,
+              ),
+              minHeight: 10,
+            ),
           ),
           const SizedBox(height: 8),
-          Text('Load your rank data to see progress', style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+          Text(
+            'Load your rank data to see progress',
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+          ),
         ],
       ),
     );

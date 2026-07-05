@@ -49,18 +49,23 @@ class AdminAuthController extends BaseController
                 }
             }
 
-            $_SESSION['admin_id'] = $admin['id'];
-            $_SESSION['admin_user_id'] = $admin['id'];
-            $_SESSION['admin_email'] = $admin['email'] ?? '';
-            $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
-            $_SESSION['admin_name'] = $admin['name'] ?? 'Admin';
-            $_SESSION['admin_username'] = $admin['name'] ?? 'admin';
             $_SESSION['user_id'] = $admin['id'];
             $_SESSION['role'] = $admin['role'] ?? 'admin';
             $_SESSION['user_email'] = $admin['email'] ?? '';
             $_SESSION['user_name'] = $admin['name'] ?? 'Admin';
             $_SESSION['user_phone'] = $admin['phone'] ?? '';
             $_SESSION['logged_in'] = true;
+
+            // Only set admin_id for actual admin roles — NOT for associate/customer/agent
+            $adminRoles = ['admin', 'super_admin', 'manager'];
+            if (in_array($admin['role'], $adminRoles)) {
+                $_SESSION['admin_id'] = $admin['id'];
+                $_SESSION['admin_user_id'] = $admin['id'];
+                $_SESSION['admin_email'] = $admin['email'] ?? '';
+                $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
+                $_SESSION['admin_name'] = $admin['name'] ?? 'Admin';
+                $_SESSION['admin_username'] = $admin['name'] ?? 'admin';
+            }
 
             // For employee/telecaller: also set employee_id session key
             if (in_array($admin['role'], ['employee', 'telecaller'])) {
@@ -162,7 +167,7 @@ class AdminAuthController extends BaseController
             }
 
             // Validate captcha (skip in dev mode)
-            $isDev = (isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'], ['127.0.0.1', '::1'])) || (defined('DEV_MODE') && DEV_MODE === true);
+            $isDev = (isset($_SERVER['SERVER_ADDR']) && in_array($_SERVER['SERVER_ADDR'], ['127.0.0.1', '::1'])) || (defined('DEV_MODE') && constant('DEV_MODE') === true);
             if (!$isDev) {
                 $submittedCaptcha = $_POST['captcha_answer'] ?? '';
                 $sessionCaptcha = $_SESSION['captcha_result'] ?? '';
@@ -200,6 +205,18 @@ class AdminAuthController extends BaseController
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_phone'] = $user['phone'] ?? '';
                 $_SESSION['logged_in'] = true;
+
+                // For employee/telecaller: also set employee_id for EmployeeDashboardController
+                if (in_array($user['role'], ['employee', 'telecaller'])) {
+                    try {
+                        $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?", [$user['id']]);
+                        if ($emp) {
+                            $_SESSION['employee_id'] = $emp['id'];
+                        }
+                    } catch (\Exception $e) {
+                        // employees table may not exist; skip
+                    }
+                }
 
                 header('Location: ' . BASE_URL . '/admin/dashboard');
                 exit;

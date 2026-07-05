@@ -7,6 +7,7 @@ $stats = $stats ?? ['total_referrals' => 0, 'successful_referrals' => 0, 'total_
 $referrals = $referrals ?? [];
 $earnings = $earnings ?? [];
 $shareLinks = $share_links ?? [];
+$tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '#CD7F32', 'icon' => 'fas fa-medal', 'total_referrals' => 0, 'next_tier' => 'Silver', 'next_tier_min' => 5, 'progress' => 0, 'referrals_needed' => 5, 'perks' => [], 'bonus_per_referral' => 100, 'bonus_on_booking' => 500];
 ?>
 
 <div class="aps-cp-hero" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #14b8a6 100%);">
@@ -58,6 +59,46 @@ $shareLinks = $share_links ?? [];
             <div class="aps-cp-stat-body">
                 <div class="aps-cp-stat-value">₹<?= number_format((float)($stats['pending_earned'] ?? 0)) ?></div>
                 <div class="aps-cp-stat-label"><?= __('referral_pending_payout') ?></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tier Card -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="aps-cp-card" style="border-left:4px solid <?= $tierInfo['color'] ?>;">
+            <div class="aps-cp-card-body">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width:56px;height:56px;border-radius:14px;background:<?= $tierInfo['color'] ?>22;display:flex;align-items:center;justify-content:center;">
+                            <i class="<?= $tierInfo['icon'] ?>" style="font-size:1.5rem;color:<?= $tierInfo['color'] ?>;"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0" style="color:<?= $tierInfo['color'] ?>;"><?= $tierInfo['label'] ?> Tier</h5>
+                            <small class="text-muted">₹<?= number_format($tierInfo['bonus_per_referral']) ?> per signup · ₹<?= number_format($tierInfo['bonus_on_booking']) ?> on booking</small>
+                        </div>
+                    </div>
+                    <?php if ($tierInfo['next_tier']): ?>
+                    <div class="text-end">
+                        <small class="text-muted d-block"><?= $tierInfo['referrals_needed'] ?> more to <?= $tierInfo['next_tier'] ?></small>
+                        <div class="progress mt-1" style="width:150px;height:8px;">
+                            <div class="progress-bar" style="width:<?= $tierInfo['progress'] ?>%;background:<?= $tierInfo['color'] ?>;"></div>
+                        </div>
+                    </div>
+                    <?php else: ?>
+                    <div class="badge" style="background:<?= $tierInfo['color'] ?>;color:#fff;font-size:0.9rem;padding:8px 16px;">
+                        <i class="fas fa-crown me-1"></i>Max Tier
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <?php if (!empty($tierInfo['perks'])): ?>
+                <div class="mt-3 d-flex flex-wrap gap-3">
+                    <?php foreach ($tierInfo['perks'] as $perk): ?>
+                    <span class="small"><i class="fas fa-check-circle text-success me-1"></i><?= $perk ?></span>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

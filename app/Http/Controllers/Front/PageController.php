@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use PDO;
+use Exception;
 
 class PageController extends BaseController
 {
@@ -139,7 +140,7 @@ class PageController extends BaseController
                     // Trigger WhatsApp notification for new inquiry
                     try {
                         $waService = new \App\Services\Communication\WhatsAppService();
-                        $waService->sendTemplate($phone, 'inquiry_received', [
+                        $waService->sendTemplateMessage($phone, 'inquiry_received', [
                             'customer_name' => $name ?: 'Valued Customer',
                             'property_type' => 'property',
                         ]);
@@ -725,7 +726,8 @@ class PageController extends BaseController
     {
         [$cmsTitle, $pageContent] = $this->loadPageContent('team');
         $team_members = [];
-        $expertise_groups = [];
+        $category_groups = [];
+        $team_groups = [];
         try {
             $stmt = $this->db->prepare("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC");
             $stmt->execute();
@@ -733,10 +735,14 @@ class PageController extends BaseController
             foreach ($rows as $r) {
                 $obj = (object)$r;
                 $team_members[] = $obj;
-                $cat = $r['expertise'] ? explode(',', $r['expertise'])[0] : 'Other';
-                $cat = trim($cat);
-                if (!isset($expertise_groups[$cat])) $expertise_groups[$cat] = [];
-                $expertise_groups[$cat][] = $obj;
+                $cat = !empty($r['category']) ? ucfirst(str_replace('_', ' ', $r['category'])) : 'Team';
+                if (!isset($category_groups[$cat])) $category_groups[$cat] = [];
+                $category_groups[$cat][] = $obj;
+            }
+
+            $tg = $this->db->query("SELECT * FROM team_groups WHERE is_active = 1 ORDER BY score DESC");
+            if ($tg) {
+                $team_groups = $tg->fetchAll(\PDO::FETCH_ASSOC);
             }
         } catch (\Exception $e) {
             error_log("Team error: " . $e->getMessage());
@@ -746,7 +752,8 @@ class PageController extends BaseController
             'page_title' => ($cmsTitle ?: 'Our Team') . ' - APS Dream Home',
             'page_description' => 'Meet the team behind APS Dream Home',
             'team_members' => $team_members,
-            'expertise_groups' => $expertise_groups,
+            'category_groups' => $category_groups,
+            'team_groups' => $team_groups,
             'pageContent' => $pageContent
         ];
         $this->render('pages/team', $data);
@@ -2614,13 +2621,81 @@ class PageController extends BaseController
             $this->notFound();
             return;
         }
-        $availablePlots = $this->db->fetchAll("SELECT * FROM plots WHERE colony_id = ? AND status = 'available' ORDER BY plot_number LIMIT 20", [$colony['id']]);
+        $availablePlots = $this->db->fetchAll("SELECT id, plot_number, block, area_sqft, width_ft, length_ft, total_price, status, price_per_sqft, corner_plot, park_facing FROM plots WHERE colony_id = ? AND status = 'available' ORDER BY plot_number LIMIT 20", [$colony['id']]);
+        $allPlots = $this->db->fetchAll("SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, gata_number FROM plots WHERE colony_id = ? ORDER BY block, plot_number", [$colony['id']]);
+        $mapData = $this->buildPlotGeoJson($allPlots, $colony);
         $this->render('pages/colony_detail', [
             'page_title' => $colony['meta_title'] ?: $colony['name'] . ' - APS Dream Home',
             'page_description' => $colony['meta_description'] ?: $colony['name'] . ' - Premium residential plots',
             'colony' => $colony,
             'availablePlots' => $availablePlots,
+            'mapData' => $mapData,
         ]);
+    }
+
+    private function buildPlotGeoJson(array $plots, array $colony): array
+    {
+        $features = [];
+        $centerLat = $colony['latitude'] ? (float)$colony['latitude'] : 26.76;
+        $centerLng = $colony['longitude'] ? (float)$colony['longitude'] : 83.37;
+        $blocksMap = [];
+        foreach ($plots as $p) {
+            $block = $p['block'] ?? 'A';
+            if (!isset($blocksMap[$block])) {
+                $blocksMap[$block] = ['plots' => [], 'y' => count($blocksMap)];
+            }
+            $blocksMap[$block]['plots'][] = $p;
+        }
+        $statusColors = [
+            'available' => '#22c55e',
+            'booked' => '#eab308',
+            'sold' => '#ef4444',
+            'hold' => '#6b7280',
+            'reserved' => '#f97316',
+        ];
+        foreach ($blocksMap as $block => $bData) {
+            $x = 0;
+            foreach ($bData['plots'] as $p) {
+                $w = max((float)($p['width_ft'] ?? 30), 20);
+                $l = max((float)($p['length_ft'] ?? 50), 30);
+                $scale = 0.000008;
+                $x1 = $centerLng + ($x * $scale * 1.1);
+                $y1 = $centerLat + ($bData['y'] * $scale * 1.1);
+                $x2 = $x1 + $w * $scale;
+                $y2 = $y1 + $l * $scale;
+                $color = $statusColors[$p['status']] ?? '#94a3b8';
+                $features[] = [
+                    'type' => 'Feature',
+                    'geometry' => [
+                        'type' => 'Polygon',
+                        'coordinates' => [[
+                            [$x1, $y1], [$x2, $y1], [$x2, $y2], [$x1, $y2], [$x1, $y1]
+                        ]]
+                    ],
+                    'properties' => [
+                        'id' => $p['id'],
+                        'plot_number' => $p['plot_number'],
+                        'block' => $block,
+                        'area_sqft' => $p['area_sqft'],
+                        'width_ft' => $p['width_ft'],
+                        'length_ft' => $p['length_ft'],
+                        'status' => $p['status'],
+                        'price_per_sqft' => $p['price_per_sqft'],
+                        'total_price' => $p['total_price'],
+                        'corner_plot' => $p['corner_plot'],
+                        'park_facing' => $p['park_facing'],
+                        'fill' => $color,
+                        'stroke' => '#1e293b',
+                        'stroke-width' => 1,
+                    ]
+                ];
+                $x += $w / 30 + 0.5;
+            }
+        }
+        return [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
     }
 
     /**

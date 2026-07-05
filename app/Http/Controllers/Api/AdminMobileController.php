@@ -23,16 +23,16 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
     {
         try {
             $bookings = $this->db->fetchAll(
-                "SELECT pb.id, pb.booking_number, pb.status, pb.total_amount, pb.token_amount,
-                        pb.created_at, pb.updated_at,
+                "SELECT b.id, b.booking_number, b.status, b.total_amount, b.booking_amount as token_amount,
+                        b.created_at, b.updated_at,
                         COALESCE(u.name, 'N/A') as customer_name,
                         p.plot_number,
                         c.name as colony_name
-                 FROM plot_bookings pb
-                 LEFT JOIN users u ON pb.user_id = u.id
-                 LEFT JOIN plots p ON pb.plot_id = p.id
-                 LEFT JOIN colonies c ON p.colony_id = c.id
-                 ORDER BY pb.created_at DESC"
+                 FROM bookings b
+                 LEFT JOIN users u ON b.user_id = u.id
+                 LEFT JOIN plots p ON b.plot_id = p.id
+                 LEFT JOIN colonies c ON b.colony_id = c.id
+                 ORDER BY b.created_at DESC"
             );
 
             return $this->jsonResponse(['success' => true, 'data' => $bookings]);
@@ -55,7 +55,7 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
                 return $this->jsonResponse(['success' => false, 'error' => 'Invalid status'], 400);
             }
 
-            $this->db->execute("UPDATE plot_bookings SET status = ?, updated_at = NOW() WHERE id = ?", [$status, $id]);
+            $this->db->execute("UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ?", [$status, $id]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'Booking status updated']);
         } catch (\Exception $e) {
@@ -123,12 +123,10 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
         try {
             $plots = $this->db->fetchAll(
                 "SELECT p.id, p.plot_number, p.status, p.area_sqft, p.total_price,
-                        p.width_ft, p.length_ft,
-                        c.name as colony_name,
-                        b.name as block_name
+                        p.width_ft, p.length_ft, p.block,
+                        c.name as colony_name
                  FROM plots p
                  LEFT JOIN colonies c ON p.colony_id = c.id
-                 LEFT JOIN blocks b ON p.block_id = b.id
                  ORDER BY p.created_at DESC"
             );
 

@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Bulk WhatsApp';
+$page_title = $page_title ?? __('assoc_bw_title', [], 'Bulk WhatsApp');
 $current_page = 'leads';
 $leads = $leads ?? [];
 $whatsappLinks = $whatsappLinks ?? [];
@@ -9,30 +9,30 @@ $message = $message ?? '';
 
 <div class="container-fluid px-4 py-3">
     <a href="<?= BASE_URL ?>/associate/leads" class="text-decoration-none mb-3 d-inline-block">
-        <i class="fas fa-arrow-left me-1"></i> Back to Leads
+        <i class="fas fa-arrow-left me-1"></i> <?= __('assoc_bw_back', [], 'Back to Leads') ?>
     </a>
 
     <div class="row">
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0"><i class="fab fa-whatsapp me-2" style="color:#25d366;"></i>Bulk WhatsApp Messages</h5>
+                    <h5 class="mb-0"><i class="fab fa-whatsapp me-2" style="color:#25d366;"></i><?= __('assoc_bw_title', [], 'Bulk WhatsApp Messages') ?></h5>
                 </div>
                 <div class="card-body">
                     <?php if (empty($leads)): ?>
-                        <p class="text-muted">Select leads from the <a href="<?= BASE_URL ?>/associate/leads">leads list</a> to send bulk messages.</p>
+                        <p class="text-muted"><?= __('assoc_bw_select_hint', [], 'Select leads from the') ?> <a href="<?= BASE_URL ?>/associate/leads"><?= __('assoc_bw_leads_list', [], 'leads list') ?></a> <?= __('assoc_bw_send_hint', [], 'to send bulk messages.') ?></p>
                         <div class="alert alert-info border-0" style="background:#f0fdf4;">
-                            <h6><i class="fas fa-info-circle me-2"></i>How to use</h6>
+                            <h6><i class="fas fa-info-circle me-2"></i><?= __('assoc_bw_how_to', [], 'How to use') ?></h6>
                             <ol class="mb-0" style="font-size:0.85rem;">
-                                <li>Go to <a href="<?= BASE_URL ?>/associate/leads">My Leads</a></li>
-                                <li>Check the boxes next to leads you want to message</li>
-                                <li>Click "Bulk WhatsApp" button</li>
-                                <li>Compose your message and send</li>
+                                <li><?= __('assoc_bw_step1', [], 'Go to My Leads') ?></li>
+                                <li><?= __('assoc_bw_step2', [], 'Check the boxes next to leads you want to message') ?></li>
+                                <li><?= __('assoc_bw_step3', [], 'Click "Bulk WhatsApp" button') ?></li>
+                                <li><?= __('assoc_bw_step4', [], 'Compose your message and send') ?></li>
                             </ol>
                         </div>
                     <?php else: ?>
                         <div class="mb-3">
-                            <strong><?= count($leads) ?> lead(s) selected</strong>
+                            <strong><?= __('assoc_bw_selected', ['count' => count($leads)], '%count% lead(s) selected') ?></strong>
                             <div class="d-flex flex-wrap gap-1 mt-1">
                                 <?php foreach ($leads as $l): ?>
                                     <span class="badge bg-light text-dark"><?= htmlspecialchars($l['name']) ?></span>
@@ -46,29 +46,28 @@ $message = $message ?? '';
                                 <input type="hidden" name="lead_ids[]" value="<?= $l['id'] ?>">
                             <?php endforeach; ?>
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Message Template</label>
-                                <textarea class="form-control" name="message" rows="5" required placeholder="Hi {name}, ..."><?= htmlspecialchars($message ?: "Hi {name}, thank you for your interest in APS Dream Home! We'd love to show you our properties. Would you like to schedule a site visit?\n\nBest regards,\nAPS Dream Home Team") ?></textarea>
-                                <small class="text-muted">Use <code>{name}</code> to personalize with lead's name, <code>{phone}</code> for their number.</small>
+                                <label class="form-label fw-bold"><?= __('assoc_bw_message_template', [], 'Message Template') ?></label>
+                                <textarea class="form-control" name="message" rows="5" required placeholder="Hi {name}, ..."><?= htmlspecialchars($message ?: __('assoc_bw_default_msg', [], "Hi {name}, thank you for your interest in APS Dream Home! We'd love to show you our properties. Would you like to schedule a site visit?\n\nBest regards,\nAPS Dream Home Team")) ?></textarea>
+                                <small class="text-muted"><?= __('assoc_bw_personalize_hint', [], 'Use {name} to personalize with lead\'s name, {phone} for their number.') ?></small>
                             </div>
 
-                            <!-- Quick Templates -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Quick Templates</label>
+                                <label class="form-label fw-bold"><?= __('assoc_bw_quick_templates', [], 'Quick Templates') ?></label>
                                 <div class="d-grid gap-2">
-                                    <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="setTemplate('Hi {name}, thank you for your interest in APS Dream Home! We have premium plots available in prime locations. Would you like to schedule a site visit?\n\nBest regards,\nAPS Dream Home Team')">
-                                        <i class="fas fa-hand-wave me-1"></i> Welcome Message
+                                    <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="setTemplate('<?= __('assoc_bw_template_welcome', [], "Hi {name}, thank you for your interest in APS Dream Home! We have premium plots available in prime locations. Would you like to schedule a site visit?\n\nBest regards,\nAPS Dream Home Team") ?>')">
+                                        <i class="fas fa-hand-wave me-1"></i> <?= __('assoc_bw_welcome_msg', [], 'Welcome Message') ?>
                                     </button>
-                                    <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="setTemplate('Hi {name}, exciting news! We have new plots launching in Greater Noida starting from ₹30 Lakh. Limited slots available. Book your site visit today!\n\nCall us: +91 9876543210')">
-                                        <i class="fas fa-rocket me-1"></i> New Launch
+                                    <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="setTemplate('<?= __('assoc_bw_template_launch', [], "Hi {name}, exciting news! We have new plots launching in Greater Noida starting from ₹30 Lakh. Limited slots available. Book your site visit today!\n\nCall us: +91 9876543210") ?>')">
+                                        <i class="fas fa-rocket me-1"></i> <?= __('assoc_bw_new_launch', [], 'New Launch') ?>
                                     </button>
-                                    <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="setTemplate('Hi {name}, just following up on your property inquiry. Do you have any questions? We\'re happy to help!\n\nView properties: https://apsdreamhome.in/properties')">
-                                        <i class="fas fa-followme me-1"></i> Follow-up
+                                    <button type="button" class="btn btn-outline-success btn-sm text-start" onclick="setTemplate('<?= __('assoc_bw_template_followup', [], "Hi {name}, just following up on your property inquiry. Do you have any questions? We're happy to help!\n\nView properties: https://apsdreamhome.in/properties") ?>')">
+                                        <i class="fas fa-followme me-1"></i> <?= __('assoc_bw_followup', [], 'Follow-up') ?>
                                     </button>
                                 </div>
                             </div>
 
                             <button type="submit" class="btn btn-success">
-                                <i class="fab fa-whatsapp me-1"></i> Generate WhatsApp Links (<?= count($leads) ?>)
+                                <i class="fab fa-whatsapp me-1"></i> <?= __('assoc_bw_generate_links', ['count' => count($leads)], 'Generate WhatsApp Links (%count%)') ?>
                             </button>
                         </form>
                     <?php endif; ?>
@@ -80,10 +79,10 @@ $message = $message ?? '';
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0"><i class="fas fa-check-circle text-success me-2"></i><?= $sent ?> Message(s) Ready</h5>
+                    <h5 class="mb-0"><i class="fas fa-check-circle text-success me-2"></i><?= __('assoc_bw_msgs_ready', ['count' => $sent], '%count% Message(s) Ready') ?></h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted mb-3">Click each link to open WhatsApp and send the message.</p>
+                    <p class="text-muted mb-3"><?= __('assoc_bw_click_to_send', [], 'Click each link to open WhatsApp and send the message.') ?></p>
                     <div class="d-grid gap-2">
                         <?php foreach ($whatsappLinks as $link): ?>
                         <a href="<?= $link['url'] ?>" target="_blank" class="btn btn-outline-success d-flex justify-content-between align-items-center">
@@ -94,7 +93,7 @@ $message = $message ?? '';
                     </div>
                     <div class="mt-3 text-center">
                         <button class="btn btn-success" onclick="openAllLinks()">
-                            <i class="fas fa-external-link-alt me-1"></i> Open All (<?= $sent ?>)
+                            <i class="fas fa-external-link-alt me-1"></i> <?= __('assoc_bw_open_all', ['count' => $sent], 'Open All (%count%)') ?>
                         </button>
                     </div>
                 </div>

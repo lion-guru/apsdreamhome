@@ -306,6 +306,10 @@ class LocationAdminController extends AdminController
             $image_path = trim($_POST['image_path']);
             $brochure_path = trim($_POST['brochure_path']);
             $is_featured = isset($_POST['is_featured']) ? 1 : 0;
+            $land_cost = (float)($_POST['land_cost'] ?? 0);
+            $min_price_per_sqft = (float)($_POST['min_price_per_sqft'] ?? 0);
+            $block_count = (int)($_POST['block_count'] ?? 0);
+            $phase = trim($_POST['phase'] ?? '');
 
             if (empty($district_id) || empty($name)) {
                 $_SESSION['error'] = 'District and Colony Name are required';
@@ -314,8 +318,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("INSERT INTO colonies (district_id, name, description, amenities, map_link, total_plots, available_plots, starting_price, image_path, brochure_path, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$district_id, $name, $description, $amenities, $map_link, $total_plots, $available_plots, $starting_price, $image_path, $brochure_path, $is_featured]);
+                $stmt = $this->db->prepare("INSERT INTO colonies (district_id, name, description, amenities, map_link, total_plots, available_plots, starting_price, image_path, brochure_path, is_featured, land_cost, min_price_per_sqft, block_count, phase) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$district_id, $name, $description, $amenities, $map_link, $total_plots, $available_plots, $starting_price, $image_path, $brochure_path, $is_featured, $land_cost, $min_price_per_sqft, $block_count, $phase]);
 
                 $_SESSION['success'] = 'Colony created successfully';
                 redirect('/admin/locations/colonies');
@@ -360,6 +364,10 @@ class LocationAdminController extends AdminController
             $brochure_path = trim($_POST['brochure_path']);
             $is_featured = isset($_POST['is_featured']) ? 1 : 0;
             $is_active = isset($_POST['is_active']) ? 1 : 0;
+            $land_cost = (float)($_POST['land_cost'] ?? 0);
+            $min_price_per_sqft = (float)($_POST['min_price_per_sqft'] ?? 0);
+            $block_count = (int)($_POST['block_count'] ?? 0);
+            $phase = trim($_POST['phase'] ?? '');
 
             if (empty($district_id) || empty($name)) {
                 $_SESSION['error'] = 'District and Colony Name are required';
@@ -368,8 +376,8 @@ class LocationAdminController extends AdminController
             }
 
             try {
-                $stmt = $this->db->prepare("UPDATE colonies SET district_id = ?, name = ?, description = ?, amenities = ?, map_link = ?, total_plots = ?, available_plots = ?, starting_price = ?, image_path = ?, brochure_path = ?, is_featured = ?, is_active = ? WHERE id = ?");
-                $stmt->execute([$district_id, $name, $description, $amenities, $map_link, $total_plots, $available_plots, $starting_price, $image_path, $brochure_path, $is_featured, $is_active, $id]);
+                $stmt = $this->db->prepare("UPDATE colonies SET district_id = ?, name = ?, description = ?, amenities = ?, map_link = ?, total_plots = ?, available_plots = ?, starting_price = ?, image_path = ?, brochure_path = ?, is_featured = ?, is_active = ?, land_cost = ?, min_price_per_sqft = ?, block_count = ?, phase = ? WHERE id = ?");
+                $stmt->execute([$district_id, $name, $description, $amenities, $map_link, $total_plots, $available_plots, $starting_price, $image_path, $brochure_path, $is_featured, $is_active, $land_cost, $min_price_per_sqft, $block_count, $phase, $id]);
 
                 $_SESSION['success'] = 'Colony updated successfully';
                 redirect('/admin/locations/colonies');

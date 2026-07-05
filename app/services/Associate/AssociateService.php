@@ -4,6 +4,7 @@ namespace App\Services\Associate;
 
 use App\Core\Database\Database;
 use App\Services\LoggingService;
+use Exception;
 
 /**
  * Associate Service - APS Dream Home

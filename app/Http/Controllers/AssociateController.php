@@ -38,9 +38,25 @@ class AssociateController extends BaseController
             return;
         }
 
+        @session_start();
+        $csrf_token = $_SESSION['csrf_token'] ?? '';
+        $errors = [];
+        $old = $_SESSION['old_input'] ?? [];
+        unset($_SESSION['old_input']);
+
+        $flashError = $_SESSION['flash_error'] ?? null;
+        unset($_SESSION['flash_error']);
+
+        if ($flashError) {
+            $errors[] = $flashError;
+        }
+
         $this->render('auth/associate_register', [
             'page_title' => 'Associate Registration - APS Dream Home',
-            'page_description' => 'Register as a Property Associate'
+            'page_description' => 'Register as a Property Associate',
+            'csrf_token' => $csrf_token,
+            'errors' => $errors,
+            'old' => $old,
         ], 'layouts/base');
     }
 
@@ -49,24 +65,97 @@ class AssociateController extends BaseController
      */
     public function store()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = $this->sanitize($_POST['name']) ?? '';
-            $email = $this->sanitize($_POST['email']) ?? '';
-            $phone = $this->sanitize($_POST['phone']) ?? '';
-            $password = $this->sanitize($_POST['password']) ?? '';
-            $experience = $this->sanitize($_POST['experience']) ?? '';
-            $commission_rate = $this->sanitize($_POST['commission_rate']) ?? '';
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/associate/register');
+            return;
+        }
 
-            // Basic validation
-            if (empty($name) || empty($email) || empty($phone) || empty($password)) {
-                $this->setFlash('error', 'All required fields must be filled');
-                $this->redirect('/associate/register');
+        $name = trim($_POST['full_name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+        $sponsorCode = trim($_POST['sponsor_code'] ?? '');
+        $errors = [];
+
+        // Validation
+        if (empty($name)) $errors[] = 'Full name is required';
+        if (empty($email)) $errors[] = 'Email is required';
+        if (empty($phone) || !preg_match('/^[0-9]{10}$/', $phone)) $errors[] = 'Valid 10-digit phone number is required';
+        if (empty($password)) $errors[] = 'Password is required';
+        if ($password !== $confirmPassword) $errors[] = 'Passwords do not match';
+
+        if (!empty($errors)) {
+            $_SESSION['flash_error'] = implode('<br>', $errors);
+            $_SESSION['old_input'] = $_POST;
+            $this->redirect('/associate/register');
+            return;
+        }
+
+        try {
+            // Check duplicate email
+            $existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$email]);
+            if ($existing) {
+                $_SESSION['flash_error'] = 'This email is already registered. Please login.';
+                $this->redirect('/associate/login');
                 return;
             }
 
-            // In production, save to database
-            $this->setFlash('success', 'Registration successful! Please login.');
-            $this->redirect('/login');
+            // Check duplicate phone
+            $existing = $this->db->fetchOne("SELECT id FROM users WHERE phone = ?", [$phone]);
+            if ($existing) {
+                $_SESSION['flash_error'] = 'This phone number is already registered. Please login.';
+                $this->redirect('/associate/login');
+                return;
+            }
+
+            // Resolve referrer from sponsor code
+            $referredBy = null;
+            if (!empty($sponsorCode)) {
+                $referrer = $this->db->fetchOne("SELECT id FROM users WHERE referral_code = ?", [$sponsorCode]);
+                if ($referrer) {
+                    $referredBy = $referrer['id'];
+                }
+            }
+
+            // Generate IDs
+            $prefix = 'ASS';
+            $customerId = $prefix . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $referralCode = strtoupper(substr($name, 0, 3)) . date('ymd') . rand(100, 999);
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+            $this->db->execute(
+                "INSERT INTO users (customer_id, name, email, phone, password, referral_code, referred_by, role, status, created_at, updated_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, 'associate', 'active', NOW(), NOW())",
+                [$customerId, $name, $email, $phone, $passwordHash, $referralCode, $referredBy]
+            );
+
+            $newUserId = (int)$this->db->lastInsertId();
+
+            // Create wallet entry
+            try {
+                $this->db->execute(
+                    "INSERT INTO wallet_points (user_id, points_balance, total_earned, total_used, referral_earnings, status, created_at, updated_at)
+                     VALUES (?, 0, 0, 0, 0, 'active', NOW(), NOW())",
+                    [$newUserId]
+                );
+            } catch (\Exception $e) { error_log('Wallet creation: ' . $e->getMessage()); }
+
+            // Auto-login
+            $_SESSION['user_id'] = $newUserId;
+            $_SESSION['user_name'] = $name;
+            $_SESSION['user_email'] = $email;
+            $_SESSION['user_phone'] = $phone;
+            $_SESSION['role'] = 'associate';
+            $_SESSION['logged_in'] = true;
+            $_SESSION['flash_success'] = 'Registration successful! Welcome to APS Dream Home.';
+
+            $this->redirect('/associate/dashboard');
+        } catch (\Exception $e) {
+            error_log('Associate registration error: ' . $e->getMessage());
+            $_SESSION['flash_error'] = 'Registration failed. Please try again.';
+            $_SESSION['old_input'] = $_POST;
+            $this->redirect('/associate/register');
         }
     }
 
@@ -1604,6 +1693,104 @@ class AssociateController extends BaseController
             $colonies = $this->db->getConnection()->query("SELECT id, name FROM colonies WHERE status = 'active' ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {}
 
+        // ── Commission Calculator Data ──
+        $commissionEstimate = [
+            'rank' => 'Associate',
+            'rate' => 5,
+            'budget_mid' => 0,
+            'estimated_commission' => 0,
+            'breakdown' => [],
+        ];
+        try {
+            // Get associate's current rank and rate from mlm_profiles and mlm_rank_benefits
+            $profile = $this->db->fetchOne(
+                "SELECT mp.current_level, rb.direct_sale_pct
+                 FROM mlm_profiles mp
+                 LEFT JOIN mlm_rank_benefits rb ON rb.rank_name = mp.current_level
+                 WHERE mp.user_id = ?",
+                [$userId]
+            );
+            if ($profile) {
+                $commissionEstimate['rank'] = $profile['current_level'] ?? 'Associate';
+                $commissionEstimate['rate'] = (float)($profile['direct_sale_pct'] ?? 5);
+            } else {
+                // Fallback: get default rates
+                $defaultRank = $this->db->fetchOne(
+                    "SELECT rank_name, direct_sale_pct FROM mlm_rank_benefits ORDER BY rank_order ASC LIMIT 1"
+                );
+                if ($defaultRank) {
+                    $commissionEstimate['rank'] = $defaultRank['rank_name'];
+                    $commissionEstimate['rate'] = (float)$defaultRank['direct_sale_pct'];
+                }
+            }
+
+            // Parse budget_range to extract a numeric mid-point
+            $budgetStr = $lead['budget_range'] ?? '';
+            $budgetMid = 0;
+            if (preg_match('/[\d,.]+/', $budgetStr, $m)) {
+                $nums = [];
+                preg_match_all('/[\d,.]+/', $budgetStr, $matches);
+                foreach ($matches[0] as $n) {
+                    $clean = (float)str_replace(',', '', $n);
+                    if ($clean > 0) $nums[] = $clean;
+                }
+                if (!empty($nums)) {
+                    $budgetMid = count($nums) > 1 ? (min($nums) + max($nums)) / 2 : $nums[0];
+                }
+            }
+            // If budget_range contains lakh/crore clues, scale accordingly
+            if ($budgetMid < 1000 && stripos($budgetStr, 'lakh') !== false) {
+                $budgetMid *= 100000;
+            } elseif ($budgetMid < 1000 && stripos($budgetStr, 'cr') !== false) {
+                $budgetMid *= 10000000;
+            }
+            $commissionEstimate['budget_mid'] = $budgetMid;
+
+            // Calculate estimated commission: direct_sale at associate's rate
+            $directCommission = $budgetMid * ($commissionEstimate['rate'] / 100);
+            $commissionEstimate['estimated_commission'] = $directCommission;
+
+            // Build breakdown of all commission types
+            $levels = $this->db->fetchAll("SELECT * FROM mlm_levels ORDER BY level_order");
+            $settings = $this->db->fetchAll("SELECT setting_key, setting_value FROM mlm_settings");
+            $settingsMap = [];
+            foreach ($settings as $s) {
+                $settingsMap[$s['setting_key']] = $s['setting_value'];
+            }
+
+            $commissionEstimate['breakdown'][] = [
+                'label' => 'Direct Sale (' . $commissionEstimate['rate'] . '%)',
+                'amount' => $directCommission,
+                'pct' => $commissionEstimate['rate'],
+            ];
+
+            // Track A (Slab Differential) — estimate roughly 15% of direct
+            if (!empty($settingsMap['track_a_percent'])) {
+                $trackAPct = (float)$settingsMap['track_a_percent'];
+                $commissionEstimate['breakdown'][] = [
+                    'label' => 'Track A (Slab Differential ~' . $trackAPct . '%)',
+                    'amount' => $budgetMid * ($trackAPct / 100),
+                    'pct' => $trackAPct,
+                ];
+            }
+
+            // Track B (Performance Rollup) — 3% hardcoded as per docs
+            $commissionEstimate['breakdown'][] = [
+                'label' => 'Track B (Performance Rollup 3%)',
+                'amount' => $budgetMid * 0.03,
+                'pct' => 3,
+            ];
+
+            // Track C (Milestone Escrow) — 2% hardcoded as per docs
+            $commissionEstimate['breakdown'][] = [
+                'label' => 'Track C (Milestone Escrow 2%)',
+                'amount' => $budgetMid * 0.02,
+                'pct' => 2,
+            ];
+        } catch (\Exception $e) {
+            error_log('Commission calculator error: ' . $e->getMessage());
+        }
+
         $this->render('associate/lead_detail', [
             'page_title' => htmlspecialchars($lead['name']) . ' - Lead Details',
             'page_description' => 'Lead CRM details',
@@ -1614,6 +1801,7 @@ class AssociateController extends BaseController
             'current_page' => 'leads',
             'success' => $success,
             'error' => $error,
+            'commission_estimate' => $commissionEstimate,
         ], 'layouts/associate');
     }
 
@@ -1882,7 +2070,7 @@ class AssociateController extends BaseController
     }
 
     /**
-     * Referral page - share code and track referrals
+     * Referral page - share code, track referrals, and show analytics
      */
     public function referral()
     {
@@ -1895,11 +2083,14 @@ class AssociateController extends BaseController
         $referralCode = '';
         $referralCount = 0;
         $referralEarnings = 0;
+        $shareClicks = [];
+        $referredUsers = [];
         try {
-            $stmt = $pdo->prepare("SELECT referral_code FROM users WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT referral_code, share_clicks FROM users WHERE id = ?");
             $stmt->execute([$userId]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             $referralCode = $row['referral_code'] ?? '';
+            $shareClicks = json_decode($row['share_clicks'] ?? '{}', true) ?: [];
 
             $stmt2 = $pdo->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
             $stmt2->execute([$referralCode]);
@@ -1908,9 +2099,26 @@ class AssociateController extends BaseController
             $stmt3 = $pdo->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE user_id = ? AND type = 'referral_bonus'");
             $stmt3->execute([$userId]);
             $referralEarnings = (float) $stmt3->fetchColumn();
+
+            $stmt4 = $pdo->prepare("
+                SELECT cr.*, u.name as referred_name, u.email as referred_email, u.phone as referred_phone
+                FROM customer_referrals cr
+                LEFT JOIN users u ON cr.referred_user_id = u.id
+                WHERE cr.referrer_user_id = ?
+                ORDER BY cr.created_at DESC
+                LIMIT 50
+            ");
+            $stmt4->execute([$userId]);
+            $referredUsers = $stmt4->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {
             error_log('Referral error: ' . $e->getMessage());
         }
+
+        $tierInfo = ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '#CD7F32', 'icon' => 'fas fa-medal', 'total_referrals' => 0, 'next_tier' => 'Silver', 'next_tier_min' => 5, 'progress' => 0, 'referrals_needed' => 5, 'perks' => [], 'bonus_per_referral' => 100, 'bonus_on_booking' => 500];
+        try {
+            $referralService = new \App\Services\ReferralService();
+            $tierInfo = $referralService->getUserTier($userId);
+        } catch (\Throwable $e) {}
 
         $this->render('associate/referral', [
             'page_title' => 'Refer & Earn - APS Dream Home',
@@ -1918,6 +2126,9 @@ class AssociateController extends BaseController
             'referral_code' => $referralCode,
             'referral_count' => $referralCount,
             'referral_earnings' => $referralEarnings,
+            'share_clicks' => $shareClicks,
+            'referred_users' => $referredUsers,
+            'tier_info' => $tierInfo,
         ]);
     }
 
@@ -3100,5 +3311,41 @@ class AssociateController extends BaseController
             $_SESSION['flash_error'] = 'Failed to recalculate scores.';
         }
         $this->redirect('/associate/leads');
+    }
+
+    /**
+     * Associate Colony Map — Leaflet plot map for associates
+     * GET /associate/colonies/{id}/map
+     */
+    public function colonyMap($id)
+    {
+        $this->requireAuth();
+        try {
+            $colony = $this->db->fetchOne(
+                "SELECT c.*, d.name as district_name FROM colonies c LEFT JOIN districts d ON c.district_id = d.id WHERE c.id = ?",
+                [$id]
+            );
+            if (!$colony) {
+                $_SESSION['flash_error'] = 'Colony not found';
+                $this->redirect('/associate/browse');
+                return;
+            }
+            $plots = $this->db->fetchAll(
+                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft,
+                        status, price_per_sqft, total_price, corner_plot, park_facing,
+                        road_facing, gata_number
+                 FROM plots WHERE colony_id = ?
+                 ORDER BY block, plot_number",
+                [$id]
+            );
+            $this->render('associate/colony_map', [
+                'page_title' => $colony['name'] . ' — Plot Map',
+                'colony' => $colony,
+                'plots' => $plots,
+            ], 'layouts/associate');
+        } catch (\Exception $e) {
+            $_SESSION['flash_error'] = 'Failed to load map';
+            $this->redirect('/associate/browse');
+        }
     }
 }

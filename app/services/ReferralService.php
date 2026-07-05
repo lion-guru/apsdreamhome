@@ -696,4 +696,399 @@ class ReferralService
 
         return (int) ($result['team_size'] ?? 0);
     }
+
+    // ── Referral Leaderboard ──────────────────────────────────────
+
+    /**
+     * Get referral leaderboard — top referrers ranked by referral count + earnings
+     */
+    public function getLeaderboard(int $limit = 20, string $period = 'all'): array
+    {
+        $dateFilter = '';
+        $params = [];
+        if ($period === 'monthly') {
+            $dateFilter = 'AND cr.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)';
+        } elseif ($period === 'weekly') {
+            $dateFilter = 'AND cr.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)';
+        } elseif ($period === 'yearly') {
+            $dateFilter = 'AND cr.created_at >= DATE_SUB(NOW(), INTERVAL 1 YEAR)';
+        }
+
+        try {
+            $stmt = $this->conn->prepare("
+                SELECT 
+                    u.id, u.name, u.referral_code,
+                    COUNT(DISTINCT cr.referred_user_id) AS referral_count,
+                    COUNT(DISTINCT CASE WHEN cr.status = 'booked' THEN cr.referred_user_id END) AS booked_count,
+                    COALESCE(SUM(CASE WHEN cr.status = 'booked' THEN 1 ELSE 0 END), 0) AS bookings_made,
+                    (SELECT COUNT(DISTINCT u2.referred_by) FROM users u2 WHERE u2.referred_by = u.id) AS total_signups
+                FROM users u
+                LEFT JOIN customer_referrals cr ON cr.referrer_user_id = u.id {$dateFilter}
+                WHERE u.referral_code IS NOT NULL AND u.referral_code != ''
+                GROUP BY u.id
+                HAVING referral_count > 0 OR total_signups > 0
+                ORDER BY referral_count DESC, booked_count DESC
+                LIMIT ?
+            ");
+            $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+            $stmt->execute();
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+            // Add rank + tier info
+            foreach ($rows as &$row) {
+                $row['rank'] = 0; // will be set below
+                $tier = $this->getUserTier((int)$row['id']);
+                $row['tier'] = $tier['tier'];
+                $row['tier_color'] = $tier['color'];
+                $row['tier_icon'] = $tier['icon'];
+            }
+            unset($row);
+
+            // Assign ranks
+            foreach ($rows as $i => &$row) {
+                $row['rank'] = $i + 1;
+            }
+            unset($row);
+
+            return $rows;
+        } catch (\Throwable $e) {
+            error_log("[ReferralService] getLeaderboard error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get a user's position on the leaderboard
+     */
+    public function getUserRank(int $userId): array
+    {
+        $leaderboard = $this->getLeaderboard(100);
+        foreach ($leaderboard as $entry) {
+            if ((int)$entry['id'] === $userId) {
+                return [
+                    'rank' => $entry['rank'],
+                    'total' => count($leaderboard),
+                    'referral_count' => $entry['referral_count'],
+                    'tier' => $entry['tier'],
+                ];
+            }
+        }
+        return ['rank' => 0, 'total' => count($leaderboard), 'referral_count' => 0, 'tier' => 'bronze'];
+    }
+
+    // ── Tiered Referral Bonuses ───────────────────────────────────
+
+    /**
+     * Referral tier definitions
+     */
+    public static function getTiers(): array
+    {
+        return [
+            [
+                'tier' => 'bronze',
+                'label' => 'Bronze',
+                'min_referrals' => 0,
+                'bonus_per_referral' => 100,
+                'bonus_on_booking' => 500,
+                'color' => '#CD7F32',
+                'icon' => 'fas fa-medal',
+                'perks' => ['₹100 per signup', '₹500 on booking', 'Basic referral badge'],
+            ],
+            [
+                'tier' => 'silver',
+                'label' => 'Silver',
+                'min_referrals' => 5,
+                'bonus_per_referral' => 200,
+                'bonus_on_booking' => 1000,
+                'color' => '#94a3b8',
+                'icon' => 'fas fa-medal',
+                'perks' => ['₹200 per signup', '₹1,000 on booking', 'Silver badge', 'Priority support'],
+            ],
+            [
+                'tier' => 'gold',
+                'label' => 'Gold',
+                'min_referrals' => 15,
+                'bonus_per_referral' => 500,
+                'bonus_on_booking' => 2500,
+                'color' => '#f59e0b',
+                'icon' => 'fas fa-crown',
+                'perks' => ['₹500 per signup', '₹2,500 on booking', 'Gold badge', 'Priority support', 'Exclusive offers'],
+            ],
+            [
+                'tier' => 'platinum',
+                'label' => 'Platinum',
+                'min_referrals' => 30,
+                'bonus_per_referral' => 1000,
+                'bonus_on_booking' => 5000,
+                'color' => '#6366f1',
+                'icon' => 'fas fa-gem',
+                'perks' => ['₹1,000 per signup', '₹5,000 on booking', 'Platinum badge', 'Dedicated manager', 'VIP events'],
+            ],
+        ];
+    }
+
+    /**
+     * Get user's current tier based on referral count
+     */
+    public function getUserTier(int $userId): array
+    {
+        $tiers = self::getTiers();
+
+        // Count total referrals (signups + customer_referrals)
+        $signupCount = 0;
+        try {
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ?");
+            $stmt->execute([$userId]);
+            $signupCount = (int)$stmt->fetchColumn();
+        } catch (\Throwable $e) {}
+
+        $crCount = 0;
+        try {
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM customer_referrals WHERE referrer_user_id = ?");
+            $stmt->execute([$userId]);
+            $crCount = (int)$stmt->fetchColumn();
+        } catch (\Throwable $e) {}
+
+        $totalReferrals = max($signupCount, $crCount);
+
+        // Find current tier (highest one user qualifies for)
+        $currentTier = $tiers[0];
+        $nextTier = null;
+        foreach ($tiers as $i => $tier) {
+            if ($totalReferrals >= $tier['min_referrals']) {
+                $currentTier = $tier;
+                $nextTier = $tiers[$i + 1] ?? null;
+            }
+        }
+
+        // Progress to next tier
+        $progress = 100;
+        $referralsNeeded = 0;
+        if ($nextTier) {
+            $progress = min(100, round(($totalReferrals / $nextTier['min_referrals']) * 100));
+            $referralsNeeded = max(0, $nextTier['min_referrals'] - $totalReferrals);
+        }
+
+        return [
+            'tier' => $currentTier['tier'],
+            'label' => $currentTier['label'],
+            'color' => $currentTier['color'],
+            'icon' => $currentTier['icon'],
+            'perks' => $currentTier['perks'],
+            'bonus_per_referral' => $currentTier['bonus_per_referral'],
+            'bonus_on_booking' => $currentTier['bonus_on_booking'],
+            'total_referrals' => $totalReferrals,
+            'next_tier' => $nextTier ? $nextTier['label'] : null,
+            'next_tier_min' => $nextTier ? $nextTier['min_referrals'] : null,
+            'progress' => $progress,
+            'referrals_needed' => $referralsNeeded,
+        ];
+    }
+
+    /**
+     * Process tiered bonus on referral signup
+     */
+    public function processTieredSignupBonus(int $referrerId, int $referredUserId): array
+    {
+        $tier = $this->getUserTier($referrerId);
+        $bonusAmount = $tier['bonus_per_referral'];
+
+        if ($bonusAmount <= 0) {
+            return ['success' => false, 'message' => 'No bonus for current tier'];
+        }
+
+        // Check if bonus already paid for this referred user
+        try {
+            $stmt = $this->conn->prepare(
+                "SELECT id FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND source_user_id = ? AND commission_type = 'referral_signup' LIMIT 1"
+            );
+            $stmt->execute([$referrerId, $referredUserId]);
+            if ($stmt->fetch()) {
+                return ['success' => false, 'message' => 'Signup bonus already processed'];
+            }
+        } catch (\Throwable $e) {}
+
+        try {
+            $referrerName = '';
+            $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?");
+            $stmt->execute([$referrerId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $referrerName = $row['name'] ?? 'User';
+
+            $referredName = '';
+            $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?");
+            $stmt->execute([$referredUserId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $referredName = $row['name'] ?? 'User';
+
+            $this->conn->prepare("
+                INSERT INTO mlm_commission_ledger 
+                    (beneficiary_user_id, source_user_id, commission_type, amount, status, notes, created_at)
+                VALUES (?, ?, 'referral_signup', ?, 'approved', ?, NOW())
+            ")->execute([
+                $referrerId,
+                $referredUserId,
+                $bonusAmount,
+                "Tiered signup bonus ({$tier['label']}) for referral: {$referredName}"
+            ]);
+
+            return [
+                'success' => true,
+                'amount' => $bonusAmount,
+                'tier' => $tier['label'],
+                'message' => "₹{$bonusAmount} {$tier['label']} signup bonus credited",
+            ];
+        } catch (\Throwable $e) {
+            error_log("[ReferralService] processTieredSignupBonus error: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Bonus processing failed'];
+        }
+    }
+
+    /**
+     * Process tiered bonus on referral booking
+     */
+    public function processTieredBookingBonus(int $referrerId, int $referredUserId, int $bookingId, float $bookingAmount): array
+    {
+        $tier = $this->getUserTier($referrerId);
+        $bonusAmount = $tier['bonus_on_booking'];
+
+        if ($bonusAmount <= 0) {
+            return ['success' => false, 'message' => 'No booking bonus for current tier'];
+        }
+
+        // Check if already processed
+        try {
+            $stmt = $this->conn->prepare(
+                "SELECT id FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND source_user_id = ? AND commission_type = 'referral_booking' AND booking_id = ? LIMIT 1"
+            );
+            $stmt->execute([$referrerId, $referredUserId, $bookingId]);
+            if ($stmt->fetch()) {
+                return ['success' => false, 'message' => 'Booking bonus already processed'];
+            }
+        } catch (\Throwable $e) {}
+
+        try {
+            $referredName = '';
+            $stmt = $this->conn->prepare("SELECT name FROM users WHERE id = ?");
+            $stmt->execute([$referredUserId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $referredName = $row['name'] ?? 'User';
+
+            $bookingNumber = "#{$bookingId}";
+            $stmt = $this->conn->prepare("SELECT booking_number FROM plot_bookings WHERE id = ?");
+            $stmt->execute([$bookingId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) $bookingNumber = $row['booking_number'] ?? "#{$bookingId}";
+
+            $this->conn->prepare("
+                INSERT INTO mlm_commission_ledger 
+                    (beneficiary_user_id, source_user_id, commission_type, amount, status, booking_id, notes, created_at)
+                VALUES (?, ?, 'referral_booking', ?, 'approved', ?, ?, NOW())
+            ")->execute([
+                $referrerId,
+                $referredUserId,
+                $bonusAmount,
+                $bookingId,
+                "Tiered booking bonus ({$tier['label']}) for {$referredName}'s booking {$bookingNumber}"
+            ]);
+
+            return [
+                'success' => true,
+                'amount' => $bonusAmount,
+                'tier' => $tier['label'],
+                'message' => "₹{$bonusAmount} {$tier['label']} booking bonus credited",
+            ];
+        } catch (\Throwable $e) {
+            error_log("[ReferralService] processTieredBookingBonus error: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Booking bonus processing failed'];
+        }
+    }
+
+    // ── Share Conversion Funnel ───────────────────────────────────
+
+    /**
+     * Get share conversion funnel stats
+     * shares → signups → bookings
+     */
+    public function getShareConversionFunnel(): array
+    {
+        $funnel = [
+            'total_shares' => 0,
+            'total_signups' => 0,
+            'total_bookings' => 0,
+            'conversion_rate' => 0,
+            'booking_rate' => 0,
+            'by_platform' => [],
+        ];
+
+        try {
+            // Total shares from users.share_clicks
+            $users = $this->conn->query("SELECT share_clicks FROM users WHERE share_clicks IS NOT NULL AND share_clicks != '{}' AND share_clicks != ''")->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            foreach ($users as $u) {
+                $clicks = json_decode($u['share_clicks'] ?? '{}', true);
+                if (is_array($clicks)) {
+                    $funnel['total_shares'] += array_sum($clicks);
+                    foreach ($clicks as $platform => $count) {
+                        $funnel['by_platform'][$platform] = ($funnel['by_platform'][$platform] ?? 0) + $count;
+                    }
+                }
+            }
+
+            // Total signups from customer_referrals
+            $stmt = $this->conn->query("SELECT COUNT(*) FROM customer_referrals WHERE status IN ('registered', 'booked')");
+            $funnel['total_signups'] = (int)$stmt->fetchColumn();
+
+            // Total bookings
+            $stmt = $this->conn->query("SELECT COUNT(*) FROM customer_referrals WHERE status = 'booked'");
+            $funnel['total_bookings'] = (int)$stmt->fetchColumn();
+
+            // Conversion rates
+            if ($funnel['total_shares'] > 0) {
+                $funnel['conversion_rate'] = round(($funnel['total_signups'] / $funnel['total_shares']) * 100, 1);
+            }
+            if ($funnel['total_signups'] > 0) {
+                $funnel['booking_rate'] = round(($funnel['total_bookings'] / $funnel['total_signups']) * 100, 1);
+            }
+
+            // Sort platforms by count
+            arsort($funnel['by_platform']);
+        } catch (\Throwable $e) {
+            error_log("[ReferralService] getShareConversionFunnel error: " . $e->getMessage());
+        }
+
+        return $funnel;
+    }
+
+    /**
+     * Get top sharers
+     */
+    public function getTopSharers(int $limit = 10): array
+    {
+        try {
+            $users = $this->conn->query("
+                SELECT id, name, share_clicks 
+                FROM users 
+                WHERE share_clicks IS NOT NULL AND share_clicks != '{}' AND share_clicks != ''
+            ")->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+            $sharers = [];
+            foreach ($users as $u) {
+                $clicks = json_decode($u['share_clicks'] ?? '{}', true);
+                $total = is_array($clicks) ? array_sum($clicks) : 0;
+                if ($total > 0) {
+                    $sharers[] = [
+                        'id' => $u['id'],
+                        'name' => $u['name'],
+                        'total_shares' => $total,
+                        'platforms' => $clicks,
+                    ];
+                }
+            }
+
+            usort($sharers, fn($a, $b) => $b['total_shares'] - $a['total_shares']);
+            return array_slice($sharers, 0, $limit);
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
 }

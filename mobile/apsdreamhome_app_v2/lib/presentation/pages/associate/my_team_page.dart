@@ -33,16 +33,23 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
           ),
         ],
       ),
-      body: myTeamAsync.when(
-        loading: () => _buildShimmer(),
-        error: (error, stack) => _buildError(error.toString()),
-        data: (data) {
-          final directReferrals = (data['direct_referrals'] as List? ?? [])
-              .map((e) => Map<String, dynamic>.from(e as Map))
-              .toList();
-          final stats = data['stats'] as Map<String, dynamic>? ?? {};
-          return _buildContent(directReferrals, stats);
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(myTeamProvider);
+          await Future.delayed(const Duration(milliseconds: 500));
         },
+        color: AppTheme.primaryColor,
+        child: myTeamAsync.when(
+          loading: () => _buildShimmer(),
+          error: (error, stack) => _buildError(error.toString()),
+          data: (data) {
+            final directReferrals = (data['direct_referrals'] as List? ?? [])
+                .map((e) => Map<String, dynamic>.from(e as Map))
+                .toList();
+            final stats = data['stats'] as Map<String, dynamic>? ?? {};
+            return _buildContent(directReferrals, stats);
+          },
+        ),
       ),
     );
   }
@@ -79,7 +86,8 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
               sliver: SliverList.separated(
                 itemCount: filtered.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 8),
-                itemBuilder: (context, index) => _buildTeamCard(filtered[index]),
+                itemBuilder: (context, index) =>
+                    _buildTeamCard(filtered[index]),
               ),
             ),
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -190,8 +198,10 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
               : null,
           filled: true,
           fillColor: Colors.white,
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 0,
+            horizontal: 16,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -202,8 +212,10 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide:
-                const BorderSide(color: AppTheme.primaryColor, width: 1.5),
+            borderSide: const BorderSide(
+              color: AppTheme.primaryColor,
+              width: 1.5,
+            ),
           ),
         ),
       ),
@@ -215,9 +227,12 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
     final email = member['email']?.toString() ?? '';
     final rank = member['rank']?.toString() ?? 'Associate';
     final sales = _parseDouble(
-        member['sales'] ?? member['total_sales'] ?? member['team_sales'] ?? 0);
+      member['sales'] ?? member['total_sales'] ?? member['team_sales'] ?? 0,
+    );
     final joinDate =
-        member['joined_at']?.toString() ?? member['created_at']?.toString() ?? '';
+        member['joined_at']?.toString() ??
+        member['created_at']?.toString() ??
+        '';
     final isActive =
         (member['status']?.toString().toLowerCase() ?? '') == 'active';
 
@@ -270,7 +285,9 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: isActive
                               ? AppTheme.successColor.withValues(alpha: 0.1)
@@ -282,8 +299,9 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
-                            color:
-                                isActive ? AppTheme.successColor : Colors.grey,
+                            color: isActive
+                                ? AppTheme.successColor
+                                : Colors.grey,
                           ),
                         ),
                       ),
@@ -293,8 +311,10 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
                     const SizedBox(height: 2),
                     Text(
                       email,
-                      style:
-                          TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade500,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -304,7 +324,9 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: _getRankColor(rank).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
@@ -332,7 +354,9 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
                         Text(
                           _formatJoinDate(joinDate),
                           style: TextStyle(
-                              fontSize: 10, color: Colors.grey.shade400),
+                            fontSize: 10,
+                            color: Colors.grey.shade400,
+                          ),
                         ),
                       ],
                     ],
@@ -355,11 +379,13 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
         member['phone']?.toString() ?? member['mobile']?.toString() ?? '';
     final rank = member['rank']?.toString() ?? 'Associate';
     final sales = _parseDouble(
-        member['sales'] ?? member['total_sales'] ?? member['team_sales'] ?? 0);
+      member['sales'] ?? member['total_sales'] ?? member['team_sales'] ?? 0,
+    );
     final joinDate =
-        member['joined_at']?.toString() ?? member['created_at']?.toString() ?? '';
-    final downlineCount =
-        member['downline_count'] ?? member['team_size'] ?? 0;
+        member['joined_at']?.toString() ??
+        member['created_at']?.toString() ??
+        '';
+    final downlineCount = member['downline_count'] ?? member['team_size'] ?? 0;
     final isActive =
         (member['status']?.toString().toLowerCase() ?? '') == 'active';
 
@@ -405,14 +431,18 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
                 child: Text(
                   name,
                   style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(height: 4),
               Center(
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: _getRankColor(rank).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -428,17 +458,32 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              _detailRow(Icons.email_outlined, 'Email',
-                  email.isNotEmpty ? email : 'Not available'),
-              _detailRow(Icons.phone_outlined, 'Phone',
-                  phone.isNotEmpty ? phone : 'Not available'),
-              _detailRow(Icons.attach_money, 'Total Sales',
-                  '₹${_formatCurrency(sales)}'),
               _detailRow(
-                  Icons.group_outlined, 'Downline', '$downlineCount members'),
+                Icons.email_outlined,
+                'Email',
+                email.isNotEmpty ? email : 'Not available',
+              ),
+              _detailRow(
+                Icons.phone_outlined,
+                'Phone',
+                phone.isNotEmpty ? phone : 'Not available',
+              ),
+              _detailRow(
+                Icons.attach_money,
+                'Total Sales',
+                '₹${_formatCurrency(sales)}',
+              ),
+              _detailRow(
+                Icons.group_outlined,
+                'Downline',
+                '$downlineCount members',
+              ),
               if (joinDate.isNotEmpty)
-                _detailRow(Icons.calendar_today_outlined, 'Joined',
-                    _formatJoinDate(joinDate)),
+                _detailRow(
+                  Icons.calendar_today_outlined,
+                  'Joined',
+                  _formatJoinDate(joinDate),
+                ),
               _detailRow(
                 Icons.circle,
                 'Status',
@@ -473,8 +518,12 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
     );
   }
 
-  Widget _detailRow(IconData icon, String label, String value,
-      {Color? valueColor}) {
+  Widget _detailRow(
+    IconData icon,
+    String label,
+    String value, {
+    Color? valueColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -555,8 +604,11 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline,
-                size: 56, color: AppTheme.errorColor.withValues(alpha: 0.5)),
+            Icon(
+              Icons.error_outline,
+              size: 56,
+              color: AppTheme.errorColor.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 16),
             Text(
               message,
@@ -603,10 +655,7 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
             ...List.generate(
               4,
               (_) => Column(
-                children: [
-                  _shimmerBox(height: 80),
-                  const SizedBox(height: 8),
-                ],
+                children: [_shimmerBox(height: 80), const SizedBox(height: 8)],
               ),
             ),
           ],

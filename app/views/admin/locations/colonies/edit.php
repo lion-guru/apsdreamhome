@@ -45,6 +45,24 @@
                                 <option value="inactive" <?= ($colony['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                             </select>
                         </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Land Cost (₹)</label>
+                                <input type="number" class="form-control" name="land_cost" value="<?= htmlspecialchars($colony['land_cost'] ?? '') ?>" min="0" step="0.01" placeholder="Total land cost">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Min Price Per Sqft (₹)</label>
+                                <input type="number" class="form-control" name="min_price_per_sqft" value="<?= htmlspecialchars($colony['min_price_per_sqft'] ?? '') ?>" min="0" step="0.01" placeholder="Floor price">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Blocks</label>
+                                <input type="number" class="form-control" name="block_count" value="<?= htmlspecialchars($colony['block_count'] ?? '') ?>" min="0">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Phase</label>
+                                <input type="text" class="form-control" name="phase" value="<?= htmlspecialchars($colony['phase'] ?? '') ?>" placeholder="e.g. Phase 1">
+                            </div>
+                        </div>
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Update Colony</button>
                             <a href="<?= BASE_URL ?>admin/locations/colonies" class="btn btn-outline-secondary">Cancel</a>

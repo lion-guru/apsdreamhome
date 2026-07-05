@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'My Commissions - APS Dream Home';
+$page_title = $page_title ?? __('assoc_comm_page_title', [], 'My Commissions - APS Dream Home');
 $commissions = $commissions ?? [];
 $total_earned = $total_earned ?? 0;
 $total_pending = $total_pending ?? 0;
@@ -13,16 +13,16 @@ $total_pages = $total_pages ?? 1;
 $pagination_url = $pagination_url ?? BASE_URL . '/associate/commissions?';
 
 $typeLabels = [
-    'direct_sale' => ['label' => 'Direct Sale', 'icon' => 'fa-handshake', 'color' => 'primary'],
-    'override' => ['label' => 'Override', 'icon' => 'fa-layer-group', 'color' => 'info'],
-    'level_bonus' => ['label' => 'Level Bonus', 'icon' => 'fa-stairs', 'color' => 'success'],
-    'generation_bonus' => ['label' => 'Generation Bonus', 'icon' => 'fa-users', 'color' => 'warning'],
-    'matching_bonus' => ['label' => 'Matching Bonus', 'icon' => 'fa-code-compare', 'color' => 'danger'],
-    'rank_bonus' => ['label' => 'Rank Bonus', 'icon' => 'fa-medal', 'color' => 'purple'],
-    'royalty_pool' => ['label' => 'Royalty Pool', 'icon' => 'fa-crown', 'color' => 'gold'],
-    'infinity_override' => ['label' => 'Infinity Override', 'icon' => 'fa-infinity', 'color' => 'dark'],
-    'performance_bonus' => ['label' => 'Performance Bonus', 'icon' => 'fa-chart-line', 'color' => 'teal'],
-    'team_bonus' => ['label' => 'Team Bonus', 'icon' => 'fa-people-group', 'color' => 'indigo'],
+    'direct_sale' => ['label' => __('assoc_comm_type_direct_sale', [], 'Direct Sale'), 'icon' => 'fa-handshake', 'color' => 'primary'],
+    'override' => ['label' => __('assoc_comm_type_override', [], 'Override'), 'icon' => 'fa-layer-group', 'color' => 'info'],
+    'level_bonus' => ['label' => __('assoc_comm_type_level_bonus', [], 'Level Bonus'), 'icon' => 'fa-stairs', 'color' => 'success'],
+    'generation_bonus' => ['label' => __('assoc_comm_type_generation_bonus', [], 'Generation Bonus'), 'icon' => 'fa-users', 'color' => 'warning'],
+    'matching_bonus' => ['label' => __('assoc_comm_type_matching_bonus', [], 'Matching Bonus'), 'icon' => 'fa-code-compare', 'color' => 'danger'],
+    'rank_bonus' => ['label' => __('assoc_comm_type_rank_bonus', [], 'Rank Bonus'), 'icon' => 'fa-medal', 'color' => 'purple'],
+    'royalty_pool' => ['label' => __('assoc_comm_type_royalty_pool', [], 'Royalty Pool'), 'icon' => 'fa-crown', 'color' => 'gold'],
+    'infinity_override' => ['label' => __('assoc_comm_type_infinity_override', [], 'Infinity Override'), 'icon' => 'fa-infinity', 'color' => 'dark'],
+    'performance_bonus' => ['label' => __('assoc_comm_type_performance_bonus', [], 'Performance Bonus'), 'icon' => 'fa-chart-line', 'color' => 'teal'],
+    'team_bonus' => ['label' => __('assoc_comm_type_team_bonus', [], 'Team Bonus'), 'icon' => 'fa-people-group', 'color' => 'indigo'],
 ];
 ?>
 <div class="container-fluid px-4">
@@ -30,11 +30,11 @@ $typeLabels = [
     <div class="alert alert-info d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
         <div>
             <i class="fas fa-wallet me-2"></i>
-            <strong>₹<?php echo number_format($total_earned); ?></strong> earned &bull;
-            <strong>₹<?php echo number_format($total_pending); ?></strong> pending
+            <strong>₹<?php echo number_format($total_earned); ?></strong> <?php echo __('assoc_comm_total_earned', [], 'earned'); ?> &bull;
+            <strong>₹<?php echo number_format($total_pending); ?></strong> <?php echo __('assoc_comm_pending', [], 'pending'); ?>
         </div>
         <a href="<?php echo BASE_URL; ?>/associate/wallet/withdraw" class="btn btn-success btn-sm">
-            <i class="fas fa-arrow-right me-1"></i>Request Withdrawal
+            <i class="fas fa-arrow-right me-1"></i><?php echo __('assoc_comm_request_withdrawal', [], 'Request Withdrawal'); ?>
         </a>
     </div>
 
@@ -43,7 +43,7 @@ $typeLabels = [
         <div class="col-md-4">
             <div class="card border-0 shadow-sm bg-success text-white">
                 <div class="card-body aps-cp-card-body">
-                    <h6><i class="fas fa-check-circle me-1"></i>Total Earned</h6>
+                    <h6><i class="fas fa-check-circle me-1"></i><?php echo __('assoc_comm_total_earned', [], 'Total Earned'); ?></h6>
                     <h3 class="mb-0">₹<?php echo number_format($total_earned); ?></h3>
                 </div>
             </div>
@@ -51,7 +51,7 @@ $typeLabels = [
         <div class="col-md-4">
             <div class="card border-0 shadow-sm bg-warning text-white">
                 <div class="card-body aps-cp-card-body">
-                    <h6><i class="fas fa-clock me-1"></i>Pending</h6>
+                    <h6><i class="fas fa-clock me-1"></i><?php echo __('assoc_comm_pending', [], 'Pending'); ?></h6>
                     <h3 class="mb-0">₹<?php echo number_format($total_pending); ?></h3>
                 </div>
             </div>
@@ -59,7 +59,7 @@ $typeLabels = [
         <div class="col-md-4">
             <div class="card border-0 shadow-sm bg-info text-white">
                 <div class="card-body aps-cp-card-body">
-                    <h6><i class="fas fa-list me-1"></i>Total Transactions</h6>
+                    <h6><i class="fas fa-list me-1"></i><?php echo __('assoc_comm_total_transactions', [], 'Total Transactions'); ?></h6>
                     <h3 class="mb-0"><?php echo count($commissions); ?></h3>
                 </div>
             </div>
@@ -70,7 +70,7 @@ $typeLabels = [
     <?php if (!empty($breakdown)): ?>
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3">
-            <h5 class="mb-0"><i class="fas fa-chart-pie text-primary me-2"></i>Commission Breakdown by Type</h5>
+            <h5 class="mb-0"><i class="fas fa-chart-pie text-primary me-2"></i><?php echo __('assoc_comm_breakdown', [], 'Commission Breakdown by Type'); ?></h5>
         </div>
         <div class="card-body">
             <div class="row g-3">
@@ -89,16 +89,16 @@ $typeLabels = [
                                     </div>
                                     <div>
                                         <div class="fw-bold text-dark"><?php echo $meta['label']; ?></div>
-                                        <small class="text-muted"><?php echo $b['count']; ?> transactions</small>
+                                        <small class="text-muted"><?php echo $b['count']; ?> <?php echo __('assoc_comm_transactions', [], 'transactions'); ?></small>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-end">
                                     <div>
-                                        <div class="text-muted small">Total</div>
+                                        <div class="text-muted small"><?php echo __('assoc_comm_total', [], 'Total'); ?></div>
                                         <div class="fw-bold text-dark" style="font-size: 1.1rem;">₹<?php echo number_format($b['total_amount']); ?></div>
                                     </div>
                                     <div class="text-end">
-                                        <div class="text-muted small">Paid / Pending</div>
+                                        <div class="text-muted small"><?php echo __('assoc_comm_paid_pending', [], 'Paid / Pending'); ?></div>
                                         <span class="badge bg-success">₹<?php echo number_format($b['paid_amount']); ?></span>
                                         <?php if ($b['pending_amount'] > 0): ?>
                                         <span class="badge bg-warning">₹<?php echo number_format($b['pending_amount']); ?></span>
@@ -124,34 +124,34 @@ $typeLabels = [
         <div class="card-body aps-cp-card-body">
             <form method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label small">Status</label>
+                    <label class="form-label small"><?php echo __('assoc_comm_status', [], 'Status'); ?></label>
                     <select name="status" class="form-select form-select-sm">
-                        <option value="">All Status</option>
-                        <option value="pending" <?php echo $status_filter === 'pending' ? 'selected' : ''; ?>>Pending</option>
-                        <option value="paid" <?php echo $status_filter === 'paid' ? 'selected' : ''; ?>>Paid</option>
-                        <option value="cancelled" <?php echo $status_filter === 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                        <option value=""><?php echo __('assoc_comm_all_status', [], 'All Status'); ?></option>
+                        <option value="pending" <?php echo $status_filter === 'pending' ? 'selected' : ''; ?>><?php echo __('assoc_comm_pending', [], 'Pending'); ?></option>
+                        <option value="paid" <?php echo $status_filter === 'paid' ? 'selected' : ''; ?>><?php echo __('assoc_comm_paid', [], 'Paid'); ?></option>
+                        <option value="cancelled" <?php echo $status_filter === 'cancelled' ? 'selected' : ''; ?>><?php echo __('assoc_comm_cancelled', [], 'Cancelled'); ?></option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label small">Type</label>
+                    <label class="form-label small"><?php echo __('assoc_comm_type', [], 'Type'); ?></label>
                     <select name="type" class="form-select form-select-sm">
-                        <option value="">All Types</option>
-                        <option value="direct" <?php echo $type_filter === 'direct' ? 'selected' : ''; ?>>Direct</option>
-                        <option value="team" <?php echo $type_filter === 'team' ? 'selected' : ''; ?>>Team</option>
-                        <option value="referral" <?php echo $type_filter === 'referral' ? 'selected' : ''; ?>>Referral</option>
-                        <option value="bonus" <?php echo $type_filter === 'bonus' ? 'selected' : ''; ?>>Bonus</option>
+                        <option value=""><?php echo __('assoc_comm_all_types', [], 'All Types'); ?></option>
+                        <option value="direct" <?php echo $type_filter === 'direct' ? 'selected' : ''; ?>><?php echo __('assoc_comm_direct', [], 'Direct'); ?></option>
+                        <option value="team" <?php echo $type_filter === 'team' ? 'selected' : ''; ?>><?php echo __('assoc_comm_team', [], 'Team'); ?></option>
+                        <option value="referral" <?php echo $type_filter === 'referral' ? 'selected' : ''; ?>><?php echo __('assoc_comm_referral', [], 'Referral'); ?></option>
+                        <option value="bonus" <?php echo $type_filter === 'bonus' ? 'selected' : ''; ?>><?php echo __('assoc_comm_bonus', [], 'Bonus'); ?></option>
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label small">From</label>
+                    <label class="form-label small"><?php echo __('assoc_comm_from', [], 'From'); ?></label>
                     <input type="date" name="date_from" class="form-control form-control-sm" value="<?php echo htmlspecialchars($date_from); ?>">
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label small">To</label>
+                    <label class="form-label small"><?php echo __('assoc_comm_to', [], 'To'); ?></label>
                     <input type="date" name="date_to" class="form-control form-control-sm" value="<?php echo htmlspecialchars($date_to); ?>">
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-search me-1"></i>Filter</button>
+                    <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-search me-1"></i><?php echo __('assoc_comm_filter', [], 'Filter'); ?></button>
                 </div>
             </form>
         </div>
@@ -160,18 +160,18 @@ $typeLabels = [
     <!-- Commission Table -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-money-bill-wave text-warning me-2"></i>Commission History</h5>
-            <a href="<?php echo BASE_URL; ?>/associate/commissions" class="btn btn-sm btn-outline-secondary" title="Reset filters">
-                <i class="fas fa-redo me-1"></i>Reset
+            <h5 class="mb-0"><i class="fas fa-money-bill-wave text-warning me-2"></i><?php echo __('assoc_comm_history', [], 'Commission History'); ?></h5>
+            <a href="<?php echo BASE_URL; ?>/associate/commissions" class="btn btn-sm btn-outline-secondary" title="<?php echo __('assoc_comm_reset', [], 'Reset filters'); ?>">
+                <i class="fas fa-redo me-1"></i><?php echo __('assoc_comm_reset', [], 'Reset'); ?>
             </a>
         </div>
         <div class="card-body p-0">
             <?php if (empty($commissions)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-coins fa-4x text-muted mb-3"></i>
-                    <p class="text-muted">No commission transactions found.</p>
+                    <p class="text-muted"><?php echo __('assoc_comm_empty', [], 'No commission transactions found.'); ?></p>
                     <?php if ($status_filter || $type_filter || $date_from || $date_to): ?>
-                        <a href="<?php echo BASE_URL; ?>/associate/commissions" class="btn btn-sm btn-outline-primary">Clear Filters</a>
+                        <a href="<?php echo BASE_URL; ?>/associate/commissions" class="btn btn-sm btn-outline-primary"><?php echo __('assoc_comm_clear_filters', [], 'Clear Filters'); ?></a>
                     <?php endif; ?>
                 </div>
             <?php else: ?>
@@ -179,22 +179,22 @@ $typeLabels = [
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th>Property</th>
-                                <th>Type</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Date</th>
+                                <th><?php echo __('assoc_comm_th_property', [], 'Property'); ?></th>
+                                <th><?php echo __('assoc_comm_th_type', [], 'Type'); ?></th>
+                                <th><?php echo __('assoc_comm_th_amount', [], 'Amount'); ?></th>
+                                <th><?php echo __('assoc_comm_th_status', [], 'Status'); ?></th>
+                                <th><?php echo __('assoc_comm_th_date', [], 'Date'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($commissions as $c): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($c['property'] ?? 'N/A'); ?></td>
-                                    <td><span class="badge bg-secondary"><?php echo ucfirst($c['commission_type'] ?? 'N/A'); ?></span></td>
+                                    <td><?php echo htmlspecialchars($c['property'] ?? __('assoc_comm_na', [], 'N/A')); ?></td>
+                                    <td><span class="badge bg-secondary"><?php echo ucfirst($c['commission_type'] ?? __('assoc_comm_na', [], 'N/A')); ?></span></td>
                                     <td><strong>₹<?php echo number_format($c['amount'] ?? 0); ?></strong></td>
                                     <td>
                                         <span class="badge bg-<?php echo ($c['status'] ?? '') === 'paid' ? 'success' : (($c['status'] ?? '') === 'cancelled' ? 'danger' : 'warning'); ?>">
-                                            <?php echo ucfirst($c['status'] ?? 'Pending'); ?>
+                                            <?php echo ucfirst($c['status'] ?? __('assoc_comm_pending', [], 'Pending')); ?>
                                         </span>
                                     </td>
                                     <td><?php echo htmlspecialchars($c['date'] ?? ''); ?></td>
@@ -209,7 +209,7 @@ $typeLabels = [
                     <nav>
                         <ul class="pagination pagination-sm mb-0">
                             <li class="page-item <?php echo $current_page_no <= 1 ? 'disabled' : ''; ?>">
-                                <a class="page-link" href="<?php echo $pagination_url; ?>page=<?php echo $current_page_no - 1; ?>">Previous</a>
+                                <a class="page-link" href="<?php echo $pagination_url; ?>page=<?php echo $current_page_no - 1; ?>"><?php echo __('assoc_comm_pagination_prev', [], 'Previous'); ?></a>
                             </li>
                             <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                                 <li class="page-item <?php echo $i === $current_page_no ? 'active' : ''; ?>">
@@ -217,7 +217,7 @@ $typeLabels = [
                                 </li>
                             <?php endfor; ?>
                             <li class="page-item <?php echo $current_page_no >= $total_pages ? 'disabled' : ''; ?>">
-                                <a class="page-link" href="<?php echo $pagination_url; ?>page=<?php echo $current_page_no + 1; ?>">Next</a>
+                                <a class="page-link" href="<?php echo $pagination_url; ?>page=<?php echo $current_page_no + 1; ?>"><?php echo __('assoc_comm_pagination_next', [], 'Next'); ?></a>
                             </li>
                         </ul>
                     </nav>

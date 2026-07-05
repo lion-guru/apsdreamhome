@@ -142,6 +142,109 @@ class MapController extends BaseController
     }
 
     /**
+     * Colony Plot Map — Publicly viewable Leaflet map
+     * GET /colony/{slug}/map
+     */
+    public function colonyPlotMap($slug)
+    {
+        try {
+            $colony = $this->db->fetchOne("SELECT c.*, d.name as district_name FROM colonies c LEFT JOIN districts d ON c.district_id = d.id WHERE c.slug = ?", [$slug]);
+            if (!$colony) {
+                $this->setFlash('error', 'Colony not found');
+                $this->redirect('/properties');
+                return;
+            }
+            $plots = $this->db->fetchAll(
+                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, road_facing, gata_number
+                 FROM plots WHERE colony_id = ? ORDER BY block, plot_number",
+                [$colony['id']]
+            );
+            $this->render('pages/colony_plot_map', [
+                'page_title' => $colony['name'] . ' — Plot Map',
+                'colony' => $colony,
+                'plots' => $plots,
+            ], 'layouts/base');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed to load map');
+            $this->redirect('/properties');
+        }
+    }
+
+    /**
+     * Colony GeoJSON API — Publicly accessible plot data
+     * GET /api/colony/{id}/map/geojson
+     */
+    public function colonyGeoJson($id)
+    {
+        header('Content-Type: application/json');
+        try {
+            $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [$id]);
+            if (!$colony) {
+                echo json_encode(['type' => 'FeatureCollection', 'features' => []]);
+                return;
+            }
+            $plots = $this->db->fetchAll(
+                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, road_facing, gata_number
+                 FROM plots WHERE colony_id = ? ORDER BY block, plot_number",
+                [$id]
+            );
+            $features = [];
+            $centerLat = $colony['latitude'] ? (float)$colony['latitude'] : 26.76;
+            $centerLng = $colony['longitude'] ? (float)$colony['longitude'] : 83.37;
+            $blocksMap = [];
+            foreach ($plots as $p) {
+                $block = $p['block'] ?? 'A';
+                if (!isset($blocksMap[$block])) {
+                    $blocksMap[$block] = ['plots' => [], 'y' => count($blocksMap)];
+                }
+                $blocksMap[$block]['plots'][] = $p;
+            }
+            foreach ($blocksMap as $block => $bData) {
+                $x = 0;
+                foreach ($bData['plots'] as $p) {
+                    $w = max((float)($p['width_ft'] ?? 30), 20);
+                    $l = max((float)($p['length_ft'] ?? 50), 30);
+                    $scale = 0.000008;
+                    $x1 = $centerLng + ($x * $scale * 1.1);
+                    $y1 = $centerLat + ($bData['y'] * $scale * 1.1);
+                    $x2 = $x1 + $w * $scale;
+                    $y2 = $y1 + $l * $scale;
+                    $statusColors = [
+                        'available' => '#22c55e', 'booked' => '#eab308', 'sold' => '#ef4444',
+                        'hold' => '#6b7280', 'reserved' => '#f97316',
+                    ];
+                    $features[] = [
+                        'type' => 'Feature',
+                        'geometry' => ['type' => 'Polygon', 'coordinates' => [[
+                            [$x1, $y1], [$x2, $y1], [$x2, $y2], [$x1, $y2], [$x1, $y1]
+                        ]]],
+                        'properties' => [
+                            'plot_id' => $p['id'],
+                            'plot_number' => $p['plot_number'],
+                            'block' => $p['block'],
+                            'area_sqft' => $p['area_sqft'],
+                            'width_ft' => $p['width_ft'],
+                            'length_ft' => $p['length_ft'],
+                            'status' => $p['status'],
+                            'price_per_sqft' => $p['price_per_sqft'],
+                            'total_price' => $p['total_price'],
+                            'corner_plot' => (bool)$p['corner_plot'],
+                            'park_facing' => (bool)$p['park_facing'],
+                            'road_facing' => (bool)$p['road_facing'],
+                            'gata_number' => $p['gata_number'],
+                            'marker_color' => $statusColors[$p['status']] ?? '#94a3b8',
+                        ],
+                    ];
+                    $x++;
+                }
+            }
+            echo json_encode(['type' => 'FeatureCollection', 'features' => $features]);
+        } catch (Exception $e) {
+            echo json_encode(['type' => 'FeatureCollection', 'features' => []]);
+        }
+    }
+
+    /**
      * Get property location suggestions (AJAX)
      */
     public function getLocationSuggestions()

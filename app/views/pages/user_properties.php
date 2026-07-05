@@ -84,14 +84,19 @@ $extraHead = '<style>
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                                 <small class="text-muted">
                                     <?= __('user_properties_posted_on', ['date' => date('d M Y', strtotime($p['created_at']))]) ?>
                                 </small>
                                 <?php if ($p['status'] === 'pending'): ?>
                                     <span class="badge bg-warning"><?= __('user_properties_under_review') ?></span>
                                 <?php elseif ($p['status'] === 'approved'): ?>
-                                    <a href="<?php echo BASE_URL; ?>/listing/<?php echo $p['id']; ?>" class="btn btn-sm btn-outline-primary" target="_blank"><?= __('user_properties_view_listing') ?> <i class="fas fa-external-link-alt ms-1"></i></a>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="<?php echo BASE_URL; ?>/listing/<?php echo $p['id']; ?>" class="btn btn-outline-primary" target="_blank"><?= __('user_properties_view_listing') ?> <i class="fas fa-external-link-alt ms-1"></i></a>
+                                        <a href="<?php echo BASE_URL; ?>/user/boost-property/<?php echo $p['id']; ?>" class="btn btn-outline-warning">
+                                            <i class="fas fa-crown"></i> Boost
+                                        </a>
+                                    </div>
                                 <?php elseif ($p['status'] === 'rejected'): ?>
                                     <span class="badge bg-danger"><?= __('status_rejected') ?></span>
                                 <?php elseif ($p['status'] === 'verified'): ?>
@@ -100,6 +105,13 @@ $extraHead = '<style>
                                     <span class="badge bg-dark"><?= __('status_sold') ?></span>
                                 <?php endif; ?>
                             </div>
+                            <?php if ($p['status'] === 'approved' && (!empty($p['is_featured']) || !empty($p['is_urgent']) || !empty($p['is_premium']))): ?>
+                            <div class="mt-2 d-flex gap-1">
+                                <?php if (!empty($p['is_featured'])): ?><span class="badge bg-warning text-dark"><i class="fas fa-star"></i> Featured</span><?php endif; ?>
+                                <?php if (!empty($p['is_urgent'])): ?><span class="badge bg-danger"><i class="fas fa-bolt"></i> Urgent</span><?php endif; ?>
+                                <?php if (!empty($p['is_premium'])): ?><span class="badge bg-primary"><i class="fas fa-gem"></i> Premium</span><?php endif; ?>
+                            </div>
+                            <?php endif; ?>
                             <?php if (!empty($p['admin_notes'])): ?>
                             <div class="mt-3 p-3 bg-light rounded">
                                 <small class="text-muted d-block mb-1"><i class="fas fa-sticky-note me-1"></i><?= __('user_properties_admin_note') ?>:</small>

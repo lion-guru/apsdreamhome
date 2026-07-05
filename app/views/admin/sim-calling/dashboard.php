@@ -1,3 +1,4 @@
+<?php $_conn = $_conn ?? false; $_ch = $_ch ?? []; $_st = $stats ?? []; $_rc = $recent_calls ?? []; ?>
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -20,11 +21,11 @@
             <!-- Connection Status -->
             <div class="row mb-4">
                 <div class="col-md-4">
-                    <div class="card card-outline <?= $connected ? 'card-success' : 'card-danger' ?>">
+                    <div class="card card-outline <?= $_conn ? 'card-success' : 'card-danger' ?>">
                         <div class="card-body text-center">
-                            <i class="fas <?= $connected ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' ?> fa-3x mb-2"></i>
-                            <h4><?= $connected ? 'Connected' : 'Disconnected' ?></h4>
-                            <p class="text-muted">Asterisk AMI — <?= $connected ? 'Online' : 'Offline' ?></p>
+                            <i class="fas <?= $_conn ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' ?> fa-3x mb-2"></i>
+                            <h4><?= $_conn ? 'Connected' : 'Disconnected' ?></h4>
+                            <p class="text-muted">Asterisk AMI — <?= $_conn ? 'Online' : 'Offline' ?></p>
                             <a href="/admin/sim-calling/settings" class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-cog"></i> Settings
                             </a>
@@ -35,7 +36,7 @@
                     <div class="card card-outline card-info">
                         <div class="card-body text-center">
                             <i class="fas fa-phone fa-3x mb-2 text-info"></i>
-                            <h4><?= (int)($stats['active_channels'] ?? 0) ?></h4>
+                            <h4><?= (int)($_st['active_channels'] ?? 0) ?></h4>
                             <p class="text-muted">Active Channels</p>
                             <button onclick="refreshStatus()" class="btn btn-sm btn-outline-info">
                                 <i class="fas fa-sync"></i> Refresh
@@ -47,9 +48,9 @@
                     <div class="card card-outline card-warning">
                         <div class="card-body text-center">
                             <i class="fas fa-calendar-day fa-3x mb-2 text-warning"></i>
-                            <h4><?= (int)($stats['today_calls'] ?? 0) ?></h4>
+                            <h4><?= (int)($_st['today_calls'] ?? 0) ?></h4>
                             <p class="text-muted">Calls Today</p>
-                            <span class="badge badge-success"><?= (int)($stats['answered'] ?? 0) ?> answered</span>
+                            <span class="badge badge-success"><?= (int)($_st['answered'] ?? 0) ?> answered</span>
                         </div>
                     </div>
                 </div>
@@ -103,32 +104,32 @@
                         <div class="card-body">
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <h3 class="text-teal"><?= (int)($stats['total_calls'] ?? 0) ?></h3>
+                                    <h3 class="text-teal"><?= (int)($_st['total_calls'] ?? 0) ?></h3>
                                     <small class="text-muted">Total Calls</small>
                                 </div>
                                 <div class="col-4">
-                                    <h3 class="text-success"><?= (int)($stats['completed'] ?? 0) ?></h3>
+                                    <h3 class="text-success"><?= (int)($_st['completed'] ?? 0) ?></h3>
                                     <small class="text-muted">Completed</small>
                                 </div>
                                 <div class="col-4">
-                                    <h3 class="text-danger"><?= (int)($stats['no_answer'] ?? 0) ?></h3>
+                                    <h3 class="text-danger"><?= (int)($_st['no_answer'] ?? 0) ?></h3>
                                     <small class="text-muted">No Answer</small>
                                 </div>
                             </div>
                             <hr>
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <h4 class="text-info"><?= (int)($stats['answered'] ?? 0) ?></h4>
+                                    <h4 class="text-info"><?= (int)($_st['answered'] ?? 0) ?></h4>
                                     <small>Answered</small>
                                 </div>
                                 <div class="col-4">
-                                    <h4 class="text-warning"><?= (int)($stats['busy'] ?? 0) ?></h4>
+                                    <h4 class="text-warning"><?= (int)($_st['busy'] ?? 0) ?></h4>
                                     <small>Busy</small>
                                 </div>
                                 <div class="col-4">
                                     <?php
-                                    $total = (int)($stats['total_calls'] ?? 0);
-                                    $answered = (int)($stats['answered'] ?? 0);
+                                    $total = (int)($_st['total_calls'] ?? 0);
+                                    $answered = (int)($_st['answered'] ?? 0);
                                     $rate = $total > 0 ? round(($answered / $total) * 100) : 0;
                                     ?>
                                     <h4 class="text-primary"><?= $rate ?>%</h4>
@@ -158,10 +159,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (empty($recentCalls)): ?>
+                            <?php if (empty($_rc)): ?>
                             <tr><td colspan="6" class="text-center text-muted py-4">No calls yet. Make your first call above!</td></tr>
                             <?php else: ?>
-                            <?php foreach ($recentCalls as $call): ?>
+                            <?php foreach ($_rc as $call): ?>
                             <tr>
                                 <td><?= date('d M, H:i', strtotime($call['created_at'])) ?></td>
                                 <td><i class="fas fa-phone text-muted"></i> <?= htmlspecialchars($call['customer_phone'] ?? '') ?></td>
@@ -196,7 +197,7 @@
             </div>
 
             <!-- Active Channels -->
-            <?php if (!empty($channels)): ?>
+            <?php if (!empty($_ch)): ?>
             <div class="card card-outline card-info">
                 <div class="card-header">
                     <h3 class="card-title"><i class="fas fa-broadcast-tower"></i> Active Channels</h3>
@@ -205,7 +206,7 @@
                     <table class="table table-sm">
                         <thead><tr><th>Channel</th><th>State</th><th>Caller</th><th>Called</th><th></th></tr></thead>
                         <tbody>
-                            <?php foreach ($channels as $ch): ?>
+                            <?php foreach ($_ch as $ch): ?>
                             <tr>
                                 <td><code><?= htmlspecialchars($ch['Channel'] ?? '') ?></code></td>
                                 <td><span class="badge badge-info"><?= htmlspecialchars($ch['ChannelState'] ?? '') ?></span></td>
@@ -310,9 +311,11 @@ async function refreshStatus() {
     try {
         const res = await fetch('/admin/sim-calling/api/status');
         const data = await res.json();
-        location.reload();
+        if (data.connected) {
+            location.reload();
+        }
     } catch (e) {
-        alert('Cannot reach Asterisk');
+        // Asterisk not reachable — silent fail, no alert
     }
 }
 
@@ -330,6 +333,6 @@ async function hangup(channel) {
     }
 }
 
-// Auto-refresh every 30 seconds
-setInterval(refreshStatus, 30000);
+// Auto-refresh only when Asterisk is connected (manual refresh button available)
+// setInterval(refreshStatus, 30000);
 </script>

@@ -261,11 +261,11 @@ $associate_email = $associate_email ?? '';
         <div class="prop-section">
             <h6><i class="fas fa-camera"></i>Property Photos</h6>
             <div class="photo-upload-zone" id="photoDropZone">
-                <input type="file" name="property_image[]" id="photoInput" accept="image/*" multiple>
+                <input type="file" name="property_image" id="photoInput" accept="image/*">
                 <i class="fas fa-cloud-upload-alt d-block"></i>
-                <div class="fw-bold text-primary">Tap to Add Photos</div>
+                <div class="fw-bold text-primary">Tap to Add Photo</div>
                 <div class="text-muted small">Take photo or choose from gallery</div>
-                <div class="text-muted small mt-1">Up to 10 photos (JPG, PNG, WEBP)</div>
+                <div class="text-muted small mt-1">JPG, PNG, WEBP (max 5MB)</div>
             </div>
             <div class="photo-preview-grid" id="photoPreviewGrid"></div>
         </div>
@@ -326,10 +326,18 @@ function setPrice(val) {
 const photoInput = document.getElementById('photoInput');
 const photoGrid = document.getElementById('photoPreviewGrid');
 const dropZone = document.getElementById('photoDropZone');
-let uploadedFiles = [];
-
 photoInput.addEventListener('change', function(e) {
-    handleFiles(e.target.files);
+    const file = e.target.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    photoGrid.innerHTML = '';
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const div = document.createElement('div');
+        div.className = 'photo-preview-item';
+        div.innerHTML = '<img src="' + e.target.result + '" alt="Preview"><button type="button" class="remove-btn" onclick="this.parentElement.remove(); photoInput.value=\'\'"><i class="fas fa-times"></i></button>';
+        photoGrid.appendChild(div);
+    };
+    reader.readAsDataURL(file);
 });
 
 dropZone.addEventListener('dragover', function(e) {
@@ -342,30 +350,11 @@ dropZone.addEventListener('dragleave', function() {
 dropZone.addEventListener('drop', function(e) {
     e.preventDefault();
     this.classList.remove('dragover');
-    handleFiles(e.dataTransfer.files);
+    if (e.dataTransfer.files.length) {
+        photoInput.files = e.dataTransfer.files;
+        photoInput.dispatchEvent(new Event('change'));
+    }
 });
-
-function handleFiles(files) {
-    Array.from(files).forEach(file => {
-        if (!file.type.startsWith('image/')) return;
-        if (uploadedFiles.length >= 10) return;
-        uploadedFiles.push(file);
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const idx = uploadedFiles.length - 1;
-            const div = document.createElement('div');
-            div.className = 'photo-preview-item';
-            div.innerHTML = '<img src="' + e.target.result + '" alt="Preview"><button type="button" class="remove-btn" onclick="removePhoto(' + idx + ', this)"><i class="fas fa-times"></i></button>';
-            photoGrid.appendChild(div);
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-function removePhoto(idx, btn) {
-    uploadedFiles[idx] = null;
-    btn.parentElement.remove();
-}
 
 // Location cascade
 document.getElementById('state_id').addEventListener('change', async function() {

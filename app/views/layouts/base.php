@@ -168,7 +168,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Scroll fix -->
     <style>
         html, body { height: auto !important; overflow-y: auto !important; overflow-x: hidden; }
-        #main-content { height: auto !important; overflow-y: auto !important; }
+        #main-content { height: auto !important; overflow: visible !important; }
     </style>
 
     <!-- Extra head content from views -->
@@ -218,6 +218,12 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     }
     ?>
 
+    <?php if (!$isAdminPage): ?>
+    <div class="container-fluid px-0">
+        <?= (new \App\Services\AdManagerService())->renderSlot('header_banner') ?>
+    </div>
+    <?php endif; ?>
+
     <main>
         <?php if (!empty($_SESSION['flash_success'])): ?>
         <div class="container mt-3">
@@ -237,6 +243,12 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         <?php endif; ?>
         <?php echo $content ?? ''; ?>
     </main>
+
+    <?php if (!$isAdminPage): ?>
+    <div class="container-fluid px-0">
+        <?= (new \App\Services\AdManagerService())->renderSlot('footer_banner') ?>
+    </div>
+    <?php endif; ?>
 
     <?php
     if (!$isAdminPage) {

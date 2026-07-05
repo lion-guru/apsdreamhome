@@ -11,7 +11,7 @@
     </div>
     <div class="card-body aps-cp-card-body">
         <form method="POST" action="<?php echo BASE_URL; ?>/admin/team/<?php echo $isEdit ? 'update/' . $member['id'] : 'store'; ?>" enctype="multipart/form-data" class="needs-validation">
-                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
@@ -23,7 +23,33 @@
                 </div>
                 <div class="col-12">
                     <label class="form-label">Bio / Description</label>
-                    <textarea name="bio" class="form-control" rows="4"><?php echo htmlspecialchars($member['bio'] ?? ''); ?></textarea>
+                    <textarea name="bio" class="form-control" rows="3"><?php echo htmlspecialchars($member['bio'] ?? ''); ?></textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Category <span class="text-danger">*</span></label>
+                    <select name="category" class="form-select" required>
+                        <option value="">Select...</option>
+                        <option value="leadership" <?php echo (($member['category'] ?? '') === 'leadership') ? 'selected' : ''; ?>>Leadership</option>
+                        <option value="department" <?php echo (($member['category'] ?? '') === 'department') ? 'selected' : ''; ?>>Department Head</option>
+                        <option value="associate" <?php echo (($member['category'] ?? '') === 'associate') ? 'selected' : ''; ?>>President Associate</option>
+                        <option value="women_wing" <?php echo (($member['category'] ?? '') === 'women_wing') ? 'selected' : ''; ?>>Women Wing / Nari Shakti</option>
+                        <option value="tech_advisory" <?php echo (($member['category'] ?? '') === 'tech_advisory') ? 'selected' : ''; ?>>Tech / Advisory</option>
+                        <option value="college_ambassador" <?php echo (($member['category'] ?? '') === 'college_ambassador') ? 'selected' : ''; ?>>College Ambassador</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Group</label>
+                    <select name="group_name" class="form-select">
+                        <option value="">None</option>
+                        <option value="APS Warriors" <?php echo (($member['group_name'] ?? '') === 'APS Warriors') ? 'selected' : ''; ?>>APS Warriors</option>
+                        <option value="Dream Builders" <?php echo (($member['group_name'] ?? '') === 'Dream Builders') ? 'selected' : ''; ?>>Dream Builders</option>
+                        <option value="Nari Shakti" <?php echo (($member['group_name'] ?? '') === 'Nari Shakti') ? 'selected' : ''; ?>>Nari Shakti</option>
+                        <option value="Tech Pioneers" <?php echo (($member['group_name'] ?? '') === 'Tech Pioneers') ? 'selected' : ''; ?>>Tech Pioneers</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Experience</label>
+                    <input type="text" name="experience" class="form-control" value="<?php echo htmlspecialchars($member['experience'] ?? ''); ?>" placeholder="e.g. 10+ years">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Email</label>
@@ -33,17 +59,9 @@
                     <label class="form-label">Phone</label>
                     <input type="text" name="phone" class="form-control" value="<?php echo htmlspecialchars($member['phone'] ?? ''); ?>">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">LinkedIn URL</label>
-                    <input type="url" name="linkedin" class="form-control" value="<?php echo htmlspecialchars($member['linkedin'] ?? ''); ?>" placeholder="https://linkedin.com/in/...">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Expertise / Department</label>
-                    <input type="text" name="expertise" class="form-control" value="<?php echo htmlspecialchars($member['expertise'] ?? ''); ?>" placeholder="e.g. Sales, Legal, Marketing">
-                </div>
                 <div class="col-md-4">
-                    <label class="form-label">Experience</label>
-                    <input type="text" name="experience" class="form-control" value="<?php echo htmlspecialchars($member['experience'] ?? ''); ?>" placeholder="e.g. 10+ years">
+                    <label class="form-label">Expertise / Skills</label>
+                    <input type="text" name="expertise" class="form-control" value="<?php echo htmlspecialchars($member['expertise'] ?? ''); ?>" placeholder="e.g. Sales, Legal, Marketing">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Sort Order</label>
@@ -55,6 +73,18 @@
                         <option value="active" <?php echo (($member['status'] ?? 'active') === 'active') ? 'selected' : ''; ?>>Active</option>
                         <option value="inactive" <?php echo (($member['status'] ?? '') === 'inactive') ? 'selected' : ''; ?>>Inactive</option>
                     </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">LinkedIn URL</label>
+                    <input type="url" name="linkedin" class="form-control" value="<?php echo htmlspecialchars($member['linkedin'] ?? ''); ?>" placeholder="https://linkedin.com/in/...">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Facebook URL</label>
+                    <input type="url" name="facebook_url" class="form-control" value="<?php echo htmlspecialchars($member['facebook_url'] ?? ''); ?>" placeholder="https://facebook.com/...">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Instagram URL</label>
+                    <input type="url" name="instagram_url" class="form-control" value="<?php echo htmlspecialchars($member['instagram_url'] ?? ''); ?>" placeholder="https://instagram.com/...">
                 </div>
                 <div class="col-12">
                     <label class="form-label">Photo</label>

@@ -24,7 +24,8 @@
                         <th>Photo</th>
                         <th>Name</th>
                         <th>Position</th>
-                        <th>Email</th>
+                        <th>Category</th>
+                        <th>Group</th>
                         <th>Expertise</th>
                         <th>Order</th>
                         <th>Status</th>
@@ -33,7 +34,7 @@
                 </thead>
                 <tbody>
                     <?php if (empty($members)): ?>
-                    <tr><td colspan="9" class="text-center py-4 text-muted">No team members found.</td></tr>
+                    <tr><td colspan="10" class="text-center py-4 text-muted">No team members found.</td></tr>
                     <?php else: ?>
                     <?php foreach ($members as $i => $m): ?>
                     <tr>
@@ -47,7 +48,8 @@
                         </td>
                         <td class="fw-semibold"><?php echo htmlspecialchars($m['name'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($m['position'] ?? ''); ?></td>
-                        <td><a href="mailto:<?php echo htmlspecialchars($m['email'] ?? ''); ?>" class="text-decoration-none"><?php echo htmlspecialchars($m['email'] ?? '-'); ?></a></td>
+                        <td><span class="badge bg-info"><?php echo htmlspecialchars(ucwords(str_replace('_', ' ', $m['category'] ?? 'team'))); ?></span></td>
+                        <td><?php echo htmlspecialchars($m['group_name'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars($m['expertise'] ?? '-'); ?></td>
                         <td><?php echo (int)($m['sort_order'] ?? 0); ?></td>
                         <td>

@@ -4,7 +4,7 @@
  * Associate Dashboard View
  */
 
-$page_title = $page_title ?? 'Associate Dashboard';
+$page_title = $page_title ?? __('assoc_dashboard', [], 'Associate Dashboard');
 $current_page = 'dashboard';
 $referral_code = $referral_code ?? '';
 $associate_name = $associate_name ?? 'Associate';
@@ -50,8 +50,8 @@ $formatRank = function (?string $rank): string {
     <div class="d-flex align-items-center gap-3">
         <i class="fas fa-ticket-alt fa-2x text-white opacity-75"></i>
         <div>
-            <strong class="text-white d-block">Your Referral Code</strong>
-            <span class="small" style="color: rgba(255,255,255,0.7);">Share this code to earn rewards when others join</span>
+            <strong class="text-white d-block"><?php echo __('assoc_dash_referral_code', [], 'Your Referral Code'); ?></strong>
+            <span class="small" style="color: rgba(255,255,255,0.7);"><?php echo __('assoc_dash_share_rewards', [], 'Share this code to earn rewards when others join'); ?></span>
         </div>
     </div>
     <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -59,10 +59,10 @@ $formatRank = function (?string $rank): string {
             <?php echo htmlspecialchars($referral_code ?: 'N/A'); ?>
         </code>
         <button class="btn btn-light btn-sm px-3" onclick="copyReferralCode()">
-            <i class="fas fa-copy me-1"></i> Copy
+            <i class="fas fa-copy me-1"></i> <?php echo __('assoc_dash_copy', [], 'Copy'); ?>
         </button>
         <a href="<?php echo BASE_URL; ?>/become-associate" class="btn btn-light btn-sm px-3" target="_blank">
-            <i class="fas fa-external-link-alt me-1"></i> Share
+            <i class="fas fa-external-link-alt me-1"></i> <?php echo __('assoc_dash_share', [], 'Share'); ?>
         </a>
     </div>
 </div>
@@ -84,8 +84,8 @@ $formatRank = function (?string $rank): string {
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <h5 class="mb-1 text-white"><i class="fas fa-trophy me-2" style="color: #fbbf24;"></i>Rank Progress</h5>
-                        <p class="mb-0 text-white-50 small">Your journey to the next rank</p>
+                        <h5 class="mb-1 text-white"><i class="fas fa-trophy me-2" style="color: #fbbf24;"></i><?php echo __('assoc_dash_rank_progress', [], 'Rank Progress'); ?></h5>
+                        <p class="mb-0 text-white-50 small"><?php echo __('assoc_dash_rank_journey', [], 'Your journey to the next rank'); ?></p>
                     </div>
                     <div class="text-end">
                         <div class="d-flex align-items-center gap-2">
@@ -103,7 +103,7 @@ $formatRank = function (?string $rank): string {
                 <!-- Progress Bar -->
                 <div class="mb-3">
                     <div class="d-flex justify-content-between mb-1">
-                        <small class="text-white-50">Overall Progress</small>
+                        <small class="text-white-50"><?php echo __('assoc_dash_overall_progress', [], 'Overall Progress'); ?></small>
                         <small class="text-white fw-bold"><?php echo $rank_progress['progress_pct']; ?>%</small>
                     </div>
                     <div class="progress" style="height: 12px; background: rgba(255,255,255,0.15); border-radius: 6px;">
@@ -121,9 +121,9 @@ $formatRank = function (?string $rank): string {
                                 </div>
                             </div>
                             <div class="flex-grow-1">
-                                <div class="text-white-50 small">Group Business Volume</div>
+                                <div class="text-white-50 small"><?php echo __('assoc_dash_group_bv', [], 'Group Business Volume'); ?></div>
                                 <div class="fw-bold text-white">₹<?php echo number_format($rank_progress['current_gbv']); ?></div>
-                                <div class="text-white-50 small">Required: ₹<?php echo number_format($rank_progress['next_rank_gbv']); ?></div>
+                                <div class="text-white-50 small"><?php echo __('assoc_dash_required', [], 'Required'); ?>: ₹<?php echo number_format($rank_progress['next_rank_gbv']); ?></div>
                             </div>
                         </div>
                     </div>
@@ -135,9 +135,9 @@ $formatRank = function (?string $rank): string {
                                 </div>
                             </div>
                             <div class="flex-grow-1">
-                                <div class="text-white-50 small">Direct Legs</div>
+                                <div class="text-white-50 small"><?php echo __('assoc_dash_direct_legs', [], 'Direct Legs'); ?></div>
                                 <div class="fw-bold text-white"><?php echo $rank_progress['current_legs']; ?></div>
-                                <div class="text-white-50 small">Required: <?php echo $rank_progress['next_rank_legs']; ?></div>
+                                <div class="text-white-50 small"><?php echo __('assoc_dash_required', [], 'Required'); ?>: <?php echo $rank_progress['next_rank_legs']; ?></div>
                             </div>
                         </div>
                     </div>
@@ -153,8 +153,8 @@ $formatRank = function (?string $rank): string {
         <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #1e293b;">
             <div class="card-body p-4 text-center">
                 <i class="fas fa-crown fa-3x mb-3" style="color: #92400e;"></i>
-                <h4 class="mb-1">You've Reached the Highest Rank!</h4>
-                <p class="mb-0">Congratulations! You are at <strong><?php echo htmlspecialchars($formatRank($rank_progress['current_rank'])); ?></strong> — the top of the pyramid.</p>
+                <h4 class="mb-1"><?php echo __('assoc_dash_highest_rank', [], "You've Reached the Highest Rank!"); ?></h4>
+                <p class="mb-0"><?php echo __('assoc_dash_congrats', [], 'Congratulations! You are at'); ?> <strong><?php echo htmlspecialchars($formatRank($rank_progress['current_rank'])); ?></strong> &mdash; <?php echo __('assoc_dash_highest_rank_top', [], 'the top of the pyramid.'); ?></p>
             </div>
         </div>
     </div>
@@ -167,8 +167,8 @@ $formatRank = function (?string $rank): string {
         <div class="stat-card">
             <div class="stat-icon blue"><i class="fas fa-tag"></i></div>
             <div class="stat-value"><?php echo htmlspecialchars($formatRank($stats['mlm_level'])); ?></div>
-            <div class="stat-label">Your Rank</div>
-            <div class="stat-trend up"><i class="fas fa-arrow-up"></i> ₹<?php echo number_format($stats['team_sales']); ?> team sales</div>
+            <div class="stat-label"><?php echo __('assoc_dash_your_rank', [], 'Your Rank'); ?></div>
+            <div class="stat-trend up"><i class="fas fa-arrow-up"></i> ₹<?php echo number_format($stats['team_sales']); ?> <?php echo __('assoc_dash_team_sales', [], 'team sales'); ?></div>
         </div>
     </div>
     <div class="col-6 col-md-3">
@@ -176,9 +176,9 @@ $formatRank = function (?string $rank): string {
             <div class="stat-card clickable">
                 <div class="stat-icon green"><i class="fas fa-users"></i></div>
                 <div class="stat-value"><?php echo $stats['total_leads']; ?></div>
-                <div class="stat-label">Total Leads</div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <?php echo $stats['direct_referrals']; ?> direct referrals</div>
-                <div class="click-hint"><i class="fas fa-external-link-alt"></i> View All</div>
+                <div class="stat-label"><?php echo __('assoc_dash_total_leads', [], 'Total Leads'); ?></div>
+                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <?php echo $stats['direct_referrals']; ?> <?php echo __('assoc_dash_direct_refs_small', [], 'direct referrals'); ?></div>
+                <div class="click-hint"><i class="fas fa-external-link-alt"></i> <?php echo __('assoc_dash_view_all', [], 'View All'); ?></div>
             </div>
         </a>
     </div>
@@ -187,9 +187,9 @@ $formatRank = function (?string $rank): string {
             <div class="stat-card clickable">
                 <div class="stat-icon orange"><i class="fas fa-money-bill-wave"></i></div>
                 <div class="stat-value">₹<?php echo number_format($stats['total_commission']); ?></div>
-                <div class="stat-label">Total Commission</div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> ₹<?php echo number_format($stats['commission_this_month']); ?> this month</div>
-                <div class="click-hint"><i class="fas fa-external-link-alt"></i> View All</div>
+                <div class="stat-label"><?php echo __('assoc_dash_total_commission', [], 'Total Commission'); ?></div>
+                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> ₹<?php echo number_format($stats['commission_this_month']); ?> <?php echo __('assoc_dash_this_month', [], 'this month'); ?></div>
+                <div class="click-hint"><i class="fas fa-external-link-alt"></i> <?php echo __('assoc_dash_view_all', [], 'View All'); ?></div>
             </div>
         </a>
     </div>
@@ -198,9 +198,9 @@ $formatRank = function (?string $rank): string {
             <div class="stat-card clickable">
                 <div class="stat-icon purple"><i class="fas fa-sitemap"></i></div>
                 <div class="stat-value"><?php echo $stats['network_size']; ?></div>
-                <div class="stat-label">Network Size</div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <?php echo $stats['direct_referrals']; ?> direct, <?php echo $stats['level2_count']; ?> L2, <?php echo $stats['level3_count']; ?> L3</div>
-                <div class="click-hint"><i class="fas fa-external-link-alt"></i> View Network</div>
+                <div class="stat-label"><?php echo __('assoc_network_size', [], 'Network Size'); ?></div>
+                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> <?php echo $stats['direct_referrals']; ?> <?php echo __('assoc_dash_direct', [], 'direct'); ?>, <?php echo $stats['level2_count']; ?> L2, <?php echo $stats['level3_count']; ?> L3</div>
+                <div class="click-hint"><i class="fas fa-external-link-alt"></i> <?php echo __('assoc_dash_view_network', [], 'View Network'); ?></div>
             </div>
         </a>
     </div>
@@ -213,8 +213,8 @@ $formatRank = function (?string $rank): string {
             <div class="stat-card clickable">
                 <div class="stat-icon" style="background: rgba(16,185,129,0.1); color: #10b981;"><i class="fas fa-wallet"></i></div>
                 <div class="stat-value">₹<?php echo number_format($wallet_balance ?? 0); ?></div>
-                <div class="stat-label">Wallet Balance</div>
-                <div class="click-hint"><i class="fas fa-external-link-alt"></i> View Wallet</div>
+                <div class="stat-label"><?php echo __('assoc_dash_wallet_balance', [], 'Wallet Balance'); ?></div>
+                <div class="click-hint"><i class="fas fa-external-link-alt"></i> <?php echo __('assoc_dash_view_wallet', [], 'View Wallet'); ?></div>
             </div>
         </a>
     </div>
@@ -223,9 +223,9 @@ $formatRank = function (?string $rank): string {
             <div class="stat-card clickable">
                 <div class="stat-icon" style="background: rgba(59,130,246,0.1); color: #3b82f6;"><i class="fas fa-eye"></i></div>
                 <div class="stat-value"><?php echo number_format($property_views ?? 0); ?></div>
-                <div class="stat-label">Property Views</div>
-                <div class="stat-trend"><i class="fas fa-info-circle"></i> <?php echo number_format($total_inquiries ?? 0); ?> inquiries</div>
-                <div class="click-hint"><i class="fas fa-external-link-alt"></i> View Properties</div>
+                <div class="stat-label"><?php echo __('assoc_dash_property_views', [], 'Property Views'); ?></div>
+                <div class="stat-trend"><i class="fas fa-info-circle"></i> <?php echo number_format($total_inquiries ?? 0); ?> <?php echo __('assoc_dash_inquiries', [], 'inquiries'); ?></div>
+                <div class="click-hint"><i class="fas fa-external-link-alt"></i> <?php echo __('assoc_dash_view_properties', [], 'View Properties'); ?></div>
             </div>
         </a>
     </div>
@@ -233,13 +233,13 @@ $formatRank = function (?string $rank): string {
         <div class="stat-card">
             <div class="stat-icon" style="background: rgba(245,158,11,0.1); color: #f59e0b;"><i class="fas fa-file-invoice-dollar"></i></div>
             <div class="stat-value"><?php echo number_format($emi_summary['paid_emi'] ?? 0); ?>/<?php echo number_format($emi_summary['total_emi'] ?? 0); ?></div>
-            <div class="stat-label">EMI Paid/Total</div>
+            <div class="stat-label"><?php echo __('assoc_dash_emi_paid_total', [], 'EMI Paid/Total'); ?></div>
             <?php if (($emi_summary['overdue_emi'] ?? 0) > 0): ?>
-                <div class="stat-trend" style="color: #ef4444;"><i class="fas fa-exclamation-triangle"></i> <?php echo $emi_summary['overdue_emi']; ?> overdue</div>
+                <div class="stat-trend" style="color: #ef4444;"><i class="fas fa-exclamation-triangle"></i> <?php echo $emi_summary['overdue_emi']; ?> <?php echo __('assoc_dash_overdue', [], 'overdue'); ?></div>
             <?php elseif (($emi_summary['pending_emi'] ?? 0) > 0): ?>
-                <div class="stat-trend" style="color: #f59e0b;"><i class="fas fa-clock"></i> <?php echo $emi_summary['pending_emi']; ?> pending</div>
+                <div class="stat-trend" style="color: #f59e0b;"><i class="fas fa-clock"></i> <?php echo $emi_summary['pending_emi']; ?> <?php echo __('assoc_dash_pending', [], 'pending'); ?></div>
             <?php else: ?>
-                <div class="stat-trend up"><i class="fas fa-check-circle"></i> All clear</div>
+                <div class="stat-trend up"><i class="fas fa-check-circle"></i> <?php echo __('assoc_dash_all_clear', [], 'All clear'); ?></div>
             <?php endif; ?>
         </div>
     </div>
@@ -247,8 +247,8 @@ $formatRank = function (?string $rank): string {
         <div class="stat-card">
             <div class="stat-icon" style="background: rgba(20,184,166,0.1); color: #14b8a6;"><i class="fas fa-hand-holding-usd"></i></div>
             <div class="stat-value">₹<?php echo number_format($stats['pending_commission'] ?? 0); ?></div>
-            <div class="stat-label">Pending Commission</div>
-            <div class="stat-trend"><i class="fas fa-info-circle"></i> Awaiting approval</div>
+            <div class="stat-label"><?php echo __('assoc_dash_pending_commission', [], 'Pending Commission'); ?></div>
+            <div class="stat-trend"><i class="fas fa-info-circle"></i> <?php echo __('assoc_dash_awaiting_approval', [], 'Awaiting approval'); ?></div>
         </div>
     </div>
 </div>
@@ -261,32 +261,32 @@ $formatRank = function (?string $rank): string {
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-chart-line text-primary me-2"></i>Performance Overview</h5>
+                    <h5 class="card-title mb-0"><i class="fas fa-chart-line text-primary me-2"></i><?php echo __('assoc_dash_perf_overview', [], 'Performance Overview'); ?></h5>
                 </div>
             </div>
             <div class="card-body aps-cp-card-body">
                 <div class="row text-center mb-4">
                     <div class="col-3">
                         <h4 class="text-primary mb-1"><?php echo $stats['direct_referrals']; ?></h4>
-                        <small class="text-muted">Direct Referrals</small>
+                        <small class="text-muted"><?php echo __('assoc_direct_referrals', [], 'Direct Referrals'); ?></small>
                     </div>
                     <div class="col-3">
                         <h4 class="text-warning mb-1">₹<?php echo number_format($stats['pending_commission']); ?></h4>
-                        <small class="text-muted">Pending Commission</small>
+                        <small class="text-muted"><?php echo __('assoc_dash_pending_commission', [], 'Pending Commission'); ?></small>
                     </div>
                     <div class="col-3">
                         <h4 class="text-success mb-1">₹<?php echo number_format($stats['commission_this_month']); ?></h4>
-                        <small class="text-muted">Earned (30 days)</small>
+                        <small class="text-muted"><?php echo __('assoc_dash_earned_30d', [], 'Earned (30 days)'); ?></small>
                     </div>
                     <div class="col-3">
                         <h4 class="text-info mb-1"><?php echo $stats['network_size']; ?></h4>
-                        <small class="text-muted">Network Size</small>
+                        <small class="text-muted"><?php echo __('assoc_network_size', [], 'Network Size'); ?></small>
                     </div>
                 </div>
                 <div style="height: 200px; background: linear-gradient(90deg, #f8fafc 0%, #e2e8f0 50%, #f8fafc 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
                     <div class="text-center text-muted">
                         <i class="fas fa-chart-area fa-3x mb-3"></i>
-                        <p>Performance chart will be displayed here</p>
+                        <p><?php echo __('assoc_dash_chart_placeholder', [], 'Performance chart will be displayed here'); ?></p>
                     </div>
                 </div>
             </div>
@@ -297,14 +297,14 @@ $formatRank = function (?string $rank): string {
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-calendar-check text-success me-2"></i>Recent Bookings (Your Referrals)</h5>
+                    <h5 class="card-title mb-0"><i class="fas fa-calendar-check text-success me-2"></i><?php echo __('assoc_dash_recent_bookings', [], 'Recent Bookings (Your Referrals)'); ?></h5>
                 </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
-                            <tr><th>Customer</th><th>Plot</th><th>Amount</th><th>Status</th><th>Date</th></tr>
+                            <tr><th><?php echo __('assoc_dash_customer', [], 'Customer'); ?></th><th><?php echo __('assoc_dash_plot', [], 'Plot'); ?></th><th><?php echo __('assoc_dash_amount', [], 'Amount'); ?></th><th><?php echo __('assoc_dash_status', [], 'Status'); ?></th><th><?php echo __('assoc_dash_date', [], 'Date'); ?></th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($recent_bookings as $b): ?>
@@ -327,8 +327,8 @@ $formatRank = function (?string $rank): string {
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-users text-success me-2"></i>Recent Leads</h5>
-                    <a href="<?php echo BASE_URL; ?>/associate/leads" class="btn btn-sm btn-outline-primary">View All</a>
+                    <h5 class="card-title mb-0"><i class="fas fa-users text-success me-2"></i><?php echo __('assoc_dash_recent_leads', [], 'Recent Leads'); ?></h5>
+                    <a href="<?php echo BASE_URL; ?>/associate/leads" class="btn btn-sm btn-outline-primary"><?php echo __('assoc_dash_view_all', [], 'View All'); ?></a>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -336,12 +336,12 @@ $formatRank = function (?string $rank): string {
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th>Name</th>
-                                <th>Contact</th>
-                                <th>Interest</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Action</th>
+                                <th><?php echo __('assoc_dash_name', [], 'Name'); ?></th>
+                                <th><?php echo __('assoc_dash_contact', [], 'Contact'); ?></th>
+                                <th><?php echo __('assoc_dash_interest', [], 'Interest'); ?></th>
+                                <th><?php echo __('assoc_dash_status', [], 'Status'); ?></th>
+                                <th><?php echo __('assoc_dash_date', [], 'Date'); ?></th>
+                                <th><?php echo __('assoc_dash_action', [], 'Action'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -369,8 +369,8 @@ $formatRank = function (?string $rank): string {
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 py-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-money-bill-wave text-warning me-2"></i>Recent Commissions</h5>
-                    <a href="<?php echo BASE_URL; ?>/associate/commissions" class="btn btn-sm btn-outline-primary">View All</a>
+                    <h5 class="card-title mb-0"><i class="fas fa-money-bill-wave text-warning me-2"></i><?php echo __('assoc_dash_recent_commissions', [], 'Recent Commissions'); ?></h5>
+                    <a href="<?php echo BASE_URL; ?>/associate/commissions" class="btn btn-sm btn-outline-primary"><?php echo __('assoc_dash_view_all', [], 'View All'); ?></a>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -378,10 +378,10 @@ $formatRank = function (?string $rank): string {
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th>Type</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Date</th>
+                                <th><?php echo __('assoc_dash_type', [], 'Type'); ?></th>
+                                <th><?php echo __('assoc_dash_amount', [], 'Amount'); ?></th>
+                                <th><?php echo __('assoc_dash_status', [], 'Status'); ?></th>
+                                <th><?php echo __('assoc_dash_date', [], 'Date'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -408,21 +408,21 @@ $formatRank = function (?string $rank): string {
         <!-- Quick Actions -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-bolt text-warning me-2"></i><?php echo __('assoc_quick_actions', [], 'Quick Actions'); ?></h5>
             </div>
             <div class="card-body aps-cp-card-body">
                 <div class="d-grid gap-2">
                     <a href="<?php echo BASE_URL; ?>/associate/leads/add" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Add New Lead
+                        <i class="fas fa-plus me-2"></i><?php echo __('assoc_dash_add_lead', [], 'Add New Lead'); ?>
                     </a>
                     <a href="<?php echo BASE_URL; ?>/associate/genealogy" class="btn btn-outline-primary">
-                        <i class="fas fa-sitemap me-2"></i>View Network Tree
+                        <i class="fas fa-sitemap me-2"></i><?php echo __('assoc_dash_view_network_tree', [], 'View Network Tree'); ?>
                     </a>
                     <a href="<?php echo BASE_URL; ?>/become-associate" class="btn btn-outline-info" target="_blank">
-                        <i class="fas fa-share-alt me-2"></i>Promotion Page
+                        <i class="fas fa-share-alt me-2"></i><?php echo __('assoc_dash_promotion_page', [], 'Promotion Page'); ?>
                     </a>
                     <a href="<?php echo BASE_URL; ?>/associate/wallet/withdraw" class="btn btn-outline-success">
-                        <i class="fas fa-wallet me-2"></i>Withdraw Commission
+                        <i class="fas fa-wallet me-2"></i><?php echo __('assoc_dash_withdraw_commission', [], 'Withdraw Commission'); ?>
                     </a>
                 </div>
             </div>
@@ -431,7 +431,7 @@ $formatRank = function (?string $rank): string {
         <!-- Recent Activity -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-clock text-info me-2"></i>Recent Activity</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-clock text-info me-2"></i><?php echo __('assoc_dash_recent_activity', [], 'Recent Activity'); ?></h5>
             </div>
             <div class="card-body aps-cp-card-body">
                 <div class="activity-list">
@@ -455,33 +455,33 @@ $formatRank = function (?string $rank): string {
         <!-- Network Summary -->
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title mb-0"><i class="fas fa-network-wired text-purple me-2"></i>Network Summary</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-network-wired text-purple me-2"></i><?php echo __('assoc_dash_network_summary', [], 'Network Summary'); ?></h5>
             </div>
             <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between mb-3">
-                    <span class="text-muted"><i class="fas fa-user text-primary me-1"></i>Direct Referrals</span>
+                    <span class="text-muted"><i class="fas fa-user text-primary me-1"></i><?php echo __('assoc_direct_referrals', [], 'Direct Referrals'); ?></span>
                     <strong><?php echo $stats['direct_referrals']; ?></strong>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
-                    <span class="text-muted"><i class="fas fa-users text-info me-1"></i>Level 2</span>
+                    <span class="text-muted"><i class="fas fa-users text-info me-1"></i><?php echo __('assoc_dash_level_2', [], 'Level 2'); ?></span>
                     <strong><?php echo $stats['level2_count']; ?></strong>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
-                    <span class="text-muted"><i class="fas fa-users text-secondary me-1"></i>Level 3</span>
+                    <span class="text-muted"><i class="fas fa-users text-secondary me-1"></i><?php echo __('assoc_dash_level_3', [], 'Level 3'); ?></span>
                     <strong><?php echo $stats['level3_count']; ?></strong>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">Total Network</span>
+                    <span class="text-muted"><?php echo __('assoc_dash_total_network', [], 'Total Network'); ?></span>
                     <strong class="text-primary"><?php echo $stats['network_size']; ?></strong>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <span class="text-muted">Team Sales</span>
+                    <span class="text-muted"><?php echo __('assoc_dash_team_sales_title', [], 'Team Sales'); ?></span>
                     <strong class="text-success">₹<?php echo number_format($stats['team_sales']); ?></strong>
                 </div>
                 <div class="mt-3">
                     <a href="<?php echo BASE_URL; ?>/associate/genealogy" class="btn btn-sm btn-outline-primary w-100">
-                        <i class="fas fa-sitemap me-1"></i> View Full Genealogy
+                        <i class="fas fa-sitemap me-1"></i> <?php echo __('assoc_dash_view_genealogy', [], 'View Full Genealogy'); ?>
                     </a>
                 </div>
             </div>
@@ -495,7 +495,7 @@ function copyReferralCode() {
     if (code) {
         var text = code.textContent.trim();
         navigator.clipboard.writeText(text).then(function() {
-            alert('Referral code copied: ' + text);
+            alert('<?php echo __('assoc_dash_code_copied', [], 'Referral code copied:'); ?> ' + text);
         }).catch(function(err) {
             console.error('Copy failed', err);
         });

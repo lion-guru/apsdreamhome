@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\CRMService;
+
 class CRMController extends AdminController
 {
     public function index()
@@ -106,5 +108,62 @@ class CRMController extends AdminController
             $stats = ['total' => 0, 'open' => 0, 'in_progress' => 0, 'resolved' => 0];
         }
         return $this->render('admin/crm/support', ['tickets' => $tickets, 'stats' => $stats]);
+    }
+
+    /**
+     * CRM Analytics Dashboard — conversion funnel, source analytics, agent performance
+     */
+    public function analytics()
+    {
+        $this->requireAdmin();
+        $service = new CRMService();
+
+        $period = $_GET['period'] ?? '30d';
+        $funnel = $service->getConversionFunnel();
+        $sourceAnalytics = $service->getSourceAnalytics($period);
+        $agentPerformance = $service->getAgentPerformance();
+
+        // Pipeline value (weighted)
+        $pipelineValue = ['total' => 0, 'by_stage' => []];
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $deals = $db->query("SELECT stage, COUNT(*) as cnt, SUM(deal_value) as total_value, SUM(CASE WHEN stage IN ('won','booking') THEN deal_value ELSE 0 END) as won_value FROM lead_deals GROUP BY stage")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            foreach ($deals as $d) {
+                $pipelineValue['total'] += (float)($d['total_value'] ?? 0);
+                $pipelineValue['by_stage'][] = [
+                    'stage' => $d['stage'],
+                    'count' => (int)$d['cnt'],
+                    'value' => (float)($d['total_value'] ?? 0),
+                    'won_value' => (float)($d['won_value'] ?? 0),
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        return $this->render('admin/crm/analytics', [
+            'funnel' => $funnel,
+            'source_analytics' => $sourceAnalytics,
+            'agent_performance' => $agentPerformance,
+            'pipeline_value' => $pipelineValue,
+            'current_period' => $period,
+            'page_title' => 'CRM Analytics',
+        ]);
+    }
+
+    /**
+     * Lead Timeline — full activity timeline for a lead
+     */
+    public function leadTimeline($leadId)
+    {
+        $this->requireAdmin();
+        $service = new CRMService();
+
+        $lead = $service->getLeadById((int)$leadId);
+        $timeline = $service->getLeadTimeline((int)$leadId, 100);
+
+        return $this->render('admin/crm/lead_timeline', [
+            'lead' => $lead,
+            'timeline' => $timeline,
+            'page_title' => 'Lead Timeline',
+        ]);
     }
 }

@@ -848,12 +848,13 @@ class BookingLifecycleController extends AdminController
     private function fetchAvailablePlots(bool $includeBooked = false): array
     {
         try {
-            $sql = "SELECT p.id, p.plot_number, p.plot_code, p.area_sqft, p.total_price, c.name AS colony_name
+            $sql = "SELECT p.id, p.plot_number, p.plot_code, p.area_sqft, p.total_price, p.block,
+                           p.colony_id, c.name AS colony_name
                     FROM plots p
                     LEFT JOIN colonies c ON c.id = p.colony_id
                     " . ($includeBooked ? '' : "WHERE p.status = 'available'") . "
                     ORDER BY c.name, p.plot_number
-                    LIMIT 200";
+                    LIMIT 500";
             return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());

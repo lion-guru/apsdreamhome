@@ -704,7 +704,7 @@ class Router
 
         if (!str_contains($class, '\\')) {
             $class = 'App\\Http\\Controllers\\' . $class;
-        } elseif (str_starts_with($class, 'Admin\\') || str_starts_with($class, 'Associate\\') || str_starts_with($class, 'Api\\') || str_starts_with($class, 'Front\\')) {
+        } elseif (str_starts_with($class, 'Admin\\') || str_starts_with($class, 'Associate\\') || str_starts_with($class, 'Api\\') || str_starts_with($class, 'Front\\') || str_starts_with($class, 'Career\\')) {
             $class = 'App\\Http\\Controllers\\' . $class;
         }
 

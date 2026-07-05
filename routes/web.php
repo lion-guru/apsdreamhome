@@ -89,7 +89,6 @@ $router->get('/public/', function () {
 $router->get('/about', 'Front\\PageController@about');
 $router->get('/contact', 'Front\\PageController@contact');
 $router->post('/contact', 'Front\\PageController@contact');
-$router->get('/services', 'Front\\PageController@services');
 $router->get('/team', 'Front\\PageController@team');
 $router->get('/opportunity', 'Front\\PageController@opportunity');
 $router->get('/our-team', function () {
@@ -350,6 +349,8 @@ $router->get('/booking/{id}/pay', 'Front\\PlotController@payBooking');
 $router->post('/booking/{id}/pay', 'Front\\PlotController@processPayment');
 $router->get('/booking/{id}/receipt', 'Front\\PlotController@receipt');
 $router->get('/colony/{slug}/plots', 'Front\\PlotController@colonyPlots');
+$router->get('/colony/{slug}/map', 'App\\Http\\Controllers\\MapController@colonyPlotMap');
+$router->get('/api/colony/{id}/map/geojson', 'App\\Http\\Controllers\\MapController@colonyGeoJson');
 $router->get('/colony/raghunath-nagri/block-c-dashboard', 'Front\\ColonyDashboardController@raghunathBlockC');
 $router->post('/api/colony/raghunath-nagri/sync-booking', 'Front\\ColonyDashboardController@syncBookingFromFirebase');
 $router->get('/api/colony/raghunath-nagri/bookings', 'Front\\ColonyDashboardController@getBlockCBookings');
@@ -443,6 +444,20 @@ $router->get('/financial-services', 'Front\\PageController@financialServices');
 $router->get('/interior-design', 'Front\\PageController@interiorDesign');
 $router->get('/construction-services', 'Front\\PageController@constructionServices');
 $router->post('/construction-services/inquiry', 'Front\\PageController@constructionInquiry');
+
+// Services Directory (Real Estate Business Directory)
+$router->get('/services', 'Front\\DirectoryController@index');
+$router->get('/services/submit', 'Front\\DirectoryController@submitListing');
+$router->post('/services/submit', 'Front\\DirectoryController@submitListing');
+$router->get('/services/categories', 'Front\\DirectoryController@apiCategories');
+$router->get('/services/listing/{id}', 'Front\\DirectoryController@detail');
+$router->post('/services/add-review', 'Front\\DirectoryController@addReview');
+$router->get('/services/jobs', 'Front\\DirectoryController@jobs');
+$router->get('/services/jobs/post', 'Front\\DirectoryController@postJob');
+$router->post('/services/jobs/post', 'Front\\DirectoryController@postJob');
+$router->get('/services/materials', 'Front\\DirectoryController@materials');
+$router->get('/services/{slug}', 'Front\\DirectoryController@category');
+
 $router->get('/legal/terms-conditions', 'Front\\PageController@legalTermsConditions');
 $router->get('/legal/services', 'Front\\PageController@legalServices');
 $router->get('/legal/documents', 'Front\\PageController@legalDocuments');
@@ -450,6 +465,8 @@ $router->get('/user/edit-profile', 'Front\\PageController@userEditProfile');
 $router->get('/user/logout', 'Auth\\CustomerAuthController@logout');
 $router->get('/user/dashboard', 'Front\\UserController@dashboard');
 $router->get('/user/properties', 'Front\\UserController@myProperties');
+$router->get('/user/boost-property/{id}', 'Front\\UserPackageController@boost');
+$router->post('/user/boost-property/purchase', 'Front\\UserPackageController@purchase');
 $router->get('/user/bookings', 'Front\\UserController@userBookings');
 $router->get('/user/bookings/new', 'Front\\UserController@newBooking');
 $router->post('/user/bookings/create', 'Front\\UserController@createBooking');
@@ -524,6 +541,8 @@ $router->get('/news/view/{id}', 'Front\\PageController@newsView');
 $router->post('/property/review', 'Front\\PageController@reviewSubmit');
 $router->get('/property/{id}', 'Front\\PageController@propertyDetails');
 $router->get('/listing/{id}', 'Front\\PageController@userPropertyDetail');
+$router->get('/marketplace', 'Front\\MarketplaceController@index');
+$router->get('/marketplace/{id}', 'Front\\MarketplaceController@detail');
 
 $router->get('/admin/saved-searches', 'App\\Http\\Controllers\\Admin\\SavedSearchController@index');
 $router->post('/admin/saved-searches/store', 'App\\Http\\Controllers\\Admin\\SavedSearchController@store');
@@ -802,6 +821,9 @@ $router->get('/associate/export/my-earnings', 'Associate\ExportController@myEarn
 $router->get('/associate/export/active-team', 'Associate\ExportController@activeTeam');
 $router->get('/associate/export/my-payouts', 'Associate\ExportController@myPayouts');
 $router->get('/associate/export/downline', 'Associate\ExportController@downline');
+
+// Associate Colony Map
+$router->get('/associate/colonies/{id}/map', 'App\\Http\\Controllers\\AssociateController@colonyMap');
 $router->get('/associate/export/new-directs', 'Associate\ExportController@newDirects');
 $router->get('/associate/export/plot-sales', 'Associate\ExportController@plotSales');
 $router->get('/associate/export/registry', 'Associate\ExportController@registry');
@@ -1943,6 +1965,8 @@ $router->get('/admin/colony-pipeline/{id}/costs',                             'A
 $router->post('/admin/colony-pipeline/{id}/costs/store',                      'App\\Http\\Controllers\\Admin\\ColonyPipelineController@storeCost');
 $router->get('/admin/colony-pipeline/{id}/plots',                             'App\\Http\\Controllers\\Admin\\ColonyPipelineController@plotList');
 $router->get('/admin/colony-pipeline/{id}/plots/stats',                       'App\\Http\\Controllers\\Admin\\ColonyPipelineController@plotStats');
+$router->get('/admin/colony-pipeline/{id}/map',                              'App\\Http\\Controllers\\Admin\\ColonyPipelineController@plotMap');
+$router->get('/admin/colony-pipeline/{id}/map/geojson',                      'App\\Http\\Controllers\\Admin\\ColonyPipelineController@plotMapGeoJson');
 
 // ============================================================
 // COLONY FEASIBILITY & PRICING ENGINE
@@ -2352,6 +2376,9 @@ $router->post('/admin/whatsapp-broadcast', 'App\\Http\\Controllers\\Admin\\Campa
 $router->get('/admin/referrals', 'App\\Http\\Controllers\\Admin\\ReferralController@index');
 $router->get('/admin/referrals/create', 'App\\Http\\Controllers\\Admin\\ReferralController@create');
 $router->post('/admin/referrals/store', 'App\\Http\\Controllers\\Admin\\ReferralController@store');
+$router->get('/admin/referrals/leaderboard', 'App\\Http\\Controllers\\Admin\\ReferralController@leaderboard');
+$router->get('/admin/referrals/share-analytics', 'App\\Http\\Controllers\\Admin\\ReferralController@shareAnalytics');
+$router->get('/admin/referrals/tiers', 'App\\Http\\Controllers\\Admin\\ReferralController@tiers');
 $router->get('/admin/referrals/{id}', 'App\\Http\\Controllers\\Admin\\ReferralController@show');
 $router->post('/admin/referrals/{id}/approve', 'App\\Http\\Controllers\\Admin\\ReferralController@approve');
 $router->post('/admin/referrals/{id}/reject', 'App\\Http\\Controllers\\Admin\\ReferralController@reject');
@@ -2366,7 +2393,6 @@ $router->get('/admin/support-tickets/{id}', 'App\\Http\\Controllers\\Admin\\Supp
 $router->post('/admin/support-tickets/{id}/reply', 'App\\Http\\Controllers\\Admin\\SupportTicketController@reply');
 $router->post('/admin/support-tickets/{id}/assign', 'App\\Http\\Controllers\\Admin\\SupportTicketController@assign');
 $router->post('/admin/support-tickets/{id}/status', 'App\\Http\\Controllers\\Admin\\SupportTicketController@updateStatus');
-$router->get('/admin/meetings', 'App\\Http\\Controllers\\Admin\\MeetingController@index');
 $router->get('/admin/documents', 'App\\Http\\Controllers\\Admin\\DocumentController@index');
 $router->get('/admin/documents/upload', 'App\\Http\\Controllers\\Admin\\DocumentController@upload');
 $router->post('/admin/documents/store', 'App\\Http\\Controllers\\Admin\\DocumentController@store');
@@ -2424,10 +2450,41 @@ $router->get('/admin/telecalling/approvals', 'App\\Http\\Controllers\\Employee\\
 
 // CRM
 $router->get('/admin/crm', 'App\\Http\\Controllers\\Admin\\CRMController@index');
+$router->get('/admin/crm/analytics', 'App\\Http\\Controllers\\Admin\\CRMController@analytics');
+$router->get('/admin/crm/leads/{id}/timeline', 'App\\Http\\Controllers\\Admin\\CRMController@leadTimeline');
 $router->get('/admin/crm/users', 'App\\Http\\Controllers\\Admin\\CRMController@users');
 $router->get('/admin/crm/users/create', 'App\\Http\\Controllers\\Admin\\CRMController@createCustomer');
 $router->get('/admin/crm/groups', 'App\\Http\\Controllers\\Admin\\CRMController@groups');
 $router->get('/admin/crm/followups', 'App\\Http\\Controllers\\Admin\\CRMController@followups');
+
+// CRM - Email/SMS Templates
+$router->get('/admin/crm/templates', 'App\\Http\\Controllers\\Admin\\CRMTemplateController@index');
+$router->get('/admin/crm/templates/create', 'App\\Http\\Controllers\\Admin\\CRMTemplateController@create');
+$router->post('/admin/crm/templates/store', 'App\\Http\\Controllers\\Admin\\CRMTemplateController@store');
+$router->get('/admin/crm/templates/{id}/edit', 'App\\Http\\Controllers\\Admin\\CRMTemplateController@edit');
+$router->post('/admin/crm/templates/{id}/update', 'App\\Http\\Controllers\\Admin\\CRMTemplateController@update');
+$router->post('/admin/crm/templates/{id}/delete', 'App\\Http\\Controllers\\Admin\\CRMTemplateController@delete');
+
+// CRM - Bulk Email/SMS
+$router->get('/admin/crm/bulk-send', 'App\\Http\\Controllers\\Admin\\CRMBulkController@index');
+$router->post('/admin/crm/bulk-send/preview', 'App\\Http\\Controllers\\Admin\\CRMBulkController@preview');
+$router->post('/admin/crm/bulk-send/send', 'App\\Http\\Controllers\\Admin\\CRMBulkController@send');
+
+// CRM - Lead Segmentation
+$router->get('/admin/crm/segments', 'App\\Http\\Controllers\\Admin\\CRMSegmentController@index');
+$router->post('/admin/crm/segments/store', 'App\\Http\\Controllers\\Admin\\CRMSegmentController@store');
+$router->post('/admin/crm/segments/{id}/delete', 'App\\Http\\Controllers\\Admin\\CRMSegmentController@delete');
+$router->get('/admin/crm/segments/{id}/leads', 'App\\Http\\Controllers\\Admin\\CRMSegmentController@leads');
+
+// CRM - Lead Forms
+$router->get('/admin/crm/forms', 'App\\Http\\Controllers\\Admin\\CRMFormController@index');
+$router->get('/admin/crm/forms/create', 'App\\Http\\Controllers\\Admin\\CRMFormController@create');
+$router->post('/admin/crm/forms/store', 'App\\Http\\Controllers\\Admin\\CRMFormController@store');
+$router->get('/admin/crm/forms/{id}/edit', 'App\\Http\\Controllers\\Admin\\CRMFormController@edit');
+$router->post('/admin/crm/forms/{id}/update', 'App\\Http\\Controllers\\Admin\\CRMFormController@update');
+$router->post('/admin/crm/forms/{id}/delete', 'App\\Http\\Controllers\\Admin\\CRMFormController@delete');
+$router->get('/admin/crm/forms/{id}/preview', 'App\\Http\\Controllers\\Admin\\CRMFormController@preview');
+$router->get('/admin/crm/forms/{id}/embed', 'App\\Http\\Controllers\\Admin\\CRMFormController@embedCode');
 
 // CRM - Lead Import
 $router->get('/admin/leads/import', 'App\\Http\\Controllers\\Admin\\LeadImportController@importForm');
@@ -2439,6 +2496,85 @@ $router->get('/admin/crm/outreach', 'App\\Http\\Controllers\\Admin\\BulkOutreach
 $router->post('/admin/crm/outreach/create', 'App\\Http\\Controllers\\Admin\\BulkOutreachController@createCampaign');
 $router->post('/admin/crm/outreach/{id}/send', 'App\\Http\\Controllers\\Admin\\BulkOutreachController@sendCampaign');
 $router->get('/admin/crm/outreach/{id}/stats', 'App\\Http\\Controllers\\Admin\\BulkOutreachController@campaignStats');
+
+// CRM - Agentic AI
+$router->get('/admin/crm/agentic', 'App\\Http\\Controllers\\Admin\\AgenticCRMController@index');
+$router->post('/admin/crm/agentic/auto-followup', 'App\\Http\\Controllers\\Admin\\AgenticCRMController@runAutoFollowup');
+$router->post('/admin/crm/agentic/score-recalc', 'App\\Http\\Controllers\\Admin\\AgenticCRMController@runScoreRecalculation');
+$router->post('/admin/crm/agentic/auto-assign', 'App\\Http\\Controllers\\Admin\\AgenticCRMController@runAutoAssignment');
+$router->post('/admin/crm/agentic/insights', 'App\\Http\\Controllers\\Admin\\AgenticCRMController@generateInsights');
+$router->post('/admin/crm/agentic/run-all', 'App\\Http\\Controllers\\Admin\\AgenticCRMController@runAll');
+
+// AI System — Unified Dashboard + 5 Agents
+$router->get('/admin/ai-system', 'App\\Http\\Controllers\\Admin\\AISystemController@index');
+$router->post('/admin/ai-system/run', 'App\\Http\\Controllers\\Admin\\AISystemController@runAgent');
+$router->get('/admin/ai-system/qualifier', 'App\\Http\\Controllers\\Admin\\AISystemController@qualifier');
+$router->get('/admin/ai-system/market-report', 'App\\Http\\Controllers\\Admin\\AISystemController@marketReport');
+$router->get('/admin/ai-system/settings', 'App\\Http\\Controllers\\Admin\\AISystemController@settings');
+$router->post('/admin/ai-system/settings', 'App\\Http\\Controllers\\Admin\\AISystemController@settings');
+$router->post('/api/ai/chat', 'App\\Http\\Controllers\\Admin\\AISystemController@chat');
+
+// CRM — Role-Based Dashboard + Dedup
+$router->get('/admin/crm/role-dashboard', 'App\\Http\\Controllers\\Admin\\CRMAdminController@roleDashboard');
+$router->get('/admin/crm/dedup', 'App\\Http\\Controllers\\Admin\\CRMAdminController@dedup');
+$router->post('/admin/crm/dedup/merge', 'App\\Http\\Controllers\\Admin\\CRMAdminController@merge');
+$router->post('/admin/crm/dedup/bulk-merge', 'App\\Http\\Controllers\\Admin\\CRMAdminController@bulkMerge');
+
+// ============================================================
+// CRM - Custom Fields
+// ============================================================
+$router->get('/admin/crm/custom-fields', 'App\\Http\\Controllers\\Admin\\CRMCustomFieldController@index');
+$router->get('/admin/crm/custom-fields/create', 'App\\Http\\Controllers\\Admin\\CRMCustomFieldController@create');
+$router->post('/admin/crm/custom-fields/store', 'App\\Http\\Controllers\\Admin\\CRMCustomFieldController@store');
+$router->get('/admin/crm/custom-fields/{id}/edit', 'App\\Http\\Controllers\\Admin\\CRMCustomFieldController@edit');
+$router->post('/admin/crm/custom-fields/{id}/update', 'App\\Http\\Controllers\\Admin\\CRMCustomFieldController@update');
+$router->post('/admin/crm/custom-fields/{id}/delete', 'App\\Http\\Controllers\\Admin\\CRMCustomFieldController@delete');
+
+// ============================================================
+// CRM - SLA Tracking
+// ============================================================
+$router->get('/admin/crm/sla', 'App\\Http\\Controllers\\Admin\\SLAController@dashboard');
+$router->get('/admin/crm/sla/rules', 'App\\Http\\Controllers\\Admin\\SLAController@rules');
+$router->post('/admin/crm/sla/rules/store', 'App\\Http\\Controllers\\Admin\\SLAController@storeRule');
+$router->get('/admin/crm/sla/breach-log', 'App\\Http\\Controllers\\Admin\\SLAController@breachLog');
+
+// ============================================================
+// CRM - Email Tracking
+// ============================================================
+$router->get('/admin/crm/email-tracking/stats', 'App\\Http\\Controllers\\Admin\\EmailTrackingController@stats');
+$router->get('/api/email/track/open/{id}', 'App\\Http\\Controllers\\Admin\\EmailTrackingController@trackOpen');
+$router->get('/api/email/track/click/{id}', 'App\\Http\\Controllers\\Admin\\EmailTrackingController@trackClick');
+
+// ============================================================
+// CRM - Meetings
+// ============================================================
+$router->get('/admin/meetings', 'App\\Http\\Controllers\\Admin\\MeetingController@index');
+$router->get('/admin/meetings/schedule', 'App\\Http\\Controllers\\Admin\\MeetingController@schedule');
+$router->post('/admin/meetings/store', 'App\\Http\\Controllers\\Admin\\MeetingController@store');
+$router->get('/admin/meetings/{id}', 'App\\Http\\Controllers\\Admin\\MeetingController@show');
+$router->post('/admin/meetings/{id}/update', 'App\\Http\\Controllers\\Admin\\MeetingController@update');
+$router->post('/admin/meetings/{id}/cancel', 'App\\Http\\Controllers\\Admin\\MeetingController@cancel');
+$router->post('/admin/meetings/{id}/complete', 'App\\Http\\Controllers\\Admin\\MeetingController@complete');
+$router->get('/admin/meetings/calendar', 'App\\Http\\Controllers\\Admin\\MeetingController@calendar');
+
+// ============================================================
+// CRM - Voice CRM
+// ============================================================
+$router->get('/admin/crm/voice', 'App\\Http\\Controllers\\Admin\\CRMVoiceController@index');
+$router->get('/admin/crm/voice/call/{id}', 'App\\Http\\Controllers\\Admin\\CRMVoiceController@callLead');
+$router->post('/admin/crm/voice/note', 'App\\Http\\Controllers\\Admin\\CRMVoiceController@dictateNote');
+$router->post('/admin/crm/voice/command', 'App\\Http\\Controllers\\Admin\\CRMVoiceController@voiceCommand');
+
+// ============================================================
+// CRM - Drip Campaigns (CRM path)
+// ============================================================
+$router->get('/admin/crm/drip', 'App\\Http\\Controllers\\Admin\\DripCampaignController@index');
+$router->get('/admin/crm/drip/create', 'App\\Http\\Controllers\\Admin\\DripCampaignController@create');
+$router->post('/admin/crm/drip/store', 'App\\Http\\Controllers\\Admin\\DripCampaignController@store');
+$router->get('/admin/crm/drip/{id}', 'App\\Http\\Controllers\\Admin\\DripCampaignController@show');
+$router->get('/admin/crm/drip/{id}/edit', 'App\\Http\\Controllers\\Admin\\DripCampaignController@create');
+$router->post('/admin/crm/drip/{id}/update', 'App\\Http\\Controllers\\Admin\\DripCampaignController@store');
+$router->get('/admin/crm/drip/{id}/delete', 'App\\Http\\Controllers\\Admin\\DripCampaignController@delete');
 
 // CRM - Share Analytics
 $router->get('/admin/crm/shares', 'App\\Http\\Controllers\\Front\\ShareController@shareStats');
@@ -2466,6 +2602,25 @@ $router->get('/ad-click/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerControll
 // Ad settings
 $router->get('/admin/ads/settings', 'App\\Http\\Controllers\\Admin\\AdManagerController@settings');
 $router->post('/admin/ads/save-settings', 'App\\Http\\Controllers\\Admin\\AdManagerController@saveSettings');
+
+// Directory Management
+$router->get('/admin/directory', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@index');
+$router->get('/admin/directory/categories', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@categories');
+$router->post('/admin/directory/categories', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@categories');
+$router->get('/admin/directory/delete-category/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteCategory');
+$router->get('/admin/directory/listings', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@listings');
+$router->get('/admin/directory/listing-form/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@listingForm');
+$router->post('/admin/directory/listing-form/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@listingForm');
+$router->get('/admin/directory/listing-form', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@listingForm');
+$router->post('/admin/directory/listing-form', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@listingForm');
+$router->get('/admin/directory/delete-listing/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteListing');
+$router->get('/admin/directory/reviews', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@reviews');
+$router->get('/admin/directory/approve-review/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@approveReview');
+$router->get('/admin/directory/reject-review/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@rejectReview');
+$router->get('/admin/directory/jobs', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@jobs');
+$router->get('/admin/directory/delete-job/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteJob');
+$router->get('/admin/directory/materials', 'App\Http\Controllers\Admin\AdminDirectoryController@materials');
+$router->get('/admin/directory/delete-material/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteMaterial');
 
 // Jobs & Applicants
 $router->get('/admin/jobs', 'App\\Http\\Controllers\\Admin\\CareerController@index');
@@ -2876,7 +3031,11 @@ $router->post('/admin/sim-calling/api/hangup',          'App\\Http\\Controllers\
 $router->get('/admin/agentic-ai',                     'App\\Http\\Controllers\\Admin\\AgenticAIController@index');
 $router->get('/admin/agentic-ai/auto-reply',          'App\\Http\\Controllers\\Admin\\AgenticAIController@autoReply');
 $router->post('/admin/agentic-ai/auto-reply',         'App\\Http\\Controllers\\Admin\\AgenticAIController@autoReply');
+$router->get('/admin/agentic-ai/conversations',       'App\\Http\\Controllers\\Admin\\AgenticAIController@conversations');
 $router->get('/admin/agentic-ai/conversation/{id}',   'App\\Http\\Controllers\\Admin\\AgenticAIController@conversation');
+$router->get('/admin/agentic-ai/agent/{type}',        'App\\Http\\Controllers\\Admin\\AgenticAIController@agent');
+$router->get('/admin/agentic-ai/logs',                'App\\Http\\Controllers\\Admin\\AgenticAIController@logs');
+$router->post('/admin/agentic-ai/run-all',             'App\\Http\\Controllers\\Admin\\AgenticAIController@runAll');
 $router->post('/admin/agentic-ai/api/send',           'App\\Http\\Controllers\\Admin\\AgenticAIController@sendMessage');
 $router->post('/admin/agentic-ai/api/claim',          'App\\Http\\Controllers\\Admin\\AgenticAIController@claimConversation');
 $router->post('/admin/agentic-ai/api/resolve',        'App\\Http\\Controllers\\Admin\\AgenticAIController@resolveConversation');
@@ -2991,6 +3150,14 @@ $router->post('/admin/telecaller/performance/update', 'App\\Http\\Controllers\\A
 // MARKETPLACE, COMPLIANCE, DEVELOPER, ANALYTICS, PERFORMANCE, SECURITY
 // ═══════════════════════════════════════════════════
 $router->get('/admin/marketplace', 'App\\Http\\Controllers\\Admin\\AdminMarketplaceController@index');
+$router->post('/admin/marketplace/toggle-featured', 'App\\Http\\Controllers\\Admin\\AdminMarketplaceController@toggleFeatured');
+$router->post('/admin/marketplace/toggle-urgent', 'App\\Http\\Controllers\\Admin\\AdminMarketplaceController@toggleUrgent');
+$router->get('/admin/premium-packages', 'App\\Http\\Controllers\\Admin\\AdminPackageController@index');
+$router->get('/admin/premium-packages/create', 'App\\Http\\Controllers\\Admin\\AdminPackageController@create');
+$router->post('/admin/premium-packages/create', 'App\\Http\\Controllers\\Admin\\AdminPackageController@create');
+$router->get('/admin/premium-packages/edit/{id}', 'App\\Http\\Controllers\\Admin\\AdminPackageController@edit');
+$router->post('/admin/premium-packages/edit/{id}', 'App\\Http\\Controllers\\Admin\\AdminPackageController@edit');
+$router->post('/admin/premium-packages/delete/{id}', 'App\\Http\\Controllers\\Admin\\AdminPackageController@delete');
 $router->get('/admin/compliance', 'App\\Http\\Controllers\\Admin\\AdminComplianceController@index');
 $router->get('/admin/developer', 'App\\Http\\Controllers\\Admin\\AdminDeveloperController@index');
 $router->get('/admin/analytics/advanced', 'App\\Http\\Controllers\\Admin\\AnalyticsController@advanced');
@@ -3803,6 +3970,7 @@ $router->get('/admin/report-center', 'App\\Http\\Controllers\\Reports\\ReportCon
 
 // Careers Management (Career\CareerController)
 $router->get('/careers', 'Career\\CareerController@index');
+$router->post('/careers/submit-application', 'Career\\CareerController@submitApplication');
 // /careers/apply (GET + POST) is registered earlier at lines 192-193 -> Front\PageController
 // (PageController wins because the router uses first-registered handler)
 $router->get('/careers/thank-you', 'Career\\CareerController@thankYou');

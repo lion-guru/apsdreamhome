@@ -8,13 +8,17 @@ $totalViews = $totalViews ?? 0;
 $topLocations = $topLocations ?? [];
 $recentListings = $recentListings ?? [];
 $typeDistribution = $typeDistribution ?? [];
+$premiumStats = $premiumStats ?? ['featured' => 0, 'urgent' => 0, 'premium' => 0, 'packages_active' => 0, 'package_revenue' => 0];
+$featuredListings = $featuredListings ?? [];
+$urgentListings = $urgentListings ?? [];
+$base = defined('BASE_URL') ? BASE_URL : '';
 ?>
 <div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="mb-0"><i class="fas fa-store me-2 text-primary"></i>Marketplace - Resell Properties</h2>
         <div>
-            <a href="<?= BASE_URL ?>/admin/user-properties" class="btn btn-outline-primary btn-sm"><i class="fas fa-list me-1"></i>All Properties</a>
-            <a href="<?= BASE_URL ?>/admin/resell-properties" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Resell Listings</a>
+            <a href="<?= $base ?>/admin/user-properties" class="btn btn-outline-primary btn-sm"><i class="fas fa-list me-1"></i>All Properties</a>
+            <a href="<?= $base ?>/admin/premium-packages" class="btn btn-outline-warning btn-sm"><i class="fas fa-crown me-1"></i>Premium Packages</a>
         </div>
     </div>
 
@@ -62,23 +66,49 @@ $typeDistribution = $typeDistribution ?? [];
         </div>
         <div class="col-md-4">
             <div class="aps-cp-card">
-                <div class="aps-cp-card-header"><i class="fas fa-chart-pie me-2"></i>Status Breakdown</div>
+                <div class="aps-cp-card-header"><i class="fas fa-crown me-2 text-warning"></i>Premium Stats</div>
                 <div class="aps-cp-card-body">
-                    <?php $total = $activeListings + $pendingApprovals + $soldCount; ?>
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between"><small>Active Listings</small><small><?= $activeListings ?></small></div>
-                        <div class="progress" style="height:10px"><div class="progress-bar bg-success" style="width:<?= $total > 0 ? round($activeListings/$total*100) : 0 ?>%"></div></div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between"><small>Pending Approval</small><small><?= $pendingApprovals ?></small></div>
-                        <div class="progress" style="height:10px"><div class="progress-bar bg-warning" style="width:<?= $total > 0 ? round($pendingApprovals/$total*100) : 0 ?>%"></div></div>
-                    </div>
-                    <div>
-                        <div class="d-flex justify-content-between"><small>Sold</small><small><?= $soldCount ?></small></div>
-                        <div class="progress" style="height:10px"><div class="progress-bar bg-info" style="width:<?= $total > 0 ? round($soldCount/$total*100) : 0 ?>%"></div></div>
-                    </div>
+                    <div class="d-flex justify-content-between mb-2"><small><i class="fas fa-star text-warning me-1"></i>Featured</small><span class="badge bg-warning"><?= $premiumStats['featured'] ?></span></div>
+                    <div class="d-flex justify-content-between mb-2"><small><i class="fas fa-bolt text-danger me-1"></i>Urgent</small><span class="badge bg-danger"><?= $premiumStats['urgent'] ?></span></div>
+                    <div class="d-flex justify-content-between mb-2"><small><i class="fas fa-gem text-primary me-1"></i>Premium</small><span class="badge bg-primary"><?= $premiumStats['premium'] ?></span></div>
+                    <div class="d-flex justify-content-between mb-2"><small><i class="fas fa-box me-1"></i>Active Packages</small><span class="badge bg-success"><?= $premiumStats['packages_active'] ?></span></div>
+                    <div class="d-flex justify-content-between"><small><i class="fas fa-money-bill me-1"></i>Package Revenue</small><span class="badge bg-info">₹<?= number_format($premiumStats['package_revenue']) ?></span></div>
                 </div>
             </div>
+            <?php if (!empty($featuredListings)): ?>
+            <div class="aps-cp-card mt-3">
+                <div class="aps-cp-card-header"><i class="fas fa-star text-warning me-2"></i>Featured Properties</div>
+                <div class="aps-cp-card-body p-2">
+                    <?php foreach ($featuredListings as $f): ?>
+                        <div class="d-flex justify-content-between align-items-center p-1 border-bottom small">
+                            <span><?= htmlspecialchars(mb_substr($f['name'], 0, 25)) ?></span>
+                            <form method="post" action="<?= $base ?>/admin/marketplace/toggle-featured" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                                <input type="hidden" name="id" value="<?= $f['id'] ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-1" title="Remove featured"><i class="fas fa-times"></i></button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+            <?php if (!empty($urgentListings)): ?>
+            <div class="aps-cp-card mt-3">
+                <div class="aps-cp-card-header"><i class="fas fa-bolt text-danger me-2"></i>Urgent Properties</div>
+                <div class="aps-cp-card-body p-2">
+                    <?php foreach ($urgentListings as $u): ?>
+                        <div class="d-flex justify-content-between align-items-center p-1 border-bottom small">
+                            <span><?= htmlspecialchars(mb_substr($u['name'], 0, 25)) ?></span>
+                            <form method="post" action="<?= $base ?>/admin/marketplace/toggle-urgent" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                                <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-1" title="Remove urgent"><i class="fas fa-times"></i></button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -90,7 +120,7 @@ $typeDistribution = $typeDistribution ?? [];
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>ID</th><th>Property</th><th>Type</th><th>Price</th><th>Location</th><th>Seller</th><th>Status</th><th>Views</th><th>Created</th></tr></thead>
+                        <thead><tr><th>ID</th><th>Property</th><th>Type</th><th>Price</th><th>Location</th><th>Seller</th><th>Premium</th><th>Status</th><th>Views</th><th>Actions</th></tr></thead>
                         <tbody>
                         <?php foreach ($recentListings as $p): ?>
                             <tr>
@@ -100,9 +130,30 @@ $typeDistribution = $typeDistribution ?? [];
                                 <td>₹<?= $p['price'] > 100000 ? number_format($p['price']/100000,1).'L' : number_format($p['price']) ?></td>
                                 <td class="small"><?= htmlspecialchars($p['location'] ?? $p['city_name'] ?? 'N/A') ?></td>
                                 <td class="small"><?= htmlspecialchars($p['seller_name'] ?? 'N/A') ?></td>
+                                <td>
+                                    <?php if (!empty($p['is_premium'])): ?><span class="badge bg-primary" title="Premium">P</span><?php endif; ?>
+                                    <?php if (!empty($p['is_featured'])): ?><span class="badge bg-warning text-dark" title="Featured"><i class="fas fa-star"></i></span><?php endif; ?>
+                                    <?php if (!empty($p['is_urgent'])): ?><span class="badge bg-danger" title="Urgent"><i class="fas fa-bolt"></i></span><?php endif; ?>
+                                    <?php if (empty($p['is_premium']) && empty($p['is_featured']) && empty($p['is_urgent'])): ?>
+                                        <span class="text-muted small">—</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td><span class="aps-cp-badge badge bg-<?= $p['status'] === 'approved' ? 'success' : ($p['status'] === 'pending' ? 'warning' : ($p['status'] === 'sold' ? 'info' : 'danger')) ?>"><?= ucfirst(htmlspecialchars($p['status'])) ?></span></td>
                                 <td><?= (int)$p['views'] ?></td>
-                                <td class="text-muted small"><?= date('d M Y', strtotime($p['created_at'])) ?></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <form method="post" action="<?= $base ?>/admin/marketplace/toggle-featured" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                                            <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                                            <button type="submit" class="btn btn-outline-warning py-0 px-1" title="<?= !empty($p['is_featured']) ? 'Unfeature' : 'Feature' ?>"><i class="fas fa-star<?= !empty($p['is_featured']) ? '' : '-o' ?>"></i></button>
+                                        </form>
+                                        <form method="post" action="<?= $base ?>/admin/marketplace/toggle-urgent" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                                            <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                                            <button type="submit" class="btn btn-outline-danger py-0 px-1" title="<?= !empty($p['is_urgent']) ? 'Remove urgent' : 'Mark urgent' ?>"><i class="fas fa-bolt<?= !empty($p['is_urgent']) ? '' : '' ?>"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>

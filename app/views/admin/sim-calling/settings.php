@@ -1,9 +1,15 @@
+<?php
+// Ensure variables are available (extract() may not work in all contexts)
+$_conn = $connected ?? false;
+$_cfg = $config ?? [];
+$_pageTitle = $page_title ?? 'SIM Calling Settings';
+?>
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fas fa-cog text-teal"></i> SIM Calling Settings</h1>
+                    <h1 class="m-0"><i class="fas fa-cog text-teal"></i> <?= htmlspecialchars($_pageTitle) ?></h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -93,12 +99,12 @@
 
                 <div class="col-md-4">
                     <!-- Connection Test -->
-                    <div class="card card-outline <?= $connected ? 'card-success' : 'card-danger' ?>">
+                    <div class="card card-outline <?= $_conn ? 'card-success' : 'card-danger' ?>">
                         <div class="card-body text-center">
-                            <i class="fas <?= $connected ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' ?> fa-3x mb-3"></i>
-                            <h4><?= $connected ? 'Connected!' : 'Not Connected' ?></h4>
-                            <p class="text-muted"><?= $connected ? 'Asterisk AMI is reachable' : 'Cannot reach Asterisk AMI' ?></p>
-                            <button onclick="testConnection()" class="btn btn-sm btn-outline-<?= $connected ? 'success' : 'danger' ?>">
+                            <i class="fas <?= $_conn ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' ?> fa-3x mb-3"></i>
+                            <h4><?= $_conn ? 'Connected!' : 'Not Connected' ?></h4>
+                            <p class="text-muted"><?= $_conn ? 'Asterisk AMI is reachable' : 'Cannot reach Asterisk AMI' ?></p>
+                            <button onclick="testConnection()" class="btn btn-sm btn-outline-<?= $_conn ? 'success' : 'danger' ?>">
                                 <i class="fas fa-plug"></i> Test Connection
                             </button>
                         </div>

@@ -1,15 +1,23 @@
+<?php
+$_ss = $sys_stats ?? [];
+$_aa = $recent_activity ?? [];
+$_as = $agent_stats ?? [];
+$_ar = $auto_reply ?? [];
+$_ag = $agents ?? [];
+?>
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0"><i class="fas fa-brain text-teal"></i> Agentic AI <small class="text-muted">Auto-Reply Agent System</small></h1>
+                    <h1 class="m-0"><i class="fas fa-brain" style="color:#8b5cf6"></i> Agentic AI System</h1>
+                    <small class="text-muted">Autonomous AI Agents running your company 24/7</small>
                 </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
-                        <li class="breadcrumb-item active">Agentic AI</li>
-                    </ol>
+                <div class="col-sm-6 text-right">
+                    <button onclick="runAllAgents(this)" class="btn btn-sm" style="background:#8b5cf6;color:#fff"><i class="fas fa-play me-1"></i> Run All Agents</button>
+                    <a href="/admin/agentic-ai/conversations" class="btn btn-sm btn-outline-primary"><i class="fas fa-comments"></i> Conversations</a>
+                    <a href="/admin/agentic-ai/logs" class="btn btn-sm btn-outline-secondary"><i class="fas fa-list"></i> Logs</a>
+                    <a href="/admin/agentic-ai/auto-reply" class="btn btn-sm btn-outline-success"><i class="fas fa-cog"></i> Auto-Reply</a>
                 </div>
             </div>
         </div>
@@ -17,106 +25,140 @@
 
     <section class="content">
         <div class="container-fluid">
-            <!-- Stats Cards -->
+            <!-- System Overview -->
             <div class="row mb-4">
-                <div class="col-lg-3 col-md-6">
-                    <div class="card card-outline card-teal">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h3 class="mb-0"><?= (int)($stats['active'] ?? 0) ?></h3>
-                                    <p class="text-muted mb-0">Active Chats</p>
-                                </div>
-                                <i class="fas fa-comments fa-2x text-teal opacity-50"></i>
-                            </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="info-box">
+                        <span class="info-box-icon" style="background:#8b5cf6;color:#fff"><i class="fas fa-robot"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Tasks</span>
+                            <span class="info-box-number"><?= (int)($_ss['today_tasks'] ?? 0) ?></span>
+                            <small>Today</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card card-outline card-success">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h3 class="mb-0"><?= (int)($stats['resolved'] ?? 0) ?></h3>
-                                    <p class="text-muted mb-0">Resolved Today</p>
-                                </div>
-                                <i class="fas fa-check-circle fa-2x text-success opacity-50"></i>
-                            </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="info-box">
+                        <span class="info-box-icon" style="background:#10b981;color:#fff"><i class="fas fa-check"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Running Now</span>
+                            <span class="info-box-number"><?= (int)($_ss['running_now'] ?? 0) ?></span>
+                            <small>Active</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card card-outline card-info">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h3 class="mb-0"><?= (int)($stats['wa_clicks'] ?? 0) ?></h3>
-                                    <p class="text-muted mb-0">WhatsApp Clicks</p>
-                                </div>
-                                <i class="fab fa-whatsapp fa-2x text-success opacity-50"></i>
-                            </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="info-box">
+                        <span class="info-box-icon" style="background:#ef4444;color:#fff"><i class="fas fa-exclamation"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Escalated</span>
+                            <span class="info-box-number"><?= (int)($_ss['escalated'] ?? 0) ?></span>
+                            <small>Needs human</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card card-outline card-warning">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h3 class="mb-0"><?= (int)($stats['new_leads'] ?? 0) ?></h3>
-                                    <p class="text-muted mb-0">New Leads Today</p>
-                                </div>
-                                <i class="fas fa-user-plus fa-2x text-warning opacity-50"></i>
-                            </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="info-box">
+                        <span class="info-box-icon" style="background:#3b82f6;color:#fff"><i class="fas fa-comments"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Conversations</span>
+                            <span class="info-box-number"><?= (int)($_ss['today_conversations'] ?? 0) ?></span>
+                            <small>Today</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="info-box">
+                        <span class="info-box-icon" style="background:#25D366;color:#fff"><i class="fab fa-whatsapp"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">WA Clicks</span>
+                            <span class="info-box-number"><?= (int)($_ss['wa_clicks'] ?? 0) ?></span>
+                            <small>Today</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="info-box">
+                        <span class="info-box-icon" style="background:#f59e0b;color:#fff"><i class="fas fa-user-plus"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">New Leads</span>
+                            <span class="info-box-number"><?= (int)($_ss['new_leads'] ?? 0) ?></span>
+                            <small>Today</small>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Agent Cards Grid -->
+            <h5 class="mb-3"><i class="fas fa-layer-group"></i> AI Agents</h5>
+            <div class="row mb-4">
+                <?php foreach ($_ag as $key => $agent): ?>
+                <?php $stat = $_as[$key] ?? []; ?>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                    <a href="/admin/agentic-ai/agent/<?= $key ?>" class="text-decoration-none">
+                        <div class="card card-outline h-100" style="border-left:4px solid <?= $agent['color'] ?>;transition:all 0.2s">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div style="width:40px;height:40px;border-radius:10px;background:<?= $agent['color'] ?>15;display:flex;align-items:center;justify-content:center;margin-right:10px">
+                                        <i class="fas <?= $agent['icon'] ?>" style="color:<?= $agent['color'] ?>;font-size:18px"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0" style="color:<?= $agent['color'] ?>"><?= $agent['name'] ?></h6>
+                                    </div>
+                                </div>
+                                <p class="small text-muted mb-2"><?= $agent['description'] ?></p>
+                                <div class="d-flex justify-content-between small">
+                                    <span><strong><?= (int)($stat['total_tasks'] ?? 0) ?></strong> tasks</span>
+                                    <span class="text-success"><strong><?= (int)($stat['completed'] ?? 0) ?></strong> done</span>
+                                    <?php if (($stat['failed'] ?? 0) > 0): ?>
+                                    <span class="text-danger"><strong><?= (int)($stat['failed'] ?? 0) ?></strong> failed</span>
+                                    <?php endif; ?>
+                                </div>
+                                <?php if ($stat['last_run']): ?>
+                                <div class="small text-muted mt-1"><i class="fas fa-clock"></i> Last: <?= date('M d, H:i', strtotime($stat['last_run'])) ?></div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
             <div class="row">
-                <!-- Active Conversations -->
+                <!-- Recent Activity -->
                 <div class="col-lg-8">
                     <div class="card card-outline card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title"><i class="fas fa-comments"></i> Active Conversations</h3>
+                            <h3 class="card-title"><i class="fas fa-history"></i> Recent Agent Activity</h3>
                             <div class="card-tools">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()"><i class="fas fa-sync"></i></button>
+                                <a href="/admin/agentic-ai/logs" class="btn btn-sm btn-outline-secondary">View All</a>
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <?php if (empty($conversations)): ?>
-                            <div class="text-center py-5 text-muted">
-                                <i class="fas fa-inbox fa-3x mb-3 opacity-25"></i>
-                                <p>No active conversations. Customers will appear here when they start chatting.</p>
+                            <?php if (empty($_aa)): ?>
+                            <div class="text-center py-4 text-muted">
+                                <i class="fas fa-inbox fa-2x mb-2 opacity-25"></i>
+                                <p>No activity yet. Agents will start working once activated.</p>
                             </div>
                             <?php else: ?>
                             <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead><tr><th>Customer</th><th>Channel</th><th>Last Message</th><th>Status</th><th></th></tr></thead>
+                                <table class="table table-sm table-hover">
+                                    <thead><tr><th>Time</th><th>Agent</th><th>Task</th><th>Status</th></tr></thead>
                                     <tbody>
-                                    <?php foreach ($conversations as $conv): ?>
+                                    <?php foreach ($_aa as $act): ?>
                                     <tr>
+                                        <td class="text-muted small"><?= date('M d, H:i', strtotime($act['created_at'])) ?></td>
                                         <td>
-                                            <strong><?= htmlspecialchars($conv['lead_name'] ?? 'Guest') ?></strong><br>
-                                            <small class="text-muted"><?= htmlspecialchars($conv['lead_phone'] ?? '') ?></small>
+                                            <?php $ag = $_ag[$act['agent_type']] ?? ['name' => $act['agent_type'], 'color' => '#666', 'icon' => 'fa-robot']; ?>
+                                            <span style="color:<?= $ag['color'] ?>"><i class="fas <?= $ag['icon'] ?>"></i> <?= $ag['name'] ?></span>
                                         </td>
-                                        <td><span class="badge badge-info"><?= htmlspecialchars($conv['channel'] ?? 'chatbot') ?></span></td>
-                                        <td><small><?= htmlspecialchars(mb_substr($conv['last_message'] ?? '', 0, 60)) ?></small></td>
+                                        <td class="small"><?= htmlspecialchars($act['task_name'] ?? '') ?></td>
                                         <td>
-                                            <?php if ($conv['agent_id'] == ($agent_id ?? 0)): ?>
-                                            <span class="badge badge-success">Mine</span>
-                                            <?php elseif ($conv['agent_id']): ?>
-                                            <span class="badge badge-secondary">Assigned</span>
-                                            <?php else: ?>
-                                            <span class="badge badge-warning">Unclaimed</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if (!$conv['agent_id']): ?>
-                                            <button class="btn btn-xs btn-teal" onclick="claimConv(<?= $conv['id'] ?>)"><i class="fas fa-hand-paper"></i> Claim</button>
-                                            <?php else: ?>
-                                            <a href="/admin/agentic-ai/conversation/<?= $conv['id'] ?>" class="btn btn-xs btn-outline-primary"><i class="fas fa-eye"></i></a>
-                                            <?php endif; ?>
+                                            <?php
+                                            $statusColors = ['completed' => 'success', 'running' => 'info', 'failed' => 'danger', 'escalated' => 'warning', 'pending' => 'secondary'];
+                                            $sc = $statusColors[$act['status']] ?? 'secondary';
+                                            ?>
+                                            <span class="badge badge-<?= $sc ?>"><?= $act['status'] ?></span>
                                         </td>
                                     </tr>
                                     <?php endforeach; ?>
@@ -128,52 +170,30 @@
                     </div>
                 </div>
 
-                <!-- Auto-Reply Status -->
+                <!-- Quick Info -->
                 <div class="col-lg-4">
-                    <div class="card card-outline <?= !empty($auto_reply['auto_reply_enabled']) ? 'card-success' : 'card-secondary' ?>">
-                        <div class="card-header">
-                            <h3 class="card-title"><i class="fas fa-robot"></i> Auto-Reply</h3>
-                        </div>
-                        <div class="card-body text-center">
-                            <?php if (!empty($auto_reply['auto_reply_enabled'])): ?>
-                            <div class="mb-3">
-                                <i class="fas fa-check-circle fa-3x text-success"></i>
-                            </div>
-                            <h5 class="text-success">ACTIVE</h5>
-                            <p class="text-muted small">
-                                Business hours: <?= htmlspecialchars($auto_reply['business_hours_start'] ?? '9:00') ?> - <?= htmlspecialchars($auto_reply['business_hours_end'] ?? '19:00') ?>
-                            </p>
-                            <p class="small text-muted">
-                                Max auto-replies: <?= (int)($auto_reply['max_auto_replies'] ?? 5) ?> before human handoff
-                            </p>
-                            <?php else: ?>
-                            <div class="mb-3">
-                                <i class="fas fa-pause-circle fa-3x text-muted"></i>
-                            </div>
-                            <h5 class="text-muted">INACTIVE</h5>
-                            <p class="text-muted small">Auto-reply is turned off. Customers will wait for human agent.</p>
-                            <?php endif; ?>
-                            <a href="/admin/agentic-ai/auto-reply" class="btn btn-sm btn-outline-teal mt-2"><i class="fas fa-cog"></i> Settings</a>
+                    <div class="card card-outline card-purple" style="border-left-color:#8b5cf6">
+                        <div class="card-header" style="background:#8b5cf610"><h3 class="card-title" style="color:#8b5cf6"><i class="fas fa-info-circle"></i> How It Works</h3></div>
+                        <div class="card-body">
+                            <ol class="small mb-0 pl-3">
+                                <li class="mb-2"><strong>Each agent</strong> specializes in one business function</li>
+                                <li class="mb-2"><strong>Cron jobs</strong> trigger agents at scheduled intervals</li>
+                                <li class="mb-2"><strong>AI processes</strong> data and takes autonomous actions</li>
+                                <li class="mb-2"><strong>Low confidence</strong> → escalates to human</li>
+                                <li class="mb-2"><strong>Full audit</strong> trail in agent_task_logs</li>
+                            </ol>
                         </div>
                     </div>
 
-                    <!-- Quick Actions -->
-                    <div class="card card-outline card-secondary">
-                        <div class="card-header"><h3 class="card-title"><i class="fas fa-bolt"></i> Quick Actions</h3></div>
+                    <div class="card card-outline card-success">
+                        <div class="card-header"><h3 class="card-title"><i class="fas fa-play-circle"></i> Quick Start</h3></div>
                         <div class="card-body p-0">
                             <div class="list-group list-group-flush">
-                                <a href="/admin/agentic-ai/auto-reply" class="list-group-item list-group-item-action">
-                                    <i class="fas fa-cog text-teal"></i> Auto-Reply Settings
-                                </a>
-                                <a href="/admin/leads" class="list-group-item list-group-item-action">
-                                    <i class="fas fa-users text-info"></i> View All Leads
-                                </a>
-                                <a href="/admin/voice-agents" class="list-group-item list-group-item-action">
-                                    <i class="fas fa-phone text-purple"></i> Voice Agents
-                                </a>
-                                <a href="/admin/sim-calling" class="list-group-item list-group-item-action">
-                                    <i class="fas fa-phone-volume text-success"></i> SIM Calling
-                                </a>
+                                <a href="/admin/leads" class="list-group-item list-group-item-action"><i class="fas fa-magnet text-primary"></i> View Leads Pipeline</a>
+                                <a href="/admin/bookings" class="list-group-item list-group-item-action"><i class="fas fa-handshake text-success"></i> View Bookings</a>
+                                <a href="/admin/agentic-ai/conversations" class="list-group-item list-group-item-action"><i class="fas fa-comments text-info"></i> Live Conversations</a>
+                                <a href="/admin/agentic-ai/logs" class="list-group-item list-group-item-action"><i class="fas fa-list text-secondary"></i> Agent Logs</a>
+                                <a href="/admin/agentic-ai/auto-reply" class="list-group-item list-group-item-action"><i class="fas fa-robot text-purple"></i> Auto-Reply Config</a>
                             </div>
                         </div>
                     </div>
@@ -184,21 +204,37 @@
 </div>
 
 <style>
-.text-teal{color:#0d9488!important}
-.btn-teal{background:#0d9488;color:#fff;border-color:#0d9488}
-.btn-teal:hover{background:#0f766e;color:#fff}
 .text-purple{color:#6f42c1!important}
+.card-purple{border-left-color:#8b5cf6!important}
+.info-box{box-shadow:0 1px 3px rgba(0,0,0,0.08);border-radius:10px}
+.info-box-icon{border-radius:10px}
 </style>
-
 <script>
-function claimConv(id) {
-    fetch('/admin/agentic-ai/api/claim', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({conversation_id: id})
-    }).then(function(r){ return r.json(); }).then(function(d){
-        if (d.success) location.reload();
-        else alert('Failed to claim');
-    });
+function runAllAgents(btn) {
+    btn.disabled = true;
+    var orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Running...';
+    var notif = document.createElement('div');
+    notif.className = 'alert alert-info alert-dismissible fade show mt-2';
+    notif.id = 'agentRunNotif';
+    notif.innerHTML = '<i class="fas fa-sync fa-spin me-2"></i> Running all 8 AI agents...';
+    btn.closest('.content-header').after(notif);
+
+    fetch('/admin/agentic-ai/run-all', { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            notif.className = data.success ? 'alert alert-success alert-dismissible fade show mt-2' : 'alert alert-warning alert-dismissible fade show mt-2';
+            notif.innerHTML = '<i class="fas fa-' + (data.success ? 'check-circle' : 'exclamation-triangle') + ' me-2"></i>' + (data.message || 'Completed') +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+            setTimeout(function() { location.reload(); }, 2000);
+        })
+        .catch(function(err) {
+            notif.className = 'alert alert-danger alert-dismissible fade show mt-2';
+            notif.innerHTML = '<i class="fas fa-times-circle me-2"></i>Error: ' + err.message;
+        })
+        .finally(function() {
+            btn.disabled = false;
+            btn.innerHTML = orig;
+        });
 }
 </script>

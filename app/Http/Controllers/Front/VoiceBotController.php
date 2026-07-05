@@ -43,7 +43,7 @@ class VoiceBotController extends BaseController
     }
 
     /**
-     * API: Process voice message via AI brain
+     * API: Process voice message via PropertyChatbotService (rich, live data)
      * POST /api/voice-bot/chat
      */
     public function chat()
@@ -61,16 +61,13 @@ class VoiceBotController extends BaseController
             return;
         }
 
-        require_once __DIR__ . '/../../../Services/Auc/AucBrainService.php';
-        $brain = new \App\Services\Auc\AucBrainService();
+        require_once __DIR__ . '/../../../Services/PropertyChatbotService.php';
+        $brain = new \App\Services\PropertyChatbotService();
 
-        $result = $brain->processMessage($message, 'voice_bot', [
-            'session_id' => $session,
-            'language' => $lang,
-        ]);
+        $result = $brain->processMessage($message);
 
         echo json_encode([
-            'reply' => $result['text'],
+            'reply' => $result['reply'],
             'intent' => $result['intent'],
             'session' => $session,
         ]);

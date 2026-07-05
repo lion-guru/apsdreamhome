@@ -44,7 +44,7 @@ class CareerController extends BaseController
         $benefits = [];
 
         try {
-            $stmt = $this->db->query("SELECT * FROM careers WHERE status = 'active' ORDER BY created_at DESC");
+            $stmt = $this->db->query("SELECT * FROM careers WHERE status = 'open' ORDER BY created_at DESC");
             $careers = $stmt->fetchAll(\PDO::FETCH_OBJ);
         } catch (\Throwable $e) {
             error_log('Careers fetch error: ' . $e->getMessage());
@@ -93,34 +93,81 @@ class CareerController extends BaseController
     }
 
     /**
-     * Submit job application
+     * Submit job application (AJAX endpoint)
      */
     public function submitApplication($request = null)
     {
-        $data = [
-            'full_name' => trim($request['post']['full_name'] ?? ''),
-            'email' => trim($request['post']['email'] ?? ''),
-            'phone' => trim($request['post']['phone'] ?? ''),
-            'position' => trim($request['post']['position'] ?? ''),
-            'experience' => trim($request['post']['experience'] ?? ''),
-            'cover_letter' => trim($request['post']['cover_letter'] ?? ''),
-            'availability' => trim($request['post']['availability'] ?? '')
-        ];
+        $fullName = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $position = trim($_POST['position'] ?? '');
+        $coverLetter = trim($_POST['cover_letter'] ?? '');
 
-        $files = $request['files'] ?? [];
-
-        $result = $this->careerService->submitApplication($data, $files);
-
-        if ($result['success']) {
-            $_SESSION['success'] = $result['message'];
-            $this->redirect('/careers/thank-you');
-        } else {
-            $_SESSION['errors'] = $result['errors'] ?? [$result['message']];
-            $_SESSION['old_input'] = $data;
-            $this->redirect('/careers/apply?position=' . urlencode($data['position']));
+        if (empty($fullName) || empty($email) || empty($phone) || empty($position)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Please fill in all required fields.']);
+            exit;
         }
 
-        return $result;
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Please enter a valid email address.']);
+            exit;
+        }
+
+        $digits = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($digits) < 10 || strlen($digits) > 15) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Please enter a valid phone number.']);
+            exit;
+        }
+
+        $resumePath = null;
+        if (isset($_FILES['resume']) && $_FILES['resume']['error'] === UPLOAD_ERR_OK) {
+            $allowedExtensions = ['pdf', 'doc', 'docx'];
+            $ext = strtolower(pathinfo($_FILES['resume']['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, $allowedExtensions)) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Resume must be PDF, DOC, or DOCX format.']);
+                exit;
+            }
+            if ($_FILES['resume']['size'] > 5 * 1024 * 1024) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Resume file size must be less than 5MB.']);
+                exit;
+            }
+
+            $uploadDir = dirname(__DIR__, 3) . '/assets/uploads/resumes/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            $filename = 'resume_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+            if (move_uploaded_file($_FILES['resume']['tmp_name'], $uploadDir . $filename)) {
+                $resumePath = 'assets/uploads/resumes/' . $filename;
+            }
+        }
+
+        try {
+            $stmt = $this->db->prepare("INSERT INTO career_applications (career_id, full_name, email, phone, resume_path, cover_letter, status) VALUES (?, ?, ?, ?, ?, ?, 'pending')");
+
+            $careerId = 0;
+            $stmtCareer = $this->db->prepare("SELECT id FROM careers WHERE title = ? LIMIT 1");
+            $stmtCareer->execute([$position]);
+            $careerRow = $stmtCareer->fetch(\PDO::FETCH_ASSOC);
+            if ($careerRow) {
+                $careerId = $careerRow['id'];
+            }
+
+            $stmt->execute([$careerId, $fullName, $email, $phone, $resumePath, $coverLetter]);
+
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'message' => 'Your application has been submitted successfully! We will review it and get back to you soon.']);
+        } catch (\Throwable $e) {
+            error_log('Career application error: ' . $e->getMessage());
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Something went wrong. Please try again later.']);
+        }
+        exit;
     }
 
     /**

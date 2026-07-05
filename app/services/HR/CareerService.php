@@ -255,7 +255,7 @@ class CareerService
     private function sendHRNotification($data, $resumeFile)
     {
         $to = 'careers@apsdreamhomes.com';
-        $subject = 'New Job Application - APS Dream Homes';
+        $subject = 'New Job Application - APS Dream Home';
 
         $body = $this->generateHRNotificationEmail($data, $resumeFile);
 
@@ -270,7 +270,7 @@ class CareerService
     private function sendApplicantConfirmation($data)
     {
         $to = $data['email'];
-        $subject = 'Application Received - APS Dream Homes';
+        $subject = 'Application Received - APS Dream Home';
 
         $body = $this->generateApplicantConfirmationEmail($data);
 
@@ -306,9 +306,9 @@ class CareerService
     private function generateApplicantConfirmationEmail($data)
     {
         return "
-            <h2>Application Received - APS Dream Homes</h2>
+            <h2>Application Received - APS Dream Home</h2>
             <p>Dear {$data['full_name']},</p>
-            <p>Thank you for your interest in the <strong>{$data['position']}</strong> position at APS Dream Homes.</p>
+            <p>Thank you for your interest in the <strong>{$data['position']}</strong> position at APS Dream Home.</p>
             <p>We have received your application and will review it carefully. Our HR team will contact you if your profile matches our requirements.</p>
             <p><strong>Application Details:</strong></p>
             <ul>
@@ -318,7 +318,7 @@ class CareerService
                 <li>Submitted: " . date('Y-m-d H:i:s') . "</li>
             </ul>
             <p>For any inquiries, please contact us at careers@apsdreamhomes.com</p>
-            <p>Best regards,<br>APS Dream Homes HR Team</p>
+            <p>Best regards,<br>APS Dream Home HR Team</p>
         ";
     }
 
@@ -617,10 +617,41 @@ class CareerService
     }
 
     /**
-     * Get application details (alias for getApplicationById)
+     * Get application details with history
      */
     public function getApplicationDetails($id)
     {
-        return $this->getApplicationById($id);
+        try {
+            $application = $this->getApplicationById($id);
+            if (!$application) {
+                return [
+                    'success' => false,
+                    'message' => 'Application not found'
+                ];
+            }
+
+            $history = [];
+            try {
+                $history = $this->db->fetchAll(
+                    "SELECT * FROM career_application_history WHERE application_id = ? ORDER BY created_at DESC",
+                    [$id]
+                );
+            } catch (\Throwable $e) {
+                $history = [];
+            }
+
+            return [
+                'success' => true,
+                'data' => [
+                    'application' => $application,
+                    'history' => $history
+                ]
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Failed to retrieve application details'
+            ];
+        }
     }
 }

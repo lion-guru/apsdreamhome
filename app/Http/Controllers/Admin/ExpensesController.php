@@ -41,9 +41,9 @@ class ExpensesController extends AdminController
                 $_POST['payment_mode'] ?? 'cash',
                 $_POST['expense_date'] ?? date('Y-m-d')
             ]);
-            $this->setFlashMessage('success', 'Expense recorded successfully');
+            $this->setFlash('success', 'Expense recorded successfully');
         } catch (\Exception $e) {
-            $this->setFlashMessage('error', 'Failed to record expense: ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to record expense: ' . $e->getMessage());
         }
         return $this->redirect('/admin/expenses');
     }

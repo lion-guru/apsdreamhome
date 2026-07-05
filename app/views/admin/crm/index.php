@@ -1,86 +1,203 @@
-<?php $page_title = 'CRM Dashboard'; ?>
-<div class="container-fluid py-4">
-    <h2 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i>CRM Dashboard</h2>
-    <div class="row mb-4">
-        <div class="col-xl-2 col-md-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-users fa-2x text-primary mb-2"></i>
-                    <h3 class="mb-0"><?= number_format($stats['total_customers']) ?></h3>
-                    <small class="text-muted"><?= __('admin_total_customers') ?></small>
-                </div>
+<?php
+$page_title = $page_title ?? 'CRM Dashboard';
+$stats = $stats ?? [];
+$recent_tickets = $recent_tickets ?? [];
+$recent_leads = $recent_leads ?? [];
+$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+
+$totalCustomers = (int)($stats['total_customers'] ?? 0);
+$activeLeads = (int)($stats['active_leads'] ?? 0);
+$openTickets = (int)($stats['open_tickets'] ?? 0);
+$totalInquiries = (int)($stats['total_inquiries'] ?? 0);
+$convertedMonth = (int)($stats['converted_this_month'] ?? 0);
+$pendingFollowups = (int)($stats['pending_followups'] ?? 0);
+
+$kpis = [
+    ['icon' => 'fas fa-users', 'val' => $totalCustomers, 'label' => 'Total Customers', 'color' => 'primary', 'bg' => 'primary-subtle'],
+    ['icon' => 'fas fa-bullseye', 'val' => $activeLeads, 'label' => 'Active Leads', 'color' => 'warning', 'bg' => 'warning-subtle'],
+    ['icon' => 'fas fa-ticket-alt', 'val' => $openTickets, 'label' => 'Open Tickets', 'color' => 'info', 'bg' => 'info-subtle'],
+    ['icon' => 'fas fa-question-circle', 'val' => $totalInquiries, 'label' => 'Inquiries', 'color' => 'secondary', 'bg' => 'secondary-subtle'],
+    ['icon' => 'fas fa-check-circle', 'val' => $convertedMonth, 'label' => 'Converted (Month)', 'color' => 'success', 'bg' => 'success-subtle'],
+    ['icon' => 'fas fa-clock', 'val' => $pendingFollowups, 'label' => 'Pending Follow-ups', 'color' => 'danger', 'bg' => 'danger-subtle'],
+];
+?>
+
+<style>
+.crm-dashboard-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-radius:0 0 24px 24px;padding:32px 0;margin-bottom:24px}
+.crm-kpi-card{background:#fff;border-radius:14px;border:1px solid #f0f0f5;transition:.3s;overflow:hidden;position:relative}
+.crm-kpi-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.1)}
+.crm-kpi-card .kpi-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.crm-kpi-card .kpi-value{font-size:28px;font-weight:800;margin:0;line-height:1}
+.crm-kpi-card .kpi-label{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin:4px 0 0}
+.crm-kpi-card .kpi-glow{position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.06}
+.crm-quick-action{border-radius:12px;text-align:center;border:1px solid #e9ecef;background:#fff;transition:.3s;padding:16px 8px;text-decoration:none;color:inherit}
+.crm-quick-action:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1);text-decoration:none;color:inherit;background:#f8f9ff}
+.crm-quick-action i{font-size:28px;margin-bottom:8px;display:block}
+.crm-quick-action span{font-size:12px;font-weight:600;display:block}
+.crm-section-title{font-size:16px;font-weight:700;color:#333;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.crm-section-title i{color:#667eea}
+.recent-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f5f5f5;transition:.2s}
+.recent-item:last-child{border:none}
+.recent-item:hover{background:#fafafe;border-radius:8px;padding-left:8px;padding-right:8px}
+.recent-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0}
+</style>
+
+<!-- Header -->
+<div class="crm-dashboard-header">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h2 class="mb-1 fw-bold"><i class="fas fa-tachometer-alt me-2"></i>CRM Dashboard</h2>
+                <p class="mb-0 opacity-75" style="font-size:14px">Lead management, pipeline, and performance overview</p>
             </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-bullseye fa-2x text-warning mb-2"></i>
-                    <h3 class="mb-0"><?= number_format($stats['active_leads']) ?></h3>
-                    <small class="text-muted"><?= __('admin_active_leads') ?></small>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-ticket-alt fa-2x text-info mb-2"></i>
-                    <h3 class="mb-0"><?= number_format($stats['open_tickets']) ?></h3>
-                    <small class="text-muted"><?= __('admin_open_tickets') ?></small>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-question-circle fa-2x text-secondary mb-2"></i>
-                    <h3 class="mb-0"><?= number_format($stats['total_inquiries']) ?></h3>
-                    <small class="text-muted"><?= __('admin_total_inquiries') ?></small>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
-                    <h3 class="mb-0"><?= number_format($stats['converted_this_month']) ?></h3>
-                    <small class="text-muted"><?= __('admin_converted_month') ?></small>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-6 mb-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-clock fa-2x text-danger mb-2"></i>
-                    <h3 class="mb-0"><?= number_format($stats['pending_followups']) ?></h3>
-                    <small class="text-muted"><?= __('admin_pending_followups') ?></small>
-                </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="<?= $base ?>/admin/leads/create" class="btn btn-warning fw-bold"><i class="fas fa-plus me-1"></i> New Lead</a>
+                <a href="<?= $base ?>/admin/crm/analytics" class="btn btn-light"><i class="fas fa-chart-line me-1"></i> Analytics</a>
+                <a href="<?= $base ?>/admin/lead-kanban" class="btn btn-light"><i class="fas fa-columns me-1"></i> Pipeline</a>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-ticket-alt me-2"></i><?= __('admin_recent_support_tickets') ?></h6>
-                    <a href="<?= BASE_URL ?>/admin/crm/support" class="btn btn-sm btn-outline-primary"><?= __('admin_view_all') ?></a>
+</div>
+
+<div class="container-fluid px-4" style="margin-top:-12px">
+    <!-- KPI Cards -->
+    <div class="row g-3 mb-4">
+        <?php foreach ($kpis as $kpi): ?>
+            <div class="col-6 col-md-4 col-xl-2">
+                <div class="crm-kpi-card p-3">
+                    <div class="kpi-glow bg-<?= $kpi['color'] ?>"></div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="kpi-icon bg-<?= $kpi['bg'] ?> text-<?= $kpi['color'] ?>">
+                            <i class="<?= $kpi['icon'] ?>"></i>
+                        </div>
+                        <div>
+                            <div class="kpi-value"><?= number_format($kpi['val']) ?></div>
+                            <div class="kpi-label"><?= $kpi['label'] ?></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3 col-lg">
+            <a href="<?= $base ?>/admin/leads" class="crm-quick-action">
+                <i class="fas fa-list text-primary"></i>
+                <span>All Leads</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="<?= $base ?>/admin/lead-kanban" class="crm-quick-action">
+                <i class="fas fa-columns text-success"></i>
+                <span>Kanban Board</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="<?= $base ?>/admin/leads/followups" class="crm-quick-action">
+                <i class="fas fa-clock text-warning"></i>
+                <span>Follow-ups</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="<?= $base ?>/admin/leads/scoring" class="crm-quick-action">
+                <i class="fas fa-star text-info"></i>
+                <span>Lead Scoring</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="<?= $base ?>/admin/leads/sources" class="crm-quick-action">
+                <i class="fas fa-map-marker-alt text-danger"></i>
+                <span>Sources</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="<?= $base ?>/admin/crm/analytics" class="crm-quick-action">
+                <i class="fas fa-chart-bar text-secondary"></i>
+                <span>Analytics</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="<?= $base ?>/admin/crm/outreach" class="crm-quick-action">
+                <i class="fas fa-paper-plane text-purple" style="color:#8b5cf6"></i>
+                <span>Bulk Outreach</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="<?= $base ?>/admin/leads/import" class="crm-quick-action">
+                <i class="fas fa-file-import text-dark"></i>
+                <span>Import Leads</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Leads -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-0">
+                    <h6 class="crm-section-title mb-0"><i class="fas fa-bullseye"></i>Recent Leads</h6>
+                    <a href="<?= $base ?>/admin/leads" class="btn btn-sm btn-outline-primary">View All <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
                 <div class="card-body p-0">
-                    <?php if (empty($recent_tickets)): ?>
-                        <p class="text-muted text-center py-4"><?= __('admin_no_tickets') ?></p>
+                    <?php if (empty($recent_leads)): ?>
+                        <div class="text-center py-5">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No leads yet. Create your first lead!</p>
+                            <a href="<?= $base ?>/admin/leads/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i> Add Lead</a>
+                        </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead><tr><th>#</th><th><?= __('admin_subject') ?></th><th><?= __('admin_customer') ?></th><th><?= __('admin_status') ?></th><th><?= __('admin_date') ?></th></tr></thead>
-                                <tbody>
-                                <?php foreach ($recent_tickets as $t): ?>
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
                                     <tr>
-                                        <td><?= htmlspecialchars($t['ticket_number'] ?? $t['id']) ?></td>
-                                        <td><?= htmlspecialchars(substr($t['subject'], 0, 40)) ?></td>
-                                        <td><?= htmlspecialchars($t['user_name'] ?? 'Unknown') ?></td>
-                                        <td><span class="badge bg-<?= $t['status']==='open'?'warning':($t['status']==='resolved'?'success':'info') ?>"><?= ucfirst($t['status']) ?></span></td>
-                                        <td><?= date('d M', strtotime($t['created_at'])) ?></td>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Source</th>
+                                        <th>Status</th>
+                                        <th>Score</th>
+                                        <th>Assigned</th>
                                     </tr>
-                                <?php endforeach; ?>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $avatarColors = ['#667eea','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4'];
+                                    $ci = 0;
+                                    foreach ($recent_leads as $l):
+                                        $color = $avatarColors[$ci % count($avatarColors)];
+                                        $ci++;
+                                        $statusBadge = match($l['status'] ?? 'new') {
+                                            'new' => 'primary',
+                                            'contacted' => 'info',
+                                            'qualified' => 'purple',
+                                            'site_visit' => 'warning',
+                                            'proposal' => 'pink',
+                                            'negotiation' => 'danger',
+                                            'won' => 'success',
+                                            'converted' => 'success',
+                                            'lost' => 'secondary',
+                                            'dead' => 'muted',
+                                            default => 'secondary'
+                                        };
+                                    ?>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="recent-avatar" style="background:<?= $color ?>;width:32px;height:32px;font-size:13px"><?= strtoupper(substr($l['name'] ?? 'N', 0, 1)) ?></div>
+                                                    <a href="<?= $base ?>/admin/leads/<?= $l['id'] ?>" class="text-decoration-none fw-bold text-dark"><?= htmlspecialchars($l['name']) ?></a>
+                                                </div>
+                                            </td>
+                                            <td><small class="text-muted"><?= htmlspecialchars($l['phone'] ?? '') ?></small></td>
+                                            <td><span class="badge bg-light text-dark"><?= htmlspecialchars($l['source'] ?? 'N/A') ?></span></td>
+                                            <td><span class="badge bg-<?= $statusBadge ?>"><?= ucfirst(str_replace('_',' ',$l['status'] ?? '')) ?></span></td>
+                                            <td>
+                                                <?php $score = (int)($l['lead_score'] ?? 0); ?>
+                                                <span class="badge bg-<?= $score >= 70 ? 'success' : ($score >= 40 ? 'warning' : 'danger') ?>"><?= $score ?></span>
+                                            </td>
+                                            <td><small class="text-muted"><?= htmlspecialchars($l['assignee_name'] ?? 'Unassigned') ?></small></td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -88,32 +205,152 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-bullseye me-2"></i><?= __('admin_recent_leads') ?></h6>
-                    <a href="<?= BASE_URL ?>/admin/leads" class="btn btn-sm btn-outline-primary"><?= __('admin_view_all') ?></a>
+
+        <!-- Right Column: Tickets + Pending Follow-ups -->
+        <div class="col-lg-5">
+            <!-- Support Tickets -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-0">
+                    <h6 class="crm-section-title mb-0"><i class="fas fa-ticket-alt"></i>Support Tickets</h6>
+                    <a href="<?= $base ?>/admin/crm/support" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
                 <div class="card-body p-0">
-                    <?php if (empty($recent_leads)): ?>
-                        <p class="text-muted text-center py-4"><?= __('admin_no_leads') ?></p>
+                    <?php if (empty($recent_tickets)): ?>
+                        <p class="text-muted text-center py-4 mb-0">No tickets</p>
                     <?php else: ?>
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead><tr><th><?= __('admin_name') ?></th><th><?= __('admin_phone') ?></th><th><?= __('admin_source') ?></th><th><?= __('admin_status') ?></th><th><?= __('admin_assigned') ?></th></tr></thead>
-                                <tbody>
-                                <?php foreach ($recent_leads as $l): ?>
-                                    <tr>
-                                        <td><a href="<?= BASE_URL ?>/admin/leads/show/<?= $l['id'] ?>"><?= htmlspecialchars($l['name']) ?></a></td>
-                                        <td><?= htmlspecialchars($l['phone'] ?? '') ?></td>
-                                        <td><span class="badge bg-light text-dark"><?= htmlspecialchars($l['source'] ?? 'N/A') ?></span></td>
-                                        <td><span class="badge bg-<?= $l['status']==='new'?'primary':($l['status']==='converted'?'success':($l['status']==='closed'?'secondary':'warning')) ?>"><?= ucfirst($l['status']) ?></span></td>
-                                        <td><?= htmlspecialchars($l['assignee_name'] ?? 'Unassigned') ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                                </tbody>
-                            </table>
+                        <?php foreach (array_slice($recent_tickets, 0, 6) as $t): ?>
+                            <div class="recent-item px-3">
+                                <div class="recent-avatar" style="background:<?= ($t['status'] ?? '') === 'open' ? '#f59e0b' : (($t['status'] ?? '') === 'resolved' ? '#10b981' : '#3b82f6') ?>;width:32px;height:32px;font-size:12px">
+                                    <i class="fas fa-<?= ($t['status'] ?? '') === 'open' ? 'exclamation' : (($t['status'] ?? '') === 'resolved' ? 'check' : 'clock') ?>"></i>
+                                </div>
+                                <div class="flex-grow-1" style="min-width:0">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="fw-semibold text-truncate" style="font-size:13px;max-width:180px"><?= htmlspecialchars($t['subject'] ?? 'Ticket') ?></span>
+                                        <small class="text-muted text-nowrap ms-2"><?= date('d M', strtotime($t['created_at'])) ?></small>
+                                    </div>
+                                    <small class="text-muted"><?= htmlspecialchars($t['user_name'] ?? 'Unknown') ?></small>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Pending Follow-ups -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-0">
+                    <h6 class="crm-section-title mb-0"><i class="fas fa-clock"></i>Pending Follow-ups</h6>
+                    <a href="<?= $base ?>/admin/leads/followups" class="btn btn-sm btn-outline-warning">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <?php if ($pendingFollowups > 0): ?>
+                        <div class="p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-bold text-danger"><?= $pendingFollowups ?></span>
+                                <small class="text-muted">leads need follow-up</small>
+                            </div>
+                            <div class="progress mb-3" style="height:8px">
+                                <div class="progress-bar bg-danger" style="width:<?= min(100, ($pendingFollowups / max($activeLeads, 1)) * 100) ?>%"></div>
+                            </div>
+                            <a href="<?= $base ?>/admin/leads/followups" class="btn btn-sm btn-warning w-100 fw-bold">
+                                <i class="fas fa-arrow-right me-1"></i> Handle Follow-ups
+                            </a>
                         </div>
+                    <?php else: ?>
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                            <p class="text-muted mb-0">All caught up!</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Row: Pipeline Summary + Conversion Funnel -->
+    <div class="row g-4 mt-2">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-0">
+                    <h6 class="crm-section-title mb-0"><i class="fas fa-project-diagram"></i>Pipeline Summary</h6>
+                </div>
+                <div class="card-body">
+                    <?php
+                    try {
+                        $db = \App\Core\Database\Database::getInstance()->getConnection();
+                        $pipeline = $db->query("SELECT status, COUNT(*) as cnt, SUM(COALESCE(budget, 0)) as total_val FROM leads WHERE deleted_at IS NULL AND status NOT IN ('converted','closed','dead') GROUP BY status ORDER BY FIELD(status, 'new','contacted','qualified','site_visit','proposal','negotiation','booking','won')")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+                    } catch (\Throwable $e) { $pipeline = []; }
+                    ?>
+                    <?php if (!empty($pipeline)): ?>
+                        <?php
+                        $cnts = array_map(function($p) { return (int)$p['cnt']; }, $pipeline);
+                        $maxPipeline = max($cnts);
+                        if ($maxPipeline < 1) $maxPipeline = 1;
+                        $stageColors = ['new'=>'#667eea','contacted'=>'#3b82f6','qualified'=>'#8b5cf6','site_visit'=>'#f59e0b','proposal'=>'#ec4899','negotiation'=>'#ef4444','booking'=>'#06b6d4','won'=>'#10b981'];
+                        foreach ($pipeline as $p):
+                            $width = max(8, ((int)$p['cnt'] / $maxPipeline) * 100);
+                            $color = $stageColors[$p['status']] ?? '#6b7280';
+                        ?>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="fw-semibold" style="font-size:13px"><?= ucfirst(str_replace('_',' ',$p['status'])) ?></span>
+                                    <span class="fw-bold"><?= (int)$p['cnt'] ?> leads &middot; ₹<?= number_format((float)$p['total_val'] / 100000, 1) ?>L</span>
+                                </div>
+                                <div class="progress" style="height:10px;border-radius:5px">
+                                    <div class="progress-bar" style="width:<?= $width ?>%;background:<?= $color ?>;border-radius:5px"></div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="text-muted text-center mb-0">No pipeline data</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-0">
+                    <h6 class="crm-section-title mb-0"><i class="fas fa-filter"></i>Lead Status Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <?php
+                    try {
+                        $db = \App\Core\Database\Database::getInstance()->getConnection();
+                        $statusDist = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+                    } catch (\Throwable $e) { $statusDist = []; }
+                    $totalAll = array_sum(array_map(fn($s) => (int)$s['cnt'], $statusDist)) ?: 1;
+                    ?>
+                    <?php if (!empty($statusDist)): ?>
+                        <!-- Donut Chart (CSS-based) -->
+                        <div class="d-flex align-items-center gap-4">
+                            <div style="width:120px;height:120px;border-radius:50%;background:conic-gradient(
+                                <?php
+                                $colors = ['#667eea','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16','#f97316'];
+                                $deg = 0;
+                                foreach ($statusDist as $i => $s):
+                                    $pct = ((int)$s['cnt'] / $totalAll) * 360;
+                                    echo $colors[$i % count($colors)] . " {$deg}deg " . ($deg + $pct) . "deg,";
+                                    $deg += $pct;
+                                endforeach;
+                                ?>
+                            );position:relative;flex-shrink:0">
+                                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center">
+                                    <strong style="font-size:18px"><?= number_format(array_sum(array_map(fn($s) => (int)$s['cnt'], $statusDist))) ?></strong>
+                                </div>
+                            </div>
+                            <div style="flex:1">
+                                <?php foreach (array_slice($statusDist, 0, 8) as $i => $s): ?>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <div style="width:10px;height:10px;border-radius:3px;background:<?= $colors[$i % count($colors)] ?>;flex-shrink:0"></div>
+                                        <span style="font-size:12px;flex:1"><?= ucfirst(str_replace('_',' ',$s['status'])) ?></span>
+                                        <span class="fw-bold" style="font-size:12px"><?= (int)$s['cnt'] ?></span>
+                                        <small class="text-muted" style="font-size:11px"><?= round(((int)$s['cnt'] / $totalAll) * 100) ?>%</small>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted text-center mb-0">No data</p>
                     <?php endif; ?>
                 </div>
             </div>

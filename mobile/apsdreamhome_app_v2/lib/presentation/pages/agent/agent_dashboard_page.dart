@@ -43,32 +43,42 @@ class AgentDashboardPage extends ConsumerWidget {
     final leadRepo = ref.watch(leadRepositoryProvider);
     final commissionAsync = ref.watch(mlmSummaryProvider);
 
-    return CustomScrollView(
-      slivers: [
-        // App Bar
-        SliverToBoxAdapter(child: _buildAppBar(context, user)),
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(currentUserDataProvider);
+        ref.invalidate(mlmSummaryProvider);
+        await Future.delayed(const Duration(milliseconds: 500));
+      },
+      color: AppTheme.primaryColor,
+      child: CustomScrollView(
+        slivers: [
+          // App Bar
+          SliverToBoxAdapter(child: _buildAppBar(context, user)),
 
-        // Stats Cards
-        SliverToBoxAdapter(child: _buildStatsCards(context, ref, commissionAsync)),
-
-        // Quick Actions
-        SliverToBoxAdapter(child: _buildQuickActions(context)),
-
-        // Today's Follow-ups
-        SliverToBoxAdapter(
-          child: AppWidgets.sectionHeader(
-            title: 'Recent Leads',
-            subtitle: 'Your latest assigned leads',
-            onSeeAll: () => context.push('/agent/leads'),
+          // Stats Cards
+          SliverToBoxAdapter(
+            child: _buildStatsCards(context, ref, commissionAsync),
           ),
-        ),
 
-        // Recent Leads List
-        SliverToBoxAdapter(child: _buildRecentLeads(context, ref, leadRepo)),
+          // Quick Actions
+          SliverToBoxAdapter(child: _buildQuickActions(context)),
 
-        // Bottom Padding
-        const SliverToBoxAdapter(child: SizedBox(height: 32)),
-      ],
+          // Today's Follow-ups
+          SliverToBoxAdapter(
+            child: AppWidgets.sectionHeader(
+              title: 'Recent Leads',
+              subtitle: 'Your latest assigned leads',
+              onSeeAll: () => context.push('/agent/leads'),
+            ),
+          ),
+
+          // Recent Leads List
+          SliverToBoxAdapter(child: _buildRecentLeads(context, ref, leadRepo)),
+
+          // Bottom Padding
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        ],
+      ),
     );
   }
 
@@ -97,9 +107,16 @@ class AgentDashboardPage extends ConsumerWidget {
                   child: user.profileImage != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(30),
-                          child: Image.network(user.profileImage!, fit: BoxFit.cover),
+                          child: Image.network(
+                            user.profileImage!,
+                            fit: BoxFit.cover,
+                          ),
                         )
-                      : const Icon(Icons.person, color: AppTheme.primaryColor, size: 32),
+                      : const Icon(
+                          Icons.person,
+                          color: AppTheme.primaryColor,
+                          size: 32,
+                        ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -116,7 +133,10 @@ class AgentDashboardPage extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
@@ -135,11 +155,17 @@ class AgentDashboardPage extends ConsumerWidget {
                 ),
                 IconButton(
                   onPressed: () => context.push('/notifications'),
-                  icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                  icon: const Icon(
+                    Icons.notifications_outlined,
+                    color: Colors.white,
+                  ),
                 ),
                 IconButton(
                   onPressed: () => context.push('/profile'),
-                  icon: const Icon(Icons.settings_outlined, color: Colors.white),
+                  icon: const Icon(
+                    Icons.settings_outlined,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
@@ -175,7 +201,10 @@ class AgentDashboardPage extends ConsumerWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.successColor,
                       borderRadius: BorderRadius.circular(20),
@@ -357,9 +386,9 @@ class AgentDashboardPage extends ConsumerWidget {
         children: [
           Text(
             'Quick Actions',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Row(
@@ -373,7 +402,9 @@ class AgentDashboardPage extends ConsumerWidget {
                       width: 70,
                       height: 70,
                       decoration: BoxDecoration(
-                        color: (action['color'] as Color).withValues(alpha: 0.1),
+                        color: (action['color'] as Color).withValues(
+                          alpha: 0.1,
+                        ),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Icon(
@@ -400,7 +431,11 @@ class AgentDashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecentLeads(BuildContext context, WidgetRef ref, LeadRepository leadRepo) {
+  Widget _buildRecentLeads(
+    BuildContext context,
+    WidgetRef ref,
+    LeadRepository leadRepo,
+  ) {
     return FutureBuilder<List<LeadModel>>(
       future: leadRepo.getMyLeads(),
       builder: (context, snapshot) {
@@ -408,16 +443,19 @@ class AgentDashboardPage extends ConsumerWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
-              children: List.generate(3, (i) => AppWidgets.shimmerLoading(
-                child: Container(
-                  height: 80,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+              children: List.generate(
+                3,
+                (i) => AppWidgets.shimmerLoading(
+                  child: Container(
+                    height: 80,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
-              )),
+              ),
             ),
           );
         }
@@ -473,10 +511,7 @@ class AgentDashboardPage extends ConsumerWidget {
               color: statusColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              Icons.person,
-              color: statusColor,
-            ),
+            child: Icon(Icons.person, color: statusColor),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -495,7 +530,11 @@ class AgentDashboardPage extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Icon(priorityIcon, size: 16, color: _getPriorityColor(lead.priority)),
+                    Icon(
+                      priorityIcon,
+                      size: 16,
+                      color: _getPriorityColor(lead.priority),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),

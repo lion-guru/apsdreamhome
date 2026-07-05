@@ -331,7 +331,9 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                                     ['label' => __('about_us'), 'url' => '/about', 'icon' => 'fas fa-info-circle'],
                                     ['label' => __('nav_our_team'), 'url' => '/team', 'icon' => 'fas fa-users'],
                                     ['label' => __('nav_gallery'), 'url' => '/gallery', 'icon' => 'fas fa-images'],
+                                    ['label' => __('nav_career_opportunity', null, 'Career Opportunity'), 'url' => '/opportunity', 'icon' => 'fas fa-rocket'],
                                     ['label' => __('nav_careers'), 'url' => '/careers', 'icon' => 'fas fa-briefcase'],
+                                    ['label' => __('nav_news', null, 'News'), 'url' => '/news', 'icon' => 'fas fa-newspaper'],
                                     ['label' => __('nav_testimonials'), 'url' => '/testimonials', 'icon' => 'fas fa-comment-alt'],
                                     ['label' => __('nav_blog'), 'url' => '/blog', 'icon' => 'fas fa-blog'],
                                     ['label' => __('nav_faqs'), 'url' => '/faqs', 'icon' => 'fas fa-question-circle'],
@@ -590,9 +592,6 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                 </div>
             </div>
         </nav>
-    </header>
-
-    <!-- Ad Banner (removed — ads handled via popup/modal) -->
     </header>
 
 
@@ -905,10 +904,23 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
             margin-top: 8px;
         }
 
+        .premium-header .btn-admin {
+            display: block !important;
+            margin-top: 8px;
+        }
+
+        .premium-header .btn-call {
+            display: block !important;
+            margin-top: 8px;
+        }
+
         #compareBadge,
-        .btn-compare,
-        .btn-admin {
+        .btn-compare {
             display: none !important;
+        }
+
+        .btn-admin {
+            margin-top: 8px;
         }
 
         /* Add brand to top of mobile menu */

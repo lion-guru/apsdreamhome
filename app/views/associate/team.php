@@ -1,27 +1,28 @@
 <?php
-$page_title = $page_title ?? 'My Team';
+$page_title = $page_title ?? __('assoc_team_title', [], 'My Team');
 $team = $team ?? [];
 $team_count = $team_count ?? 0;
 $team_stats = $team_stats ?? ['total' => 0, 'active' => 0, 'total_sales' => 0, 'total_commission' => 0];
 
-$rankColors = [
-    'associate' => '#94a3b8', 'senior_associate' => '#a16207', 'bdm' => '#ca8a04',
-    'sr_bdm' => '#0891b2', 'vice_president' => '#0f766e', 'president' => '#dc2626', 'site_manager' => '#059669',
-];
 $rankLabels = [
-    'associate' => 'Associate', 'senior_associate' => 'Sr. Associate', 'bdm' => 'BDM',
-    'sr_bdm' => 'Sr. BDM', 'vice_president' => 'Vice President', 'president' => 'President', 'site_manager' => 'Site Manager',
+    'associate' => __('assoc_rank_associate', [], 'Associate'),
+    'senior_associate' => __('assoc_rank_sr_associate', [], 'Sr. Associate'),
+    'bdm' => __('assoc_rank_bdm', [], 'BDM'),
+    'sr_bdm' => __('assoc_rank_sr_bdm', [], 'Sr. BDM'),
+    'vice_president' => __('assoc_rank_vp', [], 'Vice President'),
+    'president' => __('assoc_rank_president', [], 'President'),
+    'site_manager' => __('assoc_rank_site_manager', [], 'Site Manager'),
 ];
 ?>
 
 <div class="container-fluid px-4 py-3">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="mb-1"><i class="fas fa-users text-primary me-2"></i>My Team</h4>
-            <small class="text-muted">Manage and track your team members' performance</small>
+            <h4 class="mb-1"><i class="fas fa-users text-primary me-2"></i><?= __('assoc_team_title', [], 'My Team') ?></h4>
+            <small class="text-muted"><?= __('assoc_team_subtitle', [], 'Manage and track your team members\' performance') ?></small>
         </div>
         <a href="<?= BASE_URL ?>/associate/dashboard" class="btn btn-outline-secondary btn-sm">
-            <i class="fas fa-arrow-left me-1"></i>Dashboard
+                    <i class="fas fa-arrow-left me-1"></i><?= __('assoc_team_dashboard', [], 'Dashboard') ?>
         </a>
     </div>
 
@@ -33,7 +34,7 @@ $rankLabels = [
                     <i class="fas fa-users"></i>
                 </div>
                 <div style="font-size:1.8rem;font-weight:700;color:#1e293b;"><?= $team_stats['total'] ?></div>
-                <div class="text-muted small">Total Members</div>
+                <div class="text-muted small"><?= __('assoc_team_total_members', [], 'Total Members') ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
@@ -42,7 +43,7 @@ $rankLabels = [
                     <i class="fas fa-user-check"></i>
                 </div>
                 <div style="font-size:1.8rem;font-weight:700;color:#1e293b;"><?= $team_stats['active'] ?></div>
-                <div class="text-muted small">Active</div>
+                <div class="text-muted small"><?= __('assoc_team_active', [], 'Active') ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
@@ -51,7 +52,7 @@ $rankLabels = [
                     <i class="fas fa-rupee-sign"></i>
                 </div>
                 <div style="font-size:1.8rem;font-weight:700;color:#1e293b;">₹<?= number_format($team_stats['total_sales']) ?></div>
-                <div class="text-muted small">Team Sales</div>
+                <div class="text-muted small"><?= __('assoc_team_sales', [], 'Team Sales') ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
@@ -60,7 +61,7 @@ $rankLabels = [
                     <i class="fas fa-coins"></i>
                 </div>
                 <div style="font-size:1.8rem;font-weight:700;color:#1e293b;">₹<?= number_format($team_stats['total_commission']) ?></div>
-                <div class="text-muted small">Team Earned</div>
+                <div class="text-muted small"><?= __('assoc_team_earned', [], 'Team Earned') ?></div>
             </div>
         </div>
     </div>
@@ -69,11 +70,11 @@ $rankLabels = [
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3">
             <div class="d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0"><i class="fas fa-list text-primary me-2"></i>Team Members (<?= $team_count ?>)</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-list text-primary me-2"></i><?= __('assoc_team_members_count', [], 'Team Members') ?> (<?= $team_count ?>)</h5>
                 <div class="d-flex gap-2">
-                    <input type="text" id="teamSearch" class="form-control form-control-sm" style="max-width:250px;" placeholder="Search by name..." autocomplete="off">
+                    <input type="text" id="teamSearch" class="form-control form-control-sm" style="max-width:250px;" placeholder="<?= __('assoc_team_search', [], 'Search by name...') ?>" autocomplete="off">
                     <a href="<?= BASE_URL ?>/become-associate" class="btn btn-primary btn-sm" target="_blank">
-                        <i class="fas fa-user-plus me-1"></i>Invite
+                        <i class="fas fa-user-plus me-1"></i><?= __('assoc_team_invite', [], 'Invite') ?>
                     </a>
                 </div>
             </div>
@@ -82,10 +83,10 @@ $rankLabels = [
             <?php if (empty($team)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-users fa-4x text-muted mb-3"></i>
-                    <h5 class="text-muted">No Team Members Yet</h5>
-                    <p class="text-muted">Share your referral link to start building your team.</p>
+                    <h5 class="text-muted"><?= __('assoc_team_empty', [], 'No Team Members Yet') ?></h5>
+                    <p class="text-muted"><?= __('assoc_team_empty_desc', [], 'Share your referral link to start building your team.') ?></p>
                     <a href="<?= BASE_URL ?>/become-associate" class="btn btn-primary" target="_blank">
-                        <i class="fas fa-share-alt me-1"></i>Share Referral Link
+                        <i class="fas fa-share-alt me-1"></i><?= __('assoc_team_share_link', [], 'Share Referral Link') ?>
                     </a>
                 </div>
             <?php else: ?>
@@ -93,14 +94,14 @@ $rankLabels = [
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th>#</th>
-                                <th>Member</th>
-                                <th>Rank</th>
-                                <th class="text-end">Team Size</th>
-                                <th class="text-end">Lifetime Sales</th>
-                                <th class="text-end">Earned</th>
-                                <th>Status</th>
-                                <th>Joined</th>
+                                <th><?= __('assoc_team_th_hash', [], '#') ?></th>
+                                <th><?= __('assoc_team_th_member', [], 'Member') ?></th>
+                                <th><?= __('assoc_team_th_rank', [], 'Rank') ?></th>
+                                <th class="text-end"><?= __('assoc_team_th_team_size', [], 'Team Size') ?></th>
+                                <th class="text-end"><?= __('assoc_team_th_sales', [], 'Lifetime Sales') ?></th>
+                                <th class="text-end"><?= __('assoc_team_th_earned', [], 'Earned') ?></th>
+                                <th><?= __('assoc_team_th_status', [], 'Status') ?></th>
+                                <th><?= __('assoc_team_th_joined', [], 'Joined') ?></th>
                             </tr>
                         </thead>
                         <tbody>

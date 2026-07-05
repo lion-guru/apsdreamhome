@@ -17,7 +17,7 @@ class AdManagerService
     private function ensureTableExists(): void
     {
         try {
-            $this->db->exec("CREATE TABLE IF NOT EXISTS ad_slots (
+            $this->db->exec("CREATE TABLE IF NOT EXISTS ad_placements (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 slot_key VARCHAR(50) NOT NULL UNIQUE,
                 title VARCHAR(255) NOT NULL,
@@ -41,7 +41,7 @@ class AdManagerService
     public function getSlot(string $slotKey): ?array
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM ad_slots WHERE slot_key = ? AND status = 'active' LIMIT 1");
+            $stmt = $this->db->prepare("SELECT * FROM ad_placements WHERE slot_key = ? AND status = 'active' LIMIT 1");
             $stmt->execute([$slotKey]);
             $ad = $stmt->fetch(\PDO::FETCH_ASSOC);
             if ($ad) {
@@ -55,7 +55,7 @@ class AdManagerService
     public function getSlotsByType(string $type): array
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM ad_slots WHERE slot_type = ? AND status = 'active' ORDER BY sort_order ASC");
+            $stmt = $this->db->prepare("SELECT * FROM ad_placements WHERE slot_type = ? AND status = 'active' ORDER BY sort_order ASC");
             $stmt->execute([$type]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
@@ -66,7 +66,7 @@ class AdManagerService
     public function getAllSlots(): array
     {
         try {
-            $stmt = $this->db->query("SELECT * FROM ad_slots ORDER BY slot_type, sort_order ASC");
+            $stmt = $this->db->query("SELECT * FROM ad_placements ORDER BY slot_type, sort_order ASC");
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
@@ -77,10 +77,10 @@ class AdManagerService
     {
         try {
             if (!empty($data['id'])) {
-                $stmt = $this->db->prepare("UPDATE ad_slots SET slot_key=?, title=?, content=?, image_url=?, link_url=?, html_code=?, slot_type=?, status=?, sort_order=? WHERE id=?");
+                $stmt = $this->db->prepare("UPDATE ad_placements SET slot_key=?, title=?, content=?, image_url=?, link_url=?, html_code=?, slot_type=?, status=?, sort_order=? WHERE id=?");
                 return $stmt->execute([$data['slot_key'], $data['title'], $data['content'] ?? '', $data['image_url'] ?? '', $data['link_url'] ?? '', $data['html_code'] ?? '', $data['slot_type'] ?? 'banner', $data['status'] ?? 'active', (int)($data['sort_order'] ?? 0), $data['id']]);
             } else {
-                $stmt = $this->db->prepare("INSERT INTO ad_slots (slot_key, title, content, image_url, link_url, html_code, slot_type, status, sort_order) VALUES (?,?,?,?,?,?,?,?,?)");
+                $stmt = $this->db->prepare("INSERT INTO ad_placements (slot_key, title, content, image_url, link_url, html_code, slot_type, status, sort_order) VALUES (?,?,?,?,?,?,?,?,?)");
                 return $stmt->execute([$data['slot_key'], $data['title'], $data['content'] ?? '', $data['image_url'] ?? '', $data['link_url'] ?? '', $data['html_code'] ?? '', $data['slot_type'] ?? 'banner', $data['status'] ?? 'active', (int)($data['sort_order'] ?? 0)]);
             }
         } catch (\Exception $e) {
@@ -91,7 +91,7 @@ class AdManagerService
     public function deleteSlot(int $id): bool
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM ad_slots WHERE id = ?");
+            $stmt = $this->db->prepare("DELETE FROM ad_placements WHERE id = ?");
             return $stmt->execute([$id]);
         } catch (\Exception $e) {
             return false;
@@ -101,14 +101,14 @@ class AdManagerService
     public function incrementViews(int $id): void
     {
         try {
-            $this->db->prepare("UPDATE ad_slots SET views = views + 1 WHERE id = ?")->execute([$id]);
+            $this->db->prepare("UPDATE ad_placements SET views = views + 1 WHERE id = ?")->execute([$id]);
         } catch (\Exception $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
     }
 
     public function incrementClicks(int $id): void
     {
         try {
-            $this->db->prepare("UPDATE ad_slots SET clicks = clicks + 1 WHERE id = ?")->execute([$id]);
+            $this->db->prepare("UPDATE ad_placements SET clicks = clicks + 1 WHERE id = ?")->execute([$id]);
         } catch (\Exception $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
     }
 

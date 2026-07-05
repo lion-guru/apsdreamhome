@@ -269,7 +269,7 @@ class LandInventoryController extends AdminController
         // Handle file upload with validation
         $filePath = null;
         if (!empty($_FILES['document_file']) && $_FILES['document_file']['error'] === UPLOAD_ERR_OK) {
-            $validation = UploadValidator::validate($_FILES['document_file'], ['types' => 'documents', 'max_size' => 25]);
+            $validation = \UploadValidator::validate($_FILES['document_file'], ['types' => 'documents', 'max_size' => 25]);
             if ($validation['valid']) {
                 $leadDir = $this->uploadPath . DIRECTORY_SEPARATOR . $leadId;
                 if (!is_dir($leadDir)) {

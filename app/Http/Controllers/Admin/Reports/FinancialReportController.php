@@ -36,14 +36,14 @@ class FinancialReportController extends AdminController
                 $totalTds = (float)($this->db->query("SELECT COALESCE(SUM(total_tds),0) FROM tds_register")->fetchColumn());
                 $depositedTds = (float)($this->db->query("SELECT COALESCE(SUM(total_tds),0) FROM tds_register WHERE status IN ('deposited','verified')")->fetchColumn());
                 $pendingTds = $totalTds - $depositedTds;
-                $bankAccounts = $this->db->query("SELECT * FROM bank_accounts_master WHERE active = 1")->fetchAll(PDO::FETCH_ASSOC);
+                $bankAccounts = $this->db->query("SELECT * FROM bank_accounts_master WHERE active = 1")->fetchAll(\PDO::FETCH_ASSOC);
                 $totalBankBalance = array_sum(array_map(function($a) { return (float)$a['current_balance']; }, $bankAccounts));
                 $escrowBalance = array_sum(array_map(function($a) { return $a['is_escrow'] ? (float)$a['current_balance'] : 0; }, $bankAccounts));
                 $reconciliations = (int)($this->db->query("SELECT COUNT(*) FROM bank_reconciliation WHERE status = 'completed'")->fetchColumn());
                 $pendingRecon = (int)($this->db->query("SELECT COUNT(*) FROM bank_reconciliation WHERE status != 'completed'")->fetchColumn());
-                $monthlyData = $this->db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, SUM(amount) as revenue, payment_method FROM payment_transactions WHERE payment_status = 'completed' AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY month, payment_method ORDER BY month ASC")->fetchAll(PDO::FETCH_ASSOC);
-                $methodBreakdown = $this->db->query("SELECT payment_method, COUNT(*) as cnt, SUM(amount) as total FROM payment_transactions WHERE payment_status = 'completed' GROUP BY payment_method ORDER BY total DESC")->fetchAll(PDO::FETCH_ASSOC);
-                $recentPayments = $this->db->query("SELECT pt.*, u.name FROM payment_transactions pt LEFT JOIN users u ON pt.user_id = u.id ORDER BY pt.created_at DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
+                $monthlyData = $this->db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, SUM(amount) as revenue, payment_method FROM payment_transactions WHERE payment_status = 'completed' AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY month, payment_method ORDER BY month ASC")->fetchAll(\PDO::FETCH_ASSOC);
+                $methodBreakdown = $this->db->query("SELECT payment_method, COUNT(*) as cnt, SUM(amount) as total FROM payment_transactions WHERE payment_status = 'completed' GROUP BY payment_method ORDER BY total DESC")->fetchAll(\PDO::FETCH_ASSOC);
+                $recentPayments = $this->db->query("SELECT pt.*, u.name FROM payment_transactions pt LEFT JOIN users u ON pt.user_id = u.id ORDER BY pt.created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
             } catch (\Exception $e) {
                 error_log('FinancialReportController::index() query error: ' . $e->getMessage());
             }

@@ -104,7 +104,7 @@ class Router
 
         // Step 5b: Global CSRF validation for POST/PUT/DELETE
         if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'DELETE'])) {
-            $excludedPaths = ['/subscribe', '/api/', '/ad-click/', '/register', '/login', '/associate/login', '/associate/register', '/agent/login', '/agent/register', '/ai/property-valuation/generate', '/ai/', '/csp-report', '/webhook/', '/compare/'];
+            $excludedPaths = ['/subscribe', '/api/', '/ad-click/', '/register', '/login', '/associate/login', '/associate/register', '/agent/login', '/agent/register', '/ai/property-valuation/generate', '/ai/', '/csp-report', '/webhook/', '/compare/', '/careers/submit-application'];
             $skip = false;
             foreach ($excludedPaths as $path) {
                 if (strpos($uri, $path) === 0) {

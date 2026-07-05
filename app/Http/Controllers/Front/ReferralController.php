@@ -46,6 +46,7 @@ class ReferralController extends BaseController
         } catch (\Throwable $e) {}
 
         $shareUrl = $service->getShareUrl($referralCode);
+        $tierInfo = $service->getUserTier($userId);
         $shareLinks = [
             'url' => $shareUrl,
             'whatsapp' => 'https://wa.me/?text=' . urlencode("Join APS Dream Home! Use my referral code: {$referralCode}\nRegister at: {$shareUrl}"),
@@ -98,6 +99,7 @@ class ReferralController extends BaseController
             'share_links' => $shareLinks,
             'share_stats' => $shareStats,
             'leaderboard' => $leaderboard,
+            'tier_info' => $tierInfo,
         ]);
     }
 

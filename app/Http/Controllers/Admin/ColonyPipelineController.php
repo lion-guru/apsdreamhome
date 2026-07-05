@@ -417,7 +417,7 @@ class ColonyPipelineController extends AdminController
     }
 
     /**
-     * Pricing dashboard — land cost, dev costs breakdown, current plot prices
+     * Pricing dashboard — land cost, dev costs breakdown, current plot prices, approvals
      */
     public function pricingDashboard($id)
     {
@@ -474,12 +474,65 @@ class ColonyPipelineController extends AdminController
                  GROUP BY price_band ORDER BY MIN(total_price)",
                 [$id]
             );
+
+            // Blocks list for block-premium
+            $blockList = $this->db->fetchAll(
+                "SELECT DISTINCT block FROM plots WHERE colony_id = ? AND block IS NOT NULL AND block != '' ORDER BY block",
+                [$id]
+            );
+
+            // Phases list for phase-premium
+            $phaseList = $this->db->fetchAll(
+                "SELECT DISTINCT phase FROM plots WHERE colony_id = ? AND phase IS NOT NULL AND phase != '' ORDER BY phase",
+                [$id]
+            );
+
+            // Pending approvals for this colony
+            $pendingApprovals = $this->db->fetchAll(
+                "SELECT pa.*, p.plot_number, p.block, p.area_sqft,
+                        u1.name AS requested_by_name
+                 FROM pricing_approvals pa
+                 LEFT JOIN plots p ON pa.plot_id = p.id
+                 LEFT JOIN users u1 ON pa.requested_by = u1.id
+                 WHERE pa.colony_id = ? AND pa.status = 'pending'
+                 ORDER BY pa.requested_at DESC LIMIT 50",
+                [$id]
+            );
+
+            // All approvals history
+            $approvalHistory = $this->db->fetchAll(
+                "SELECT pa.*, p.plot_number, p.block, p.area_sqft,
+                        u1.name AS requested_by_name,
+                        u2.name AS approved_by_name
+                 FROM pricing_approvals pa
+                 LEFT JOIN plots p ON pa.plot_id = p.id
+                 LEFT JOIN users u1 ON pa.requested_by = u1.id
+                 LEFT JOIN users u2 ON pa.approved_by = u2.id
+                 WHERE pa.colony_id = ?
+                 ORDER BY pa.requested_at DESC LIMIT 50",
+                [$id]
+            );
+
+            // Plots that could have price overrides
+            $recentlyOverridden = $this->db->fetchAll(
+                "SELECT id, plot_number, block, area_sqft, price_per_sqft, total_price,
+                        negotiated_price, price_override_reason, price_overridden_at,
+                        negotiated_price_approved
+                 FROM plots WHERE colony_id = ? AND price_override_reason IS NOT NULL AND price_override_reason != ''
+                 ORDER BY price_overridden_at DESC LIMIT 20",
+                [$id]
+            );
         } catch (Exception $e) {
             $colony = [];
             $plotStats = ['total' => 0, 'avg_ppsf' => 0, 'min_price' => 0, 'max_price' => 0, 'total_value' => 0, 'avg_area' => 0];
             $devCosts = [];
             $totalDevCost = ['total' => 0];
             $priceBands = [];
+            $blockList = [];
+            $phaseList = [];
+            $pendingApprovals = [];
+            $approvalHistory = [];
+            $recentlyOverridden = [];
             error_log('ColonyPipeline pricingDashboard error: ' . $e->getMessage());
         }
 
@@ -489,7 +542,12 @@ class ColonyPipelineController extends AdminController
             'plot_stats' => $plotStats,
             'dev_costs' => $devCosts,
             'total_dev_cost' => $totalDevCost['total'] ?? 0,
-            'price_bands' => $priceBands
+            'price_bands' => $priceBands,
+            'block_list' => $blockList,
+            'phase_list' => $phaseList,
+            'pending_approvals' => $pendingApprovals,
+            'approval_history' => $approvalHistory,
+            'recently_overridden' => $recentlyOverridden,
         ]);
     }
 
@@ -527,11 +585,14 @@ class ColonyPipelineController extends AdminController
 
     /**
      * Apply pricing — sets base_price_per_sqft on all available plots
+     * Also handles sub-actions: update_single_plot, request_discount, approve_discount, reject_discount
      */
     public function applyPricing($id)
     {
         $this->requireAdmin();
         $this->validateCsrfOrFail();
+
+        $subAction = $_POST['sub_action'] ?? 'apply_all';
 
         try {
             $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [$id]);
@@ -540,6 +601,79 @@ class ColonyPipelineController extends AdminController
                 $this->redirect('/admin/colony-pipeline');
             }
 
+            $pricingService = new \App\Services\Land\ColonyPricingService();
+
+            // ── Sub-action: Update single plot price ─────────────
+            if ($subAction === 'update_single_plot') {
+                $plotId = (int)($_POST['plot_id'] ?? 0);
+                $newPpsf = floatval($_POST['new_price_per_sqft'] ?? 0);
+                $reason = trim($_POST['price_reason'] ?? '');
+                if ($plotId <= 0 || $newPpsf <= 0) {
+                    $this->setFlash('error', 'Plot ID and valid price are required');
+                    $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+                }
+                $result = $pricingService->updatePlotPrice($plotId, $newPpsf, $reason);
+                if ($result['success']) {
+                    $this->setFlash('success', 'Plot #' . $plotId . ' price updated to ₹' . number_format($newPpsf) . '/sqft');
+                } else {
+                    $this->setFlash('error', $result['error'] ?? 'Update failed');
+                }
+                $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+            }
+
+            // ── Sub-action: Request discount ────────────────────
+            if ($subAction === 'request_discount') {
+                $plotId = (int)($_POST['plot_id'] ?? 0);
+                $requestedPpsf = floatval($_POST['requested_price_per_sqft'] ?? 0);
+                $reason = trim($_POST['discount_reason'] ?? '');
+                if ($plotId <= 0 || $requestedPpsf <= 0) {
+                    $this->setFlash('error', 'Plot ID and requested price are required');
+                    $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+                }
+                $result = $pricingService->requestDiscount($plotId, $requestedPpsf, $reason);
+                if ($result['success']) {
+                    $this->setFlash('success', $result['message'] ?? 'Discount request submitted');
+                } else {
+                    $this->setFlash('error', $result['error'] ?? 'Discount request failed');
+                }
+                $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+            }
+
+            // ── Sub-action: Approve discount ────────────────────
+            if ($subAction === 'approve_discount') {
+                $approvalId = (int)($_POST['approval_id'] ?? 0);
+                $notes = trim($_POST['approval_notes'] ?? '');
+                if ($approvalId <= 0) {
+                    $this->setFlash('error', 'Invalid approval ID');
+                    $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+                }
+                $result = $pricingService->approveDiscount($approvalId, $notes);
+                if ($result['success']) {
+                    $this->setFlash('success', $result['message'] ?? 'Discount approved');
+                } else {
+                    $this->setFlash('error', $result['error'] ?? 'Approval failed');
+                }
+                $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+            }
+
+            // ── Sub-action: Reject discount ─────────────────────
+            if ($subAction === 'reject_discount') {
+                $approvalId = (int)($_POST['approval_id'] ?? 0);
+                $notes = trim($_POST['approval_notes'] ?? '');
+                if ($approvalId <= 0) {
+                    $this->setFlash('error', 'Invalid approval ID');
+                    $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+                }
+                $result = $pricingService->rejectDiscount($approvalId, $notes);
+                if ($result['success']) {
+                    $this->setFlash('success', $result['message'] ?? 'Discount rejected');
+                } else {
+                    $this->setFlash('error', $result['error'] ?? 'Rejection failed');
+                }
+                $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
+            }
+
+            // ── Default: Apply pricing to ALL plots ─────────────
             $basePpsf = floatval($_POST['base_price_per_sqft'] ?? 0);
             if ($basePpsf <= 0) {
                 $this->setFlash('error', 'Base price per sqft must be greater than 0');
@@ -548,11 +682,34 @@ class ColonyPipelineController extends AdminController
 
             $cornerPremium = floatval($_POST['corner_premium_pct'] ?? 10) / 100;
             $parkFacingPremium = floatval($_POST['park_facing_premium_pct'] ?? 5) / 100;
+            $wideRoadPremium = floatval($_POST['wide_road_premium_pct'] ?? 8) / 100;
+            $wideRoadThreshold = floatval($_POST['wide_road_threshold'] ?? 40);
 
-            $pricingService = new \App\Services\Land\ColonyPricingService();
+            // Per-block premiums
+            $blockPremiums = [];
+            foreach ($_POST as $key => $val) {
+                if (strpos($key, 'block_premium_') === 0 && !empty($val)) {
+                    $blockName = substr($key, strlen('block_premium_'));
+                    $blockPremiums[$blockName] = floatval($val);
+                }
+            }
+
+            // Per-phase premiums
+            $phasePremiums = [];
+            foreach ($_POST as $key => $val) {
+                if (strpos($key, 'phase_premium_') === 0 && !empty($val)) {
+                    $phaseName = substr($key, strlen('phase_premium_'));
+                    $phasePremiums[$phaseName] = floatval($val);
+                }
+            }
+
             $result = $pricingService->applyPricingToColony($id, $basePpsf, [
-                'corner_plot' => $cornerPremium,
-                'park_facing' => $parkFacingPremium
+                'corner_plot'          => $cornerPremium,
+                'park_facing'          => $parkFacingPremium,
+                'road_width_ft'        => $wideRoadPremium,
+                'wide_road_threshold'  => $wideRoadThreshold,
+                'block'                => $blockPremiums,
+                'phase'                => $phasePremiums,
             ]);
 
             if ($result['success']) {
@@ -826,6 +983,149 @@ class ColonyPipelineController extends AdminController
                 'success' => false,
                 'error' => 'Failed to load plot stats: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Plot Map View — Leaflet interactive map for a colony
+     */
+    public function plotMap($id)
+    {
+        $this->requireAdmin();
+
+        try {
+            $colony = $this->db->fetchOne(
+                "SELECT c.*, d.name as district_name
+                 FROM colonies c LEFT JOIN districts d ON c.district_id = d.id
+                 WHERE c.id = ?",
+                [$id]
+            );
+
+            if (!$colony) {
+                $this->setFlash('error', 'Colony not found');
+                $this->redirect('/admin/colony-pipeline');
+            }
+
+            $plots = $this->db->fetchAll(
+                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft,
+                        status, price_per_sqft, total_price, corner_plot, park_facing,
+                        road_facing, gata_number, khasra_number
+                 FROM plots WHERE colony_id = ?
+                 ORDER BY block, plot_number",
+                [$id]
+            );
+        } catch (Exception $e) {
+            $colony = [];
+            $plots = [];
+            error_log('ColonyPipeline plotMap error: ' . $e->getMessage());
+        }
+
+        return $this->render('admin/colony-pipeline/plot-map', [
+            'page_title' => 'Plot Map — ' . ($colony['name'] ?? ''),
+            'colony' => $colony,
+            'plots' => $plots
+        ]);
+    }
+
+    /**
+     * Plot map GeoJSON data — returns plot geometries as GeoJSON FeatureCollection
+     */
+    public function plotMapGeoJson($id)
+    {
+        $this->requireAdmin();
+
+        try {
+            $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [$id]);
+            if (!$colony) {
+                $this->json(['type' => 'FeatureCollection', 'features' => []]);
+                return;
+            }
+
+            $plots = $this->db->fetchAll(
+                "SELECT id, plot_number, block, area_sqft, width_ft, length_ft,
+                        status, price_per_sqft, total_price, corner_plot, park_facing,
+                        road_facing, gata_number
+                 FROM plots WHERE colony_id = ?
+                 ORDER BY block, plot_number",
+                [$id]
+            );
+
+            $features = [];
+            $centerLat = $colony['latitude'] ? (float)$colony['latitude'] : 26.76;
+            $centerLng = $colony['longitude'] ? (float)$colony['longitude'] : 83.37;
+            $blocksMap = [];
+            foreach ($plots as $p) {
+                $block = $p['block'] ?? 'A';
+                if (!isset($blocksMap[$block])) {
+                    $blocksMap[$block] = ['plots' => [], 'y' => count($blocksMap)];
+                }
+                $blocksMap[$block]['plots'][] = $p;
+            }
+
+            foreach ($blocksMap as $block => $bData) {
+                $x = 0;
+                foreach ($bData['plots'] as $p) {
+                    $w = max((float)($p['width_ft'] ?? 30), 20);
+                    $l = max((float)($p['length_ft'] ?? 50), 30);
+                    $scale = 0.000008;
+                    $x1 = $centerLng + ($x * $scale * 1.1);
+                    $y1 = $centerLat + ($bData['y'] * $scale * 1.1);
+                    $x2 = $x1 + $w * $scale;
+                    $y2 = $y1 + $l * $scale;
+
+                    $statusColors = [
+                        'available' => '#22c55e',
+                        'booked' => '#eab308',
+                        'sold' => '#ef4444',
+                        'hold' => '#6b7280',
+                        'reserved' => '#f97316',
+                    ];
+                    $color = $statusColors[$p['status']] ?? '#94a3b8';
+
+                    $features[] = [
+                        'type' => 'Feature',
+                        'geometry' => [
+                            'type' => 'Polygon',
+                            'coordinates' => [[
+                                [$x1, $y1], [$x2, $y1], [$x2, $y2], [$x1, $y2], [$x1, $y1]
+                            ]]
+                        ],
+                        'properties' => [
+                            'id' => $p['id'],
+                            'plot_number' => $p['plot_number'],
+                            'block' => $block,
+                            'area_sqft' => $p['area_sqft'],
+                            'width_ft' => $p['width_ft'],
+                            'length_ft' => $p['length_ft'],
+                            'status' => $p['status'],
+                            'price_per_sqft' => $p['price_per_sqft'],
+                            'total_price' => $p['total_price'],
+                            'corner_plot' => $p['corner_plot'],
+                            'park_facing' => $p['park_facing'],
+                            'road_facing' => $p['road_facing'],
+                            'gata_number' => $p['gata_number'],
+                            'fill' => $color,
+                            'stroke' => '#1e293b',
+                            'stroke-width' => 1,
+                        ]
+                    ];
+                    $x += $w / 30 + 0.5;
+                }
+            }
+
+            $this->json([
+                'type' => 'FeatureCollection',
+                'features' => $features,
+                'metadata' => [
+                    'colony_id' => $id,
+                    'colony_name' => $colony['name'],
+                    'total_plots' => count($plots),
+                    'center' => [$centerLat, $centerLng]
+                ]
+            ]);
+        } catch (Exception $e) {
+            error_log('plotMapGeoJson error: ' . $e->getMessage());
+            $this->json(['type' => 'FeatureCollection', 'features' => []], 500);
         }
     }
 }

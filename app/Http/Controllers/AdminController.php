@@ -10,10 +10,34 @@ use App\Http\Controllers\BaseController;
  */
 class AdminController extends BaseController
 {
+    private static $skipAdminCheck = false;
+
     public function __construct()
     {
         parent::__construct();
         $this->layout = 'layouts/admin';
+
+        // RBAC: Enforce admin-only access for ALL admin controllers
+        if (!self::$skipAdminCheck && !$this->isAdmin()) {
+            // API calls get JSON error, page loads get redirect
+            $isApi = strpos($_SERVER['REQUEST_URI'] ?? '', '/api/') !== false;
+            if ($isApi) {
+                http_response_code(403);
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'Admin access required', 'redirect' => '/admin/login']);
+                exit;
+            }
+            $_SESSION['error_message'] = 'Admin access required. Please login as admin.';
+            $this->redirect('/admin/login');
+        }
+    }
+
+    /**
+     * Allow specific admin controller methods to skip admin check
+     */
+    protected function skipAdminCheck()
+    {
+        self::$skipAdminCheck = true;
     }
 
     /**

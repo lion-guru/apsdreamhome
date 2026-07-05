@@ -1,5 +1,5 @@
 <?php
-$page_title = $page_title ?? 'Follow-ups';
+$page_title = $page_title ?? __('assoc_fu_title', [], 'Follow-ups');
 $current_page = 'followups';
 $followups = $followups ?? [];
 $stats = $stats ?? ['total' => 0, 'pending' => 0, 'completed' => 0, 'overdue' => 0];
@@ -7,13 +7,12 @@ $filter = $_GET['filter'] ?? 'all';
 $today = date('Y-m-d');
 ?>
 
-<!-- Stats Row -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
         <a href="?filter=all" class="card border-0 shadow-sm text-decoration-none <?= $filter === 'all' ? 'border-primary' : '' ?>" style="background: linear-gradient(135deg, #6366f1 0%, #14b8a6 100%); color: #fff;">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold"><?= $stats['total'] ?></div>
-                <div class="small opacity-75">Total Tasks</div>
+                <div class="small opacity-75"><?= __('assoc_fu_total_tasks', [], 'Total Tasks') ?></div>
             </div>
         </a>
     </div>
@@ -21,7 +20,7 @@ $today = date('Y-m-d');
         <a href="?filter=pending" class="card border-0 shadow-sm text-decoration-none <?= $filter === 'pending' ? 'border-warning' : '' ?>">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold text-warning"><?= $stats['pending'] ?></div>
-                <div class="small text-muted">Pending</div>
+                <div class="small text-muted"><?= __('assoc_fu_pending', [], 'Pending') ?></div>
             </div>
         </a>
     </div>
@@ -29,7 +28,7 @@ $today = date('Y-m-d');
         <a href="?filter=overdue" class="card border-0 shadow-sm text-decoration-none <?= $filter === 'overdue' ? 'border-danger' : '' ?>">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold text-danger"><?= $stats['overdue'] ?></div>
-                <div class="small text-muted">Overdue</div>
+                <div class="small text-muted"><?= __('assoc_fu_overdue', [], 'Overdue') ?></div>
             </div>
         </a>
     </div>
@@ -37,32 +36,29 @@ $today = date('Y-m-d');
         <a href="?filter=completed" class="card border-0 shadow-sm text-decoration-none <?= $filter === 'completed' ? 'border-success' : '' ?>">
             <div class="card-body p-3 text-center">
                 <div class="fs-2 fw-bold text-success"><?= $stats['completed'] ?></div>
-                <div class="small text-muted">Completed</div>
+                <div class="small text-muted"><?= __('assoc_fu_completed', [], 'Completed') ?></div>
             </div>
         </a>
     </div>
 </div>
 
-<!-- Filter Tabs -->
 <div class="d-flex gap-2 mb-4 flex-wrap">
     <?php
-    $tabs = ['all'=>'All Tasks','today'=>'Today','week'=>'This Week','overdue'=>'Overdue','completed'=>'Completed'];
+    $tabs = ['all'=>__('assoc_fu_all_tasks', [], 'All Tasks'),'today'=>__('assoc_fu_today', [], 'Today'),'week'=>__('assoc_fu_week', [], 'This Week'),'overdue'=>__('assoc_fu_overdue', [], 'Overdue'),'completed'=>__('assoc_fu_completed', [], 'Completed')];
     foreach ($tabs as $tKey => $tLabel): ?>
         <a href="?filter=<?= $tKey ?>" class="tab-pill <?= $filter === $tKey ? 'active' : '' ?>"><?= $tLabel ?></a>
     <?php endforeach; ?>
 </div>
 
-<!-- Follow-ups List -->
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-        <h5 class="mb-0"><i class="fas fa-calendar-check me-2 text-primary"></i>Follow-ups & Tasks</h5>
+        <h5 class="mb-0"><i class="fas fa-calendar-check me-2 text-primary"></i><?= __('assoc_fu_title', [], 'Follow-ups & Tasks') ?></h5>
         <a href="<?= BASE_URL ?>/associate/crm" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus me-1"></i> Add Task
+            <i class="fas fa-plus me-1"></i> <?= __('assoc_fu_add_task', [], 'Add Task') ?>
         </a>
     </div>
     <div class="card-body p-0">
         <?php
-        // Filter logic
         $filtered = $followups;
         if ($filter === 'today') {
             $filtered = array_filter($followups, fn($t) => ($t['due_date'] ?? '') === $today && $t['status'] !== 'completed');
@@ -78,21 +74,21 @@ $today = date('Y-m-d');
         if (empty($filtered)): ?>
             <div class="text-center py-5">
                 <i class="fas fa-check-circle fa-3x text-success mb-3" style="opacity:0.3"></i>
-                <h5 class="text-muted"><?= $filter === 'completed' ? 'No completed tasks yet' : 'No pending follow-ups!' ?></h5>
-                <p class="text-muted"><?= $filter === 'completed' ? 'Complete tasks to see them here.' : 'You\'re all caught up. Great job!' ?></p>
+                <h5 class="text-muted"><?= $filter === 'completed' ? __('assoc_fu_no_completed', [], 'No completed tasks yet') : __('assoc_fu_no_pending', [], 'No pending follow-ups!') ?></h5>
+                <p class="text-muted"><?= $filter === 'completed' ? __('assoc_fu_no_completed_desc', [], 'Complete tasks to see them here.') : __('assoc_fu_all_caught_up', [], 'You\'re all caught up. Great job!') ?></p>
             </div>
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Task</th>
-                            <th>Lead</th>
-                            <th>Due Date</th>
-                            <th>Type</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th><?= __('assoc_fu_th_task', [], 'Task') ?></th>
+                            <th><?= __('assoc_fu_th_lead', [], 'Lead') ?></th>
+                            <th><?= __('assoc_fu_th_due', [], 'Due Date') ?></th>
+                            <th><?= __('assoc_fu_th_type', [], 'Type') ?></th>
+                            <th><?= __('assoc_fu_th_priority', [], 'Priority') ?></th>
+                            <th><?= __('assoc_fu_th_status', [], 'Status') ?></th>
+                            <th><?= __('assoc_fu_th_action', [], 'Action') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -114,7 +110,7 @@ $today = date('Y-m-d');
                         ?>
                             <tr class="<?= $isOverdue ? 'table-danger' : ($isTodayTask ? 'table-light' : '') ?>">
                                 <td>
-                                    <strong><?= htmlspecialchars($task['title'] ?? 'Untitled') ?></strong>
+                                    <strong><?= htmlspecialchars($task['title'] ?? __('assoc_fu_untitled', [], 'Untitled')) ?></strong>
                                     <?php if (!empty($task['description'])): ?>
                                         <br><small class="text-muted"><?= htmlspecialchars(mb_substr($task['description'], 0, 60)) ?></small>
                                     <?php endif; ?>
@@ -136,26 +132,26 @@ $today = date('Y-m-d');
                                         <span class="<?= $isOverdue ? 'text-danger fw-bold' : ($isTodayTask ? 'text-primary fw-bold' : '') ?>">
                                             <i class="fas fa-clock me-1"></i>
                                             <?= date('d M Y', strtotime($task['due_date'])) ?>
-                                            <?php if ($isTodayTask): ?><span class="badge bg-primary ms-1">Today</span><?php endif; ?>
-                                            <?php if ($isOverdue): ?><span class="badge bg-danger ms-1">Overdue</span><?php endif; ?>
+                                            <?php if ($isTodayTask): ?><span class="badge bg-primary ms-1"><?= __('assoc_fu_today_badge', [], 'Today') ?></span><?php endif; ?>
+                                            <?php if ($isOverdue): ?><span class="badge bg-danger ms-1"><?= __('assoc_fu_overdue_badge', [], 'Overdue') ?></span><?php endif; ?>
                                         </span>
                                     <?php else: ?>
-                                        <span class="text-muted">No date</span>
+                                        <span class="text-muted"><?= __('assoc_fu_no_date', [], 'No date') ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <span class="badge bg-light text-dark"><i class="fas <?= $typeIcon ?> me-1"></i><?= ucfirst(str_replace('_', ' ', $task['task_type'] ?? 'task')) ?></span>
+                                    <span class="badge bg-light text-dark"><i class="fas <?= $typeIcon ?> me-1"></i><?= ucfirst(str_replace('_', ' ', $task['task_type'] ?? __('assoc_fu_task', [], 'task'))) ?></span>
                                 </td>
                                 <td>
                                     <span class="badge bg-<?= $priorityClass ?>"><?= ucfirst($task['priority'] ?? 'medium') ?></span>
                                 </td>
                                 <td>
                                     <?php if ($task['status'] === 'completed'): ?>
-                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i>Done</span>
+                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i><?= __('assoc_fu_done', [], 'Done') ?></span>
                                     <?php elseif ($isOverdue): ?>
-                                        <span class="badge bg-danger"><i class="fas fa-exclamation me-1"></i>Overdue</span>
+                                        <span class="badge bg-danger"><i class="fas fa-exclamation me-1"></i><?= __('assoc_fu_overdue_badge', [], 'Overdue') ?></span>
                                     <?php else: ?>
-                                        <span class="badge bg-warning text-dark"><i class="fas fa-hourglass me-1"></i>Pending</span>
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-hourglass me-1"></i><?= __('assoc_fu_pending', [], 'Pending') ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -163,14 +159,14 @@ $today = date('Y-m-d');
                                         <form method="POST" action="<?= BASE_URL ?>/associate/followups/update/<?= $task['id'] ?>" class="d-inline">
                                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                             <input type="hidden" name="status" value="completed">
-                                            <button type="submit" class="btn btn-success btn-sm" title="Mark Complete"><i class="fas fa-check"></i></button>
+                                            <button type="submit" class="btn btn-success btn-sm" title="<?= __('assoc_fu_mark_done', [], 'Mark Complete') ?>"><i class="fas fa-check"></i></button>
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!empty($task['lead_id'])): ?>
-                                    <a href="<?= BASE_URL ?>/associate/leads/<?= $task['lead_id'] ?>" class="btn btn-outline-primary btn-sm" title="View Lead"><i class="fas fa-eye"></i></a>
+                                    <a href="<?= BASE_URL ?>/associate/leads/<?= $task['lead_id'] ?>" class="btn btn-outline-primary btn-sm" title="<?= __('assoc_fu_view_lead', [], 'View Lead') ?>"><i class="fas fa-eye"></i></a>
                                     <?php endif; ?>
                                     <?php if (!empty($task['lead_phone'])): ?>
-                                    <a href="tel:<?= htmlspecialchars($task['lead_phone']) ?>" class="btn btn-outline-success btn-sm" title="Call"><i class="fas fa-phone"></i></a>
+                                    <a href="tel:<?= htmlspecialchars($task['lead_phone']) ?>" class="btn btn-outline-success btn-sm" title="<?= __('assoc_fu_call', [], 'Call') ?>"><i class="fas fa-phone"></i></a>
                                     <?php endif; ?>
                                 </td>
                             </tr>

@@ -718,7 +718,11 @@ class BaseController
      */
     protected function isAdmin()
     {
-        return isset($_SESSION['admin_id']);
+        if (!isset($_SESSION['admin_id'])) return false;
+        // Admin, super_admin, manager, employee, telecaller — all can access admin panel
+        // Sidebar filtering via AdminMenuService shows only their department's menus
+        $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? '';
+        return in_array($role, ['admin', 'super_admin', 'manager', 'employee', 'telecaller']);
     }
 
     /**
@@ -749,6 +753,20 @@ class BaseController
     }
 
     /**
+     * Render error page
+     */
+    protected function renderError($title, $message, $code = 500)
+    {
+        http_response_code($code);
+        $this->render('errors/generic', [
+            'page_title' => $title,
+            'error_title' => $title,
+            'error_message' => $message,
+            'error_code' => $code
+        ]);
+    }
+
+    /**
      * Get views base path
      */
     protected function getViewsBasePath()
@@ -772,7 +790,7 @@ class BaseController
         if (isset($this->start_time)) {
             $end_time = microtime(true);
             $execution_time = $end_time - $this->start_time;
-            if (defined('DEBUG_MODE') && DEBUG_MODE) {
+            if (defined('DEBUG_MODE') && constant('DEBUG_MODE')) {
                 error_log("Page execution time: " . number_format($execution_time, 4) . " seconds");
             }
         }

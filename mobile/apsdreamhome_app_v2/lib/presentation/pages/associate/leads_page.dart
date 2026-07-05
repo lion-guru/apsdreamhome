@@ -15,25 +15,36 @@ class LeadsPage extends ConsumerStatefulWidget {
   ConsumerState<LeadsPage> createState() => _LeadsPageState();
 }
 
-class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateMixin {
+class _LeadsPageState extends ConsumerState<LeadsPage>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   final _searchController = TextEditingController();
   bool _isSearching = false;
   String _selectedStatus = 'all';
   String _selectedSource = 'all';
   String _selectedPriority = 'all';
-  
+
   final List<String> _statuses = [
-    'all', 'new', 'contacted', 'interested', 'visited', 'closed', 'lost'
+    'all',
+    'new',
+    'contacted',
+    'interested',
+    'visited',
+    'closed',
+    'lost',
   ];
-  
+
   final List<String> _sources = [
-    'all', 'website', 'phone', 'email', 'referral', 'social', 'campaign'
+    'all',
+    'website',
+    'phone',
+    'email',
+    'referral',
+    'social',
+    'campaign',
   ];
-  
-  final List<String> _priorities = [
-    'all', 'high', 'medium', 'low'
-  ];
+
+  final List<String> _priorities = ['all', 'high', 'medium', 'low'];
 
   @override
   void initState() {
@@ -51,7 +62,7 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     ref.watch(currentUserProvider);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: _isSearching
@@ -93,27 +104,34 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
           ],
         ),
       ),
-      body: Column(
-        children: [
-          // Filter Chips
-          _buildFilterChips(),
-          
-          // Leads List
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildLeadsList('all'),
-                _buildLeadsList('new'),
-                _buildLeadsList('contacted'),
-                _buildLeadsList('interested'),
-                _buildLeadsList('visited'),
-                _buildLeadsList('closed'),
-                _buildLeadsList('lost'),
-              ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(currentUserProvider);
+          await Future.delayed(const Duration(milliseconds: 500));
+        },
+        color: Theme.of(context).colorScheme.primary,
+        child: Column(
+          children: [
+            // Filter Chips
+            _buildFilterChips(),
+
+            // Leads List
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildLeadsList('all'),
+                  _buildLeadsList('new'),
+                  _buildLeadsList('contacted'),
+                  _buildLeadsList('interested'),
+                  _buildLeadsList('visited'),
+                  _buildLeadsList('closed'),
+                  _buildLeadsList('lost'),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/leads/add'),
@@ -131,7 +149,7 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
         itemCount: 3,
         itemBuilder: (context, index) {
           List<String> options;
-          
+
           switch (index) {
             case 0:
               options = _statuses;
@@ -145,14 +163,14 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
             default:
               options = ['all'];
           }
-          
+
           return Container(
             margin: const EdgeInsets.only(right: 8),
             child: Wrap(
               spacing: 4,
               children: options.map((option) {
                 final isSelected = _getSelectedFilter(index, option);
-                
+
                 return FilterChip(
                   label: Text(option.toUpperCase()),
                   selected: isSelected,
@@ -164,8 +182,12 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
                   backgroundColor: Colors.grey.shade200,
                   selectedColor: Colors.blue.shade100,
                   labelStyle: TextStyle(
-                    color: isSelected ? Colors.blue.shade700 : Colors.grey.shade700,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected
+                        ? Colors.blue.shade700
+                        : Colors.grey.shade700,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 );
               }).toList(),
@@ -208,15 +230,19 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
       'status': status == 'all' ? null : status,
       'source': _selectedSource == 'all' ? null : _selectedSource,
       'priority': _selectedPriority == 'all' ? null : _selectedPriority,
-      'search': _searchController.text.isNotEmpty ? _searchController.text : null,
+      'search': _searchController.text.isNotEmpty
+          ? _searchController.text
+          : null,
     };
 
     return RefreshIndicator(
-      onRefresh: () async { ref.refresh(myLeadsProvider(filters)); }, // ignore: unused_result
+      onRefresh: () async {
+        ref.refresh(myLeadsProvider(filters));
+      }, // ignore: unused_result
       child: Consumer(
         builder: (context, ref, child) {
           final leadsAsync = ref.watch(myLeadsProvider(filters));
-          
+
           return leadsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => AppWidgets.errorWidget(
@@ -229,7 +255,11 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.people_outline, size: 80, color: Colors.grey.shade300),
+                      Icon(
+                        Icons.people_outline,
+                        size: 80,
+                        color: Colors.grey.shade300,
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         'No $status leads',
@@ -298,9 +328,9 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
                   _buildStatusBadge(lead.status ?? 'new'),
                 ],
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               // Contact Info
               Row(
                 children: [
@@ -331,7 +361,7 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
                   ],
                 ],
               ),
-              
+
               if ((lead.interestedIn ?? '').isNotEmpty) ...[
                 const SizedBox(height: 8),
                 Row(
@@ -350,7 +380,7 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
                   ],
                 ),
               ],
-              
+
               // Budget and Priority
               const SizedBox(height: 8),
               Row(
@@ -392,17 +422,14 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
                   ),
                 ],
               ),
-              
+
               // Created Date and Actions
               const SizedBox(height: 12),
               Row(
                 children: [
                   Text(
                     'Created ${_getFormattedDate(lead.createdAt)}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade500,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
                   ),
                   const Spacer(),
                   Row(
@@ -437,7 +464,7 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
   Widget _buildStatusBadge(String status) {
     Color color;
     String text;
-    
+
     switch (status.toLowerCase()) {
       case 'new':
         color = Colors.blue;
@@ -467,7 +494,7 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
         color = Colors.grey;
         text = status;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -488,7 +515,7 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
 
   Widget _buildPriorityBadge(String priority) {
     Color color;
-    
+
     switch (priority.toLowerCase()) {
       case 'high':
         color = Colors.red;
@@ -502,7 +529,7 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
       default:
         color = Colors.grey;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -523,10 +550,10 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
 
   String _getFormattedDate(DateTime? date) {
     if (date == null) return 'recently';
-    
+
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays == 0) {
       return 'today';
     } else if (difference.inDays == 1) {
@@ -568,20 +595,17 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Title
                 const Text(
                   'Filter Leads',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 Expanded(
                   child: ListView(
                     controller: scrollController,
@@ -597,22 +621,26 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
-                        children: _statuses.map((status) => FilterChip(
-                          label: Text(status.toUpperCase()),
-                          selected: _selectedStatus == status,
-                          onSelected: (selected) {
-                            setModalState(() {
-                              _selectedStatus = selected ? status : 'all';
-                            });
-                            setState(() {
-                              _selectedStatus = selected ? status : 'all';
-                            });
-                          },
-                        )).toList(),
+                        children: _statuses
+                            .map(
+                              (status) => FilterChip(
+                                label: Text(status.toUpperCase()),
+                                selected: _selectedStatus == status,
+                                onSelected: (selected) {
+                                  setModalState(() {
+                                    _selectedStatus = selected ? status : 'all';
+                                  });
+                                  setState(() {
+                                    _selectedStatus = selected ? status : 'all';
+                                  });
+                                },
+                              ),
+                            )
+                            .toList(),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Source Filter
                       const Text(
                         'Source',
@@ -624,22 +652,26 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
-                        children: _sources.map((source) => FilterChip(
-                          label: Text(source.toUpperCase()),
-                          selected: _selectedSource == source,
-                          onSelected: (selected) {
-                            setModalState(() {
-                              _selectedSource = selected ? source : 'all';
-                            });
-                            setState(() {
-                              _selectedSource = selected ? source : 'all';
-                            });
-                          },
-                        )).toList(),
+                        children: _sources
+                            .map(
+                              (source) => FilterChip(
+                                label: Text(source.toUpperCase()),
+                                selected: _selectedSource == source,
+                                onSelected: (selected) {
+                                  setModalState(() {
+                                    _selectedSource = selected ? source : 'all';
+                                  });
+                                  setState(() {
+                                    _selectedSource = selected ? source : 'all';
+                                  });
+                                },
+                              ),
+                            )
+                            .toList(),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Priority Filter
                       const Text(
                         'Priority',
@@ -651,22 +683,30 @@ class _LeadsPageState extends ConsumerState<LeadsPage> with TickerProviderStateM
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
-                        children: _priorities.map((priority) => FilterChip(
-                          label: Text(priority.toUpperCase()),
-                          selected: _selectedPriority == priority,
-                          onSelected: (selected) {
-                            setModalState(() {
-                              _selectedPriority = selected ? priority : 'all';
-                            });
-                            setState(() {
-                              _selectedPriority = selected ? priority : 'all';
-                            });
-                          },
-                        )).toList(),
+                        children: _priorities
+                            .map(
+                              (priority) => FilterChip(
+                                label: Text(priority.toUpperCase()),
+                                selected: _selectedPriority == priority,
+                                onSelected: (selected) {
+                                  setModalState(() {
+                                    _selectedPriority = selected
+                                        ? priority
+                                        : 'all';
+                                  });
+                                  setState(() {
+                                    _selectedPriority = selected
+                                        ? priority
+                                        : 'all';
+                                  });
+                                },
+                              ),
+                            )
+                            .toList(),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Apply Button
                       SizedBox(
                         width: double.infinity,

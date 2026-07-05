@@ -168,6 +168,15 @@ $blocks = $blocks ?? [];
         </div>
       </a>
     </div>
+    <div class="col-md-3">
+      <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)($colony['id'] ?? 0) ?>/map" class="card aps-cp-card text-decoration-none">
+        <div class="card-body aps-cp-card-body text-center">
+          <i class="fas fa-map-marked-alt fa-2x" style="color:#0d9488 mb-2"></i>
+          <div class="fw-semibold">Interactive Map</div>
+          <small class="text-muted">Leaflet plot map with filters</small>
+        </div>
+      </a>
+    </div>
   </div>
 
   <div class="text-muted small">
