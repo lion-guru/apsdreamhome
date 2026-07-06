@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Services\Communication\NotificationService;
 use Exception;
 
 class CampaignDeliveryService

@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Core\App;
 use App\Models\Model;
+use App\Services\Communication\NotificationService;
 use Exception;
 
 class AlertService

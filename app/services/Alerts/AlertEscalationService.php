@@ -4,7 +4,7 @@ namespace App\Services\Alerts;
 
 use App\Core\Database\Database;
 use App\Services\LoggingService;
-use App\Services\NotificationService;
+use App\Services\Communication\NotificationService;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
