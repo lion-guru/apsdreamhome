@@ -33,7 +33,7 @@
                     </div>
 
                     <?php if ($listing['photo']): ?>
-                        <img src="<?= htmlspecialchars($listing['photo']) ?>" alt="<?= htmlspecialchars($listing['business_name']) ?>" class="img-fluid rounded mb-3" style="max-height:300px;width:100%;object-fit:cover;">
+                        <img src="<?= htmlspecialchars($listing['photo']) ?>" loading="lazy" alt="<?= htmlspecialchars($listing['business_name']) ?>" class="img-fluid rounded mb-3" style="max-height:300px;width:100%;object-fit:cover;">
                     <?php endif; ?>
 
                     <?php if ($listing['description']): ?>

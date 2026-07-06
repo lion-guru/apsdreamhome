@@ -688,19 +688,22 @@ class AdminController extends BaseController
         if (in_array($role, ['super_admin', 'admin'])) {
             return true;
         }
-        try {
-            $db = $this->db ?? \App\Core\Database::getInstance()->getPdo();
-            $stmt = $db->prepare(
-                "SELECT COUNT(*) FROM admin_role_menu_permissions rp
-                 JOIN admin_menu_items mi ON mi.id = rp.menu_item_id
-                 WHERE rp.role = ? AND mi.url = ? AND mi.is_active = 1"
-            );
-            $stmt->execute([$role, $url]);
-            return (int)$stmt->fetchColumn() > 0;
-        } catch (\Exception $e) {
-            error_log('checkMenuPermission error: ' . $e->getMessage());
-            return false;
-        }
+        $cacheKey = "admin_menu_perm_" . md5($role . '|' . $url);
+        return \App\Core\Cache::remember($cacheKey, function () use ($role, $url) {
+            try {
+                $db = $this->db ?? \App\Core\Database::getInstance()->getPdo();
+                $stmt = $db->prepare(
+                    "SELECT COUNT(*) FROM admin_role_menu_permissions rp
+                     JOIN admin_menu_items mi ON mi.id = rp.menu_item_id
+                     WHERE rp.role = ? AND mi.url = ? AND mi.is_active = 1"
+                );
+                $stmt->execute([$role, $url]);
+                return (int)$stmt->fetchColumn() > 0;
+            } catch (\Exception $e) {
+                error_log('checkMenuPermission error: ' . $e->getMessage());
+                return false;
+            }
+        }, 300);
     }
 
     public function devTools()

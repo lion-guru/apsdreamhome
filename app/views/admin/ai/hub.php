@@ -400,4 +400,15 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
         const panel = document.getElementById('notificationPanel');
         if (panel) panel.classList.toggle('d-none');
     }
+
+    // Stub functions for tab loading (placeholder implementations)
+    function loadAITools() { showToast('Tool Directory loading...', 'info'); }
+    function loadRecommendations() { showToast('Recommendations loading...', 'info'); }
+    function loadEcosystem() { showToast('AI Ecosystem loading...', 'info'); }
+    function loadBotSettings() { showToast('Bot settings loading...', 'info'); }
+    function loadLearningUpdates() { showToast('Learning Center loading...', 'info'); }
+    function loadInsights() { showToast('Insights loading...', 'info'); }
+    function loadHealthStatus() { showToast('Health status loading...', 'info'); }
+    function saveWorkflow() { showToast('Workflow saved', 'success'); }
+    function executeWorkflow() { showToast('Workflow execution started', 'info'); }
 </script>

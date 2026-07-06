@@ -45,12 +45,39 @@ class BookingController extends AdminController
                 $where[] = "b.customer_id = ?";
                 $params[] = $filters['customer_id'];
             }
+            if (!empty($filters['associate_id'])) {
+                $where[] = "b.associate_id = ?";
+                $params[] = $filters['associate_id'];
+            }
             $whereClause = count($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
-            $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM bookings b LEFT JOIN properties p ON b.property_id = p.id LEFT JOIN users u ON b.customer_id = u.id $whereClause");
+            if (!empty($filters['search'])) {
+                $countSql = "SELECT COUNT(DISTINCT b.id) as total FROM bookings b LEFT JOIN properties p ON b.property_id = p.id LEFT JOIN users u ON b.customer_id = u.id $whereClause";
+            } else {
+                $simpleWhere = array_filter($where, fn($w) => str_starts_with(trim($w), 'b.'));
+                $simpleParams = [];
+                $simpleWhereClause = '';
+                if ($simpleWhere) {
+                    $reindexed = [];
+                    foreach ($where as $i => $w) {
+                        if (str_starts_with(trim($w), 'b.')) {
+                            $reindexed[] = $w;
+                            $simpleParams[] = $params[$i];
+                        }
+                    }
+                    $simpleWhereClause = 'WHERE ' . implode(' AND ', $reindexed);
+                }
+                $countSql = "SELECT COUNT(*) as total FROM bookings b $simpleWhereClause";
+                $params = $simpleParams ?: $params;
+            }
+            $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = intval($countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
             $totalPages = max(1, ceil($total / $perPage));
+
+            $validSorts = ['b.created_at', 'b.booking_number', 'b.total_amount', 'b.status'];
+            $sortCol = in_array($filters['sort'], $validSorts) ? $filters['sort'] : 'b.created_at';
+            $sortDir = strtoupper($filters['order']) === 'ASC' ? 'ASC' : 'DESC';
 
             $stmt = $this->db->prepare(
                 "SELECT b.*, p.title as property_title, p.location as property_location,
@@ -61,14 +88,16 @@ class BookingController extends AdminController
                  LEFT JOIN users u ON b.customer_id = u.id
                  LEFT JOIN users a ON b.associate_id = a.id
                  $whereClause
-                 ORDER BY b.created_at DESC
+                 ORDER BY $sortCol $sortDir
                  LIMIT $perPage OFFSET $offset"
             );
-            $stmt->execute($params);
+            $allParams = array_merge($params, []);
+            $stmt->execute($allParams);
             $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            $users = $this->db->query("SELECT id, name FROM users WHERE role IN ('customer','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-            $associates = $this->db->query("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $allRoles = $this->db->query("SELECT id, name, role FROM users WHERE role IN ('customer','agent','associate') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $users = array_values(array_filter($allRoles, fn($u) => in_array($u['role'], ['customer','agent'])));
+            $associates = array_values(array_filter($allRoles, fn($u) => $u['role'] === 'associate'));
 
             return $this->render('admin/bookings/index', [
                 'bookings' => $bookings,

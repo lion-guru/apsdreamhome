@@ -171,21 +171,26 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="APS.closeSidebar()"></div>
 
     <?php
-    // Live notification/message counts from DB
+    // Live notification/message counts from DB (cached 120s to avoid N+1 on every page load)
     $newLeadsCount = 0;
     $pendingTicketsCount = 0;
     $newInquiriesCount = 0;
     try {
-        $db = \App\Core\Database::getInstance()->getConnection();
-        $stmt = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE DATE(created_at) = CURDATE()");
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        $newLeadsCount = $row['cnt'] ?? 0;
-        $stmt = $db->query("SELECT COUNT(*) as cnt FROM support_tickets WHERE status = 'open'");
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        $pendingTicketsCount = $row['cnt'] ?? 0;
-        $stmt = $db->query("SELECT COUNT(*) as cnt FROM inquiries WHERE DATE(created_at) = CURDATE()");
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        $newInquiriesCount = $row['cnt'] ?? 0;
+        $newLeadsCount = \App\Core\Cache::remember('admin_notify_leads_today', function () {
+            $db = \App\Core\Database::getInstance()->getConnection();
+            $stmt = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE DATE(created_at) = CURDATE()");
+            return (int)($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
+        }, 120);
+        $pendingTicketsCount = \App\Core\Cache::remember('admin_notify_tickets_open', function () {
+            $db = \App\Core\Database::getInstance()->getConnection();
+            $stmt = $db->query("SELECT COUNT(*) as cnt FROM support_tickets WHERE status = 'open'");
+            return (int)($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
+        }, 120);
+        $newInquiriesCount = \App\Core\Cache::remember('admin_notify_inquiries_today', function () {
+            $db = \App\Core\Database::getInstance()->getConnection();
+            $stmt = $db->query("SELECT COUNT(*) as cnt FROM inquiries WHERE DATE(created_at) = CURDATE()");
+            return (int)($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
+        }, 120);
     } catch (\Exception $e) { /* silent */
     }
     ?>

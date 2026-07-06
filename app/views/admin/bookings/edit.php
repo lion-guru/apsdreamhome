@@ -323,6 +323,8 @@ $active_page = 'bookings';
             }
         }
 
+        function updateAmount() { updateCommissionPreview(); }
+
         // Form validation before submission
         document.querySelector('form').addEventListener('submit', function(e) {
             const propertyId = propertySelect.value;
