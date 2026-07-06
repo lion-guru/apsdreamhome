@@ -1,8 +1,4 @@
 <?php $isEdit = !empty($member); ?>
-<?php if (isset($_SESSION['error'])): ?>
-<div class="alert alert-danger alert-dismissible fade show"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-<?php endif; ?>
 
 <div class="card aps-cp-card">
     <div class="card-header d-flex justify-content-between align-items-center">

@@ -543,7 +543,7 @@ class UserController extends BaseController
         $bookingId = !empty($_POST['booking_id']) ? (int)$_POST['booking_id'] : null;
 
         if (empty($subject) || empty($message)) {
-            $_SESSION['flash_error'] = 'Subject and message are required.';
+            $_SESSION['error'] = 'Subject and message are required.';
             header('Location: ' . BASE_URL . '/user/tickets');
             exit;
         }
@@ -574,9 +574,9 @@ class UserController extends BaseController
                 error_log("[UserController::createTicket] email failed: " . $e->getMessage());
             }
 
-            $_SESSION['flash_success'] = 'Support ticket created successfully!';
+            $_SESSION['success'] = 'Support ticket created successfully!';
         } catch (\Exception $e) {
-            $_SESSION['flash_error'] = 'Failed to create ticket. Please try again.';
+            $_SESSION['error'] = 'Failed to create ticket. Please try again.';
         }
 
         header('Location: ' . BASE_URL . '/user/tickets');
@@ -634,12 +634,12 @@ class UserController extends BaseController
         $bookingId = !empty($_POST['booking_id']) ? (int)$_POST['booking_id'] : null;
 
         if (strlen($subject) < 5) {
-            $_SESSION['flash_error'] = 'Subject must be at least 5 characters.';
+            $_SESSION['error'] = 'Subject must be at least 5 characters.';
             header('Location: ' . BASE_URL . '/user/support/create');
             exit;
         }
         if (strlen($message) < 10) {
-            $_SESSION['flash_error'] = 'Message must be at least 10 characters.';
+            $_SESSION['error'] = 'Message must be at least 10 characters.';
             header('Location: ' . BASE_URL . '/user/support/create');
             exit;
         }
@@ -667,12 +667,12 @@ class UserController extends BaseController
                 error_log("[UserController::storeSupportTicket] email failed: " . $e->getMessage());
             }
 
-            $_SESSION['flash_success'] = 'Ticket ' . $ticket['ticket_number'] . ' created successfully!';
+            $_SESSION['success'] = 'Ticket ' . $ticket['ticket_number'] . ' created successfully!';
             header('Location: ' . BASE_URL . '/user/support/' . $ticket['id']);
             exit;
         } catch (\Exception $e) {
             error_log("storeSupportTicket: " . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to create ticket. Please try again.';
+            $_SESSION['error'] = 'Failed to create ticket. Please try again.';
             header('Location: ' . BASE_URL . '/user/support/create');
             exit;
         }
@@ -692,7 +692,7 @@ class UserController extends BaseController
         $ticket = $service->getTicket((int)$id);
 
         if (!$ticket || (int)$ticket['user_id'] !== (int)$user['id']) {
-            $_SESSION['flash_error'] = 'Ticket not found.';
+            $_SESSION['error'] = 'Ticket not found.';
             header('Location: ' . BASE_URL . '/user/support');
             exit;
         }
@@ -717,7 +717,7 @@ class UserController extends BaseController
 
         $message = trim($_POST['message'] ?? '');
         if (strlen($message) < 2) {
-            $_SESSION['flash_error'] = 'Reply message is required.';
+            $_SESSION['error'] = 'Reply message is required.';
             header('Location: ' . BASE_URL . '/user/support/' . $id);
             exit;
         }
@@ -726,23 +726,23 @@ class UserController extends BaseController
         $ticket = $service->getTicket((int)$id);
 
         if (!$ticket || (int)$ticket['user_id'] !== (int)$user['id']) {
-            $_SESSION['flash_error'] = 'Ticket not found.';
+            $_SESSION['error'] = 'Ticket not found.';
             header('Location: ' . BASE_URL . '/user/support');
             exit;
         }
 
         if (in_array($ticket['status'], ['resolved', 'closed'])) {
-            $_SESSION['flash_error'] = 'This ticket is ' . $ticket['status'] . ' and cannot accept new replies.';
+            $_SESSION['error'] = 'This ticket is ' . $ticket['status'] . ' and cannot accept new replies.';
             header('Location: ' . BASE_URL . '/user/support/' . $id);
             exit;
         }
 
         try {
             $service->addReply((int)$id, (int)$user['id'], $message, false);
-            $_SESSION['flash_success'] = 'Reply sent successfully!';
+            $_SESSION['success'] = 'Reply sent successfully!';
         } catch (\Exception $e) {
             error_log("ticketReply: " . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to send reply.';
+            $_SESSION['error'] = 'Failed to send reply.';
         }
 
         header('Location: ' . BASE_URL . '/user/support/' . $id);
@@ -820,7 +820,7 @@ class UserController extends BaseController
         @session_start();
 
         if (!isset($_SESSION['user_id'])) {
-            $_SESSION['flash_error'] = 'Please login first';
+            $_SESSION['error'] = 'Please login first';
             header('Location: ' . BASE_URL . '/login?redirect=/user/bank-details');
             exit;
         }
@@ -836,7 +836,7 @@ class UserController extends BaseController
     {
         @session_start();
         if (!isset($_SESSION['user_id'])) {
-            $_SESSION['flash_error'] = 'Please login first';
+            $_SESSION['error'] = 'Please login first';
             header('Location: ' . BASE_URL . '/login?redirect=/user/address');
             exit;
         }
@@ -851,7 +851,7 @@ class UserController extends BaseController
     {
         @session_start();
         if (!isset($_SESSION['user_id'])) {
-            $_SESSION['flash_error'] = 'Please login first';
+            $_SESSION['error'] = 'Please login first';
             header('Location: ' . BASE_URL . '/login?redirect=/user/insurance');
             exit;
         }
@@ -866,7 +866,7 @@ class UserController extends BaseController
     {
         @session_start();
         if (!isset($_SESSION['user_id'])) {
-            $_SESSION['flash_error'] = 'Please login first';
+            $_SESSION['error'] = 'Please login first';
             header('Location: ' . BASE_URL . '/login?redirect=/user/investment-plans');
             exit;
         }
@@ -897,7 +897,7 @@ class UserController extends BaseController
 
         // Validation
         if (empty($accountHolder) || empty($accountNumber) || empty($ifscCode)) {
-            $_SESSION['flash_error'] = 'Please fill all required fields';
+            $_SESSION['error'] = 'Please fill all required fields';
             header('Location: ' . BASE_URL . '/user/bank-details');
             exit;
         }
@@ -927,7 +927,7 @@ class UserController extends BaseController
             $stmt->execute([$userId, $accountHolder, $accountNumber, $ifscCode, $bankName, $branchName, $accountType, $upiId]);
         }
 
-        $_SESSION['flash_success'] = 'Bank details saved successfully!';
+        $_SESSION['success'] = 'Bank details saved successfully!';
         header('Location: ' . BASE_URL . '/user/bank-details');
         exit;
     }
@@ -1003,9 +1003,9 @@ class UserController extends BaseController
             ];
         }
 
-        $flash_error = $_SESSION['flash_error'] ?? '';
-        $flash_success = $_SESSION['flash_success'] ?? '';
-        unset($_SESSION['flash_error'], $_SESSION['flash_success']);
+        $flash_error = $_SESSION['error'] ?? '';
+        $flash_success = $_SESSION['success'] ?? '';
+        unset($_SESSION['error'], $_SESSION['success']);
 
         $this->layout = 'layouts/customer';
         $this->render('pages/user_notification_settings', [
@@ -1058,7 +1058,7 @@ class UserController extends BaseController
             ]);
         }
 
-        $_SESSION['flash_success'] = 'Notification preferences updated successfully!';
+        $_SESSION['success'] = 'Notification preferences updated successfully!';
         header('Location: ' . BASE_URL . '/user/notification-settings');
         exit;
     }
@@ -2714,7 +2714,7 @@ class UserController extends BaseController
         $notes = trim($_POST['notes'] ?? '');
 
         if (empty($visitorName) || empty($visitorPhone) || empty($visitDate) || empty($visitTime)) {
-            $_SESSION['flash_error'] = 'Please fill all required fields.';
+            $_SESSION['error'] = 'Please fill all required fields.';
             $this->redirect('/user/site-visits');
             return;
         }
@@ -2729,10 +2729,10 @@ class UserController extends BaseController
             ");
             $st->execute([$colonyId ?: null, $userId, $visitorName, $visitorPhone, $visitDate, $visitTime, $notes]);
 
-            $_SESSION['flash_success'] = 'Site visit scheduled for ' . date('M d, Y', strtotime($visitDate)) . ' at ' . date('h:i A', strtotime($visitTime)) . '!';
+            $_SESSION['success'] = 'Site visit scheduled for ' . date('M d, Y', strtotime($visitDate)) . ' at ' . date('h:i A', strtotime($visitTime)) . '!';
         } catch (\Throwable $e) {
             error_log('bookSiteVisitAction error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to schedule visit.';
+            $_SESSION['error'] = 'Failed to schedule visit.';
         }
         $this->redirect('/user/site-visits');
     }

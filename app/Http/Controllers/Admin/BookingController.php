@@ -109,12 +109,10 @@ class BookingController extends AdminController
                  VALUES (?, ?, ?, 'pending', ?, NOW())"
             );
             $stmt->execute([$data['customer_id'], $data['property_id'], $data['visit_date'] ?? date('Y-m-d'), $data['notes'] ?? '']);
-            $_SESSION['flash_message'] = 'Booking created successfully.';
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = 'Booking created successfully.';
             $this->redirect('/admin/bookings');
         } catch (Exception $e) {
-            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/bookings/create');
         }
     }
@@ -196,14 +194,12 @@ class BookingController extends AdminController
                 "UPDATE bookings SET customer_id = ?, property_id = ?, visit_date = ?, status = ?, notes = ? WHERE id = ?"
             );
             $stmt->execute([$data['customer_id'], $data['property_id'], $data['visit_date'] ?? date('Y-m-d'), $data['status'] ?? 'pending', $data['notes'] ?? '', $id]);
-            $_SESSION['flash_message'] = 'Booking updated successfully.';
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = 'Booking updated successfully.';
             // Hot-path: booking status/amount changes affect the admin dashboard KPI bundle.
             \App\Services\Cache\HotPathCacheService::invalidateAdminDashboard();
             $this->redirect('/admin/bookings');
         } catch (Exception $e) {
-            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/bookings/' . $id . '/edit');
         }
     }
@@ -213,11 +209,9 @@ class BookingController extends AdminController
         try {
             $stmt = $this->db->prepare("DELETE FROM bookings WHERE id = ?");
             $stmt->execute([$id]);
-            $_SESSION['flash_message'] = 'Booking deleted successfully.';
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = 'Booking deleted successfully.';
         } catch (Exception $e) {
-            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/bookings');
     }
@@ -231,11 +225,9 @@ class BookingController extends AdminController
                  VALUES (?, ?, NOW(), ?, ?, 'completed', ?)"
             );
             $stmt->execute([$id, $data['amount'] ?? 0, $data['payment_method'] ?? 'cash', $data['transaction_id'] ?? '', $data['notes'] ?? '']);
-            $_SESSION['flash_message'] = 'Payment processed successfully.';
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = 'Payment processed successfully.';
         } catch (Exception $e) {
-            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/bookings/' . $id);
     }

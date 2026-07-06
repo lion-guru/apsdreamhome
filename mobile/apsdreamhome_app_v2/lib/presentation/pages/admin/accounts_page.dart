@@ -32,142 +32,168 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
   Widget build(BuildContext context) {
     final dataAsync = ref.watch(crmFinanceOverviewProvider);
 
-    return Column(
-      children: [
-        // Header
-        Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
-            ],
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.account_balance,
-                  size: 32, color: AppTheme.primaryColor),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Accounts & Finance',
-                        style: TextStyle(
-                            fontSize: ResponsiveHelper.fontSize(context, 24), fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
-                    const Text('Manage payments, invoices, and financial records',
-                        style: TextStyle(color: Colors.grey)),
-                  ],
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(crmFinanceOverviewProvider),
+      child: Column(
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
                 ),
-              ),
-              IconButton(
-                onPressed: () => ref.invalidate(crmFinanceOverviewProvider),
-                icon: const Icon(Icons.refresh),
-              ),
-            ],
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.account_balance,
+                  size: 32,
+                  color: AppTheme.primaryColor,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Accounts & Finance',
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(context, 24),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Manage payments, invoices, and financial records',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => ref.invalidate(crmFinanceOverviewProvider),
+                  icon: const Icon(Icons.refresh),
+                ),
+              ],
+            ),
           ),
-        ),
 
-        // Stats
-        dataAsync.when(
-          data: (data) {
-            final s = data['stats'] as Map<String, dynamic>? ?? {};
-            return Container(
-              padding: const EdgeInsets.all(16),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _buildStatCard(
+          // Stats
+          dataAsync.when(
+            data: (data) {
+              final s = data['stats'] as Map<String, dynamic>? ?? {};
+              return Container(
+                padding: const EdgeInsets.all(16),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildStatCard(
                       "Today's Collection",
                       '₹${_fmt(s['todays_collection'] ?? 0)}',
                       Colors.green,
-                      Icons.payments),
-                  _buildStatCard(
+                      Icons.payments,
+                    ),
+                    _buildStatCard(
                       'Pending EMI',
                       '₹${_fmt(s['pending_emi'] ?? 0)}',
                       Colors.orange,
-                      Icons.schedule),
-                  _buildStatCard(
+                      Icons.schedule,
+                    ),
+                    _buildStatCard(
                       'Outstanding',
                       '₹${_fmt(s['total_outstanding'] ?? 0)}',
                       Colors.red,
-                      Icons.trending_down),
-                  _buildStatCard(
+                      Icons.trending_down,
+                    ),
+                    _buildStatCard(
                       'This Month',
                       '₹${_fmt(s['collected_this_month'] ?? 0)}',
                       Colors.blue,
-                      Icons.calendar_month),
-                ],
-              ),
-            );
-          },
-          loading: () => const SizedBox(
-              height: 80, child: Center(child: CircularProgressIndicator())),
-          error: (_, __) => const SizedBox.shrink(),
-        ),
-
-        // Tabs
-        Expanded(
-          child: dataAsync.when(
-            data: (data) {
-              final collections = (data['collections'] as List<dynamic>?) ?? [];
-              final emiSchedule =
-                  (data['emi_schedule'] as List<dynamic>?) ?? [];
-              final s = data['stats'] as Map<String, dynamic>? ?? {};
-
-              return DefaultTabController(
-                length: 4,
-                child: Column(
-                  children: [
-                    TabBar(
-                      controller: _tabCtrl,
-                      tabs: [
-                        Tab(text: 'Collections (${collections.length})'),
-                        Tab(
-                            text:
-                                'EMI Schedule (${s['active_emi_count'] ?? 0})'),
-                        const Tab(text: 'Vendors'),
-                        const Tab(text: 'Overview'),
-                      ],
-                    ),
-                    Expanded(
-                      child: TabBarView(
-                        controller: _tabCtrl,
-                        children: [
-                          _buildCollections(collections),
-                          _buildEMISchedule(emiSchedule),
-                          _buildVendors(data),
-                          _buildOverview(s),
-                        ],
-                      ),
+                      Icons.calendar_month,
                     ),
                   ],
                 ),
               );
             },
-            loading: () =>
-                const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                  const SizedBox(height: 12),
-                  Text('Error: $e'),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () => ref.invalidate(crmFinanceOverviewProvider),
-                    child: const Text('Retry'),
+            loading: () => const SizedBox(
+              height: 80,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (_, __) => const SizedBox.shrink(),
+          ),
+
+          // Tabs
+          Expanded(
+            child: dataAsync.when(
+              data: (data) {
+                final collections =
+                    (data['collections'] as List<dynamic>?) ?? [];
+                final emiSchedule =
+                    (data['emi_schedule'] as List<dynamic>?) ?? [];
+                final s = data['stats'] as Map<String, dynamic>? ?? {};
+
+                return DefaultTabController(
+                  length: 4,
+                  child: Column(
+                    children: [
+                      TabBar(
+                        controller: _tabCtrl,
+                        tabs: [
+                          Tab(text: 'Collections (${collections.length})'),
+                          Tab(
+                            text:
+                                'EMI Schedule (${s['active_emi_count'] ?? 0})',
+                          ),
+                          const Tab(text: 'Vendors'),
+                          const Tab(text: 'Overview'),
+                        ],
+                      ),
+                      Expanded(
+                        child: TabBarView(
+                          controller: _tabCtrl,
+                          children: [
+                            _buildCollections(collections),
+                            _buildEMISchedule(emiSchedule),
+                            _buildVendors(data),
+                            _buildOverview(s),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 12),
+                    Text('Error: $e'),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () =>
+                          ref.invalidate(crmFinanceOverviewProvider),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -181,8 +207,10 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
           children: [
             Icon(Icons.payments_outlined, size: 64, color: Colors.grey),
             SizedBox(height: 16),
-            Text('No collections recorded today',
-                style: TextStyle(fontSize: 16, color: Colors.grey)),
+            Text(
+              'No collections recorded today',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
           ],
         ),
       );
@@ -206,22 +234,30 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
               backgroundColor: Colors.green.withValues(alpha: 0.1),
               child: const Icon(Icons.check_circle, color: Colors.green),
             ),
-            title: Text('Installment #$installment — $booking',
-                style: const TextStyle(fontWeight: FontWeight.w600)),
-            subtitle: Text('$customer • ${date.length >= 10 ? date.substring(0, 10) : date}'),
+            title: Text(
+              'Installment #$installment — $booking',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: Text(
+              '$customer • ${date.length >= 10 ? date.substring(0, 10) : date}',
+            ),
             trailing: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('₹${_fmt(paid)}',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                        fontSize: 15)),
+                Text(
+                  '₹${_fmt(paid)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                    fontSize: 15,
+                  ),
+                ),
                 if (emiAmt > paid)
-                  Text('of ₹${_fmt(emiAmt)}',
-                      style:
-                          TextStyle(color: Colors.grey.shade500, fontSize: 11)),
+                  Text(
+                    'of ₹${_fmt(emiAmt)}',
+                    style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                  ),
               ],
             ),
           ),
@@ -238,8 +274,10 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
           children: [
             Icon(Icons.check_circle, size: 64, color: Colors.green),
             SizedBox(height: 16),
-            Text('No pending EMIs',
-                style: TextStyle(fontSize: 16, color: Colors.grey)),
+            Text(
+              'No pending EMIs',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
           ],
         ),
       );
@@ -262,32 +300,43 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor:
-                  isOverdue ? Colors.red.withValues(alpha: 0.1) : Colors.blue.withValues(alpha: 0.1),
+              backgroundColor: isOverdue
+                  ? Colors.red.withValues(alpha: 0.1)
+                  : Colors.blue.withValues(alpha: 0.1),
               child: Icon(
                 isOverdue ? Icons.warning : Icons.calendar_today,
                 color: isOverdue ? Colors.red : Colors.blue,
               ),
             ),
-            title: Text('Installment #$installment — $customer',
-                style: const TextStyle(fontWeight: FontWeight.w600)),
-            subtitle: Text('$booking • Due: ${dueDate.length >= 10 ? dueDate.substring(0, 10) : dueDate}'),
+            title: Text(
+              'Installment #$installment — $customer',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: Text(
+              '$booking • Due: ${dueDate.length >= 10 ? dueDate.substring(0, 10) : dueDate}',
+            ),
             trailing: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('₹${_fmt(amount)}',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isOverdue ? Colors.red : Colors.black,
-                        fontSize: 15)),
+                Text(
+                  '₹${_fmt(amount)}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isOverdue ? Colors.red : Colors.black,
+                    fontSize: 15,
+                  ),
+                ),
                 if (isOverdue)
-                  const Text('OVERDUE',
-                      style: TextStyle(color: Colors.red, fontSize: 10)),
+                  const Text(
+                    'OVERDUE',
+                    style: TextStyle(color: Colors.red, fontSize: 10),
+                  ),
                 if (!isOverdue && daysUntil > 0)
-                  Text('in $daysUntil days',
-                      style:
-                          TextStyle(color: Colors.grey.shade500, fontSize: 11)),
+                  Text(
+                    'in $daysUntil days',
+                    style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                  ),
               ],
             ),
           ),
@@ -304,11 +353,15 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
         children: [
           const Icon(Icons.store, size: 64, color: Colors.grey),
           const SizedBox(height: 16),
-          Text('Total Vendors: $totalVendors',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          Text(
+            'Total Vendors: $totalVendors',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 8),
-          const Text('Vendor management available on web portal',
-              style: TextStyle(color: Colors.grey)),
+          const Text(
+            'Vendor management available on web portal',
+            style: TextStyle(color: Colors.grey),
+          ),
         ],
       ),
     );
@@ -320,29 +373,51 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Financial Summary',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text(
+            'Financial Summary',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 16),
-          _overviewRow('Total Bookings Value',
-              '₹${_fmt(s['total_bookings_value'] ?? 0)}', Colors.purple),
           _overviewRow(
-              'Collected This Month',
-              '₹${_fmt(s['collected_this_month'] ?? 0)}',
-              Colors.green),
+            'Total Bookings Value',
+            '₹${_fmt(s['total_bookings_value'] ?? 0)}',
+            Colors.purple,
+          ),
           _overviewRow(
-              "Today's Collection",
-              '₹${_fmt(s['todays_collection'] ?? 0)}',
-              Colors.blue),
-          _overviewRow('Pending EMI Amount',
-              '₹${_fmt(s['pending_emi'] ?? 0)}', Colors.orange),
-          _overviewRow('Total Outstanding',
-              '₹${_fmt(s['total_outstanding'] ?? 0)}', Colors.red),
-          _overviewRow('Active EMIs',
-              '${s['active_emi_count'] ?? 0}', Colors.teal),
-          _overviewRow('Overdue EMIs',
-              '${s['overdue_emi_count'] ?? 0}', Colors.red),
+            'Collected This Month',
+            '₹${_fmt(s['collected_this_month'] ?? 0)}',
+            Colors.green,
+          ),
           _overviewRow(
-              'Total Vendors', '${s['total_vendors'] ?? 0}', Colors.indigo),
+            "Today's Collection",
+            '₹${_fmt(s['todays_collection'] ?? 0)}',
+            Colors.blue,
+          ),
+          _overviewRow(
+            'Pending EMI Amount',
+            '₹${_fmt(s['pending_emi'] ?? 0)}',
+            Colors.orange,
+          ),
+          _overviewRow(
+            'Total Outstanding',
+            '₹${_fmt(s['total_outstanding'] ?? 0)}',
+            Colors.red,
+          ),
+          _overviewRow(
+            'Active EMIs',
+            '${s['active_emi_count'] ?? 0}',
+            Colors.teal,
+          ),
+          _overviewRow(
+            'Overdue EMIs',
+            '${s['overdue_emi_count'] ?? 0}',
+            Colors.red,
+          ),
+          _overviewRow(
+            'Total Vendors',
+            '${s['total_vendors'] ?? 0}',
+            Colors.indigo,
+          ),
         ],
       ),
     );
@@ -360,14 +435,19 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
       child: Row(
         children: [
           Expanded(
-              child: Text(label,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w500))),
-          Text(value,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: color)),
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
@@ -376,7 +456,11 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
   // ─── Helpers ─────────────────────────────────────────────────────
 
   Widget _buildStatCard(
-      String label, String value, Color color, IconData icon) {
+    String label,
+    String value,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
       width: 100,
       padding: const EdgeInsets.all(12),
@@ -390,16 +474,21 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
           Icon(icon, color: color, size: 24),
           const SizedBox(height: 6),
           FittedBox(
-            child: Text(value,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: color)),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
           ),
           const SizedBox(height: 4),
-          Text(label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 10, color: Colors.grey)),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 10, color: Colors.grey),
+          ),
         ],
       ),
     );

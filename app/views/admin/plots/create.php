@@ -10,12 +10,6 @@
             
             <div class="card aps-cp-card">
                 <div class="card-body aps-cp-card-body">
-                    <?php if (isset($_SESSION['error'])): ?>
-                        <div class="alert alert-danger">
-                            <?= htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
-                        </div>
-                    <?php endif; ?>
-                    
                     <form method="POST" action="<?= BASE_URL ?>admin/plots" id="plotForm">
                         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                         <ul class="nav nav-tabs mb-3" id="plotTabs">

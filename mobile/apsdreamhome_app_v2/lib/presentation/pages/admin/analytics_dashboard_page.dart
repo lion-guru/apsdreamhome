@@ -22,31 +22,34 @@ class _AnalyticsDashboardPageState
   Widget build(BuildContext context) {
     final overviewAsync = ref.watch(_adminOverviewProvider);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTimeRangeSelector(),
-          const SizedBox(height: 24),
-          overviewAsync.when(
-            loading: () => const Center(
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(_adminOverviewProvider),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTimeRangeSelector(),
+            const SizedBox(height: 24),
+            overviewAsync.when(
+              loading: () => const Center(
                 child: Padding(
-              padding: EdgeInsets.all(40),
-              child: CircularProgressIndicator(),
-            )),
-            error: (e, _) => _buildErrorCard(e.toString()),
-            data: (data) => _buildContent(data),
-          ),
-        ],
+                  padding: EdgeInsets.all(40),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+              error: (e, _) => _buildErrorCard(e.toString()),
+              data: (data) => _buildContent(data),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildContent(Map<String, dynamic> data) {
     final stats = (data['stats'] as Map<String, dynamic>?) ?? {};
-    final recentActivity =
-        (data['recent_activity'] as List<dynamic>?) ?? [];
+    final recentActivity = (data['recent_activity'] as List<dynamic>?) ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,9 +73,10 @@ class _AnalyticsDashboardPageState
               Text(
                 'Failed to load analytics',
                 style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade800),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade800,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -116,8 +120,7 @@ class _AnalyticsDashboardPageState
                     range.toUpperCase(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color:
-                          isSelected ? Colors.white : Colors.grey.shade700,
+                      color: isSelected ? Colors.white : Colors.grey.shade700,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -134,10 +137,8 @@ class _AnalyticsDashboardPageState
   Widget _buildStatsGrid(Map<String, dynamic> stats) {
     final totalLeads = (stats['total_leads'] as num?)?.toInt() ?? 0;
     final hotLeads = (stats['hot_leads'] as num?)?.toInt() ?? 0;
-    final bookingsToday =
-        (stats['bookings_today'] as num?)?.toInt() ?? 0;
-    final totalRevenue =
-        (stats['total_revenue'] as num?)?.toDouble() ?? 0;
+    final bookingsToday = (stats['bookings_today'] as num?)?.toInt() ?? 0;
+    final totalRevenue = (stats['total_revenue'] as num?)?.toDouble() ?? 0;
     final pendingCommissions =
         (stats['pending_commissions'] as num?)?.toInt() ?? 0;
     final totalUsers = (stats['total_users'] as num?)?.toInt() ?? 0;
@@ -226,17 +227,11 @@ class _AnalyticsDashboardPageState
                 ),
                 Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                 ),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey.shade500,
-                  ),
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
               ],
             ),
@@ -264,13 +259,18 @@ class _AnalyticsDashboardPageState
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     children: [
-                      Icon(Icons.history,
-                          size: 48, color: Colors.grey.shade300),
+                      Icon(
+                        Icons.history,
+                        size: 48,
+                        color: Colors.grey.shade300,
+                      ),
                       const SizedBox(height: 12),
                       Text(
                         'No recent activity',
                         style: TextStyle(
-                            color: Colors.grey.shade500, fontSize: 14),
+                          color: Colors.grey.shade500,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -280,13 +280,11 @@ class _AnalyticsDashboardPageState
               ...activities.map((activity) {
                 final type =
                     (activity['interaction_type'] as String?) ?? 'note';
-                final subject =
-                    (activity['subject'] as String?) ?? '';
+                final subject = (activity['subject'] as String?) ?? '';
                 final body = (activity['body'] as String?) ?? '';
                 final leadName =
                     (activity['lead_name'] as String?) ?? 'Unknown';
-                final createdAt =
-                    (activity['created_at'] as String?) ?? '';
+                final createdAt = (activity['created_at'] as String?) ?? '';
 
                 IconData icon;
                 Color color;
@@ -368,19 +366,19 @@ class _AnalyticsDashboardPageState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Text(
                   description,
-                  style:
-                      TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   time,
-                  style:
-                      TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
               ],
             ),
@@ -393,11 +391,11 @@ class _AnalyticsDashboardPageState
 
 // ─── Providers ────────────────────────────────────────────────────────
 
-final _adminOverviewProvider =
-    FutureProvider<Map<String, dynamic>>((ref) async {
+final _adminOverviewProvider = FutureProvider<Map<String, dynamic>>((
+  ref,
+) async {
   try {
-    final response =
-        await ApiService().get('/crm/admin-overview');
+    final response = await ApiService().get('/crm/admin-overview');
     if (response['success'] == true) {
       return {
         'stats': response['stats'] ?? {},

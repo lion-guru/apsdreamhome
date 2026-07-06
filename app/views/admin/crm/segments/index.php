@@ -9,12 +9,6 @@
         <button class="btn btn-primary" onclick="new bootstrap.Modal(document.getElementById('segmentModal')).show()"><i class="fas fa-plus me-1"></i> New Segment</button>
     </div>
 
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i><?= $_SESSION['success']; unset($_SESSION['success']); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-    <?php endif; ?>
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i><?= $_SESSION['error']; unset($_SESSION['error']); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-    <?php endif; ?>
 
     <?php if (empty($segments)): ?>
         <div class="text-center py-5 bg-white rounded shadow-sm">

@@ -30,220 +30,251 @@ class _EmployeeManagementPageState
   }
 
   Map<String, String?> get _filters => {
-        if (_search.isNotEmpty) 'search': _search,
-        if (_selectedRole != null) 'role': _selectedRole,
-        if (_selectedStatus != null) 'status': _selectedStatus,
-      };
+    if (_search.isNotEmpty) 'search': _search,
+    if (_selectedRole != null) 'role': _selectedRole,
+    if (_selectedStatus != null) 'status': _selectedStatus,
+  };
 
   @override
   Widget build(BuildContext context) {
     final dataAsync = ref.watch(crmAdminEmployeesProvider(_filters));
 
-    return Column(
-      children: [
-        // Header
-        Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.group, size: 32, color: AppTheme.primaryColor),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Employee Management',
-                        style: TextStyle(
-                            fontSize: ResponsiveHelper.fontSize(context, 24), fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
-                    const Text('Manage staff, roles, and permissions',
-                        style: TextStyle(color: Colors.grey)),
-                  ],
+    return RefreshIndicator(
+      onRefresh: () async =>
+          ref.invalidate(crmAdminEmployeesProvider(_filters)),
+      child: Column(
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
                 ),
-              ),
-              OutlinedButton.icon(
-                onPressed: () => ref.invalidate(crmAdminEmployeesProvider),
-                icon: const Icon(Icons.refresh),
-                label: const Text('Refresh'),
-              ),
-            ],
-          ),
-        ),
-
-        // Stats
-        dataAsync.when(
-          data: (data) {
-            final stats = data['stats'] as Map<String, dynamic>? ?? {};
-            return Container(
-              padding: const EdgeInsets.all(16),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _buildStatCard(
-                      'Total', '${stats['total'] ?? 0}', Colors.blue),
-                  _buildStatCard(
-                      'Active', '${stats['active'] ?? 0}', Colors.green),
-                  _buildStatCard('Inactive', '${stats['inactive'] ?? 0}',
-                      Colors.red),
-                  _buildStatCard(
-                      'Employee',
-                      '${(stats['by_role'] as Map<String, dynamic>?)?['employee'] ?? 0}',
-                      Colors.purple),
-                  _buildStatCard(
-                      'Agent',
-                      '${(stats['by_role'] as Map<String, dynamic>?)?['agent'] ?? 0}',
-                      Colors.orange),
-                  _buildStatCard(
-                      'Associate',
-                      '${(stats['by_role'] as Map<String, dynamic>?)?['associate'] ?? 0}',
-                      Colors.teal),
-                ],
-              ),
-            );
-          },
-          loading: () => const SizedBox(
-              height: 80,
-              child: Center(child: CircularProgressIndicator())),
-          error: (_, __) => const SizedBox.shrink(),
-        ),
-
-        // Filters
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: TextField(
-                  controller: _searchCtrl,
-                  decoration: InputDecoration(
-                    hintText: 'Search employees...',
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  onChanged: (v) {
-                    _debounce?.cancel();
-                    _debounce =
-                        Timer(const Duration(milliseconds: 500), () {
-                      setState(() => _search = v);
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  initialValue: _selectedRole,
-                  hint: const Text('Role'),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: null, child: Text('All Roles')),
-                    DropdownMenuItem(value: 'employee', child: Text('Employee')),
-                    DropdownMenuItem(value: 'agent', child: Text('Agent')),
-                    DropdownMenuItem(
-                        value: 'associate', child: Text('Associate')),
-                  ],
-                  onChanged: (v) => setState(() {
-                    _selectedRole = v;
-                    ref.invalidate(crmAdminEmployeesProvider);
-                  }),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  initialValue: _selectedStatus,
-                  hint: const Text('Status'),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: null, child: Text('All Status')),
-                    DropdownMenuItem(value: 'active', child: Text('Active')),
-                    DropdownMenuItem(
-                        value: 'inactive', child: Text('Inactive')),
-                  ],
-                  onChanged: (v) => setState(() {
-                    _selectedStatus = v;
-                    ref.invalidate(crmAdminEmployeesProvider);
-                  }),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Employee List
-        Expanded(
-          child: dataAsync.when(
-            data: (data) {
-              final employees =
-                  (data['employees'] as List<dynamic>?) ?? [];
-              if (employees.isEmpty) {
-                return const Center(
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.group, size: 32, color: AppTheme.primaryColor),
+                const SizedBox(width: 16),
+                Expanded(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.group_off, size: 64, color: Colors.grey),
-                      SizedBox(height: 16),
-                      Text('No employees found',
-                          style: TextStyle(
-                              fontSize: 18, color: Colors.grey)),
+                      Text(
+                        'Employee Management',
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(context, 24),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Manage staff, roles, and permissions',
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ],
                   ),
-                );
-              }
-              return _buildEmployeeTable(employees);
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => ref.invalidate(crmAdminEmployeesProvider),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Refresh'),
+                ),
+              ],
+            ),
+          ),
+
+          // Stats
+          dataAsync.when(
+            data: (data) {
+              final stats = data['stats'] as Map<String, dynamic>? ?? {};
+              return Container(
+                padding: const EdgeInsets.all(16),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildStatCard(
+                      'Total',
+                      '${stats['total'] ?? 0}',
+                      Colors.blue,
+                    ),
+                    _buildStatCard(
+                      'Active',
+                      '${stats['active'] ?? 0}',
+                      Colors.green,
+                    ),
+                    _buildStatCard(
+                      'Inactive',
+                      '${stats['inactive'] ?? 0}',
+                      Colors.red,
+                    ),
+                    _buildStatCard(
+                      'Employee',
+                      '${(stats['by_role'] as Map<String, dynamic>?)?['employee'] ?? 0}',
+                      Colors.purple,
+                    ),
+                    _buildStatCard(
+                      'Agent',
+                      '${(stats['by_role'] as Map<String, dynamic>?)?['agent'] ?? 0}',
+                      Colors.orange,
+                    ),
+                    _buildStatCard(
+                      'Associate',
+                      '${(stats['by_role'] as Map<String, dynamic>?)?['associate'] ?? 0}',
+                      Colors.teal,
+                    ),
+                  ],
+                ),
+              );
             },
-            loading: () =>
-                const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.error_outline,
-                      size: 48, color: Colors.red),
-                  const SizedBox(height: 12),
-                  Text('Error loading employees: $e'),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () =>
-                        ref.invalidate(crmAdminEmployeesProvider),
-                    child: const Text('Retry'),
+            loading: () => const SizedBox(
+              height: 80,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (_, __) => const SizedBox.shrink(),
+          ),
+
+          // Filters
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: TextField(
+                    controller: _searchCtrl,
+                    decoration: InputDecoration(
+                      hintText: 'Search employees...',
+                      prefixIcon: const Icon(Icons.search),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    onChanged: (v) {
+                      _debounce?.cancel();
+                      _debounce = Timer(const Duration(milliseconds: 500), () {
+                        setState(() => _search = v);
+                      });
+                    },
                   ),
-                ],
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    initialValue: _selectedRole,
+                    hint: const Text('Role'),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: null, child: Text('All Roles')),
+                      DropdownMenuItem(
+                        value: 'employee',
+                        child: Text('Employee'),
+                      ),
+                      DropdownMenuItem(value: 'agent', child: Text('Agent')),
+                      DropdownMenuItem(
+                        value: 'associate',
+                        child: Text('Associate'),
+                      ),
+                    ],
+                    onChanged: (v) => setState(() {
+                      _selectedRole = v;
+                      ref.invalidate(crmAdminEmployeesProvider);
+                    }),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    initialValue: _selectedStatus,
+                    hint: const Text('Status'),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: null, child: Text('All Status')),
+                      DropdownMenuItem(value: 'active', child: Text('Active')),
+                      DropdownMenuItem(
+                        value: 'inactive',
+                        child: Text('Inactive'),
+                      ),
+                    ],
+                    onChanged: (v) => setState(() {
+                      _selectedStatus = v;
+                      ref.invalidate(crmAdminEmployeesProvider);
+                    }),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Employee List
+          Expanded(
+            child: dataAsync.when(
+              data: (data) {
+                final employees = (data['employees'] as List<dynamic>?) ?? [];
+                if (employees.isEmpty) {
+                  return const Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.group_off, size: 64, color: Colors.grey),
+                        SizedBox(height: 16),
+                        Text(
+                          'No employees found',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return _buildEmployeeTable(employees);
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 12),
+                    Text('Error loading employees: $e'),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () =>
+                          ref.invalidate(crmAdminEmployeesProvider),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -259,16 +290,21 @@ class _EmployeeManagementPageState
       child: Column(
         children: [
           FittedBox(
-            child: Text(value,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: color)),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
           ),
           const SizedBox(height: 4),
-          Text(label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 11, color: Colors.grey)),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 11, color: Colors.grey),
+          ),
         ],
       ),
     );
@@ -311,63 +347,90 @@ class _EmployeeManagementPageState
                 ? created.substring(0, 10)
                 : created;
 
-            return DataRow(cells: [
-              DataCell(Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor:
-                        _roleColor(role).withValues(alpha: 0.15),
-                    child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?',
-                        style: TextStyle(
+            return DataRow(
+              cells: [
+                DataCell(
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: _roleColor(
+                          role,
+                        ).withValues(alpha: 0.15),
+                        child: Text(
+                          name.isNotEmpty ? name[0].toUpperCase() : '?',
+                          style: TextStyle(
                             color: _roleColor(role),
-                            fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            name,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            email,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
+                ),
+                DataCell(_buildRoleBadge(role)),
+                DataCell(Text(dept.isNotEmpty ? dept : '-')),
+                DataCell(
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(name,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600)),
-                      Text(email,
-                          style: TextStyle(
-                              color: Colors.grey.shade600, fontSize: 12)),
+                      Text(phone.isNotEmpty ? phone : '-'),
+                      Text(
+                        email,
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 11,
+                        ),
+                      ),
                     ],
                   ),
-                ],
-              )),
-              DataCell(_buildRoleBadge(role)),
-              DataCell(Text(dept.isNotEmpty ? dept : '-')),
-              DataCell(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(phone.isNotEmpty ? phone : '-'),
-                  Text(email,
-                      style: TextStyle(
-                          color: Colors.grey.shade600, fontSize: 11)),
-                ],
-              )),
-              DataCell(_buildStatusBadge(status)),
-              DataCell(Text(joinDate,
-                  style: const TextStyle(fontSize: 12))),
-              DataCell(Row(
-                children: [
-                  IconButton(
-                    onPressed: () => _showEmployeeDetail(emp),
-                    icon:
-                        const Icon(Icons.visibility, size: 20, color: Colors.blue),
-                    tooltip: 'View',
+                ),
+                DataCell(_buildStatusBadge(status)),
+                DataCell(Text(joinDate, style: const TextStyle(fontSize: 12))),
+                DataCell(
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => _showEmployeeDetail(emp),
+                        icon: const Icon(
+                          Icons.visibility,
+                          size: 20,
+                          color: Colors.blue,
+                        ),
+                        tooltip: 'View',
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.edit,
+                          size: 20,
+                          color: Colors.orange,
+                        ),
+                        tooltip: 'Edit',
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.edit, size: 20, color: Colors.orange),
-                    tooltip: 'Edit',
-                  ),
-                ],
-              )),
-            ]);
+                ),
+              ],
+            );
           }).toList(),
         ),
       ),
@@ -382,9 +445,14 @@ class _EmployeeManagementPageState
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(role.toUpperCase(),
-          style: TextStyle(
-              color: color, fontWeight: FontWeight.bold, fontSize: 11)),
+      child: Text(
+        role.toUpperCase(),
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 11,
+        ),
+      ),
     );
   }
 
@@ -397,9 +465,14 @@ class _EmployeeManagementPageState
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(status.toUpperCase(),
-          style: TextStyle(
-              color: color, fontWeight: FontWeight.bold, fontSize: 12)),
+      child: Text(
+        status.toUpperCase(),
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      ),
     );
   }
 
@@ -459,30 +532,49 @@ class _EmployeeManagementPageState
                 radius: 36,
                 backgroundColor: _roleColor(role).withValues(alpha: 0.15),
                 child: Text(
-                    name.isNotEmpty ? name[0].toUpperCase() : '?',
-                    style: TextStyle(
-                        fontSize: ResponsiveHelper.fontSize(context, 28),
-                        fontWeight: FontWeight.bold,
-                        color: _roleColor(role))),
+                  name.isNotEmpty ? name[0].toUpperCase() : '?',
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(context, 28),
+                    fontWeight: FontWeight.bold,
+                    color: _roleColor(role),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 12),
             Center(
-              child: Text(name,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold)),
+              child: Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(height: 4),
             Center(child: _buildRoleBadge(role)),
             const SizedBox(height: 24),
             _detailRow(Icons.email, 'Email', email),
             _detailRow(Icons.phone, 'Phone', phone),
-            _detailRow(Icons.business, 'Department', dept.isNotEmpty ? dept : '-'),
-            _detailRow(Icons.work, 'Designation', designation.isNotEmpty ? designation : '-'),
-            if (empCode.isNotEmpty) _detailRow(Icons.badge, 'Emp Code', empCode),
+            _detailRow(
+              Icons.business,
+              'Department',
+              dept.isNotEmpty ? dept : '-',
+            ),
+            _detailRow(
+              Icons.work,
+              'Designation',
+              designation.isNotEmpty ? designation : '-',
+            ),
+            if (empCode.isNotEmpty)
+              _detailRow(Icons.badge, 'Emp Code', empCode),
             if (level.isNotEmpty) _detailRow(Icons.star, 'Level', level),
             _detailRow(Icons.circle, 'Status', status.toUpperCase()),
-            _detailRow(Icons.calendar_today, 'Joined', created.length >= 10 ? created.substring(0, 10) : created),
+            _detailRow(
+              Icons.calendar_today,
+              'Joined',
+              created.length >= 10 ? created.substring(0, 10) : created,
+            ),
           ],
         ),
       ),
@@ -498,13 +590,16 @@ class _EmployeeManagementPageState
           const SizedBox(width: 12),
           SizedBox(
             width: 110,
-            child: Text(label,
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+            child: Text(
+              label,
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+            ),
           ),
           Expanded(
-            child: Text(value,
-                style: const TextStyle(
-                    fontWeight: FontWeight.w600, fontSize: 14)),
+            child: Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            ),
           ),
         ],
       ),

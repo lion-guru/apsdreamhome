@@ -23,7 +23,7 @@ class AssociateController extends BaseController
     {
         @session_start();
         if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'associate') {
-            $_SESSION['flash_error'] = 'Please login as an associate to access this page';
+            $_SESSION['error'] = 'Please login as an associate to access this page';
             $this->redirect('/associate/login');
         }
     }
@@ -44,8 +44,8 @@ class AssociateController extends BaseController
         $old = $_SESSION['old_input'] ?? [];
         unset($_SESSION['old_input']);
 
-        $flashError = $_SESSION['flash_error'] ?? null;
-        unset($_SESSION['flash_error']);
+        $flashError = $_SESSION['error'] ?? null;
+        unset($_SESSION['error']);
 
         if ($flashError) {
             $errors[] = $flashError;
@@ -86,7 +86,7 @@ class AssociateController extends BaseController
         if ($password !== $confirmPassword) $errors[] = 'Passwords do not match';
 
         if (!empty($errors)) {
-            $_SESSION['flash_error'] = implode('<br>', $errors);
+            $_SESSION['error'] = implode('<br>', $errors);
             $_SESSION['old_input'] = $_POST;
             $this->redirect('/associate/register');
             return;
@@ -96,7 +96,7 @@ class AssociateController extends BaseController
             // Check duplicate email
             $existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$email]);
             if ($existing) {
-                $_SESSION['flash_error'] = 'This email is already registered. Please login.';
+                $_SESSION['error'] = 'This email is already registered. Please login.';
                 $this->redirect('/associate/login');
                 return;
             }
@@ -104,7 +104,7 @@ class AssociateController extends BaseController
             // Check duplicate phone
             $existing = $this->db->fetchOne("SELECT id FROM users WHERE phone = ?", [$phone]);
             if ($existing) {
-                $_SESSION['flash_error'] = 'This phone number is already registered. Please login.';
+                $_SESSION['error'] = 'This phone number is already registered. Please login.';
                 $this->redirect('/associate/login');
                 return;
             }
@@ -148,12 +148,12 @@ class AssociateController extends BaseController
             $_SESSION['user_phone'] = $phone;
             $_SESSION['role'] = 'associate';
             $_SESSION['logged_in'] = true;
-            $_SESSION['flash_success'] = 'Registration successful! Welcome to APS Dream Home.';
+            $_SESSION['success'] = 'Registration successful! Welcome to APS Dream Home.';
 
             $this->redirect('/associate/dashboard');
         } catch (\Exception $e) {
             error_log('Associate registration error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Registration failed. Please try again.';
+            $_SESSION['error'] = 'Registration failed. Please try again.';
             $_SESSION['old_input'] = $_POST;
             $this->redirect('/associate/register');
         }
@@ -493,7 +493,7 @@ class AssociateController extends BaseController
         $description = trim($_POST['description'] ?? '');
 
         if (empty($title) || empty($propertyType) || empty($location) || $price <= 0) {
-            $_SESSION['flash_error'] = 'Please fill in all required fields.';
+            $_SESSION['error'] = 'Please fill in all required fields.';
             $this->redirect('/associate/add-property');
             return;
         }
@@ -537,10 +537,10 @@ class AssociateController extends BaseController
                 $imagePath
             ]);
 
-            $_SESSION['flash_success'] = 'Property submitted successfully! It will be verified before publishing.';
+            $_SESSION['success'] = 'Property submitted successfully! It will be verified before publishing.';
         } catch (\Exception $e) {
             error_log("Add property error: " . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to submit. Please try again.';
+            $_SESSION['error'] = 'Failed to submit. Please try again.';
         }
 
         $this->redirect('/associate/properties');
@@ -861,7 +861,7 @@ class AssociateController extends BaseController
         } catch (\Exception $e) { error_log('Edit property error: ' . $e->getMessage()); }
 
         if (!$property) {
-            $_SESSION['flash_error'] = 'Property not found or access denied.';
+            $_SESSION['error'] = 'Property not found or access denied.';
             $this->redirect('/associate/properties');
             return;
         }
@@ -871,9 +871,9 @@ class AssociateController extends BaseController
             $states = $this->db->fetchAll("SELECT id, name FROM states ORDER BY name LIMIT 50");
         } catch (\Exception $e) {}
 
-        $success = $_SESSION['flash_success'] ?? null;
-        $error = $_SESSION['flash_error'] ?? null;
-        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error']);
 
         $this->render('associate/edit_property', [
             'page_title' => 'Edit Property - APS Dream Home',
@@ -906,7 +906,7 @@ class AssociateController extends BaseController
             [$id, $userId]
         );
         if (!$property) {
-            $_SESSION['flash_error'] = 'Property not found.';
+            $_SESSION['error'] = 'Property not found.';
             $this->redirect('/associate/properties');
             return;
         }
@@ -920,7 +920,7 @@ class AssociateController extends BaseController
         $description = trim($_POST['description'] ?? '');
 
         if (empty($title) || empty($propertyType) || $price <= 0) {
-            $_SESSION['flash_error'] = 'Please fill in all required fields.';
+            $_SESSION['error'] = 'Please fill in all required fields.';
             $this->redirect("/associate/properties/edit/{$id}");
             return;
         }
@@ -946,10 +946,10 @@ class AssociateController extends BaseController
                 [$title, $propertyType, $listingType, $price, $area, $location, $description, $imagePath, $id, $userId]
             );
 
-            $_SESSION['flash_success'] = 'Property updated successfully!';
+            $_SESSION['success'] = 'Property updated successfully!';
         } catch (\Exception $e) {
             error_log("Update property error: " . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to update property.';
+            $_SESSION['error'] = 'Failed to update property.';
         }
 
         $this->redirect('/associate/properties');
@@ -970,13 +970,13 @@ class AssociateController extends BaseController
                 [$id, $userId]
             );
             if ($result) {
-                $_SESSION['flash_success'] = 'Property archived successfully.';
+                $_SESSION['success'] = 'Property archived successfully.';
             } else {
-                $_SESSION['flash_error'] = 'Property not found.';
+                $_SESSION['error'] = 'Property not found.';
             }
         } catch (\Exception $e) {
             error_log("Delete property error: " . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to archive property.';
+            $_SESSION['error'] = 'Failed to archive property.';
         }
 
         $this->redirect('/associate/properties');
@@ -1205,9 +1205,9 @@ class AssociateController extends BaseController
             error_log('AssociateController settings notification prefs: ' . $e->getMessage());
         }
 
-        $success = $_SESSION['flash_success'] ?? null;
-        $error = $_SESSION['flash_error'] ?? null;
-        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error']);
 
         $data = [
             'page_title' => 'Settings - Associate Dashboard',
@@ -1243,9 +1243,9 @@ class AssociateController extends BaseController
         $db = \App\Core\Database\Database::getInstance();
         $states = $db->fetchAll("SELECT id, name FROM states ORDER BY name LIMIT 50");
 
-        $success = $_SESSION['flash_success'] ?? null;
-        $error = $_SESSION['flash_error'] ?? null;
-        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error']);
 
         $data = [
             'page_title' => 'Post Property - Associate Dashboard',
@@ -1303,7 +1303,7 @@ class AssociateController extends BaseController
         $possession = trim($_POST['possession'] ?? 'ready');
 
         if (empty($name) || empty($phone) || empty($propertyType)) {
-            $_SESSION['flash_error'] = 'Please fill in all required fields.';
+            $_SESSION['error'] = 'Please fill in all required fields.';
             $this->redirect('/associate/list-property');
             return;
         }
@@ -1399,10 +1399,10 @@ class AssociateController extends BaseController
             // Auto-wire to CRM lead
             try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property_listing','created_by'=>$associateId]); } catch (\Exception $e3) {}
 
-            $_SESSION['flash_success'] = 'Thank you! Your property listing has been submitted. Our team will verify and publish it soon.';
+            $_SESSION['success'] = 'Thank you! Your property listing has been submitted. Our team will verify and publish it soon.';
         } catch (\Exception $e) {
             error_log("Associate property listing error: " . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to submit. Please try again or contact support.';
+            $_SESSION['error'] = 'Failed to submit. Please try again or contact support.';
         }
 
         $this->redirect('/associate/properties');
@@ -1579,9 +1579,9 @@ class AssociateController extends BaseController
         $this->layout = 'layouts/associate';
         
         @session_start();
-        $success = $_SESSION['flash_success'] ?? null;
-        $error = $_SESSION['flash_error'] ?? null;
-        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error']);
 
         // Load available properties for interest dropdown
         $properties = [];
@@ -1625,7 +1625,7 @@ class AssociateController extends BaseController
         $notes = trim($_POST['notes'] ?? '');
 
         if (empty($name) || empty($phone)) {
-            $_SESSION['flash_error'] = 'Name and Phone Number are required.';
+            $_SESSION['error'] = 'Name and Phone Number are required.';
             $this->redirect('/associate/leads/add');
             return;
         }
@@ -1646,11 +1646,11 @@ class AssociateController extends BaseController
                     ->execute([$leadId, $userId]);
             } catch (\Exception $e) {}
 
-            $_SESSION['flash_success'] = 'Lead added successfully!';
+            $_SESSION['success'] = 'Lead added successfully!';
             $this->redirect('/associate/leads');
         } catch (\Exception $e) {
             error_log('Error storing lead: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to save lead. Please try again.';
+            $_SESSION['error'] = 'Failed to save lead. Please try again.';
             $this->redirect('/associate/leads/add');
         }
     }
@@ -1683,9 +1683,9 @@ class AssociateController extends BaseController
         }
 
         @session_start();
-        $success = $_SESSION['flash_success'] ?? null;
-        $error = $_SESSION['flash_error'] ?? null;
-        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error']);
 
         // Get colonies for site visit form
         $colonies = [];
@@ -1822,7 +1822,7 @@ class AssociateController extends BaseController
         $newStatus = trim($_POST['status'] ?? '');
         $validStatuses = ['new','contacted','qualified','proposal','negotiation','closed_won','closed_lost','nurture'];
         if (!in_array($newStatus, $validStatuses)) {
-            $_SESSION['flash_error'] = 'Invalid status.';
+            $_SESSION['error'] = 'Invalid status.';
             $this->redirect("/associate/leads/{$id}");
             return;
         }
@@ -1842,10 +1842,10 @@ class AssociateController extends BaseController
                 $db->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, old_value, new_value, created_by, created_at) VALUES (?, 'status_change', ?, ?, ?, ?, NOW())")
                     ->execute([$id, "Status changed from $oldStatus to $newStatus", $oldStatus, $newStatus, $userId]);
             } catch (\Exception $e) {}
-            $_SESSION['flash_success'] = 'Lead status updated to ' . ucfirst(str_replace('_', ' ', $newStatus));
+            $_SESSION['success'] = 'Lead status updated to ' . ucfirst(str_replace('_', ' ', $newStatus));
         } catch (\Exception $e) {
             error_log('Update lead status error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to update status.';
+            $_SESSION['error'] = 'Failed to update status.';
         }
         $this->redirect("/associate/leads/{$id}");
     }
@@ -1904,9 +1904,9 @@ class AssociateController extends BaseController
                     // Update lead's next_activity_date
                     $db->query("UPDATE leads SET next_activity_date = ?, updated_at = NOW() WHERE id = ?", [$followupDate, $id]);
 
-                    $_SESSION['flash_success'] = 'Note added & follow-up scheduled for ' . date('M d, Y', strtotime($followupDate)) . '.';
+                    $_SESSION['success'] = 'Note added & follow-up scheduled for ' . date('M d, Y', strtotime($followupDate)) . '.';
                 } else {
-                    $_SESSION['flash_success'] = 'Note added.';
+                    $_SESSION['success'] = 'Note added.';
                 }
 
                 // Update last activity
@@ -1914,7 +1914,7 @@ class AssociateController extends BaseController
             }
         } catch (\Exception $e) {
             error_log('Add lead note error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to add note.';
+            $_SESSION['error'] = 'Failed to add note.';
         }
         $this->redirect("/associate/leads/{$id}");
     }
@@ -2000,10 +2000,10 @@ class AssociateController extends BaseController
         try {
             $stmt = $pdo->prepare("UPDATE crm_tasks SET status = ?, updated_at = NOW() WHERE id = ? AND (assigned_to = ? OR created_by = ?)");
             $stmt->execute([$status, $id, $userId, $userId]);
-            $_SESSION['flash_success'] = 'Follow-up updated successfully';
+            $_SESSION['success'] = 'Follow-up updated successfully';
         } catch (\Throwable $e) {
             error_log('Update followup error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to update follow-up';
+            $_SESSION['error'] = 'Failed to update follow-up';
         }
 
         $this->redirect('/associate/followups');
@@ -2329,7 +2329,7 @@ class AssociateController extends BaseController
         }
 
         if (!$customer) {
-            $_SESSION['flash_error'] = 'Customer not found or access denied';
+            $_SESSION['error'] = 'Customer not found or access denied';
             $this->redirect('/associate/my-customers');
             return;
         }
@@ -2465,7 +2465,7 @@ class AssociateController extends BaseController
         }
 
         if (!$booking) {
-            $_SESSION['flash_error'] = 'Booking not found or access denied';
+            $_SESSION['error'] = 'Booking not found or access denied';
             $this->redirect('/associate/my-bookings');
             return;
         }
@@ -2576,7 +2576,7 @@ class AssociateController extends BaseController
 
         // Validation
         if (empty($plotId) || empty($customerName) || empty($customerPhone)) {
-            $_SESSION['flash_error'] = 'Please fill all required fields (Plot, Customer Name, Phone)';
+            $_SESSION['error'] = 'Please fill all required fields (Plot, Customer Name, Phone)';
             $this->redirect('/associate/book-plot');
             return;
         }
@@ -2588,7 +2588,7 @@ class AssociateController extends BaseController
             $plotData = $plot->fetch(\PDO::FETCH_ASSOC);
 
             if (!$plotData) {
-                $_SESSION['flash_error'] = 'Selected plot is not available';
+                $_SESSION['error'] = 'Selected plot is not available';
                 $this->redirect('/associate/book-plot');
                 return;
             }
@@ -2652,12 +2652,12 @@ class AssociateController extends BaseController
                 }
             }
 
-            $_SESSION['flash_success'] = "Plot booked successfully! Booking #{$bookingNumber}. Awaiting admin approval.";
+            $_SESSION['success'] = "Plot booked successfully! Booking #{$bookingNumber}. Awaiting admin approval.";
             $this->redirect('/associate/my-bookings');
 
         } catch (\Throwable $e) {
             error_log('SubmitPlotBooking error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Error creating booking: ' . $e->getMessage();
+            $_SESSION['error'] = 'Error creating booking: ' . $e->getMessage();
             $this->redirect('/associate/book-plot');
         }
     }
@@ -2780,7 +2780,7 @@ class AssociateController extends BaseController
             $notes = trim($_POST['notes'] ?? '');
 
             if (empty($visitorName) || empty($visitorPhone) || empty($visitDate) || empty($visitTime)) {
-                $_SESSION['flash_error'] = 'Please fill all required fields.';
+                $_SESSION['error'] = 'Please fill all required fields.';
                 $this->redirect('/associate/site-visits/schedule');
                 return;
             }
@@ -2803,12 +2803,12 @@ class AssociateController extends BaseController
                     } catch (\Throwable $e) {}
                 }
 
-                $_SESSION['flash_success'] = 'Site visit scheduled for ' . date('M d, Y', strtotime($visitDate)) . ' at ' . date('h:i A', strtotime($visitTime)) . '!';
+                $_SESSION['success'] = 'Site visit scheduled for ' . date('M d, Y', strtotime($visitDate)) . ' at ' . date('h:i A', strtotime($visitTime)) . '!';
                 $this->redirect('/associate/site-visits');
                 return;
             } catch (\Throwable $e) {
                 error_log('scheduleSiteVisit error: ' . $e->getMessage());
-                $_SESSION['flash_error'] = 'Failed to schedule visit.';
+                $_SESSION['error'] = 'Failed to schedule visit.';
             }
         }
 
@@ -2856,13 +2856,13 @@ class AssociateController extends BaseController
                     } catch (\Throwable $e) {}
                 }
 
-                $_SESSION['flash_success'] = 'Site visit marked as completed!';
+                $_SESSION['success'] = 'Site visit marked as completed!';
             } else {
-                $_SESSION['flash_error'] = 'Visit not found.';
+                $_SESSION['error'] = 'Visit not found.';
             }
         } catch (\Throwable $e) {
             error_log('completeSiteVisit error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to complete visit.';
+            $_SESSION['error'] = 'Failed to complete visit.';
         }
         $this->redirect('/associate/site-visits');
     }
@@ -2888,10 +2888,10 @@ class AssociateController extends BaseController
             $st = $pdo->prepare("UPDATE site_visits SET status = 'cancelled', notes = CONCAT(COALESCE(notes,''), '\n\nCancelled: ', ?) WHERE id = ? AND (assigned_to = ? OR user_id = ?)");
             $st->execute([$reason, $id, $userId, $userId]);
 
-            $_SESSION['flash_success'] = $st->rowCount() > 0 ? 'Site visit cancelled.' : 'Visit not found.';
+            $_SESSION['success'] = $st->rowCount() > 0 ? 'Site visit cancelled.' : 'Visit not found.';
         } catch (\Throwable $e) {
             error_log('cancelSiteVisit error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to cancel visit.';
+            $_SESSION['error'] = 'Failed to cancel visit.';
         }
         $this->redirect('/associate/site-visits');
     }
@@ -2913,7 +2913,7 @@ class AssociateController extends BaseController
         $newTime = $_POST['new_time'] ?? '';
 
         if (empty($newDate) || empty($newTime)) {
-            $_SESSION['flash_error'] = 'Please select new date and time.';
+            $_SESSION['error'] = 'Please select new date and time.';
             $this->redirect('/associate/site-visits');
             return;
         }
@@ -2924,10 +2924,10 @@ class AssociateController extends BaseController
             $st = $pdo->prepare("UPDATE site_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ? AND (assigned_to = ? OR user_id = ?)");
             $st->execute([$newDate, $newTime, $id, $userId, $userId]);
 
-            $_SESSION['flash_success'] = $st->rowCount() > 0 ? 'Visit rescheduled to ' . date('M d, Y', strtotime($newDate)) . '!' : 'Visit not found.';
+            $_SESSION['success'] = $st->rowCount() > 0 ? 'Visit rescheduled to ' . date('M d, Y', strtotime($newDate)) . '!' : 'Visit not found.';
         } catch (\Throwable $e) {
             error_log('rescheduleSiteVisit error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to reschedule.';
+            $_SESSION['error'] = 'Failed to reschedule.';
         }
         $this->redirect('/associate/site-visits');
     }
@@ -3090,9 +3090,9 @@ class AssociateController extends BaseController
                 fclose($handle);
 
                 if ($imported > 0) {
-                    $_SESSION['flash_success'] = "Imported $imported leads successfully!" . ($skipped > 0 ? " $skipped skipped." : '');
+                    $_SESSION['success'] = "Imported $imported leads successfully!" . ($skipped > 0 ? " $skipped skipped." : '');
                 } else {
-                    $_SESSION['flash_error'] = "No leads imported. " . ($skipped > 0 ? "$skipped rows skipped." : 'Check CSV format.');
+                    $_SESSION['error'] = "No leads imported. " . ($skipped > 0 ? "$skipped rows skipped." : 'Check CSV format.');
                 }
                 $this->redirect('/associate/leads');
                 return;
@@ -3185,7 +3185,7 @@ class AssociateController extends BaseController
 
         $assignTo = (int)($_POST['assign_to'] ?? 0);
         if ($assignTo <= 0) {
-            $_SESSION['flash_error'] = 'Please select a team member.';
+            $_SESSION['error'] = 'Please select a team member.';
             $this->redirect("/associate/leads/{$id}");
             return;
         }
@@ -3198,7 +3198,7 @@ class AssociateController extends BaseController
             $lead = $pdo->prepare("SELECT id, name FROM leads WHERE id = ? AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL");
             $lead->execute([$id, $userId, $userId]);
             if (!$lead->fetch()) {
-                $_SESSION['flash_error'] = 'Lead not found.';
+                $_SESSION['error'] = 'Lead not found.';
                 $this->redirect('/associate/leads');
                 return;
             }
@@ -3207,7 +3207,7 @@ class AssociateController extends BaseController
             $assignee = $pdo->prepare("SELECT id, name FROM users WHERE id = ? AND role = 'associate'");
             $assignee->execute([$assignTo]);
             if (!$assignee->fetch()) {
-                $_SESSION['flash_error'] = 'Invalid team member.';
+                $_SESSION['error'] = 'Invalid team member.';
                 $this->redirect("/associate/leads/{$id}");
                 return;
             }
@@ -3223,10 +3223,10 @@ class AssociateController extends BaseController
             $pdo->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'assignment', ?, ?, NOW())")
                 ->execute([$id, "Lead assigned to $aName", $userId]);
 
-            $_SESSION['flash_success'] = "Lead assigned to $aName successfully!";
+            $_SESSION['success'] = "Lead assigned to $aName successfully!";
         } catch (\Throwable $e) {
             error_log('assignLead error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to assign lead.';
+            $_SESSION['error'] = 'Failed to assign lead.';
         }
         $this->redirect("/associate/leads/{$id}");
     }
@@ -3253,7 +3253,7 @@ class AssociateController extends BaseController
             $lead = $pdo->prepare("SELECT id, name FROM leads WHERE id = ? AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL");
             $lead->execute([$id, $userId, $userId]);
             if (!$lead->fetch()) {
-                $_SESSION['flash_error'] = 'Lead not found.';
+                $_SESSION['error'] = 'Lead not found.';
                 $this->redirect('/associate/leads');
                 return;
             }
@@ -3262,13 +3262,13 @@ class AssociateController extends BaseController
             $scores = $scoringService->calculateScore($id);
             if ($scores) {
                 $scoringService->saveScore($id, $scores);
-                $_SESSION['flash_success'] = "Score recalculated: {$scores['total']}/100 ({$scores['rank']})";
+                $_SESSION['success'] = "Score recalculated: {$scores['total']}/100 ({$scores['rank']})";
             } else {
-                $_SESSION['flash_error'] = 'Could not calculate score for this lead.';
+                $_SESSION['error'] = 'Could not calculate score for this lead.';
             }
         } catch (\Throwable $e) {
             error_log('recalculateScore error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to recalculate score.';
+            $_SESSION['error'] = 'Failed to recalculate score.';
         }
         $this->redirect("/associate/leads/{$id}");
     }
@@ -3305,10 +3305,10 @@ class AssociateController extends BaseController
                 }
             }
 
-            $_SESSION['flash_success'] = "Scores recalculated for {$processed} leads.";
+            $_SESSION['success'] = "Scores recalculated for {$processed} leads.";
         } catch (\Throwable $e) {
             error_log('recalculateAllScores error: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to recalculate scores.';
+            $_SESSION['error'] = 'Failed to recalculate scores.';
         }
         $this->redirect('/associate/leads');
     }
@@ -3326,7 +3326,7 @@ class AssociateController extends BaseController
                 [$id]
             );
             if (!$colony) {
-                $_SESSION['flash_error'] = 'Colony not found';
+                $_SESSION['error'] = 'Colony not found';
                 $this->redirect('/associate/browse');
                 return;
             }
@@ -3344,7 +3344,7 @@ class AssociateController extends BaseController
                 'plots' => $plots,
             ], 'layouts/associate');
         } catch (\Exception $e) {
-            $_SESSION['flash_error'] = 'Failed to load map';
+            $_SESSION['error'] = 'Failed to load map';
             $this->redirect('/associate/browse');
         }
     }

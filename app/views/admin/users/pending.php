@@ -240,13 +240,4 @@ function bulkApprove() {
     })
     .catch(() => showToast('Network error', 'danger'));
 }
-
-function showToast(message, type) {
-    const toast = document.createElement('div');
-    toast.className = 'alert alert-' + type + ' position-fixed';
-    toast.style.cssText = 'top:20px;right:20px;z-index:9999;min-width:300px;animation:fadeIn 0.3s';
-    toast.innerHTML = '<i class="fas fa-' + (type === 'success' ? 'check-circle' : 'exclamation-circle') + ' me-2"></i>' + message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-}
 </script>

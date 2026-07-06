@@ -180,9 +180,9 @@ class AgenticAIController extends AdminController
                 } else {
                     $db->execute("INSERT INTO system_settings (settings_key, settings_value, created_at) VALUES ('agent_auto_reply', ?, NOW())", [$json]);
                 }
-                $_SESSION['flash_success'] = 'Auto-reply settings saved!';
+                $_SESSION['success'] = 'Auto-reply settings saved!';
             } catch (\Exception $e) {
-                $_SESSION['flash_error'] = 'Error: ' . $e->getMessage();
+                $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
             header('Location: /admin/agentic-ai/auto-reply');
             exit;

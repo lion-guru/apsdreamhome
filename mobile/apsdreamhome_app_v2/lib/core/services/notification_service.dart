@@ -2,10 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
 
 import '../utils/logger.dart';
 import 'api_service.dart';
+
+/// Global navigator key — set in main() via MaterialApp.router
+GlobalKey<NavigatorState>? _navigatorKey;
+
+/// Set the navigator key so notification taps can navigate
+void setNavigatorKey(GlobalKey<NavigatorState> key) {
+  _navigatorKey = key;
+}
 
 /// Background message handler — must be a top-level function
 @pragma('vm:entry-point')
@@ -207,7 +217,93 @@ class NotificationService {
   void _handleNotificationTap(RemoteMessage message) {
     AppLogger.info('Notification tapped: ${message.data}');
     _notifications.insert(0, {..._messageToMap(message), 'read': true});
-    // Navigation logic can be added here based on message.data
+
+    // Deep-link navigation based on notification type
+    final data = message.data;
+    final type = (data['type'] ?? '').toString();
+    final id = (data['id'] ?? data['entity_id'] ?? '').toString();
+
+    // Use a post-frame callback to ensure the router context is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _navigateFromNotification(type, id.toString(), data);
+    });
+  }
+
+  /// Navigate to the appropriate screen based on notification type
+  void _navigateFromNotification(
+    String type,
+    String id,
+    Map<String, dynamic> data,
+  ) {
+    try {
+      // Attempt to get the navigator key from the app
+      final GlobalKey<NavigatorState>? navigatorKey = _navigatorKey;
+      if (navigatorKey == null || navigatorKey.currentContext == null) {
+        AppLogger.warning(
+          'Navigator context unavailable for notification navigation',
+        );
+        return;
+      }
+      final context = navigatorKey.currentContext!;
+      final goRouter = GoRouter.of(context);
+
+      switch (type) {
+        case 'booking':
+        case 'booking_confirmed':
+        case 'booking_payment':
+          if (id.isNotEmpty) {
+            goRouter.push('/my-bookings');
+          } else {
+            goRouter.push('/my-bookings');
+          }
+          break;
+        case 'commission':
+        case 'commission_credit':
+          goRouter.push('/associate/commission');
+          break;
+        case 'lead_assigned':
+        case 'lead_update':
+          goRouter.push('/agent/leads');
+          break;
+        case 'payment':
+        case 'payment_received':
+          goRouter.push('/emi-schedule');
+          break;
+        case 'property':
+        case 'property_alert':
+          if (id.isNotEmpty) {
+            goRouter.push('/property-detail/$id');
+          } else {
+            goRouter.push('/properties');
+          }
+          break;
+        case 'kyc':
+        case 'kyc_update':
+          goRouter.push('/kyc-status');
+          break;
+        case 'payout':
+          goRouter.push('/associate/payout');
+          break;
+        case 'team':
+        case 'team_update':
+          goRouter.push('/associate/team');
+          break;
+        case 'document':
+          goRouter.push('/documents');
+          break;
+        case 'support':
+        case 'ticket':
+          goRouter.push('/support-tickets');
+          break;
+        default:
+          // Default to notifications center
+          goRouter.push('/notifications-center');
+          break;
+      }
+      AppLogger.info('Navigated to screen for notification type: $type');
+    } catch (e) {
+      AppLogger.warning('Failed to navigate from notification: $e');
+    }
   }
 
   /// Show a local notification using flutter_local_notifications

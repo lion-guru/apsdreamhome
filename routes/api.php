@@ -452,4 +452,6 @@ $router->get("$adminMobilePrefix/commissions", 'Api\AdminMobileController@commis
 $router->post("$adminMobilePrefix/commissions/{id}/action", 'Api\AdminMobileController@commissionAction')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get("$adminMobilePrefix/plots", 'Api\AdminMobileController@plots')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get("$adminMobilePrefix/users", 'Api\AdminMobileController@users')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get("$adminMobilePrefix/reports", 'Api\AdminMobileController@reports')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get("$adminMobilePrefix/telecaller-dashboard", 'Api\AdminMobileController@telecallerDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/crm/team-performance', 'Api\CRMController@dashboard');

@@ -39,50 +39,54 @@ class _BookingApprovalsPageState extends ConsumerState<BookingApprovalsPage> {
   Widget build(BuildContext context) {
     final bookingsAsync = ref.watch(_bookingsProvider);
 
-    return Column(
-      children: [
-        _buildHeader(),
-        _buildStatsRow(bookingsAsync),
-        _buildFilters(),
-        Expanded(
-          child: bookingsAsync.when(
-            data: (bookings) {
-              var filtered = bookings;
-              if (_filterStatus != 'all') {
-                filtered = filtered
-                    .where((b) => b['status'] == _filterStatus)
-                    .toList();
-              }
-              if (_searchQuery.isNotEmpty) {
-                final q = _searchQuery.toLowerCase();
-                filtered = filtered
-                    .where(
-                      (b) =>
-                          (b['customer_name']
-                                  ?.toString()
-                                  .toLowerCase()
-                                  .contains(q) ??
-                              false) ||
-                          (b['plot_number']?.toString().toLowerCase().contains(
-                                q,
-                              ) ??
-                              false) ||
-                          (b['booking_number']
-                                  ?.toString()
-                                  .toLowerCase()
-                                  .contains(q) ??
-                              false),
-                    )
-                    .toList();
-              }
-              if (filtered.isEmpty) return _buildEmptyState();
-              return _buildBookingsList(filtered);
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('Error: $e')),
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(_bookingsProvider),
+      child: Column(
+        children: [
+          _buildHeader(),
+          _buildStatsRow(bookingsAsync),
+          _buildFilters(),
+          Expanded(
+            child: bookingsAsync.when(
+              data: (bookings) {
+                var filtered = bookings;
+                if (_filterStatus != 'all') {
+                  filtered = filtered
+                      .where((b) => b['status'] == _filterStatus)
+                      .toList();
+                }
+                if (_searchQuery.isNotEmpty) {
+                  final q = _searchQuery.toLowerCase();
+                  filtered = filtered
+                      .where(
+                        (b) =>
+                            (b['customer_name']
+                                    ?.toString()
+                                    .toLowerCase()
+                                    .contains(q) ??
+                                false) ||
+                            (b['plot_number']
+                                    ?.toString()
+                                    .toLowerCase()
+                                    .contains(q) ??
+                                false) ||
+                            (b['booking_number']
+                                    ?.toString()
+                                    .toLowerCase()
+                                    .contains(q) ??
+                                false),
+                      )
+                      .toList();
+                }
+                if (filtered.isEmpty) return _buildEmptyState();
+                return _buildBookingsList(filtered);
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('Error: $e')),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

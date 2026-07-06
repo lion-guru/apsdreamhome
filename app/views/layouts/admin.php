@@ -7,6 +7,7 @@
     <title><?php echo $page_title ?? 'APS Dream Home - Admin'; ?></title>
     <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/favicon.png">
     <meta name="description" content="<?php echo $page_description ?? 'Admin Panel'; ?>">
+    <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
     <!-- Skip to content link (a11y) -->
     <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
@@ -273,6 +274,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Admin JS -->
     <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/js/admin.js"></script>
+    <script>
+    function toggleNotifications() {
+        var panel = document.getElementById('notification-panel');
+        if (panel) { panel.classList.toggle('show'); } else { window.location.href = '<?php echo $base ?? BASE_URL; ?>/admin/notifications'; }
+    }
+    function toggleMessages() {
+        window.location.href = '<?php echo $base ?? BASE_URL; ?>/admin/inquiries';
+    }
+    </script>
     <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo $extra_js; ?><?php endif; ?>
         <!-- Frontend enhancements: a11y, forms, toasts, loading -->
         <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>

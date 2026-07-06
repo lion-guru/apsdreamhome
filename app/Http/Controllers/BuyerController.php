@@ -103,10 +103,10 @@ class BuyerController extends BaseController
             // Auto-match with available properties
             $this->autoMatch($userId);
 
-            $_SESSION['flash_success'] = 'Your property requirement has been submitted! We will find matching properties.';
+            $_SESSION['success'] = 'Your property requirement has been submitted! We will find matching properties.';
         } catch (\Throwable $e) {
             error_log('BuyerController submitInterest: ' . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to submit. Please try again.';
+            $_SESSION['error'] = 'Failed to submit. Please try again.';
         }
 
         header('Location: ' . BASE_URL . '/buyer/dashboard');

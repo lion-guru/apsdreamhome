@@ -85,7 +85,7 @@ class SIMCallingController extends AdminController
             ];
 
             $this->asterisk->saveConfig($config);
-            $_SESSION['flash_success'] = 'Asterisk settings saved!';
+            $_SESSION['success'] = 'Asterisk settings saved!';
             header('Location: /admin/sim-calling/settings');
             exit;
         }

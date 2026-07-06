@@ -48,13 +48,6 @@ $settings = $settings ?? [
             <div class="col-12">
                 <h1 class="mb-4"><i class="fas fa-palette me-2"></i>Layout Manager</h1>
 
-                <?php if (isset($_SESSION['success'])): ?>
-                    <div class="alert alert-success alert-dismissible fade show">
-                        <?php echo $_SESSION['success'];
-                        unset($_SESSION['success']); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                <?php endif; ?>
 
                 <form method="POST" action="/admin/layout-manager">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">

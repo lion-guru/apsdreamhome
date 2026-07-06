@@ -3,6 +3,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../../core/services/api_service.dart';
+
+/// Provider for telecaller dashboard data
+final telecallerDashboardProvider = FutureProvider<Map<String, dynamic>>((
+  ref,
+) async {
+  final api = ApiService();
+  try {
+    final response = await api.get('admin/telecaller-dashboard');
+    if (response['success'] == true) {
+      return Map<String, dynamic>.from(response['data'] as Map? ?? {});
+    }
+  } catch (e) {
+    // Fall back to empty data
+  }
+  return {};
+});
+
 /// Telecaller/Daily Caller Dashboard
 /// Salary + Commission based calling system
 class TelecallerDashboardPage extends ConsumerStatefulWidget {
@@ -17,87 +35,22 @@ class _TelecallerDashboardPageState
     extends ConsumerState<TelecallerDashboardPage> {
   int _selectedIndex = 0;
 
-  // Sample data
-  final List<Map<String, dynamic>> _assignedLeads = [
-    {
-      'id': '1',
-      'name': 'Rajesh Kumar',
-      'phone': '+91 98765 43210',
-      'source': 'Website Enquiry',
-      'status': 'new',
-      'priority': 'high',
-      'notes': 'Interested in Gorakhpur plot',
-      'callCount': 0,
-      'lastCall': null,
-    },
-    {
-      'id': '2',
-      'name': 'Sunita Devi',
-      'phone': '+91 98765 43211',
-      'source': 'Facebook Ad',
-      'status': 'call_later',
-      'priority': 'medium',
-      'notes': 'Will decide next month',
-      'callCount': 1,
-      'lastCall': DateTime.now().subtract(const Duration(days: 2)),
-    },
-    {
-      'id': '3',
-      'name': 'Amit Sharma',
-      'phone': '+91 98765 43212',
-      'source': 'Referral',
-      'status': 'interested',
-      'priority': 'high',
-      'notes': 'Wants site visit',
-      'callCount': 2,
-      'lastCall': DateTime.now().subtract(const Duration(days: 1)),
-    },
-    {
-      'id': '4',
-      'name': 'Priya Patel',
-      'phone': '+91 98765 43213',
-      'source': 'Google Ads',
-      'status': 'not_interested',
-      'priority': 'low',
-      'notes': 'Budget issue',
-      'callCount': 1,
-      'lastCall': DateTime.now().subtract(const Duration(days: 3)),
-    },
-  ];
-
-  final Map<String, dynamic> _todayStats = {
-    'targetCalls': 50,
-    'completedCalls': 32,
-    'connected': 18,
-    'validLeads': 5,
-    'bookings': 1,
-    'talkTimeMinutes': 124,
-  };
-
   @override
   Widget build(BuildContext context) {
+    final dashboardAsync = ref.watch(telecallerDashboardProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Telecaller Dashboard'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.person), onPressed: () {}),
         ],
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          _buildHomeTab(),
-          _buildLeadsTab(),
-          _buildReportTab(),
-          _buildEarningsTab(),
-        ],
+      body: dashboardAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => _buildBody(context, {}),
+        data: (data) => _buildBody(context, data),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
@@ -129,35 +82,61 @@ class _TelecallerDashboardPageState
     );
   }
 
-  Widget _buildHomeTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Welcome & Status
-          _buildWelcomeCard(),
+  Widget _buildBody(BuildContext context, Map<String, dynamic> data) {
+    final leads = (data['leads'] as List? ?? []).cast<Map<String, dynamic>>();
+    final stats = Map<String, dynamic>.from(
+      (data['today_stats'] as Map?) ?? {},
+    );
+    final earnings = Map<String, dynamic>.from(
+      (data['earnings'] as Map?) ?? {},
+    );
+    final performance = Map<String, dynamic>.from(
+      (data['monthly_performance'] as Map?) ?? {},
+    );
 
-          const SizedBox(height: 16),
+    return IndexedStack(
+      index: _selectedIndex,
+      children: [
+        _buildHomeTab(stats, leads),
+        _buildLeadsTab(leads),
+        _buildReportTab(stats, performance),
+        _buildEarningsTab(earnings),
+      ],
+    );
+  }
 
-          // Today's Progress
-          _buildProgressCard(),
+  Widget _buildHomeTab(
+    Map<String, dynamic> stats,
+    List<Map<String, dynamic>> leads,
+  ) {
+    final completedCalls = (stats['completed_calls'] as num?)?.toInt() ?? 0;
+    final targetCalls = (stats['target_calls'] as num?)?.toInt() ?? 50;
+    final connected = (stats['connected'] as num?)?.toInt() ?? 0;
+    final validLeads = (stats['valid_leads'] as num?)?.toInt() ?? 0;
 
-          const SizedBox(height: 16),
+    final highPriorityLeads = leads
+        .where((lead) => lead['priority'] == 'high')
+        .toList();
 
-          // Quick Stats
-          _buildQuickStats(),
-
-          const SizedBox(height: 16),
-
-          // Priority Leads
-          _buildPriorityLeadsSection(),
-
-          const SizedBox(height: 16),
-
-          // Quick Actions
-          _buildQuickActions(),
-        ],
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(telecallerDashboardProvider),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildWelcomeCard(),
+            const SizedBox(height: 16),
+            _buildProgressCard(completedCalls, targetCalls),
+            const SizedBox(height: 16),
+            _buildQuickStats(connected, validLeads),
+            const SizedBox(height: 16),
+            _buildPriorityLeadsSection(highPriorityLeads),
+            const SizedBox(height: 16),
+            _buildQuickActions(),
+          ],
+        ),
       ),
     );
   }
@@ -169,10 +148,7 @@ class _TelecallerDashboardPageState
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            const CircleAvatar(
-              radius: 30,
-              child: Icon(Icons.person, size: 30),
-            ),
+            const CircleAvatar(radius: 30, child: Icon(Icons.person, size: 30)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -180,23 +156,15 @@ class _TelecallerDashboardPageState
                 children: [
                   const Text(
                     'Welcome Back!',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   ),
                   const Text(
-                    'Telecaller #TC001',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    'Telecaller',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     DateFormat('EEEE, d MMMM').format(DateTime.now()),
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -207,9 +175,7 @@ class _TelecallerDashboardPageState
     );
   }
 
-  Widget _buildProgressCard() {
-    final completed = (_todayStats['completedCalls'] as num).toDouble();
-    final target = (_todayStats['targetCalls'] as num).toDouble();
+  Widget _buildProgressCard(int completed, int target) {
     final progress = target > 0 ? completed / target : 0.0;
 
     return Card(
@@ -223,10 +189,7 @@ class _TelecallerDashboardPageState
               children: [
                 const Text(
                   "Today's Progress",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   '${(progress * 100).toInt()}%',
@@ -249,7 +212,7 @@ class _TelecallerDashboardPageState
             ),
             const SizedBox(height: 8),
             Text(
-              '${_todayStats['completedCalls']} / ${_todayStats['targetCalls']} calls completed',
+              '$completed / $target calls completed',
               style: TextStyle(color: Colors.grey[600]),
             ),
           ],
@@ -258,23 +221,34 @@ class _TelecallerDashboardPageState
     );
   }
 
-  Widget _buildQuickStats() {
+  Widget _buildQuickStats(int connected, int validLeads) {
     return Row(
       children: [
-        _buildStatCard('Connected', '${_todayStats['connected']}',
-            Icons.phone_in_talk, Colors.green),
+        _buildStatCard(
+          'Connected',
+          '$connected',
+          Icons.phone_in_talk,
+          Colors.green,
+        ),
         const SizedBox(width: 8),
-        _buildStatCard('Valid Leads', '${_todayStats['validLeads']}',
-            Icons.verified_user, Colors.orange),
+        _buildStatCard(
+          'Valid Leads',
+          '$validLeads',
+          Icons.verified_user,
+          Colors.orange,
+        ),
         const SizedBox(width: 8),
-        _buildStatCard('Talk Time', '${_todayStats['talkTimeMinutes']}m',
-            Icons.timer, Colors.purple),
+        _buildStatCard('Bookings', '0', Icons.book_online, Colors.purple),
       ],
     );
   }
 
   Widget _buildStatCard(
-      String title, String value, IconData icon, Color color) {
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Expanded(
       child: Card(
         child: Padding(
@@ -292,10 +266,7 @@ class _TelecallerDashboardPageState
               ),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ],
           ),
@@ -304,10 +275,7 @@ class _TelecallerDashboardPageState
     );
   }
 
-  Widget _buildPriorityLeadsSection() {
-    final highPriorityLeads =
-        _assignedLeads.where((lead) => lead['priority'] == 'high').toList();
-
+  Widget _buildPriorityLeadsSection(List<Map<String, dynamic>> leads) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -316,10 +284,7 @@ class _TelecallerDashboardPageState
           children: [
             const Text(
               'Priority Leads',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             TextButton(
               onPressed: () => setState(() => _selectedIndex = 1),
@@ -328,30 +293,35 @@ class _TelecallerDashboardPageState
           ],
         ),
         const SizedBox(height: 8),
-        ...highPriorityLeads.take(2).map((lead) => _buildLeadCard(lead)),
+        if (leads.isEmpty)
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('No priority leads assigned'),
+            ),
+          )
+        else
+          ...leads.take(2).map((lead) => _buildLeadCard(lead)),
       ],
     );
   }
 
   Widget _buildLeadCard(Map<String, dynamic> lead) {
+    final priority = (lead['priority'] ?? 'medium') as String;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: _getPriorityColor(lead['priority'] as String)
-              .withValues(alpha: 0.2),
-          child: Icon(
-            Icons.person,
-            color: _getPriorityColor(lead['priority'] as String),
-          ),
+          backgroundColor: _getPriorityColor(priority).withValues(alpha: 0.2),
+          child: Icon(Icons.person, color: _getPriorityColor(priority)),
         ),
-        title: Text(lead['name'] as String),
+        title: Text((lead['name'] ?? 'Unknown') as String),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(lead['phone'] as String),
+            Text((lead['phone'] ?? '') as String),
             Text(
-              lead['notes'] as String,
+              (lead['notes'] ?? '') as String,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: Colors.grey[600]),
@@ -366,8 +336,10 @@ class _TelecallerDashboardPageState
               onPressed: () => _makeCall(lead),
             ),
             IconButton(
-              icon:
-                  const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green),
+              icon: const FaIcon(
+                FontAwesomeIcons.whatsapp,
+                color: Colors.green,
+              ),
               onPressed: () => _openWhatsApp(lead),
             ),
           ],
@@ -383,10 +355,7 @@ class _TelecallerDashboardPageState
       children: [
         const Text(
           'Quick Actions',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Row(
@@ -415,7 +384,11 @@ class _TelecallerDashboardPageState
   }
 
   Widget _buildActionButton(
-      String label, IconData icon, Color color, VoidCallback onTap) {
+    String label,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return ElevatedButton.icon(
       onPressed: onTap,
       icon: Icon(icon),
@@ -428,51 +401,82 @@ class _TelecallerDashboardPageState
     );
   }
 
-  Widget _buildLeadsTab() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _assignedLeads.length,
-      itemBuilder: (context, index) {
-        final lead = _assignedLeads[index];
-        return _buildLeadCard(lead);
-      },
-    );
-  }
-
-  Widget _buildReportTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          const Text(
-            'Daily Report',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildReportForm(),
-        ],
+  Widget _buildLeadsTab(List<Map<String, dynamic>> leads) {
+    if (leads.isEmpty) {
+      return const Center(child: Text('No leads assigned'));
+    }
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(telecallerDashboardProvider),
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        itemCount: leads.length,
+        itemBuilder: (context, index) => _buildLeadCard(leads[index]),
       ),
     );
   }
 
-  Widget _buildReportForm() {
+  Widget _buildReportTab(
+    Map<String, dynamic> stats,
+    Map<String, dynamic> performance,
+  ) {
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(telecallerDashboardProvider),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const Text(
+              'Daily Report',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            _buildReportForm(stats, performance),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReportForm(
+    Map<String, dynamic> stats,
+    Map<String, dynamic> performance,
+  ) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _buildReportField('Total Calls Made', '32', Icons.phone),
-            const SizedBox(height: 12),
-            _buildReportField('Connected Calls', '18', Icons.phone_in_talk),
+            _buildReportField(
+              'Total Calls Made',
+              '${stats['completed_calls'] ?? 0}',
+              Icons.phone,
+            ),
             const SizedBox(height: 12),
             _buildReportField(
-                'Valid Leads Generated', '5', Icons.verified_user),
+              'Connected Calls',
+              '${stats['connected'] ?? 0}',
+              Icons.phone_in_talk,
+            ),
             const SizedBox(height: 12),
-            _buildReportField('Site Visits Scheduled', '3', Icons.location_on),
+            _buildReportField(
+              'Valid Leads Generated',
+              '${stats['valid_leads'] ?? 0}',
+              Icons.verified_user,
+            ),
             const SizedBox(height: 12),
-            _buildReportField('Bookings Confirmed', '1', Icons.check_circle),
+            _buildReportField(
+              'Site Visits Scheduled',
+              '${stats['callback'] ?? 0}',
+              Icons.location_on,
+            ),
             const SizedBox(height: 12),
-            _buildReportField('Total Talk Time (min)', '124', Icons.timer),
+            _buildReportField(
+              'Monthly Total Calls',
+              '${performance['total_calls'] ?? 0}',
+              Icons.assessment,
+            ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -511,34 +515,39 @@ class _TelecallerDashboardPageState
     );
   }
 
-  Widget _buildEarningsTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _buildEarningsSummary(),
-          const SizedBox(height: 16),
-          _buildCommissionBreakdown(),
-        ],
+  Widget _buildEarningsTab(Map<String, dynamic> earnings) {
+    final totalEarnings = (earnings['total_earnings'] as num?)?.toDouble() ?? 0;
+    final pendingEarnings =
+        (earnings['pending_earnings'] as num?)?.toDouble() ?? 0;
+
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(telecallerDashboardProvider),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildEarningsSummary(totalEarnings, pendingEarnings),
+            const SizedBox(height: 16),
+            _buildCommissionBreakdown(earnings),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildEarningsSummary() {
+  Widget _buildEarningsSummary(double total, double pending) {
     return Card(
       color: Colors.green.shade50,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const Text(
-              'This Month Earnings',
-              style: TextStyle(fontSize: 16),
-            ),
+            const Text('This Month Earnings', style: TextStyle(fontSize: 16)),
             const SizedBox(height: 8),
-            const Text(
-              '₹24,500',
-              style: TextStyle(
+            Text(
+              '₹${total.toStringAsFixed(0)}',
+              style: const TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
                 color: Colors.green,
@@ -548,9 +557,8 @@ class _TelecallerDashboardPageState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildEarningItem('Base Salary', '₹15,000'),
-                _buildEarningItem('Commission', '₹7,500'),
-                _buildEarningItem('Incentive', '₹2,000'),
+                _buildEarningItem('Commission', '₹${total.toStringAsFixed(0)}'),
+                _buildEarningItem('Pending', '₹${pending.toStringAsFixed(0)}'),
               ],
             ),
           ],
@@ -564,23 +572,14 @@ class _TelecallerDashboardPageState
       children: [
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],
     );
   }
 
-  Widget _buildCommissionBreakdown() {
+  Widget _buildCommissionBreakdown(Map<String, dynamic> earnings) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -588,20 +587,19 @@ class _TelecallerDashboardPageState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Commission Breakdown',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              'Earnings Summary',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildCommissionRow('Valid Leads (5 × ₹100)', '₹500'),
+            _buildCommissionRow(
+              'Total Earned',
+              '₹${earnings['total_earnings'] ?? 0}',
+            ),
             const Divider(),
-            _buildCommissionRow('Booking Conversion (1 × ₹2000)', '₹2,000'),
-            const Divider(),
-            _buildCommissionRow('Target Achievement Bonus', '₹5,000'),
-            const Divider(),
-            _buildTotalRow(),
+            _buildCommissionRow(
+              'Pending Payout',
+              '₹${earnings['pending_earnings'] ?? 0}',
+            ),
           ],
         ),
       ),
@@ -615,36 +613,7 @@ class _TelecallerDashboardPageState
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(description),
-          Text(
-            amount,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTotalRow() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Total Commission',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            '₹7,500',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.green,
-            ),
-          ),
+          Text(amount, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -664,12 +633,11 @@ class _TelecallerDashboardPageState
   }
 
   void _makeCall(Map<String, dynamic> lead) {
-    // Implement call functionality
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Calling ${lead['name'] as String}'),
-        content: Text('Dialing ${lead['phone'] as String}...'),
+        title: Text('Calling ${lead['name'] ?? 'Unknown'}'),
+        content: Text('Dialing ${lead['phone'] ?? ''}...'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -707,21 +675,24 @@ class _TelecallerDashboardPageState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  lead['name'] as String,
+                  (lead['name'] ?? 'Unknown') as String,
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  lead['phone'] as String,
+                  (lead['phone'] ?? '') as String,
                   style: const TextStyle(fontSize: 18),
                 ),
                 const SizedBox(height: 16),
-                _buildDetailRow('Source', lead['source'] as String),
-                _buildDetailRow('Status', lead['status'] as String),
-                _buildDetailRow('Priority', lead['priority'] as String),
-                _buildDetailRow('Notes', lead['notes'] as String),
+                _buildDetailRow('Source', (lead['source'] ?? 'N/A') as String),
+                _buildDetailRow('Status', (lead['status'] ?? 'N/A') as String),
+                _buildDetailRow(
+                  'Priority',
+                  (lead['priority'] ?? 'N/A') as String,
+                ),
+                _buildDetailRow('Notes', (lead['notes'] ?? 'N/A') as String),
                 const Spacer(),
                 Row(
                   children: [
@@ -762,10 +733,7 @@ class _TelecallerDashboardPageState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '$label: ',
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
+          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
           Expanded(child: Text(value)),
         ],
       ),

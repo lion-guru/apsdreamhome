@@ -385,13 +385,4 @@ document.getElementById('careerSubmitBtn').addEventListener('click', function() 
     .catch(function() { showToast('Network error. Please try again.', 'danger'); })
     .finally(function() { btn.disabled = false; btn.innerHTML = orig; });
 });
-
-function showToast(msg, type) {
-    var t = document.createElement('div');
-    t.className = 'alert alert-' + type + ' alert-dismissible fade show position-fixed';
-    t.style.cssText = 'top:80px;right:20px;z-index:9999;min-width:300px;box-shadow:0 4px 12px rgba(0,0,0,.15)';
-    t.innerHTML = '<i class="fas fa-' + (type === 'success' ? 'check-circle' : 'exclamation-circle') + ' me-2"></i>' + msg + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-    document.body.appendChild(t);
-    setTimeout(function() { t.remove(); }, 5000);
-}
 </script>

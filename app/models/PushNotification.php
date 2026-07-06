@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Core\Database;
+use App\Services\Communication\PushNotificationService;
 use DateTime;
 
 /**
@@ -213,44 +214,29 @@ class PushNotification extends Model
     }
 
     /**
-     * Send push notification
+     * Send push notification via FCM
      */
     private function sendPushNotification(array $notification): array
     {
-        // Get user's push subscriptions
-        $subscriptions = $this->getUserPushSubscriptions($notification['user_id'], $notification['user_type']);
+        try {
+            $pushService = new PushNotificationService();
 
-        if (empty($subscriptions)) {
-            return ['success' => false, 'error' => 'No push subscriptions found'];
+            $payload = [
+                'title' => $notification['title'],
+                'body' => $notification['message'],
+                'data' => json_decode($notification['data'], true) ?? []
+            ];
+
+            // Send to user via FCM (reads tokens from push_tokens/mobile_devices tables)
+            $result = $pushService->sendToUser((int)$notification['user_id'], $payload);
+
+            return [
+                'success' => $result['success'] ?? false,
+                'error' => $result['error'] ?? null
+            ];
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
         }
-
-        $successCount = 0;
-        foreach ($subscriptions as $subscription) {
-            try {
-                // Here you would integrate with a push service like Firebase, OneSignal, etc.
-                // For now, simulate sending
-                $payload = [
-                    'title' => $notification['title'],
-                    'body' => $notification['message'],
-                    'icon' => '/favicon.ico',
-                    'badge' => '/badge.png',
-                    'data' => json_decode($notification['data'], true) ?? []
-                ];
-
-                // Simulate successful send
-                $successCount++;
-
-                // Update subscription last_used
-                $this->updateSubscriptionLastUsed($subscription['id']);
-            } catch (\Exception $e) {
-                continue;
-            }
-        }
-
-        return [
-            'success' => $successCount > 0,
-            'error' => $successCount === 0 ? 'Failed to send to all subscriptions' : null
-        ];
     }
 
     /**

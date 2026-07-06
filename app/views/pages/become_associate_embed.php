@@ -255,11 +255,4 @@ function nativeShare() {
         showToast('Use the share buttons above');
     }
 }
-function showToast(msg) {
-    var t = document.createElement('div');
-    t.textContent = msg;
-    t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:12px 24px;border-radius:10px;font-size:0.9rem;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
-    document.body.appendChild(t);
-    setTimeout(function(){ t.remove(); }, 2500);
-}
 </script>

@@ -2261,10 +2261,6 @@ class MobileApiController extends BaseController
     /**
      * Extract Bearer token from Authorization header.
      * Returns null when missing or malformed.
-
-    /**
-     * Extract Bearer token from Authorization header.
-     * Returns null when missing or malformed.
      */
     private function extractBearerToken()
     {
@@ -2696,7 +2692,8 @@ class MobileApiController extends BaseController
 
             // 3. Subscribe to role-based topic for broadcast notifications
             try {
-                if (!empty($this->fcmProjectId)) {
+                $fcmProjectId = $_ENV['FCM_PROJECT_ID'] ?? '';
+                if (!empty($fcmProjectId)) {
                     // Topic subscription handled by PushNotificationService
                     $pushSvc = new \App\Services\Communication\PushNotificationService();
                     $pushSvc->subscribeToTopic($deviceToken, 'role_' . $userRole);

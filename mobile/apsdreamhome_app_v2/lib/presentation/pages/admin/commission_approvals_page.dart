@@ -40,33 +40,36 @@ class _CommissionApprovalsPageState
   Widget build(BuildContext context) {
     final commissionsAsync = ref.watch(_commissionsProvider);
 
-    return Column(
-      children: [
-        _buildHeader(),
-        _buildStatsRow(commissionsAsync),
-        _buildFilters(),
-        Expanded(
-          child: commissionsAsync.when(
-            data: (commissions) {
-              var filtered = commissions;
-              if (_filterStatus != 'all') {
-                filtered = filtered
-                    .where((c) => c['status'] == _filterStatus)
-                    .toList();
-              }
-              if (_filterType != 'all') {
-                filtered = filtered
-                    .where((c) => c['commission_type'] == _filterType)
-                    .toList();
-              }
-              if (filtered.isEmpty) return _buildEmptyState();
-              return _buildCommissionsList(filtered);
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('Error: $e')),
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(_commissionsProvider),
+      child: Column(
+        children: [
+          _buildHeader(),
+          _buildStatsRow(commissionsAsync),
+          _buildFilters(),
+          Expanded(
+            child: commissionsAsync.when(
+              data: (commissions) {
+                var filtered = commissions;
+                if (_filterStatus != 'all') {
+                  filtered = filtered
+                      .where((c) => c['status'] == _filterStatus)
+                      .toList();
+                }
+                if (_filterType != 'all') {
+                  filtered = filtered
+                      .where((c) => c['commission_type'] == _filterType)
+                      .toList();
+                }
+                if (filtered.isEmpty) return _buildEmptyState();
+                return _buildCommissionsList(filtered);
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(child: Text('Error: $e')),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

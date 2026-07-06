@@ -22,31 +22,35 @@ class _CampaignManagementPageState
   Widget build(BuildContext context) {
     final campaignsAsync = ref.watch(_campaignsProvider);
 
-    return Stack(
-      children: [
-        Column(
-          children: [
-            _buildHeader(),
-            _buildCampaignStats(campaignsAsync),
-            Expanded(
-              child: campaignsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => _buildErrorState(e.toString()),
-                data: (campaigns) => _buildCampaignBody(campaigns),
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(_campaignsProvider),
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              _buildHeader(),
+              _buildCampaignStats(campaignsAsync),
+              Expanded(
+                child: campaignsAsync.when(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => _buildErrorState(e.toString()),
+                  data: (campaigns) => _buildCampaignBody(campaigns),
+                ),
               ),
-            ),
-          ],
-        ),
-        Positioned(
-          right: 16,
-          bottom: 16,
-          child: FloatingActionButton.extended(
-            onPressed: () => _showCreateCampaignDialog(),
-            icon: const Icon(Icons.add),
-            label: const Text('New Campaign'),
+            ],
           ),
-        ),
-      ],
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: FloatingActionButton.extended(
+              onPressed: () => _showCreateCampaignDialog(),
+              icon: const Icon(Icons.add),
+              label: const Text('New Campaign'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -64,11 +68,7 @@ class _CampaignManagementPageState
       ),
       child: const Row(
         children: [
-          Icon(
-            Icons.campaign,
-            size: 32,
-            color: AppTheme.primaryColor,
-          ),
+          Icon(Icons.campaign, size: 32, color: AppTheme.primaryColor),
           SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -93,15 +93,19 @@ class _CampaignManagementPageState
 
   Widget _buildCampaignStats(AsyncValue<List<Map<String, dynamic>>> asyncData) {
     final campaigns = asyncData.valueOrNull ?? [];
-    final activeCount =
-        campaigns.where((c) => c['status'] == 'active').length;
-    final totalLeads =
-        campaigns.fold<int>(0, (sum, c) => sum + ((c['total_leads'] as num?)?.toInt() ?? 0));
+    final activeCount = campaigns.where((c) => c['status'] == 'active').length;
+    final totalLeads = campaigns.fold<int>(
+      0,
+      (sum, c) => sum + ((c['total_leads'] as num?)?.toInt() ?? 0),
+    );
     final totalConversions = campaigns.fold<int>(
-        0, (sum, c) => sum + ((c['total_conversions'] as num?)?.toInt() ?? 0));
+      0,
+      (sum, c) => sum + ((c['total_conversions'] as num?)?.toInt() ?? 0),
+    );
 
-    final conversionRate =
-        totalLeads > 0 ? ((totalConversions / totalLeads) * 100) : 0.0;
+    final conversionRate = totalLeads > 0
+        ? ((totalConversions / totalLeads) * 100)
+        : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -109,21 +113,34 @@ class _CampaignManagementPageState
         children: [
           _buildStatCard('Active', '$activeCount', Icons.campaign, Colors.blue),
           _buildStatCard(
-              'Total Leads', '$totalLeads', Icons.people, Colors.green),
+            'Total Leads',
+            '$totalLeads',
+            Icons.people,
+            Colors.green,
+          ),
           _buildStatCard(
-              'Conversions', '$totalConversions', Icons.trending_up, Colors.purple),
+            'Conversions',
+            '$totalConversions',
+            Icons.trending_up,
+            Colors.purple,
+          ),
           _buildStatCard(
-              'Conv. Rate',
-              '${conversionRate.toStringAsFixed(1)}%',
-              Icons.analytics,
-              Colors.orange),
+            'Conv. Rate',
+            '${conversionRate.toStringAsFixed(1)}%',
+            Icons.analytics,
+            Colors.orange,
+          ),
         ],
       ),
     );
   }
 
   Widget _buildStatCard(
-      String title, String value, IconData icon, Color color) {
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -146,13 +163,18 @@ class _CampaignManagementPageState
             Text(
               value,
               style: TextStyle(
-                  fontSize: 28, fontWeight: FontWeight.bold, color: color),
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               title,
               style: TextStyle(
-                  color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
@@ -163,8 +185,7 @@ class _CampaignManagementPageState
   Widget _buildCampaignBody(List<Map<String, dynamic>> allCampaigns) {
     var campaigns = allCampaigns;
     if (_filterStatus != 'all') {
-      campaigns =
-          campaigns.where((c) => c['status'] == _filterStatus).toList();
+      campaigns = campaigns.where((c) => c['status'] == _filterStatus).toList();
     }
 
     return Container(
@@ -190,7 +211,9 @@ class _CampaignManagementPageState
                 Text(
                   'Campaigns (${campaigns.length})',
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SegmentedButton<String>(
                   segments: const [
@@ -234,9 +257,10 @@ class _CampaignManagementPageState
                 ? 'No campaigns yet'
                 : 'No $_filterStatus campaigns',
             style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey.shade700),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade700,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -255,15 +279,20 @@ class _CampaignManagementPageState
         children: [
           Icon(Icons.error_outline, size: 48, color: Colors.red.shade300),
           const SizedBox(height: 16),
-          Text('Failed to load campaigns',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800)),
+          Text(
+            'Failed to load campaigns',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade800,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text(message,
-              style: TextStyle(color: Colors.grey.shade600),
-              textAlign: TextAlign.center),
+          Text(
+            message,
+            style: TextStyle(color: Colors.grey.shade600),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () => ref.invalidate(_campaignsProvider),
@@ -277,17 +306,13 @@ class _CampaignManagementPageState
 
   Widget _buildCampaignCard(Map<String, dynamic> campaign) {
     final name = (campaign['name'] as String?) ?? 'Untitled';
-    final campaignType =
-        (campaign['campaign_type'] as String?) ?? 'other';
+    final campaignType = (campaign['campaign_type'] as String?) ?? 'other';
     final status = (campaign['status'] as String?) ?? 'draft';
     final leads = (campaign['total_leads'] as num?)?.toInt() ?? 0;
-    final conversions =
-        (campaign['total_conversions'] as num?)?.toInt() ?? 0;
-    final impressions =
-        (campaign['total_impressions'] as num?)?.toInt() ?? 0;
+    final conversions = (campaign['total_conversions'] as num?)?.toInt() ?? 0;
+    final impressions = (campaign['total_impressions'] as num?)?.toInt() ?? 0;
     final clicks = (campaign['total_clicks'] as num?)?.toInt() ?? 0;
-    final budget =
-        (campaign['budget'] as num?)?.toDouble() ?? 0;
+    final budget = (campaign['budget'] as num?)?.toDouble() ?? 0;
     final startDate = (campaign['start_date'] as String?) ?? '';
     final endDate = (campaign['end_date'] as String?) ?? '';
 
@@ -298,8 +323,8 @@ class _CampaignManagementPageState
     final duration = startDate.isNotEmpty && endDate.isNotEmpty
         ? '$startDate - $endDate'
         : startDate.isNotEmpty
-            ? 'From $startDate'
-            : 'Not scheduled';
+        ? 'From $startDate'
+        : 'Not scheduled';
 
     final sourceColors = {
       'google_ads': Colors.orange,
@@ -332,11 +357,11 @@ class _CampaignManagementPageState
           Row(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (sourceColors[campaignType] ?? Colors.grey)
-                      .withValues(alpha: 0.1),
+                  color: (sourceColors[campaignType] ?? Colors.grey).withValues(
+                    alpha: 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -350,8 +375,7 @@ class _CampaignManagementPageState
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: isActive
                       ? Colors.green.withValues(alpha: 0.1)
@@ -382,23 +406,27 @@ class _CampaignManagementPageState
           const SizedBox(height: 16),
           Row(
             children: [
+              Expanded(child: _buildMiniStat('Leads', '$leads', Icons.people)),
               Expanded(
-                child: _buildMiniStat('Leads', '$leads', Icons.people),
+                child: _buildMiniStat(
+                  'Conv.',
+                  '${conversionRate.toStringAsFixed(0)}%',
+                  Icons.trending_up,
+                ),
               ),
               Expanded(
                 child: _buildMiniStat(
-                    'Conv.', '${conversionRate.toStringAsFixed(0)}%',
-                    Icons.trending_up),
-              ),
-              Expanded(
-                child:
-                    _buildMiniStat('CTR', '${ctr.toStringAsFixed(1)}%', Icons.mouse),
+                  'CTR',
+                  '${ctr.toStringAsFixed(1)}%',
+                  Icons.mouse,
+                ),
               ),
               Expanded(
                 child: _buildMiniStat(
-                    'Budget',
-                    '₹${(budget / 1000).toStringAsFixed(0)}K',
-                    Icons.attach_money),
+                  'Budget',
+                  '₹${(budget / 1000).toStringAsFixed(0)}K',
+                  Icons.attach_money,
+                ),
               ),
             ],
           ),
@@ -415,11 +443,14 @@ class _CampaignManagementPageState
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(value,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-            Text(label,
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+            Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+            Text(
+              label,
+              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+            ),
           ],
         ),
       ],
@@ -450,21 +481,42 @@ class _CampaignManagementPageState
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   initialValue: selectedType,
-                  decoration: const InputDecoration(
-                      labelText: 'Campaign Type'),
+                  decoration: const InputDecoration(labelText: 'Campaign Type'),
                   items: const [
-                    DropdownMenuItem(value: 'google_ads', child: Text('Google Ads')),
-                    DropdownMenuItem(value: 'facebook_ads', child: Text('Facebook Ads')),
-                    DropdownMenuItem(value: 'instagram_ads', child: Text('Instagram Ads')),
-                    DropdownMenuItem(value: 'whatsapp_broadcast', child: Text('WhatsApp')),
-                    DropdownMenuItem(value: 'sms_blast', child: Text('SMS Blast')),
-                    DropdownMenuItem(value: 'email_blast', child: Text('Email Blast')),
-                    DropdownMenuItem(value: 'referral', child: Text('Referral')),
+                    DropdownMenuItem(
+                      value: 'google_ads',
+                      child: Text('Google Ads'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'facebook_ads',
+                      child: Text('Facebook Ads'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'instagram_ads',
+                      child: Text('Instagram Ads'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'whatsapp_broadcast',
+                      child: Text('WhatsApp'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'sms_blast',
+                      child: Text('SMS Blast'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'email_blast',
+                      child: Text('Email Blast'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'referral',
+                      child: Text('Referral'),
+                    ),
                     DropdownMenuItem(value: 'organic', child: Text('Organic')),
                     DropdownMenuItem(value: 'event', child: Text('Event')),
                     DropdownMenuItem(value: 'other', child: Text('Other')),
                   ],
-                  onChanged: (v) => setDialogState(() => selectedType = v ?? 'other'),
+                  onChanged: (v) =>
+                      setDialogState(() => selectedType = v ?? 'other'),
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -487,7 +539,9 @@ class _CampaignManagementPageState
               onPressed: () async {
                 if (nameController.text.trim().isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please enter a campaign name')),
+                    const SnackBar(
+                      content: Text('Please enter a campaign name'),
+                    ),
                   );
                   return;
                 }
@@ -506,15 +560,17 @@ class _CampaignManagementPageState
     );
   }
 
-  Future<void> _createCampaign(
-      String name, String type, double budget) async {
+  Future<void> _createCampaign(String name, String type, double budget) async {
     try {
-      final response = await ApiService().post('/crm/campaigns', data: {
-        'name': name,
-        'campaign_type': type,
-        'budget': budget,
-        'status': 'draft',
-      });
+      final response = await ApiService().post(
+        '/crm/campaigns',
+        data: {
+          'name': name,
+          'campaign_type': type,
+          'budget': budget,
+          'status': 'draft',
+        },
+      );
       if (response['success'] == true) {
         ref.invalidate(_campaignsProvider);
         if (mounted) {
@@ -542,15 +598,14 @@ class _CampaignManagementPageState
 
 // ─── Providers ────────────────────────────────────────────────────────
 
-final _campaignsProvider =
-    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final _campaignsProvider = FutureProvider<List<Map<String, dynamic>>>((
+  ref,
+) async {
   try {
     final response = await ApiService().get('/crm/campaigns');
     if (response['success'] == true) {
       final campaigns = (response['campaigns'] as List<dynamic>?) ?? [];
-      return campaigns
-          .map((c) => Map<String, dynamic>.from(c as Map))
-          .toList();
+      return campaigns.map((c) => Map<String, dynamic>.from(c as Map)).toList();
     }
     return [];
   } catch (e) {

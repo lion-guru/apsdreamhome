@@ -9,12 +9,6 @@
         <a href="<?= BASE_URL ?>/admin/crm/templates/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i> New Template</a>
     </div>
 
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i><?= $_SESSION['success']; unset($_SESSION['success']); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-    <?php endif; ?>
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i><?= $_SESSION['error']; unset($_SESSION['error']); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-    <?php endif; ?>
 
     <ul class="nav nav-pills mb-4" id="templateTabs">
         <li class="nav-item"><a class="nav-link active" data-bs-toggle="pill" href="#email-tab"><i class="fas fa-envelope me-1"></i> Email Templates (<?= count($templates) ?>)</a></li>

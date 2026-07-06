@@ -20,21 +20,6 @@ foreach ($levels as $lv) {
         <a href="<?= htmlspecialchars($base) ?>/admin/commission-plans" class="btn btn-link btn-sm">Back to Plans</a>
     </div>
     <div class="aps-cp-card-body">
-        <?php if (!empty($_SESSION['success'])): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <?= htmlspecialchars($_SESSION['success'] ?? '') ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <?php unset($_SESSION['success']); ?>
-        <?php endif; ?>
-        <?php if (!empty($_SESSION['error'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?= htmlspecialchars($_SESSION['error'] ?? '') ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <?php unset($_SESSION['error']); ?>
-        <?php endif; ?>
-
         <form method="POST" action="<?= htmlspecialchars($base) ?>/admin/commission-plans/update/<?= $plan['id'] ?>">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
 

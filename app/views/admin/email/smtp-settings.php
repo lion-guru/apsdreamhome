@@ -23,12 +23,6 @@ $smtp = $smtp ?? [
         <h4 class="mb-0"><i class="fas fa-cog me-2"></i>SMTP Email Settings</h4>
     </div>
 
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($_SESSION['success'] ?? '') ?><?php unset($_SESSION['success']); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-    <?php endif; ?>
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($_SESSION['error'] ?? '') ?><?php unset($_SESSION['error']); ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-    <?php endif; ?>
 
     <div class="alert alert-info">
         <i class="fas fa-info-circle me-2"></i>

@@ -180,34 +180,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    // Toast notification function
-    function showToast(message, type) {
-        // Create toast element
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.innerHTML = `
-            <div class="toast-body">
-                ${message}
-            </div>
-        `;
-
-        // Add to page
-        document.body.appendChild(toast);
-
-        // Show toast
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 100);
-
-        // Hide toast after 3 seconds
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                document.body.removeChild(toast);
-            }, 300);
-        }, 3000);
-    }
 });
 </script>
 

@@ -110,7 +110,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'whatsapp', 'Welcome!', ?, 'pending', NOW())",
+                 VALUES (?, 'whatsapp', 'Welcome!', ?, 'queued', NOW())",
                 [$data['user_id'] ?? 0, "Namaste $name! Welcome to APS Dream Home. 🏠\n\nI'm your AI assistant. How can I help you today?"]
             );
             return ['success' => true, 'message' => "Welcome message queued for $name"];
@@ -127,7 +127,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'push', 'New Lead Assigned', ?, 'pending', NOW())",
+                 VALUES (?, 'push', 'New Lead Assigned', ?, 'queued', NOW())",
                 [$assignedTo, "A new lead has been assigned to you. Please follow up within 24 hours."]
             );
             return ['success' => true, 'message' => "Associate notified"];
@@ -159,7 +159,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO crm_tasks (lead_id, assigned_to, title, description, priority, due_date, status, created_at)
-                 VALUES (?, ?, 'Follow up with lead', 'Auto-scheduled follow-up after qualification', 'high', DATE_ADD(NOW(), INTERVAL 1 DAY), 'pending', NOW())",
+                 VALUES (?, ?, 'Follow up with lead', 'Auto-scheduled follow-up after qualification', 'high', DATE_ADD(NOW(), INTERVAL 1 DAY), 'queued', NOW())",
                 [$leadId, $assignedTo]
             );
             return ['success' => true, 'message' => "Follow-up scheduled"];
@@ -174,7 +174,7 @@ class WorkflowAutomationAgent
             $leadId = $data['lead_id'] ?? '?';
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (1, 'push', 'Lead Qualified', ?, 'pending', NOW())",
+                 VALUES (1, 'push', 'Lead Qualified', ?, 'queued', NOW())",
                 ["Lead #$leadId has been qualified and needs attention."]
             );
             return ['success' => true, 'message' => "Manager notified"];
@@ -196,7 +196,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'whatsapp', 'Congratulations!', ?, 'pending', NOW())",
+                 VALUES (?, 'whatsapp', 'Congratulations!', ?, 'queued', NOW())",
                 [$data['user_id'] ?? 0, "🎉 Congratulations! Your booking is confirmed. Welcome to APS Dream Home family!"]
             );
             return ['success' => true, 'message' => "Congrats message sent"];
@@ -253,7 +253,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'email', 'Payment Reminder', ?, 'pending', NOW())",
+                 VALUES (?, 'email', 'Payment Reminder', ?, 'queued', NOW())",
                 [$data['user_id'] ?? 0, "Your payment is overdue. Please clear the dues to avoid penalties."]
             );
             return ['success' => true, 'message' => "Reminder sent"];
@@ -276,7 +276,7 @@ class WorkflowAutomationAgent
             $bookingId = $data['booking_id'] ?? '?';
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (1, 'email', 'CRITICAL: Overdue Payment', ?, 'pending', NOW())",
+                 VALUES (1, 'email', 'CRITICAL: Overdue Payment', ?, 'queued', NOW())",
                 ["CRITICAL: Booking #$bookingId is $daysOverdue days overdue!"]
             );
             return ['success' => true, 'message' => "Escalated to management"];
@@ -323,7 +323,7 @@ class WorkflowAutomationAgent
             $bookingId = $data['booking_id'] ?? '?';
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (1, 'push', 'Team Notification', ?, 'pending', NOW())",
+                 VALUES (1, 'push', 'Team Notification', ?, 'queued', NOW())",
                 ["Booking #$bookingId status changed."]
             );
             return ['success' => true, 'message' => "Team notified"];
@@ -351,7 +351,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'sms', 'EMI Reminder', ?, 'pending', NOW())",
+                 VALUES (?, 'sms', 'EMI Reminder', ?, 'queued', NOW())",
                 [$data['user_id'] ?? 0, "Your EMI installment is due soon. Please ensure timely payment."]
             );
             return ['success' => true, 'message' => "Reminder scheduled"];
@@ -365,7 +365,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'email', 'Penalty Notice', ?, 'pending', NOW())",
+                 VALUES (?, 'email', 'Penalty Notice', ?, 'queued', NOW())",
                 [$data['user_id'] ?? 0, "Your EMI payment is overdue. A penalty of ₹" . ($data['penalty'] ?? '500') . " has been applied."]
             );
             return ['success' => true, 'message' => "Penalty notice sent"];
@@ -379,7 +379,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'whatsapp', 'Visit Confirmed', ?, 'pending', NOW())",
+                 VALUES (?, 'whatsapp', 'Visit Confirmed', ?, 'queued', NOW())",
                 [$data['user_id'] ?? 0, "Your site visit has been confirmed! 📅\nDate: " . ($data['visit_date'] ?? 'TBD')]
             );
             return ['success' => true, 'message' => "Confirmation sent"];
@@ -398,7 +398,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'whatsapp', 'Follow Up', ?, 'pending', NOW())",
+                 VALUES (?, 'whatsapp', 'Follow Up', ?, 'queued', NOW())",
                 [$data['user_id'] ?? 0, "Thank you for visiting our project! Did you like what you saw? Any questions? 😊"]
             );
             return ['success' => true, 'message' => "Follow-up sent"];
@@ -431,7 +431,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO crm_tasks (lead_id, assigned_to, title, description, priority, due_date, status, created_at)
-                 VALUES (?, ?, 'Post-visit follow-up', 'Check if customer wants to proceed', 'high', DATE_ADD(NOW(), INTERVAL 2 DAY), 'pending', NOW())",
+                 VALUES (?, ?, 'Post-visit follow-up', 'Check if customer wants to proceed', 'high', DATE_ADD(NOW(), INTERVAL 2 DAY), 'queued', NOW())",
                 [$leadId, $data['assigned_to'] ?? null]
             );
             return ['success' => true, 'message' => "Next action scheduled"];
@@ -445,7 +445,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO notification_queue (user_id, type, title, message, status, created_at)
-                 VALUES (?, 'email', 'Welcome Kit', ?, 'pending', NOW())",
+                 VALUES (?, 'email', 'Welcome Kit', ?, 'queued', NOW())",
                 [$data['user_id'] ?? 0, "Welcome to APS Dream Home! Here's your onboarding guide and commission structure."]
             );
             return ['success' => true, 'message' => "Welcome kit sent"];
@@ -459,7 +459,7 @@ class WorkflowAutomationAgent
         try {
             $this->db->execute(
                 "INSERT INTO crm_tasks (assigned_to, title, description, priority, due_date, status, created_at)
-                 VALUES (?, 'Onboarding: New Associate', 'Complete KYC, training, and first sale guidance', 'medium', DATE_ADD(NOW(), INTERVAL 7 DAY), 'pending', NOW())",
+                 VALUES (?, 'Onboarding: New Associate', 'Complete KYC, training, and first sale guidance', 'medium', DATE_ADD(NOW(), INTERVAL 7 DAY), 'queued', NOW())",
                 [$data['user_id'] ?? 0]
             );
             return ['success' => true, 'message' => "Onboarding task assigned"];

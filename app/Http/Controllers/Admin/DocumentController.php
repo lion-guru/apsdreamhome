@@ -78,8 +78,7 @@ class DocumentController extends AdminController
                 // Validate upload before processing
                 $validation = UploadValidator::validate($file, ['types' => 'documents', 'max_size' => 25]);
                 if (!$validation['valid']) {
-                    $_SESSION['flash_message'] = 'Upload rejected: ' . $validation['error'];
-                    $_SESSION['flash_type'] = 'danger';
+                    $_SESSION['error'] = 'Upload rejected: ' . $validation['error'];
                     header('Location: ' . BASE_URL . '/admin/documents');
                     exit;
                 }
@@ -91,14 +90,12 @@ class DocumentController extends AdminController
                     $stmt = $db->prepare("INSERT INTO documents (title, type, description, file_path, file_size, related_type, related_id, category_id, doc_type_id, uploaded_by, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())");
                     $stmt->execute([$title, $type, $description, $filePath, $file['size'], $relatedType, $relatedId, $categoryId, $docTypeId, $_SESSION['admin_id'] ?? 0]);
 
-                    $_SESSION['flash_message'] = 'Document uploaded successfully';
-                    $_SESSION['flash_type'] = 'success';
+                    $_SESSION['success'] = 'Document uploaded successfully';
                 } else {
                     throw new \Exception('File upload failed');
                 }
             } catch (\Exception $e) {
-                $_SESSION['flash_message'] = 'Upload failed: ' . $e->getMessage();
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Upload failed: ' . $e->getMessage();
             }
         }
 
@@ -119,11 +116,9 @@ class DocumentController extends AdminController
             }
             $stmt = $db->prepare("DELETE FROM documents WHERE id = ?");
             $stmt->execute([$id]);
-            $_SESSION['flash_message'] = 'Document deleted successfully';
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = 'Document deleted successfully';
         } catch (\Exception $e) {
-            $_SESSION['flash_message'] = 'Delete failed: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Delete failed: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/documents');
         exit;
@@ -149,8 +144,7 @@ class DocumentController extends AdminController
             // fall through
                     error_log("DocumentController.php: " . $e->getMessage());
         }
-        $_SESSION['flash_message'] = 'File not found';
-        $_SESSION['flash_type'] = 'danger';
+        $_SESSION['error'] = 'File not found';
         header('Location: ' . BASE_URL . '/admin/documents');
         exit;
     }
@@ -188,11 +182,9 @@ class DocumentController extends AdminController
 
                 $stmt = $db->prepare("INSERT INTO document_categories (name, slug, description, parent_id, is_active, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
                 $stmt->execute([$name, $slug, $description, $parentId, $isActive]);
-                $_SESSION['flash_message'] = 'Category created successfully';
-                $_SESSION['flash_type'] = 'success';
+                $_SESSION['success'] = 'Category created successfully';
             } catch (\Exception $e) {
-                $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
         header('Location: ' . BASE_URL . '/admin/documents/categories');
@@ -213,11 +205,9 @@ class DocumentController extends AdminController
 
                 $stmt = $db->prepare("UPDATE document_categories SET name = ?, slug = ?, description = ?, parent_id = ?, is_active = ? WHERE id = ?");
                 $stmt->execute([$name, $slug, $description, $parentId, $isActive, $id]);
-                $_SESSION['flash_message'] = 'Category updated successfully';
-                $_SESSION['flash_type'] = 'success';
+                $_SESSION['success'] = 'Category updated successfully';
             } catch (\Exception $e) {
-                $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
         header('Location: ' . BASE_URL . '/admin/documents/categories');
@@ -231,11 +221,9 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->prepare("DELETE FROM document_categories WHERE id = ?");
             $stmt->execute([$id]);
-            $_SESSION['flash_message'] = 'Category deleted successfully';
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = 'Category deleted successfully';
         } catch (\Exception $e) {
-            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/documents/categories');
         exit;
@@ -273,11 +261,9 @@ class DocumentController extends AdminController
 
                 $stmt = $db->prepare("INSERT INTO document_types (name, slug, category_id, description, is_active, created_at) VALUES (?, ?, ?, ?, 1, NOW())");
                 $stmt->execute([$name, $slug, $categoryId, $description]);
-                $_SESSION['flash_message'] = 'Document type created successfully';
-                $_SESSION['flash_type'] = 'success';
+                $_SESSION['success'] = 'Document type created successfully';
             } catch (\Exception $e) {
-                $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
         header('Location: ' . BASE_URL . '/admin/documents/types');
@@ -298,11 +284,9 @@ class DocumentController extends AdminController
 
                 $stmt = $db->prepare("UPDATE document_types SET name = ?, slug = ?, category_id = ?, description = ?, is_active = ? WHERE id = ?");
                 $stmt->execute([$name, $slug, $categoryId, $description, $isActive, $id]);
-                $_SESSION['flash_message'] = 'Document type updated successfully';
-                $_SESSION['flash_type'] = 'success';
+                $_SESSION['success'] = 'Document type updated successfully';
             } catch (\Exception $e) {
-                $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
         header('Location: ' . BASE_URL . '/admin/documents/types');
@@ -316,11 +300,9 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->prepare("DELETE FROM document_types WHERE id = ?");
             $stmt->execute([$id]);
-            $_SESSION['flash_message'] = 'Document type deleted successfully';
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = 'Document type deleted successfully';
         } catch (\Exception $e) {
-            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/documents/types');
         exit;
@@ -359,11 +341,9 @@ class DocumentController extends AdminController
 
                 $stmt = $db->prepare("INSERT INTO document_templates (name, type, category_id, content, description, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW())");
                 $stmt->execute([$name, $type, $categoryId, $content, $description]);
-                $_SESSION['flash_message'] = 'Template created successfully';
-                $_SESSION['flash_type'] = 'success';
+                $_SESSION['success'] = 'Template created successfully';
             } catch (\Exception $e) {
-                $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
         header('Location: ' . BASE_URL . '/admin/documents/templates');
@@ -401,11 +381,9 @@ class DocumentController extends AdminController
 
                 $stmt = $db->prepare("UPDATE document_templates SET name = ?, type = ?, category_id = ?, content = ?, description = ?, is_active = ?, updated_at = NOW() WHERE id = ?");
                 $stmt->execute([$name, $type, $categoryId, $content, $description, $isActive, $id]);
-                $_SESSION['flash_message'] = 'Template updated successfully';
-                $_SESSION['flash_type'] = 'success';
+                $_SESSION['success'] = 'Template updated successfully';
             } catch (\Exception $e) {
-                $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
         header('Location: ' . BASE_URL . '/admin/documents/templates');
@@ -419,11 +397,9 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->prepare("DELETE FROM document_templates WHERE id = ?");
             $stmt->execute([$id]);
-            $_SESSION['flash_message'] = 'Template deleted successfully';
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = 'Template deleted successfully';
         } catch (\Exception $e) {
-            $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/documents/templates');
         exit;
@@ -478,11 +454,9 @@ class DocumentController extends AdminController
                     $_POST['review_status'] ?? 'pending',
                     $_POST['comments'] ?? ''
                 ]);
-                $_SESSION['flash_message'] = 'Review submitted successfully';
-                $_SESSION['flash_type'] = 'success';
+                $_SESSION['success'] = 'Review submitted successfully';
             } catch (\Exception $e) {
-                $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
         header('Location: ' . BASE_URL . '/admin/documents/reviews');

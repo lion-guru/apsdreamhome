@@ -28,7 +28,10 @@ $shift_types = $shift_types ?? [];
                                 <td><?= !empty($st['is_active']) ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>' ?></td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-primary edit-shift" data-id="<?= $st['id'] ?>"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger delete-shift" data-id="<?= $st['id'] ?>"><i class="fas fa-trash"></i></button>
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/schedule/shift-types/<?= $st['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this shift type?')">
+                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

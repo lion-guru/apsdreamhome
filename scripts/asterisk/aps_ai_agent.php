@@ -10,9 +10,10 @@
  *   same => n,AGI(/var/lib/asterisk/agi/aps_ai_agent.php,${CALLID},${CUSTOMER_PHONE})
  */
 
-// Guard: STDIN only exists inside Asterisk AGI context
-if (!defined('STDIN') || !defined('STDOUT')) {
-    fwrite(STDERR, "Error: This script must be run by Asterisk AGI, not directly.\n");
+// Guard: STDIN/STDOUT/STDERR only exist inside Asterisk AGI or CLI context
+if (!defined('STDIN') || !defined('STDOUT') || !defined('STDERR')) {
+    http_response_code(403);
+    echo "Error: This script must be run by Asterisk AGI, not directly.\n";
     exit(1);
 }
 

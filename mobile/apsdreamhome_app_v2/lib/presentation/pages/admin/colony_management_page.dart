@@ -24,69 +24,75 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
   Widget build(BuildContext context) {
     final coloniesAsync = ref.watch(coloniesProvider);
 
-    return Stack(
-      children: [
-        Column(
-          children: [
-            // Header Section
-            _buildHeader(),
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(coloniesProvider),
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              // Header Section
+              _buildHeader(),
 
-            // Stats Cards
-            _buildStatsRow(),
+              // Stats Cards
+              _buildStatsRow(),
 
-            // Filters
-            _buildFilters(),
+              // Filters
+              _buildFilters(),
 
-            // Colonies List
-            Expanded(
-              child: coloniesAsync.when(
-                data: (colonies) {
-                  var filtered = colonies;
+              // Colonies List
+              Expanded(
+                child: coloniesAsync.when(
+                  data: (colonies) {
+                    var filtered = colonies;
 
-                  if (_searchQuery.isNotEmpty) {
-                    filtered = filtered
-                        .where((c) =>
-                            c.name
-                                .toLowerCase()
-                                .contains(_searchQuery.toLowerCase()) ||
-                            c.location
-                                .toLowerCase()
-                                .contains(_searchQuery.toLowerCase()))
-                        .toList();
-                  }
+                    if (_searchQuery.isNotEmpty) {
+                      filtered = filtered
+                          .where(
+                            (c) =>
+                                c.name.toLowerCase().contains(
+                                  _searchQuery.toLowerCase(),
+                                ) ||
+                                c.location.toLowerCase().contains(
+                                  _searchQuery.toLowerCase(),
+                                ),
+                          )
+                          .toList();
+                    }
 
-                  if (_selectedState != null) {
-                    filtered =
-                        filtered.where((c) => c.state == _selectedState).toList();
-                  }
+                    if (_selectedState != null) {
+                      filtered = filtered
+                          .where((c) => c.state == _selectedState)
+                          .toList();
+                    }
 
-                  if (_selectedStatus != null) {
-                    filtered = filtered
-                        .where((c) => c.status == _selectedStatus)
-                        .toList();
-                  }
+                    if (_selectedStatus != null) {
+                      filtered = filtered
+                          .where((c) => c.status == _selectedStatus)
+                          .toList();
+                    }
 
-                  return _buildColoniesGrid(filtered);
-                },
-                loading: () => _buildLoadingGrid(),
-                error: (error, stack) => AppWidgets.errorWidget(
-                  message: error.toString(),
-                  onRetry: () => ref.refresh(coloniesProvider),
+                    return _buildColoniesGrid(filtered);
+                  },
+                  loading: () => _buildLoadingGrid(),
+                  error: (error, stack) => AppWidgets.errorWidget(
+                    message: error.toString(),
+                    onRetry: () => ref.refresh(coloniesProvider),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        Positioned(
-          right: 16,
-          bottom: 16,
-          child: FloatingActionButton.extended(
-            onPressed: () => _showAddColonyDialog(),
-            icon: const Icon(Icons.add),
-            label: const Text('Add Colony'),
+            ],
           ),
-        ),
-      ],
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: FloatingActionButton.extended(
+              onPressed: () => _showAddColonyDialog(),
+              icon: const Icon(Icons.add),
+              label: const Text('Add Colony'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -116,17 +122,12 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
               children: [
                 const Text(
                   'Colony Management',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Manage colonies, plots, and master plans',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600),
                 ),
               ],
             ),
@@ -157,25 +158,25 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
         'label': 'Total Colonies',
         'value': '24',
         'icon': Icons.location_city,
-        'color': AppTheme.primaryColor
+        'color': AppTheme.primaryColor,
       },
       {
         'label': 'Active',
         'value': '18',
         'icon': Icons.check_circle,
-        'color': AppTheme.successColor
+        'color': AppTheme.successColor,
       },
       {
         'label': 'Launching Soon',
         'value': '4',
         'icon': Icons.rocket_launch,
-        'color': AppTheme.infoColor
+        'color': AppTheme.infoColor,
       },
       {
         'label': 'Sold Out',
         'value': '2',
         'icon': Icons.sell,
-        'color': AppTheme.warningColor
+        'color': AppTheme.warningColor,
       },
     ];
 
@@ -216,10 +217,7 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
                   const SizedBox(height: 4),
                   Text(
                     stat['label'] as String,
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                   ),
                 ],
               ),
@@ -270,10 +268,14 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
               items: const [
                 DropdownMenuItem(value: null, child: Text('All States')),
                 DropdownMenuItem(
-                    value: 'Uttar Pradesh', child: Text('Uttar Pradesh')),
+                  value: 'Uttar Pradesh',
+                  child: Text('Uttar Pradesh'),
+                ),
                 DropdownMenuItem(value: 'Bihar', child: Text('Bihar')),
                 DropdownMenuItem(
-                    value: 'Madhya Pradesh', child: Text('Madhya Pradesh')),
+                  value: 'Madhya Pradesh',
+                  child: Text('Madhya Pradesh'),
+                ),
               ],
               onChanged: (value) => setState(() => _selectedState = value),
             ),
@@ -361,10 +363,7 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
                   width: double.infinity,
                   color: Colors.grey.shade200,
                   child: colony.images != null && colony.images!.isNotEmpty
-                      ? Image.network(
-                          colony.images!.first,
-                          fit: BoxFit.cover,
-                        )
+                      ? Image.network(colony.images!.first, fit: BoxFit.cover)
                       : const Icon(
                           Icons.home_work,
                           size: 50,
@@ -398,10 +397,7 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
                 const SizedBox(height: 4),
                 Text(
                   '${colony.location}, ${colony.state}',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                 ),
                 const SizedBox(height: 12),
 

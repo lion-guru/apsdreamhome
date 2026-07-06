@@ -636,7 +636,7 @@ class EmployeeController extends BaseController
         $employeeId = $_SESSION['employee_id'] ?? 0;
 
         if (!$id || !in_array($action, ['verify', 'approve', 'reject', 'mark_sold'])) {
-            $_SESSION['flash_error'] = 'Invalid request';
+            $_SESSION['error'] = 'Invalid request';
             $this->redirect('/employee/user-properties');
         }
 
@@ -665,10 +665,10 @@ class EmployeeController extends BaseController
                 error_log("Employee property notification error: " . $e2->getMessage());
             }
 
-            $_SESSION['flash_success'] = "Property #$id status updated to: $status";
+            $_SESSION['success'] = "Property #$id status updated to: $status";
         } catch (\Exception $e) {
             error_log("Employee property action error: " . $e->getMessage());
-            $_SESSION['flash_error'] = "Failed to update property status";
+            $_SESSION['error'] = "Failed to update property status";
         }
 
         $this->redirect('/employee/user-properties');

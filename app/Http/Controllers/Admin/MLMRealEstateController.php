@@ -82,11 +82,9 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                     $stmt = $db->prepare("INSERT INTO packages (name, price, direct_reward, level_reward, daily_capping, description, is_active) VALUES (?,?,?,?,?,?,?)");
                     $stmt->execute([$data['name'], $data['price'], $data['direct_reward'], $data['level_reward'], $data['daily_capping'], $data['description'], $data['is_active']]);
                 }
-                $_SESSION['flash_message'] = 'Package saved successfully';
-                $_SESSION['flash_type'] = 'success';
+                $_SESSION['success'] = 'Package saved successfully';
             } catch (\Exception $e) {
-                $_SESSION['flash_message'] = 'Error: ' . $e->getMessage();
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/packages');
@@ -157,8 +155,11 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             if ($id && $reraNumber) {
                 $reraService = new RERAComplianceService();
                 $result = $reraService->approveRERA($id, $reraNumber, $_SESSION['admin_id'] ?? 0);
-                $_SESSION['flash_message'] = $result['message'];
-                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                if ($result['success']) {
+                    $_SESSION['success'] = $result['message'];
+                } else {
+                    $_SESSION['error'] = $result['message'];
+                }
             }
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/rera');
@@ -235,8 +236,11 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             if ($bookingId > 0 && $amount > 0) {
                 $bookingService = new BookingComplianceService();
                 $result = $bookingService->recordPayment($bookingId, $amount, $mode);
-                $_SESSION['flash_message'] = $result['success'] ? 'Payment recorded' : 'Error: ' . ($result['error'] ?? '');
-                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                if ($result['success']) {
+                    $_SESSION['success'] = 'Payment recorded';
+                } else {
+                    $_SESSION['error'] = 'Error: ' . ($result['error'] ?? '');
+                }
             }
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
@@ -281,8 +285,11 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             if ($name && $email && $packageId) {
                 $mlmService = new MLMNetworkService();
                 $result = $mlmService->registerNetworker(['name'=>$name,'email'=>$email,'phone'=>$phone], $packageId, $sponsorId);
-                $_SESSION['flash_message'] = $result['message'] ?? ($result['error'] ?? 'Registration failed');
-                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                if ($result['success']) {
+                    $_SESSION['success'] = $result['message'] ?? ($result['error'] ?? 'Registration failed');
+                } else {
+                    $_SESSION['error'] = $result['message'] ?? ($result['error'] ?? 'Registration failed');
+                }
             }
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/networkers');
@@ -300,8 +307,11 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             if ($name && $email) {
                 $mlmService = new MLMNetworkService();
                 $result = $mlmService->registerFreeConsultant(['name'=>$name,'email'=>$email,'phone'=>$phone], $sponsorId);
-                $_SESSION['flash_message'] = $result['message'] ?? ($result['error'] ?? 'Registration failed');
-                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                if ($result['success']) {
+                    $_SESSION['success'] = $result['message'] ?? ($result['error'] ?? 'Registration failed');
+                } else {
+                    $_SESSION['error'] = $result['message'] ?? ($result['error'] ?? 'Registration failed');
+                }
             }
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/free-consultants');
@@ -318,8 +328,11 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             if ($agentId > 0 && $saleAmount > 0) {
                 $reraService = new RERAComplianceService();
                 $result = $reraService->processCommissionWithRERA($agentId, $bookingId, $saleAmount);
-                $_SESSION['flash_message'] = $result['message'] ?? ($result['error'] ?? '');
-                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                if ($result['success']) {
+                    $_SESSION['success'] = $result['message'] ?? ($result['error'] ?? '');
+                } else {
+                    $_SESSION['error'] = $result['message'] ?? ($result['error'] ?? '');
+                }
             }
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
@@ -333,8 +346,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
         if ($userId > 0) {
             $salaryService = new LeadershipSalaryService();
             $result = $salaryService->evaluateTargets($userId);
-            $_SESSION['flash_message'] = 'Evaluated: ' . json_encode($result);
-            $_SESSION['flash_type'] = 'info';
+            $_SESSION['success'] = 'Evaluated: ' . json_encode($result);
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/salary');
         exit;
@@ -350,11 +362,9 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $salaryService = new LeadershipSalaryService();
             $salaryResult = $salaryService->processMonthlyPayouts();
             
-            $_SESSION['flash_message'] = "Token compliance: {$tokenResult['released_plots']} released. Salary: {$salaryResult['processed']} processed.";
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = "Token compliance: {$tokenResult['released_plots']} released. Salary: {$salaryResult['processed']} processed.";
         } catch (\Exception $e) {
-            $_SESSION['flash_message'] = 'Cron error: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Cron error: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate');
         exit;
@@ -394,8 +404,11 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                 'booking_date' => $_POST['booking_date'] ?? date('Y-m-d'),
                 'initial_payment' => (float)($_POST['initial_payment'] ?? 0),
             ]);
-            $_SESSION['flash_message'] = $result['message'] ?? ($result['error'] ?? 'Booking created');
-            $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+            if ($result['success']) {
+                $_SESSION['success'] = $result['message'] ?? ($result['error'] ?? 'Booking created');
+            } else {
+                $_SESSION['error'] = $result['message'] ?? ($result['error'] ?? 'Booking created');
+            }
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
         exit;
@@ -411,8 +424,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $booking = $bookingStmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$booking || $booking['status'] !== 'pending') {
-                $_SESSION['flash_message'] = 'Booking not found or already processed';
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Booking not found or already processed';
                 header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
                 exit;
             }
@@ -453,12 +465,10 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                 $msg .= " Commission processed.";
                 $notificationService->notifyCommissionProcessed($id, (int)$booking['associate_id'], $saleAmount);
             }
-            $_SESSION['flash_message'] = $msg;
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = $msg;
         } catch (\Exception $e) {
             if (isset($db) && $db->inTransaction()) $db->rollBack();
-            $_SESSION['flash_message'] = 'Approval failed: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Approval failed: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
         exit;
@@ -470,12 +480,10 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
         try {
             $salaryService = new LeadershipSalaryService();
             $result = $salaryService->processMonthlyPayouts();
-            $_SESSION['flash_message'] = 'Monthly payouts processed: ' . ($result['processed'] ?? 0) . ' entries.';
-            $_SESSION['flash_type'] = 'success';
+            $_SESSION['success'] = 'Monthly payouts processed: ' . ($result['processed'] ?? 0) . ' entries.';
         } catch (\Exception $e) {
             error_log('[MLMRealEstateController::processMonthlyPayouts] ' . $e->getMessage());
-            $_SESSION['flash_message'] = 'Error processing payouts: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Error processing payouts: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/salary');
         exit;
@@ -555,8 +563,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $booking = $bookingStmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$booking || $booking['status'] !== 'pending') {
-                $_SESSION['flash_message'] = 'Booking not found or already processed';
-                $_SESSION['flash_type'] = 'danger';
+                $_SESSION['error'] = 'Booking not found or already processed';
                 header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
                 exit;
             }
@@ -579,12 +586,10 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $notificationService->ensureNotificationsTable();
             $notificationService->notifyBookingRejected($id, $booking, $reason);
 
-            $_SESSION['flash_message'] = "Booking #{$id} rejected. Plot returned to available.";
-            $_SESSION['flash_type'] = 'warning';
+            $_SESSION['error'] = "Booking #{$id} rejected. Plot returned to available.";
         } catch (\Exception $e) {
             if (isset($db) && $db->inTransaction()) $db->rollBack();
-            $_SESSION['flash_message'] = 'Rejection failed: ' . $e->getMessage();
-            $_SESSION['flash_type'] = 'danger';
+            $_SESSION['error'] = 'Rejection failed: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate/bookings');
         exit;

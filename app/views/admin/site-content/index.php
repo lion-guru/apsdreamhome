@@ -7,16 +7,7 @@ $sections = $sections ?? [];
         <h1 class="h3 mb-0"><i class="fas fa-edit me-2"></i><?= __('admin_site_content') ?></h1>
     </div>
 
-    <?php if (!empty($_SESSION['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($_SESSION['success'] ?? ''); unset($_SESSION['success']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
-    <?php if (!empty($_SESSION['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($_SESSION['error'] ?? ''); unset($_SESSION['error']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
+
 
     <div class="row">
         <?php

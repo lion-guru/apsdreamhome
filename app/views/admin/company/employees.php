@@ -16,12 +16,6 @@ $employeeUsers = $employeeUsers ?? [];
         </button>
     </div>
 
-    <?php if (isset($_SESSION['success'])): ?>
-    <div class="alert alert-success alert-dismissible fade show">
-        <?= htmlspecialchars($_SESSION['success'] ?? '') ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    <?php unset($_SESSION['success']); endif; ?>
 
     <div class="card aps-cp-card">
         <div class="card-header bg-white py-3">

@@ -512,7 +512,12 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                             <td><?php echo $imp['admin_id']; ?></td>
                             <td><?php echo $imp['user_id']; ?></td>
                             <td><?php echo date('Y-m-d H:i:s', $imp['start_time']); ?></td>
-                            <td><?php echo human_time_diff($imp['start_time'], time()); ?></td>
+                            <td><?php
+                                $diff = time() - (int)$imp['start_time'];
+                                $hours = floor($diff / 3600);
+                                $minutes = floor(($diff % 3600) / 60);
+                                echo $hours > 0 ? "{$hours}h {$minutes}m" : "{$minutes}m";
+                            ?></td>
                             <td>
                                 <button class="btn btn-warning-god btn-sm" onclick="stopImpersonation()">
                                     <i class="fas fa-stop"></i> Stop
@@ -616,19 +621,17 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
         
         // Show toast notification
         function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'god-toast';
-            toast.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
-                ${message}
-            `;
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 5000);
+            if (typeof APS !== 'undefined' && APS.toast) {
+                APS.toast(message, type);
+            } else {
+                var container = document.getElementById('toastContainer');
+                if (!container) return;
+                var toast = document.createElement('div');
+                toast.className = 'god-toast';
+                toast.innerHTML = '<i class="fas fa-' + (type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle') + ' me-2"></i>' + message;
+                container.appendChild(toast);
+                setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 5000);
+            }
         }
         
         // Impersonate user

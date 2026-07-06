@@ -1206,7 +1206,7 @@ class PageController extends BaseController
         $message = trim($_POST['message'] ?? '');
 
         if (empty($name) || empty($phone)) {
-            $_SESSION['flash_error'] = 'Name and phone are required';
+            $_SESSION['error'] = 'Name and phone are required';
             header('Location: ' . BASE_URL . '/construction-services#contact-form');
             exit;
         }
@@ -1226,11 +1226,11 @@ class PageController extends BaseController
                 error_log('PageController constructionInquiry service interests: ' . $e->getMessage());
             }
 
-            $_SESSION['flash_success'] = 'Thank you! We will contact you shortly regarding your construction project.';
+            $_SESSION['success'] = 'Thank you! We will contact you shortly regarding your construction project.';
         } catch (\Exception $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
-            $_SESSION['flash_error'] = 'Something went wrong. Please try again.';
+            $_SESSION['error'] = 'Something went wrong. Please try again.';
         }
 
         header('Location: ' . BASE_URL . '/construction-services#contact-form');
@@ -1395,13 +1395,13 @@ class PageController extends BaseController
         $reviewText = trim($_POST['review_text'] ?? '');
 
         if (!$propertyId || !$name || !$email || !$rating || !$reviewText) {
-            $_SESSION['flash_error'] = 'All fields are required.';
+            $_SESSION['error'] = 'All fields are required.';
             header('Location: /properties/' . $propertyId);
             exit;
         }
 
         if ($rating < 1 || $rating > 5) {
-            $_SESSION['flash_error'] = 'Rating must be between 1 and 5.';
+            $_SESSION['error'] = 'Rating must be between 1 and 5.';
             header('Location: /properties/' . $propertyId);
             exit;
         }
@@ -1423,10 +1423,10 @@ class PageController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO property_reviews (customer_id, property_id, rating, review_text, status, created_at) VALUES (?, ?, ?, ?, 'pending', NOW())");
             $stmt->execute([$customerId, $propertyId, $rating, $reviewText]);
 
-            $_SESSION['flash_success'] = 'Thank you! Your review has been submitted and is pending approval.';
+            $_SESSION['success'] = 'Thank you! Your review has been submitted and is pending approval.';
         } catch (\Exception $e) {
             error_log("Review submit error: " . $e->getMessage());
-            $_SESSION['flash_error'] = 'Something went wrong. Please try again.';
+            $_SESSION['error'] = 'Something went wrong. Please try again.';
         }
 
         header('Location: /properties/' . $propertyId);
@@ -2173,7 +2173,7 @@ class PageController extends BaseController
             $formType = trim($_POST['form_type'] ?? 'quick_inquiry');
 
             if (empty($name) || empty($phone)) {
-                $_SESSION['flash_error'] = 'Please fill in name and phone number.';
+                $_SESSION['error'] = 'Please fill in name and phone number.';
                 $this->redirect('/');
                 return;
             }
@@ -2206,10 +2206,10 @@ class PageController extends BaseController
                 // Track service interests based on requirement
                 $this->trackServiceInterests($name, $phone, $email, $requirement, $inquiryId);
 
-                $_SESSION['flash_success'] = 'Thank you! Your inquiry has been submitted. We will contact you shortly.';
+                $_SESSION['success'] = 'Thank you! Your inquiry has been submitted. We will contact you shortly.';
             } catch (\Exception $e) {
                 error_log("Quick inquiry error: " . $e->getMessage());
-                $_SESSION['flash_error'] = 'Failed to submit. Please call us directly at +91 92771 21112.';
+                $_SESSION['error'] = 'Failed to submit. Please call us directly at +91 92771 21112.';
             }
         }
         $this->redirect('/');
@@ -2261,7 +2261,7 @@ class PageController extends BaseController
             $cityName = trim($_POST['selected_city_name'] ?? $_POST['city'] ?? '');
 
             if (empty($name) || empty($phone) || empty($propertyType)) {
-                $_SESSION['flash_error'] = 'Please fill in all required fields.';
+                $_SESSION['error'] = 'Please fill in all required fields.';
                 $this->redirect('/list-property');
                 return;
             }
@@ -2405,7 +2405,7 @@ class PageController extends BaseController
                 try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property','created_by'=>$postedBy]); } catch (\Exception $e3) {}
 
                 // Success message with user-specific redirect
-                $_SESSION['flash_success'] = 'Thank you! Your property listing request has been submitted. Our team will contact you within 24 hours to verify the details.';
+                $_SESSION['success'] = 'Thank you! Your property listing request has been submitted. Our team will contact you within 24 hours to verify the details.';
 
                 // Redirect based on user type
                 if ($postedByType === 'associate') {
@@ -2417,7 +2417,7 @@ class PageController extends BaseController
                 }
             } catch (\Exception $e) {
                 error_log("Property listing error: " . $e->getMessage());
-                $_SESSION['flash_error'] = 'Failed to submit. Please try again or call us directly.';
+                $_SESSION['error'] = 'Failed to submit. Please try again or call us directly.';
             }
         }
         $this->redirect('/list-property');
@@ -2774,7 +2774,7 @@ class PageController extends BaseController
 
         $filePath = __DIR__ . '/../../../../assets/' . $doc['file_path'];
         if (!file_exists($filePath)) {
-            $_SESSION['flash_error'] = 'File not found. Please contact support.';
+            $_SESSION['error'] = 'File not found. Please contact support.';
             $this->redirect('/documents');
             return;
         }
@@ -3034,7 +3034,7 @@ class PageController extends BaseController
         $message = trim($_POST['message'] ?? '');
 
         if (!$propertyId || empty($name) || empty($phone)) {
-            $_SESSION['flash_error'] = 'Please fill in all required fields.';
+            $_SESSION['error'] = 'Please fill in all required fields.';
             $this->redirect('/listing/' . $propertyId);
             return;
         }
@@ -3057,10 +3057,10 @@ class PageController extends BaseController
                 error_log("Property owner notification error: " . $e->getMessage());
             }
 
-            $_SESSION['flash_success'] = 'Your inquiry has been sent. The property owner will contact you soon!';
+            $_SESSION['success'] = 'Your inquiry has been sent. The property owner will contact you soon!';
         } catch (\Exception $e) {
             error_log("Property inquiry error: " . $e->getMessage());
-            $_SESSION['flash_error'] = 'Failed to send inquiry. Please call us at +91 92771 21112.';
+            $_SESSION['error'] = 'Failed to send inquiry. Please call us at +91 92771 21112.';
         }
 
         $this->redirect('/listing/' . $propertyId);
