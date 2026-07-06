@@ -1,127 +1,67 @@
 <?php
 namespace App\Services;
 
-use PDO;
-
+/**
+ * @deprecated Use App\Services\NotificationService directly.
+ * This is now a thin wrapper that delegates to the canonical NotificationService.
+ */
 class NotificationCenter
 {
-    private $db;
-    private $pdo;
+    private NotificationService $notifier;
 
-    public function __construct($db)
+    public function __construct($db = null)
     {
-        $this->db = $db;
-        $this->pdo = is_object($db) && method_exists($db, 'getPdo') ? $db->getPdo() : $db;
+        if ($db === null) {
+            $db = \App\Core\Database\Database::getInstance();
+        }
+        $this->notifier = new NotificationService($db);
     }
 
+    /** @deprecated Use NotificationService::publish() directly */
     public function publish(string $channel, string $eventType, ?int $userId, array $payload, ?int $ttlSeconds = null): int
     {
-        $st = $this->db->prepare("
-            INSERT INTO realtime_notifications (channel_name, user_id, event_type, payload, expires_at)
-            VALUES (:c, :u, :e, :p, :exp)
-        ");
-        $expires = $ttlSeconds ? date('Y-m-d H:i:s', time() + $ttlSeconds) : null;
-        $st->execute([
-            ':c' => $channel,
-            ':u' => $userId,
-            ':e' => $eventType,
-            ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE),
-            ':exp' => $expires
-        ]);
-        $notificationId = (int)$this->db->lastInsertId();
-        
-        // Broadcast notification via WebSocket
-        $notification = [
-            'id' => $notificationId,
-            'channel_name' => $channel,
-            'user_id' => $userId,
-            'event_type' => $eventType,
-            'payload' => $payload,
-            'created_at' => date('Y-m-d H:i:s')
-        ];
-        $this->broadcastNotification($notification);
-        
-        return $notificationId;
+        return $this->notifier->publish($channel, $eventType, $userId, $payload, $ttlSeconds);
     }
 
+    /** @deprecated Use NotificationService::fetchPending() directly */
     public function fetchPending(int $userId, string $channel = 'global', int $limit = 20, ?int $sinceId = null): array
     {
-        $sql = "SELECT * FROM realtime_notifications WHERE channel_name = :c AND delivered_at IS NULL AND (user_id IS NULL OR user_id = :u)";
-        $params = [':c' => $channel, ':u' => $userId];
-        if ($sinceId) { $sql .= " AND id > :sid"; $params[':sid'] = $sinceId; }
-        $sql .= " ORDER BY id ASC LIMIT :lim";
-        try {
-            $st = $this->db->prepare($sql);
-            foreach ($params as $k => $v) $st->bindValue($k, $v);
-            $st->bindValue(':lim', $limit, PDO::PARAM_INT);
-            $st->execute();
-            return $st->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {
-            return [];
-        }
+        return $this->notifier->fetchPending($userId, $channel, $limit, $sinceId);
     }
 
+    /** @deprecated Use NotificationService::markDelivered() directly */
     public function markDelivered(array $ids): int
     {
-        if (empty($ids)) return 0;
-        try {
-            $placeholders = implode(',', array_fill(0, count($ids), '?'));
-            $st = $this->db->prepare("UPDATE realtime_notifications SET delivered_at = NOW() WHERE id IN ($placeholders) AND delivered_at IS NULL");
-            $st->execute($ids);
-            return $st->rowCount();
-        } catch (\Throwable $e) {
-            return 0;
-        }
+        return $this->notifier->markDelivered($ids);
     }
 
+    /** @deprecated Use NotificationService::markRead() directly */
     public function markRead(int $userId, array $ids): int
     {
         if (empty($ids)) return 0;
-        try {
-            $placeholders = implode(',', array_fill(0, count($ids), '?'));
-            $st = $this->db->prepare("UPDATE realtime_notifications SET read_at = NOW() WHERE id IN ($placeholders) AND (user_id = ? OR user_id IS NULL) AND read_at IS NULL");
-            $params = array_merge($ids, [$userId]);
-            $st->execute($params);
-            return $st->rowCount();
-        } catch (\Throwable $e) {
-            return 0;
+        // Delegate each ID to the canonical markRead
+        $count = 0;
+        foreach ($ids as $id) {
+            if ($this->notifier->markRead((int)$id)) $count++;
         }
+        return $count;
     }
 
+    /** @deprecated Use NotificationService::getUnreadCount() directly */
     public function getUnreadCount(int $userId, string $channel = 'global'): int
     {
-        try {
-            $st = $this->db->prepare("SELECT COUNT(*) FROM realtime_notifications WHERE channel_name = :c AND read_at IS NULL AND (user_id IS NULL OR user_id = :u)");
-            $st->execute([':c' => $channel, ':u' => $userId]);
-            return (int)$st->fetchColumn();
-        } catch (\Throwable $e) {
-            return 0;
-        }
+        return $this->notifier->getUnreadCount($userId);
     }
 
+    /** @deprecated Use NotificationService::cleanup() directly */
     public function cleanup(int $daysToKeep = 30): int
     {
-        try {
-            $st = $this->db->prepare("DELETE FROM realtime_notifications WHERE created_at < DATE_SUB(NOW(), INTERVAL :d DAY)");
-            $st->bindValue(':d', $daysToKeep, PDO::PARAM_INT);
-            $st->execute();
-            return $st->rowCount();
-        } catch (\Throwable $e) {
-            return 0;
-        }
+        return $this->notifier->cleanup($daysToKeep);
     }
-    
-    // Broadcast notification via WebSocket
+
+    /** @deprecated WebSocket broadcast is handled internally by NotificationService::publish() */
     public function broadcastNotification(array $notification): void
     {
-        // Try to get WebSocket server instance and broadcast
-        if (class_exists('\App\Services\WebSocketServer') && method_exists('\App\Services\WebSocketServer', 'getInstance')) {
-            $wsServer = \App\Services\WebSocketServer::getInstance();
-            if ($wsServer) {
-                $wsServer->broadcastNotification($notification);
-            }
-        }
-        // Fallback: just log if WebSocket server not available
-        error_log("WebSocket broadcast attempted: " . json_encode($notification));
+        // No-op — broadcast is handled by publish()
     }
 }

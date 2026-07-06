@@ -226,29 +226,29 @@ class AdminMenuService
     }
 
     /**
-     * Get custom permissions for a specific user
+     * Get custom permissions for a specific user (cached 300s)
      */
     private function getCustomUserPermissions(int $userId): array
     {
-        $query = "
-            SELECT menu_item_id, can_view, can_create, can_edit, can_delete
-            FROM admin_user_menu_permissions
-            WHERE user_id = ?
-        ";
-        try {
-            $permissions = $this->db->fetchAll($query, [$userId]);
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log("AdminMenuService::getCustomUserPermissions error: " . $e->getMessage());
-            $permissions = [];
-        }
+        return \App\Core\Cache::remember("admin_menu_perms_{$userId}", function () use ($userId) {
+            $query = "
+                SELECT menu_item_id, can_view, can_create, can_edit, can_delete
+                FROM admin_user_menu_permissions
+                WHERE user_id = ?
+            ";
+            try {
+                $permissions = $this->db->fetchAll($query, [$userId]);
+            } catch (\Throwable $e) {
+                error_log("AdminMenuService::getCustomUserPermissions error: " . $e->getMessage());
+                $permissions = [];
+            }
 
-        $result = [];
-        foreach ($permissions as $perm) {
-            $result[$perm['menu_item_id']] = $perm;
-        }
-
-        return $result;
+            $result = [];
+            foreach ($permissions as $perm) {
+                $result[$perm['menu_item_id']] = $perm;
+            }
+            return $result;
+        }, 300);
     }
 
     /**

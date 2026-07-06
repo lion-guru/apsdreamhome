@@ -291,4 +291,403 @@ class NotificationService
             return ['ok' => false, 'error' => $e->getMessage()];
         }
     }
+
+    // =====================================================================
+    // ADMIN NOTIFICATION FEED (notifications table)
+    // =====================================================================
+
+    /**
+     * Insert an admin notification into the `notifications` table.
+     * Replaces AdminNotificationService::notify().
+     */
+    public function notify(string $type, string $message, ?int $userId = null, ?string $actionUrl = null, ?string $title = null): bool
+    {
+        try {
+            $this->db->prepare(
+                'INSERT INTO notifications (user_id, type, title, message, action_url, is_read, status, created_at) VALUES (?, ?, ?, ?, ?, 0, ?, NOW())'
+            )->execute([$userId, $type, $title ?? ucfirst($type), $message, $actionUrl, 'unread']);
+            return true;
+        } catch (\Throwable $e) {
+            error_log('NotificationService::notify error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getUnread(?int $userId = null, int $limit = 20): array
+    {
+        try {
+            $sql = 'SELECT * FROM notifications WHERE is_read = 0';
+            $params = [];
+            if ($userId) {
+                $sql .= ' AND (user_id = ? OR user_id IS NULL)';
+                $params[] = $userId;
+            }
+            $sql .= ' ORDER BY created_at DESC LIMIT ?';
+            $params[] = $limit;
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    public function getRecent(?int $userId = null, int $limit = 50): array
+    {
+        try {
+            $sql = 'SELECT * FROM notifications';
+            $params = [];
+            if ($userId) {
+                $sql .= ' WHERE (user_id = ? OR user_id IS NULL)';
+                $params[] = $userId;
+            }
+            $sql .= ' ORDER BY created_at DESC LIMIT ?';
+            $params[] = $limit;
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get customer-facing notifications from `notifications` table.
+     * Replaces Communication\NotificationService::getCustomerNotifications().
+     */
+    public function getCustomerNotifications(int $userId, int $limit = 20): array
+    {
+        try {
+            $st = $this->db->prepare("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT ?");
+            $st->execute([$userId, $limit]);
+            return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Count unread notifications from `notifications` table.
+     * Replaces AdminNotificationService::getUnreadCount() and
+     * Communication\NotificationService::getUnreadCount().
+     */
+    public function getUnreadCount(?int $userId = null): int
+    {
+        try {
+            $sql = 'SELECT COUNT(*) as cnt FROM notifications WHERE is_read = 0';
+            $params = [];
+            if ($userId) {
+                $sql .= ' AND (user_id = ? OR user_id IS NULL)';
+                $params[] = $userId;
+            }
+            $st = $this->db->prepare($sql);
+            $st->execute($params);
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+            return $row ? (int)$row['cnt'] : 0;
+        } catch (\Throwable $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Mark a single notification as read.
+     * Replaces AdminNotificationService::markRead() and
+     * Communication\NotificationService::markAsRead().
+     */
+    public function markRead(int $id): bool
+    {
+        try {
+            $this->db->prepare('UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ?')->execute([(int)$id]);
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Alias for markRead() — matches Communication\NotificationService API.
+     */
+    public function markAsRead(int $notificationId): bool
+    {
+        return $this->markRead($notificationId);
+    }
+
+    /**
+     * Mark all notifications as read for a user.
+     * Replaces AdminNotificationService::markAllRead() and
+     * Communication\NotificationService::markAllAsRead().
+     */
+    public function markAllRead(?int $userId = null): bool
+    {
+        try {
+            $sql = 'UPDATE notifications SET is_read = 1, read_at = NOW() WHERE is_read = 0';
+            $params = [];
+            if ($userId) {
+                $sql .= ' AND (user_id = ? OR user_id IS NULL)';
+                $params[] = $userId;
+            }
+            $this->db->prepare($sql)->execute($params);
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Alias for markAllRead() — matches Communication\NotificationService API.
+     */
+    public function markAllAsRead(int $userId): bool
+    {
+        return $this->markAllRead($userId);
+    }
+
+    // =====================================================================
+    // BOOKING LIFECYCLE NOTIFICATIONS
+    // =====================================================================
+
+    /**
+     * Get the customer user_id from a booking.
+     */
+    private function getBookingCustomerUserId(int $bookingId): ?int
+    {
+        try {
+            $st = $this->db->prepare("SELECT customer_id, user_id FROM bookings WHERE id = ?");
+            $st->execute([$bookingId]);
+            $booking = $st->fetch(PDO::FETCH_ASSOC);
+            if (!$booking) return null;
+            return (int)($booking['customer_id'] ?? $booking['user_id'] ?? 0) ?: null;
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Send multi-channel booking confirmed notification.
+     * Replaces Communication\NotificationService::sendBookingConfirmed().
+     */
+    public function sendBookingConfirmed(int $bookingId): void
+    {
+        $userId = $this->getBookingCustomerUserId($bookingId);
+        if (!$userId) return;
+
+        $title = 'Booking Confirmed';
+        $message = 'Your booking has been confirmed. Please check your account for plot details and payment information.';
+        $data = ['event_type' => 'booking', 'booking_id' => $bookingId, 'action_url' => '/user/bookings/' . $bookingId, 'priority' => 'high'];
+
+        $this->send($userId, 'email', $title, $message, $data);
+        $this->send($userId, 'sms', $title, $message, $data);
+        $this->send($userId, 'push', $title, $message, $data);
+        $this->send($userId, 'whatsapp', $title, $message, $data);
+    }
+
+    public function sendBookingConfirmedEmail(int $bookingId): void
+    {
+        $this->sendBookingConfirmed($bookingId);
+    }
+
+    public function sendAgreementGenerated(int $bookingId, string $agreementType): void
+    {
+        $userId = $this->getBookingCustomerUserId($bookingId);
+        if (!$userId) return;
+
+        $typeLabel = ucwords(str_replace('_', ' ', $agreementType));
+        $title = $typeLabel . ' Ready';
+        $message = 'Your ' . $typeLabel . ' has been generated. You can download it from your account.';
+        $data = ['event_type' => 'agreement', 'booking_id' => $bookingId, 'agreement_type' => $agreementType, 'action_url' => '/user/bookings/' . $bookingId];
+
+        $this->send($userId, 'email', $title, $message, $data);
+        $this->send($userId, 'whatsapp', $title, $message, $data);
+    }
+
+    public function sendPaymentReceived(int $bookingId, float $amount): void
+    {
+        $userId = $this->getBookingCustomerUserId($bookingId);
+        if (!$userId) return;
+
+        $title = 'Payment Received';
+        $message = 'Payment of ₹' . number_format($amount) . ' has been received for your booking.';
+        $data = ['event_type' => 'payment', 'booking_id' => $bookingId, 'amount' => $amount, 'action_url' => '/user/bookings/' . $bookingId];
+
+        $this->send($userId, 'email', $title, $message, $data);
+        $this->send($userId, 'sms', $title, $message, $data);
+        $this->send($userId, 'whatsapp', $title, $message, $data);
+    }
+
+    public function sendRegistryUpdate(int $bookingId, string $status): void
+    {
+        $userId = $this->getBookingCustomerUserId($bookingId);
+        if (!$userId) return;
+
+        $statusLabels = [
+            'documents_pending' => 'Documents Pending',
+            'stamp_duty_pending' => 'Stamp Duty Pending',
+            'appointment_scheduled' => 'Registry Appointment Scheduled',
+            'registered' => 'Property Registered',
+            'completed' => 'Registry Completed',
+        ];
+        $label = $statusLabels[$status] ?? ucwords(str_replace('_', ' ', $status));
+
+        $title = 'Registry Update';
+        $message = 'Your registry status has been updated to: ' . $label . '.';
+        $data = ['event_type' => 'registry', 'booking_id' => $bookingId, 'registry_status' => $status, 'action_url' => '/user/bookings/' . $bookingId];
+
+        $this->send($userId, 'email', $title, $message, $data);
+        $this->send($userId, 'whatsapp', $title, $message, $data);
+    }
+
+    public function sendPossessionScheduled(int $bookingId, string $date): void
+    {
+        $userId = $this->getBookingCustomerUserId($bookingId);
+        if (!$userId) return;
+
+        $title = 'Possession Scheduled';
+        $message = 'Your property possession has been scheduled for ' . date('d F Y', strtotime($date)) . '.';
+        $data = ['event_type' => 'possession', 'booking_id' => $bookingId, 'possession_date' => $date, 'action_url' => '/user/bookings/' . $bookingId, 'priority' => 'high'];
+
+        $this->send($userId, 'email', $title, $message, $data);
+        $this->send($userId, 'sms', $title, $message, $data);
+        $this->send($userId, 'whatsapp', $title, $message, $data);
+    }
+
+    public function sendPossessionCompleted(int $bookingId): void
+    {
+        $userId = $this->getBookingCustomerUserId($bookingId);
+        if (!$userId) return;
+
+        $title = 'Possession Completed';
+        $message = 'Congratulations! Your property possession has been completed. You can now report any defects through your account.';
+        $data = ['event_type' => 'possession', 'booking_id' => $bookingId, 'possession_completed' => true, 'action_url' => '/user/bookings/' . $bookingId, 'priority' => 'high'];
+
+        $this->send($userId, 'email', $title, $message, $data);
+        $this->send($userId, 'sms', $title, $message, $data);
+        $this->send($userId, 'whatsapp', $title, $message, $data);
+    }
+
+    // =====================================================================
+    // DOMAIN TRIGGER HELPERS
+    // =====================================================================
+
+    public function newLead(int $leadId, string $leadName): bool
+    {
+        return $this->notify('lead', "New lead: $leadName", null, '/admin/leads/show/' . $leadId, 'New Lead');
+    }
+
+    public function newProperty(int $propertyId, string $propertyTitle): bool
+    {
+        return $this->notify('property', "New property listed: $propertyTitle", null, '/admin/user-properties/verify/' . $propertyId, 'New Property');
+    }
+
+    public function newRegistration(int $userId, string $userName): bool
+    {
+        return $this->notify('user', "New user registered: $userName", null, '/admin/users/' . $userId, 'New Registration');
+    }
+
+    public function newBooking(int $bookingId, string $buyerName): bool
+    {
+        return $this->notify('booking', "New booking: $buyerName", null, '/admin/bookings/' . $bookingId, 'New Booking');
+    }
+
+    public function paymentReceived(int $transactionId, float $amount): bool
+    {
+        return $this->notify('payment', "Payment received: ₹$amount", null, '/admin/payments/' . $transactionId, 'Payment Received');
+    }
+
+    // =====================================================================
+    // REALTIME NOTIFICATIONS (realtime_notifications table)
+    // =====================================================================
+
+    /**
+     * Publish a notification to realtime_notifications + WebSocket broadcast.
+     * Replaces NotificationCenter::publish().
+     */
+    public function publish(string $channel, string $eventType, ?int $userId, array $payload, ?int $ttlSeconds = null): int
+    {
+        $expires = $ttlSeconds ? date('Y-m-d H:i:s', time() + $ttlSeconds) : null;
+        try {
+            $st = $this->db->prepare("INSERT INTO realtime_notifications (channel_name, user_id, event_type, payload, expires_at) VALUES (:c, :u, :e, :p, :exp)");
+            $st->execute([':c' => $channel, ':u' => $userId, ':e' => $eventType, ':p' => json_encode($payload, JSON_UNESCAPED_UNICODE), ':exp' => $expires]);
+            $id = (int)$this->db->lastInsertId();
+        } catch (\Throwable $e) {
+            error_log('NotificationService::publish error: ' . $e->getMessage());
+            return 0;
+        }
+
+        // Best-effort WebSocket broadcast
+        try {
+            if (class_exists('\App\Services\WebSocketBroadcaster')) {
+                \App\Services\WebSocketBroadcaster::broadcastToUser((int)$userId, [
+                    'event' => $eventType, 'id' => $id, 'payload' => $payload, 'ts' => time()
+                ], $channel);
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
+        return $id;
+    }
+
+    /**
+     * Fetch undelivered notifications for polling.
+     * Replaces NotificationCenter::fetchPending().
+     */
+    public function fetchPending(int $userId, string $channel = 'global', int $limit = 20, ?int $sinceId = null): array
+    {
+        $sql = "SELECT * FROM realtime_notifications WHERE channel_name = :c AND delivered_at IS NULL AND (user_id IS NULL OR user_id = :u)";
+        $params = [':c' => $channel, ':u' => $userId];
+        if ($sinceId) { $sql .= " AND id > :sid"; $params[':sid'] = $sinceId; }
+        $sql .= " ORDER BY id ASC LIMIT :lim";
+        try {
+            $st = $this->db->prepare($sql);
+            foreach ($params as $k => $v) $st->bindValue($k, $v);
+            $st->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $st->execute();
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Mark notifications as delivered.
+     * Replaces NotificationCenter::markDelivered().
+     */
+    public function markDelivered(array $ids): int
+    {
+        if (empty($ids)) return 0;
+        try {
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $st = $this->db->prepare("UPDATE realtime_notifications SET delivered_at = NOW() WHERE id IN ($placeholders) AND delivered_at IS NULL");
+            $st->execute($ids);
+            return $st->rowCount();
+        } catch (\Throwable $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Purge old notifications.
+     * Replaces NotificationCenter::cleanup().
+     */
+    public function cleanup(int $daysToKeep = 30): int
+    {
+        try {
+            $st = $this->db->prepare("DELETE FROM realtime_notifications WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)");
+            $st->execute([$daysToKeep]);
+            return $st->rowCount();
+        } catch (\Throwable $e) {
+            return 0;
+        }
+    }
+
+    // =====================================================================
+    // ALIASES for backward compatibility
+    // =====================================================================
+
+    /**
+     * Alias for send() — matches Communication\NotificationService::sendNotification() signature.
+     */
+    public function sendNotification(int $userId, string $channel, string $title, string $message, array $data = []): array
+    {
+        return $this->send($userId, $channel, $title, $message, $data);
+    }
 }

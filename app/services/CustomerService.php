@@ -1,3 +1,47 @@
+<?php
+
+namespace App\Services;
+
+use PDO;
+
+/**
+ * CustomerService
+ * Handles customer registration, profile management, inquiries, wishlist, documents, and KYC.
+ */
+class CustomerService
+{
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = \App\Core\Database\Database::getInstance()->getConnection();
+    }
+
+    /**
+     * Register a new customer user.
+     */
+    public function registerCustomer(array $data): array
+    {
+        $this->db->beginTransaction();
+
+        try {
+            $userId = (int)($data["user_id"] ?? 0);
+            $customerCode = 'CUST-' . strtoupper(bin2hex(random_bytes(4)));
+
+            $userSql = "INSERT INTO users (name, email, phone, password, role, status, created_at, updated_at)
+                        VALUES (:name, :email, :phone, :password, 'customer', 'active', NOW(), NOW())";
+            $userStmt = $this->db->prepare($userSql);
+            $userStmt->execute([
+                ":name" => ($data["first_name"] ?? '') . ' ' . ($data["last_name"] ?? ''),
+                ":email" => $data["email"],
+                ":phone" => $data["phone"],
+                ":password" => password_hash($data["password"] ?? 'default123', PASSWORD_DEFAULT),
+            ]);
+            $userId = (int)$this->db->lastInsertId();
+
+            $customerSql = "INSERT INTO customers (user_id, customer_code, first_name, last_name, email, phone)
+                            VALUES (:user_id, :customer_code, :first_name, :last_name, :email, :phone)";
+            $customerStmt = $this->db->prepare($customerSql);
             $customerStmt->execute([
                 ":user_id" => $userId,
                 ":customer_code" => $customerCode,
@@ -90,10 +134,10 @@
     {
         try {
             $stmt = $this->db->prepare("INSERT IGNORE INTO customer_wishlist (customer_id, property_type, property_id, notes) VALUES (?, ?, ?, ?)");
+            return $stmt->execute([$customerId, $propertyType, $propertyId, $notes]);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            return false;
         }
-        return $stmt->execute([$customerId, $propertyType, $propertyId, $notes]);
     }
 
     public function removeFromWishlist($customerId, $propertyType, $propertyId)
@@ -116,34 +160,34 @@
                 customer_id, inquiry_type, property_type, property_id, subject, message,
                 contact_name, contact_email, contact_phone, status, priority, created_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
 
-        return $stmt->execute([
-            $data["customer_id"] ?? null,
-            $data["inquiry_type"] ?? "property",
-            $data["property_type"] ?? null,
-            $data["property_id"] ?? null,
-            $data["subject"],
-            $data["message"],
-            $data["contact_name"] ?? null,
-            $data["contact_email"] ?? null,
-            $data["contact_phone"] ?? null,
-            $data["status"] ?? "pending",
-            $data["priority"] ?? "medium"
-        ]);
+            return $stmt->execute([
+                $data["customer_id"] ?? null,
+                $data["inquiry_type"] ?? "property",
+                $data["property_type"] ?? null,
+                $data["property_id"] ?? null,
+                $data["subject"],
+                $data["message"],
+                $data["contact_name"] ?? null,
+                $data["contact_email"] ?? null,
+                $data["contact_phone"] ?? null,
+                $data["status"] ?? "pending",
+                $data["priority"] ?? "medium"
+            ]);
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     public function getInquiries($customerId)
     {
         try {
             $stmt = $this->db->prepare("SELECT * FROM customer_inquiries WHERE customer_id = ? ORDER BY created_at DESC");
+            $stmt->execute([$customerId]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            return [];
         }
-        $stmt->execute([$customerId]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function updatePreference($customerId, $key, $value, $type = "string")
@@ -210,6 +254,30 @@
         } catch (\Exception $e) {
             $this->db->rollback();
             return false;
+        }
+    }
+
+    /**
+     * Get all bookings for a customer by user_id.
+     * Called by MobileApiController::getCustomerBookings().
+     */
+    public function getCustomerBookings(int $customerId): array
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT b.id, b.status, b.booking_amount, b.booking_date,
+                       p.title AS property_title, p.price AS property_price,
+                       p.type AS property_type, p.location, p.city
+                FROM bookings b
+                LEFT JOIN properties p ON b.property_id = p.id
+                WHERE b.customer_id = :cid
+                ORDER BY b.created_at DESC
+            ");
+            $stmt->execute([':cid' => $customerId]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log('CustomerService::getCustomerBookings error: ' . $e->getMessage());
+            return [];
         }
     }
 }

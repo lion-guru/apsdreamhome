@@ -313,6 +313,7 @@ class PlotDevelopmentCostService
     
     /**
      * Generate development cost report
+     * OPTIMIZED: Calculates colony cost ONCE, then computes per-plot pricing in PHP (no N+1)
      */
     public function generateCostReport($colonyId)
     {
@@ -322,27 +323,53 @@ class PlotDevelopmentCostService
         $breakdown = $this->getCostBreakdown($colonyId);
         $colonyCost = $this->calculateColonyCost($colonyId);
         
-        // Get all plots with their pricing
+        if (!$colonyCost) return null;
+
+        $plotAreaSqft = $colonyCost['plot_area_sqft'] ?? 0;
+        $totalCost = $colonyCost['total_cost'] ?? 0;
+        
+        // Single query to get all plots
         $plots = $this->db->fetchAll(
-            "SELECT p.*, 
-                    (p.total_price / NULLIF(p.area_sqft, 0)) as price_per_sqft_calc
+            "SELECT p.*, (p.total_price / NULLIF(p.area_sqft, 0)) as price_per_sqft_calc
              FROM plots p
              WHERE p.colony_id = ?",
             [$colonyId]
         );
         
+        // Compute per-plot pricing in PHP (no more DB queries)
         $plotPricing = [];
         foreach ($plots as $plot) {
-            $pricing = $this->calculatePlotPrice($plot['id']);
-            if ($pricing) {
-                $plotPricing[] = $pricing;
-            }
+            $plotArea = floatval($plot['area_sqft'] ?? 0);
+            $sharePercent = ($plotArea / max(1, $plotAreaSqft)) * 100;
+            $plotShareOfCost = ($totalCost * $sharePercent) / 100;
+            $costPerSqft = $plotShareOfCost / max(1, $plotArea);
+            $margin = $costPerSqft * 0.25;
+            $finalPricePerSqft = $costPerSqft + $margin;
+            $totalPrice = $finalPricePerSqft * $plotArea;
+            
+            $plotPricing[] = [
+                'plot_id' => $plot['id'],
+                'plot_number' => $plot['plot_number'] ?? '',
+                'block' => $plot['block'] ?? '',
+                'plot_area_sqft' => $plotArea,
+                'share_of_land_cost' => ($colonyCost['land_cost'] * $sharePercent) / 100,
+                'share_of_development_cost' => ($colonyCost['development_cost'] * $sharePercent) / 100,
+                'share_of_amenities_cost' => ($colonyCost['amenities_cost'] * $sharePercent) / 100,
+                'share_of_legal_cost' => ($colonyCost['legal_cost'] * $sharePercent) / 100,
+                'share_of_misc_cost' => ($colonyCost['misc_cost'] * $sharePercent) / 100,
+                'total_cost' => $plotShareOfCost,
+                'cost_per_sqft' => $costPerSqft,
+                'margin_percent' => 25,
+                'margin_amount' => $margin * $plotArea,
+                'final_price' => $totalPrice,
+                'final_price_per_sqft' => $finalPricePerSqft
+            ];
         }
         
         return [
             'colony' => $colony,
             'cost_breakdown' => $breakdown,
-            'total_cost' => $colonyCost['total_cost'] ?? 0,
+            'total_cost' => $totalCost,
             'plots' => $plotPricing,
             'total_plot_value' => array_sum(array_column($plotPricing, 'final_price')),
             'total_plot_area' => array_sum(array_column($plotPricing, 'plot_area_sqft')),

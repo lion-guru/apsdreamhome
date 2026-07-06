@@ -2,195 +2,83 @@
 
 namespace App\Services;
 
+/**
+ * @deprecated Use App\Services\NotificationService directly.
+ * This is now a thin wrapper that delegates to the canonical NotificationService.
+ */
 class AdminNotificationService
 {
-    private $db;
+    private NotificationService $notifier;
 
     public function __construct()
     {
-        $this->db = \App\Core\Database\Database::getInstance();
+        $db = \App\Core\Database\Database::getInstance();
+        $this->notifier = new NotificationService($db);
     }
 
-    /**
-     * Log an internal admin notification
-     */
+    /** @deprecated Use NotificationService::notify() directly */
     public function notify($type, $message, $userId = null, $actionUrl = null, $title = null)
     {
-        try {
-            $this->db->query(
-                'INSERT INTO notifications (user_id, type, title, message, action_url, is_read, status, created_at) VALUES (?, ?, ?, ?, ?, 0, ?, NOW())',
-                [$userId, $type, $title ?? ucfirst($type), $message, $actionUrl, 'unread']
-            );
-            return true;
-        } catch (\Exception $e) {
-            error_log('AdminNotificationService: ' . $e->getMessage());
-            return false;
-        }
+        return $this->notifier->notify($type, $message, $userId, $actionUrl, $title);
     }
 
-    /**
-     * Get unread notifications
-     */
+    /** @deprecated Use NotificationService::getUnread() directly */
     public function getUnread($userId = null, $limit = 20)
     {
-        try {
-            $sql = 'SELECT * FROM notifications WHERE is_read = 0';
-            $params = [];
-            if ($userId) {
-                $sql .= ' AND (user_id = ? OR user_id IS NULL)';
-                $params[] = $userId;
-            }
-            $sql .= ' ORDER BY created_at DESC LIMIT ?';
-            $params[] = (int)$limit;
-            return $this->db->fetchAll($sql, $params) ?: [];
-        } catch (\Exception $e) {
-            error_log('AdminNotificationService: ' . $e->getMessage());
-            return [];
-        }
+        return $this->notifier->getUnread($userId, $limit);
     }
 
-    /**
-     * Get recent notifications (read + unread)
-     */
+    /** @deprecated Use NotificationService::getRecent() directly */
     public function getRecent($userId = null, $limit = 50)
     {
-        try {
-            $sql = 'SELECT * FROM notifications';
-            $params = [];
-            $conditions = [];
-            if ($userId) {
-                $conditions[] = '(user_id = ? OR user_id IS NULL)';
-                $params[] = $userId;
-            }
-            if (!empty($conditions)) {
-                $sql .= ' WHERE ' . implode(' AND ', $conditions);
-            }
-            $sql .= ' ORDER BY created_at DESC LIMIT ?';
-            $params[] = (int)$limit;
-            return $this->db->fetchAll($sql, $params) ?: [];
-        } catch (\Exception $e) {
-            return [];
-        }
+        return $this->notifier->getRecent($userId, $limit);
     }
 
-    /**
-     * Mark notification as read
-     */
+    /** @deprecated Use NotificationService::markRead() directly */
     public function markRead($id)
     {
-        try {
-            $this->db->query('UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ?', [(int)$id]);
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
+        return $this->notifier->markRead($id);
     }
 
-    /**
-     * Mark all as read for a user
-     */
+    /** @deprecated Use NotificationService::markAllRead() directly */
     public function markAllRead($userId = null)
     {
-        try {
-            $sql = 'UPDATE notifications SET is_read = 1, read_at = NOW() WHERE is_read = 0';
-            $params = [];
-            if ($userId) {
-                $sql .= ' AND (user_id = ? OR user_id IS NULL)';
-                $params[] = $userId;
-            }
-            $this->db->query($sql, $params);
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
+        return $this->notifier->markAllRead($userId);
     }
 
-    /**
-     * Get unread count
-     */
+    /** @deprecated Use NotificationService::getUnreadCount() directly */
     public function getUnreadCount($userId = null)
     {
-        try {
-            $sql = 'SELECT COUNT(*) as cnt FROM notifications WHERE is_read = 0';
-            $params = [];
-            if ($userId) {
-                $sql .= ' AND (user_id = ? OR user_id IS NULL)';
-                $params[] = $userId;
-            }
-            $row = $this->db->fetch($sql, $params);
-            return $row ? (int)$row['cnt'] : 0;
-        } catch (\Exception $e) {
-            return 0;
-        }
+        return $this->notifier->getUnreadCount($userId);
     }
 
-    /**
-     * Trigger: New lead created
-     */
+    /** @deprecated Use NotificationService::newLead() directly */
     public function newLead($leadId, $leadName)
     {
-        return $this->notify(
-            'lead',
-            "New lead: $leadName",
-            null,
-            '/admin/leads/show/' . $leadId,
-            'New Lead'
-        );
+        return $this->notifier->newLead($leadId, $leadName);
     }
 
-    /**
-     * Trigger: New property listed
-     */
+    /** @deprecated Use NotificationService::newProperty() directly */
     public function newProperty($propertyId, $propertyTitle)
     {
-        return $this->notify(
-            'property',
-            "New property listed: $propertyTitle",
-            null,
-            '/admin/user-properties/verify/' . $propertyId,
-            'New Property'
-        );
+        return $this->notifier->newProperty($propertyId, $propertyTitle);
     }
 
-    /**
-     * Trigger: New user registration
-     */
+    /** @deprecated Use NotificationService::newRegistration() directly */
     public function newRegistration($userId, $userName)
     {
-        return $this->notify(
-            'user',
-            "New user registered: $userName",
-            null,
-            '/admin/users/' . $userId,
-            'New Registration'
-        );
+        return $this->notifier->newRegistration($userId, $userName);
     }
 
-    /**
-     * Trigger: New booking
-     */
+    /** @deprecated Use NotificationService::newBooking() directly */
     public function newBooking($bookingId, $buyerName)
     {
-        return $this->notify(
-            'booking',
-            "New booking: $buyerName",
-            null,
-            '/admin/bookings/' . $bookingId,
-            'New Booking'
-        );
+        return $this->notifier->newBooking($bookingId, $buyerName);
     }
 
-    /**
-     * Trigger: Payment received
-     */
+    /** @deprecated Use NotificationService::paymentReceived() directly */
     public function paymentReceived($transactionId, $amount)
     {
-        return $this->notify(
-            'payment',
-            "Payment received: ₹$amount",
-            null,
-            '/admin/payments/' . $transactionId,
-            'Payment Received'
-        );
+        return $this->notifier->paymentReceived($transactionId, $amount);
     }
 }

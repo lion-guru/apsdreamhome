@@ -21,7 +21,7 @@ class PayoutService
     public function __construct()
     {
         $this->conn = Database::getInstance()->getConnection();
-        $this->notifier = new NotificationService();
+        $this->notifier = new NotificationService($this->conn);
     }
 
     /**
@@ -447,12 +447,14 @@ class PayoutService
 
     private function notifyAdmin(string $subject, string $body, string $type, array $payload = []): void
     {
-        $this->notifier->notifyAdmin($subject, $body, $type, $payload);
+        // Send to admin user (user_id=1) via email channel
+        $this->notifier->send(1, 'email', $subject, $body, array_merge($payload, ['notification_type' => $type]));
     }
 
     private function notifyFinance(string $subject, string $body, string $type, array $payload = []): void
     {
-        $this->notifier->notifyFinance($subject, $body, $type, $payload);
+        // Send to admin user (user_id=1) via email channel
+        $this->notifier->send(1, 'email', $subject, $body, array_merge($payload, ['notification_type' => $type]));
     }
 
     private function notifyBeneficiaries(array $items, ?array $batch, ?string $reference): void
@@ -462,14 +464,13 @@ class PayoutService
         }
 
         foreach ($items as $item) {
-            if (!empty($item['beneficiary_email'])) {
-                $this->notifier->sendEmail(
-                    $item['beneficiary_email'],
+            if (!empty($item['beneficiary_email']) && !empty($item['beneficiary_user_id'])) {
+                $this->notifier->send(
+                    (int)$item['beneficiary_user_id'],
+                    'email',
                     'Payout Disbursed',
                     "Your payout of {$item['amount']} has been disbursed. Ref: {$reference}",
-                    'payout_disbursed',
-                    $item['beneficiary_user_id'],
-                    ['batch_id' => $batch['id'] ?? null]
+                    ['notification_type' => 'payout_disbursed', 'batch_id' => $batch['id'] ?? null]
                 );
             }
         }
