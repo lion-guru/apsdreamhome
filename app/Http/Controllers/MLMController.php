@@ -314,14 +314,16 @@ class MLMController extends BaseController
                 "SELECT 
                     u.name,
                     u.email,
-                    m.level,
-                    m.position,
-                    m.sponsor_id,
+                    m.current_level,
+                    m.sponsor_user_id,
+                    m.referral_code,
+                    m.total_team_size,
+                    m.direct_referrals,
                     sp.name as sponsor_name
                  FROM users u 
                  JOIN mlm_profiles m ON u.id = m.user_id 
-                 LEFT JOIN users sp ON sp.id = m.sponsor_id 
-                 WHERE m.sponsor_id = ? OR u.id = ?
+                 LEFT JOIN users sp ON sp.id = m.sponsor_user_id 
+                 WHERE m.sponsor_user_id = ? OR u.id = ?
                  ORDER BY m.created_at ASC",
                 [$userId, $userId]
             );
@@ -449,7 +451,7 @@ class MLMController extends BaseController
         header('Content-Type: application/json');
         try {
             $db = \App\Core\Database::getInstance();
-            $totalMembers = $db->fetch("SELECT COUNT(*) as c FROM `" . $this->getTableName() . "`")['c'] ?? 0;
+            $totalMembers = $db->fetch("SELECT COUNT(*) as c FROM `mlm_profiles`")['c'] ?? 0;
             echo json_encode(['success' => true, 'data' => ['total_members' => (int)$totalMembers]]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
