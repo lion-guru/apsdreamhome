@@ -223,3 +223,7 @@ mobile/**/build/
 assets/images/logo/*.mp4
 assets/images/logo/*.mov
 assets/images/logo/*.avi
+
+# Test screenshots
+testing/browser-test/
+testing/visual_tests/screenshots/
