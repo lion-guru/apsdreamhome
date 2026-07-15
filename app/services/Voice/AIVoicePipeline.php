@@ -139,8 +139,8 @@ class AIVoicePipeline
 
                 if (!$existing) {
                     $stmt = $db->prepare(
-                        "INSERT INTO leads (name, phone, message, source, source_detail, status, created_at)
-                         VALUES (?, ?, ?, 'voice_agent', 'ai_voice_booking', 'new', NOW())"
+                        "INSERT INTO leads (name, phone, message, source, source_id, status, created_at)
+                         VALUES (?, ?, ?, 'voice_agent', 0, 'new', NOW())"
                     );
                     $stmt->execute([$name ?: 'Voice Enquiry', $fullPhone, $userInput]);
                     $leadId = (int)$db->lastInsertId();
@@ -475,14 +475,14 @@ class AIVoicePipeline
         $input = mb_strtolower($input);
         
         $intents = [
-            'price_inquiry' => ['price', 'cost', 'kitna', 'rate', 'budget', 'dam', 'keemat', 'rates'],
-            'site_visit' => ['visit', 'dekhna', 'dikhana', 'site', 'location', 'aana', 'milna', 'visit'],
-            'booking' => ['booking', 'book', 'register', 'buy', 'kharid', 'lena', 'purchase'],
-            'loan_inquiry' => ['loan', 'finance', 'emi', 'installment', 'bank', 'karj'],
-            'disinterest' => ['bye', 'goodbye', 'nhi chahiye', 'no', 'not interested', 'baad', 'baad mein'],
-            'complaint' => ['complaint', 'shikayat', 'problem', 'issue', 'galti'],
-            'location' => ['location', 'address', 'kahan', 'kidhar', 'map', 'direction'],
-            'timing' => ['time', 'timing', 'kab', 'open', 'close', 'hours'],
+            'price_inquiry' => ['price', 'cost', 'kitna', 'rate', 'budget', 'dam', 'keemat', 'rates', 'कीमत', 'कितना', 'दाम', 'रेट', 'बजट'],
+            'site_visit' => ['visit', 'dekhna', 'dikhana', 'site', 'location', 'aana', 'milna', 'विजिट', 'विज़िट', 'देखना', 'दिखाना', 'साइट', 'मिलना', 'आना'],
+            'booking' => ['booking', 'book', 'register', 'buy', 'kharid', 'lena', 'purchase', 'बुक', 'बुकिंग', 'खरीद', 'खरीदना', 'रजिस्टर', 'रजिस्ट्रेशन', 'लेना'],
+            'loan_inquiry' => ['loan', 'finance', 'emi', 'installment', 'bank', 'karj', 'लोन', 'फाइनेंस', 'ईएमआई', 'कर्ज'],
+            'disinterest' => ['bye', 'goodbye', 'nhi chahiye', 'no', 'not interested', 'baad', 'baad mein', 'नहीं', 'नही', 'नहि', 'बाद', 'मत'],
+            'complaint' => ['complaint', 'shikayat', 'problem', 'issue', 'galti', 'शिकायत', 'समस्या', 'परेशानी'],
+            'location' => ['location', 'address', 'kahan', 'kidhar', 'map', 'direction', 'पता', 'कहां', 'किधर', 'मैप', 'दिशा'],
+            'timing' => ['time', 'timing', 'kab', 'open', 'close', 'hours', 'समय', 'कब', 'खुला', 'बंद'],
         ];
 
         foreach ($intents as $intent => $keywords) {
