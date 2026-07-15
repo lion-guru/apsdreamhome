@@ -2804,7 +2804,7 @@ $router->post('/admin/messages/send',                    'App\\Http\\Controllers
 $router->get('/admin/messages/conversation/{id}',        'App\\Http\\Controllers\\Admin\\MessagesController@conversation');
 $router->get('/admin/messages/ajax-search',              'App\\Http\\Controllers\\Admin\\MessagesController@ajaxSearchUsers');
 $router->get('/user/payments', function () {
-    header('Location: ' . BASE_URL . '/payment/history');
+    header('Location: ' . BASE_URL . '/user/payment-history');
     exit;
 });
 

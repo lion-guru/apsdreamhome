@@ -149,6 +149,7 @@ return array(
   'already_have_account' => 'Already have an account?',
   'amenities' => 'Amenities',
   'amount' => 'Amount',
+  'any' => 'Any',
   'apartment' => 'Apartment',
   'apply' => 'Apply',
   'apply_now' => 'Apply Now',
@@ -264,6 +265,7 @@ return array(
   'business_hours_end' => 'Business Hours End',
   'business_hours_only' => 'Business Hours Only',
   'business_hours_start' => 'Business Hours Start',
+  'buy_and_rent' => 'Buy & Rent',
   'buy' => 'Buy',
   'buy_now_price' => 'Buy Now Price',
   'buying_guide' => 'Buying Guide',
@@ -782,6 +784,7 @@ return array(
   'highest_returns_among_all' => 'Highest returns among all asset classes',
   'home' => 'Home',
   'home_loan_assistance' => 'Home loan assistance',
+  'home_we_offer' => 'We offer premium plots, flats & villas',
   'hours' => 'hours',
   'house' => 'House',
   'house_villa' => 'House / Villa',
@@ -1959,6 +1962,7 @@ return array(
   // Home page - A/B test hero CTA variants
   'hero_cta_urgent' => 'Book Your Plot Now - Limited Inventory!',
   'hero_cta_family' => 'Find Your Family\'s Dream Home Today',
+  'hero_typed_strings' => 'Premium Plots in Gorakhpur|Smart Investment|Trusted by 5000+ Families',
 
   // Home page - Career section sub-items
   'rank_starter' => 'Starter',
@@ -4152,7 +4156,7 @@ return array(
   'fs_advisors_title' => 'Meet Our Financial Advisors',
   'fs_advisors_desc' => 'Expert guidance for all your financial needs',
   'fs_advisor_qualification' => 'Qualification',
-  'fs_advisor_experience' => 'Experience',
+'fs_advisor_experience' => 'Experience',
   'fs_advisor_years' => '%s years',
   'fs_faq_title' => 'Frequently Asked Questions',
   'fs_faq_heading' => 'Financial Services FAQ',
@@ -4162,7 +4166,23 @@ return array(
   'fs_call_us' => 'Call Us',
   'fs_whatsapp' => 'WhatsApp',
   'fs_visit_us' => 'Visit Us',
-  'fs_location' => 'Gorakhpur, UP',
+'fs_location' => 'Gorakhpur, UP',
+
+  // Financial Services page - additional keys
+  'fs_enquire_now' => 'Enquire Now',
+  'fs_contact_title' => 'Need Financial Advice?',
+  'fs_contact_desc' => 'Our expert financial advisors are here to help you with mortgages, loans, and investment planning.',
+  'fs_name' => 'Your Name',
+  'fs_email' => 'Email Address',
+  'fs_phone' => 'Phone Number',
+  'fs_service_interested' => 'Service Interested In',
+  'fs_select_service' => 'Select a service...',
+  'fs_message' => 'Your Requirements',
+  'fs_message_placeholder' => 'Tell us about your property, budget, timeline, or any specific questions...',
+  'fs_submit_enquiry' => 'Submit Enquiry',
+  'fs_enquiry_submitted' => 'Thank you! Our financial advisor will contact you within 24 hours.',
+  'fs_enquiry_failed' => 'Failed to submit enquiry. Please try again.',
+  'fs_enquiry_error' => 'Something went wrong. Please try again later.',
 
   // Interior Design page
   'id_hero_badge' => 'Premium Interior Design',

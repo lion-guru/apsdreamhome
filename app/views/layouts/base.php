@@ -168,6 +168,8 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         html, body { height: auto !important; overflow-y: auto !important; overflow-x: hidden; }
         #main-content { height: auto !important; overflow: visible !important; }
+        header.premium-header { overflow: visible; }
+        header.premium-header .navbar-collapse { overflow: visible; }
     </style>
 
     <!-- Extra head content from views -->
@@ -192,7 +194,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     </script>
 
     <!-- Page-specific styles (deferred, non-critical) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/advanced-features.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/ai-chat.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/ai-chat-enhanced.css" rel="stylesheet">

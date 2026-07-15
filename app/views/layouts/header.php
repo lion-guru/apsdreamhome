@@ -46,8 +46,8 @@ if (!isset($GLOBALS['_html_doc_started'])) {
     <title><?= htmlspecialchars($page_title) ?></title>
     <?php if ($ga4_enabled): ?>
     <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga4_id) ?>"></script>
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>" async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga4_id) ?>"></script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     window.dataLayer = window.dataLayer || [];
 
     function gtag() {
@@ -100,8 +100,8 @@ if (!isset($GLOBALS['_html_doc_started'])) {
     $GLOBALS['_ga4_loader_emitted_secondary'] = true;
     ?>
     <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga4_id) ?>"></script>
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>" async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga4_id) ?>"></script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     window.dataLayer = window.dataLayer || [];
 
     function gtag() {
@@ -595,7 +595,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     </header>
 
 
-    <style>
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     /* Premium Header Styling */
     .premium-header {
         background: rgba(255, 255, 255, 0.95);
@@ -634,6 +634,9 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     }
 
     /* Desktop nav links */
+    .premium-header .navbar-nav {
+        flex-wrap: wrap;
+    }
     .premium-header .navbar-nav .nav-link {
         font-weight: 600;
         font-size: 13.5px;
@@ -1035,7 +1038,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     }
     </style>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     window.BASE_URL = '<?php echo BASE_URL; ?>';
 
     function updateHeaderNotifCount() {
@@ -1175,7 +1178,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     </script>
 
     <!-- Quick Search Typeahead -->
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     (function() {
         const input = document.getElementById('quickSearchInput');
         const dropdown = document.getElementById('quickSearchResults');
@@ -1301,4 +1304,4 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     }
     </script>
 
-    <script src="<?php echo BASE_URL; ?>/js/visitor-tracking.js" defer></script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>" src="<?php echo BASE_URL; ?>/js/visitor-tracking.js" defer></script>
