@@ -160,20 +160,19 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <!-- Consolidated APS CSS Bundles -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
 
     <!-- Scroll fix -->
-    <style>
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         html, body { height: auto !important; overflow-y: auto !important; overflow-x: hidden; }
         #main-content { height: auto !important; overflow: visible !important; }
     </style>
 
     <!-- Extra head content from views -->
     <?php if (!empty($extraHead)) echo $extraHead; ?>
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         // Dynamically set header height for page offset (immediately + on resize)
         (function() {
             function setHeaderHeight() {
@@ -193,10 +192,12 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     </script>
 
     <!-- Page-specific styles (deferred, non-critical) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-pages.css" rel="stylesheet">
-
-    <!-- Modern UI/UX Animations -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/advanced-features.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/ai-chat.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/ai-chat-enhanced.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/chatbot.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/modern-style.css" rel="stylesheet">
 
 </head>
 
@@ -276,6 +277,11 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <?php include __DIR__ . '/chat_widget.php'; ?>
 
     <!-- WhatsApp button is now inside chat_widget.php (combined toggle) -->
+
+    <!-- Voice Booking Assistant (public pages only) -->
+    <?php if (!$isAdminPage): ?>
+        <?php include __DIR__ . '/../components/voice_booking_widget.php'; ?>
+    <?php endif; ?>
 
     <!-- Real-time WebSocket Notifications -->
     <script>

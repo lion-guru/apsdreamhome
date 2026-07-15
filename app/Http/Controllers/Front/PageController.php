@@ -68,7 +68,7 @@ class PageController extends BaseController
                     'title' => $siteName,
                     'location' => ($project->district ?? '') . ', ' . ($project->state ?? ''),
                     'city' => $project->district ?? '',
-                    'price' => 'Starting from ₹5.5 Lakhs',
+                    'price' => 'Starting from Γé╣5.5 Lakhs',
                     'slug' => $slug,
                     'type' => ucfirst($project->site_type ?? 'Residential'),
                     'status' => ($project->status === 'active') ? 'Available' : 'Completed',
@@ -654,7 +654,7 @@ public function properties()
         $perPage = 12;
         $offset = ($page - 1) * $perPage;
 
-        // ΓöÇΓöÇ Hot-path cache: property listings (5 min TTL) ΓöÇΓöÇ
+        // ╬ô├╢├ç╬ô├╢├ç Hot-path cache: property listings (5 min TTL) ╬ô├╢├ç╬ô├╢├ç
         $filterHash = [
             'q' => $keyword,
             'type' => $type,
@@ -1128,7 +1128,7 @@ public function propertyInterest()
                     "UPDATE leads SET property_interest = CONCAT(COALESCE(property_interest, ''), ?), notes = CONCAT(COALESCE(notes, ''), ?), lead_score = LEAST(100, lead_score + 10), updated_at = NOW() WHERE id = ?",
                     [
                         ($propName ? ", $propName" : ''),
-                        "\n" . date('Y-m-d H:i') . " ΓÇö Expressed interest in: $propName (Budget: $budget)",
+                        "\n" . date('Y-m-d H:i') . " ╬ô├ç├╢ Expressed interest in: $propName (Budget: $budget)",
                         $existingLead['id']
                     ]
                 );
@@ -1608,7 +1608,7 @@ public function constructionInquiry()
 
         try {
             $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, 'project', 'pending', 'medium', NOW())");
-            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: Γé╣{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
+            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: ╬ô├⌐Γòú{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
 
             // Auto-wire to CRM lead
             try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>"Construction: {$project_type}",'type'=>'project']); } catch (\Exception $e3) {}
@@ -1616,7 +1616,7 @@ public function constructionInquiry()
             // Also save to service_interests if table exists
             try {
                 $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, created_at) VALUES (?, 'construction', 'pending', ?, NOW())");
-                $sStmt->execute([$this->db->lastInsertId(), "Budget: Γé╣{$budget}, Location: {$location}, Type: {$project_type}"]);
+                $sStmt->execute([$this->db->lastInsertId(), "Budget: ╬ô├⌐Γòú{$budget}, Location: {$location}, Type: {$project_type}"]);
             } catch (\Exception $e) {
                 error_log('PageController constructionInquiry service interests: ' . $e->getMessage());
             }
