@@ -190,6 +190,7 @@ try {
                             <label for="description" class="form-label fw-bold"><?= __('list_property_label_description') ?></label>
                             <textarea name="description" id="description" class="form-control" rows="3" maxlength="500" placeholder="<?= __('list_property_ph_description') ?>" data-aps-counter="#description_counter" aria-label="<?= __('list_property_label_description') ?>"></textarea>
                             <small id="description_counter" class="text-muted">0 / 500</small>
+                            <button type="button" id="aiGenDesc" class="btn btn-sm mt-2" style="background:#0d9488;color:#fff"><i class="fas fa-magic"></i> <?= __('ai_generate_description', null, 'Generate with AI') ?></button>
                         </div>
                     </div>
 
@@ -202,6 +203,15 @@ try {
                             <input type="file" name="property_image" id="property_image" accept="image/jpeg,image/png,image/webp" data-aps-image-preview="#property_image_preview" data-max-files="5" aria-label="<?= __('list_property_label_image') ?>">
                         </div>
                         <div class="aps-cp-image-grid" id="property_image_preview"></div>
+
+                        <div class="mt-2">
+                            <label for="image_alt_text" class="form-label fw-bold"><?= __('list_property_alt_label', null, 'Image Alt Text (SEO)') ?></label>
+                            <div class="input-group">
+                                <input type="text" name="image_alt_text" id="image_alt_text" class="form-control" placeholder="<?= __('list_property_alt_ph', null, 'Auto-generate SEO alt text with AI') ?>" maxlength="160" aria-label="<?= __('list_property_alt_label', null, 'Image Alt Text') ?>">
+                                <button type="button" id="aiGenAlt" class="btn btn-sm" style="background:#0d9488;color:#fff"><i class="fas fa-magic"></i> <?= __('ai_alt_text', null, 'AI Alt') ?></button>
+                            </div>
+                            <small class="text-muted"><?= __('list_property_alt_hint', null, 'Improves accessibility & Google image search ranking.') ?></small>
+                        </div>
 
                         <h4 class="mb-3 mt-4"><i class="fas fa-user-circle me-2 text-primary"></i><?= __('list_property_contact_heading', null, 'Contact details') ?></h4>
                         <div class="row">
@@ -445,4 +455,87 @@ try {
 })();
 </script>
 
+<!-- Smart Registration Behavior Tracking -->
+<script>
+(function() {
+    var token = (document.cookie.match('(^|;)\\s*smart_reg_token\\s*=\\s*([^;]+)') || [])[2];
+    if (!token) return;
+    function track(type, data) {
+        try {
+            var x = new XMLHttpRequest();
+            x.open('POST', '<?= BASE_URL ?>/api/smart-register/track', true);
+            x.setRequestHeader('Content-Type', 'application/json');
+            x.send(JSON.stringify({ token: token, event_type: type, event_data: data || null, page_url: window.location.href }));
+        } catch(e) {}
+    }
+    track('page_view', { action: 'list_property_page' });
+})();
+</script>
+
 <?php include __DIR__ . '/../components/quick_register_modal.php'; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('aiGenDesc');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+        var fd = new FormData();
+        fd.append('csrf_token', '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>');
+        fd.append('name', document.getElementById('name') ? document.getElementById('name').value : '');
+        fd.append('location', document.getElementById('city') ? document.getElementById('city').value : '');
+        fd.append('price', document.getElementById('price') ? document.getElementById('price').value : '');
+        fd.append('area_sqft', document.getElementById('area') ? document.getElementById('area').value : '');
+        fd.append('type', (document.querySelector('input[name="property_type"]:checked') || {}).value || 'plot');
+        var ta = document.getElementById('description');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        fetch('<?= BASE_URL ?>/ai/content/description', { method: 'POST', body: fd })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (d.success && d.description) {
+                    ta.value = d.description.substring(0, 500);
+                    var c = document.getElementById('description_counter');
+                    if (c) c.textContent = ta.value.length + ' / 500';
+                } else {
+                    alert('AI generation failed. Please try again.');
+                }
+            })
+            .catch(function () { alert('AI generation failed. Please try again.'); })
+            .finally(function () {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-magic"></i> <?= __('ai_generate_description', null, 'Generate with AI') ?>';
+            });
+    });
+
+    var altBtn = document.getElementById('aiGenAlt');
+    if (altBtn) {
+        altBtn.addEventListener('click', function () {
+            var fd = new FormData();
+            fd.append('csrf_token', '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>');
+            var fileInput = document.getElementById('property_image');
+            var fileName = (fileInput && fileInput.files && fileInput.files.length > 0) ? fileInput.files[0].name : '';
+            fd.append('filename', fileName);
+            fd.append('title', document.getElementById('name') ? document.getElementById('name').value : '');
+            fd.append('type', (document.querySelector('input[name="property_type"]:checked') || {}).value || 'plot');
+            fd.append('location', document.getElementById('city') ? document.getElementById('city').value : '');
+            var altInput = document.getElementById('image_alt_text');
+            altBtn.disabled = true;
+            altBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
+            fetch('<?= BASE_URL ?>/ai/content/image-tags', { method: 'POST', body: fd })
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    if (d.success && d.alt_text) {
+                        altInput.value = d.alt_text.substring(0, 160);
+                    } else {
+                        alert('AI alt-text generation failed. Please try again.');
+                    }
+                })
+                .catch(function () { alert('AI alt-text generation failed. Please try again.'); })
+                .finally(function () {
+                    altBtn.disabled = false;
+                    altBtn.innerHTML = '<i class="fas fa-magic"></i> <?= __('ai_alt_text', null, 'AI Alt') ?>';
+                });
+        });
+    }
+});
+</script>

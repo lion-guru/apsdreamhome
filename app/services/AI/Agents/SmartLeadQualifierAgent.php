@@ -56,6 +56,25 @@ class SmartLeadQualifierAgent
         $aiScore = $scoreResult['result']['score']['score'] ?? $score;
         $grade = $scoreResult['result']['score']['grade'] ?? 'D';
 
+        // 2b. Boost with live company data (top colonies, market averages) so the
+        //     score reflects real business context, not just the lead's raw text.
+        $company = $this->getCompanyContext();
+        $bonus = 0;
+        if (!empty($company['avg_booking']) && (float)($lead['budget'] ?? 0) >= $company['avg_booking']) {
+            $bonus += 10; // budget at/above the company's average booking = serious buyer
+        }
+        $msgLower = mb_strtolower($lead['notes'] ?? '');
+        foreach (($company['top_colonies'] ?? []) as $colonyName) {
+            if (!empty($colonyName) && stripos($msgLower, mb_strtolower($colonyName)) !== false) {
+                $bonus += 8; // explicitly interested in a top-performing colony
+                break;
+            }
+        }
+        if ($bonus > 0) {
+            $aiScore = min(100, $aiScore + $bonus);
+            $grade = $this->scoreToGrade($aiScore);
+        }
+
         // 3. Update lead
         $this->db->getConnection()->prepare(
             "UPDATE leads SET lead_score = ?, lead_category = ?, priority = ?, updated_at = NOW() WHERE id = ?"
@@ -144,9 +163,52 @@ class SmartLeadQualifierAgent
 
     // ─────── Helpers ─────────────────────────────────────────────────
 
-    private function getLead(int $id): ?array
+    /**
+     * Live business context used to sharpen lead scoring:
+     * average booking value, top-performing colonies, available inventory.
+     */
+    private function getCompanyContext(): array
     {
-        return $this->db->fetch("SELECT * FROM leads WHERE id = ? AND deleted_at IS NULL", [$id]) ?: null;
+        $ctx = ['avg_booking' => 0, 'top_colonies' => [], 'available_plots' => 0];
+        try {
+            $row = $this->db->fetch(
+                "SELECT AVG(total_price) AS avg_price, COUNT(*) AS cnt
+                 FROM plot_bookings WHERE total_price > 0"
+            );
+            if ($row && (int)$row['cnt'] > 0) {
+                $ctx['avg_booking'] = (float)$row['avg_price'];
+            }
+
+            $colonies = $this->db->fetchAll(
+                "SELECT c.name, COUNT(p.id) AS available
+                 FROM colonies c
+                 LEFT JOIN plots p ON p.colony_id = c.id AND p.status = 'available' AND p.is_active = 1
+                 WHERE c.is_active = 1
+                 GROUP BY c.id ORDER BY available DESC LIMIT 3"
+            ) ?: [];
+            foreach ($colonies as $c) {
+                if (!empty($c['name'])) {
+                    $ctx['top_colonies'][] = $c['name'];
+                    $ctx['available_plots'] += (int)$c['available'];
+                }
+            }
+        } catch (\Throwable $e) {
+            // non-critical — scoring falls back to base signals
+        }
+        return $ctx;
+    }
+
+    private function scoreToGrade(int $score): string
+    {
+        if ($score >= 80) return 'A';
+        if ($score >= 65) return 'B';
+        if ($score >= 50) return 'C';
+        if ($score >= 35) return 'D';
+        return 'E';
+    }
+
+    private function getLead(int $id): ?array
+    {        return $this->db->fetch("SELECT * FROM leads WHERE id = ? AND deleted_at IS NULL", [$id]) ?: null;
     }
 
     private function autoAssignHotLead(int $leadId): void

@@ -16,7 +16,8 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Content</label>
-                                    <textarea name="content" class="form-control" rows="10" required></textarea>
+                                    <textarea name="content" id="blog_content" class="form-control" rows="10" required></textarea>
+                                    <button type="button" id="aiGenBlog" class="btn btn-sm mt-2" style="background:#0d9488;color:#fff"><i class="fas fa-magic"></i> Generate with AI (Hindi + English)</button>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -54,6 +55,41 @@
                         <button type="submit" class="btn btn-primary">Save Post</button>
                         <a href="<?php echo BASE_URL; ?>/admin/blogs" class="btn btn-secondary">Cancel</a>
                     </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('aiGenBlog');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+        var title = document.querySelector('input[name="title"]');
+        var cat = document.querySelector('select[name="category_id"] option:checked');
+        var fd = new FormData();
+        fd.append('csrf_token', '<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>');
+        fd.append('topic', title ? title.value : '');
+        fd.append('category', cat ? cat.textContent : '');
+        if (!title.value) { alert('Please enter a title first.'); return; }
+        var ta = document.getElementById('blog_content');
+        var meta = document.querySelector('textarea[name="meta_description"]');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        fetch('<?php echo BASE_URL; ?>/ai/content/blog-draft', { method: 'POST', body: fd })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (d.success) {
+                    ta.value = (d.english || '') + "\n\n---\n\n" + (d.hindi || '');
+                    if (meta && d.excerpt) meta.value = d.excerpt;
+                } else {
+                    alert('AI generation failed. Please try again.');
+                }
+            })
+            .catch(function () { alert('AI generation failed. Please try again.'); })
+            .finally(function () {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-magic"></i> Generate with AI (Hindi + English)';
+            });
+    });
+});
+</script>
                 </div>
             </div>
         </div>

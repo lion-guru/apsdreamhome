@@ -18,7 +18,7 @@ class FreeAIEngines
 
     // Ollama (local)
     private $ollamaUrl = 'http://localhost:11434';
-    private $ollamaModel = 'llama3.1:8b';
+    private $ollamaModel = 'llama3.2:3b';
 
     // Groq (free tier: 30 RPM, 14,400 RPD)
     private $groqKey = '';
@@ -31,6 +31,8 @@ class FreeAIEngines
 
     private function __construct()
     {
+        $this->ollamaUrl = getenv('OLLAMA_URL') ?: $this->ollamaUrl;
+        $this->ollamaModel = getenv('OLLAMA_MODEL') ?: $this->ollamaModel;
         $this->loadKeys();
     }
 
@@ -117,6 +119,7 @@ class FreeAIEngines
             'model' => $this->ollamaModel,
             'messages' => $messages,
             'stream' => false,
+            'keep_alive' => -1,
             'options' => ['temperature' => $temp, 'num_predict' => $maxTokens],
         ];
 
@@ -253,6 +256,28 @@ class FreeAIEngines
             if ($decoded) return $decoded;
         }
         return null;
+    }
+
+    // ─────────── Accessors (for health checks / admin UI) ─────────────
+
+    public function getOllamaUrl(): string
+    {
+        return $this->ollamaUrl;
+    }
+
+    public function getOllamaModel(): string
+    {
+        return $this->ollamaModel;
+    }
+
+    public function isGroqConfigured(): bool
+    {
+        return !empty($this->groqKey);
+    }
+
+    public function isOpenRouterConfigured(): bool
+    {
+        return !empty($this->openRouterKey);
     }
 
     /**

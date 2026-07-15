@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\AI\AIManager;
+use App\Services\Voice\AIVoicePipeline;
+use App\Services\Communication\WhatsAppWebService;
 
 class AIBotController extends BaseController
 {
@@ -25,7 +27,7 @@ class AIBotController extends BaseController
         $message = trim($_POST['message'] ?? $_GET['message'] ?? '');
         $sessionId = $_POST['session_id'] ?? $_GET['session_id'] ?? session_id();
         $platform = $_POST['platform'] ?? 'website';
-        $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
+        $userId = (int)($_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 0);
 
         if (empty($message)) {
             echo json_encode(['error' => 'Message is required']);
@@ -34,6 +36,21 @@ class AIBotController extends BaseController
 
         // Process via self-learning AI
         $aiResponse = $this->ai()->processChat($sessionId, $userId, $message, $platform);
+
+        // Make the property-aware LLM (Ollama local → Gemini cloud → rule fallback)
+        // the primary reply source. The pattern matcher's precise answers remain
+        // as the automatic fallback if the LLM is unavailable. Buy/rent property
+        // suggestions below still run independently.
+        try {
+            $pipeline = new AIVoicePipeline();
+            $llmReply = $pipeline->generateChatReply($message);
+            if (!empty($llmReply)) {
+                $aiResponse['text'] = $llmReply;
+                $aiResponse['engine'] = 'llm';
+            }
+        } catch (\Throwable $e) {
+            // keep pattern-based reply on any LLM failure
+        }
 
         // Also save to legacy ai_conversations for backward compatibility
         $this->saveConversation($sessionId, $message, $aiResponse['text'], $aiResponse['intent'], $platform);
@@ -88,7 +105,7 @@ class AIBotController extends BaseController
         }
     }
 
-    // WhatsApp Webhook - powered by self-learning AI
+    // WhatsApp Webhook - AI auto-reply (LLM + live inventory) via self-hosted WA service
     public function whatsappWebhook()
     {
         $data = json_decode(file_get_contents('php://input'), true);
@@ -98,9 +115,35 @@ class AIBotController extends BaseController
             $from = $data['messages'][0]['from'] ?? '';
             $sessionId = 'wa_' . $from;
 
-            $aiResponse = $this->ai()->processChat($sessionId, null, $message, 'whatsapp');
-            $this->saveConversation($sessionId, $message, $aiResponse['text'], $aiResponse['intent'], 'whatsapp');
-            $this->createLeadFromWhatsApp($from, $message, $aiResponse['intent']);
+            // 1. AI reply: local LLM (Ollama) → cloud Gemini → rule fallback,
+            //    enriched with live inventory context so customers get real plots.
+            $reply = '';
+            try {
+                $pipeline = new AIVoicePipeline();
+                $reply = $pipeline->generateChatReply($message) ?: '';
+            } catch (\Throwable $e) {
+                $reply = '';
+            }
+            if (empty($reply)) {
+                $aiResponse = $this->ai()->processChat($sessionId, null, $message, 'whatsapp');
+                $reply = $aiResponse['text'] ?? '';
+            }
+
+            $this->saveConversation($sessionId, $message, $reply, 'whatsapp_ai', 'whatsapp');
+
+            // 2. Send the AI reply back over WhatsApp (if the local WA service is up)
+            try {
+                $wa = new WhatsAppWebService();
+                $status = $wa->isConnected();
+                if (!empty($status['connected']) || !isset($status['error'])) {
+                    $wa->sendMessage($from, $reply);
+                }
+            } catch (\Throwable $e) {
+                error_log("[WhatsAppWebhook] reply send failed: " . $e->getMessage());
+            }
+
+            // 3. Capture as a CRM lead (deduped) for follow-up
+            $this->createLeadFromWhatsApp($from, $message, 'whatsapp_ai');
         }
 
         echo 'OK';

@@ -153,6 +153,68 @@ class AISystemController extends AdminController
     }
 
     /**
+     * Live AI engine health check (AJAX/GET) — pings Ollama + runs a real
+     * generate test so admins can confirm the local LLM is actually serving
+     * the chatbot, voice agent and all 5 dashboard agents.
+     */
+    public function engineHealth()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        $free = FreeAIEngines::getInstance();
+        $gateway = AIGateway::getInstance();
+
+        // Live Ollama ping (ignore static cache by re-pinging)
+        $ollamaUp = false;
+        $ollamaModel = $free->getOllamaModel();
+        $ollamaTest = null;
+        try {
+            $ch = curl_init(rtrim($free->getOllamaUrl(), '/') . '/api/tags');
+            curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 3]);
+            curl_exec($ch);
+            $ollamaUp = curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200;
+            curl_close($ch);
+
+            if ($ollamaUp) {
+                $t0 = microtime(true);
+                $res = $free->generate('Reply with exactly: OK', ['max_tokens' => 8, 'temperature' => 0], 'chat');
+                $ollamaTest = trim($res['text'] ?? '');
+                $ollamaMs = round((microtime(true) - $t0) * 1000);
+            }
+        } catch (\Throwable $e) {
+            $ollamaTest = 'error: ' . $e->getMessage();
+        }
+
+        $status = [
+            'ollama' => [
+                'up' => $ollamaUp,
+                'model' => $ollamaModel,
+                'test_reply' => $ollamaTest,
+                'response_ms' => $ollamaMs ?? null,
+                'cost' => 'Free (local)',
+            ],
+            'gemini' => [
+                'configured' => $gateway->isGeminiAvailable(),
+                'cost' => 'Free tier',
+            ],
+            'groq' => [
+                'configured' => $free->isGroqConfigured(),
+                'cost' => 'Free tier',
+            ],
+            'openrouter' => [
+                'configured' => $free->isOpenRouterConfigured(),
+                'cost' => 'Free tier',
+            ],
+            'primary_engine' => $ollamaUp ? 'ollama (' . $ollamaModel . ')' : ($gateway->isGeminiAvailable() ? 'gemini' : 'rule-fallback'),
+            'checked_at' => date('Y-m-d H:i:s'),
+        ];
+
+        echo json_encode($status);
+        exit;
+    }
+
+    /**
      * Chat API endpoint — for chatbot widget
      */
     public function chat()
@@ -242,7 +304,7 @@ class AISystemController extends AdminController
             $groqKey = trim($_POST['groq_api_key'] ?? '');
             $openrouterKey = trim($_POST['openrouter_api_key'] ?? '');
             $ollamaUrl = trim($_POST['ollama_url'] ?? 'http://localhost:11434');
-            $ollamaModel = trim($_POST['ollama_model'] ?? 'llama3.1:8b');
+            $ollamaModel = trim($_POST['ollama_model'] ?? 'llama3.2:3b');
             $geminiKey = trim($_POST['gemini_api_key'] ?? '');
 
             if (!empty($settings['id'])) {

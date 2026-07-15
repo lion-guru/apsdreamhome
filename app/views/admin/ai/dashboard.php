@@ -153,7 +153,10 @@ $recent_activity = $recent_activity ?? [];
     <div class="row g-3 mb-4">
         <div class="col-12">
             <div style="background:linear-gradient(135deg,#f0fdf4 0%,#ecfdf5 100%);border-radius:16px;border:1px solid #bbf7d0;padding:20px">
-                <div class="section-title" style="color:#166534"><i class="fas fa-bolt" style="color:#16a34a"></i> Free AI Engines (Cost: ₹0)</div>
+                <div class="section-title" style="color:#166534"><i class="fas fa-bolt" style="color:#16a34a"></i> Free AI Engines (Cost: ₹0)
+                    <button id="engineHealthBtn" type="button" class="btn btn-sm" style="float:right;background:#16a34a;color:#fff;font-size:12px"><i class="fas fa-heartbeat"></i> Live Test</button>
+                </div>
+                <div id="engineHealthResult" style="display:none;margin-bottom:12px;font-size:13px"></div>
                 <div class="row g-3">
                     <?php foreach ($engine_status as $engine => $info): ?>
                         <div class="col-md-3">
@@ -272,3 +275,47 @@ $recent_activity = $recent_activity ?? [];
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('engineHealthBtn');
+    var out = document.getElementById('engineHealthResult');
+    if (!btn) return;
+
+    btn.addEventListener('click', function () {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
+        out.style.display = 'block';
+        out.innerHTML = '<span style="color:#888">Pinging AI engines...</span>';
+
+        fetch('<?= BASE_URL ?>/admin/ai-system/health')
+            .then(function (r) { return r.json(); })
+            .then(function (s) {
+                var dot = s.ollama && s.ollama.up ? '#10b981' : '#ef4444';
+                var html = '<div style="background:#fff;border:1px solid #bbf7d0;border-radius:10px;padding:12px">';
+                html += '<div><span class="health-dot" style="background:' + dot + '"></span>'
+                    + '<strong>Ollama</strong>: ' + (s.ollama && s.ollama.up ? 'ONLINE' : 'OFFLINE')
+                    + (s.ollama ? ' &middot; model <code>' + s.ollama.model + '</code>' : '')
+                    + (s.ollama && s.ollama.response_ms ? ' &middot; ' + s.ollama.response_ms + 'ms' : '')
+                    + '</div>';
+                if (s.ollama && s.ollama.test_reply) {
+                    html += '<div style="font-size:11px;color:#15803d">test reply: &ldquo;' + s.ollama.test_reply + '&rdquo;</div>';
+                }
+                html += '<div style="margin-top:4px">Primary engine: <strong>' + (s.primary_engine || 'unknown') + '</strong></div>';
+                html += '<div style="margin-top:4px;font-size:11px;color:#888">Gemini: ' + (s.gemini && s.gemini.configured ? 'configured' : 'not set')
+                    + ' &middot; Groq: ' + (s.groq && s.groq.configured ? 'configured' : 'not set')
+                    + ' &middot; OpenRouter: ' + (s.openrouter && s.openrouter.configured ? 'configured' : 'not set') + '</div>';
+                html += '<div style="margin-top:4px;font-size:10px;color:#aaa">Checked at ' + (s.checked_at || '') + '</div>';
+                html += '</div>';
+                out.innerHTML = html;
+            })
+            .catch(function (e) {
+                out.innerHTML = '<span style="color:#ef4444">Health check failed: ' + e + '</span>';
+            })
+            .finally(function () {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-heartbeat"></i> Live Test';
+            });
+    });
+});
+</script>
