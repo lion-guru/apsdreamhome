@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../widgets/glass_card.dart';
+import '../../../data/services/property_listing_service.dart';
 import '../../../data/services/referral_service.dart';
 import '../../../core/theme/app_theme.dart';
 
@@ -18,6 +19,7 @@ class PropertyDetailPage extends ConsumerStatefulWidget {
     this.type = '',
     this.description = '',
     this.image = '',
+    this.images = const [],
   });
 
   final String propertyId;
@@ -28,6 +30,7 @@ class PropertyDetailPage extends ConsumerStatefulWidget {
   final String type;
   final String description;
   final String image;
+  final List<String> images;
 
   @override
   ConsumerState<PropertyDetailPage> createState() => _PropertyDetailPageState();
@@ -35,11 +38,36 @@ class PropertyDetailPage extends ConsumerStatefulWidget {
 
 class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
   String _referralCode = '';
+  PropertyListing? _property;
+  bool _isLoading = true;
+  String? _loadError;
+  int _galleryIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _loadReferralCode();
+    _loadProperty();
+  }
+
+  Future<void> _loadProperty() async {
+    try {
+      final service = ref.read(propertyListingServiceProvider);
+      final prop = await service.getPropertyById(widget.propertyId);
+      if (mounted) {
+        setState(() {
+          _property = prop;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _loadError = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> _loadReferralCode() async {
@@ -47,21 +75,55 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
       final referralService = ref.read(referralServiceProvider);
       final code = await referralService.getReferralCode();
       if (mounted && code != null) {
-        setState(() => _referralCode = code);
+        setState(() => _referralCode = code!);
       }
     } catch (_) {}
   }
+
+  List<String> get _allImages {
+    if (_property != null && _property!.images.isNotEmpty) {
+      return _property!.images;
+    }
+    if (widget.images.isNotEmpty) {
+      return widget.images;
+    }
+    if (widget.image.isNotEmpty) {
+      return [widget.image];
+    }
+    return [];
+  }
+
+  String get _displayTitle =>
+      (_property?.title.isNotEmpty == true) ? _property!.title : widget.title;
+
+  double get _displayPrice =>
+      _property != null ? _property!.price : widget.price;
+
+  String get _displayLocation => (_property?.location.isNotEmpty == true)
+      ? _property!.location
+      : widget.location;
+
+  double get _displayArea => _property?.area ?? widget.area;
+
+  String get _displayType =>
+      (_property?.type.isNotEmpty == true) ? _property!.type : widget.type;
+
+  String get _displayDescription => (_property?.description.isNotEmpty == true)
+      ? _property!.description
+      : widget.description;
+
+  bool get _isDisplayVerified => _property?.isVerified ?? false;
 
   Future<void> _shareViaWhatsApp() async {
     final referralService = ref.read(referralServiceProvider);
     final code = _referralCode.isNotEmpty ? _referralCode : 'GUEST';
 
     final message = referralService.generateShareMessage(
-      propertyName: widget.title,
+      propertyName: _displayTitle,
       referralCode: code,
       propertyId: int.tryParse(widget.propertyId),
-      price: widget.price > 0 ? '₹${widget.price.toStringAsFixed(0)}' : null,
-      location: widget.location,
+      price: _displayPrice > 0 ? '₹${_displayPrice.toStringAsFixed(0)}' : null,
+      location: _displayLocation,
     );
 
     final encodedMessage = Uri.encodeComponent(message);
@@ -69,17 +131,20 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
 
     try {
       if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
-        await launchUrl(Uri.parse(whatsappUrl), mode: LaunchMode.externalApplication);
-        // Track referral
+        await launchUrl(
+          Uri.parse(whatsappUrl),
+          mode: LaunchMode.externalApplication,
+        );
         referralService.shareViaWhatsApp(
-          propertyName: widget.title,
+          propertyName: _displayTitle,
           referralCode: code,
           propertyId: int.tryParse(widget.propertyId),
-          price: widget.price > 0 ? '₹${widget.price.toStringAsFixed(0)}' : null,
-          location: widget.location,
+          price: _displayPrice > 0
+              ? '₹${_displayPrice.toStringAsFixed(0)}'
+              : null,
+          location: _displayLocation,
         );
       } else {
-        // Fallback to system share
         await Share.share(message);
       }
     } catch (e) {
@@ -87,13 +152,37 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
     }
   }
 
+  void _openFullScreen(int index) {
+    final images = _allImages;
+    if (images.isEmpty) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => _PropertyImageViewer(
+          images: images,
+          initialIndex: index,
+          title: _displayTitle,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return _buildLoading();
+    }
+
+    final images = _allImages;
+
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Property Details'),
+          title: Text(
+            _displayTitle.isNotEmpty ? _displayTitle : 'Property Details',
+            overflow: TextOverflow.ellipsis,
+          ),
           backgroundColor: Colors.transparent,
           elevation: 0,
           actions: [
@@ -117,30 +206,12 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Property Image
-              if (widget.image.isNotEmpty)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.network(
-                    widget.image,
-                    height: 220,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      height: 220,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white10,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Icon(Icons.home, size: 64, color: Colors.white38),
-                    ),
-                  ),
-                ),
+              // ─── Gallery Carousel ───
+              if (images.isNotEmpty) _buildGalleryCarousel(images),
 
-              const SizedBox(height: 16),
+              if (images.isNotEmpty) const SizedBox(height: 16),
 
-              // Title & Type
+              // ─── Title & Type ───
               GlassCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +220,9 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                       children: [
                         Expanded(
                           child: Text(
-                            widget.title.isNotEmpty ? widget.title : 'Property #${widget.propertyId}',
+                            _displayTitle.isNotEmpty
+                                ? _displayTitle
+                                : 'Property #${widget.propertyId}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -157,32 +230,66 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                             ),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFD700).withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            widget.type.toUpperCase(),
-                            style: const TextStyle(
-                              color: Color(0xFFFFD700),
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (_isDisplayVerified)
+                              Container(
+                                margin: const EdgeInsets.only(right: 6),
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF4CAF50),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.verified,
+                                  color: Colors.white,
+                                  size: 14,
+                                ),
+                              ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(
+                                  0xFFFFD700,
+                                ).withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                _displayType.toUpperCase(),
+                                style: const TextStyle(
+                                  color: Color(0xFFFFD700),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    if (widget.location.isNotEmpty)
+                    if (_displayLocation.isNotEmpty)
                       Row(
                         children: [
-                          const Icon(Icons.location_on, color: Colors.white54, size: 18),
+                          const Icon(
+                            Icons.location_on,
+                            color: Colors.white54,
+                            size: 18,
+                          ),
                           const SizedBox(width: 4),
-                          Text(
-                            widget.location,
-                            style: const TextStyle(color: Colors.white70, fontSize: 14),
+                          Expanded(
+                            child: Text(
+                              _displayLocation,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),
@@ -192,7 +299,7 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
 
               const SizedBox(height: 12),
 
-              // Price & Area
+              // ─── Price & Area ───
               GlassCard(
                 child: Row(
                   children: [
@@ -200,9 +307,17 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Price', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                          const Text(
+                            'Price',
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 12,
+                            ),
+                          ),
                           Text(
-                            widget.price > 0 ? '₹${widget.price.toStringAsFixed(0)}' : 'Price on request',
+                            _displayPrice > 0
+                                ? '₹${_displayPrice.toStringAsFixed(0)}'
+                                : 'Price on request',
                             style: const TextStyle(
                               color: Color(0xFFFFD700),
                               fontSize: 24,
@@ -218,9 +333,17 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Area', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                          const Text(
+                            'Area',
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 12,
+                            ),
+                          ),
                           Text(
-                            widget.area > 0 ? '${widget.area.toStringAsFixed(0)} sqft' : 'N/A',
+                            _displayArea > 0
+                                ? '${_displayArea.toStringAsFixed(0)} sqft'
+                                : 'N/A',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -236,8 +359,8 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
 
               const SizedBox(height: 12),
 
-              // Description
-              if (widget.description.isNotEmpty)
+              // ─── Description ───
+              if (_displayDescription.isNotEmpty)
                 GlassCard(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,8 +375,12 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        widget.description,
-                        style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+                        _displayDescription,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
                       ),
                     ],
                   ),
@@ -261,7 +388,11 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
 
               const SizedBox(height: 12),
 
-              // Features
+              // ─── Image Type Grid ───
+              if (images.length > 1) _buildImageTypeGrid(images),
+
+              // ─── Features ───
+              const SizedBox(height: 12),
               GlassCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,13 +406,17 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Row(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
-                        _featureChip(Icons.square_foot, 'Area'),
-                        const SizedBox(width: 8),
-                        _featureChip(Icons.aspect_ratio, 'Dimensions'),
-                        const SizedBox(width: 8),
-                        _featureChip(Icons.location_on, 'Location'),
+                        _featureChip(Icons.square_foot, '$_displayArea sqft'),
+                        _featureChip(Icons.aspect_ratio, _displayType),
+                        _featureChip(Icons.location_on, _displayLocation),
+                        if (_isDisplayVerified)
+                          _featureChip(Icons.verified, 'Verified'),
+                        if (_property?.purpose != null)
+                          _featureChip(Icons.sell, _property!.purposeLabel),
                       ],
                     ),
                   ],
@@ -290,13 +425,17 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
 
               const SizedBox(height: 12),
 
-              // Referral info
+              // ─── Referral info ───
               if (_referralCode.isNotEmpty)
                 GlassCard(
                   opacity: 0.1,
                   child: Row(
                     children: [
-                      const Icon(Icons.card_giftcard, color: Color(0xFFFFD700), size: 24),
+                      const Icon(
+                        Icons.card_giftcard,
+                        color: Color(0xFFFFD700),
+                        size: 24,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -304,23 +443,33 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                           children: [
                             const Text(
                               'Share & Earn Referral Benefits',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             Text(
                               'Your code: $_referralCode',
-                              style: const TextStyle(color: Colors.white70, fontSize: 12),
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white54,
+                        size: 16,
+                      ),
                     ],
                   ),
                 ),
 
               const SizedBox(height: 12),
 
-              // Set Alert action
+              // ─── Set Alert action ───
               GlassCard(
                 opacity: 0.08,
                 child: InkWell(
@@ -335,7 +484,11 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                   borderRadius: BorderRadius.circular(12),
                   child: const Row(
                     children: [
-                      Icon(Icons.notifications_active, color: Color(0xFFFFD700), size: 24),
+                      Icon(
+                        Icons.notifications_active,
+                        color: Color(0xFFFFD700),
+                        size: 24,
+                      ),
                       SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -343,16 +496,26 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                           children: [
                             Text(
                               'Set Property Alert',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             Text(
                               'Get notified for similar properties',
-                              style: TextStyle(color: Colors.white70, fontSize: 12),
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white54,
+                        size: 16,
+                      ),
                     ],
                   ),
                 ),
@@ -362,6 +525,223 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoading() {
+    return GradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('Property Details'),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGalleryCarousel(List<String> images) {
+    return Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: SizedBox(
+            height: 260,
+            width: double.infinity,
+            child: Stack(
+              children: [
+                PageView.builder(
+                  itemCount: images.length,
+                  onPageChanged: (i) => setState(() => _galleryIndex = i),
+                  itemBuilder: (_, i) => GestureDetector(
+                    onTap: () => _openFullScreen(i),
+                    child: Image.network(
+                      images[i],
+                      height: 260,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (_, child, progress) {
+                        if (progress == null) return child;
+                        return Container(
+                          height: 260,
+                          color: Colors.white10,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: progress.expectedTotalBytes != null
+                                  ? progress.cumulativeBytesLoaded /
+                                        progress.expectedTotalBytes!
+                                  : null,
+                              color: Colors.white54,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (_, __, ___) => Container(
+                        height: 260,
+                        decoration: BoxDecoration(
+                          color: Colors.white10,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.broken_image_rounded,
+                          size: 64,
+                          color: Colors.white38,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Counter badge
+                if (images.length > 1)
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${_galleryIndex + 1}/${images.length}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // Full-screen hint
+                Positioned(
+                  bottom: 12,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black45,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.fullscreen,
+                            color: Colors.white70,
+                            size: 14,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            'Tap for full screen',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Dot indicators
+        if (images.length > 1)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              images.length,
+              (i) => AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                width: _galleryIndex == i ? 20 : 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: _galleryIndex == i
+                      ? const Color(0xFFFFD700)
+                      : Colors.white38,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildImageTypeGrid(List<String> images) {
+    return GlassCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Photos',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 72,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: images.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (_, i) {
+                final isSelected = i == _galleryIndex;
+                return GestureDetector(
+                  onTap: () => _openFullScreen(i),
+                  child: Container(
+                    width: 72,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFFFFD700)
+                            : Colors.white24,
+                        width: isSelected ? 2 : 1,
+                      ),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.network(
+                      images[i],
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: Colors.white10,
+                        child: const Icon(
+                          Icons.broken_image,
+                          color: Colors.white38,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -379,7 +759,135 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
         children: [
           Icon(icon, color: Colors.white54, size: 16),
           const SizedBox(width: 4),
-          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white70, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Full-screen image viewer with pinch-zoom and thumbnail filmstrip
+class _PropertyImageViewer extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
+  final String title;
+
+  const _PropertyImageViewer({
+    required this.images,
+    required this.initialIndex,
+    required this.title,
+  });
+
+  @override
+  State<_PropertyImageViewer> createState() => _PropertyImageViewerState();
+}
+
+class _PropertyImageViewerState extends State<_PropertyImageViewer> {
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text(widget.title),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Text(
+                '${_selectedIndex + 1}/${widget.images.length}',
+                style: const TextStyle(fontSize: 14, color: Colors.white70),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              itemCount: widget.images.length,
+              onPageChanged: (i) => setState(() => _selectedIndex = i),
+              itemBuilder: (_, i) => InteractiveViewer(
+                maxScale: 4,
+                child: Center(
+                  child: Image.network(
+                    widget.images[i],
+                    fit: BoxFit.contain,
+                    loadingBuilder: (_, child, progress) {
+                      if (progress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: progress.expectedTotalBytes != null
+                              ? progress.cumulativeBytesLoaded /
+                                    progress.expectedTotalBytes!
+                              : null,
+                          color: Colors.white,
+                        ),
+                      );
+                    },
+                    errorBuilder: (_, __, ___) => const Center(
+                      child: Icon(
+                        Icons.broken_image_rounded,
+                        size: 64,
+                        color: Colors.white38,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            height: 100,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemCount: widget.images.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (_, i) {
+                final isSelected = i == _selectedIndex;
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedIndex = i),
+                  child: Container(
+                    width: 72,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isSelected ? Colors.white : Colors.transparent,
+                        width: 2,
+                      ),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.network(
+                      widget.images[i],
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: Colors.grey.shade800,
+                        child: const Icon(
+                          Icons.broken_image,
+                          color: Colors.white38,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

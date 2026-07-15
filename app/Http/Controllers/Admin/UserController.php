@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\CoreFunctionsServiceCustom;
 use App\Services\LoggingService;
+use App\Services\UserRegistrationService;
 use App\Core\Database;
 use Exception;
 
@@ -128,7 +129,7 @@ class UserController extends AdminController
     }
 
     /**
-     * Store a newly created user
+     * Store a newly created user — uses UserRegistrationService for complete record creation
      */
     public function store()
     {
@@ -153,59 +154,61 @@ class UserController extends AdminController
             }
 
             // Validate role
-            $validRoles = ['admin', 'manager', 'associate', 'agent', 'customer', 'user'];
+            $validRoles = ['admin', 'manager', 'associate', 'agent', 'customer', 'user', 'employee', 'telecaller'];
             if (!in_array($data['role'], $validRoles)) {
                 return $this->jsonError('Invalid role', 400);
             }
 
-            // Check if email already exists
-            $sql = "SELECT id FROM users WHERE email = ?";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$data['email']]);
-            if ($stmt->fetch()) {
-                return $this->jsonError('Email already exists', 400);
+            // Use UserRegistrationService for complete record creation (wallet, MLM, tree, etc.)
+            $regService = new UserRegistrationService();
+            $user = null;
+            $result = $regService->createUser($data['role'], [
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'] ?? '',
+                'password' => $data['password'],
+                'city' => $data['city'] ?? '',
+                'occupation' => $data['occupation'] ?? '',
+                'registration_method' => 'admin',
+            ], $user);
+
+            if (!$result['success']) {
+                return $this->jsonError($result['message'], 400);
             }
 
-            // Hash password
-            $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+            $userId = $result['user_id'];
 
-            // Insert user
-            $sql = "INSERT INTO users 
-                    (name, email, password, phone, address, role, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+            // If employee role, also create employees table row
+            if ($data['role'] === 'employee' || $data['role'] === 'telecaller') {
+                $this->db->execute(
+                    "INSERT INTO employees (user_id, name, email, phone, role, department, designation, salary, joining_date, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())",
+                    [
+                        $userId,
+                        $data['name'],
+                        $data['email'],
+                        $data['phone'] ?? '',
+                        $data['role'],
+                        $data['department'] ?? 'General',
+                        $data['designation'] ?? $data['role'],
+                        $data['salary'] ?? 0,
+                        $data['join_date'] ?? date('Y-m-d'),
+                    ]
+                );
+            }
 
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([
-                CoreFunctionsServiceCustom::validateInput($data['name'], 'string'),
-                CoreFunctionsServiceCustom::validateInput($data['email'], 'string'),
-                $hashedPassword,
-                CoreFunctionsServiceCustom::validateInput($data['phone'] ?? '', 'string'),
-                CoreFunctionsServiceCustom::validateInput($data['address'] ?? '', 'string'),
-                $data['role'],
-                $data['status'] ?? 'active'
+            // Log activity
+            $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'user_created', [
+                'user_id' => $userId,
+                'email' => $data['email'],
+                'role' => $data['role']
             ]);
 
-            if ($result) {
-                $userId = $this->db->lastInsertId();
+            $this->setFlash('success', ucfirst($data['role']) . ' created successfully. Customer ID: ' . ($user['customer_id'] ?? $userId));
+            return $this->redirect('admin/users');
 
-                // Log activity
-                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'user_created', [
-                    'user_id' => $userId,
-                    'email' => $data['email'],
-                    'role' => $data['role']
-                ]);
-
-                return $this->jsonResponse([
-                    'success' => true,
-                    'message' => 'User created successfully',
-                    'user_id' => $userId
-                ]);
-            }
-
-            return $this->jsonError('Failed to create user', 500);
         } catch (Exception $e) {
             $this->loggingService->error("User Store error: " . $e->getMessage());
-            return $this->jsonError('Failed to create user', 500);
+            return $this->jsonError('Failed to create user: ' . $e->getMessage(), 500);
         }
     }
 
@@ -221,12 +224,16 @@ class UserController extends AdminController
                 return $this->redirect('admin/users');
             }
 
-            // Get user details
+            // Get user details with sponsor/referred_by names
             $sql = "SELECT u.*,
                            COUNT(p.id) as property_count,
-                           (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count
+                           (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count,
+                           s.name as sponsor_name,
+                           r.name as referred_by_name
                     FROM users u
                     LEFT JOIN properties p ON u.id = p.created_by
+                    LEFT JOIN users s ON u.sponsor_id = s.id
+                    LEFT JOIN users r ON u.referred_by = r.id
                     WHERE u.id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId]);
@@ -236,6 +243,25 @@ class UserController extends AdminController
                 $this->setFlash('error', 'User not found');
                 return $this->redirect('admin/users');
             }
+
+            // Get wallet balance from wallet_points (not legacy users.wallet_balance)
+            $wallet = $this->db->fetchOne("SELECT COALESCE(SUM(points_balance), 0) as balance FROM wallet_points WHERE user_id = ?", [$userId]);
+            $user['wallet_balance'] = $wallet['balance'] ?? 0;
+
+            // Get commission totals
+            $commissionTotals = $this->db->fetchOne(
+                "SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ?",
+                [$userId]
+            );
+            $user['commission_count'] = $commissionTotals['count'] ?? 0;
+            $user['commission_total'] = $commissionTotals['total'] ?? 0;
+
+            // Get direct referrals count
+            $directCount = $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM mlm_network_tree WHERE parent_id = ?",
+                [$userId]
+            );
+            $user['direct_referrals'] = $directCount['count'] ?? 0;
 
             $data = [
                 'page_title' => 'User Details - APS Dream Home',
@@ -278,7 +304,7 @@ class UserController extends AdminController
                 'page_title' => 'Edit User - APS Dream Home',
                 'active_page' => 'users',
                 'user' => $user,
-                'roles' => ['admin', 'manager', 'associate', 'agent', 'customer', 'user']
+                'roles' => ['admin', 'super_admin', 'manager', 'employee', 'telecaller', 'associate', 'agent', 'customer', 'user']
             ];
 
             return $this->render('admin/users/edit', $data);
@@ -353,7 +379,7 @@ class UserController extends AdminController
             }
 
             if (isset($data['role'])) {
-                $validRoles = ['admin', 'manager', 'associate', 'agent', 'customer', 'user'];
+                $validRoles = ['admin', 'super_admin', 'manager', 'employee', 'telecaller', 'associate', 'agent', 'customer', 'user'];
                 if (in_array($data['role'], $validRoles)) {
                     $updateFields[] = "role = ?";
                     $updateValues[] = $data['role'];
@@ -430,12 +456,13 @@ class UserController extends AdminController
             }
 
             // Prevent deletion of admin users
-            if ($user['role'] === 'admin') {
+            if ($user['role'] === 'admin' || $user['role'] === 'super_admin') {
                 return $this->jsonError('Cannot delete admin users', 400);
             }
 
-            // Delete user
-            $sql = "DELETE FROM users WHERE id = ?";
+            // Soft delete instead of hard delete (preserves data integrity)
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $sql = "UPDATE users SET status = 'inactive', deleted_at = NOW(), updated_at = NOW() WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([$userId]);
 
@@ -687,6 +714,426 @@ class UserController extends AdminController
                 'success' => false,
                 'message' => 'Failed to fetch stats'
             ], 500);
+        }
+    }
+
+    // ============================================================
+    // ENHANCED USER MANAGEMENT — Wallet, Commissions, Team, Sponsor
+    // ============================================================
+
+    /**
+     * View user wallet — balance, transactions, commissions
+     */
+    public function viewWallet($id)
+    {
+        try {
+            $userId = intval($id);
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, customer_id FROM users WHERE id = ?", [$userId]);
+            if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
+
+            // Wallet balance from wallet_points
+            $wallet = $this->db->fetchOne("SELECT COALESCE(SUM(points_balance), 0) as balance, COALESCE(SUM(total_credited), 0) as total_credited FROM wallet_points WHERE user_id = ?", [$userId]);
+
+            // Recent wallet transactions
+            $transactions = $this->db->fetchAll(
+                "SELECT * FROM wallet_transactions WHERE user_id = ? ORDER BY created_at DESC LIMIT 50",
+                [$userId]
+            );
+
+            // Commission ledger
+            $commissions = $this->db->fetchAll(
+                "SELECT * FROM mlm_commission_ledger WHERE beneficiary_user_id = ? ORDER BY created_at DESC LIMIT 50",
+                [$userId]
+            );
+
+            $data = [
+                'page_title' => "Wallet: {$user['name']} - APS Dream Home",
+                'active_page' => 'users',
+                'user' => $user,
+                'wallet' => $wallet ?? ['balance' => 0, 'total_credited' => 0],
+                'transactions' => $transactions ?? [],
+                'commissions' => $commissions ?? [],
+            ];
+
+            return $this->render('admin/users/wallet', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("View Wallet error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load wallet');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Credit user wallet (AJAX)
+     */
+    public function creditWallet($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            $amount = (float)($_POST['amount'] ?? 0);
+            $reason = trim($_POST['reason'] ?? '');
+            if ($amount <= 0) return $this->jsonError('Amount must be positive', 400);
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            // Ensure wallet exists
+            $this->db->execute(
+                "INSERT IGNORE INTO wallet_points (user_id, user_type, points_balance, total_credited, is_active) VALUES (?, 'associate', 0, 0, 1)",
+                [$userId]
+            );
+
+            $this->db->execute(
+                "UPDATE wallet_points SET points_balance = points_balance + ?, total_credited = total_credited + ? WHERE user_id = ?",
+                [$amount, $amount, $userId]
+            );
+
+            $this->db->execute(
+                "INSERT INTO wallet_transactions (user_id, type, amount, description, reference_id, created_at) VALUES (?, 'credit', ?, ?, ?, NOW())",
+                [$userId, $amount, "Admin credit: {$reason}", $adminId]
+            );
+
+            $this->loggingService->logUserActivity($adminId, 'wallet_credit', ['user_id' => $userId, 'amount' => $amount, 'reason' => $reason]);
+            return $this->jsonResponse(['success' => true, 'message' => "₹" . number_format($amount) . " credited"]);
+        } catch (Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Debit user wallet (AJAX)
+     */
+    public function debitWallet($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            $amount = (float)($_POST['amount'] ?? 0);
+            $reason = trim($_POST['reason'] ?? '');
+            if ($amount <= 0) return $this->jsonError('Amount must be positive', 400);
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            $wallet = $this->db->fetchOne("SELECT points_balance FROM wallet_points WHERE user_id = ?", [$userId]);
+            if (!$wallet || (float)$wallet['points_balance'] < $amount) {
+                return $this->jsonError('Insufficient balance', 400);
+            }
+
+            $this->db->execute(
+                "UPDATE wallet_points SET points_balance = points_balance - ? WHERE user_id = ?",
+                [$amount, $userId]
+            );
+
+            $this->db->execute(
+                "INSERT INTO wallet_transactions (user_id, type, amount, description, reference_id, created_at) VALUES (?, 'debit', ?, ?, ?, NOW())",
+                [$userId, $amount, "Admin debit: {$reason}", $adminId]
+            );
+
+            $this->loggingService->logUserActivity($adminId, 'wallet_debit', ['user_id' => $userId, 'amount' => $amount, 'reason' => $reason]);
+            return $this->jsonResponse(['success' => true, 'message' => "₹" . number_format($amount) . " debited"]);
+        } catch (Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Change user's sponsor/referrer — updates ALL related tables
+     */
+    public function changeSponsor($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            $newSponsorId = (int)($_POST['new_sponsor_id'] ?? 0);
+            if ($newSponsorId <= 0) return $this->jsonError('Invalid sponsor', 400);
+            if ($newSponsorId === $userId) return $this->jsonError('Cannot be own sponsor', 400);
+
+            $user = $this->db->fetchOne("SELECT id, role FROM users WHERE id = ?", [$userId]);
+            if (!$user) return $this->jsonError('User not found', 404);
+
+            $newSponsor = $this->db->fetchOne("SELECT id, name FROM users WHERE id = ?", [$newSponsorId]);
+            if (!$newSponsor) return $this->jsonError('Sponsor not found', 404);
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            $this->db->beginTransaction();
+            try {
+                // 1. Update users table
+                $this->db->execute("UPDATE users SET referred_by = ?, sponsor_id = ?, updated_at = NOW() WHERE id = ?", [$newSponsorId, $newSponsorId, $userId]);
+
+                // 2. Update mlm_profiles
+                $this->db->execute("UPDATE mlm_profiles SET sponsor_user_id = ?, updated_at = NOW() WHERE user_id = ?", [$newSponsorId, $userId]);
+
+                // 3. Update associates
+                $this->db->execute("UPDATE associates SET sponsor_id = ?, updated_at = NOW() WHERE user_id = ?", [$newSponsorId, $userId]);
+
+                // 4. Update mlm_network_tree
+                $this->db->execute("UPDATE mlm_network_tree SET sponsor_id = ?, parent_id = ? WHERE associate_id = ?", [$newSponsorId, $newSponsorId, $userId]);
+
+                // 5. Update network_tree parent
+                $this->db->execute("UPDATE network_tree SET parent_id = ? WHERE associate_id = ?", [$newSponsorId, $userId]);
+
+                $this->db->commit();
+            } catch (\Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+
+            $this->loggingService->logUserActivity($adminId, 'sponsor_changed', ['user_id' => $userId, 'new_sponsor_id' => $newSponsorId]);
+            return $this->jsonResponse(['success' => true, 'message' => "Sponsor changed to {$newSponsor['name']}"]);
+        } catch (Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Change user's referral code
+     */
+    public function changeReferralCode($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            $newCode = strtoupper(trim($_POST['new_referral_code'] ?? ''));
+            if (empty($newCode) || strlen($newCode) < 3) return $this->jsonError('Referral code too short (min 3 chars)', 400);
+
+            // Check uniqueness
+            $exists = $this->db->fetchOne("SELECT id FROM users WHERE referral_code = ? AND id != ?", [$newCode, $userId]);
+            if ($exists) return $this->jsonError('Referral code already in use', 400);
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            $this->db->execute("UPDATE users SET referral_code = ?, updated_at = NOW() WHERE id = ?", [$newCode, $userId]);
+            $this->db->execute("UPDATE mlm_profiles SET referral_code = ?, updated_at = NOW() WHERE user_id = ?", [$newCode, $userId]);
+
+            $this->loggingService->logUserActivity($adminId, 'referral_code_changed', ['user_id' => $userId, 'new_code' => $newCode]);
+            return $this->jsonResponse(['success' => true, 'message' => "Referral code changed to {$newCode}"]);
+        } catch (Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * View user's team / MLM downline
+     */
+    public function viewTeam($id)
+    {
+        try {
+            $userId = intval($id);
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, referral_code FROM users WHERE id = ?", [$userId]);
+            if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
+
+            // Direct referrals from mlm_network_tree
+            $directReferrals = $this->db->fetchAll(
+                "SELECT mnt.associate_id, u.name, u.email, u.phone, u.role, u.status, u.created_at, mnt.level
+                 FROM mlm_network_tree mnt
+                 JOIN users u ON u.id = mnt.associate_id
+                 WHERE mnt.parent_id = ?
+                 ORDER BY mnt.level ASC, u.name ASC",
+                [$userId]
+            );
+
+            // Full team (up to 3 levels deep via recursive CTE or iterative)
+            $team = [];
+            $queue = [$userId];
+            $visited = [$userId];
+            for ($depth = 0; $depth < 3 && !empty($queue); $depth++) {
+                $placeholders = implode(',', array_fill(0, count($queue), '?'));
+                $members = $this->db->fetchAll(
+                    "SELECT mnt.associate_id, mnt.level, mnt.sponsor_id, u.name, u.email, u.role, u.status, u.created_at
+                     FROM mlm_network_tree mnt
+                     JOIN users u ON u.id = mnt.associate_id
+                     WHERE mnt.parent_id IN ($placeholders)
+                     ORDER BY u.name ASC",
+                    $queue
+                );
+                $nextQueue = [];
+                foreach ($members as $m) {
+                    if (!in_array($m['associate_id'], $visited)) {
+                        $visited[] = $m['associate_id'];
+                        $m['depth'] = $depth + 1;
+                        $team[] = $m;
+                        $nextQueue[] = $m['associate_id'];
+                    }
+                }
+                $queue = $nextQueue;
+            }
+
+            // MLM profile
+            $mlmProfile = $this->db->fetchOne("SELECT * FROM mlm_profiles WHERE user_id = ?", [$userId]);
+
+            $data = [
+                'page_title' => "Team: {$user['name']} - APS Dream Home",
+                'active_page' => 'users',
+                'user' => $user,
+                'directReferrals' => $directReferrals ?? [],
+                'team' => $team ?? [],
+                'mlmProfile' => $mlmProfile,
+            ];
+
+            return $this->render('admin/users/team', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("View Team error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load team');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Soft delete user (sets status='deleted' + deleted_at timestamp)
+     */
+    public function softDelete($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userId = intval($id);
+            $user = $this->db->fetchOne("SELECT id, name, email, role FROM users WHERE id = ?", [$userId]);
+            if (!$user) return $this->jsonError('User not found', 404);
+            if ($user['role'] === 'admin' || $user['role'] === 'super_admin') return $this->jsonError('Cannot delete admin users', 400);
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+            $this->db->execute(
+                "UPDATE users SET status = 'inactive', deleted_at = NOW(), updated_at = NOW() WHERE id = ?",
+                [$userId]
+            );
+
+            $this->loggingService->logUserActivity($adminId, 'user_soft_deleted', ['user_id' => $userId, 'name' => $user['name'], 'email' => $user['email']]);
+            return $this->jsonResponse(['success' => true, 'message' => 'User deactivated (soft deleted)']);
+        } catch (Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Bulk operations: activate, deactivate, change role
+     */
+    public function bulkOperation()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
+        try {
+            $userIds = $_POST['user_ids'] ?? [];
+            $action = $_POST['bulk_action'] ?? '';
+            if (empty($userIds)) return $this->jsonError('No users selected', 400);
+
+            $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+
+            switch ($action) {
+                case 'activate':
+                    $this->db->execute("UPDATE users SET status = 'active', updated_at = NOW() WHERE id IN ($placeholders)", $userIds);
+                    $msg = count($userIds) . ' users activated';
+                    break;
+                case 'deactivate':
+                    $this->db->execute("UPDATE users SET status = 'inactive', updated_at = NOW() WHERE id IN ($placeholders)", $userIds);
+                    $msg = count($userIds) . ' users deactivated';
+                    break;
+                case 'suspend':
+                    $this->db->execute("UPDATE users SET status = 'suspended', updated_at = NOW() WHERE id IN ($placeholders)", $userIds);
+                    $msg = count($userIds) . ' users suspended';
+                    break;
+                default:
+                    return $this->jsonError('Invalid action', 400);
+            }
+
+            $this->loggingService->logUserActivity($adminId, 'bulk_' . $action, ['user_ids' => $userIds, 'count' => count($userIds)]);
+            return $this->jsonResponse(['success' => true, 'message' => $msg]);
+        } catch (Exception $e) {
+            return $this->jsonError('Failed: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * View admin activity log for a user — who did what, when
+     */
+    public function viewActivityLog($id)
+    {
+        try {
+            $userId = intval($id);
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role FROM users WHERE id = ?", [$userId]);
+            if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
+
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = 30;
+            $offset = ($page - 1) * $perPage;
+
+            $logs = $this->db->fetchAll(
+                "SELECT l.*, a.name as admin_name
+                 FROM user_activity_logs_unified l
+                 LEFT JOIN users a ON a.id = l.user_id
+                 WHERE JSON_EXTRACT(l.context, '$.user_id') = ? OR l.user_id = ?
+                 ORDER BY l.created_at DESC
+                 LIMIT ? OFFSET ?",
+                [$userId, $userId, $perPage, $offset]
+            );
+
+            $countResult = $this->db->fetchOne(
+                "SELECT COUNT(*) as cnt FROM user_activity_logs_unified
+                 WHERE JSON_EXTRACT(context, '$.user_id') = ? OR user_id = ?",
+                [$userId, $userId]
+            );
+            $total = (int)($countResult['cnt'] ?? 0);
+            $totalPages = ceil($total / $perPage);
+
+            $data = [
+                'page_title' => "Activity Log: {$user['name']} - APS Dream Home",
+                'active_page' => 'users',
+                'user' => $user,
+                'logs' => $logs ?? [],
+                'total' => $total,
+                'page' => $page,
+                'total_pages' => $totalPages,
+            ];
+
+            return $this->render('admin/users/activity_log', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("View Activity Log error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load activity log');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * View all commission history for a user
+     */
+    public function viewCommissions($id)
+    {
+        try {
+            $userId = intval($id);
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, customer_id FROM users WHERE id = ?", [$userId]);
+            if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
+
+            $commissions = $this->db->fetchAll(
+                "SELECT ml.*, u.name as source_name
+                 FROM mlm_commission_ledger ml
+                 LEFT JOIN users u ON u.id = ml.source_user_id
+                 WHERE ml.beneficiary_user_id = ?
+                 ORDER BY ml.created_at DESC",
+                [$userId]
+            );
+
+            $totals = $this->db->fetchOne(
+                "SELECT commission_type, COUNT(*) as cnt, SUM(amount) as total
+                 FROM mlm_commission_ledger
+                 WHERE beneficiary_user_id = ?
+                 GROUP BY commission_type
+                 ORDER BY total DESC",
+                [$userId]
+            );
+
+            $data = [
+                'page_title' => "Commissions: {$user['name']} - APS Dream Home",
+                'active_page' => 'users',
+                'user' => $user,
+                'commissions' => $commissions ?? [],
+                'totals' => $totals ?? [],
+            ];
+
+            return $this->render('admin/users/commissions', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("View Commissions error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load commissions');
+            return $this->redirect('admin/users');
         }
     }
 }

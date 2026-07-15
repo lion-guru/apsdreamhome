@@ -7,12 +7,14 @@ $user = $user ?? [];
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm text-center">
                 <div class="card-body py-5">
-                    <div class="mb-3">
-                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px; font-size: 2.5rem;">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    </div>
-                    <h5><?php echo htmlspecialchars($user['name'] ?? ($_SESSION['associate_name'] ?? 'Associate')); ?></h5>
+                    <?php
+                    $userId = (int)($user['id'] ?? $_SESSION['user_id'] ?? 0);
+                    $photoUrl = !empty($user['profile_image']) ? BASE_URL . '/' . $user['profile_image'] : null;
+                    $userName = $user['name'] ?? ($_SESSION['associate_name'] ?? 'Associate');
+                    $size = 'lg';
+                    include __DIR__ . '/../shared/profile_photo_upload.php';
+                    ?>
+                    <h5 class="mt-3"><?php echo htmlspecialchars($user['name'] ?? ($_SESSION['associate_name'] ?? 'Associate')); ?></h5>
                     <p class="text-muted mb-1"><?php echo htmlspecialchars($user['email'] ?? ($_SESSION['associate_email'] ?? '')); ?></p>
                     <p class="text-muted mb-0"><?php echo htmlspecialchars($user['phone'] ?? ($_SESSION['associate_phone'] ?? '')); ?></p>
                     <span class="badge bg-primary mt-2"><?= __('assoc_rank_associate', [], 'Associate') ?></span>

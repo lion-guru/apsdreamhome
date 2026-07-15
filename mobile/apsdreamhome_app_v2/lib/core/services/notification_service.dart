@@ -295,6 +295,14 @@ class NotificationService {
         case 'ticket':
           goRouter.push('/support-tickets');
           break;
+        case 'welcome':
+        case 'registration_welcome':
+          goRouter.push('/profile');
+          break;
+        case 'login_alert':
+        case 'security_alert':
+          goRouter.push('/notifications-center');
+          break;
         default:
           // Default to notifications center
           goRouter.push('/notifications-center');
@@ -317,7 +325,7 @@ class NotificationService {
       '@mipmap/ic_launcher',
     );
     const initSettings = InitializationSettings(android: androidSettings);
-    await _localNotifications.initialize(initSettings);
+    await _localNotifications.initialize(settings: initSettings);
 
     const androidDetails = AndroidNotificationDetails(
       'aps_dreamhome_channel',
@@ -331,10 +339,10 @@ class NotificationService {
     const details = NotificationDetails(android: androidDetails);
 
     await _localNotifications.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      title,
-      body,
-      details,
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: title,
+      body: body,
+      notificationDetails: details,
       payload: payload != null ? jsonEncode(payload) : null,
     );
 

@@ -75,7 +75,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Event Types</h6>
-                            <h3 class="mb-0">8</h3>
+                            <h3 class="mb-0"><?= (int)($stats['event_types'] ?? 8) ?></h3>
                         </div>
                     </div>
                 </div>

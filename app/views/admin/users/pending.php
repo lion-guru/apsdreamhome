@@ -1,4 +1,4 @@
-<?php $layout = "admin/layouts/admin"; $active_page = "pending"; ?>
+<?php $layout = "admin/layouts/admin"; $active_page = "pending"; $total_pages = $total_pages ?? 1; $page = $page ?? 1; ?>
 <!-- Pending Registrations Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>

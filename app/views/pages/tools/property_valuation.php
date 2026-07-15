@@ -2,7 +2,7 @@
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-home me-2"></i><?php echo __('tool_property_valuation_title', [], 'Property Valuation Tool'); ?></h1>
-            <p class="text-white-50"><?php echo __('tool_property_valuation_subtitle', [], 'Apni property ki current market value jaanein'); ?></p>
+            <p class="text-white-50"><?php echo __('tool_property_valuation_subtitle', [], 'Know the current market value of your property'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8">

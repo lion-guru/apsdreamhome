@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../../core/utils/logger.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../data/models/user_model.dart';
@@ -6,21 +7,17 @@ import '../../data/models/user_model.dart';
 class AuthNotifier extends StateNotifier<User?> {
   final AuthRepository _repository;
 
-  AuthNotifier(this._repository, Ref ref) : super(null) {
-    // Read initial state directly (no fireImmediately — it fires during
-    // provider creation and triggers _dependents.isEmpty assertion when
-    // appRouterProvider tries to rebuild while widgets still depend on it).
-    try {
-      final initial = ref.read(authStateProvider);
-      state = initial.user;
-    } catch (_) {
-      state = null;
-    }
+  AuthNotifier(this._repository) : super(null) {
+    _loadInitialUser();
+  }
 
-    // Listen for future changes only (no fireImmediately)
-    ref.listen<AuthState>(authStateProvider, (previous, next) {
-      if (mounted) state = next.user;
-    });
+  Future<void> _loadInitialUser() async {
+    try {
+      final user = await _repository.getCurrentUser();
+      if (mounted) state = user;
+    } catch (_) {
+      if (mounted) state = null;
+    }
   }
 
   Future<String?> getToken() async {
@@ -33,7 +30,9 @@ class AuthNotifier extends StateNotifier<User?> {
       AppLogger.info('[AuthNotifier] Starting login...');
       final user = await _repository.login(email, password);
       state = user;
-      AppLogger.info('[AuthNotifier] Login successful: userId=${user.userId}, rank=${user.rank}');
+      AppLogger.info(
+        '[AuthNotifier] Login successful: userId=${user.userId}, rank=${user.rank}',
+      );
       return user;
     } catch (e, stackTrace) {
       state = null;
@@ -51,7 +50,7 @@ class AuthNotifier extends StateNotifier<User?> {
 
 final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) {
   final repository = ref.watch(authRepositoryProvider);
-  return AuthNotifier(repository, ref);
+  return AuthNotifier(repository);
 });
 
 final userDataProvider = FutureProvider<User?>((ref) async {

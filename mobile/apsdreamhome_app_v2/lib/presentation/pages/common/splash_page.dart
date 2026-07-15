@@ -1,168 +1,151 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../core/constants/app_constants.dart';
+import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/services/auth_service.dart';
+import '../../widgets/glass_card.dart';
 
-class SplashPage extends ConsumerStatefulWidget {
+class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
   @override
-  ConsumerState<SplashPage> createState() => _SplashPageState();
+  State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends ConsumerState<SplashPage>
+class _SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
-  late AnimationController _fadeController;
+  late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
   bool _navigating = false;
 
   @override
   void initState() {
     super.initState();
-
-    _fadeController = AnimationController(
+    _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1500),
     );
-    _fadeAnimation = CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeIn,
-    );
-    _fadeController.forward();
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _scaleAnimation = Tween<double>(
+      begin: 0.6,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+    _controller.forward();
 
-    Timer(const Duration(seconds: 2), () {
-      if (mounted && !_navigating) {
-        _checkAuthAndNavigate();
-      }
+    Timer(const Duration(seconds: 3), () {
+      if (mounted && !_navigating) _checkAuthAndNavigate();
     });
   }
 
   Future<void> _checkAuthAndNavigate() async {
     if (_navigating) return;
     _navigating = true;
-
     try {
-      final authService = ref.read(authServiceProvider);
-      final user = authService.currentUser;
-
-      if (user != null) {
+      final authService = AuthService();
+      await authService.refreshLoginState();
+      final isLoggedIn = authService.currentUser != null;
+      if (isLoggedIn) {
         final userData = await authService.getCurrentUserData();
-
         if (mounted) {
+          AuthBridge.instance.currentUser.value = userData;
           if (userData != null) {
-            if (userData.isCustomer) {
-              context.go('/home');
-            } else if (userData.isAssociate) {
-              context.go('/associate/dashboard');
-            } else if (userData.isAdmin) {
-              context.go('/admin/dashboard');
-            } else if (userData.isAgent) {
-              context.go('/agent/dashboard');
-            } else if (userData.isEmployee) {
-              context.go('/employee/dashboard');
-            } else {
-              context.go('/home');
-            }
+            context.go(defaultRouteForRole(userData));
           } else {
             context.go('/home');
           }
         }
       } else {
-        if (mounted) {
-          context.go('/home');
-        }
+        if (mounted) context.go('/home');
       }
     } catch (_) {
-      if (mounted) {
-        context.go('/home');
-      }
+      if (mounted) context.go('/home');
     }
   }
 
   @override
   void dispose() {
-    _fadeController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryColor,
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                AppTheme.primaryColor,
-                AppTheme.secondaryColor,
-              ],
-            ),
-          ),
+      body: MeshGradientBackground(
+        child: FadeTransition(
+          opacity: _fadeAnimation,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
+                ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Container(
+                    width: 130,
+                    height: 130,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Colors.white, Color(0xFFE8EAF6)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: Image.asset(
-                      'assets/images/aps_logo.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        Icons.home_work,
-                        size: 80,
-                        color: AppTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(32),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.accentColor.withValues(alpha: 0.3),
+                          blurRadius: 30,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(32),
+                      child: Image.asset(
+                        'assets/images/aps_logo.png',
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.home_rounded,
+                          size: 70,
+                          color: AppTheme.primaryColor,
+                        ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
-                Text(
-                  AppConstants.appName,
-                  style: AppTheme.displayLarge.copyWith(
-                    color: Colors.white,
-                    letterSpacing: 1.5,
+                const SizedBox(height: 36),
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [Colors.white, AppTheme.accentColor],
+                  ).createShader(bounds),
+                  child: Text(
+                    AppConstants.appName,
+                    style: AppTheme.displayLarge.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.5,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Text(
                   'Your Dream Home Awaits',
-                  style: AppTheme.bodyLarge.copyWith(
+                  style: AppTheme.titleLarge.copyWith(
                     color: Colors.white70,
-                    letterSpacing: 1,
+                    letterSpacing: 2,
                   ),
                 ),
-                const SizedBox(height: 60),
-                const SizedBox(
-                  width: 40,
-                  height: 40,
+                const SizedBox(height: 80),
+                SizedBox(
+                  width: 32,
+                  height: 32,
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.white,
+                      AppTheme.accentColor.withValues(alpha: 0.7),
                     ),
-                    strokeWidth: 3,
+                    strokeWidth: 2.5,
                   ),
                 ),
               ],

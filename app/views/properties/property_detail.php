@@ -280,6 +280,49 @@ min-width: auto;
 }
 </style>
 
+<!-- Smart Registration Behavior Tracking -->
+<script>
+(function() {
+    var token = getCookie('smart_reg_token');
+    if (!token) return;
+
+    function getCookie(name) {
+        var v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+        return v ? v.pop() : '';
+    }
+
+    function track(eventType, eventData) {
+        try {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '<?= BASE_URL ?>/api/smart-register/track', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                token: token,
+                event_type: eventType,
+                event_data: eventData || null,
+                page_url: window.location.href
+            }));
+        } catch(e) {}
+    }
+
+    // Track property view
+    track('property_view', {
+        property_id: <?= (int)($property['id'] ?? 0) ?>,
+        property_title: <?= json_encode($property['title'] ?? '') ?>,
+        property_type: <?= json_encode($property['property_type'] ?? '') ?>,
+        price: <?= (int)($property['price'] ?? 0) ?>,
+        city: <?= json_encode($property['city'] ?? '') ?>
+    });
+
+    // Track "Earn Money" / "List Property" clicks
+    document.querySelectorAll('[data-track-earn], [data-track-agent]').forEach(function(el) {
+        el.addEventListener('click', function() {
+            track('earn_click', { source: 'property_detail' });
+        });
+    });
+})();
+</script>
+
 //
 // PERFORMANCE OPTIMIZATION GUIDELINES
 //

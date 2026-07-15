@@ -223,4 +223,79 @@ class ConfigService
     {
         return $this->get('app');
     }
+
+    /**
+     * Validate critical configuration at startup
+     * Throws RuntimeException if critical config is missing or insecure
+     */
+    public function validateCriticalConfig(): void
+    {
+        $errors = [];
+        $warnings = [];
+        
+        // Check required database config
+        $dbConfig = $this->getDatabaseConfig();
+        if (empty($dbConfig['host']) || empty($dbConfig['database']) || empty($dbConfig['username'])) {
+            $errors[] = 'Database configuration incomplete (host, database, username required)';
+        }
+        
+        // Check for default/placeholder secrets in production
+        $appConfig = $this->getAppConfig();
+        $isProduction = ($appConfig['env'] ?? 'production') === 'production';
+        
+        if ($isProduction) {
+            // JWT Secret
+            $jwtSecret = $_ENV['JWT_SECRET'] ?? getenv('JWT_SECRET') ?? '';
+            if (empty($jwtSecret) || strlen($jwtSecret) < 32) {
+                $errors[] = 'JWT_SECRET must be set and at least 32 characters in production';
+            }
+            
+            // Encryption Key
+            $encKey = $_ENV['ENCRYPTION_KEY'] ?? getenv('ENCRYPTION_KEY') ?? '';
+            if (empty($encKey) || $encKey === 'default_key_change_me') {
+                $errors[] = 'ENCRYPTION_KEY must be set to a strong random key in production';
+            }
+            
+            // APP_KEY
+            $appKey = $_ENV['APP_KEY'] ?? getenv('APP_KEY') ?? '';
+            if (empty($appKey) || strpos($appKey, 'dev') !== false) {
+                $errors[] = 'APP_KEY must be set to a strong random key in production (run: php -r "echo base64_encode(random_bytes(32));")';
+            }
+            
+            // GA4
+            $ga4Id = $_ENV['GA4_MEASUREMENT_ID'] ?? getenv('GA4_MEASUREMENT_ID') ?? '';
+            if ($ga4Id === 'G-PLACEHOLDER' || empty($ga4Id)) {
+                $warnings[] = 'GA4_MEASUREMENT_ID not set - analytics disabled';
+            }
+            
+            // VAPID keys
+            $vapidPublic = $_ENV['VAPID_PUBLIC_KEY'] ?? getenv('VAPID_PUBLIC_KEY') ?? '';
+            $vapidPrivate = $_ENV['VAPID_PRIVATE_KEY'] ?? getenv('VAPID_PRIVATE_KEY') ?? '';
+            if (empty($vapidPublic) || empty($vapidPrivate)) {
+                $warnings[] = 'VAPID keys not set - push notifications disabled';
+            }
+        }
+        
+        // Always warn about placeholder credentials
+        $placeholders = [
+            'GOOGLE_CLIENT_SECRET' => 'GOCSPX-',
+            'TWILIO_AUTH_TOKEN' => 'your-',
+            'SMTP_PASS' => 'your-',
+        ];
+        
+        foreach ($placeholders as $key => $placeholder) {
+            $val = $_ENV[$key] ?? getenv($key) ?? '';
+            if (!empty($val) && strpos($val, $placeholder) !== false) {
+                $warnings[] = "{$key} appears to contain placeholder value";
+            }
+        }
+        
+        if (!empty($errors)) {
+            throw new \RuntimeException('Critical configuration errors: ' . implode('; ', $errors));
+        }
+        
+        if (!empty($warnings)) {
+            error_log('Config warnings: ' . implode('; ', $warnings));
+        }
+    }
 }

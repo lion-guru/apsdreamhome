@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/router/app_router.dart';
 import '../../../data/repositories/kyc_repository_provider.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -80,7 +81,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           _apiEmail = data['email']?.toString() ?? '';
           _apiPhone = data['phone']?.toString() ?? '';
           _apiRank = data['rank']?.toString() ?? data['role']?.toString() ?? '';
-          _apiAvatar = data['avatar']?.toString() ??
+          _apiAvatar =
+              data['avatar']?.toString() ??
               data['profile_image']?.toString() ??
               '';
           _apiReferralCode = data['referral_code']?.toString() ?? '';
@@ -120,18 +122,29 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Future<void> _loadBankDetails() async {
     try {
       final api = ref.read(apiServiceProvider);
-      final response = await api.get('user/bank-details');
+      final response = await api.get('user/bank-accounts');
       final data = response['data'] ?? response;
-      if (mounted && data is Map<String, dynamic>) {
+      // API returns array of accounts � grab the primary/first one
+      Map<String, dynamic>? acct;
+      if (data is List && data.isNotEmpty) {
+        acct = data.first as Map<String, dynamic>;
+      } else if (data is Map<String, dynamic>) {
+        acct = data;
+      }
+      final bankAcct = acct;
+      if (mounted && bankAcct != null) {
         setState(() {
           _hasBankDetails = true;
-          _bankName = data['bank_name']?.toString() ?? '';
-          final acct = data['account_number']?.toString() ?? '';
-          _bankAccountLast4 =
-              acct.length > 4 ? acct.substring(acct.length - 4) : acct;
+          _bankName = bankAcct['bank_name']?.toString() ?? '';
+          final rawAcct = bankAcct['account_number']?.toString() ?? '';
+          _bankAccountLast4 = rawAcct.length > 4
+              ? rawAcct.substring(rawAcct.length - 4)
+              : rawAcct;
           _bankIfsc =
-              data['ifsc_code']?.toString() ?? data['ifsc']?.toString() ?? '';
-          _bankUpi = data['upi_id']?.toString() ?? '';
+              bankAcct['ifsc_code']?.toString() ??
+              bankAcct['ifsc']?.toString() ??
+              '';
+          _bankUpi = bankAcct['upi_id']?.toString() ?? '';
         });
       }
     } catch (_) {}
@@ -146,7 +159,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         setState(() {
           _hasAddress = true;
           _addressLine1 =
-              data['address_line1']?.toString() ?? data['address']?.toString() ?? '';
+              data['address_line1']?.toString() ??
+              data['address']?.toString() ??
+              '';
           _addressCity = data['city']?.toString() ?? '';
           _addressState = data['state']?.toString() ?? '';
           _addressPincode =
@@ -157,11 +172,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         setState(() {
           _hasAddress = true;
           _addressLine1 =
-              first['address_line1']?.toString() ?? first['address']?.toString() ?? '';
+              first['address_line1']?.toString() ??
+              first['address']?.toString() ??
+              '';
           _addressCity = first['city']?.toString() ?? '';
           _addressState = first['state']?.toString() ?? '';
           _addressPincode =
-              first['pincode']?.toString() ?? first['zip_code']?.toString() ?? '';
+              first['pincode']?.toString() ??
+              first['zip_code']?.toString() ??
+              '';
         });
       }
     } catch (_) {}
@@ -170,10 +189,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Future<void> _loadKycStatus() async {
     try {
       final api = ref.read(apiServiceProvider);
-      final response = await api.get('user/kyc/status');
+      final response = await api.get('kyc/status');
       final data = response['data'] ?? response;
       if (mounted && data is Map<String, dynamic>) {
-        setState(() => _kycStatus = data['status']?.toString() ?? 'not_started');
+        setState(
+          () => _kycStatus = data['status']?.toString() ?? 'not_started',
+        );
       }
     } catch (_) {}
   }
@@ -190,11 +211,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
     try {
       final api = ref.read(apiServiceProvider);
-      await api.put('user/profile', data: {
-        'name': name,
-        'email': email,
-        'phone': phone,
-      });
+      await api.put(
+        'user/profile',
+        data: {'name': name, 'email': email, 'phone': phone},
+      );
       if (mounted) {
         setState(() {
           _apiName = name;
@@ -295,8 +315,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final displayEmail = _apiEmail.isNotEmpty ? _apiEmail : (user?.email ?? '');
     final displayPhone = _apiPhone.isNotEmpty ? _apiPhone : (user?.phone ?? '');
     final displayRank = _apiRank.isNotEmpty ? _apiRank : (user?.rank ?? '');
-    final displayAvatar =
-        _apiAvatar.isNotEmpty ? _apiAvatar : (user?.avatar);
+    final displayAvatar = _apiAvatar.isNotEmpty ? _apiAvatar : (user?.avatar);
     final displayReferral = _apiReferralCode.isNotEmpty
         ? _apiReferralCode
         : (user?.referralCode ?? '');
@@ -374,9 +393,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     onStartKyc: () => context.push('/kyc-verification'),
                   ),
                   const SizedBox(height: 20),
-                  _MoreFeaturesSection(
-                    context: context,
-                  ),
+                  _MoreFeaturesSection(context: context),
                   const SizedBox(height: 20),
                   _QuickActionsSection(
                     referralCode: displayReferral,
@@ -416,7 +433,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       _showSnackBar('Avatar updated');
       _loadProfileData();
     } catch (_) {
-      _showSnackBar('Photo upload coming soon');
+      _showSnackBar('Upload failed. Server may be unavailable.');
     }
   }
 
@@ -502,18 +519,32 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 20),
-              _BottomSheetField(controller: bankCtrl, label: 'Bank Name', icon: Icons.account_balance),
+              _BottomSheetField(
+                controller: bankCtrl,
+                label: 'Bank Name',
+                icon: Icons.account_balance,
+              ),
               const SizedBox(height: 12),
               _BottomSheetField(
                 controller: acctCtrl,
-                label: _hasBankDetails ? 'New Account (blank to keep)' : 'Account Number',
+                label: _hasBankDetails
+                    ? 'New Account (blank to keep)'
+                    : 'Account Number',
                 icon: Icons.credit_card,
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 12),
-              _BottomSheetField(controller: ifscCtrl, label: 'IFSC Code', icon: Icons.code),
+              _BottomSheetField(
+                controller: ifscCtrl,
+                label: 'IFSC Code',
+                icon: Icons.code,
+              ),
               const SizedBox(height: 12),
-              _BottomSheetField(controller: upiCtrl, label: 'UPI ID (optional)', icon: Icons.qr_code),
+              _BottomSheetField(
+                controller: upiCtrl,
+                label: 'UPI ID (optional)',
+                icon: Icons.qr_code,
+              ),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -531,9 +562,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     backgroundColor: AppTheme.primaryColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  child: const Text('Save Bank Details', style: TextStyle(fontWeight: FontWeight.w600)),
+                  child: const Text(
+                    'Save Bank Details',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
             ],
@@ -561,14 +597,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       };
       if (accountNumber.isNotEmpty) payload['account_number'] = accountNumber;
       if (upi.isNotEmpty) payload['upi_id'] = upi;
-      await api.post('user/bank-details', data: payload);
+      await api.post('user/bank-accounts', data: payload);
 
       if (mounted) {
         setState(() {
           _hasBankDetails = true;
           _bankName = bankName;
           if (accountNumber.length > 4) {
-            _bankAccountLast4 = accountNumber.substring(accountNumber.length - 4);
+            _bankAccountLast4 = accountNumber.substring(
+              accountNumber.length - 4,
+            );
           } else if (accountNumber.isNotEmpty) {
             _bankAccountLast4 = accountNumber;
           }
@@ -628,11 +666,23 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 20),
-              _BottomSheetField(controller: line1Ctrl, label: 'Address Line', icon: Icons.home_outlined),
+              _BottomSheetField(
+                controller: line1Ctrl,
+                label: 'Address Line',
+                icon: Icons.home_outlined,
+              ),
               const SizedBox(height: 12),
-              _BottomSheetField(controller: cityCtrl, label: 'City', icon: Icons.location_city),
+              _BottomSheetField(
+                controller: cityCtrl,
+                label: 'City',
+                icon: Icons.location_city,
+              ),
               const SizedBox(height: 12),
-              _BottomSheetField(controller: stateCtrl, label: 'State', icon: Icons.map_outlined),
+              _BottomSheetField(
+                controller: stateCtrl,
+                label: 'State',
+                icon: Icons.map_outlined,
+              ),
               const SizedBox(height: 12),
               _BottomSheetField(
                 controller: pinCtrl,
@@ -657,9 +707,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     backgroundColor: AppTheme.primaryColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  child: const Text('Save Address', style: TextStyle(fontWeight: FontWeight.w600)),
+                  child: const Text(
+                    'Save Address',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
             ],
@@ -681,12 +736,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     }
     try {
       final api = ref.read(apiServiceProvider);
-      await api.post('user/addresses', data: {
-        'address_line1': line1,
-        'city': city,
-        'state': state,
-        'pincode': pincode,
-      });
+      await api.post(
+        'user/addresses',
+        data: {
+          'address_line1': line1,
+          'city': city,
+          'state': state,
+          'pincode': pincode,
+        },
+      );
       if (mounted) {
         setState(() {
           _hasAddress = true;
@@ -720,18 +778,24 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: TextStyle(color: Colors.grey.shade600)),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.grey.shade600),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(ctx);
               await ref.read(authProvider.notifier).logout();
+              AuthBridge.instance.currentUser.value = null;
               if (mounted) context.go('/login');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.errorColor,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Logout'),
           ),
@@ -807,7 +871,11 @@ class _ProfileHeader extends StatelessWidget {
                             ),
                           ),
                         )
-                      : const Icon(Icons.person, size: 48, color: AppTheme.primaryColor),
+                      : const Icon(
+                          Icons.person,
+                          size: 48,
+                          color: AppTheme.primaryColor,
+                        ),
                 ),
                 GestureDetector(
                   onTap: onAvatarEdit,
@@ -817,7 +885,11 @@ class _ProfileHeader extends StatelessWidget {
                       color: AppTheme.primaryColor,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      size: 16,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
@@ -948,7 +1020,11 @@ class _StatCard extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               value,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
@@ -1005,7 +1081,11 @@ class _PersonalInfoSection extends StatelessWidget {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.person_outline, size: 20, color: AppTheme.primaryColor),
+                    Icon(
+                      Icons.person_outline,
+                      size: 20,
+                      color: AppTheme.primaryColor,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       'Personal Information',
@@ -1029,7 +1109,11 @@ class _PersonalInfoSection extends StatelessWidget {
             ),
             const Divider(height: 20),
             if (isEditing) ...[
-              _EditableField(controller: nameController, label: 'Full Name', icon: Icons.person_outline),
+              _EditableField(
+                controller: nameController,
+                label: 'Full Name',
+                icon: Icons.person_outline,
+              ),
               const SizedBox(height: 12),
               _EditableField(
                 controller: emailController,
@@ -1052,15 +1136,28 @@ class _PersonalInfoSection extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: const Text('Save Changes', style: TextStyle(fontWeight: FontWeight.w600)),
+                  child: const Text(
+                    'Save Changes',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
             ] else ...[
-              _InfoTile(icon: Icons.person_outline, label: 'Name', value: name.isNotEmpty ? name : 'Not set'),
-              _InfoTile(icon: Icons.email_outlined, label: 'Email', value: email.isNotEmpty ? email : 'Not set'),
+              _InfoTile(
+                icon: Icons.person_outline,
+                label: 'Name',
+                value: name.isNotEmpty ? name : 'Not set',
+              ),
+              _InfoTile(
+                icon: Icons.email_outlined,
+                label: 'Email',
+                value: email.isNotEmpty ? email : 'Not set',
+              ),
               _InfoTile(
                 icon: Icons.phone_outlined,
                 label: 'Phone',
@@ -1102,7 +1199,10 @@ class _EditableField extends StatelessWidget {
         ),
         filled: true,
         fillColor: Colors.grey.shade50,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
     );
   }
@@ -1113,7 +1213,11 @@ class _InfoTile extends StatelessWidget {
   final String label;
   final String value;
 
-  const _InfoTile({required this.icon, required this.label, required this.value});
+  const _InfoTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1129,7 +1233,11 @@ class _InfoTile extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade500,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -1181,7 +1289,11 @@ class _BankDetailsSection extends StatelessWidget {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.account_balance_outlined, size: 20, color: AppTheme.primaryColor),
+                    Icon(
+                      Icons.account_balance_outlined,
+                      size: 20,
+                      color: AppTheme.primaryColor,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       'Bank Details',
@@ -1202,34 +1314,61 @@ class _BankDetailsSection extends StatelessWidget {
                   ),
                   label: Text(
                     hasDetails ? 'Edit' : 'Add',
-                    style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
             ),
             const Divider(height: 20),
             if (hasDetails) ...[
-              _InfoTile(icon: Icons.account_balance, label: 'Bank Name', value: bankName),
+              _InfoTile(
+                icon: Icons.account_balance,
+                label: 'Bank Name',
+                value: bankName,
+              ),
               _InfoTile(
                 icon: Icons.credit_card,
                 label: 'Account (Last 4)',
-                value: accountLast4.isNotEmpty ? '**** $accountLast4' : 'Not set',
+                value: accountLast4.isNotEmpty
+                    ? '**** $accountLast4'
+                    : 'Not set',
               ),
-              _InfoTile(icon: Icons.code, label: 'IFSC', value: ifsc.isNotEmpty ? ifsc : 'Not set'),
-              if (upi.isNotEmpty) _InfoTile(icon: Icons.qr_code, label: 'UPI ID', value: upi),
+              _InfoTile(
+                icon: Icons.code,
+                label: 'IFSC',
+                value: ifsc.isNotEmpty ? ifsc : 'Not set',
+              ),
+              if (upi.isNotEmpty)
+                _InfoTile(icon: Icons.qr_code, label: 'UPI ID', value: upi),
             ] else ...[
               Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Column(
                     children: [
-                      Icon(Icons.account_balance_outlined, size: 40, color: Colors.grey.shade300),
+                      Icon(
+                        Icons.account_balance_outlined,
+                        size: 40,
+                        color: Colors.grey.shade300,
+                      ),
                       const SizedBox(height: 12),
-                      Text('No bank details added', style: TextStyle(fontSize: 14, color: Colors.grey.shade500)),
+                      Text(
+                        'No bank details added',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         'Add bank details for easier payouts',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade400,
+                        ),
                       ),
                     ],
                   ),
@@ -1262,10 +1401,7 @@ class _AddressSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cityState = [
-      city,
-      if (state.isNotEmpty) state,
-    ].join(', ');
+    final cityState = [city, if (state.isNotEmpty) state].join(', ');
 
     return Card(
       elevation: 1,
@@ -1280,7 +1416,11 @@ class _AddressSection extends StatelessWidget {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.location_on_outlined, size: 20, color: AppTheme.primaryColor),
+                    Icon(
+                      Icons.location_on_outlined,
+                      size: 20,
+                      color: AppTheme.primaryColor,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       'Address',
@@ -1301,7 +1441,10 @@ class _AddressSection extends StatelessWidget {
                   ),
                   label: Text(
                     hasAddress ? 'Edit' : 'Add',
-                    style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -1313,17 +1456,37 @@ class _AddressSection extends StatelessWidget {
                 label: 'Address',
                 value: line1.isNotEmpty ? line1 : 'Not set',
               ),
-              if (cityState.isNotEmpty) _InfoTile(icon: Icons.location_city, label: 'City / State', value: cityState),
-              if (pincode.isNotEmpty) _InfoTile(icon: Icons.pin_drop_outlined, label: 'Pincode', value: pincode),
+              if (cityState.isNotEmpty)
+                _InfoTile(
+                  icon: Icons.location_city,
+                  label: 'City / State',
+                  value: cityState,
+                ),
+              if (pincode.isNotEmpty)
+                _InfoTile(
+                  icon: Icons.pin_drop_outlined,
+                  label: 'Pincode',
+                  value: pincode,
+                ),
             ] else ...[
               Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Column(
                     children: [
-                      Icon(Icons.location_on_outlined, size: 40, color: Colors.grey.shade300),
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 40,
+                        color: Colors.grey.shade300,
+                      ),
                       const SizedBox(height: 12),
-                      Text('No address added', style: TextStyle(fontSize: 14, color: Colors.grey.shade500)),
+                      Text(
+                        'No address added',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1345,31 +1508,34 @@ class _KycStatusSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isVerified = status == 'verified' || status == 'approved';
-    final isPending = status == 'pending' || status == 'submitted' || status == 'under_review';
+    final isPending =
+        status == 'pending' ||
+        status == 'submitted' ||
+        status == 'under_review';
 
     final statusColor = isVerified
         ? AppTheme.successColor
         : isPending
-            ? AppTheme.warningColor
-            : Colors.grey.shade400;
+        ? AppTheme.warningColor
+        : Colors.grey.shade400;
 
     final statusIcon = isVerified
         ? Icons.verified
         : isPending
-            ? Icons.hourglass_top
-            : Icons.info_outline;
+        ? Icons.hourglass_top
+        : Icons.info_outline;
 
     final statusTitle = isVerified
         ? 'KYC Verified'
         : isPending
-            ? 'KYC Under Review'
-            : 'KYC Not Started';
+        ? 'KYC Under Review'
+        : 'KYC Not Started';
 
     final statusSubtitle = isVerified
         ? 'Your identity has been verified'
         : isPending
-            ? 'Documents are being reviewed'
-            : 'Complete KYC to unlock all features';
+        ? 'Documents are being reviewed'
+        : 'Complete KYC to unlock all features';
 
     return Card(
       elevation: 1,
@@ -1381,7 +1547,11 @@ class _KycStatusSection extends StatelessWidget {
           children: [
             const Row(
               children: [
-                Icon(Icons.verified_user_outlined, size: 20, color: AppTheme.primaryColor),
+                Icon(
+                  Icons.verified_user_outlined,
+                  size: 20,
+                  color: AppTheme.primaryColor,
+                ),
                 SizedBox(width: 8),
                 Text(
                   'KYC Verification',
@@ -1420,7 +1590,10 @@ class _KycStatusSection extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         statusSubtitle,
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade500,
+                        ),
                       ),
                     ],
                   ),
@@ -1436,7 +1609,9 @@ class _KycStatusSection extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppTheme.primaryColor,
                     side: const BorderSide(color: AppTheme.primaryColor),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   child: Text(
@@ -1460,14 +1635,121 @@ class _MoreFeaturesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      _FeatureItem(Icons.search, 'Saved Searches', '/saved-searches', AppTheme.primaryColor),
-      _FeatureItem(Icons.notifications_active, 'Property Alerts', '/property-alerts', AppTheme.warningColor),
-      _FeatureItem(Icons.compare_arrows, 'Compare Properties', '/compare', AppTheme.infoColor),
-      _FeatureItem(Icons.star_border, 'Testimonials', '/testimonials', AppTheme.accentColor),
-      _FeatureItem(Icons.language, 'Language', '/language', AppTheme.secondaryColor),
-      _FeatureItem(Icons.calculate, 'Stamp Duty Calculator', '/stamp-duty-calculator', const Color(0xFF43A047)),
-      _FeatureItem(Icons.straighten, 'Plot Converter', '/plot-converter', const Color(0xFF00897B)),
+      _FeatureItem(
+        Icons.chat_bubble_outline_rounded,
+        'Messages',
+        '/inbox',
+        AppTheme.primaryColor,
+      ),
+      _FeatureItem(
+        Icons.receipt_long_outlined,
+        'Payment History',
+        '/payment-history',
+        AppTheme.successColor,
+      ),
+      _FeatureItem(
+        Icons.search,
+        'Saved Searches',
+        '/saved-searches',
+        AppTheme.primaryColor,
+      ),
+      _FeatureItem(
+        Icons.notifications_active,
+        'Property Alerts',
+        '/property-alerts',
+        AppTheme.warningColor,
+      ),
+      _FeatureItem(
+        Icons.compare_arrows,
+        'Compare Properties',
+        '/compare',
+        AppTheme.infoColor,
+      ),
+      _FeatureItem(
+        Icons.star_border,
+        'Testimonials',
+        '/testimonials',
+        AppTheme.accentColor,
+      ),
+      _FeatureItem(
+        Icons.language,
+        'Language',
+        '/language',
+        AppTheme.secondaryColor,
+      ),
+      _FeatureItem(
+        Icons.health_and_safety_outlined,
+        'Property Insurance',
+        '/insurance',
+        const Color(0xFF4CAF50),
+      ),
+      _FeatureItem(
+        Icons.receipt_long_outlined,
+        'NACH / e-Mandate',
+        '/nach-mandate',
+        const Color(0xFF00897B),
+      ),
+      _FeatureItem(
+        Icons.auto_stories_outlined,
+        'Agreements & E-Sign',
+        '/agreements',
+        const Color(0xFF1565C0),
+      ),
+      _FeatureItem(
+        Icons.calculate,
+        'Stamp Duty Calculator',
+        '/stamp-duty-calculator',
+        const Color(0xFF43A047),
+      ),
+      _FeatureItem(
+        Icons.straighten,
+        'Plot Converter',
+        '/plot-converter',
+        const Color(0xFF00897B),
+      ),
       _FeatureItem(Icons.question_answer, 'FAQs', '/faq', AppTheme.infoColor),
+      _FeatureItem(
+        Icons.info_outline,
+        'About Us',
+        '/about',
+        AppTheme.infoColor,
+      ),
+      _FeatureItem(
+        Icons.article_outlined,
+        'Blog',
+        '/blog',
+        AppTheme.secondaryColor,
+      ),
+      _FeatureItem(
+        Icons.work_outline,
+        'Careers',
+        '/careers',
+        AppTheme.accentColor,
+      ),
+      _FeatureItem(
+        Icons.explore_outlined,
+        'How It Works',
+        '/how-it-works',
+        AppTheme.primaryColor,
+      ),
+      _FeatureItem(
+        Icons.storefront_outlined,
+        'Services Directory',
+        '/services',
+        const Color(0xFF6A1B9A),
+      ),
+      _FeatureItem(
+        Icons.build_circle_outlined,
+        'Tools Hub',
+        '/tools-hub',
+        const Color(0xFF4CAF50),
+      ),
+      _FeatureItem(
+        Icons.business_outlined,
+        'Our Projects',
+        '/projects',
+        const Color(0xFF1565C0),
+      ),
     ];
 
     return Card(
@@ -1480,7 +1762,11 @@ class _MoreFeaturesSection extends StatelessWidget {
           children: [
             const Row(
               children: [
-                Icon(Icons.grid_view_rounded, size: 20, color: AppTheme.primaryColor),
+                Icon(
+                  Icons.grid_view_rounded,
+                  size: 20,
+                  color: AppTheme.primaryColor,
+                ),
                 SizedBox(width: 8),
                 Text(
                   'More Features',
@@ -1549,7 +1835,11 @@ class _QuickActionsSection extends StatelessWidget {
           children: [
             const Row(
               children: [
-                Icon(Icons.flash_on_outlined, size: 20, color: AppTheme.primaryColor),
+                Icon(
+                  Icons.flash_on_outlined,
+                  size: 20,
+                  color: AppTheme.primaryColor,
+                ),
                 SizedBox(width: 8),
                 Text(
                   'Quick Actions',
@@ -1565,7 +1855,9 @@ class _QuickActionsSection extends StatelessWidget {
             _ActionTile(
               icon: Icons.share_outlined,
               label: 'Share Referral Code',
-              subtitle: referralCode.isNotEmpty ? referralCode : 'Your unique code',
+              subtitle: referralCode.isNotEmpty
+                  ? referralCode
+                  : 'Your unique code',
               color: AppTheme.primaryColor,
               onTap: () => onShareReferral(referralCode),
             ),
@@ -1641,11 +1933,21 @@ class _ActionTile extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right, size: 20, color: Colors.grey.shade400),
+                Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: Colors.grey.shade400,
+                ),
               ],
             ),
           ),
@@ -1678,7 +1980,9 @@ class _LogoutButton extends StatelessWidget {
         ),
         style: OutlinedButton.styleFrom(
           side: const BorderSide(color: AppTheme.errorColor, width: 1.5),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
       ),

@@ -45,9 +45,12 @@ $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
         <div class="col-lg-4 mb-4">
             <div class="card aps-cp-card">
                 <div class="card-body text-center py-4">
-                    <div class="avatar-lg mx-auto mb-3 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 32px;">
-                        <?php echo strtoupper(substr(trim($userName), 0, 1)); ?>
-                    </div>
+                    <?php
+                    $userId = (int)($user['id'] ?? $_SESSION['user_id'] ?? 0);
+                    $photoUrl = !empty($user['profile_image']) ? BASE_URL . '/' . $user['profile_image'] : null;
+                    $size = 'md';
+                    include __DIR__ . '/profile_photo_upload.php';
+                    ?>
                     <h5 class="mb-1"><?php echo htmlspecialchars($userName); ?></h5>
                     <p class="text-muted mb-2"><?php echo htmlspecialchars($userEmail); ?></p>
                     <span class="badge bg-primary mb-3"><?php echo $roleDisplayName; ?></span>

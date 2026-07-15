@@ -73,6 +73,14 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 .cw-quick-btn{background:#fff;border:1.5px solid #e0e7ff;color:#0d9488;padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:600;cursor:pointer;transition:all 0.25s ease;white-space:nowrap}
 .cw-quick-btn:hover{background:#0d9488;color:#fff;border-color:#0d9488;transform:translateY(-1px);box-shadow:0 3px 8px rgba(13,148,136,0.2)}
 
+/* ── Feedback Buttons ── */
+.cw-feedback{display:flex;gap:4px;margin-top:4px;padding-left:32px;opacity:0;transition:opacity 0.3s}
+.cw-msg:hover .cw-feedback{opacity:1}
+.cw-fb-btn{background:none;border:1.5px solid #e2e8f0;width:26px;height:26px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all 0.2s;color:#94a3b8}
+.cw-fb-btn:hover{border-color:#0d9488;color:#0d9488;background:#f0fdfa}
+.cw-fb-btn.cw-fb-active{border-color:#0d9488;color:#fff;background:#0d9488}
+.cw-fb-btn.cw-fb-active.cw-fb-down{border-color:#ef4444;background:#ef4444}
+
 /* ── Typing ── */
 .cw-typing{display:flex;gap:6px;align-self:flex-start;max-width:88%}
 .cw-typing .cw-typing-bubble{background:#fff;border-radius:14px;border-bottom-left-radius:4px;padding:10px 14px;display:flex;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
@@ -101,6 +109,22 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 .cw-lead-form button{width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:8px;padding:9px;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s}
 .cw-lead-form button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(16,185,129,0.3)}
 
+/* ── Conversation Chips (Action Flows) ── */
+.cw-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;padding-left:32px}
+.cw-chip{background:linear-gradient(135deg,#f0fdfa,#ccfbf1);border:1.5px solid #99f6e4;color:#0d9488;padding:6px 14px;border-radius:20px;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.25s ease;white-space:nowrap}
+.cw-chip:hover{background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-color:#0d9488;transform:translateY(-1px);box-shadow:0 3px 10px rgba(13,148,136,0.25)}
+.cw-chip.cw-chip-action{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#93c5fd;color:#1d4ed8}
+.cw-chip.cw-chip-action:hover{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border-color:#2563eb}
+.cw-chip.cw-chip-confirm{background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-color:#86efac;color:#15803d;font-weight:700}
+.cw-chip.cw-chip-confirm:hover{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-color:#16a34a}
+.cw-chip.cw-chip-cancel{background:#fef2f2;border-color:#fecaca;color:#dc2626}
+.cw-chip.cw-chip-cancel:hover{background:#dc2626;color:#fff;border-color:#dc2626}
+
+/* ── Progress Bar ── */
+.cw-progress{padding:4px 12px 4px 32px;font-size:0.65rem;color:#64748b;font-weight:500;letter-spacing:0.5px}
+.cw-progress-bar{height:3px;background:#e2e8f0;border-radius:3px;margin-top:4px;overflow:hidden}
+.cw-progress-fill{height:100%;background:linear-gradient(90deg,#0d9488,#10b981);border-radius:3px;transition:width 0.4s ease}
+
 /* ── WhatsApp Templates Panel ── */
 .cw-wa-templates{padding:12px;display:flex;flex-direction:column;gap:8px}
 .cw-wa-templates h5{margin:0;font-size:0.85rem;color:#1e293b;font-weight:700}
@@ -117,6 +141,38 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     .cw-quick{padding-left:0}
     .cw-lead-form{margin-left:0}
     .cw-wa-tpl{padding:8px 10px}
+}
+/* ── Mobile Improvements ── */
+@media(max-width:600px){
+    .cw-wrap{bottom:12px;right:12px}
+    .cw-toggle{width:52px;height:52px;font-size:20px}
+    .cw-box{width:calc(100vw - 24px);right:-12px;bottom:68px;max-height:calc(100dvh - 100px);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.25)}
+    .cw-header{padding:12px 14px}
+    .cw-header-avatar{width:36px;height:36px;font-size:16px}
+    .cw-header-info h4{font-size:0.85rem}
+    .cw-messages{padding:10px;gap:6px}
+    .cw-bubble{font-size:0.82rem;padding:9px 12px}
+    .cw-msg{max-width:92%}
+    .cw-input-area{padding:8px 10px}
+    .cw-input{padding:9px 14px;font-size:0.82rem}
+    .cw-send{width:38px;height:38px}
+    .cw-voice-btn{width:36px;height:36px}
+    .cw-chips{padding-left:0;gap:4px}
+    .cw-chip{padding:5px 10px;font-size:0.7rem}
+    .cw-quick-btn{padding:4px 10px;font-size:0.68rem}
+    /* Safe area for notched phones */
+    .cw-box{padding-bottom:env(safe-area-inset-bottom,0)}
+    .cw-input-area{padding-bottom:max(8px,env(safe-area-inset-bottom,0))}
+}
+/* ── Very small screens (< 360px) ── */
+@media(max-width:360px){
+    .cw-box{width:calc(100vw - 16px);right:-8px;border-radius:12px}
+    .cw-header-info h4{font-size:0.8rem}
+    .cw-bubble{font-size:0.78rem;padding:8px 10px}
+}
+/* ── Landscape mobile ── */
+@media(max-height:500px) and (orientation:landscape){
+    .cw-box{max-height:calc(100vh - 80px)}
 }
 </style>
 
@@ -144,7 +200,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 
     <!-- Toggle Buttons: Chatbot + WhatsApp side by side -->
     <div class="cw-toggles">
-        <a href="https://wa.me/<?= $waPhone ?>?text=<?= urlencode('Namaste APS Dream Homes! Mujhe property ke baare mein jaanna hai.') ?>"
+        <a href="https://wa.me/<?= $waPhone ?>?text=<?= urlencode('Hello APS Dream Homes! I would like to know about your properties.') ?>"
            target="_blank" class="cw-toggle" id="cwWhatsAppToggle"
            onclick="cwTrackWhatsApp('main_button')"
            title="Chat on WhatsApp">
@@ -160,7 +216,8 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 
 <script>
 (function(){
-    var cwSession = 'web_' + Date.now();
+    var cwSession = localStorage.getItem('cw_session') || ('web_' + Date.now());
+    localStorage.setItem('cw_session', cwSession);
     var cwOpen = false;
     var cwMsgCount = 0;
     var cwVoiceMode = false;
@@ -173,11 +230,12 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     // RBAC-AWARE GREETING
     // ═══════════════════════════════════════════════
     var cwGreetings = {
-        admin: 'Namaste Admin! 🙏 Aapke liye full system access hai.\n\n• Dashboard stats dekh sakte ho\n• Bookings, commissions, leads manage kar sakte ho\n• Koi bhi action lo — main guide karunga\n\nBataiye, kya karna hai?',
-        associate: 'Namaste! 🙏 APS Associate portal mein aapka swagat hai.\n\n• Aapke network aur commission dikhega\n• Naye leads add kar sakte ho\n• Properties share karke earning badhao!\n\nBataiye kya help chahiye?',
-        employee: 'Namaste! 🙏 Employee portal mein aapka swagat hai.\n\n• Attendance, tasks, tickets\n• Koi kaam hai toh bataiye\n\nMain help karta hoon!',
-        customer: cwUserName ? ('Namaste ' + cwUserName + '! 🙏 Aapka dashboard ready hai.\n\n• Properties dekh sakte ho\n• Booking status check karo\n• EMI details jaano\n\nBataiye, kya chahiye?') : 'Namaste! 🙏 Welcome to APS Dream Homes!\n\nMain aapki property dhoondhne mein help karunga.\n\n• Plots & Prices dekho\n• Site Visit plan karo\n• EMI Calculator use karo\n\nNeeche options choose karo ya type karo!',
-        guest: 'Namaste! 🙏 Welcome to APS Dream Homes!\n\nMain aapki property dhoondhne mein help karunga.\n\n• Plots & Prices dekho\n• Site Visit plan karo\n• EMI Calculator use karo\n\nNeeche options choose karo ya type karo!'
+        admin: cwUserName ? ('Hello ' + cwUserName + '! Admin dashboard ready.\n\n• View analytics\n• Manage leads\n• Commission reports\n• Team performance\n\nWhat would you like to do?') : 'Hello Admin! Welcome back.\n\n• View analytics\n• Manage leads\n• Commission reports\n• Team performance\n\nChoose an option or type your question!',
+        associate: cwUserName ? ('Hello ' + cwUserName + '! Ready to grow your network.\n\n• Add new leads\n• Post properties\n• Check commissions\n• View your team\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\n• Add new leads\n• Post properties\n• Check commissions\n• View your team\n\nChoose an option or type your question!',
+        agent: cwUserName ? ('Hello ' + cwUserName + '! Property agent dashboard.\n\n• Add leads\n• Post properties\n• Site visits\n• Search properties\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\n• Add leads\n• Post properties\n• Site visits\n• Search properties\n\nChoose an option or type your question!',
+        employee: cwUserName ? ('Hello ' + cwUserName + '! Employee portal ready.\n\n• My tasks\n• Attendance\n• Add leads\n• Support tickets\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\n• My tasks\n• Attendance\n• Add leads\n• Support tickets\n\nChoose an option or type your question!',
+        customer: cwUserName ? ('Hello ' + cwUserName + '! Your dashboard is ready.\n\n• Browse properties\n• Check booking status\n• View EMI details\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\nI will help you find the perfect property.\n\n• View Plots & Prices\n• Schedule a Site Visit\n• Use the EMI Calculator\n\nChoose an option below or type your question!',
+        guest: 'Hello! Welcome to APS Dream Homes!\n\nI will help you find the perfect property.\n\n• View Plots & Prices\n• Schedule a Site Visit\n• Use the EMI Calculator\n\nChoose an option below or type your question!'
     };
 
     var cwQuickOptions = {
@@ -185,33 +243,44 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             {text:'Dashboard Stats', msg:'Show me today dashboard stats'},
             {text:'Pending Bookings', msg:'Show pending bookings'},
             {text:'New Leads', msg:'Show new leads today'},
+            {text:'Add Lead', msg:'I want to add a new lead'},
+            {text:'Post Property', msg:'I want to post a property'},
             {text:'Commission Report', msg:'Show commission report'}
         ],
         associate: [
+            {text:'Add Lead', msg:'I want to add a new lead'},
+            {text:'Post Property', msg:'I want to post a property'},
             {text:'My Network', msg:'Show my network tree'},
             {text:'My Commission', msg:'Show my commission earnings'},
-            {text:'Share Property', msg:'I want to share a property'},
-            {text:'Add Lead', msg:'I want to add a new lead'}
+            {text:'Site Visit', msg:'I want to schedule a site visit'}
+        ],
+        agent: [
+            {text:'Add Lead', msg:'I want to add a new lead'},
+            {text:'Post Property', msg:'I want to post a property'},
+            {text:'Site Visit', msg:'I want to schedule a site visit'},
+            {text:'Search Property', msg:'I want to search for a property'}
         ],
         employee: [
             {text:'My Tasks', msg:'Show my pending tasks'},
             {text:'Attendance', msg:'Show my attendance'},
+            {text:'Add Lead', msg:'I want to add a new lead'},
+            {text:'Site Visit', msg:'I want to schedule a site visit'},
             {text:'Tickets', msg:'Show open support tickets'}
         ],
         customer: [
             {text:'View Properties', msg:'Show me available properties'},
-            {text:'Check Prices', msg:'What are the current prices?'},
+            {text:'Post Property', msg:'I want to post a property to sell'},
             {text:'Site Visit', msg:'I want to schedule a site visit'},
-            {text:'EMI Calculator', msg:'Show EMI options'},
             {text:'My Booking', msg:'Show my booking status'},
-            {text:'Contact', msg:'Contact details'}
+            {text:'EMI Calculator', msg:'Show EMI options'},
+            {text:'Check Prices', msg:'What are the current prices?'}
         ],
         guest: [
             {text:'View Properties', msg:'Show me available properties'},
-            {text:'Check Prices', msg:'What are the current prices?'},
             {text:'Site Visit', msg:'I want to schedule a site visit'},
+            {text:'Check Prices', msg:'What are the current prices?'},
+            {text:'Register', msg:'I want to register an account'},
             {text:'Home Loan', msg:'Need home loan help'},
-            {text:'Contact', msg:'Contact details'},
             {text:'Talk to Human', msg:'__human__'}
         ]
     };
@@ -220,11 +289,42 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     // INIT GREETING
     // ═══════════════════════════════════════════════
     function cwInitGreeting() {
-        var msgs = document.getElementById('cwMessages');
-        var greeting = cwGreetings[cwUserRole] || cwGreetings.guest;
-        cwAddMsg(greeting, 'bot');
+        // Try to load conversation history first
+        cwLoadHistory();
+    }
 
-        var quicks = cwQuickOptions[cwUserRole] || cwQuickOptions.guest;
+    function cwLoadHistory() {
+        fetch('<?= BASE_URL ?>/api/ai/history?session_id=' + encodeURIComponent(cwSession))
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+            if (data.success && data.history && data.history.length > 0) {
+                // Render existing messages
+                data.history.forEach(function(msg) {
+                    if (msg.message) cwAddMsg(msg.message, 'user');
+                    if (msg.response) cwAddMsg(msg.response, 'bot');
+                });
+                // Still show quick options after history
+                var quicks = cwQuickOptions[cwUserRole] || cwQuickOptions.guest;
+                cwRenderQuickReplies(quicks);
+            } else {
+                // No history — show fresh greeting
+                var greeting = cwGreetings[cwUserRole] || cwGreetings.guest;
+                cwAddMsg(greeting, 'bot');
+                var quicks = cwQuickOptions[cwUserRole] || cwQuickOptions.guest;
+                cwRenderQuickReplies(quicks);
+            }
+        })
+        .catch(function(){
+            // Fallback to fresh greeting on error
+            var greeting = cwGreetings[cwUserRole] || cwGreetings.guest;
+            cwAddMsg(greeting, 'bot');
+            var quicks = cwQuickOptions[cwUserRole] || cwQuickOptions.guest;
+            cwRenderQuickReplies(quicks);
+        });
+    }
+
+    function cwRenderQuickReplies(quicks) {
+        var msgs = document.getElementById('cwMessages');
         var qrDiv = document.createElement('div');
         qrDiv.className = 'cw-quick';
         qrDiv.id = 'cwQuickReplies';
@@ -240,6 +340,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             qrDiv.appendChild(btn);
         });
         msgs.appendChild(qrDiv);
+        msgs.scrollTop = msgs.scrollHeight;
     }
     cwInitGreeting();
 
@@ -333,10 +434,10 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         document.getElementById('cwSendBtn').disabled = true;
         cwShowTyping();
 
-        fetch('<?= BASE_URL ?>/api/gemini/chat', {
+        fetch('<?= BASE_URL ?>/api/ai/chat', {
             method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: 'message=' + encodeURIComponent(msg) + '&session_id=' + cwSession + '&role=' + encodeURIComponent(cwUserRole) + '&user_id=' + encodeURIComponent(window.NOTIFY_USER && window.NOTIFY_USER.id ? window.NOTIFY_USER.id : '')
+            headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
+            body: JSON.stringify({message: msg, session_id: cwSession, role: cwUserRole, user_id: window.NOTIFY_USER && window.NOTIFY_USER.id ? window.NOTIFY_USER.id : ''})
         })
         .then(function(r){ return r.json(); })
         .then(function(data){
@@ -345,6 +446,18 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             var reply = (data.success && data.response) ? data.response : null;
             if (reply) {
                 cwAddMsg(reply, 'bot');
+                // Render conversation chips + progress from conversation_state
+                var cs = data.conversation_state;
+                if (cs) {
+                    // Render progress bar
+                    if (cs.step !== null && cs.step !== 'done' && cs.step !== 'confirm' && cs.step_count > 0) {
+                        cwRenderProgress(cs.step, cs.step_count);
+                    }
+                    // Render suggestion chips
+                    if (cs.suggestions && cs.suggestions.length > 0) {
+                        cwRenderChips(cs.suggestions, cs.step, cs.action);
+                    }
+                }
                 if (cwVoiceMode) cwSpeak(reply);
             } else {
                 cwFallback(msg);
@@ -374,11 +487,11 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         cwShowTyping();
         setTimeout(function(){
             cwHideTyping();
-            cwAddMsg('Kripya apna Naam aur Mobile Number darj karein. Hamare executive aapse turant sampark karenge.\n\nYa seedha WhatsApp karein: https://wa.me/<?= $waPhone ?>', 'bot');
+            cwAddMsg('Thank you! Our team has received your details. We will contact you shortly.\n\nOr chat directly on WhatsApp: https://wa.me/<?= $waPhone ?>', 'bot');
             var c = document.getElementById('cwMessages');
             var f = document.createElement('div');
             f.className = 'cw-lead-form';
-            f.innerHTML = '<input type="text" id="cwLeadName" placeholder="Aapka Naam" value="' + (cwUserName||'') + '"><input type="tel" id="cwLeadPhone" placeholder="Mobile Number"><button onclick="cwSubmitLead()">Request Callback</button>';
+            f.innerHTML = '<input type="text" id="cwLeadName" placeholder="Your Name" value="' + (cwUserName||'') + '"><input type="tel" id="cwLeadPhone" placeholder="Mobile Number"><button onclick="cwSubmitLead()">Request Callback</button>';
             c.appendChild(f);
             c.scrollTop = c.scrollHeight;
         }, 700);
@@ -397,7 +510,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         fd.append('subject','general');fd.append('message','Callback requested via AI Chatbot');
         fd.append('csrf_token','<?= $_SESSION['csrf_token'] ?? '' ?>');
         fetch('<?= BASE_URL ?>/contact',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
-        .then(function(){cwHideTyping();cwAddMsg('Dhanyawad '+name+'! Aapki details hamari team ko bhej di gayi hain. Ham jald hi aapse sampark karenge.','bot');})
+        .then(function(){cwHideTyping();cwAddMsg('Thank you '+name+'! Your details have been sent to our team. We will contact you soon.','bot');})
         .catch(function(){cwHideTyping();cwAddMsg('Details saved! We will contact you soon.','bot');});
     };
 
@@ -427,11 +540,11 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         panel.innerHTML = '<h5><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp Templates</h5>';
 
         var templates = [
-            {icon:'fa-home', title:'Property Inquiry', msg:'Namaste! Mujhe plots ke baare mein jaanna hai. Kya available hain?', key:'property'},
-            {icon:'fa-tag', title:'Price Check', msg:'Hi! APS Dream Homes ke current rates kya hain?', key:'price'},
-            {icon:'fa-calendar', title:'Site Visit', msg:'Namaste! Mujhe site visit book karna hai. Kab aa sakta hoon?', key:'visit'},
-            {icon:'fa-credit-card', title:'EMI Details', msg:'Hi! EMI options kya hain? Monthly kitna hoga?', key:'emi'},
-            {icon:'fa-handshake', title:'Booking', msg:'Namaste! Mujhe plot book karna hai. Kya process hai?', key:'booking'},
+            {icon:'fa-home', title:'Property Inquiry', msg:'Hello! I would like to know about available plots. Are there any available?', key:'property'},
+            {icon:'fa-tag', title:'Price Check', msg:'Hi! What are the current rates at APS Dream Homes?', key:'price'},
+            {icon:'fa-calendar', title:'Site Visit', msg:'Hello! I would like to schedule a site visit. When can I come?', key:'visit'},
+            {icon:'fa-credit-card', title:'EMI Details', msg:'Hi! What are the EMI options? How much would the monthly payment be?', key:'emi'},
+            {icon:'fa-handshake', title:'Booking', msg:'Hello! I would like to book a plot. What is the process?', key:'booking'},
         ];
 
         templates.forEach(function(t) {
@@ -455,13 +568,13 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         setTimeout(function(){
             cwHideTyping();
             var m = userMsg.toLowerCase();
-            var r = 'Aapki requirement samajh li gayi hai. Behtar jankari ke liye call karein: <?= $cPhone ?> ya WhatsApp karein!';
-            if(m.indexOf('hi')!==-1||m.indexOf('hello')!==-1||m.indexOf('namaste')!==-1) r='Namaste! Main APS Dream Home ki taraf se aapki kya madad kar sakta hoon?';
-            else if(m.indexOf('price')!==-1||m.indexOf('rate')!==-1||m.indexOf('kitne')!==-1) r='Hamare premium plots Rs 5.5 Lakh se shuru hote hain. Aapka budget kitna hai?';
-            else if(m.indexOf('location')!==-1||m.indexOf('kaha')!==-1) r='Hamare projects Gorakhpur mein available hain. Aapko kis area mein property chahiye?';
-            else if(m.indexOf('loan')!==-1||m.indexOf('emi')!==-1) r='Haan, hum home loan aur EMI ki suvidha dete hain. Kya aap EMI details dekhna chahte hain?';
-            else if(m.indexOf('visit')!==-1||m.indexOf('site')!==-1) r='Site visit bilkul free hai! Humare number pe call karein ya WhatsApp karein: <?= $cPhone ?>';
-            else if(m.indexOf('buy')!==-1||m.indexOf('plot')!==-1) r='Badiya! Humare paas residential plots hain Gorakhpur mein. Budget bataiye, best options dikhata hoon!';
+            var r = 'Your requirement has been noted. For better assistance, call us at: <?= $cPhone ?> or WhatsApp us!';
+            if(m.indexOf('hi')!==-1||m.indexOf('hello')!==-1||m.indexOf('namaste')!==-1) r='Hello! How can I assist you with APS Dream Homes?';
+            else if(m.indexOf('price')!==-1||m.indexOf('rate')!==-1||m.indexOf('kitne')!==-1) r='Our premium plots start from Rs 5.5 Lakh. What is your budget?';
+            else if(m.indexOf('location')!==-1||m.indexOf('kaha')!==-1) r='Our projects are available in Gorakhpur. Which area are you looking for?';
+            else if(m.indexOf('loan')!==-1||m.indexOf('emi')!==-1) r='Yes, we offer home loan and EMI facilities. Would you like to see EMI details?';
+            else if(m.indexOf('visit')!==-1||m.indexOf('site')!==-1) r='Site visits are completely free! Call us or WhatsApp at: <?= $cPhone ?>';
+            else if(m.indexOf('buy')!==-1||m.indexOf('plot')!==-1) r='Great! We have residential plots in Gorakhpur. Tell us your budget and I will show you the best options!';
             else if(m.indexOf('whatsapp')!==-1) { cwShowWATemplates(); return; }
             cwAddMsg(r,'bot');
             if (cwVoiceMode) cwSpeak(r);
@@ -469,14 +582,74 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     }
 
     // ═══════════════════════════════════════════════
+    // CONVERSATION CHIPS + PROGRESS (Action Flows)
+    // ═══════════════════════════════════════════════
+    function cwRenderChips(suggestions, step, action) {
+        var c = document.getElementById('cwMessages');
+        // Remove old chips
+        var old = c.querySelectorAll('.cw-chips');
+        old.forEach(function(el){ el.remove(); });
+
+        var div = document.createElement('div');
+        div.className = 'cw-chips';
+
+        suggestions.forEach(function(s) {
+            var btn = document.createElement('button');
+            btn.className = 'cw-chip';
+            // Style based on chip type
+            if (s.indexOf('✅') !== -1 || s.indexOf('Confirm') !== -1) btn.className += ' cw-chip-confirm';
+            else if (s.indexOf('❌') !== -1 || s.indexOf('Cancel') !== -1) btn.className += ' cw-chip-cancel';
+            else if (s.indexOf('✏️') !== -1 || s.indexOf('Edit') !== -1) btn.className += ' cw-chip-action';
+            btn.textContent = s;
+            btn.onclick = function() {
+                document.getElementById('cwInput').value = s;
+                cwSend();
+            };
+            div.appendChild(btn);
+        });
+
+        c.appendChild(div);
+        c.scrollTop = c.scrollHeight;
+    }
+
+    function cwRenderProgress(currentStep, totalSteps) {
+        var c = document.getElementById('cwMessages');
+        // Remove old progress
+        var old = c.querySelectorAll('.cw-progress');
+        old.forEach(function(el){ el.remove(); });
+
+        if (totalSteps <= 1) return;
+
+        var pct = Math.round((currentStep / totalSteps) * 100);
+        var div = document.createElement('div');
+        div.className = 'cw-progress';
+        div.innerHTML = 'Step ' + currentStep + ' of ' + totalSteps +
+            '<div class="cw-progress-bar"><div class="cw-progress-fill" style="width:' + pct + '%"></div></div>';
+
+        c.appendChild(div);
+        c.scrollTop = c.scrollHeight;
+    }
+
+    // ═══════════════════════════════════════════════
     // HELPER FUNCTIONS
     // ═══════════════════════════════════════════════
-    function cwAddMsg(text, type){
+    function cwLinkify(t){
+        return t.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" style="color:#0d9488;text-decoration:underline;word-break:break-all">$1</a>');
+    }
+    function cwAddMsg(text, type, msgId){
         var c = document.getElementById('cwMessages');
         var d = document.createElement('div');
         d.className = 'cw-msg cw-' + type;
         var av = type==='bot' ? '<div class="cw-msg-avatar"><i class="fas fa-robot"></i></div>' : '<div class="cw-msg-avatar"><i class="fas fa-user"></i></div>';
-        d.innerHTML = av + '<div class="cw-bubble">' + text.replace(/\n/g,'<br>') + '</div>';
+        var fb = '';
+        if (type === 'bot') {
+            var uid = 'fb_' + Math.random().toString(36).substr(2,6);
+            fb = '<div class="cw-feedback" id="' + uid + '">'
+                + '<button class="cw-fb-btn" title="Helpful" onclick="cwFeedback(this,1)"><i class="fas fa-thumbs-up"></i></button>'
+                + '<button class="cw-fb-btn cw-fb-down" title="Not helpful" onclick="cwFeedback(this,0)"><i class="fas fa-thumbs-down"></i></button>'
+                + '</div>';
+        }
+        d.innerHTML = av + '<div class="cw-bubble">' + cwLinkify(text.replace(/\n/g,'<br>')) + '</div>' + fb;
         c.appendChild(d);
         c.scrollTop = c.scrollHeight;
         cwMsgCount++;
@@ -501,5 +674,25 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         var t = document.getElementById('cwTyping');
         if(t) t.remove();
     }
+
+    // ═══════════════════════════════════════════════
+    // FEEDBACK (Thumbs Up/Down)
+    // ═══════════════════════════════════════════════
+    window.cwFeedback = function(btn, positive) {
+        var container = btn.closest('.cw-feedback');
+        if (!container) return;
+        // Mark active
+        var buttons = container.querySelectorAll('.cw-fb-btn');
+        buttons.forEach(function(b){ b.classList.remove('cw-fb-active'); });
+        btn.classList.add('cw-fb-active');
+        // Send feedback
+        try {
+            fetch('<?= BASE_URL ?>/api/ai/feedback', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({session_id: cwSession, positive: positive === 1})
+            }).catch(function(){});
+        } catch(e) {}
+    };
 })();
 </script>

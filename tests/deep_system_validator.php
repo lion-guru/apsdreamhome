@@ -23,7 +23,7 @@ $services = [
     'App\Services\Queue\QueueService',
     'App\Services\Map\MapService',
     'App\Services\I18n\LocalizationService',
-    'App\Services\Notification\NotificationCenterService',
+    'App\Services\NotificationService',
     'App\Services\Analytics\AdvancedAnalyticsService',
     'App\Services\Scheduler\TaskSchedulerService',
     'App\Services\File\FileManagerService',

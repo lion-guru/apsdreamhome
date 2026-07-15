@@ -45,7 +45,9 @@ final documentsProvider = FutureProvider<List<AppDocument>>((ref) async {
   final response = await api.get('user/documents');
   final data = response['data'];
   if (data is List) {
-    return data.map((json) => AppDocument.fromJson(json as Map<String, dynamic>)).toList();
+    return data
+        .map((json) => AppDocument.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
   return [];
 });
@@ -67,7 +69,9 @@ class DocumentsPage extends ConsumerWidget {
             icon: const Icon(Icons.upload_file),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Upload feature coming soon')),
+                const SnackBar(
+                  content: Text('Upload documents via the web portal'),
+                ),
               );
             },
             tooltip: 'Upload Document',
@@ -100,9 +104,15 @@ class DocumentsPage extends ConsumerWidget {
         children: [
           Icon(Icons.folder_open, size: 64, color: Colors.grey.shade400),
           const SizedBox(height: 16),
-          Text('No documents yet', style: TextStyle(color: Colors.grey.shade600, fontSize: 18)),
+          Text(
+            'No documents yet',
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 18),
+          ),
           const SizedBox(height: 8),
-          Text('Upload your KYC and booking documents here.', style: TextStyle(color: Colors.grey.shade500)),
+          Text(
+            'Upload your KYC and booking documents here.',
+            style: TextStyle(color: Colors.grey.shade500),
+          ),
         ],
       ),
     );
@@ -127,10 +137,17 @@ class DocumentsPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(bottom: 8, top: sectionIndex == 0 ? 0 : 16),
+              padding: EdgeInsets.only(
+                bottom: 8,
+                top: sectionIndex == 0 ? 0 : 16,
+              ),
               child: Text(
                 category,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryColor,
+                ),
               ),
             ),
             ...categoryDocs.map((doc) => _buildDocumentCard(doc)),
@@ -150,7 +167,9 @@ class DocumentsPage extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6),
+        ],
       ),
       child: Row(
         children: [
@@ -168,7 +187,13 @@ class DocumentsPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(doc.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                Text(
+                  doc.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
                 const SizedBox(height: 2),
                 if (doc.uploadedAt != null)
                   Text(
@@ -210,7 +235,11 @@ class DocumentsPage extends ConsumerWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: color),
+        style: TextStyle(
+          fontSize: 9,
+          fontWeight: FontWeight.bold,
+          color: color,
+        ),
       ),
     );
   }

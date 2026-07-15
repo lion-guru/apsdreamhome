@@ -712,11 +712,14 @@ class MLMCommissionEngine
             }
 
             // Insert each entry into mlm_commission_ledger
+            $planSnapshot = $this->getActivePlanSnapshot();
             $ins = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
-                    (beneficiary_user_id, source_user_id, commission_type, level, amount, status, property_id, sale_amount, commission_percentage, notes, booking_id, receipt_id, hold_until, created_at)
+                    (beneficiary_user_id, source_user_id, commission_type, level, amount, status, property_id, sale_amount, commission_percentage, notes, booking_id, receipt_id, hold_until, created_at,
+                     plan_id, plan_version, plan_snapshot, calculation_engine)
                 VALUES
-                    (?, ?, ?, ?, ?, 'pending', NULL, ?, ?, ?, ?, 0, DATE_ADD(NOW(), INTERVAL 30 DAY), NOW())
+                    (?, ?, ?, ?, ?, 'pending', NULL, ?, ?, ?, ?, 0, DATE_ADD(NOW(), INTERVAL 30 DAY), NOW(),
+                     ?, ?, ?, 'legacy')
             ");
             foreach ($entries as &$e) {
                 try {
@@ -730,6 +733,9 @@ class MLMCommissionEngine
                         $e['pct'],
                         'Module 4 auto-calc from booking #' . $bookingId,
                         $bookingId,
+                        $planSnapshot['plan_id'] ?? null,
+                        $planSnapshot['plan_version'] ?? null,
+                        $planSnapshot ? json_encode($planSnapshot) : null,
                     ]);
                     $e['id'] = (int)$this->db->lastInsertId();
                     $result['created_ids'][] = $e['id'];
@@ -815,6 +821,7 @@ class MLMCommissionEngine
             return;
         }
         try {
+            $planSnapshot = $this->getActivePlanSnapshot();
             $enabled = $this->db->query("SELECT setting_value FROM mlm_settings WHERE setting_key = 'rank_bonus_enabled'")->fetchColumn();
             if ($enabled !== '1') {
                 return;
@@ -848,13 +855,18 @@ class MLMCommissionEngine
 
             $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
-                    (beneficiary_user_id, source_user_id, commission_type, amount, status, notes, booking_id, created_at)
-                VALUES (?, ?, 'rank_bonus', ?, 'pending', ?, NULL, NOW())
+                    (beneficiary_user_id, source_user_id, commission_type, amount, status, notes, booking_id, created_at,
+                     plan_id, plan_version, plan_snapshot, calculation_engine)
+                VALUES (?, ?, 'rank_bonus', ?, 'pending', ?, NULL, NOW(),
+                        ?, ?, ?, 'legacy')
             ")->execute([
                 $userId,
                 $userId,
                 $bonus,
                 "Rank promotion bonus: $fromRank → $toRank",
+                ($planSnapshot['plan_id'] ?? null),
+                ($planSnapshot['plan_version'] ?? null),
+                ($planSnapshot ? json_encode($planSnapshot) : null),
             ]);
         } catch (\Throwable $e) {
             error_log("[MLMCommissionEngine] awardRankBonus() error: " . $e->getMessage());
@@ -1452,6 +1464,55 @@ class MLMCommissionEngine
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return [];
+        }
+    }
+
+    /**
+     * Get active plan snapshot for ledger entries.
+     * Ensures past commission entries are NEVER affected by future plan changes.
+     */
+    public function getActivePlanSnapshot(): ?array
+    {
+        if (!$this->db) return null;
+        try {
+            $plan = $this->db->query("
+                SELECT p.id, p.plan_name, p.plan_code, p.version, p.plan_type, p.effective_date,
+                       p.global_cap_pct, p.track_a_pct, p.track_b_pct, p.track_c_pct,
+                       p.royalty_pool_pct, p.same_level_override_gen1, p.same_level_override_gen2
+                FROM mlm_commission_plans p
+                WHERE p.status = 'active'
+                ORDER BY p.version DESC
+                LIMIT 1
+            ")->fetch(PDO::FETCH_ASSOC);
+
+            if (!$plan) return null;
+
+            $levels = $this->db->query("
+                SELECT level_name, direct_commission, team_commission, level_bonus,
+                       matching_bonus, leadership_bonus, performance_bonus, monthly_target
+                FROM mlm_plan_levels WHERE plan_id = {$plan['id']} ORDER BY level_order
+            ")->fetchAll(PDO::FETCH_ASSOC);
+
+            return [
+                'plan_id' => (int)$plan['id'],
+                'plan_name' => $plan['plan_name'],
+                'plan_code' => $plan['plan_code'],
+                'plan_version' => (int)$plan['version'],
+                'plan_type' => $plan['plan_type'],
+                'effective_date' => $plan['effective_date'],
+                'global_cap_pct' => (float)$plan['global_cap_pct'],
+                'track_a_pct' => (float)$plan['track_a_pct'],
+                'track_b_pct' => (float)$plan['track_b_pct'],
+                'track_c_pct' => (float)$plan['track_c_pct'],
+                'royalty_pool_pct' => (float)$plan['royalty_pool_pct'],
+                'same_level_override_gen1' => (float)$plan['same_level_override_gen1'],
+                'same_level_override_gen2' => (float)$plan['same_level_override_gen2'],
+                'levels' => $levels,
+                'snapshot_taken_at' => date('Y-m-d H:i:s'),
+            ];
+        } catch (Exception $e) {
+            error_log("[MLMCommissionEngine] getActivePlanSnapshot FAILED: " . $e->getMessage());
+            return null;
         }
     }
 }

@@ -289,6 +289,214 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
     }
 
     /**
+     * GET /api/v2/mobile/admin/dashboard-stats
+     */
+    public function dashboardStats()
+    {
+        try {
+            $revenue = $this->db->fetchOne("SELECT COALESCE(SUM(total_amount),0) as total FROM bookings WHERE status!='cancelled'");
+            $bookings = $this->db->fetchOne("SELECT COUNT(*) as total FROM bookings WHERE status!='cancelled'");
+            $users = $this->db->fetchOne("SELECT COUNT(*) as total FROM users WHERE status='active'");
+            $leads = $this->db->fetchOne("SELECT COUNT(*) as total FROM leads");
+            return $this->jsonResponse(['success'=>true,'data'=>[
+                'total_revenue' => (float)($revenue['total']??0),
+                'total_bookings' => (int)($bookings['total']??0),
+                'total_users' => (int)($users['total']??0),
+                'total_leads' => (int)($leads['total']??0),
+            ]]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse(['success'=>false,'error'=>$e->getMessage()],500);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/admin/sales-trend
+     */
+    public function salesTrend()
+    {
+        try {
+            $data = $this->db->fetchAll(
+                "SELECT DATE_FORMAT(created_at,'%Y-%m') as month, COUNT(*) as count, COALESCE(SUM(total_amount),0) as revenue
+                 FROM bookings WHERE status!='cancelled' AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                 GROUP BY DATE_FORMAT(created_at,'%Y-%m') ORDER BY month ASC"
+            );
+            return $this->jsonResponse(['success'=>true,'data'=>$data?:[]]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>$e->getMessage()],500);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/admin/top-associates
+     */
+    public function topAssociates()
+    {
+        try {
+            $data = $this->db->fetchAll(
+                "SELECT u.id, u.name, u.email, u.phone, COUNT(b.id) as bookings, COALESCE(SUM(b.total_amount),0) as revenue
+                 FROM users u INNER JOIN bookings b ON u.id = b.user_id
+                 WHERE b.status!='cancelled' GROUP BY u.id ORDER BY revenue DESC LIMIT 10"
+            );
+            return $this->jsonResponse(['success'=>true,'data'=>$data?:[]]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>$e->getMessage()],500);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/admin/colony-performance
+     */
+    public function colonyPerformance()
+    {
+        try {
+            $data = $this->db->fetchAll(
+                "SELECT c.id, c.name, COUNT(p.id) as total_plots,
+                        SUM(CASE WHEN p.status='booked' THEN 1 ELSE 0 END) as booked_plots,
+                        SUM(CASE WHEN p.status='available' THEN 1 ELSE 0 END) as available_plots
+                 FROM colonies c LEFT JOIN plots p ON c.id = p.colony_id
+                 GROUP BY c.id ORDER BY c.name ASC"
+            );
+            return $this->jsonResponse(['success'=>true,'data'=>$data?:[]]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>$e->getMessage()],500);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/admin/emi-collection
+     * Returns today's dues, stats, history, and earnings for field agents.
+     */
+    public function emiCollection()
+    {
+        try {
+            $userId = $_GET['user_id'] ?? $_SESSION['user_id'] ?? 0;
+            $today = date('Y-m-d');
+
+            // Today's dues (individual items with customer info)
+            $todayDues = $this->db->fetchAll(
+                "SELECT bps.id, bps.booking_id, bps.installment_no, bps.due_date, bps.amount as emi_amount,
+                        bps.status, bps.paid_amount, bps.accrued_penalty, bps.late_fee,
+                        bps.remarks, bps.opening_balance, bps.closing_balance,
+                        u.id as customer_id, u.name as customer_name, u.phone,
+                        p.plot_number, c.name as colony_name,
+                        DATEDIFF(CURDATE(), bps.due_date) as days_overdue
+                 FROM booking_payment_schedules bps
+                 JOIN bookings b ON bps.booking_id = b.id
+                 LEFT JOIN users u ON b.user_id = u.id
+                 LEFT JOIN plots p ON b.plot_id = p.id
+                 LEFT JOIN colonies c ON b.colony_id = c.id
+                 WHERE bps.status IN ('pending','overdue')
+                 ORDER BY
+                    CASE WHEN bps.due_date < CURDATE() THEN 0 ELSE 1 END,
+                    bps.due_date ASC
+                 LIMIT 50"
+            );
+
+            // Today's stats
+            $todayStats = $this->db->fetchOne(
+                "SELECT
+                    COUNT(*) as total_due,
+                    COALESCE(SUM(CASE WHEN due_date < CURDATE() THEN 1 ELSE 0 END), 0) as overdue_count,
+                    COALESCE(SUM(CASE WHEN due_date = CURDATE() THEN 1 ELSE 0 END), 0) as due_today,
+                    COALESCE(SUM(amount), 0) as total_amount_due
+                 FROM booking_payment_schedules
+                 WHERE status IN ('pending','overdue')"
+            );
+
+            // Today's collections (paid today)
+            $todayCollections = $this->db->fetchAll(
+                "SELECT bps.id, bps.booking_id, bps.amount, bps.paid_amount,
+                        bps.paid_date, bps.late_fee, bps.remarks,
+                        u.name as customer_name, p.plot_number, c.name as colony_name
+                 FROM booking_payment_schedules bps
+                 JOIN bookings b ON bps.booking_id = b.id
+                 LEFT JOIN users u ON b.user_id = u.id
+                 LEFT JOIN plots p ON b.plot_id = p.id
+                 LEFT JOIN colonies c ON b.colony_id = c.id
+                 WHERE bps.paid_date = CURDATE()
+                 ORDER BY bps.paid_date DESC
+                 LIMIT 20"
+            );
+
+            // Collection history (last 30 days)
+            $history = $this->db->fetchAll(
+                "SELECT DATE(paid_date) as date, COUNT(*) as count,
+                        COALESCE(SUM(paid_amount), 0) as collected
+                 FROM booking_payment_schedules
+                 WHERE paid_date IS NOT NULL AND paid_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                 GROUP BY DATE(paid_date)
+                 ORDER BY date DESC"
+            );
+
+            // Earnings summary (current month)
+            $earnings = $this->db->fetchOne(
+                "SELECT
+                    COALESCE(SUM(CASE WHEN status='paid' THEN amount ELSE 0 END), 0) as total_collected,
+                    COUNT(CASE WHEN status='paid' THEN 1 END) as total_paid_count,
+                    COALESCE(SUM(late_fee), 0) as total_late_fees
+                 FROM booking_payment_schedules
+                 WHERE MONTH(due_date) = MONTH(CURDATE()) AND YEAR(due_date) = YEAR(CURDATE())"
+            );
+
+            return $this->jsonResponse(['success' => true, 'data' => [
+                'today_dues' => $todayDues ?: [],
+                'today_stats' => $todayStats ?: [
+                    'total_due' => 0, 'overdue_count' => 0,
+                    'due_today' => 0, 'total_amount_due' => 0,
+                ],
+                'today_collections' => $todayCollections ?: [],
+                'history' => $history ?: [],
+                'earnings' => $earnings ?: [
+                    'total_collected' => 0, 'total_paid_count' => 0, 'total_late_fees' => 0,
+                ],
+            ]]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse(['success' => false, 'data' => [], 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/admin/lead-conversion
+     */
+    public function leadConversion()
+    {
+        try {
+            $total = $this->db->fetchOne("SELECT COUNT(*) as count FROM leads");
+            $won = $this->db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE status='closed_won'");
+            $lost = $this->db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE status='closed_lost'");
+            $totalCount = (int)($total['count']??0);
+            $wonCount = (int)($won['count']??0);
+            $rate = $totalCount > 0 ? round(($wonCount / $totalCount) * 100, 1) : 0;
+            return $this->jsonResponse(['success'=>true,'data'=>[
+                'total_leads' => $totalCount,
+                'won' => $wonCount,
+                'lost' => (int)($lost['count']??0),
+                'conversion_rate' => $rate,
+                'pipeline' => $this->db->fetchAll("SELECT status, COUNT(*) as count FROM leads GROUP BY status"),
+            ]]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>$e->getMessage()],500);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/admin/daily-sales
+     */
+    public function dailySales()
+    {
+        try {
+            $data = $this->db->fetchAll(
+                "SELECT DATE(created_at) as date, COUNT(*) as count, COALESCE(SUM(total_amount),0) as revenue
+                 FROM bookings WHERE status!='cancelled' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                 GROUP BY DATE(created_at) ORDER BY date ASC"
+            );
+            return $this->jsonResponse(['success'=>true,'data'=>$data?:[]]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse(['success'=>false,'data'=>[],'error'=>$e->getMessage()],500);
+        }
+    }
+
+    /**
      * GET /api/v2/mobile/admin/telecaller-dashboard
      * Returns telecaller dashboard data: assigned leads, today's stats, earnings.
      */

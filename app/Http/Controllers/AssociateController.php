@@ -1125,17 +1125,58 @@ class AssociateController extends BaseController
     }
 
     /**
-     * View profile
+     * View & Update profile (GET = view, POST = update)
      */
     public function profile()
     {
         $this->requireAuth();
         $this->layout = 'layouts/associate';
 
-        // Get associate data from session
         $userId = $_SESSION['user_id'] ?? null;
-        $user = [];
 
+        // Handle POST — profile update
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!$userId) {
+                $_SESSION['error'] = 'Session expired';
+                header('Location: ' . BASE_URL . '/associate/login');
+                exit;
+            }
+
+            $name = trim($_POST['name'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $address = trim($_POST['address'] ?? '');
+
+            if (empty($name)) {
+                $_SESSION['error'] = 'Name is required';
+                header('Location: ' . BASE_URL . '/associate/profile');
+                exit;
+            }
+
+            try {
+                $svc = new \App\Services\UserRegistrationService();
+                $result = $svc->updateProfile($userId, [
+                    'name' => $name,
+                    'phone' => $phone,
+                    'address' => $address,
+                ]);
+
+                if ($result['success']) {
+                    $_SESSION['user_name'] = $name;
+                    $_SESSION['success'] = $result['message'];
+                } else {
+                    $_SESSION['error'] = $result['message'];
+                }
+            } catch (\Exception $e) {
+                error_log("Associate profile update error: " . $e->getMessage());
+                $_SESSION['error'] = 'Failed to update profile';
+            }
+
+            header('Location: ' . BASE_URL . '/associate/profile');
+            exit;
+        }
+
+        // GET — show profile
+        $user = [];
         if ($userId) {
             try {
                 $user = $this->db->fetchOne(
@@ -1147,7 +1188,6 @@ class AssociateController extends BaseController
             }
         }
 
-        // Define BASE_PATH for shared view
         if (!defined('BASE_PATH')) {
             define('BASE_PATH', dirname(__DIR__, 3));
         }
@@ -1632,6 +1672,17 @@ class AssociateController extends BaseController
 
         try {
             $db = \App\Core\Database\Database::getInstance();
+
+            // Duplicate detection: check if lead with same phone already exists
+            $dupCheck = $db->prepare("SELECT id, name, created_by FROM leads WHERE phone = ? AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1");
+            $dupCheck->execute([$phone]);
+            $existingLead = $dupCheck->fetch(\PDO::FETCH_ASSOC);
+            if ($existingLead) {
+                $creator = $existingLead['created_by'] == $userId ? 'you' : 'another user';
+                $_SESSION['error'] = "A lead with phone {$phone} already exists ({$existingLead['name']}, created by {$creator}). View it instead.";
+                $this->redirect('/associate/leads/' . $existingLead['id']);
+                return;
+            }
             $stmt = $db->prepare("
                 INSERT INTO leads (name, email, phone, property_interest, budget_range, location_preference, 
                     source, status, priority, notes, created_by, created_at, updated_at)
@@ -2552,7 +2603,7 @@ class AssociateController extends BaseController
     }
 
     /**
-     * Book Plot - Form for associates to book plots for customers
+     * Book Plot - Form for associates to book plots for customers (GET=form, POST=save)
      */
     public function bookPlot()
     {
@@ -2562,104 +2613,308 @@ class AssociateController extends BaseController
         $db = \App\Core\Database\Database::getInstance();
         $pdo = $db->getConnection();
 
-        // Sanitize inputs
-        $plotId = (int)($_POST['plot_id'] ?? 0);
-        $customerName = trim($_POST['customer_name'] ?? '');
-        $customerPhone = trim($_POST['customer_phone'] ?? '');
-        $customerEmail = trim($_POST['customer_email'] ?? '');
-        $customerAddress = trim($_POST['customer_address'] ?? '');
-        $aadharNumber = trim($_POST['aadhar_number'] ?? '');
-        $panNumber = trim($_POST['pan_number'] ?? '');
-        $bookingAmount = (float)($_POST['booking_amount'] ?? 0);
-        $paymentMode = trim($_POST['payment_mode'] ?? 'cash');
-        $notes = trim($_POST['notes'] ?? '');
+        // GET: Load plots and colonies for form
+        $plots = [];
+        $colonies = [];
+        try {
+            // Get available plots
+            $plots = $pdo->query("
+                SELECT p.id, p.plot_number, p.area_sqft, p.price, p.colony_id, c.name as colony_name
+                FROM plots p
+                JOIN colonies c ON p.colony_id = c.id
+                WHERE p.status = 'available' AND c.status = 'active'
+                ORDER BY c.name, p.plot_number
+            ")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-        // Validation
-        if (empty($plotId) || empty($customerName) || empty($customerPhone)) {
-            $_SESSION['error'] = 'Please fill all required fields (Plot, Customer Name, Phone)';
-            $this->redirect('/associate/book-plot');
-            return;
+            // Get active colonies
+            $colonies = $pdo->query("SELECT id, name FROM colonies WHERE status = 'active' ORDER BY name ASC")
+                ->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('bookPlot form data error: ' . $e->getMessage());
         }
 
-        try {
-            // Check plot availability
-            $plot = $pdo->prepare("SELECT * FROM plots WHERE id = ? AND status = 'available'");
-            $plot->execute([$plotId]);
-            $plotData = $plot->fetch(\PDO::FETCH_ASSOC);
+        // POST: Handle form submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Sanitize inputs
+            $plotId = (int)($_POST['plot_id'] ?? 0);
+            $customerName = trim($_POST['customer_name'] ?? '');
+            $customerPhone = trim($_POST['customer_phone'] ?? '');
+            $customerEmail = trim($_POST['customer_email'] ?? '');
+            $customerAddress = trim($_POST['customer_address'] ?? '');
+            $aadharNumber = trim($_POST['aadhar_number'] ?? '');
+            $panNumber = trim($_POST['pan_number'] ?? '');
+            $bookingAmount = (float)($_POST['booking_amount'] ?? 0);
+            $paymentMode = trim($_POST['payment_mode'] ?? 'cash');
+            $notes = trim($_POST['notes'] ?? '');
 
-            if (!$plotData) {
-                $_SESSION['error'] = 'Selected plot is not available';
+            // Validation
+            if (empty($plotId) || empty($customerName) || empty($customerPhone)) {
+                $_SESSION['error'] = 'Please fill all required fields (Plot, Customer Name, Phone)';
                 $this->redirect('/associate/book-plot');
                 return;
             }
 
-            // Find or create customer
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE phone = ? LIMIT 1");
-            $stmt->execute([$customerPhone]);
-            $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
+            try {
+                // Check plot availability
+                $plot = $pdo->prepare("SELECT * FROM plots WHERE id = ? AND status = 'available'");
+                $plot->execute([$plotId]);
+                $plotData = $plot->fetch(\PDO::FETCH_ASSOC);
 
-            if ($existing) {
-                $customerId = $existing['id'];
-            } else {
-                // Create new customer
-                $pdo->prepare("INSERT INTO users (name, phone, email, role, password, created_at) VALUES (?, ?, ?, 'customer', ?, NOW())")
-                    ->execute([$customerName, $customerPhone, $customerEmail, password_hash('customer123', PASSWORD_DEFAULT)]);
-                $customerId = $pdo->lastInsertId();
-            }
+                if (!$plotData) {
+                    $_SESSION['error'] = 'Selected plot is not available';
+                    $this->redirect('/associate/book-plot');
+                    return;
+                }
 
-            // Generate booking number
-            $bookingNumber = 'BK-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
+                // Find or create customer
+                $stmt = $pdo->prepare("SELECT id FROM users WHERE phone = ? LIMIT 1");
+                $stmt->execute([$customerPhone]);
+                $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-            // Create booking
-            $totalAmount = (float)$plotData['price'];
-            $pdo->prepare("
-                INSERT INTO plot_bookings 
-                (plot_id, customer_id, booking_number, booking_date, total_plot_value, booking_amount, status, associate_id, created_by, notes, created_at)
-                VALUES (?, ?, ?, CURDATE(), ?, ?, 'pending_approval', ?, ?, ?, NOW())
-            ")->execute([$plotId, $customerId, $bookingNumber, $totalAmount, $bookingAmount, $userId, $userId, $notes]);
+                if ($existing) {
+                    $customerId = $existing['id'];
+                } else {
+                    // Create new customer
+                    $pdo->prepare("INSERT INTO users (name, phone, email, role, password, created_at) VALUES (?, ?, ?, 'customer', ?, NOW())")
+                        ->execute([$customerName, $customerPhone, $customerEmail, password_hash('customer123', PASSWORD_DEFAULT)]);
+                    $customerId = $pdo->lastInsertId();
+                }
 
-            $bookingId = $pdo->lastInsertId();
+                // Generate booking number
+                $bookingNumber = 'BK-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
 
-            // Update plot status
-            $pdo->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = CURDATE(), updated_at = NOW() WHERE id = ?")->execute([$customerId, $plotId]);
+                // Create booking
+                $totalAmount = (float)$plotData['price'];
+                $pdo->prepare("
+                    INSERT INTO plot_bookings 
+                    (plot_id, customer_id, booking_number, booking_date, total_plot_value, booking_amount, status, associate_id, created_by, notes, created_at)
+                    VALUES (?, ?, ?, CURDATE(), ?, ?, 'pending_approval', ?, ?, ?, NOW())
+                ")->execute([$plotId, $customerId, $bookingNumber, $totalAmount, $bookingAmount, $userId, $userId, $notes]);
 
-            // Handle document uploads
-            $uploadDir = __DIR__ . '/../../../uploads/booking_documents/' . $bookingId . '/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
+                $bookingId = $pdo->lastInsertId();
 
-            $uploadedFiles = [];
-            $files = ['aadhar_doc', 'pan_doc', 'form_copy'];
-            foreach ($files as $fileKey) {
-                if (!empty($_FILES[$fileKey]['tmp_name']) && $_FILES[$fileKey]['error'] === UPLOAD_ERR_OK) {
-                    $ext = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION);
-                    $newName = $fileKey . '_' . time() . '.' . $ext;
-                    $target = $uploadDir . $newName;
-                    if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $target)) {
-                        $uploadedFiles[$fileKey] = 'booking_documents/' . $bookingId . '/' . $newName;
+                // Update plot status
+                $pdo->prepare("UPDATE plots SET status = 'booked', customer_id = ?, booking_date = CURDATE(), updated_at = NOW() WHERE id = ?")->execute([$customerId, $plotId]);
+
+                // Handle document uploads
+                $uploadDir = __DIR__ . '/../../../uploads/booking_documents/' . $bookingId . '/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+
+                $uploadedFiles = [];
+                $files = ['aadhar_doc', 'pan_doc', 'form_copy'];
+                foreach ($files as $fileKey) {
+                    if (!empty($_FILES[$fileKey]['tmp_name']) && $_FILES[$fileKey]['error'] === UPLOAD_ERR_OK) {
+                        $ext = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION);
+                        $newName = $fileKey . '_' . time() . '.' . $ext;
+                        $target = $uploadDir . $newName;
+                        if (move_uploaded_file($_FILES[$fileKey]['tmp_name'], $target)) {
+                            $uploadedFiles[$fileKey] = 'booking_documents/' . $bookingId . '/' . $newName;
+                        }
                     }
                 }
-            }
 
-            // Save document references
-            if (!empty($uploadedFiles)) {
-                foreach ($uploadedFiles as $docType => $docPath) {
-                    $pdo->prepare("
-                        INSERT INTO booking_documents (booking_id, document_type, file_path, uploaded_by, created_at)
-                        VALUES (?, ?, ?, ?, NOW())
-                    ")->execute([$bookingId, $docType, $docPath, $userId]);
+                // Save document references
+                if (!empty($uploadedFiles)) {
+                    foreach ($uploadedFiles as $docType => $docPath) {
+                        $pdo->prepare("INSERT INTO booking_documents (booking_id, document_type, document_path, uploaded_at) VALUES (?, ?, ?, NOW())")
+                            ->execute([$bookingId, $docType, $docPath]);
+                    }
                 }
+
+                $_SESSION['success'] = 'Booking submitted successfully! Booking ID: ' . $bookingNumber;
+                $this->redirect('/associate/book-plot');
+                return;
+            } catch (\Throwable $e) {
+                error_log('bookPlot error: ' . $e->getMessage());
+                $_SESSION['error'] = 'Failed to submit booking. Please try again.';
             }
-
-            $_SESSION['success'] = "Plot booked successfully! Booking #{$bookingNumber}. Awaiting admin approval.";
-            $this->redirect('/associate/my-bookings');
-
-        } catch (\Throwable $e) {
-            error_log('SubmitPlotBooking error: ' . $e->getMessage());
-            $_SESSION['error'] = 'Error creating booking: ' . $e->getMessage();
-            $this->redirect('/associate/book-plot');
         }
+
+$this->render('associate/book_plot', [
+            'page_title' => 'Book Plot for Customer - APS Dream Home',
+            'current_page' => 'book-plot',
+            'plots' => $plots,
+            'colonies' => $colonies,
+        ], 'layouts/associate');
+    }
+
+    /**
+     * Associate Tools Hub - Smart calculators for associates
+     */
+    public function tools()
+    {
+        $this->requireAuth();
+        $this->layout = 'layouts/associate';
+        $base = BASE_URL ?? '/apsdreamhome';
+        
+        $this->render('associate/tools', [
+            'page_title' => 'Smart Tools - APS Dream Home Associate',
+            'current_page' => 'tools',
+            'base' => $base,
+        ], 'layouts/associate');
+    }
+
+    /**
+     * EMI Calculator for associates
+     */
+    public function emiCalculator()
+    {
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 405);
+        }
+
+        $principal = (float)($_POST['principal'] ?? 0);
+        $rate = (float)($_POST['rate'] ?? 8.5);
+        $tenure = (int)($_POST['tenure'] ?? 240);
+
+        if ($principal <= 0 || $rate <= 0 || $tenure <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid inputs'], 400);
+        }
+
+        $monthlyRate = $rate / 12 / 100;
+        $emi = $principal * $monthlyRate * pow(1 + $monthlyRate, $tenure) / (pow(1 + $monthlyRate, $tenure) - 1);
+        $totalPayable = $emi * $tenure;
+        $totalInterest = $totalPayable - $principal;
+
+        return $this->jsonResponse([
+            'success' => true,
+            'emi' => round($emi, 2),
+            'total_payable' => round($totalPayable, 2),
+            'total_interest' => round($totalInterest, 2),
+        ]);
+    }
+
+    /**
+     * Stamp Duty Calculator for associates
+     */
+    public function stampDutyCalculator()
+    {
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 405);
+        }
+
+        $propertyValue = (float)($_POST['property_value'] ?? 0);
+        $state = $_POST['state'] ?? 'UP';
+        $gender = $_POST['gender'] ?? 'male';
+        $propertyType = $_POST['property_type'] ?? 'residential';
+
+        if ($propertyValue <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid property value'], 400);
+        }
+
+        // UP Stamp Duty Rates (simplified)
+        $rates = [
+            'UP' => ['male' => 0.07, 'female' => 0.06, 'joint' => 0.065],
+            'DL' => ['male' => 0.06, 'female' => 0.04, 'joint' => 0.05],
+            'MH' => ['male' => 0.05, 'female' => 0.04, 'joint' => 0.045],
+        ];
+
+        $stateRates = $rates[$state] ?? $rates['UP'];
+        $rate = $stateRates[$gender] ?? $stateRates['male'];
+        
+        $stampDuty = $propertyValue * $rate;
+        $registration = $propertyValue * 0.01; // 1% registration
+        $total = $stampDuty + $registration;
+
+        return $this->jsonResponse([
+            'success' => true,
+            'stamp_duty' => round($stampDuty, 2),
+            'registration' => round($registration, 2),
+            'total' => round($total, 2),
+            'rate_used' => ($rate * 100) . '%',
+        ]);
+    }
+
+    /**
+     * Plot Size Converter
+     */
+    public function plotConverter()
+    {
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 405);
+        }
+
+        $value = (float)($_POST['value'] ?? 0);
+        $from = $_POST['from'] ?? 'sqft';
+        $to = $_POST['to'] ?? 'sqyd';
+
+        $conversions = [
+            'sqft' => 1,
+            'sqyd' => 9,
+            'sqm' => 10.764,
+            'acre' => 43560,
+            'bigha' => 27000, // UP bigha
+            'biswa' => 1350,
+            'hectare' => 107639,
+            'guntha' => 1089,
+        ];
+
+        if (!isset($conversions[$from]) || !isset($conversions[$to]) || $value <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid conversion'], 400);
+        }
+
+        $sqft = $value * $conversions[$from];
+        $result = $sqft / $conversions[$to];
+
+        return $this->jsonResponse([
+            'success' => true,
+            'input' => $value,
+            'from' => $from,
+            'to' => $to,
+            'result' => round($result, 4),
+        ]);
+    }
+
+    /**
+     * Commission Calculator for associates
+     */
+    public function commissionCalculator()
+    {
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid method'], 405);
+        }
+
+        $saleValue = (float)($_POST['sale_value'] ?? 0);
+        $rank = $_POST['rank'] ?? 'associate';
+        $track = $_POST['track'] ?? 'A'; // A, B, or C
+
+        if ($saleValue <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid sale value'], 400);
+        }
+
+        // Rank-based commission rates
+        $rankRates = [
+            'associate' => 0.05,
+            'sr_associate' => 0.07,
+            'bdm' => 0.10,
+            'sr_bdm' => 0.12,
+            'vice_president' => 0.15,
+            'president' => 0.18,
+            'site_manager' => 0.20,
+        ];
+
+        $rate = $rankRates[$rank] ?? 0.05;
+        
+        // Track multipliers
+        $trackMult = ['A' => 1.0, 'B' => 0.5, 'C' => 0.3];
+        $mult = $trackMult[$track] ?? 1.0;
+
+        $commission = $saleValue * $rate * $mult;
+        $effectiveRate = $rate * $mult * 100;
+
+        return $this->jsonResponse([
+            'success' => true,
+            'commission' => round($commission, 2),
+            'effective_rate' => round($effectiveRate, 2),
+            'base_rate' => $rate * 100,
+            'track' => $track,
+        ]);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -3347,5 +3602,41 @@ class AssociateController extends BaseController
             $_SESSION['error'] = 'Failed to load map';
             $this->redirect('/associate/browse');
         }
+    }
+
+    /**
+     * Export leads as CSV
+     */
+    public function exportLeads()
+    {
+        $this->requireAuth();
+        @session_start();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $status = $_GET['status'] ?? '';
+        $where = "(created_by = ? OR assigned_to = ?) AND deleted_at IS NULL";
+        $params = [$userId, $userId];
+        if ($status) { $where .= " AND status = ?"; $params[] = $status; }
+
+        $db = \App\Core\Database\Database::getInstance();
+        $leads = $db->fetchAll("SELECT * FROM leads WHERE $where ORDER BY created_at DESC", $params);
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="leads_export_' . date('Y-m-d') . '.csv"');
+
+        $fp = fopen('php://output', 'w');
+        fputcsv($fp, ['ID', 'Name', 'Phone', 'Email', 'Status', 'Priority', 'Score', 'Source', 'Property Interest', 'Budget', 'Location', 'Notes', 'Created At']);
+
+        foreach ($leads as $lead) {
+            fputcsv($fp, [
+                $lead['id'], $lead['name'], $lead['phone'], $lead['email'] ?? '',
+                $lead['status'], $lead['priority'] ?? '', $lead['lead_score'] ?? 0,
+                $lead['source'] ?? '', $lead['property_interest'] ?? '',
+                $lead['budget_range'] ?? '', $lead['location_preference'] ?? '',
+                $lead['notes'] ?? '', $lead['created_at'],
+            ]);
+        }
+        fclose($fp);
+        exit;
     }
 }

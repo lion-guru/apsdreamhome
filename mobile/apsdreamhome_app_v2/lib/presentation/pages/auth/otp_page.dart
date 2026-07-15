@@ -46,11 +46,19 @@ class _OTPPageState extends ConsumerState<OTPPage> {
     setState(() => _isLoading = true);
 
     try {
-      // For demo, just navigate
-      await Future.delayed(const Duration(seconds: 2));
-      
       if (mounted) {
-        context.go('/home');
+        AppWidgets.showInfoSnackBar(
+          context,
+          'OTP verification coming soon. Use email/password login.',
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'OTP login is under development. Please use email/password.',
+            ),
+          ),
+        );
+        if (mounted) context.pop();
       }
     } catch (e) {
       AppWidgets.showErrorSnackBar(context, 'Invalid OTP');
@@ -88,9 +96,9 @@ class _OTPPageState extends ConsumerState<OTPPage> {
                 size: 80,
                 color: AppTheme.primaryColor,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               Text(
                 'Verify OTP',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -98,19 +106,19 @@ class _OTPPageState extends ConsumerState<OTPPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               Text(
                 'Enter the 6-digit code sent to your phone',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // OTP Input
               TextField(
                 controller: _otpController,
@@ -127,9 +135,9 @@ class _OTPPageState extends ConsumerState<OTPPage> {
                   counterText: '',
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Verify Button
               SizedBox(
                 height: 56,
@@ -146,9 +154,9 @@ class _OTPPageState extends ConsumerState<OTPPage> {
                         ),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Resend
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -160,9 +168,7 @@ class _OTPPageState extends ConsumerState<OTPPage> {
                   TextButton(
                     onPressed: _canResend ? _resendOTP : null,
                     child: Text(
-                      _canResend
-                          ? 'Resend'
-                          : 'Resend in ${_resendTimer}s',
+                      _canResend ? 'Resend' : 'Resend in ${_resendTimer}s',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: _canResend ? AppTheme.primaryColor : Colors.grey,

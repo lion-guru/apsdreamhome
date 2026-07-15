@@ -41,9 +41,12 @@ class AdminController extends BaseController
             @session_start();
         }
 
+        error_log("enterpriseDashboard: admin_id=" . ($_SESSION['admin_id'] ?? 'NOT SET') . ", admin_role=" . ($_SESSION['admin_role'] ?? 'NOT SET') . ", role=" . ($_SESSION['role'] ?? 'NOT SET') . ", session_id=" . session_id());
+
         // Check if admin is logged in — allow any role with RBAC menu permissions
         $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller'];
         if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', $allowedRoles)) {
+            error_log("enterpriseDashboard: FAILED auth check, redirecting to login");
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
@@ -588,24 +591,12 @@ class AdminController extends BaseController
      */
     public function properties()
     {
-        // Start session if not started
-        if (session_status() === PHP_SESSION_NONE) {
-            @session_start();
-        }
-
-        // Check if admin is logged in
-        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller'];
-        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', $allowedRoles)) {
-            $_SESSION['error'] = 'Admin access required';
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-
-        // Get properties list
+        $this->requireAdmin();
         $properties = $this->getPropertiesList();
-
-        // Load properties view
-        require_once APP_PATH . '/views/admin/properties.php';
+        $this->render('admin/properties/index', [
+            'page_title' => 'Properties - Admin',
+            'properties' => $properties,
+        ], 'layouts/admin');
     }
 
     /**

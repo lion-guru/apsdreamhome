@@ -1,16 +1,11 @@
 <?php
 // Customer Reviews Page - APS Dream Homes
-$page_title = 'Customer Reviews - APS Dream Homes';
-
-// Sample reviews data
-$reviews = [
-    ['name' => 'Rajesh Kumar', 'rating' => 5, 'text' => 'Excellent service and beautiful property. Very satisfied with APS Dream Homes.', 'property' => 'APS Anant City', 'date' => '2026-03-15'],
-    ['name' => 'Priya Sharma', 'rating' => 5, 'text' => 'Professional team, transparent dealings. Highly recommend for property investment.', 'property' => 'Suyoday Colony', 'date' => '2026-03-10'],
-    ['name' => 'Amit Verma', 'rating' => 4, 'text' => 'Great experience overall. Property delivered on time with all promised amenities.', 'property' => 'Raghunath Nagri', 'date' => '2026-02-28'],
-    ['name' => 'Sunita Gupta', 'rating' => 5, 'text' => 'Best real estate company in Gorakhpur. Very trustworthy and professional.', 'property' => 'Braj Radha Nagri', 'date' => '2026-02-20'],
-    ['name' => 'Vikram Singh', 'rating' => 5, 'text' => 'Smooth process from booking to possession. Excellent customer support.', 'property' => 'Awadhpuri', 'date' => '2026-02-15'],
-    ['name' => 'Meera Pandey', 'rating' => 4, 'text' => 'Good investment opportunity. Property value has increased significantly.', 'property' => 'Budh Bihari Colony', 'date' => '2026-02-10'],
-];
+$page_title = $page_title ?? 'Customer Reviews - APS Dream Homes';
+$reviews = $reviews ?? [];
+$avg_rating = $avg_rating ?? 4.8;
+$total_reviews = $total_reviews ?? 0;
+$happy_users = $happy_users ?? 100;
+$satisfaction = $satisfaction ?? 98;
 ?>
 
 <section class="py-5 bg-primary text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
@@ -19,15 +14,15 @@ $reviews = [
         <p class="lead"><?= __('reviews_hero_desc') ?></p>
         <div class="d-flex justify-content-center gap-4 mt-4">
             <div class="text-center">
-                <div class="h2 fw-bold">4.8</div>
+                <div class="h2 fw-bold"><?= number_format($avg_rating, 1) ?></div>
                 <small><?= __('reviews_avg_rating') ?></small>
             </div>
             <div class="text-center">
-                <div class="h2 fw-bold">950+</div>
+                <div class="h2 fw-bold"><?= number_format($happy_users) ?>+</div>
                 <small><?= __('reviews_happy_users') ?></small>
             </div>
             <div class="text-center">
-                <div class="h2 fw-bold">98%</div>
+                <div class="h2 fw-bold"><?= $satisfaction ?>%</div>
                 <small><?= __('reviews_satisfaction') ?></small>
             </div>
         </div>
@@ -87,11 +82,10 @@ $reviews = [
                                 <label class="form-label"><?= __('reviews_property') ?></label>
                                 <select class="form-select" name="property">
                                     <option value=""><?= __('reviews_select_property') ?></option>
-                                    <option>APS Anant City</option>
-                                    <option>Suyoday Colony</option>
-                                    <option>Raghunath Nagri</option>
+                                    <option>APS Suryoday</option>
                                     <option>Braj Radha Nagri</option>
-                                    <option>Awadhpuri</option>
+                                    <option>Raghunath Nagri</option>
+                                    <option>Budh Bihar</option>
                                 </select>
                             </div>
                             <div class="mb-3">

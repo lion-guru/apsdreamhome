@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect fill="#f1f5f9" width="400" height="300"/>
+  <rect fill="#e2e8f0" x="150" y="100" width="100" height="80" rx="8"/>
+  <polygon fill="#cbd5e1" points="150,100 200,60 250,100"/>
+  <rect fill="#94a3b8" x="185" y="130" width="30" height="50"/>
+  <text fill="#64748b" font-family="Arial,sans-serif" font-size="14" text-anchor="middle" x="200" y="210">No Image Available</text>
+</svg>

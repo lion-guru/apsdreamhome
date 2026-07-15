@@ -66,6 +66,69 @@ class MobileApiController extends BaseController
     }
 
     /**
+     * API Register for Mobile
+     */
+    public function register()
+    {
+        $this->setCorsHeaders();
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        $name = trim($data['name'] ?? '');
+        $email = trim($data['email'] ?? '');
+        $phone = trim($data['phone'] ?? '');
+        $password = $data['password'] ?? '';
+        $role = $data['role'] ?? 'customer';
+
+        if ($name === '' || $email === '' || $password === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Name, email and password are required']);
+            return;
+        }
+
+        if (strlen($password) < 6) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Password must be at least 6 characters']);
+            return;
+        }
+
+        try {
+            $pdo = $this->db->getConnection();
+
+            // Check if email already exists
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
+            $stmt->execute([$email]);
+            if ($stmt->fetch()) {
+                http_response_code(409);
+                echo json_encode(['success' => false, 'message' => 'Email already registered']);
+                return;
+            }
+
+            // Insert new user
+            $hash = Security::hashPassword($password);
+            $stmt = $pdo->prepare("
+                INSERT INTO users (name, email, phone, password, role, status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, 'active', NOW(), NOW())
+            ");
+            $stmt->execute([$name, $email, $phone, $hash, $role]);
+            $userId = $pdo->lastInsertId();
+
+            // Auto-login after registration
+            $result = $this->apiAuthService->login($email, $password);
+
+            if ($result['success']) {
+                echo json_encode($result);
+            } else {
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Registration succeeded but auto-login failed']);
+            }
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::register failed: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Registration failed: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
      * API Logout for Mobile
      */
     public function logout()
@@ -1373,7 +1436,7 @@ class MobileApiController extends BaseController
 
         try {
             $stmt = $this->db->prepare("
-                SELECT u.id as user_id, u.name, u.email, u.phone, u.role, u.created_at, u.updated_at,
+                SELECT u.id as user_id, u.name, u.email, u.phone, u.role, u.profile_image, u.created_at, u.updated_at,
                        mp.current_level as rank, mp.referral_code, mp.status as mlm_status
                 FROM users u
                 LEFT JOIN mlm_profiles mp ON u.id = mp.user_id
@@ -1386,7 +1449,7 @@ class MobileApiController extends BaseController
                 return $this->errorResponse('User not found', 404);
             }
 
-            $user['avatar'] = null; // Placeholder for now
+            $user['avatar'] = $user['profile_image'] ?? null;
 
             return $this->successResponse($user, 'User profile fetched');
         } catch (Exception $e) {
@@ -1769,6 +1832,360 @@ class MobileApiController extends BaseController
     }
 
     /**
+     * Get available time slots for site visit booking
+     */
+    public function getAvailableSlots()
+    {
+        $this->setCorsHeaders();
+        $date = trim($_GET['date'] ?? '');
+        $colonyId = (int)($_GET['colony_id'] ?? 0);
+
+        if (!$date) {
+            $date = date('Y-m-d');
+        }
+
+        try {
+            $pdo = $this->db;
+            // Check if visit_time_slots table has data for this date
+            $stmt = $pdo->prepare("SELECT id FROM visit_time_slots WHERE date = ? AND is_available = 1 LIMIT 1");
+            $stmt->execute([$date]);
+            $hasSlots = $stmt->fetch();
+
+            if (!$hasSlots) {
+                // Auto-generate default slots for this date (9 AM to 6 PM, 1-hour intervals)
+                $this->generateDefaultSlots($pdo, $date);
+            }
+
+            $sql = "SELECT id, time_slot, max_bookings, current_bookings, (max_bookings - current_bookings) as remaining
+                    FROM visit_time_slots WHERE date = ? AND is_available = 1 AND current_bookings < max_bookings
+                    ORDER BY time_slot ASC";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$date]);
+            $slots = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Format time slots for display
+            foreach ($slots as &$slot) {
+                $slot['time_slot'] = date('H:i', strtotime($slot['time_slot']));
+                $slot['display_time'] = date('h:i A', strtotime($slot['time_slot']));
+                $slot['remaining'] = (int)$slot['remaining'];
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'date' => $date,
+                    'slots' => $slots,
+                ]
+            ]);
+        } catch (Exception $e) {
+            error_log("[MobileApiController] getAvailableSlots() exception: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to fetch slots']);
+        }
+    }
+
+    /**
+     * Generate default time slots for a date (9 AM - 6 PM, 1-hour intervals)
+     */
+    private function generateDefaultSlots($pdo, string $date): void
+    {
+        $slots = [
+            '09:00:00', '10:00:00', '11:00:00', '12:00:00',
+            '13:00:00', '14:00:00', '15:00:00', '16:00:00', '17:00:00'
+        ];
+        $insertStmt = $pdo->prepare("INSERT IGNORE INTO visit_time_slots (date, time_slot, max_bookings, current_bookings, is_available) VALUES (?, ?, 3, 0, 1)");
+        foreach ($slots as $slot) {
+            $insertStmt->execute([$date, $slot]);
+        }
+    }
+
+    /**
+     * Book a site visit
+     */
+    public function bookSiteVisitApi()
+    {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+
+        $colonyId = (int)($input['colony_id'] ?? 0);
+        $visitDate = trim($input['visit_date'] ?? '');
+        $visitTime = trim($input['visit_time'] ?? '');
+        $name = trim($input['name'] ?? '');
+        $phone = trim($input['phone'] ?? '');
+        $email = trim($input['email'] ?? '');
+        $needPickup = !empty($input['need_pickup']);
+        $pickupAddress = trim($input['pickup_address'] ?? '');
+        $guestCount = max(1, (int)($input['guest_count'] ?? 1));
+        $notes = trim($input['notes'] ?? '');
+        $plotId = (int)($input['plot_id'] ?? 0);
+
+        // Validation
+        if (!$visitDate || !$visitTime || !$name || !$phone) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Missing required fields: visit_date, visit_time, name, phone']);
+            return;
+        }
+
+        // Get user_id from auth token if available
+        $userId = $GLOBALS['api_user_id'] ?? null;
+
+        try {
+            $pdo = $this->db;
+
+            // Get colony name
+            $colonyName = '';
+            if ($colonyId > 0) {
+                $cstmt = $pdo->prepare("SELECT name FROM colonies WHERE id = ?");
+                $cstmt->execute([$colonyId]);
+                $crow = $cstmt->fetch(PDO::FETCH_ASSOC);
+                $colonyName = $crow['name'] ?? '';
+            }
+
+            // Check slot availability
+            $slotStmt = $pdo->prepare("SELECT id, current_bookings, max_bookings FROM visit_time_slots WHERE date = ? AND time_slot = ? AND is_available = 1 FOR UPDATE");
+            $slotStmt->execute([$visitDate, $visitTime]);
+            $slot = $slotStmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($slot && $slot['current_bookings'] >= $slot['max_bookings']) {
+                http_response_code(409);
+                echo json_encode(['success' => false, 'message' => 'Time slot is fully booked. Please choose another time.']);
+                return;
+            }
+
+            // Insert into property_visits
+            $insertStmt = $pdo->prepare("INSERT INTO property_visits
+                (customer_id, property_id, customer_name, customer_email, customer_phone,
+                 visit_date, visit_time, visit_type, status, notes, assigned_to, created_by)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'site_visit', 'scheduled', ?, ?, ?)");
+            $insertStmt->execute([
+                $userId,
+                $plotId > 0 ? $plotId : null,
+                $name,
+                $email,
+                $phone,
+                $visitDate . ' ' . $visitTime,
+                $visitTime,
+                ($notes ? $notes . ' | ' : '') . "Colony: $colonyName | Guests: $guestCount" . ($needPickup ? " | Pickup: $pickupAddress" : ''),
+                null, // assigned_to (auto-assign later)
+                $userId
+            ]);
+            $visitId = (int)$pdo->lastInsertId();
+
+            // Update slot booking count
+            if ($slot) {
+                $pdo->prepare("UPDATE visit_time_slots SET current_bookings = current_bookings + 1 WHERE id = ?")->execute([$slot['id']]);
+            }
+
+            // Auto-assign an available agent (round-robin from associates)
+            $agentStmt = $pdo->prepare("SELECT id FROM users WHERE role = 'associate' AND status = 'active' ORDER BY RAND() LIMIT 1");
+            $agentStmt->execute();
+            $agent = $agentStmt->fetch(PDO::FETCH_ASSOC);
+            if ($agent) {
+                $pdo->prepare("UPDATE property_visits SET assigned_to = ? WHERE id = ?")->execute([$agent['id'], $visitId]);
+            }
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Site visit booked successfully!',
+                'data' => [
+                    'visit_id' => $visitId,
+                    'visit_date' => $visitDate,
+                    'visit_time' => date('h:i A', strtotime($visitTime)),
+                    'colony' => $colonyName,
+                    'status' => 'scheduled',
+                ]
+            ]);
+        } catch (Exception $e) {
+            error_log("[MobileApiController] bookSiteVisitApi() exception: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Booking failed: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get current user's site visits
+     */
+    public function getMySiteVisits()
+    {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            return;
+        }
+
+        try {
+            $pdo = $this->db;
+            $status = trim($_GET['status'] ?? '');
+
+            $sql = "SELECT v.id, v.visit_date, v.visit_time, v.status, v.visit_type, v.notes,
+                           v.feedback_rating, v.feedback_comments, v.customer_name, v.customer_phone,
+                           v.created_at,
+                           c.name as colony_name, c.id as colony_id,
+                           u.name as agent_name, u.phone as agent_phone
+                    FROM property_visits v
+                    LEFT JOIN colonies c ON c.id = (SELECT CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(v.notes, 'Colony: ', -1), ' | ', 1) AS CHAR))
+                    LEFT JOIN users u ON u.id = v.assigned_to
+                    WHERE v.customer_id = ? ";
+            $params = [$userId];
+
+            if ($status) {
+                $sql .= "AND v.status = ? ";
+                $params[] = $status;
+            }
+
+            $sql .= "ORDER BY v.visit_date DESC LIMIT 50";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $visits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Format visits
+            foreach ($visits as &$visit) {
+                $visit['visit_date'] = date('Y-m-d', strtotime($visit['visit_date']));
+                $visit['visit_time'] = date('h:i A', strtotime($visit['visit_time']));
+                $visit['display_date'] = date('D, d M Y', strtotime($visit['visit_date']));
+                $visit['is_upcoming'] = strtotime($visit['visit_date'] . ' ' . $visit['visit_time']) > time();
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => $visits,
+                'count' => count($visits)
+            ]);
+        } catch (Exception $e) {
+            error_log("[MobileApiController] getMySiteVisits() exception: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to fetch visits']);
+        }
+    }
+
+    /**
+     * Cancel a site visit
+     */
+    public function cancelSiteVisitApi()
+    {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $visitId = (int)($input['visit_id'] ?? 0);
+        $reason = trim($input['reason'] ?? '');
+
+        if (!$visitId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Visit ID required']);
+            return;
+        }
+
+        try {
+            $pdo = $this->db;
+            $userId = $GLOBALS['api_user_id'] ?? null;
+
+            // Verify ownership
+            $stmt = $pdo->prepare("SELECT id, customer_id, visit_date, visit_time FROM property_visits WHERE id = ?");
+            $stmt->execute([$visitId]);
+            $visit = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$visit) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Visit not found']);
+                return;
+            }
+
+            if ($userId && $visit['customer_id'] != $userId) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'message' => 'Not authorized']);
+                return;
+            }
+
+            // Cancel the visit
+            $pdo->prepare("UPDATE property_visits SET status = 'cancelled', cancellation_reason = ? WHERE id = ?")->execute([$reason, $visitId]);
+
+            // Release slot
+            $pdo->prepare("UPDATE visit_time_slots SET current_bookings = GREATEST(0, current_bookings - 1) WHERE date = DATE(?) AND time_slot = ?")->execute([$visit['visit_date'], $visit['visit_time']]);
+
+            echo json_encode(['success' => true, 'message' => 'Visit cancelled successfully']);
+        } catch (Exception $e) {
+            error_log("[MobileApiController] cancelSiteVisitApi() exception: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Cancel failed']);
+        }
+    }
+
+    /**
+     * Reschedule a site visit
+     */
+    public function rescheduleSiteVisitApi()
+    {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $visitId = (int)($input['visit_id'] ?? 0);
+        $newDate = trim($input['new_date'] ?? '');
+        $newTime = trim($input['new_time'] ?? '');
+
+        if (!$visitId || !$newDate || !$newTime) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Missing visit_id, new_date, or new_time']);
+            return;
+        }
+
+        try {
+            $pdo = $this->db;
+            $userId = $GLOBALS['api_user_id'] ?? null;
+
+            // Verify ownership
+            $stmt = $pdo->prepare("SELECT id, customer_id, visit_date, visit_time FROM property_visits WHERE id = ?");
+            $stmt->execute([$visitId]);
+            $visit = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$visit) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Visit not found']);
+                return;
+            }
+
+            if ($userId && $visit['customer_id'] != $userId) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'message' => 'Not authorized']);
+                return;
+            }
+
+            $pdo->beginTransaction();
+
+            // Check new slot availability
+            $slotStmt = $pdo->prepare("SELECT id, current_bookings, max_bookings FROM visit_time_slots WHERE date = ? AND time_slot = ? AND is_available = 1 FOR UPDATE");
+            $slotStmt->execute([$newDate, $newTime]);
+            $slot = $slotStmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$slot || $slot['current_bookings'] >= $slot['max_bookings']) {
+                $pdo->rollBack();
+                http_response_code(409);
+                echo json_encode(['success' => false, 'message' => 'New time slot not available']);
+                return;
+            }
+
+            // Release old slot
+            $pdo->prepare("UPDATE visit_time_slots SET current_bookings = GREATEST(0, current_bookings - 1) WHERE date = DATE(?) AND time_slot = ?")->execute([$visit['visit_date'], $visit['visit_time']]);
+
+            // Update visit
+            $pdo->prepare("UPDATE property_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ?")->execute([$newDate . ' ' . $newTime, $newTime, $visitId]);
+
+            // Book new slot
+            $pdo->prepare("UPDATE visit_time_slots SET current_bookings = current_bookings + 1 WHERE id = ?")->execute([$slot['id']]);
+
+            $pdo->commit();
+
+            echo json_encode(['success' => true, 'message' => 'Visit rescheduled successfully']);
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            error_log("[MobileApiController] rescheduleSiteVisitApi() exception: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Reschedule failed']);
+        }
+    }
+
+    /**
      * Get pending payouts summary
      */
     public function getPendingPayouts()
@@ -1892,21 +2309,21 @@ class MobileApiController extends BaseController
         try {
             $mlmService = new \App\Services\MLMNetworkService();
             
-            // Get direct referrals from network_tree
-            $directSql = "SELECT nt.associate_id, u.name, u.email, u.phone, u.profile_image, nt.level, nt.position, nt.joined_at
-                FROM network_tree nt
+            // Get direct referrals from mlm_network_tree
+            $directSql = "SELECT nt.associate_id, u.name, u.email, u.phone, u.profile_image, nt.level, nt.created_at as joined_at
+                FROM mlm_network_tree nt
                 JOIN users u ON u.id = nt.associate_id
                 WHERE nt.parent_id = ?
-                ORDER BY nt.joined_at DESC";
+                ORDER BY nt.created_at DESC";
             $directReferrals = $this->db->fetchAll($directSql, [$userId]) ?? [];
             
             // Get team stats
             $teamSize = $mlmService->getTeamSize($userId);
             $directCount = $mlmService->getDirectCount($userId);
             
-            // Get active/inactive counts via network_tree
-            $activeSql = "SELECT COUNT(*) FROM network_tree nt JOIN users u ON u.id = nt.associate_id WHERE nt.parent_id = ? AND u.status = 'active'";
-            $inactiveSql = "SELECT COUNT(*) FROM network_tree nt JOIN users u ON u.id = nt.associate_id WHERE nt.parent_id = ? AND u.status != 'active'";
+            // Get active/inactive counts via mlm_network_tree
+            $activeSql = "SELECT COUNT(*) FROM mlm_network_tree nt JOIN users u ON u.id = nt.associate_id WHERE nt.parent_id = ? AND u.status = 'active'";
+            $inactiveSql = "SELECT COUNT(*) FROM mlm_network_tree nt JOIN users u ON u.id = nt.associate_id WHERE nt.parent_id = ? AND u.status != 'active'";
             
             $activeStmt = $this->db->prepare($activeSql);
             $activeStmt->execute([$userId]);
@@ -1917,7 +2334,7 @@ class MobileApiController extends BaseController
             $inactiveCount = (int)$inactiveStmt->fetchColumn();
 
             // Get recent joinings (last 30 days)
-            $recentSql = "SELECT COUNT(*) FROM network_tree WHERE parent_id = ? AND joined_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+            $recentSql = "SELECT COUNT(*) FROM mlm_network_tree WHERE parent_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
             $recentStmt = $this->db->prepare($recentSql);
             $recentStmt->execute([$userId]);
             $recentCount = (int)$recentStmt->fetchColumn();
@@ -1927,7 +2344,7 @@ class MobileApiController extends BaseController
                 SELECT COALESCE(SUM(pb.total_plot_value), 0) as total_business
                 FROM plot_bookings pb
                 WHERE pb.associate_id IN (
-                    SELECT nt.associate_id FROM network_tree nt WHERE nt.parent_id = ?
+                    SELECT nt.associate_id FROM mlm_network_tree nt WHERE nt.parent_id = ?
                 )
             ";
             $businessStmt = $this->db->prepare($businessSql);
@@ -2821,6 +3238,156 @@ class MobileApiController extends BaseController
     }
 
     /**
+     * GET /api/v2/mobile/marketplace
+     * Property marketplace with premium/featured/urgent badges
+     */
+    public function getMarketplace()
+    {
+        $this->setCorsHeaders();
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = min(50, max(1, (int)($_GET['limit'] ?? 20)));
+        $offset = ($page - 1) * $perPage;
+        $type = trim($_GET['type'] ?? '');
+        $city = trim($_GET['city'] ?? '');
+        $minPrice = (float)($_GET['min_price'] ?? 0);
+        $maxPrice = (float)($_GET['max_price'] ?? 0);
+        $sort = trim($_GET['sort'] ?? 'newest');
+
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+
+            $where = ["up.status = 'approved'"];
+            $params = [];
+
+            if ($type) { $where[] = 'up.property_type = ?'; $params[] = $type; }
+            if ($city) { $where[] = '(up.city LIKE ? OR up.address LIKE ?)'; $params[] = "%$city%"; $params[] = "%$city%"; }
+            if ($minPrice > 0) { $where[] = 'up.price >= ?'; $params[] = $minPrice; }
+            if ($maxPrice > 0) { $where[] = 'up.price <= ?'; $params[] = $maxPrice; }
+
+            $whereSql = implode(' AND ', $where);
+
+            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM user_properties up WHERE $whereSql");
+            $countStmt->execute($params);
+            $total = (int)$countStmt->fetchColumn();
+
+            $orderMap = [
+                'newest' => 'up.created_at DESC',
+                'price_low' => 'up.price ASC',
+                'price_high' => 'up.price DESC',
+                'oldest' => 'up.created_at ASC',
+            ];
+            $orderBy = $orderMap[$sort] ?? 'up.created_at DESC';
+
+            // Premium/featured first, then by sort order
+            $sql = "
+                SELECT up.id, up.user_id, up.property_type, up.listing_type, up.title,
+                       up.description, up.price, up.address, up.city, up.state,
+                       up.area_sqft, up.bedrooms, up.bathrooms, up.status,
+                       up.is_featured, up.is_urgent, up.is_premium, up.expires_at,
+                       up.created_at, up.updated_at,
+                       u.name as owner_name, u.phone as owner_phone,
+                       up.main_image,
+                       CASE WHEN up.is_premium = 1 THEN 3
+                            WHEN up.is_featured = 1 THEN 2
+                            WHEN up.is_urgent = 1 THEN 1
+                            ELSE 0 END as priority
+                FROM user_properties up
+                LEFT JOIN users u ON u.id = up.user_id
+                WHERE $whereSql
+                ORDER BY priority DESC, $orderBy
+                LIMIT $perPage OFFSET $offset
+            ";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Add badge info
+            foreach ($properties as &$p) {
+                $p['badges'] = [];
+                $p['price'] = (float)($p['price'] ?? 0);
+                if ($p['is_premium']) $p['badges'][] = ['label' => 'Premium', 'color' => '#FFD700', 'icon' => 'star'];
+                if ($p['is_featured']) $p['badges'][] = ['label' => 'Featured', 'color' => '#4CAF50', 'icon' => 'trending_up'];
+                if ($p['is_urgent']) $p['badges'][] = ['label' => 'Urgent', 'color' => '#FF5722', 'icon' => 'priority_high'];
+                $p['is_premium'] = (bool)$p['is_premium'];
+                $p['is_featured'] = (bool)$p['is_featured'];
+                $p['is_urgent'] = (bool)$p['is_urgent'];
+                $p['area_sqft'] = (float)($p['area_sqft'] ?? 0);
+                $p['bedrooms'] = (int)($p['bedrooms'] ?? 0);
+                $p['bathrooms'] = (int)($p['bathrooms'] ?? 0);
+                $p['image_url'] = $p['main_image'] ? (BASE_URL . '/' . ltrim($p['main_image'], '/')) : null;
+            }
+
+            // Separate premium listings for top section
+            $premiumListings = array_values(array_filter($properties, fn($p) => $p['is_premium']));
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'properties' => $properties,
+                    'premium_count' => count($premiumListings),
+                    'pagination' => [
+                        'current_page' => $page,
+                        'per_page' => $perPage,
+                        'total' => $total,
+                        'total_pages' => (int)ceil($total / $perPage),
+                    ],
+                ]
+            ]);
+        } catch (Exception $e) {
+            error_log("[MobileApiController] getMarketplace() exception: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to fetch marketplace']);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/marketplace/premium
+     * Get only premium/featured listings
+     */
+    public function getPremiumProperties()
+    {
+        $this->setCorsHeaders();
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $limit = min(20, max(1, (int)($_GET['limit'] ?? 10)));
+
+            $stmt = $pdo->prepare("
+                SELECT up.id, up.user_id, up.property_type, up.listing_type, up.title,
+                       up.description, up.price, up.address, up.city,
+                       up.area_sqft, up.bedrooms, up.bathrooms,
+                       up.is_featured, up.is_urgent, up.is_premium,
+                       u.name as owner_name,
+                       up.main_image
+                FROM user_properties up
+                LEFT JOIN users u ON u.id = up.user_id
+                WHERE up.status = 'approved' AND (up.is_premium = 1 OR up.is_featured = 1 OR up.is_urgent = 1)
+                ORDER BY up.is_premium DESC, up.is_featured DESC, up.created_at DESC
+                LIMIT ?
+            ");
+            $stmt->execute([$limit]);
+            $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($properties as &$p) {
+                $p['price'] = (float)($p['price'] ?? 0);
+                $p['is_premium'] = (bool)$p['is_premium'];
+                $p['is_featured'] = (bool)$p['is_featured'];
+                $p['is_urgent'] = (bool)$p['is_urgent'];
+                $p['image_url'] = $p['main_image'] ? (BASE_URL . '/' . ltrim($p['main_image'], '/')) : null;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => $properties,
+                'count' => count($properties)
+            ]);
+        } catch (Exception $e) {
+            error_log("[MobileApiController] getPremiumProperties() exception: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Failed to fetch premium listings']);
+        }
+    }
+
+    /**
      * GET /api/mobile/v2/properties/{id}
      * Property detail with images, features, nearby facilities
      */
@@ -3437,6 +4004,69 @@ class MobileApiController extends BaseController
             error_log('MobileApiController::updateProfileV2() exception: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Profile update failed', 'code' => 500]);
+        }
+    }
+
+    /**
+     * POST /api/v2/mobile/user/profile/avatar
+     * Upload/update user profile avatar (multipart: avatar field)
+     */
+    public function uploadAvatar()
+    {
+        $this->setCorsHeaders();
+        $userId = (int) $GLOBALS['api_user_id'];
+    
+        if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Avatar file is required', 'code' => 400]);
+            return;
+        }
+    
+        $file = $_FILES['avatar'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    
+        if (!in_array($ext, $allowed)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Invalid file type. Allowed: ' . implode(', ', $allowed), 'code' => 400]);
+            return;
+        }
+    
+        if ($file['size'] > 2 * 1024 * 1024) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'File too large. Max 2MB', 'code' => 400]);
+            return;
+        }
+    
+        try {
+            $uploadDir = __DIR__ . '/../../../../public/uploads/avatars/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+    
+            $filename = 'user_' . $userId . '_' . time() . '.' . $ext;
+            $destPath = $uploadDir . $filename;
+    
+            if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+                http_response_code(500);
+                echo json_encode(['success' => false, 'error' => 'Failed to save file', 'code' => 500]);
+                return;
+            }
+    
+            $avatarUrl = '/uploads/avatars/' . $filename;
+    
+            $stmt = $this->db->prepare("UPDATE users SET profile_image = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$avatarUrl, $userId]);
+    
+            echo json_encode([
+                'success' => true,
+                'data' => ['avatar' => $avatarUrl],
+                'message' => 'Avatar updated successfully',
+            ]);
+        } catch (\Throwable $e) {
+            error_log('MobileApiController::uploadAvatar() exception: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Avatar upload failed', 'code' => 500]);
         }
     }
 
@@ -4377,4 +5007,1415 @@ class MobileApiController extends BaseController
      * POST /api/attendance/punch-in
      * Body: { "latitude": 26.84, "longitude": 83.30 }
      */
+
+    /**
+     * GET /api/v2/mobile/plots/{id}
+     */
+    public function getPlotDetail($id) {
+        $this->setCorsHeaders();
+        try {
+            $stmt = $this->db->prepare("
+                SELECT p.*, c.name as colony_name, c.id as colony_id, c.district_name
+                FROM plots p 
+                LEFT JOIN colonies c ON p.colony_id = c.id 
+                WHERE p.id = ?
+            ");
+            $stmt->execute([$id]);
+            $plot = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$plot) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Plot not found']);
+                return;
+            }
+            echo json_encode(['success' => true, 'data' => $plot]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/plots/all — Public listing of all plots across all active colonies
+     */
+    public function getAllPlots() {
+        $this->setCorsHeaders();
+        try {
+            $page = (int)(\App\Core\Security::sanitize($_GET['page']) ?? 1);
+            $limit = min((int)(\App\Core\Security::sanitize($_GET['limit']) ?? 20), 100);
+            $offset = ($page - 1) * $limit;
+            $status = \App\Core\Security::sanitize($_GET['status']) ?? null;
+            $colonyId = \App\Core\Security::sanitize($_GET['colony_id']) ?? null;
+
+            $where = ['c.is_active = 1'];
+            $params = [];
+            if ($status) {
+                $where[] = 'p.status = ?';
+                $params[] = $status;
+            }
+            if ($colonyId) {
+                $where[] = 'p.colony_id = ?';
+                $params[] = $colonyId;
+            }
+            $whereClause = implode(' AND ', $where);
+
+            $countStmt = $this->db->prepare("SELECT COUNT(*) FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id WHERE {$whereClause}");
+            $countStmt->execute($params);
+            $total = (int)$countStmt->fetchColumn();
+
+            $params[] = $limit;
+            $params[] = $offset;
+            $stmt = $this->db->prepare("
+                SELECT p.id, p.plot_number, p.colony_id, p.block, p.area_sqft, p.status, 
+                       p.total_price, p.price_per_sqft, p.facing, p.corner_plot,
+                       p.width_ft, p.length_ft,
+                       c.name as colony_name, c.slug as colony_slug, c.district_name
+                FROM plots p 
+                LEFT JOIN colonies c ON p.colony_id = c.id 
+                WHERE {$whereClause}
+                ORDER BY c.name, p.block, p.plot_number
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute($params);
+            $plots = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => $plots,
+                'pagination' => [
+                    'page' => $page,
+                    'limit' => $limit,
+                    'total' => $total,
+                    'pages' => (int)ceil($total / $limit),
+                ],
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * POST /api/v2/mobile/plots/{id}/hold
+     */
+    public function holdPlot($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            return;
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT status FROM plots WHERE id = ?");
+            $stmt->execute([$id]);
+            $plot = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$plot) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Plot not found']);
+                return;
+            }
+            if ($plot['status'] !== 'available') {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Plot is not available']);
+                return;
+            }
+            $stmt = $this->db->prepare("UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW() WHERE id = ?");
+            $stmt->execute([$userId, $id]);
+            echo json_encode(['success' => true, 'message' => 'Plot held successfully']);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * POST /api/v2/mobile/plots/{id}/release
+     */
+    public function releasePlot($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            return;
+        }
+        try {
+            $stmt = $this->db->prepare("UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL WHERE id = ? AND held_by = ?");
+            $stmt->execute([$id, $userId]);
+            echo json_encode(['success' => true, 'message' => 'Plot released successfully']);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/user/notifications
+     */
+    public function getCustomerNotifications() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            return;
+        }
+        try {
+            $stmt = $this->db->prepare("
+                SELECT id, title, message, type, is_read, created_at 
+                FROM notifications 
+                WHERE user_id = ? 
+                ORDER BY created_at DESC 
+                LIMIT 50
+            ");
+            $stmt->execute([$userId]);
+            $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success' => true, 'data' => $notifications]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    /**
+     * POST /api/v2/mobile/user/notifications/read
+     */
+    public function markNotificationsRead() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            return;
+        }
+        try {
+            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0");
+            $stmt->execute([$userId]);
+            echo json_encode(['success' => true, 'message' => 'Notifications marked as read']);
+        } catch (Exception $e) {
+            echo json_encode(['success' => true, 'message' => 'Done']);
+        }
+    }
+
+    /**
+     * POST /api/v2/mobile/bookings
+     */
+    public function createBookingRequest() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            return;
+        }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $plotId = $input['plot_id'] ?? null;
+        if (!$plotId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Plot ID is required']);
+            return;
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT id, status, total_price, colony_id FROM plots WHERE id = ?");
+            $stmt->execute([$plotId]);
+            $plot = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$plot) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Plot not found']);
+                return;
+            }
+            if ($plot['status'] !== 'available') {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Plot is not available']);
+                return;
+            }
+            $stmt = $this->db->prepare("SELECT name, email, phone FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $bookingNumber = 'BK-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $bookingAmount = ($plot['total_price'] ?? 0) * 0.10;
+            $stmt = $this->db->prepare("INSERT INTO plot_bookings (booking_number, plot_id, colony_id, customer_id, customer_name, customer_email, customer_phone, total_plot_value, booking_amount, status, channel, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'mobile_app', NOW())");
+            $stmt->execute([$bookingNumber, $plotId, $plot['colony_id'], $userId, $user['name'] ?? '', $user['email'] ?? '', $user['phone'] ?? '', $plot['total_price'] ?? 0, $bookingAmount]);
+            $bookingId = $this->db->lastInsertId();
+            $stmt = $this->db->prepare("UPDATE plots SET status = 'booked' WHERE id = ?");
+            $stmt->execute([$plotId]);
+            echo json_encode(['success' => true, 'data' => ['booking_id' => $bookingId, 'booking_number' => $bookingNumber, 'plot_id' => $plotId, 'booking_amount' => $bookingAmount, 'total_plot_value' => $plot['total_price'] ?? 0, 'status' => 'pending']]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API — User Bank Accounts
+    // ============================================================
+    public function getUserBankAccounts() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("SELECT id, bank_name, account_holder_name, account_number, ifsc_code, branch_name, is_primary, created_at FROM user_bank_accounts WHERE user_id = ? ORDER BY is_primary DESC, created_at DESC");
+            $stmt->execute([$userId]);
+            $accounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($accounts as &$a) {
+                $a['account_number'] = substr($a['account_number'], -4);
+                $a['masked'] = 'XXXX' . substr($a['account_number'], -4);
+            }
+            echo json_encode(['success' => true, 'data' => $accounts]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    public function saveUserBankAccount() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $id = $input['id'] ?? null;
+        $bankName = $input['bank_name'] ?? '';
+        $accountHolder = $input['account_holder_name'] ?? $input['account_holder'] ?? '';
+        $accountNumber = $input['account_number'] ?? '';
+        $ifscCode = $input['ifsc_code'] ?? '';
+        $branch = $input['branch_name'] ?? $input['branch'] ?? '';
+        $isPrimary = !empty($input['is_primary']) ? 1 : 0;
+        // Fallback: use user name as account holder if not provided
+        $nameStmt = $this->db->prepare("SELECT name FROM users WHERE id = ?");
+        $nameStmt->execute([$userId]);
+        $accountHolder = $accountHolder ?: ($nameStmt->fetchColumn() ?: "Unknown");
+
+        if (empty($bankName) || empty($accountNumber) || empty($ifscCode)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'All fields required']); return;
+        }
+        try {
+            if ($isPrimary) {
+                $this->db->exec("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = $userId");
+            }
+            if ($id) {
+                $stmt = $this->db->prepare("UPDATE user_bank_accounts SET bank_name=?, account_holder_name=?, account_number=?, ifsc_code=?, branch_name=?, is_primary=? WHERE id=? AND user_id=?");
+                $stmt->execute([$bankName, $accountHolder, $accountNumber, $ifscCode, $branch, $isPrimary, $id, $userId]);
+            } else {
+                $stmt = $this->db->prepare("INSERT INTO user_bank_accounts (user_id, bank_name, account_holder_name, account_number, ifsc_code, branch_name, is_primary, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+                $stmt->execute([$userId, $bankName, $accountHolder, $accountNumber, $ifscCode, $branch, $isPrimary]);
+                $id = $this->db->lastInsertId();
+            }
+            echo json_encode(['success' => true, 'data' => ['id' => $id]]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function deleteUserBankAccount() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $id = $input['id'] ?? null;
+        if (!$id) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'ID required']); return; }
+        try {
+            $stmt = $this->db->prepare("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ?");
+            $stmt->execute([$id, $userId]);
+            echo json_encode(['success' => true]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => true]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API — User Addresses
+    // ============================================================
+    public function getUserAddresses() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("SELECT id, full_address, city, state, pincode, type, is_primary, created_at FROM user_addresses WHERE user_id = ? ORDER BY is_primary DESC, created_at DESC");
+            $stmt->execute([$userId]);
+            echo json_encode(['success' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    public function saveUserAddress() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $id = $input['id'] ?? null;
+        $address = $input['address'] ?? '';
+        $city = $input['city'] ?? '';
+        $state = $input['state'] ?? '';
+        $pincode = $input['pincode'] ?? '';
+        $type = $input['type'] ?? 'home';
+        $isPrimary = !empty($input['is_primary']) ? 1 : 0;
+        if (empty($address) || empty($city)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Address and city required']); return;
+        }
+        try {
+            if ($isPrimary) {
+                $this->db->exec("UPDATE user_addresses SET is_primary = 0 WHERE user_id = $userId");
+            }
+            if ($id) {
+                $stmt = $this->db->prepare("UPDATE user_addresses SET full_address=?, city=?, state=?, pincode=?, type=?, is_primary=? WHERE id=? AND user_id=?");
+                $stmt->execute([$address, $city, $state, $pincode, $type, $isPrimary, $id, $userId]);
+            } else {
+                $stmt = $this->db->prepare("INSERT INTO user_addresses (user_id, full_address, city, state, pincode, type, is_primary, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+                $stmt->execute([$userId, $address, $city, $state, $pincode, $type, $isPrimary]);
+                $id = $this->db->lastInsertId();
+            }
+            echo json_encode(['success' => true, 'data' => ['id' => $id]]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function deleteUserAddress() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $id = $input['id'] ?? null;
+        if (!$id) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'ID required']); return; }
+        try {
+            $stmt = $this->db->prepare("DELETE FROM user_addresses WHERE id = ? AND user_id = ?");
+            $stmt->execute([$id, $userId]);
+            echo json_encode(['success' => true]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => true]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API — Payment History
+    // ============================================================
+    public function getPaymentHistory() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("SELECT p.id, p.booking_id, b.booking_number, b.plot_id, p.amount, p.payment_method, p.transaction_id, p.receipt_number, p.status, p.payment_date, p.type FROM booking_payments p JOIN plot_bookings b ON p.booking_id = b.id WHERE b.customer_id = ? ORDER BY p.payment_date DESC LIMIT 50");
+            $stmt->execute([$userId]);
+            $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stats = [
+                'total_paid' => 0,
+                'total_count' => count($payments),
+                'completed' => 0,
+                'pending' => 0,
+                'failed' => 0,
+            ];
+            foreach ($payments as &$p) {
+                $p['amount'] = (float)$p['amount'];
+                $stats['total_paid'] += $p['amount'];
+                if ($p['status'] === 'completed' || $p['status'] === 'success') $stats['completed']++;
+                elseif ($p['status'] === 'pending') $stats['pending']++;
+                else $stats['failed']++;
+            }
+            echo json_encode(['success' => true, 'data' => ['payments' => $payments, 'stats' => $stats]]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => true, 'data' => ['payments' => [], 'stats' => ['total_paid' => 0, 'total_count' => 0, 'completed' => 0, 'pending' => 0, 'failed' => 0]]]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API — Blog/News
+    // ============================================================
+    public function getBlogPosts() {
+        $this->setCorsHeaders();
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $pdo->query("SELECT id, title, slug, excerpt, featured_image, category, created_at as published_at, 'APS Dream Home' as author, 5 as reading_time FROM blog_posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 20");
+            $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($posts as &$post) {
+                if (!empty($post['featured_image'])) {
+                    $post['featured_image'] = (defined('BASE_URL') ? BASE_URL : '') . '/' . ltrim($post['featured_image'], '/');
+                }
+            }
+            echo json_encode(['success' => true, 'data' => $posts]);
+        } catch (\Throwable $e) {
+            error_log('getBlogPosts error: ' . $e->getMessage());
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    public function getBlogPostDetail($slug) {
+        $this->setCorsHeaders();
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare("SELECT id, title, slug, content, excerpt, featured_image, category, tags, views, created_at as published_at, 'APS Dream Home' as author, 5 as reading_time FROM blog_posts WHERE slug = ? AND status = 'published' LIMIT 1");
+            $stmt->execute([$slug]);
+            $post = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$post) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Not found']); return; }
+            if (!empty($post['featured_image'])) {
+                $post['featured_image'] = (defined('BASE_URL') ? BASE_URL : '') . '/' . ltrim($post['featured_image'], '/');
+            }
+            echo json_encode(['success' => true, 'data' => $post]);
+        } catch (\Throwable $e) {
+            error_log('getBlogPostDetail error: ' . $e->getMessage());
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API — Careers/Jobs
+    // ============================================================
+    public function getJobListings() {
+        $this->setCorsHeaders();
+        try {
+            $stmt = $this->db->query("SELECT id, title, department, location, employment_type, experience_required, salary_range, vacancies, description, requirements, created_at FROM careers WHERE status = 'open' ORDER BY created_at DESC");
+            $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success' => true, 'data' => $jobs]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    public function getJobDetail($id) {
+        $this->setCorsHeaders();
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM careers WHERE id = ? AND status = 'open' LIMIT 1");
+            $stmt->execute([$id]);
+            $job = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$job) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Not found']); return; }
+            echo json_encode(['success' => true, 'data' => $job]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function submitJobApplication() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $jobId = $input['job_id'] ?? null;
+        $name = $input['name'] ?? '';
+        $email = $input['email'] ?? '';
+        $phone = $input['phone'] ?? '';
+        $coverLetter = $input['cover_letter'] ?? '';
+        $experience = $input['experience'] ?? 0;
+        $company = $input['current_company'] ?? '';
+        if (!$jobId || empty($name) || empty($email) || empty($phone)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Required fields missing']); return;
+        }
+        try {
+            $stmt = $this->db->prepare("INSERT INTO career_applications (career_id, full_name, email, phone, cover_letter, experience_years, current_company, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'new', NOW())");
+            $stmt->execute([$jobId, $name, $email, $phone, $coverLetter, $experience, $company]);
+            echo json_encode(['success' => true, 'message' => 'Application submitted successfully']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API — About Us & Team
+    // ============================================================
+    public function getAboutInfo() {
+        $this->setCorsHeaders();
+        try {
+            $stmt = $this->db->query("SELECT content_key, content_value FROM site_content WHERE section = 'about' AND is_active = 1");
+            $content = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            $team = [];
+            try {
+                $stmt2 = $this->db->query("SELECT id, name, position, photo, bio, experience, expertise, linkedin, facebook_url, instagram_url, category, group_name, sort_order FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC LIMIT 10");
+                $team = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+            } catch (Exception $e) {}
+            echo json_encode(['success' => true, 'data' => ['content' => $content, 'team' => $team, 'stats' => ['projects' => 4, 'plots' => 5000, 'families' => 500, 'colonies' => 4]]]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => true, 'data' => ['content' => [], 'team' => [], 'stats' => ['projects' => 4, 'plots' => 5000, 'families' => 500, 'colonies' => 4]]]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — Auth (Password/OTP/Phone Check)
+    // ============================================================
+    public function forgotPassword() {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $email = $input['email'] ?? '';
+        $phone = $input['phone'] ?? '';
+        if (empty($email) && empty($phone)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Email or phone required']); return;
+        }
+        try {
+            $field = !empty($email) ? 'email' : 'phone';
+            $value = !empty($email) ? $email : $phone;
+            $stmt = $this->db->prepare("SELECT id FROM users WHERE $field = ? LIMIT 1");
+            $stmt->execute([$value]);
+            if (!$stmt->fetch()) {
+                echo json_encode(['success'=>true,'message'=>'If the account exists, reset instructions have been sent']);
+                return;
+            }
+            $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $expires = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+            $stmt = $this->db->prepare("INSERT INTO password_reset_tokens (email, phone, otp, token, expires_at, created_at) VALUES (?, ?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE otp=?, expires_at=?, created_at=NOW()");
+            $token = bin2hex(random_bytes(32));
+            $stmt->execute([$email, $phone, $otp, $token, $expires, $otp, $expires]);
+            echo json_encode(['success'=>true,'message'=>'OTP sent','otp'=>$otp,'token'=>$token]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function verifyOtp() {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $otp = $input['otp'] ?? '';
+        $email = $input['email'] ?? '';
+        $phone = $input['phone'] ?? '';
+        if (empty($otp) || (empty($email) && empty($phone))) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'OTP and email/phone required']); return;
+        }
+        try {
+            $field = !empty($email) ? 'email' : 'phone';
+            $value = !empty($email) ? $email : $phone;
+            $stmt = $this->db->prepare("SELECT * FROM password_reset_tokens WHERE $field = ? AND otp = ? AND expires_at > NOW() ORDER BY created_at DESC LIMIT 1");
+            $stmt->execute([$value, $otp]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row) {
+                http_response_code(400); echo json_encode(['success'=>false,'error'=>'Invalid or expired OTP']); return;
+            }
+            echo json_encode(['success'=>true,'message'=>'OTP verified','token'=>$row['token']]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function resendOtp() {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $email = $input['email'] ?? '';
+        $phone = $input['phone'] ?? '';
+        if (empty($email) && empty($phone)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Email or phone required']); return;
+        }
+        try {
+            $field = !empty($email) ? 'email' : 'phone';
+            $value = !empty($email) ? $email : $phone;
+            $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $expires = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+            $stmt = $this->db->prepare("UPDATE password_reset_tokens SET otp=?, expires_at=?, created_at=NOW() WHERE $field=? ORDER BY created_at DESC LIMIT 1");
+            $stmt->execute([$otp, $expires, $value]);
+            echo json_encode(['success'=>true,'message'=>'OTP resent','otp'=>$otp]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function resetPassword() {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $token = $input['token'] ?? '';
+        $password = $input['password'] ?? '';
+        $email = $input['email'] ?? '';
+        $phone = $input['phone'] ?? '';
+        if (empty($token) || empty($password) || (empty($email) && empty($phone))) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Token, password and email/phone required']); return;
+        }
+        try {
+            $field = !empty($email) ? 'email' : 'phone';
+            $value = !empty($email) ? $email : $phone;
+            $stmt = $this->db->prepare("SELECT * FROM password_reset_tokens WHERE $field = ? AND token = ? AND expires_at > NOW() ORDER BY created_at DESC LIMIT 1");
+            $stmt->execute([$value, $token]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row) {
+                http_response_code(400); echo json_encode(['success'=>false,'error'=>'Invalid or expired token']); return;
+            }
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE $field = ?");
+            $stmt->execute([$hash, $value]);
+            $stmt = $this->db->prepare("DELETE FROM password_resets WHERE $field = ?");
+            $stmt->execute([$value]);
+            echo json_encode(['success'=>true,'message'=>'Password reset successfully']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function changePassword() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $currentPassword = $input['current_password'] ?? '';
+        $newPassword = $input['new_password'] ?? '';
+        if (empty($currentPassword) || empty($newPassword)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Current and new password required']); return;
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT password FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$user || !password_verify($currentPassword, $user['password'])) {
+                http_response_code(400); echo json_encode(['success'=>false,'error'=>'Current password is incorrect']); return;
+            }
+            $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+            $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
+            $stmt->execute([$hash, $userId]);
+            echo json_encode(['success'=>true,'message'=>'Password changed successfully']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function checkUser() {
+        $this->setCorsHeaders();
+        $phone = $_GET['phone'] ?? '';
+        $email = $_GET['email'] ?? '';
+        if (empty($phone) && empty($email)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Phone or email required']); return;
+        }
+        try {
+            $field = !empty($phone) ? 'phone' : 'email';
+            $value = !empty($phone) ? $phone : $email;
+            $stmt = $this->db->prepare("SELECT id, name, email, phone, role FROM users WHERE $field = ? LIMIT 1");
+            $stmt->execute([$value]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true,'exists'=>!!$user,'user'=>$user]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function getReferrer() {
+        $this->setCorsHeaders();
+        $code = $_GET['code'] ?? '';
+        if (empty($code)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Referral code required']); return;
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT id, name, phone FROM users WHERE referral_code = ? LIMIT 1");
+            $stmt->execute([$code]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true,'found'=>!!$user,'data'=>$user ?: null]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function firebaseLogin() {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $phone = $input['phone'] ?? '';
+        $idToken = $input['id_token'] ?? '';
+        if (empty($phone)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Phone required']); return;
+        }
+        try {
+            $stmt = $this->db->prepare("SELECT id, name, email, phone, role, status FROM users WHERE phone = ? LIMIT 1");
+            $stmt->execute([$phone]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$user) {
+                $name = $input['name'] ?? 'User';
+                $stmt = $this->db->prepare("INSERT INTO users (name, phone, role, status, created_at) VALUES (?, ?, 'customer', 'active', NOW())");
+                $stmt->execute([$name, $phone]);
+                $userId = $this->db->lastInsertId();
+                $user = ['id' => $userId, 'name' => $name, 'phone' => $phone, 'role' => 'customer', 'status' => 'active'];
+            }
+            $token = bin2hex(random_bytes(32));
+            $stmt = $this->db->prepare("UPDATE users SET api_token = ? WHERE id = ?");
+            $stmt->execute([$token, $user['id']]);
+            echo json_encode(['success'=>true,'token'=>$token,'user'=>$user]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — Lead Management (flat /leads/* pattern)
+    // ============================================================
+    public function changeLeadStatus($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $status = $input['status'] ?? '';
+        if (empty($status)) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'Status required']); return; }
+        try {
+            $stmt = $this->db->prepare("UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$status, $id]);
+            echo json_encode(['success'=>true,'message'=>'Status updated']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function scheduleLeadFollowup($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $followupDate = $input['followup_date'] ?? '';
+        $notes = $input['notes'] ?? '';
+        if (empty($followupDate)) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'Follow-up date required']); return; }
+        try {
+            $stmt = $this->db->prepare("UPDATE leads SET next_followup = ?, notes = CONCAT(COALESCE(notes,''), ?), updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$followupDate, "\n[Follow-up: $notes]", $id]);
+            echo json_encode(['success'=>true,'message'=>'Follow-up scheduled']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function addLeadActivity($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $type = $input['type'] ?? 'note';
+        $description = $input['description'] ?? '';
+        if (empty($description)) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'Description required']); return; }
+        try {
+            $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, ?, ?, NOW())");
+            $stmt->execute([$id, $userId, $type, $description]);
+            echo json_encode(['success'=>true,'message'=>'Activity logged']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function convertLead($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $dealValue = $input['deal_value'] ?? 0;
+        try {
+            $stmt = $this->db->prepare("UPDATE leads SET status = 'closed_won', converted_at = NOW(), deal_value = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$dealValue, $id]);
+            $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, 'conversion', 'Lead converted to deal', NOW())")->execute([$id, $userId]);
+            echo json_encode(['success'=>true,'message'=>'Lead converted']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function markLeadLost($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $reason = $input['reason'] ?? '';
+        try {
+            $stmt = $this->db->prepare("UPDATE leads SET status = 'closed_lost', lost_reason = ?, lost_at = NOW(), updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$reason, $id]);
+            $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, 'lost', 'Lead lost: $reason', NOW())")->execute([$id, $userId]);
+            echo json_encode(['success'=>true,'message'=>'Lead marked as lost']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function getLeadStatistics() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->query("SELECT status, COUNT(*) as count FROM leads GROUP BY status");
+            $stats = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            echo json_encode(['success'=>true,'data'=>[
+                'new' => (int)($stats['new'] ?? 0),
+                'contacted' => (int)($stats['contacted'] ?? 0),
+                'qualified' => (int)($stats['qualified'] ?? 0),
+                'proposal' => (int)($stats['proposal'] ?? 0),
+                'negotiation' => (int)($stats['negotiation'] ?? 0),
+                'closed_won' => (int)($stats['closed_won'] ?? 0),
+                'closed_lost' => (int)($stats['closed_lost'] ?? 0),
+                'total' => array_sum($stats),
+            ]]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function logLeadCall($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $duration = $input['duration'] ?? 0;
+        $notes = $input['notes'] ?? '';
+        $callType = $input['call_type'] ?? 'outbound';
+        try {
+            $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, 'call', ?, NOW())");
+            $desc = "Call ($callType, " . ($duration ? "{$duration}s" : 'no duration') . "): $notes";
+            $stmt->execute([$id, $userId, $desc]);
+            $this->db->prepare("UPDATE leads SET call_count = COALESCE(call_count, 0) + 1, updated_at = NOW() WHERE id = ?")->execute([$id]);
+            echo json_encode(['success'=>true,'message'=>'Call logged']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — Bookings (Update/Cancel)
+    // ============================================================
+    public function updateBooking($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        try {
+            $fields = [];
+            $params = [];
+            foreach (['customer_name','customer_email','customer_phone','notes'] as $f) {
+                if (isset($input[$f])) { $fields[] = "$f = ?"; $params[] = $input[$f]; }
+            }
+            if (empty($fields)) { http_response_code(400); echo json_encode(['success'=>false,'error'=>'No fields to update']); return; }
+            $params[] = $id;
+            $this->db->prepare("UPDATE plot_bookings SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ? AND customer_id = ?")->execute([...$params, $userId]);
+            echo json_encode(['success'=>true,'message'=>'Booking updated']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function cancelBooking($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("SELECT plot_id FROM plot_bookings WHERE id = ? AND customer_id = ?");
+            $stmt->execute([$id, $userId]);
+            $booking = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$booking) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Booking not found']); return; }
+            $this->db->prepare("UPDATE plot_bookings SET status = 'cancelled', updated_at = NOW() WHERE id = ?")->execute([$id]);
+            $this->db->prepare("UPDATE plots SET status = 'available' WHERE id = ?")->execute([$booking['plot_id']]);
+            echo json_encode(['success'=>true,'message'=>'Booking cancelled, plot released']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — Properties (Similar, Colony Properties)
+    // ============================================================
+    public function getSimilarProperties($id) {
+        $this->setCorsHeaders();
+        try {
+            $stmt = $this->db->prepare("SELECT colony_id, area_sqft, total_price FROM plots WHERE id = ?");
+            $stmt->execute([$id]);
+            $plot = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$plot) { echo json_encode(['success'=>true,'data'=>[]]); return; }
+            $stmt = $this->db->prepare("SELECT id, plot_number, area_sqft, total_price, status, width_ft, length_ft, block FROM plots WHERE colony_id = ? AND id != ? AND status = 'available' ORDER BY ABS(area_sqft - ?) LIMIT 10");
+            $stmt->execute([$plot['colony_id'], $id, $plot['area_sqft']]);
+            $similar = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true,'data'=>$similar]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>true,'data'=>[]]);
+        }
+    }
+
+    public function getColonyProperties($colonyId) {
+        $this->setCorsHeaders();
+        try {
+            $stmt = $this->db->prepare("SELECT id, plot_number, area_sqft, total_price, status, width_ft, length_ft, block FROM plots WHERE colony_id = ? ORDER BY plot_number ASC");
+            $stmt->execute([$colonyId]);
+            $plots = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true,'data'=>$plots]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>true,'data'=>[]]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — Notifications (Individual Read/Delete)
+    // ============================================================
+    public function markNotificationRead($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE id = ? AND user_id = ?")->execute([$id, $userId]);
+            echo json_encode(['success'=>true]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function deleteNotification($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $this->db->prepare("DELETE FROM notifications WHERE id = ? AND user_id = ?")->execute([$id, $userId]);
+            echo json_encode(['success'=>true]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — Referral Dashboard & Share Tracking
+    // ============================================================
+    public function getReferralDashboard() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("SELECT id, name, email, phone, referral_code FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status='active' THEN 1 ELSE 0 END) as active_signups FROM customer_referrals WHERE referrer_user_id = ?");
+            $stmt->execute([$userId]);
+            $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->db->prepare("SELECT COUNT(*) as bookings FROM plot_bookings WHERE referred_by = ? AND status NOT IN ('cancelled')");
+            $stmt->execute([$userId]);
+            $bookingStats = $stmt->fetch(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true,'data'=>[
+                'referral_code' => $user['referral_code'] ?? '',
+                'total_signups' => (int)($stats['total'] ?? 0),
+                'active_signups' => (int)($stats['active_signups'] ?? 0),
+                'total_bookings' => (int)($bookingStats['bookings'] ?? 0),
+                'share_url' => "https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome/register?ref=" . ($user['referral_code'] ?? ''),
+            ]]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>true,'data'=>['referral_code'=>'','total_signups'=>0,'active_signups'=>0,'total_bookings'=>0,'share_url'=>'']]);
+        }
+    }
+
+    public function trackReferralShare() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $platform = $input['platform'] ?? 'unknown';
+        try {
+            $shares = json_decode(file_get_contents('php://input'), true)['shares'] ?? 1;
+            $this->db->prepare("UPDATE users SET share_clicks = COALESCE(share_clicks,0) + ? WHERE id = ?")->execute([$shares, $userId]);
+            echo json_encode(['success'=>true]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>true]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — Support Tickets
+    // ============================================================
+    public function getSupportTickets() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("SELECT id, subject, category, priority, status, created_at, updated_at FROM support_tickets WHERE user_id = ? ORDER BY created_at DESC");
+            $stmt->execute([$userId]);
+            $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true,'data'=>$tickets]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>true,'data'=>[]]);
+        }
+    }
+
+    public function createSupportTicket() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $subject = $input['subject'] ?? '';
+        $category = $input['category'] ?? 'general';
+        $message = $input['message'] ?? '';
+        $priority = $input['priority'] ?? 'medium';
+        if (empty($subject) || empty($message)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Subject and message required']); return;
+        }
+        try {
+            $stmt = $this->db->prepare("INSERT INTO support_tickets (user_id, subject, category, message, priority, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'open', NOW(), NOW())");
+            $stmt->execute([$userId, $subject, $category, $message, $priority]);
+            echo json_encode(['success'=>true,'ticket_id'=>$this->db->lastInsertId()]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function getSupportTicketDetail($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM support_tickets WHERE id = ? AND user_id = ?");
+            $stmt->execute([$id, $userId]);
+            $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$ticket) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Ticket not found']); return; }
+            $stmt = $this->db->prepare("SELECT id, message, is_admin, created_at FROM support_ticket_replies WHERE ticket_id = ? ORDER BY created_at ASC");
+            $stmt->execute([$id]);
+            $ticket['replies'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true,'data'=>$ticket]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — Settings & Preferences
+    // ============================================================
+    public function updateNotificationPreferences() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        try {
+            $prefs = json_encode($input);
+            $this->db->prepare("UPDATE users SET notification_preferences = ? WHERE id = ?")->execute([$prefs, $userId]);
+            echo json_encode(['success'=>true]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>true]);
+        }
+    }
+
+    public function updateUserPreferences() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        try {
+            $prefs = json_encode($input);
+            $this->db->prepare("UPDATE users SET preferences = ? WHERE id = ?")->execute([$prefs, $userId]);
+            echo json_encode(['success'=>true]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>true]);
+        }
+    }
+
+    public function deleteAccount() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $password = $input['password'] ?? '';
+        try {
+            if (!empty($password)) {
+                $stmt = $this->db->prepare("SELECT password FROM users WHERE id = ?");
+                $stmt->execute([$userId]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($user && !password_verify($password, $user['password'])) {
+                    http_response_code(400); echo json_encode(['success'=>false,'error'=>'Incorrect password']); return;
+                }
+            }
+            $this->db->prepare("UPDATE users SET status = 'deleted', name = CONCAT(name, '_deleted_', id), email = CONCAT('deleted_', id, '@deleted.com'), api_token = NULL, updated_at = NOW() WHERE id = ?")->execute([$userId]);
+            echo json_encode(['success'=>true,'message'=>'Account deleted']);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — MLM Operations
+    // ============================================================
+    public function processMlmSale() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $saleAmount = $input['sale_amount'] ?? 0;
+        $plotId = $input['plot_id'] ?? null;
+        if ($saleAmount <= 0 || !$plotId) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'Sale amount and plot ID required']); return;
+        }
+        try {
+            $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, commission_type, amount, source_type, source_id, status, notes, created_at) VALUES (?, 'direct_sale', ?, 'plot_sale', ?, 'pending', 'Mobile app sale submission', NOW())");
+            $stmt->execute([$userId, $saleAmount * 0.05, $plotId]);
+            echo json_encode(['success'=>true,'message'=>'Sale submitted for commission processing','commission_estimate'=>round($saleAmount * 0.05, 2)]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function upgradeMlmRank() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("SELECT rank FROM mlm_network_tree WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            $current = $stmt->fetch(PDO::FETCH_ASSOC);
+            $currentRank = $current['rank'] ?? null;
+            $newRank = '';
+            $ranks = ['associate','sr_associate','bdm','sr_bdm','vice_president','president','site_manager'];
+            $idx = array_search($currentRank, $ranks);
+            if ($idx !== false && $idx < count($ranks) - 1) {
+                $newRank = $ranks[$idx + 1];
+            } elseif ($idx === false) {
+                $newRank = 'associate';
+            } else {
+                http_response_code(400); echo json_encode(['success'=>false,'error'=>'Already at highest rank']); return;
+            }
+            $this->db->prepare("UPDATE mlm_network_tree SET rank = ?, updated_at = NOW() WHERE user_id = ?")->execute([$newRank, $userId]);
+            echo json_encode(['success'=>true,'message'=>"Rank upgraded to $newRank"]);
+        } catch (Exception $e) {
+            http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function getForm16() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $year = $_GET['year'] ?? date('Y');
+            $stmt = $this->db->prepare("SELECT SUM(amount) as total_commission, SUM(tds_deducted) as total_tds FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND YEAR(created_at) = ? AND status = 'approved'");
+            $stmt->execute([$userId, $year]);
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true,'data'=>[
+                'financial_year' => "$year-" . ($year + 1),
+                'total_commission' => (float)($data['total_commission'] ?? 0),
+                'tds_deducted' => (float)($data['total_tds'] ?? 0),
+                'net_payout' => (float)(($data['total_commission'] ?? 0) - ($data['total_tds'] ?? 0)),
+            ]]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>true,'data'=>['financial_year'=>"$year-".($year+1),'total_commission'=>0,'tds_deducted'=>0,'net_payout'=>0]]);
+        }
+    }
+
+    public function getTaxSummary() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("SELECT commission_type, SUM(amount) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'approved' GROUP BY commission_type");
+            $stmt->execute([$userId]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $this->db->prepare("SELECT SUM(tds_deducted) as total_tds FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'approved'");
+            $stmt->execute([$userId]);
+            $tds = $stmt->fetch(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true,'data'=>[
+                'breakdown' => $rows,
+                'total_tds' => (float)($tds['total_tds'] ?? 0),
+                'total_commission' => array_sum(array_column($rows, 'total')),
+            ]]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>true,'data'=>['breakdown'=>[],'total_tds'=>0,'total_commission'=>0]]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — Notification (lead assignment, etc.)
+    // ============================================================
+    public function createNotification() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $targetUserId = $input['user_id'] ?? null;
+        $title = $input['title'] ?? 'Notification';
+        $message = $input['message'] ?? '';
+        $type = $input['type'] ?? 'general';
+        if (!$targetUserId || empty($message)) {
+            http_response_code(400); echo json_encode(['success'=>false,'error'=>'user_id and message required']); return;
+        }
+        try {
+            $this->db->prepare("INSERT INTO notifications (user_id, title, message, type, is_read, created_at) VALUES (?, ?, ?, ?, 0, NOW())")->execute([$targetUserId, $title, $message, $type]);
+            echo json_encode(['success'=>true]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>true]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API V2 — Company Loans
+    // ============================================================
+    public function getLoans() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $loans = $svc->listLoans(['customer_id' => $userId]);
+            echo json_encode(['success'=>true, 'data' => $loans]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function getLoanDetail($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $loan = $svc->getLoanById((int)$id);
+            if (!$loan) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Not found']); return; }
+            $installments = $svc->getInstallments((int)$id);
+            $guarantors = $svc->getGuarantors((int)$id);
+            $documents = $svc->getDocuments((int)$id);
+            echo json_encode(['success'=>true, 'data'=>['loan'=>$loan,'installments'=>$installments,'guarantors'=>$guarantors,'documents'=>$documents]]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function getLoanInstallments($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $installments = $svc->getInstallments((int)$id);
+            echo json_encode(['success'=>true, 'data'=>$installments]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function applyLoan() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (empty($input)) $input = $_POST;
+        $input['customer_id'] = $userId;
+        try {
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $result = $svc->createLoan($input);
+            echo json_encode($result);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function getLoanOffers() {
+        $this->setCorsHeaders();
+        try {
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $offers = $svc->getOffers();
+            $offers = array_map(function($o) { return ['id'=>$o['id'],'name'=>$o['name'],'description'=>$o['description'],'offer_type'=>$o['offer_type'],'interest_free_months'=>$o['interest_free_months'],'max_tenure_months'=>$o['max_tenure_months'],'max_amount'=>$o['max_amount']]; }, $offers);
+            echo json_encode(['success'=>true, 'data'=>$offers]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function calculateLoanEligibility() {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (empty($input)) $input = $_GET;
+        $amount = (float)($input['amount'] ?? 0);
+        $rate = (float)($input['rate'] ?? 10);
+        $tenure = (int)($input['tenure_months'] ?? 60);
+        $interestFreeMonths = (int)($input['interest_free_months'] ?? 0);
+        try {
+            $svc = new \App\Services\Loan\InterestFreeOfferService($this->db);
+            $result = $svc->calculateSavings($amount, $rate, $tenure, $interestFreeMonths);
+            echo json_encode(['success'=>true, 'data'=>$result]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function getEarlySettlement($id) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $result = $svc->calculateEarlySettlement((int)$id);
+            echo json_encode($result);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    // ─── In-App Messaging ───
+
+    public function getConversations() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->query("
+                SELECT 
+                    CASE WHEN m.sender_id = $userId THEN m.receiver_id ELSE m.sender_id END AS other_user_id,
+                    MAX(m.sent_at) AS last_message_time,
+                    (SELECT content FROM messages WHERE (sender_id = $userId AND receiver_id = m.receiver_id) OR (sender_id = m.receiver_id AND receiver_id = $userId) ORDER BY sent_at DESC LIMIT 1) AS last_message,
+                    (SELECT CASE WHEN read_at IS NOT NULL THEN 1 ELSE 0 END FROM messages WHERE sender_id = m.receiver_id AND receiver_id = $userId ORDER BY sent_at DESC LIMIT 1) AS is_read,
+                    (SELECT COUNT(*) FROM messages WHERE receiver_id = $userId AND sender_id = m.receiver_id AND read_at IS NULL) AS unread_count,
+                    u.name AS other_user_name,
+                    u.email AS other_user_email,
+                    u.role AS other_user_role
+                FROM messages m
+                JOIN users u ON u.id = (CASE WHEN m.sender_id = $userId THEN m.receiver_id ELSE m.sender_id END)
+                WHERE m.sender_id = $userId OR m.receiver_id = $userId
+                GROUP BY other_user_id
+                ORDER BY last_message_time DESC
+            ");
+            $conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true, 'data'=>$conversations]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function getMessages($otherUserId) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("
+                SELECT m.*, u.name AS sender_name, u.role AS sender_role,
+                       m.content AS message, m.sent_at AS created_at,
+                       CASE WHEN m.read_at IS NOT NULL THEN 1 ELSE 0 END AS is_read
+                FROM messages m
+                JOIN users u ON u.id = m.sender_id
+                WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
+                ORDER BY m.sent_at ASC
+            ");
+            $stmt->execute([$userId, (int)$otherUserId, (int)$otherUserId, $userId]);
+            $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success'=>true, 'data'=>$messages]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function sendMessage() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            $receiverId = (int)($input['receiver_id'] ?? 0);
+            $message = trim($input['message'] ?? '');
+            if (!$receiverId || !$message) {
+                echo json_encode(['success'=>false, 'error'=>'receiver_id and message required']);
+                return;
+            }
+            $this->db->prepare("INSERT INTO messages (sender_id, receiver_id, content, message_type, sent_at) VALUES (?, ?, ?, 'text', NOW())")
+                ->execute([$userId, $receiverId, $message]);
+            $msgId = $this->db->lastInsertId();
+            $resp = [
+                'id'=>(int)$msgId, 'sender_id'=>$userId, 'receiver_id'=>$receiverId,
+                'message'=>$message, 'content'=>$message,
+                'created_at'=>date('Y-m-d H:i:s'), 'sent_at'=>date('Y-m-d H:i:s'),
+                'is_read'=>0, 'read_at'=>null,
+            ];
+            echo json_encode(['success'=>true, 'data'=>$resp]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function markMessagesRead($otherUserId) {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $this->db->prepare("UPDATE messages SET read_at = NOW() WHERE sender_id = ? AND receiver_id = ? AND read_at IS NULL")
+                ->execute([(int)$otherUserId, $userId]);
+            echo json_encode(['success'=>true]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    public function getUnreadCount() {
+        $this->setCorsHeaders();
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM messages WHERE receiver_id = ? AND read_at IS NULL");
+            $stmt->execute([$userId]);
+            $count = (int)$stmt->fetchColumn();
+            echo json_encode(['success'=>true, 'data'=>['unread_count'=>$count]]);
+        } catch (Exception $e) {
+            echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
 }

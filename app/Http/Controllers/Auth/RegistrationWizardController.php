@@ -29,6 +29,11 @@ class RegistrationWizardController extends BaseController
         }
     }
 
+    public function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     /**
      * Resolve current wizard state (session + DB)
      */
@@ -156,7 +161,7 @@ class RegistrationWizardController extends BaseController
             'name' => $name,
             'email' => $email,
             'phone' => $phone,
-            'password_hash' => password_hash($password, PASSWORD_BCRYPT),
+            'password_hash' => password_hash($password, PASSWORD_DEFAULT),
         ]);
         $this->saveState('step2', 50, $formData, $email, $phone);
         header('Location: ' . BASE_URL . '/register/step2');

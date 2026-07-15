@@ -161,6 +161,11 @@ class BaseController
         if (headers_sent()) {
             return;
         }
+        
+        // Generate CSP nonce for this request
+        $cspNonce = bin2hex(random_bytes(16));
+        $_SESSION['csp_nonce'] = $cspNonce;
+        
         header('X-Content-Type-Options: nosniff');
         header('X-Frame-Options: SAMEORIGIN');
         header('Referrer-Policy: strict-origin-when-cross-origin');
@@ -175,11 +180,11 @@ class BaseController
             || (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443)) {
             header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');
         }
-        // Content Security Policy — single source of truth for all pages
+        // Content Security Policy with nonce support
         $base = defined('BASE_URL') ? BASE_URL : '';
         $csp = "default-src 'self'; "
-            . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com; "
-            . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
+            . "script-src 'self' 'nonce-{$cspNonce}' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com; "
+            . "style-src 'self' 'nonce-{$cspNonce}' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
             . "img-src 'self' data: blob: https:; "
             . "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; "
             . "frame-src 'self' https://www.google.com; "
@@ -188,6 +193,9 @@ class BaseController
             . "report-to csp-endpoint";
         header("Content-Security-Policy: " . $csp);
         header("Reporting-Endpoints: csp-endpoint=\"{$base}/csp-report\"");
+        
+        // Expose nonce to views
+        $GLOBALS['csp_nonce'] = $cspNonce;
     }
 
     protected function skipCsrfProtection(): bool

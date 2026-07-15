@@ -11,7 +11,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h3 mb-0 text-gray-800">
                     <i class="fas fa-users mr-2"></i>
-                    सभी किसान
+                    All Farmers
                 </h1>
                 <div class="d-flex">
                     <!-- Search Form -->
@@ -20,7 +20,7 @@
                             <input type="text"
                                    name="q"
                                    class="form-control"
-                                   placeholder="किसान खोजें..."
+                                   placeholder="Search Farmers..."
                                    value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="submit">
@@ -30,7 +30,7 @@
                         </div>
                     </form>
                     <a href="<?php echo BASE_URL; ?>/farmers/create" class="btn btn-primary">
-                        <i class="fas fa-plus mr-2"></i>नया किसान जोड़ें
+                        <i class="fas fa-plus mr-2"></i>Add New Farmer
                     </a>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                कुल किसान
+                                Total Farmers
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?= $statistics['total_farmers'] ?? 0 ?>
@@ -65,7 +65,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                स्टेट्स कवर किए गए
+                                States Covered
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?= $statistics['unique_states'] ?? 0 ?>
@@ -85,7 +85,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                जिले कवर किए गए
+                                Districts Covered
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?= $statistics['unique_districts'] ?? 0 ?>
@@ -105,7 +105,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                कंप्लीट प्रोफाइल्स
+                                Complete Profiles
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?= $statistics['farmers_with_state'] ?? 0 ?>
@@ -126,27 +126,27 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-table mr-2"></i>किसान सूची
+                        <i class="fas fa-table mr-2"></i>Farmer List
                     </h6>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-toggle="dropdown">
-                            <i class="fas fa-filter mr-1"></i>फिल्टर
+                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-filter mr-1"></i>Filter
                         </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="?filter=all">सभी किसान</a>
-                            <a class="dropdown-item" href="?filter=active">सक्रिय किसान</a>
-                            <a class="dropdown-item" href="?filter=inactive">निष्क्रिय किसान</a>
-                        </div>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="?filter=all">All Farmers</a></li>
+                            <li><a class="dropdown-item" href="?filter=active">Active Farmers</a></li>
+                            <li><a class="dropdown-item" href="?filter=inactive">Inactive Farmers</a></li>
+                        </ul>
                     </div>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (empty($farmers)): ?>
                         <div class="text-center py-5">
                             <i class="fas fa-users fa-4x text-muted mb-4"></i>
-                            <h4 class="text-muted">कोई किसान नहीं मिला</h4>
-                            <p class="text-muted mb-4">अभी तक कोई किसान रजिस्टर्ड नहीं है।</p>
+                            <h4 class="text-muted">No farmers found</h4>
+                            <p class="text-muted mb-4">No farmers registered yet.</p>
                             <a href="<?php echo BASE_URL; ?>/farmers/create" class="btn btn-primary btn-lg">
-                                <i class="fas fa-plus mr-2"></i>पहला किसान जोड़ें
+                                <i class="fas fa-plus mr-2"></i>Add First Farmer
                             </a>
                         </div>
                     <?php else: ?>
@@ -154,13 +154,13 @@
                             <div class="table-responsive"><table class="table table-bordered table-hover table-responsive" id="farmersTable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th>किसान</th>
-                                        <th>संपर्क जानकारी</th>
-                                        <th>लोकेशन</th>
-                                        <th>जमीन होल्डिंग्स</th>
-                                        <th>स्टेटस</th>
-                                        <th>जुड़ा</th>
-                                        <th>कार्रवाई</th>
+                                        <th>Farmer</th>
+                                        <th>Contact Information</th>
+                                        <th>Location</th>
+                                        <th>Land Holdings</th>
+                                        <th>Status</th>
+                                        <th>Joined</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -175,7 +175,7 @@
                                                         <strong><?= htmlspecialchars($farmer['name']) ?></strong>
                                                         <?php if ($farmer['aadhar_number']): ?>
                                                             <br><small class="text-muted">
-                                                                आधार: <?= htmlspecialchars(substr($farmer['aadhar_number'], -4)) ?>
+                                                                Aadhaar: <?= htmlspecialchars(substr($farmer['aadhar_number'], -4)) ?>
                                                             </small>
                                                         <?php endif; ?>
                                                     </div>
@@ -220,14 +220,14 @@
                                                     <?php if ($farmer['total_area']): ?>
                                                         <br>
                                                         <small class="text-muted">
-                                                            कुल <?= number_format($farmer['total_area'], 2) ?> एकड़
+                                                            Total <?= number_format($farmer['total_area'], 2) ?> acres
                                                         </small>
                                                     <?php endif; ?>
                                                 </div>
                                             </td>
                                             <td>
                                                 <span class="badge badge-<?= $farmer['status'] === 'active' ? 'success' : 'secondary' ?>">
-                                                    <?= $farmer['status'] === 'active' ? 'सक्रिय' : 'निष्क्रिय' ?>
+                                                    <?= $farmer['status'] === 'active' ? 'Active' : 'Inactive' ?>
                                                 </span>
                                             </td>
                                             <td>
@@ -243,19 +243,19 @@
                                                 <div class="btn-group-vertical btn-group-sm">
                                                     <a href="<?php echo BASE_URL; ?>/farmers/<?= $farmer['id'] ?>"
                                                        class="btn btn-outline-info btn-sm"
-                                                       title="विवरण देखें">
-                                                        <i class="fas fa-eye"></i> देखें
+                                                       title="View Details">
+                                                        <i class="fas fa-eye"></i>View
                                                     </a>
                                                     <a href="<?php echo BASE_URL; ?>/farmers/<?= $farmer['id'] ?>/edit"
                                                        class="btn btn-outline-warning btn-sm"
-                                                       title="एडिट करें">
-                                                        <i class="fas fa-edit"></i> एडिट
+                                                       title="Edit">
+                                                        <i class="fas fa-edit"></i> Edit
                                                     </a>
                                                     <button type="button"
                                                             class="btn btn-outline-danger btn-sm"
                                                             onclick="deleteFarmer(<?= $farmer['id'] ?>, '<?= htmlspecialchars($farmer['name']) ?>')"
-                                                            title="डिलीट करें">
-                                                        <i class="fas fa-trash"></i> डिलीट
+                                                            title="Delete">
+                                                        <i class="fas fa-trash"></i> Delete
                                                     </button>
                                                 </div>
                                             </td>
@@ -270,13 +270,13 @@
                             <nav aria-label="Farmers pagination">
                                 <ul class="pagination">
                                     <li class="page-item disabled">
-                                        <span class="page-link">पिछला</span>
+                                        <span class="page-link">Previous</span>
                                     </li>
                                     <li class="page-item active">
                                         <span class="page-link">1</span>
                                     </li>
                                     <li class="page-item disabled">
-                                        <span class="page-link">अगला</span>
+                                        <span class="page-link">Next</span>
                                     </li>
                                 </ul>
                             </nav>
@@ -293,18 +293,16 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">किसान डिलीट करें</h5>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
+                <h5 class="modal-title">Delete Farmer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>क्या आप वाकई <strong id="farmerName"></strong> को डिलीट करना चाहते हैं?</p>
-                <p class="text-danger">यह कार्रवाई वापस नहीं की जा सकती।</p>
+                <p>Are you sure you want to delete <strong id="farmerName"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">रद्द करें</button>
-                <a href="#" id="confirmDeleteBtn" class="btn btn-danger">डिलीट करें</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Delete</a>
             </div>
         </div>
     </div>
@@ -314,17 +312,21 @@
 function deleteFarmer(id, name) {
     document.getElementById('farmerName').textContent = name;
     document.getElementById('confirmDeleteBtn').href = '<?php echo BASE_URL; ?>/farmers/' + id + '/delete';
-    $('#deleteModal').modal('show');
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
 }
 
 // Table search functionality
-$(document).ready(function(){
-    $("#farmersTable_filter input").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#farmersTable tbody tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+document.addEventListener('DOMContentLoaded', function(){
+    var searchInput = document.querySelector('#farmersTable_filter input');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            var value = this.value.toLowerCase();
+            var rows = document.querySelectorAll('#farmersTable tbody tr');
+            rows.forEach(function(row) {
+                row.style.display = row.textContent.toLowerCase().indexOf(value) > -1 ? '' : 'none';
+            });
         });
-    });
+    }
 });
 </script>
 

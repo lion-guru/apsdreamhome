@@ -11,7 +11,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h3 mb-0 text-gray-800">
                     <i class="fas fa-search mr-2"></i>
-                    किसान खोज परिणाम
+                    Farmer Search Results
                 </h1>
                 <div class="d-flex">
                     <!-- Search Form -->
@@ -20,7 +20,7 @@
                             <input type="text"
                                    name="q"
                                    class="form-control"
-                                   placeholder="किसान खोजें..."
+                                   placeholder="Search Farmers..."
                                    value="<?= htmlspecialchars($search_term) ?>">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="submit">
@@ -30,7 +30,7 @@
                         </div>
                     </form>
                     <a href="<?php echo BASE_URL; ?>/farmers" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left mr-2"></i>सभी किसान देखें
+                        <i class="fas fa-arrow-left mr-2"></i>View All Farmers
                     </a>
                 </div>
             </div>
@@ -38,9 +38,9 @@
             <?php if ($search_term): ?>
                 <div class="mt-3">
                     <p class="text-muted">
-                        "<strong><?= htmlspecialchars($search_term) ?></strong>" के लिए परिणाम
+                        "<strong><?= htmlspecialchars($search_term) ?></strong>" results for
                         <span class="badge badge-primary ml-2">
-                            <?= count($farmers) ?> किसान मिले
+                            <?= count($farmers) ?> farmers found
                         </span>
                     </p>
                 </div>
@@ -55,16 +55,16 @@
                 <div class="card shadow">
                     <div class="card-body text-center py-5">
                         <i class="fas fa-search fa-4x text-muted mb-4"></i>
-                        <h4 class="text-muted">कोई परिणाम नहीं मिला</h4>
+                        <h4 class="text-muted">No results found</h4>
                         <p class="text-muted mb-4">
-                            "<strong><?= htmlspecialchars($search_term) ?></strong>" के लिए कोई किसान नहीं मिला।
+                            "<strong><?= htmlspecialchars($search_term) ?></strong>" results for No farmers found.
                         </p>
                         <div class="d-flex justify-content-center">
                             <a href="<?php echo BASE_URL; ?>/farmers/create" class="btn btn-primary mr-3">
-                                <i class="fas fa-plus mr-2"></i>नया किसान जोड़ें
+                                <i class="fas fa-plus mr-2"></i>Add New Farmer
                             </a>
                             <button type="button" class="btn btn-secondary" onclick="clearSearch()">
-                                <i class="fas fa-times mr-2"></i>खोज साफ करें
+                                <i class="fas fa-times mr-2"></i>Clear Search
                             </button>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-users mr-2"></i>खोज परिणाम
+                            <i class="fas fa-users mr-2"></i>Search Results
                         </h6>
                     </div>
                     <div class="card-body aps-cp-card-body">
@@ -124,11 +124,11 @@
                                                 <div class="info-item mb-3">
                                                     <i class="fas fa-map mr-2 text-warning"></i>
                                                     <span class="badge badge-success">
-                                                        <?= $farmer['total_holdings'] ?? 0 ?> होल्डिंग्स
+                                                        <?= $farmer['total_holdings'] ?? 0 ?> Holdings
                                                     </span>
                                                     <?php if (!empty($farmer['total_area'])): ?>
                                                         <small class="text-muted ml-2">
-                                                            <?= number_format($farmer['total_area'], 2) ?> एकड़
+                                                            <?= number_format($farmer['total_area'], 2) ?> Acres
                                                         </small>
                                                     <?php endif; ?>
                                                 </div>
@@ -137,11 +137,11 @@
                                             <div class="btn-group-vertical btn-group-sm w-100">
                                                 <a href="<?php echo BASE_URL; ?>/farmers/<?= $farmer['id'] ?>"
                                                    class="btn btn-outline-info btn-sm">
-                                                    <i class="fas fa-eye mr-1"></i>विवरण देखें
+                                                    <i class="fas fa-eye mr-1"></i>View Details
                                                 </a>
                                                 <a href="<?php echo BASE_URL; ?>/farmers/<?= $farmer['id'] ?>/edit"
                                                    class="btn btn-outline-warning btn-sm">
-                                                    <i class="fas fa-edit mr-1"></i>एडिट करें
+                                                    <i class="fas fa-edit mr-1"></i>Edit
                                                 </a>
                                             </div>
                                         </div>
@@ -162,13 +162,13 @@
                 <div class="card shadow">
                     <div class="card-header aps-cp-card-header">
                         <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-lightbulb mr-2"></i>खोज सुझाव
+                            <i class="fas fa-lightbulb mr-2"></i>Search Suggestions
                         </h6>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <h6>नाम से खोजें:</h6>
+                                <h6>Search by name:</h6>
                                 <ul class="list-unstyled">
                                     <li><a href="<?php echo BASE_URL; ?>/farmers/search?q=राम" class="text-decoration-none">राम</a></li>
                                     <li><a href="<?php echo BASE_URL; ?>/farmers/search?q=सिंह" class="text-decoration-none">सिंह</a></li>
@@ -176,7 +176,7 @@
                                 </ul>
                             </div>
                             <div class="col-md-6">
-                                <h6>फोन से खोजें:</h6>
+                                <h6>Search by phone:</h6>
                                 <ul class="list-unstyled">
                                     <li><a href="<?php echo BASE_URL; ?>/farmers/search?q=700" class="text-decoration-none">700xxxxxxx</a></li>
                                     <li><a href="<?php echo BASE_URL; ?>/farmers/search?q=800" class="text-decoration-none">800xxxxxxx</a></li>

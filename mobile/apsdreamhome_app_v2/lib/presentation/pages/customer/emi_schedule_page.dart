@@ -19,6 +19,11 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
   List<dynamic> _installments = [];
   bool _isLoading = true;
 
+  String _formatCurrency(num amount) {
+    final fixed = amount.toStringAsFixed(0);
+    return '₹${fixed.replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,26 +61,87 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _installments.isEmpty
-              ? RefreshIndicator(
-                  onRefresh: _fetchSchedule,
-                  child: ListView(
-                    children: const [
-                      SizedBox(height: 100),
-                      Center(child: Text('No EMI schedule found for this booking.')),
-                    ],
+          ? RefreshIndicator(
+              onRefresh: _fetchSchedule,
+              child: ListView(
+                children: const [
+                  SizedBox(height: 100),
+                  Center(
+                    child: Text('No EMI schedule found for this booking.'),
                   ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _fetchSchedule,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _installments.length,
-                    itemBuilder: (context, index) {
-                      final emi = _installments[index] as Map<String, dynamic>;
-                      return _buildEmiTile(emi);
-                    },
-                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _fetchSchedule,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: _installments.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) return _buildProgressHeader();
+                  final emi = _installments[index - 1] as Map<String, dynamic>;
+                  return _buildEmiTile(emi);
+                },
+              ),
+            ),
+    );
+  }
+
+  Widget _buildProgressHeader() {
+    final total = _installments.length;
+    final paidCount = _installments
+        .where((e) => (e as Map<String, dynamic>)['status'] == 'paid')
+        .length;
+    final progress = total > 0 ? paidCount / total : 0.0;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.primaryColor,
+            AppTheme.primaryColor.withValues(alpha: 0.8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '$paidCount of $total EMIs paid',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
                 ),
+              ),
+              Text(
+                '${(progress * 100).toStringAsFixed(0)}%',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: Colors.white.withValues(alpha: 0.3),
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+              minHeight: 8,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -116,14 +182,18 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '₹${emi['amount'] as num}',
+                      _formatCurrency(emi['amount'] as num),
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                     Text(
                       'Due: ${emi['due_date'] as String}',
-                      style:
-                          TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),
@@ -133,19 +203,24 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Icon(Icons.check_circle, color: Colors.green),
-                    Text('Paid',
-                        style: TextStyle(color: Colors.green, fontSize: 11)),
+                    Text(
+                      'Paid',
+                      style: TextStyle(color: Colors.green, fontSize: 11),
+                    ),
                   ],
                 )
               else
                 ElevatedButton(
                   onPressed: () => _processPayment(emi),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isOverdue ? Colors.red : AppTheme.primaryColor,
+                    backgroundColor: isOverdue
+                        ? Colors.red
+                        : AppTheme.primaryColor,
                     minimumSize: const Size(80, 32),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                   ),
                   child: const Text('Pay Now'),
                 ),
@@ -163,14 +238,17 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
       builder: (context) => AlertDialog(
         title: const Text('Confirm Payment'),
         content: Text(
-            'Do you want to pay ₹${emi['amount'] as num} for EMI #${emi['emi_number'] as num}?'),
+          'Do you want to pay ${_formatCurrency(emi['amount'] as num)} for EMI #${emi['emi_number'] as num}?',
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
           TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Confirm')),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Confirm'),
+          ),
         ],
       ),
     );
@@ -192,8 +270,9 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Payment successful!'),
-              backgroundColor: Colors.green),
+            content: Text('Payment successful!'),
+            backgroundColor: Colors.green,
+          ),
         );
       }
     } catch (e) {

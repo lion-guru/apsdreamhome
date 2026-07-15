@@ -596,3 +596,33 @@ function submitPropertyInterest(e) {
 </div>
 
 <style>.prop-budget-chip.active{background:#0d9488!important;color:#fff!important;border-color:#0d9488!important}</style>
+
+<!-- Smart Registration Behavior Tracking -->
+<script>
+(function() {
+    var token = (document.cookie.match('(^|;)\\s*smart_reg_token\\s*=\\s*([^;]+)') || [])[2];
+    if (!token) return;
+    function track(type, data) {
+        try {
+            var x = new XMLHttpRequest();
+            x.open('POST', '<?= BASE_URL ?>/api/smart-register/track', true);
+            x.setRequestHeader('Content-Type', 'application/json');
+            x.send(JSON.stringify({ token: token, event_type: type, event_data: data || null, page_url: window.location.href }));
+        } catch(e) {}
+    }
+    // Track search events
+    var searchForm = document.querySelector('form[action*="properties"]');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function() {
+            track('search', { query: (searchForm.querySelector('[name="q"]') || {}).value || '' });
+        });
+    }
+    // Track property card clicks
+    document.querySelectorAll('.property-card a, [data-property-id]').forEach(function(el) {
+        el.addEventListener('click', function() {
+            var id = el.getAttribute('data-property-id') || '';
+            track('page_view', { action: 'property_card_click', property_id: id });
+        });
+    });
+})();
+</script>

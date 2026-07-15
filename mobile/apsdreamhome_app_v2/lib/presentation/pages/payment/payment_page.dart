@@ -110,14 +110,13 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
             children: [
               const Text(
                 'Total Amount',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.white70, fontSize: 14),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
@@ -145,10 +144,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
           const SizedBox(height: 12),
           Text(
             widget.description,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
           if (widget.entityName != null) ...[
             const SizedBox(height: 4),
@@ -174,18 +170,12 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         children: [
           const Text(
             'Select Payment Method',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
             'Choose your preferred UPI app',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
         ],
       ),
@@ -212,10 +202,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
             Expanded(
               child: Text(
                 'No UPI apps found. Please install Google Pay, PhonePe, or Paytm.',
-                style: TextStyle(
-                  color: Colors.orange.shade700,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.orange.shade700, fontSize: 14),
               ),
             ),
           ],
@@ -252,10 +239,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         children: [
           const Text(
             'Other Methods',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           _buildPaymentMethodTile(
@@ -263,7 +247,8 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
             name: 'Card / Net Banking',
             subtitle: 'Razorpay',
             iconColor: Colors.purple,
-            isSelected: ref.watch(paymentProvider).selectedMethod ==
+            isSelected:
+                ref.watch(paymentProvider).selectedMethod ==
                 PaymentMethod.razorpay,
             onTap: () => ref
                 .read(paymentProvider.notifier)
@@ -376,10 +361,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
           Expanded(
             child: Text(
               error,
-              style: TextStyle(
-                color: Colors.red.shade700,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.red.shade700, fontSize: 14),
             ),
           ),
           IconButton(
@@ -448,8 +430,9 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                         height: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : Text(
@@ -480,7 +463,9 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
       case PaymentMethod.paytm:
       case PaymentMethod.amazonPay:
       case PaymentMethod.bhim:
-        success = await ref.read(paymentProvider.notifier).initiateUpiPayment(
+        success = await ref
+            .read(paymentProvider.notifier)
+            .initiateUpiPayment(
               method: method,
               amount: widget.amount,
               description: widget.description,
@@ -509,13 +494,15 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Coming Soon'),
-        content:
-            const Text('Card and Net Banking payments will be available soon.'),
+        title: const Text('Use UPI Instead'),
+        content: const Text(
+          'Card and Net Banking will be available soon. '
+          'Please use one of the UPI options (GPay, PhonePe, Paytm) above to complete your payment instantly.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: const Text('OK, Use UPI'),
           ),
         ],
       ),

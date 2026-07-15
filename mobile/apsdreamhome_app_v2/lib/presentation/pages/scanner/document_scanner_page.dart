@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/api_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/glass_card.dart';
 
@@ -17,8 +20,23 @@ class DocumentScannerPage extends ConsumerStatefulWidget {
 
 class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
   final ImagePicker _picker = ImagePicker();
+  final ApiService _api = ApiService();
   final List<XFile> _scannedImages = [];
   bool _isProcessing = false;
+  String _documentType = 'aadhaar';
+  String? _uploadError;
+  String? _uploadSuccess;
+
+  final List<Map<String, String>> _documentTypes = [
+    {'value': 'aadhaar', 'label': 'Aadhaar Card'},
+    {'value': 'pan', 'label': 'PAN Card'},
+    {'value': 'voter', 'label': 'Voter ID'},
+    {'value': 'passport', 'label': 'Passport'},
+    {'value': 'bank_statement', 'label': 'Bank Statement'},
+    {'value': 'property_doc', 'label': 'Property Document'},
+    {'value': 'agreement', 'label': 'Agreement'},
+    {'value': 'other', 'label': 'Other'},
+  ];
 
   @override
   void initState() {
@@ -32,25 +50,26 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
 
     if (cameraStatus != PermissionStatus.granted ||
         storageStatus != PermissionStatus.granted) {
-      _showPermissionDialog();
+      if (mounted) _showPermissionDialog();
     }
   }
 
   void _showPermissionDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         title: const Text('Permissions Required'),
         content: const Text(
-            'Camera and storage permissions are required to scan documents.'),
+          'Camera and storage permissions are required to scan documents.',
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(ctx).pop(),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(ctx).pop();
               openAppSettings();
             },
             child: const Text('Open Settings'),
@@ -67,19 +86,18 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
         preferredCameraDevice: CameraDevice.rear,
         imageQuality: 80,
       );
-
       if (image != null) {
         setState(() {
           _scannedImages.add(image);
+          _uploadError = null;
+          _uploadSuccess = null;
         });
-
-        _processDocument(image);
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error capturing document: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -89,126 +107,61 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
         source: ImageSource.gallery,
         imageQuality: 80,
       );
-
       if (image != null) {
         setState(() {
           _scannedImages.add(image);
+          _uploadError = null;
+          _uploadSuccess = null;
         });
-
-        _processDocument(image);
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error selecting image: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
-  Future<void> _processDocument(XFile image) async {
-    setState(() {
-      _isProcessing = true;
-    });
+  Future<void> _uploadToServer() async {
+    if (_scannedImages.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No documents to upload')));
+      return;
+    }
 
-    try {
-      await Future.delayed(const Duration(seconds: 2));
+    setState(() => _isProcessing = true);
 
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Document processed successfully!')),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error processing document: $e')),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isProcessing = false;
-        });
+    int successCount = 0;
+    int failCount = 0;
+
+    for (final image in _scannedImages) {
+      try {
+        await _api.uploadDocument(image.path, _documentType);
+        successCount++;
+      } catch (e) {
+        failCount++;
       }
     }
+
+    if (!mounted) return;
+    setState(() {
+      _isProcessing = false;
+      if (failCount == 0) {
+        _uploadSuccess = '$successCount document(s) uploaded successfully!';
+        _uploadError = null;
+        _scannedImages.clear();
+      } else {
+        _uploadError = '$successCount uploaded, $failCount failed';
+        _uploadSuccess = null;
+      }
+    });
   }
 
   void _removeImage(int index) {
     setState(() {
       _scannedImages.removeAt(index);
     });
-  }
-
-  Future<void> _createPDF() async {
-    if (_scannedImages.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No documents to convert')),
-      );
-      return;
-    }
-
-    setState(() {
-      _isProcessing = true;
-    });
-
-    try {
-      await Future.delayed(const Duration(seconds: 3));
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('PDF created successfully!')),
-      );
-
-      setState(() {
-        _scannedImages.clear();
-      });
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error creating PDF: $e')),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isProcessing = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _uploadToServer() async {
-    if (_scannedImages.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No documents to upload')),
-      );
-      return;
-    }
-
-    setState(() {
-      _isProcessing = true;
-    });
-
-    try {
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Documents uploaded successfully!')),
-      );
-
-      setState(() {
-        _scannedImages.clear();
-      });
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error uploading documents: $e')),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isProcessing = false;
-        });
-      }
-    }
   }
 
   @override
@@ -241,28 +194,46 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
                           children: [
                             Text(
                               'Document Scanner',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              'Scan, enhance, and convert documents',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: Colors.grey.shade600,
-                                  ),
+                              '${_scannedImages.length} image(s) captured',
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: Colors.grey.shade600),
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
+                  // Document type selector
+                  DropdownButtonFormField<String>(
+                    value: _documentType,
+                    decoration: const InputDecoration(
+                      labelText: 'Document Type',
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                    ),
+                    items: _documentTypes
+                        .map(
+                          (t) => DropdownMenuItem(
+                            value: t['value'],
+                            child: Text(t['label']!),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (val) {
+                      if (val != null) {
+                        setState(() => _documentType = val);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
@@ -291,25 +262,61 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
             ),
           ),
 
-          // Processing Indicator
+          // Status messages
           if (_isProcessing)
             Container(
               padding: const EdgeInsets.all(AppConstants.defaultPadding),
               child: GlassCard(
                 child: Row(
                   children: [
-                    const CircularProgressIndicator(),
+                    const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
-                        'Processing documents...',
+                        'Uploading documents...',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
                 ),
+              ),
+            ),
+
+          if (_uploadError != null)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.defaultPadding,
+                vertical: 8,
+              ),
+              child: Text(
+                _uploadError!,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+
+          if (_uploadSuccess != null)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.defaultPadding,
+                vertical: 8,
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _uploadSuccess!,
+                      style: const TextStyle(color: Colors.green),
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -324,28 +331,18 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
           if (_scannedImages.isNotEmpty)
             Container(
               padding: const EdgeInsets.all(AppConstants.defaultPadding),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _isProcessing ? null : _createPDF,
-                      icon: const Icon(Icons.picture_as_pdf),
-                      label: const Text('Create PDF'),
-                    ),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _isProcessing ? null : _uploadToServer,
+                  icon: const Icon(Icons.cloud_upload),
+                  label: const Text('Upload All to Server'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _isProcessing ? null : _uploadToServer,
-                      icon: const Icon(Icons.cloud_upload),
-                      label: const Text('Upload'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
         ],
@@ -367,16 +364,16 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
           Text(
             'No Documents Scanned',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             'Capture documents using camera or select from gallery',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey.shade500,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade500),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -402,7 +399,7 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
           crossAxisCount: 2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 0.7,
+          childAspectRatio: 0.75,
         ),
         itemCount: _scannedImages.length,
         itemBuilder: (context, index) {
@@ -423,33 +420,39 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: Colors.grey.shade200,
+                color: Colors.grey.shade100,
               ),
               child: Stack(
                 children: [
-                  // Image placeholder (in real app, display actual image)
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.image,
-                          size: 48,
-                          color: Colors.grey.shade400,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      File(image.path),
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image,
+                              size: 48,
+                              color: Colors.grey.shade400,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Document ${index + 1}',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Document ${index + 1}',
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-
-                  // Remove button
                   Positioned(
                     top: 8,
                     right: 8,
@@ -473,10 +476,7 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
               ),
             ),
           ),
-
           const SizedBox(height: 8),
-
-          // Document info
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Column(
@@ -484,9 +484,9 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
               children: [
                 Text(
                   'Document ${index + 1}',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 FutureBuilder<int>(
                   future: image.length(),
@@ -497,8 +497,8 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
                     return Text(
                       'Size: $size KB',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey.shade600,
-                          ),
+                        color: Colors.grey.shade600,
+                      ),
                     );
                   },
                 ),

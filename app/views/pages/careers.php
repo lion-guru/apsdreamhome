@@ -76,7 +76,7 @@
             <div class="col-lg-8 text-center">
                 <h1 class="display-4 fw-bold mb-3"><?= __('careers_hero_title', null, 'Build Your Future with APS Dream Home') ?></h1>
                 <p class="lead mb-4">
-                    <?= __('careers_hero_desc', null, 'Join APS Dream Home — Eastern UP\'s leading real estate company. We\'re building premium colonies across Gorakhpur, Lucknow, and Kushinagar.') ?>
+                    <?= __('careers_hero_desc', null, 'Join APS Dream Home — Eastern UP\'s leading real estate company. We\'re building premium colonies across Gorakhpur and Deoria.') ?>
                 </p>
                 <a href="#jobs" class="btn btn-light btn-lg px-4">
                     <i class="fas fa-search me-2"></i><?= __('careers_view_positions', null, 'View Open Positions') ?>
@@ -246,7 +246,7 @@
                             <?php if (!empty($career->salary_min) && !empty($career->salary_max)): ?>
                                 <div class="mb-2">
                                     <span class="text-primary fw-bold">₹<?= number_format($career->salary_min) ?> — ₹<?= number_format($career->salary_max) ?></span>
-                                    <small class="text-muted"><?= __('careers_per_month', null, '/month') ?></small>
+                                    <small class="text-muted"><?= __('careers_per_annum', null, '/annum') ?></small>
                                 </div>
                             <?php endif; ?>
 
@@ -266,7 +266,7 @@
                             <div class="mt-auto pt-3 d-flex justify-content-end">
                                 <button class="btn btn-primary btn-sm px-3" type="button"
                                         data-bs-toggle="modal" data-bs-target="#applyModal"
-                                        onclick="setJobTitle('<?= addslashes($career->title) ?>')">
+                                        onclick="setJobTitle('<?= addslashes($career->title) ?>', <?= (int)($career->id ?? 0) ?>)">
                                     <i class="fas fa-paper-plane me-1"></i><?= __('careers_apply_now', null, 'Apply Now') ?>
                                 </button>
                             </div>
@@ -296,6 +296,7 @@
             </div>
             <div class="modal-body p-4">
                 <form id="jobApplicationForm" novalidate>
+                    <input type="hidden" name="career_id" id="applicationCareerId" value="">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('careers_full_name', null, 'Full Name') ?> <span class="text-danger">*</span></label>
@@ -353,9 +354,10 @@
 </section>
 
 <script>
-function setJobTitle(title) {
+function setJobTitle(title, careerId) {
     document.getElementById('jobTitle').textContent = title;
     document.getElementById('applicationPosition').value = title;
+    document.getElementById('applicationCareerId').value = careerId || '';
 }
 
 document.getElementById('careerSubmitBtn').addEventListener('click', function() {

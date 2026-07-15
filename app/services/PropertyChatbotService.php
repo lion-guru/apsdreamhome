@@ -61,13 +61,46 @@ class PropertyChatbotService
     }
 
     /**
+     * Get base URL for building links
+     */
+    private function getBase(): string
+    {
+        return defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+    }
+
+    /**
+     * Get Google Maps link for a colony (uses DB map_link, or generates one)
+     */
+    private function getGoogleMapsLink(array $colony): string
+    {
+        if (!empty($colony['map_link'])) {
+            return $colony['map_link'];
+        }
+        if (!empty($colony['latitude']) && !empty($colony['longitude'])) {
+            return "https://maps.google.com/?q={$colony['latitude']},{$colony['longitude']}";
+        }
+        $name = urlencode($colony['name'] . ' Gorakhpur');
+        return "https://maps.google.com/?q={$name}";
+    }
+
+    /**
+     * Get colony detail page link
+     */
+    private function getColonyPageLink(array $colony): string
+    {
+        $slug = $colony['slug'] ?? '';
+        return "{$this->getBase()}/colony/{$slug}";
+    }
+
+    /**
      * Get live colony data from database
      */
     private function getLiveProperties(): array
     {
         try {
             return $this->db->query("
-                SELECT c.id, c.name, c.slug, c.description,
+                SELECT c.id, c.name, c.slug, c.description, c.map_link, c.latitude, c.longitude,
+                       c.starting_price, c.image_path,
                        COUNT(p.id) as total_plots,
                        SUM(CASE WHEN p.status = 'available' THEN 1 ELSE 0 END) as available_plots,
                        MIN(p.total_price) as min_price,
@@ -76,7 +109,8 @@ class PropertyChatbotService
                 FROM colonies c
                 LEFT JOIN plots p ON c.id = p.colony_id AND p.is_active = 1
                 WHERE c.is_active = 1
-                GROUP BY c.id, c.name, c.slug, c.description
+                GROUP BY c.id, c.name, c.slug, c.description, c.map_link, c.latitude, c.longitude,
+                         c.starting_price, c.image_path
                 ORDER BY c.name
             ")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
@@ -195,6 +229,7 @@ class PropertyChatbotService
             'help'       => ['help', 'support', 'kya kar', 'options', 'menu'],
             'trust'      => ['trusted', 'bharosa', 'believe', 'reliable', 'achha hai', 'sahi hai'],
             'competitor'  => ['dlf', 'godrej', 'tata', 'housing', '99acres', 'magicbricks', 'other'],
+            'layout'     => ['layout', 'map', 'naksha', 'site plan', 'plot map', 'floor plan', 'blueprint'],
             'smalltalk_name' => ['naam kya hai', 'tumhara naam', 'your name', 'kaun ho', 'who are you', 'tum kaun'],
             'smalltalk_weather' => ['mausam', 'weather', 'garmi', 'sardi', 'barish'],
         ];
@@ -307,7 +342,9 @@ class PropertyChatbotService
                         $reply .= "🏘️ **{$c['name']}**\n";
                         $reply .= "   {$c['available_plots']} plots available\n";
                         $reply .= "   " . ($lang === 'hi' ? "Range" : "Range") . ": " . $this->inr($c['min_price']) . " — " . $this->inr($c['max_price']) . "\n";
-                        $reply .= "   " . ($lang === 'hi' ? "Shuru" : "Starts") . ": " . number_format($c['min_area']) . " sqft\n\n";
+                        $reply .= "   " . ($lang === 'hi' ? "Shuru" : "Starts") . ": " . number_format($c['min_area']) . " sqft\n";
+                        $reply .= "   📍 " . ($lang === 'hi' ? "Location dekhein" : "View on map") . ": " . $this->getGoogleMapsLink($c) . "\n";
+                        $reply .= "   📄 " . ($lang === 'hi' ? "Project page" : "Project page") . ": " . $this->getColonyPageLink($c) . "\n\n";
                     }
                 }
 
@@ -363,9 +400,13 @@ class PropertyChatbotService
                         : "❌ Sold Out";
                     $reply .= "**{$c['name']}** — {$status}\n";
                     if ($c['description']) {
-                        $reply .= "   " . strip_tags(substr($c['description'], 0, 80)) . "...\n";
+                        $reply .= "   " . strip_tags(substr($c['description'], 0, 120)) . "\n";
                     }
-                    $reply .= "\n";
+                    if ($c['starting_price'] > 0) {
+                        $reply .= "   💰 " . ($lang === 'hi' ? "Shuruat" : "Starting") . ": " . $this->inr($c['starting_price']) . "\n";
+                    }
+                    $reply .= "   📍 " . $this->getGoogleMapsLink($c) . "\n";
+                    $reply .= "   📄 " . $this->getColonyPageLink($c) . "\n\n";
                 }
 
                 $reply .= $lang === 'hi' ? $this->pick([
@@ -385,7 +426,9 @@ class PropertyChatbotService
 
                 foreach ($colonies as $c) {
                     $avail = $c['available_plots'] ?? 0;
-                    $reply .= "• {$c['name']}" . ($avail > 0 ? " ({$avail} plots)" : "") . "\n";
+                    $mapsLink = $this->getGoogleMapsLink($c);
+                    $reply .= "• **{$c['name']}**" . ($avail > 0 ? " ({$avail} plots)" : "") . "\n";
+                    $reply .= "  📍 " . ($lang === 'hi' ? "Google Maps pe dekhein" : "View on Google Maps") . ": " . $mapsLink . "\n";
                 }
 
                 $reply .= $lang === 'hi' ? $this->pick([
@@ -402,13 +445,15 @@ class PropertyChatbotService
                 ]) : "📍 **Our Locations:**\n\n";
 
                 foreach ($colonies as $c) {
-                    $reply .= "🏘️ {$c['name']} — Gorakhpur, UP\n";
+                    $reply .= "🏘️ **{$c['name']}** — Gorakhpur, UP\n";
+                    $reply .= "   📍 " . ($lang === 'hi' ? "Google Maps" : "Google Maps") . ": " . $this->getGoogleMapsLink($c) . "\n";
+                    $reply .= "   📄 " . ($lang === 'hi' ? "Project page" : "Project page") . ": " . $this->getColonyPageLink($c) . "\n\n";
                 }
 
                 $reply .= $lang === 'hi' ? $this->pick([
-                    "\n🏢 **Office:** Virat Bhawan, Kunraghat, Gorakhpur 273008\n\n📍 Google Maps chahiye? Call karein: **+91 92771 21112**",
-                    "\n🏢 Kunraghat, Gorakhpur mein hai hamara office.\n\nMaps bhej dun? Phone karein: **+91 92771 21112**",
-                ]) : "\n📍 Office: Virat Bhawan, Kunraghat, Gorakhpur 273008\n\n📞 +91 92771 21112 for directions";
+                    "\n🏢 **Office:** Virat Bhawan, Kunraghat, Gorakhpur 273008\n\n📞 Directions chahiye? Call karein: **+91 92771 21112**",
+                    "\n🏢 Kunraghat, Gorakhpur mein hai hamara office.\n\n📍 Office map: https://maps.google.com/?q=Virat+Bhawan+Kunraghat+Gorakhpur+273008\n\n📞 **+91 92771 21112**",
+                ]) : "\n📍 Office: Virat Bhawan, Kunraghat, Gorakhpur 273008\n\n📍 https://maps.google.com/?q=Virat+Bhawan+Kunraghat+Gorakhpur+273008\n\n📞 +91 92771 21112 for directions";
                 return $reply;
 
             case 'contact':
@@ -552,6 +597,30 @@ class PropertyChatbotService
                     . "Ek baar visit toh kariye! 🏠",
                 ]) : "Great you're comparing! APS offers local expertise, transparent pricing, and flexible EMI. Visit us to see the difference! 😊";
 
+            case 'layout':
+                $this->context['interest'] = 'layout';
+                $reply = $lang === 'hi' ? $this->pick([
+                    "🗺️ **Colony Layout Maps — APS Dream Homes:**\n\n",
+                    "🗺️ **Ye hain hamare colony layouts:**\n\n",
+                    "📋 **Site Plans dekhiye:**\n\n",
+                ]) : "🗺️ **Colony Layout Maps:**\n\n";
+
+                foreach ($colonies as $c) {
+                    if ($c['available_plots'] > 0) {
+                        $mapsLink = $this->getGoogleMapsLink($c);
+                        $pageLink = $this->getColonyPageLink($c);
+                        $reply .= "🏘️ **{$c['name']}**\n";
+                        $reply .= "   📍 " . ($lang === 'hi' ? "Location map" : "Location map") . ": " . $mapsLink . "\n";
+                        $reply .= "   📄 " . ($lang === 'hi' ? "Project page (layout dekhein)" : "Project page (view layout)") . ": " . $pageLink . "\n\n";
+                    }
+                }
+
+                $reply .= $lang === 'hi' ? $this->pick([
+                    "Konsi colony ka layout dekhna hai? Ya detailed plot map chahiye? 🗺️\n\n📞 **+91 92771 21112** par call karein — PDF layout bhej denge!",
+                    "Har colony ka detailed layout hamare project pages pe mil jayega! 📄\nYa call karein: **+91 92771 21112**",
+                ]) : "View detailed layout on each project page! Or call **+91 92771 21112** for PDF layouts.";
+                return $reply;
+
             case 'thanks':
                 $nameSuffix = $this->context['name'] ? ', ' . $this->context['name'] : '';
                 return $lang === 'hi' ? $this->pick([
@@ -623,6 +692,7 @@ class PropertyChatbotService
                     . "📐 \"Kitna bada hai?\" — Plot sizes\n"
                     . "💳 \"EMI kya hai?\" — Monthly plan\n"
                     . "🏘️ \"Kya projects hain?\" — All colonies\n"
+                    . "🗺️ \"Layout dikhao\" — Colony maps\n"
                     . "📞 \"Phone number\" — Contact details\n"
                     . "✅ \"Legal hai?\" — RERA info\n\n"
                     . "Ya seedha call karein: **+91 92771 21112**",
@@ -632,9 +702,10 @@ class PropertyChatbotService
                     . "2. Site visit plan karo 📅\n"
                     . "3. EMI check karo 💳\n"
                     . "4. Projects jaano 🏘️\n"
-                    . "5. Call karo 📞 **+91 92771 21112**\n\n"
+                    . "5. Layout dekho 🗺️\n"
+                    . "6. Call karo 📞 **+91 92771 21112**\n\n"
                     . "Bas bol dijiye, main handle kar lunga! 😊",
-                ]) : "🤔 **I can help with:**\n\n• 💰 Prices & EMI\n• 📅 Site visits\n• 📐 Plot sizes\n• 🏘️ Projects\n• 📞 Contact info\n\nCall: **+91 92771 21112**";
+                ]) : "🤔 **I can help with:**\n\n• 💰 Prices & EMI\n• 📅 Site visits\n• 📐 Plot sizes\n• 🏘️ Projects\n• 🗺️ Layout maps\n• 📞 Contact info\n\nCall: **+91 92771 21112**";
 
             default:
                 $name = $this->context['name'] ? $this->context['name'] . ' ' : '';
@@ -656,13 +727,14 @@ class PropertyChatbotService
                     . "• 📅 \"Site visit karna hai\"\n"
                     . "• 📐 \"Kitna bada hai?\"\n"
                     . "• 💳 \"EMI kya hai?\"\n"
+                    . "• 🗺️ \"Layout dikhao\"\n"
                     . "• 📞 \"Phone number\"\n\n"
                     . "Ya call karein: **+91 92771 21112**",
 
                     "🤔 {$name}Thoda aur bataiye — kya dhoondh rahe hain?\n\n"
                     . "Property, price, booking, ya kuch aur? Main sab bata sakta hoon! 😊\n\n"
                     . "📞 **+91 92771 21112**",
-                ]) : "🤔 I want to help! Ask about:\n\n• 💰 Prices\n• 📅 Site visits\n• 📐 Sizes\n• 💳 EMI\n• 📞 Contact\n\nOr call: **+91 92771 21112**";
+                ]) : "🤔 I want to help! Ask about:\n\n• 💰 Prices\n• 📅 Site visits\n• 📐 Sizes\n• 💳 EMI\n• 🗺️ Layouts\n• 📞 Contact\n\nOr call: **+91 92771 21112**";
         }
     }
 
@@ -672,28 +744,30 @@ class PropertyChatbotService
         $interest = $this->context['interest'];
 
         $base = $lang === 'hi' ? [
-            'greeting'  => ['Property dekhni hai', 'Price dekho', 'Site visit karna hai', 'Contact karo'],
+            'greeting'  => ['Property dekhni hai', 'Price dekho', 'Layout dekho', 'Site visit karna hai', 'Contact karo'],
             'price'     => ['EMI calculator', 'Budget plot batao', 'Site visit karo'],
             'emi'       => ['Booking karo', 'Payment plan', 'Site visit'],
             'visit'     => ['Suryoday nagar', 'Raghunath nagri', 'Braj radha', 'Call karo'],
-            'projects'  => ['Price dekho', 'Available plots', 'Site visit'],
+            'projects'  => ['Price dekho', 'Layout dekho', 'Available plots', 'Site visit'],
+            'layout'    => ['Suryoday layout', 'Raghunath layout', 'Braj Radha layout', 'Price dekho'],
             'booking'   => ['Site visit karo', 'Call karo', 'WhatsApp karo'],
             'contact'   => ['WhatsApp', 'Site visit karo', 'Back'],
-            'smalltalk' => ['Property dekhni hai', 'Price dekho', 'Site visit karo'],
+            'smalltalk' => ['Property dekhni hai', 'Price dekho', 'Layout dekho', 'Site visit karo'],
         ] : [
-            'greeting'  => ['View Properties', 'Check Prices', 'Site Visit', 'Contact Us'],
+            'greeting'  => ['View Properties', 'Check Prices', 'Layout Maps', 'Site Visit', 'Contact Us'],
             'price'     => ['EMI Calculator', 'Show Budget Plots', 'Book Visit'],
             'emi'       => ['Book Now', 'Payment Plan', 'Site Visit'],
             'visit'     => ['Suryoday Nagar', 'Raghunath', 'Braj Radha', 'Call Now'],
-            'projects'  => ['Prices', 'Available Plots', 'Site Visit'],
+            'projects'  => ['Prices', 'Layout Maps', 'Available Plots', 'Site Visit'],
+            'layout'    => ['Suryoday Layout', 'Raghunath Layout', 'Braj Radha Layout', 'Prices'],
             'booking'   => ['Book Visit', 'Call Us', 'WhatsApp'],
             'contact'   => ['WhatsApp', 'Book Visit', 'Back'],
-            'smalltalk' => ['View Properties', 'Check Prices', 'Site Visit'],
+            'smalltalk' => ['View Properties', 'Check Prices', 'Layout Maps', 'Site Visit'],
         ];
 
         return $base[$intent] ?? ($lang === 'hi'
-            ? ['Property dekhni hai', 'Price dekho', 'Site visit karo', 'Contact karo']
-            : ['View Properties', 'Check Prices', 'Site Visit', 'Contact Us']
+            ? ['Property dekhni hai', 'Price dekho', 'Layout dekho', 'Site visit karo', 'Contact karo']
+            : ['View Properties', 'Check Prices', 'Layout Maps', 'Site Visit', 'Contact Us']
         );
     }
 

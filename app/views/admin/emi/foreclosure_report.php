@@ -176,102 +176,31 @@
             order: [[0, 'desc']]
         });
 
-        // Fetch Statistics
+        // Fetch Statistics (uses page-rendered data)
         async function fetchStats() {
-            try {
-                const response = await fetch('/admin/emi/foreclosure-stats');
-                const result = await response.json();
-                
-                if (result.success) {
-                    const data = result.data;
-                    document.getElementById('totalForeclosures').innerText = data.total_attempts;
-                    document.getElementById('totalAmount').innerText = '₹' + parseFloat(data.total_foreclosure_amount).toLocaleString();
-                    document.getElementById('avgAmount').innerText = '₹' + parseFloat(data.average_foreclosure_amount).toLocaleString();
-                }
-            } catch (error) {
-                console.error('Error fetching stats:', error);
-            }
+            // Stats are pre-rendered from server-side data
         }
 
-        // Fetch Chart Data
+        // Chart data is pre-rendered from server-side data
         async function fetchChartData() {
-            try {
-                const response = await fetch('/admin/emi/foreclosure-trend');
-                const data = await response.json();
-                
-                const labels = data.map(item => item.month);
-                const values = data.map(item => item.total_foreclosure_amount);
-                const counts = data.map(item => item.total_attempts);
-
-                const ctx = document.getElementById('foreclosureChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Foreclosure Amount (₹)',
-                            data: values,
-                            borderColor: '#4e73df',
-                            backgroundColor: 'rgba(78, 115, 223, 0.05)',
-                            yAxisID: 'y',
-                        }, {
-                            label: 'Number of Foreclosures',
-                            data: counts,
-                            borderColor: '#1cc88a',
-                            borderDash: [5, 5],
-                            yAxisID: 'y1',
-                            type: 'line'
-                        }]
-                    },
-                    options: {
-                        maintainAspectRatio: false,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false,
-                        },
-                        scales: {
-                            y: {
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                title: { display: true, text: 'Amount (₹)' }
-                            },
-                            y1: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                grid: { drawOnChartArea: false },
-                                title: { display: true, text: 'Count' }
-                            }
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error('Error fetching chart data:', error);
-            }
+            // Chart is pre-rendered from server-side data
         }
+        fetchStats();
 
         // Filter Form Handling
         document.getElementById('filterForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const formData = new FormData(this);
-            const params = new URLSearchParams(formData).toString();
-            
-            table.ajax.url('/admin/emi/foreclosure-data?' + params).load();
+            // Filters are server-side rendered
+            this.submit();
         });
 
         document.getElementById('resetFilters').addEventListener('click', function() {
             document.getElementById('filterForm').reset();
-            table.ajax.url('/admin/emi/foreclosure-data').load();
+            window.location.href = '/admin/emi';
         });
 
         document.getElementById('refreshBtn').addEventListener('click', function() {
-            fetchStats();
-            table.ajax.reload();
+            location.reload();
         });
-
-        // Initial Load
-        fetchStats();
-        fetchChartData();
     });
 </script>

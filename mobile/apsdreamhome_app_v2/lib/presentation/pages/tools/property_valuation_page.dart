@@ -49,25 +49,25 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
       'area': 1000,
       'price': 3200000,
       'date': '2 weeks ago',
-      'location': '0.5 km'
+      'location': '0.5 km',
     },
     {
       'area': 1500,
       'price': 4500000,
       'date': '1 month ago',
-      'location': '1.2 km'
+      'location': '1.2 km',
     },
     {
       'area': 800,
       'price': 2400000,
       'date': '1 month ago',
-      'location': '0.8 km'
+      'location': '0.8 km',
     },
     {
       'area': 2000,
       'price': 6000000,
       'date': '2 months ago',
-      'location': '1.5 km'
+      'location': '1.5 km',
     },
   ];
 
@@ -188,10 +188,7 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
           const SizedBox(height: 32),
           const Text(
             'AI Analyzing Market Data...',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Text(
@@ -247,10 +244,7 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
                     SizedBox(height: 4),
                     Text(
                       'Get accurate price estimates using AI & market data',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.white70),
                     ),
                   ],
                 ),
@@ -301,10 +295,7 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
           children: [
             const Text(
               'Property Details',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
@@ -314,8 +305,9 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
               decoration: InputDecoration(
                 labelText: 'City',
                 prefixIcon: const Icon(Icons.location_city),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               items: _cityRates.keys.map((city) {
                 return DropdownMenuItem(
@@ -337,8 +329,9 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
               decoration: InputDecoration(
                 labelText: 'Property Type',
                 prefixIcon: const Icon(Icons.home),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               items: ['Plot', 'House', 'Flat', 'Shop', 'Farmhouse'].map((type) {
                 return DropdownMenuItem(value: type, child: Text(type));
@@ -359,8 +352,9 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
                 labelText: 'Plot Area (sqft) *',
                 prefixIcon: const Icon(Icons.square_foot),
                 hintText: 'e.g., 1000',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -371,8 +365,9 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
               decoration: InputDecoration(
                 labelText: 'Location Type',
                 prefixIcon: const Icon(Icons.place),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               items: _locationMultipliers.keys.map((loc) {
                 final multiplier = _locationMultipliers[loc]!;
@@ -422,8 +417,9 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
                 labelText: 'Address / Nearby Landmark',
                 prefixIcon: const Icon(Icons.location_on),
                 hintText: 'e.g., Near Railway Station, Gorakhpur',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -491,8 +487,8 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
     final double maxPrice = (result['maxPrice'] as num).toDouble();
     final double pricePerSqft = (result['pricePerSqft'] as num).toDouble();
     final double area = (result['area'] as num).toDouble();
-    final double trendPercentage =
-        (result['trendPercentage'] as num).toDouble();
+    final double trendPercentage = (result['trendPercentage'] as num)
+        .toDouble();
 
     return Card(
       elevation: 4,
@@ -517,8 +513,10 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.green.shade100,
                     borderRadius: BorderRadius.circular(12),
@@ -565,10 +563,7 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
             // Price Range
             Text(
               'Expected Range: ${AppConstants.currencySymbol}${_formatNumber(minPrice)} - ${AppConstants.currencySymbol}${_formatNumber(maxPrice)}',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade700,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
             ),
             const SizedBox(height: 20),
 
@@ -649,10 +644,7 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
         ),
       ],
     );
@@ -670,13 +662,18 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
               children: [
                 const Text(
                   'Recent Sales Nearby',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'View all recent sales on the web portal',
+                        ),
+                      ),
+                    );
+                  },
                   child: const Text('View All'),
                 ),
               ],

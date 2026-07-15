@@ -1,0 +1,146 @@
+# APS Dream Home - Telephony Stack
+# Asterisk + chan_dongle + Ollama (local LLM) + Whisper (STT)
+# Run: docker-compose -f docker/asterisk/docker-compose.telephony.yml up -d
+
+x-ollama-env: &ollama-env
+  OLLAMA_HOST: http://ollama:11434
+  OLLAMA_MODEL: llama3.2:3b
+  WHISPER_URL: http://whisper:8080
+  TTS_ENGINE: google
+
+services:
+  # ── Asterisk PBX with chan_dongle ──
+  asterisk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aps_asterisk
+    restart: unless-stopped
+    privileged: true
+    environment:
+      <<: *ollama-env
+      TZ: Asia/Kolkata
+    ports:
+      - '5038:5038' # AMI
+      - '8088:8088' # ARI
+      - '5060:5060/udp' # SIP
+      - '5060:5060/tcp' # SIP TCP
+    volumes:
+      - asterisk_sounds:/var/lib/asterisk/sounds/aps
+      - asterisk_logs:/var/log/asterisk
+      - ./extensions.conf:/etc/asterisk/extensions.conf
+      - ./dongle.conf:/etc/asterisk/dongle.conf
+      - ./manager.conf:/etc/asterisk/manager.conf
+      - ./pjsip.conf:/etc/asterisk/pjsip.conf
+      - ./modules.conf:/etc/asterisk/modules.conf
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0 # Huawei USB modem
+      - /dev/ttyUSB1:/dev/ttyUSB1 # Second modem (if available)
+    networks:
+      - telephony_network
+      - apsdreamhome_network
+    healthcheck:
+      test: ['CMD', 'asterisk', '-rx', 'core show version']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── Ollama (Local LLM for AI conversations) ──
+  ollama:
+    image: ollama/ollama:latest
+    container_name: aps_ollama
+    restart: unless-stopped
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - telephony_network
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 1G
+    healthcheck:
+      test: ['CMD', 'ollama', 'list']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ── Whisper (Speech-to-Text) ──
+  whisper:
+    image: onerahmet/whisper-asr-webservice:latest
+    container_name: aps_whisper
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    environment:
+      - ASR_MODEL=small
+      - ASR_ENGINE=openai_whisper
+      - TZ=Asia/Kolkata
+    volumes:
+      - whisper_data:/root/.cache/whisper
+    networks:
+      - telephony_network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ── PHP API Bridge (connects PHP backend to Asterisk/Whisper/Ollama) ──
+  telephony-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.php-api
+    container_name: aps_telephony_api
+    restart: unless-stopped
+    ports:
+      - '3080:8080'
+    environment:
+      <<: *ollama-env
+      DB_HOST: db
+      DB_PORT: '3306'
+      DB_DATABASE: apsdreamhome
+      DB_USERNAME: apsdream
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      ASTERISK_HOST: asterisk
+      ASTERISK_PORT: '5038'
+      ASTERISK_USERNAME: admin
+      ASTERISK_SECRET: ApsDreamHome2026!
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      TZ: Asia/Kolkata
+    depends_on:
+      asterisk:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+      whisper:
+        condition: service_healthy
+    networks:
+      - telephony_network
+      - apsdreamhome_network
+
+networks:
+  telephony_network:
+    driver: bridge
+    name: telephony_network
+  apsdreamhome_network:
+    external: true
+
+volumes:
+  asterisk_sounds:
+    driver: local
+  asterisk_logs:
+    driver: local
+  ollama_data:
+    driver: local
+  whisper_data:
+    driver: local

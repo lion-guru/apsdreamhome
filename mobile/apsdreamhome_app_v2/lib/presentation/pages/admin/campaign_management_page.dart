@@ -92,7 +92,7 @@ class _CampaignManagementPageState
   }
 
   Widget _buildCampaignStats(AsyncValue<List<Map<String, dynamic>>> asyncData) {
-    final campaigns = asyncData.valueOrNull ?? [];
+    final campaigns = asyncData.value ?? [];
     final activeCount = campaigns.where((c) => c['status'] == 'active').length;
     final totalLeads = campaigns.fold<int>(
       0,

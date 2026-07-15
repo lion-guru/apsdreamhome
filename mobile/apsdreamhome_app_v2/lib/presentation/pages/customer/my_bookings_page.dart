@@ -99,7 +99,10 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
         children: [
           Icon(Icons.home_work_outlined, size: 64, color: Colors.grey.shade400),
           const SizedBox(height: 16),
-          Text('No bookings found', style: TextStyle(color: Colors.grey.shade600, fontSize: 18)),
+          Text(
+            'No bookings found',
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 18),
+          ),
           const SizedBox(height: 8),
           const Text('Book a plot to get started'),
           const SizedBox(height: 24),
@@ -121,7 +124,10 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
     final filtered = bookings.where((b) {
       final status = (b['status'] as String?) ?? '';
       if (filter == 'active') {
-        return status == 'confirmed' || status == 'pending' || status == 'token_paid' || status == 'emi_active';
+        return status == 'confirmed' ||
+            status == 'pending' ||
+            status == 'token_paid' ||
+            status == 'emi_active';
       } else if (filter == 'completed') {
         return status == 'completed' || status == 'registration_done';
       }
@@ -130,7 +136,12 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
 
     if (filtered.isEmpty) {
       return AppWidgets.emptyState(
-        title: 'No ${filter == 'active' ? 'Active' : filter == 'completed' ? 'Completed' : ''} Bookings',
+        title:
+            'No ${filter == 'active'
+                ? 'Active'
+                : filter == 'completed'
+                ? 'Completed'
+                : ''} Bookings',
         subtitle: filter == 'active'
             ? 'You don\'t have any active bookings'
             : 'Completed bookings will appear here',
@@ -156,7 +167,8 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
   Widget _buildBookingCard(Map<String, dynamic> booking) {
     final status = (booking['status'] as String?) ?? 'pending';
     final totalAmount = (booking['amount'] as num?)?.toDouble() ?? 0;
-    final propertyName = (booking['property_name'] as String?) ?? 'Plot Booking';
+    final propertyName =
+        (booking['property_name'] as String?) ?? 'Plot Booking';
     final createdAt = (booking['created_at'] as String?) ?? '';
     final bookingId = booking['id'];
 
@@ -166,7 +178,9 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,19 +195,32 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
                   color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.home_work, color: AppTheme.primaryColor, size: 24),
+                child: const Icon(
+                  Icons.home_work,
+                  color: AppTheme.primaryColor,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(propertyName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    Text(
+                      propertyName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     if (createdAt.isNotEmpty)
                       Text(
                         'Booked on: ${createdAt.split('T').first}',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade500,
+                        ),
                       ),
                   ],
                 ),
@@ -213,11 +240,18 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Amount', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  const Text(
+                    'Amount',
+                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
                   const SizedBox(height: 2),
                   Text(
                     '₹${_formatPrice(totalAmount)}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
+                    ),
                   ),
                 ],
               ),
@@ -233,20 +267,30 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                   ),
                 ),
               if (status == 'completed' || status == 'registration_done')
                 OutlinedButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Download receipt coming soon')),
+                      const SnackBar(
+                        content: Text(
+                          'Receipt will be available after final payment confirmation',
+                        ),
+                      ),
                     );
                   },
                   icon: const Icon(Icons.download, size: 16),
                   label: const Text('Receipt', style: TextStyle(fontSize: 12)),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                   ),
                 ),
             ],
@@ -290,7 +334,14 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage>
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Text(label, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 

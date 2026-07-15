@@ -16,6 +16,5 @@ class SystemController extends BaseApiController
         ];
         
         echo json_encode($status);
-    }
+        }
 }
-?>

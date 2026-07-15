@@ -5,11 +5,6 @@ namespace App\Services;
 use App\Core\Database\Database;
 use PDO;
 
-/**
- * MLMNetworkService
- * Handles genealogy, downline tracking, and team statistics.
- * Uses network_tree table (not users.parent_id) for MLM hierarchy.
- */
 class MLMNetworkService
 {
     protected $db;
@@ -19,10 +14,6 @@ class MLMNetworkService
         $this->db = Database::getInstance();
     }
 
-    /**
-     * Get the downline tree for a specific user.
-     * Returns a recursive tree structure using network_tree table.
-     */
     public function getDownline($userId, $maxLevels = 3)
     {
         return $this->fetchRecursive($userId, 1, $maxLevels);
@@ -35,8 +26,8 @@ class MLMNetworkService
         }
 
         $sql = "SELECT nt.associate_id as id, u.name, u.email, u.phone, u.mlm_rank as rank, u.profile_image,
-                       nt.position, nt.level as tree_level
-                FROM network_tree nt
+                       nt.level as tree_level
+                FROM mlm_network_tree nt
                 JOIN users u ON u.id = nt.associate_id
                 WHERE nt.parent_id = ?
                 ORDER BY u.name ASC";
@@ -53,32 +44,22 @@ class MLMNetworkService
         return $children;
     }
 
-    /**
-     * Count total members in an agent's downline (recursive).
-     */
     public function getTeamSize($userId)
     {
         $sql = "WITH RECURSIVE downline AS (
-                    SELECT associate_id FROM network_tree WHERE parent_id = ?
+                    SELECT associate_id FROM mlm_network_tree WHERE parent_id = ?
                     UNION ALL
-                    SELECT nt.associate_id FROM network_tree nt INNER JOIN downline d ON nt.parent_id = d.associate_id
+                    SELECT nt.associate_id FROM mlm_network_tree nt INNER JOIN downline d ON nt.parent_id = d.associate_id
                 ) SELECT COUNT(*) FROM downline";
         return (int)$this->db->fetchColumn($sql, [$userId]);
     }
 
-    /**
-     * Count direct referrals.
-     */
     public function getDirectCount($userId)
     {
-        $sql = "SELECT COUNT(*) FROM network_tree WHERE parent_id = ?";
+        $sql = "SELECT COUNT(*) FROM mlm_network_tree WHERE parent_id = ?";
         return (int)$this->db->fetchColumn($sql, [$userId]);
     }
 
-    /**
-     * Get commission business breakdown for an associate.
-     * Shows which transaction generated which commission.
-     */
     public function getBusinessBreakdown($userId)
     {
         $sql = "SELECT 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../data/services/colony_service.dart';
@@ -11,18 +12,18 @@ import '../../widgets/app_widgets.dart';
 class ColonyDetailPage extends ConsumerWidget {
   final String colonyId;
 
-  const ColonyDetailPage({
-    super.key,
-    required this.colonyId,
-  });
+  const ColonyDetailPage({super.key, required this.colonyId});
 
   void _shareColony(ColonyModel colony) {
     final locationParts = [
       if (colony.district.isNotEmpty) colony.district,
       if (colony.state.isNotEmpty) colony.state,
     ];
-    final locationText = locationParts.isNotEmpty ? locationParts.join(', ') : 'APS Dream Home';
-    final message = 'Check out ${colony.name} by APS Dream Home!\n'
+    final locationText = locationParts.isNotEmpty
+        ? locationParts.join(', ')
+        : 'APS Dream Home';
+    final message =
+        'Check out ${colony.name} by APS Dream Home!\n'
         '$locationText\n'
         '${colony.pricePerSqft > 0 ? "Price from ₹${colony.pricePerSqft.toStringAsFixed(0)}/sqft" : ""}\n'
         'Plots: ${colony.availablePlots} available out of ${colony.totalPlots}\n'
@@ -121,10 +122,13 @@ class ColonyDetailPage extends ConsumerWidget {
                           if (colony.reraNumber != null)
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color: AppTheme.successColor
-                                    .withValues(alpha: 0.1),
+                                color: AppTheme.successColor.withValues(
+                                  alpha: 0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Row(
@@ -157,9 +161,9 @@ class ColonyDetailPage extends ConsumerWidget {
                         icon: Icons.location_on_outlined,
                         label: 'Location',
                         value: [
-                            if (colony.district.isNotEmpty) colony.district,
-                            if (colony.state.isNotEmpty) colony.state,
-                          ].join(', '),
+                          if (colony.district.isNotEmpty) colony.district,
+                          if (colony.state.isNotEmpty) colony.state,
+                        ].join(', '),
                       ),
 
                       const SizedBox(height: 12),
@@ -178,8 +182,8 @@ class ColonyDetailPage extends ConsumerWidget {
                       Text(
                         'About This Colony',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
 
                       const SizedBox(height: 8),
@@ -199,8 +203,8 @@ class ColonyDetailPage extends ConsumerWidget {
                       Text(
                         'Plot Availability',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
 
                       const SizedBox(height: 16),
@@ -214,10 +218,8 @@ class ColonyDetailPage extends ConsumerWidget {
                           colony.amenities!.isNotEmpty) ...[
                         Text(
                           'Amenities',
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 16),
                         Wrap(
@@ -231,8 +233,9 @@ class ColonyDetailPage extends ConsumerWidget {
                                 size: 18,
                               ),
                               label: Text(amenity),
-                              backgroundColor:
-                                  AppTheme.successColor.withValues(alpha: 0.1),
+                              backgroundColor: AppTheme.successColor.withValues(
+                                alpha: 0.1,
+                              ),
                             );
                           }).toList(),
                         ),
@@ -243,10 +246,8 @@ class ColonyDetailPage extends ConsumerWidget {
                       if (colony.masterPlanImage != null) ...[
                         Text(
                           'Master Plan',
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 16),
                         GestureDetector(
@@ -307,9 +308,7 @@ class ColonyDetailPage extends ConsumerWidget {
                                 const SizedBox(width: 8),
                                 Text(
                                   'Need Help?',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
+                                  style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: AppTheme.primaryColor,
@@ -320,18 +319,16 @@ class ColonyDetailPage extends ConsumerWidget {
                             const SizedBox(height: 8),
                             Text(
                               'Our team is available 24/7 to help you with plot selection and booking.',
-                              style: TextStyle(
-                                color: Colors.grey.shade700,
-                              ),
+                              style: TextStyle(color: Colors.grey.shade700),
                             ),
                             const SizedBox(height: 12),
                             Row(
                               children: [
                                 Expanded(
                                   child: OutlinedButton.icon(
-                                    onPressed: () {
-                                      // Call support
-                                    },
+                                    onPressed: () => launchUrl(
+                                      Uri.parse('tel:+917007444842'),
+                                    ),
                                     icon: const Icon(Icons.phone_outlined),
                                     label: const Text('Call'),
                                   ),
@@ -339,9 +336,12 @@ class ColonyDetailPage extends ConsumerWidget {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      // WhatsApp
-                                    },
+                                    onPressed: () => launchUrl(
+                                      Uri.parse(
+                                        'https://wa.me/917007444842?text=Hi, I\'m interested in your colonies',
+                                      ),
+                                      mode: LaunchMode.externalApplication,
+                                    ),
                                     icon: const Icon(Icons.chat_outlined),
                                     label: const Text('WhatsApp'),
                                   ),
@@ -357,15 +357,11 @@ class ColonyDetailPage extends ConsumerWidget {
               ),
 
               // Bottom Padding
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 100),
-              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => AppWidgets.errorWidget(
           message: error.toString(),
           onRetry: () => ref.refresh(colonyProvider(colonyId)),
@@ -448,21 +444,13 @@ class ColonyDetailPage extends ConsumerWidget {
         'count': colony.availablePlots,
         'color': AppTheme.plotAvailable,
       },
-      {
-        'label': 'Hold',
-        'count': colony.holdPlots,
-        'color': AppTheme.plotHold,
-      },
+      {'label': 'Hold', 'count': colony.holdPlots, 'color': AppTheme.plotHold},
       {
         'label': 'Booked',
         'count': colony.bookedPlots,
         'color': AppTheme.plotBooked,
       },
-      {
-        'label': 'Sold',
-        'count': colony.soldPlots,
-        'color': AppTheme.plotSold,
-      },
+      {'label': 'Sold', 'count': colony.soldPlots, 'color': AppTheme.plotSold},
     ];
 
     return Row(
@@ -491,10 +479,7 @@ class ColonyDetailPage extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   stat['label'] as String,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ],
             ),

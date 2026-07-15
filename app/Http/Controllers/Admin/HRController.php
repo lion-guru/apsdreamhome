@@ -104,15 +104,34 @@ class HRController extends AdminController
         try {
             $exists = $this->db->fetch("SELECT id FROM users WHERE email=?", [$email]);
             if ($exists) { $this->setFlash('error', 'Email already exists'); header('Location: ' . BASE_URL . '/admin/hr/users/create'); exit; }
-            $hashed = password_hash($password, PASSWORD_DEFAULT);
-            $employeeData = json_encode([
-                'department' => $department,
-                'designation' => $designation,
-                'salary' => $salary,
-                'join_date' => $joinDate,
-            ]);
-            $this->db->execute("INSERT INTO users (name, email, phone, role, status, password, employee_data, created_at) VALUES (?,?,?,'employee','active',?,?,NOW())", [$name, $email, $phone, $hashed, $employeeData]);
-            $this->setFlash('success', 'Employee created successfully');
+
+            // Use UserRegistrationService for complete record creation
+            $regService = new \App\Services\UserRegistrationService();
+            $user = null;
+            $result = $regService->createUser('employee', [
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'password' => $password,
+                'registration_method' => 'admin',
+            ], $user);
+
+            if (!$result['success']) {
+                $this->setFlash('error', 'Error: ' . $result['message']);
+                header('Location: ' . BASE_URL . '/admin/hr/users/create');
+                exit;
+            }
+
+            $userId = $result['user_id'];
+
+            // Create employees table row with employment details
+            $employeeCode = 'EMP' . str_pad($userId, 4, '0', STR_PAD_LEFT);
+            $this->db->execute(
+                "INSERT INTO employees (user_id, name, email, phone, role, department, designation, employee_code, salary, joining_date, status, created_at) VALUES (?, ?, ?, ?, 'employee', ?, ?, ?, ?, ?, 'active', NOW())",
+                [$userId, $name, $email, $phone, $department, $designation, $employeeCode, $salary, $joinDate]
+            );
+
+            $this->setFlash('success', 'Employee created successfully. ID: ' . $userId);
         } catch (\Exception $e) {
             error_log("[HRController] " . __METHOD__ . "() exception: " . $e->getMessage());
 

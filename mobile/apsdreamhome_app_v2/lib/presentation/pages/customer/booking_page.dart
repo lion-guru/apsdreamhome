@@ -3,17 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/providers/auth_provider.dart';
 import '../../../data/services/colony_service.dart';
 import '../../../data/models/plot_model.dart';
 import '../../widgets/app_widgets.dart';
 
 class BookingPage extends ConsumerStatefulWidget {
   final String plotId;
-  
-  const BookingPage({
-    super.key,
-    required this.plotId,
-  });
+
+  const BookingPage({super.key, required this.plotId});
 
   @override
   ConsumerState<BookingPage> createState() => _BookingPageState();
@@ -25,26 +23,39 @@ class _BookingPageState extends ConsumerState<BookingPage> {
   final phoneController = TextEditingController();
   final emailController = TextEditingController();
   final addressController = TextEditingController();
-  
+
   String selectedPaymentPlan = 'token';
   bool agreeToTerms = false;
   bool isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = ref.read(authProvider);
+      if (user != null && mounted) {
+        nameController.text = user.name;
+        emailController.text = user.email;
+        phoneController.text = user.phone ?? '';
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final plotAsync = ref.watch(colonyServiceProvider).getPlotById(widget.plotId);
-    
+    final plotAsync = ref
+        .watch(colonyServiceProvider)
+        .getPlotById(widget.plotId);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Book Plot'),
-      ),
+      appBar: AppBar(title: const Text('Book Plot')),
       body: FutureBuilder<PlotModel?>(
         future: plotAsync,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          
+
           final plot = snapshot.data;
           if (plot == null) {
             return AppWidgets.errorWidget(
@@ -52,12 +63,12 @@ class _BookingPageState extends ConsumerState<BookingPage> {
               onRetry: () => setState(() {}),
             );
           }
-          
+
           return Column(
             children: [
               // Plot Summary Card
               buildPlotSummary(plot),
-              
+
               // Booking Form
               Expanded(
                 child: SingleChildScrollView(
@@ -69,13 +80,12 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                       children: [
                         Text(
                           'Customer Details',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
-                        
+
                         const SizedBox(height: 16),
-                        
+
                         // Name
                         TextFormField(
                           controller: nameController,
@@ -90,9 +100,9 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             return null;
                           },
                         ),
-                        
+
                         const SizedBox(height: 16),
-                        
+
                         // Phone
                         TextFormField(
                           controller: phoneController,
@@ -114,9 +124,9 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             return null;
                           },
                         ),
-                        
+
                         const SizedBox(height: 16),
-                        
+
                         // Email
                         TextFormField(
                           controller: emailController,
@@ -126,9 +136,9 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             prefixIcon: Icon(Icons.email_outlined),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 16),
-                        
+
                         // Address
                         TextFormField(
                           controller: addressController,
@@ -139,41 +149,42 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             alignLabelWithHint: true,
                           ),
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Payment Plan
                         Text(
                           'Payment Plan',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
-                        
+
                         const SizedBox(height: 16),
-                        
+
                         buildPaymentPlanOption(
                           value: 'token',
                           title: 'Token Amount',
                           subtitle: 'Pay 10% to block the plot',
                           amount: plot.totalPrice * 0.1,
                           selected: selectedPaymentPlan == 'token',
-                          onSelect: () => setState(() => selectedPaymentPlan = 'token'),
+                          onSelect: () =>
+                              setState(() => selectedPaymentPlan = 'token'),
                         ),
-                        
+
                         const SizedBox(height: 12),
-                        
+
                         buildPaymentPlanOption(
                           value: 'full',
                           title: 'Full Payment',
                           subtitle: 'Pay 100% and get extra benefits',
                           amount: plot.totalPrice,
                           selected: selectedPaymentPlan == 'full',
-                          onSelect: () => setState(() => selectedPaymentPlan = 'full'),
+                          onSelect: () =>
+                              setState(() => selectedPaymentPlan = 'full'),
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Terms
                         CheckboxListTile(
                           value: agreeToTerms,
@@ -192,7 +203,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             ),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 100),
                       ],
                     ),
@@ -203,18 +214,18 @@ class _BookingPageState extends ConsumerState<BookingPage> {
           );
         },
       ),
-      
+
       // Bottom Action Bar
       bottomNavigationBar: FutureBuilder<PlotModel?>(
         future: plotAsync,
         builder: (context, snapshot) {
           final plot = snapshot.data;
           if (plot == null) return const SizedBox.shrink();
-          
+
           final amount = selectedPaymentPlan == 'token'
               ? plot.totalPrice * 0.1
               : plot.totalPrice;
-          
+
           return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -235,7 +246,9 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          selectedPaymentPlan == 'token' ? 'Token Amount' : 'Total Amount',
+                          selectedPaymentPlan == 'token'
+                              ? 'Token Amount'
+                              : 'Total Amount',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey.shade600,
@@ -253,9 +266,9 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(width: 16),
-                  
+
                   SizedBox(
                     height: 56,
                     child: ElevatedButton.icon(
@@ -311,10 +324,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
-                  Icons.home_work,
-                  color: Colors.white,
-                ),
+                child: const Icon(Icons.home_work, color: Colors.white),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -340,13 +350,13 @@ class _BookingPageState extends ConsumerState<BookingPage> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           const Divider(color: Colors.white24),
-          
+
           const SizedBox(height: 16),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -418,17 +428,12 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -465,33 +470,39 @@ class _BookingPageState extends ConsumerState<BookingPage> {
       AppWidgets.showErrorSnackBar(context, 'Please agree to terms');
       return;
     }
-    
+
     setState(() => isLoading = true);
-    
+
     try {
       // Hold the plot first
-      final held = await ref.read(colonyServiceProvider).holdPlot(
-        plotId: plot.id,
-        userId: 'current_user_id', // Get from auth
-        holdDuration: const Duration(hours: 24),
-      );
-      
+      final user = ref.read(authProvider);
+      final held = await ref
+          .read(colonyServiceProvider)
+          .holdPlot(
+            plotId: plot.id,
+            userId: user?.userId ?? '',
+            holdDuration: const Duration(hours: 24),
+          );
+
       if (!held) {
         throw Exception('Plot is no longer available');
       }
-      
+
       // Calculate amount based on payment plan
       final double amount = getPaymentAmount(plot);
-      
+
       // Navigate to payment page
       if (mounted) {
-        context.push('/payment', extra: {
-          'amount': amount,
-          'description': 'Plot Booking - ${plot.plotNumber}',
-          'entity_type': 'plot',
-          'entity_id': plot.id,
-          'entity_name': '${plot.plotNumber} - ${plot.colonyName}',
-        });
+        context.push(
+          '/payment',
+          extra: {
+            'amount': amount,
+            'description': 'Plot Booking - ${plot.plotNumber}',
+            'entity_type': 'plot',
+            'entity_id': plot.id,
+            'entity_name': '${plot.plotNumber} - ${plot.colonyName}',
+          },
+        );
       }
     } catch (e) {
       AppWidgets.showErrorSnackBar(context, 'Booking failed: $e');

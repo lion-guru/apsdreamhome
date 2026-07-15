@@ -214,4 +214,3 @@ class UserPropertyController extends AdminController
         return $counts;
     }
 }
-?>

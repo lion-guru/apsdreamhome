@@ -2,7 +2,7 @@
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-hard-hat me-2"></i><?php echo __('tool_construction_cost_title', [], 'Construction Cost Estimator'); ?></h1>
-            <p class="text-white-50"><?php echo __('tool_construction_cost_subtitle', [], 'Ghar banwane ka estimated cost jaanein'); ?></p>
+            <p class="text-white-50"><?php echo __('tool_construction_cost_subtitle', [], 'Know the estimated cost of building a house'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8">

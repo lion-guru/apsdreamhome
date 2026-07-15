@@ -549,22 +549,38 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
   }
 
   void _showEditColonyDialog(ColonyModel colony) {
-    // Edit colony
-    context.push('/admin/colonies/edit/${colony.id}');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Edit "${colony.name}" — Use the web admin panel for full editing',
+        ),
+        action: SnackBarAction(label: 'Open Web', onPressed: () {}),
+      ),
+    );
   }
 
   void _showManagePlots(ColonyModel colony) {
-    // Manage plots
-    context.push('/admin/colonies/${colony.id}/plots');
+    context.push(
+      '/colony-plots/${colony.id}',
+      extra: {'colonyName': colony.name},
+    );
   }
 
   void _showImportDialog() {
-    // Import colonies
-    AppWidgets.showInfoSnackBar(context, 'Import feature coming soon!');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Use the web admin panel to import colony data (CSV format)',
+        ),
+      ),
+    );
   }
 
   void _showExportDialog() {
-    // Export colonies
-    AppWidgets.showInfoSnackBar(context, 'Export feature coming soon!');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Use the web admin panel to export colony data'),
+      ),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../core/services/api_service.dart';
 import '../../core/services/database_helper.dart';
@@ -11,11 +12,7 @@ class AuthRepository {
   final DatabaseHelper _dbHelper;
   final FlutterSecureStorage _secureStorage;
 
-  AuthRepository(
-    this._apiService,
-    this._dbHelper,
-    this._secureStorage,
-  );
+  AuthRepository(this._apiService, this._dbHelper, this._secureStorage);
 
   /// Login with email/password
   Future<UserModel> login(String email, String password) async {
@@ -30,7 +27,9 @@ class AuthRepository {
 
       final userData = response['data']['user'] as Map<String, dynamic>;
       final token = response['data']['token'] as String;
-      AppLogger.info('[AuthRepo] Got userId=${userData['userId']}, rank=${userData['rank']}, token=${token.substring(0, 8)}...');
+      AppLogger.info(
+        '[AuthRepo] Got userId=${userData['userId']}, rank=${userData['rank']}, token=${token.substring(0, 8)}...',
+      );
 
       // Save token
       AppLogger.info('[AuthRepo] Saving token...');
@@ -41,7 +40,9 @@ class AuthRepository {
       // Create user model
       AppLogger.info('[AuthRepo] Creating UserModel fromJson...');
       final user = UserModel.fromJson(userData);
-      AppLogger.info('[AuthRepo] UserModel created: userId=${user.userId}, rank=${user.rank}, isAssociate=${user.isAssociate}');
+      AppLogger.info(
+        '[AuthRepo] UserModel created: userId=${user.userId}, rank=${user.rank}, isAssociate=${user.isAssociate}',
+      );
 
       // Save user to local DB
       AppLogger.info('[AuthRepo] Saving user to DB...');
@@ -69,10 +70,7 @@ class AuthRepository {
     try {
       final response = await _apiService.post(
         '/auth/firebase-login',
-        data: {
-          'firebase_uid': firebaseUid,
-          'phone': phone,
-        },
+        data: {'firebase_uid': firebaseUid, 'phone': phone},
       );
 
       if (response['success'] != true) {
@@ -100,18 +98,21 @@ class AuthRepository {
     required String phone,
     required String password,
     String? role,
+    String? parentReferralCode,
   }) async {
     try {
-      final response = await _apiService.post(
-        '/auth/register',
-        data: {
-          'name': name,
-          'email': email,
-          'phone': phone,
-          'password': password,
-          'role': role ?? 'customer',
-        },
-      );
+      final data = <String, dynamic>{
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'password': password,
+        'role': role ?? 'customer',
+      };
+      if (parentReferralCode != null && parentReferralCode.isNotEmpty) {
+        data['parent_referral_code'] = parentReferralCode;
+        data['referral_code'] = parentReferralCode;
+      }
+      final response = await _apiService.post('/auth/register', data: data);
 
       if (response['success'] != true) {
         throw Exception(response['message'] ?? 'Registration failed');
@@ -159,8 +160,9 @@ class AuthRepository {
     if (await _apiService.isConnected()) {
       try {
         final response = await _apiService.getProfile();
-        final user =
-            UserModel.fromJson(response['data'] as Map<String, dynamic>);
+        final user = UserModel.fromJson(
+          response['data'] as Map<String, dynamic>,
+        );
         await _dbHelper.saveUser(user.toJson());
         return user;
       } catch (e) {
@@ -185,10 +187,7 @@ class AuthRepository {
     if (profileImage != null) data['profile_image'] = profileImage;
 
     try {
-      final response = await _apiService.put(
-        '/auth/profile',
-        data: data,
-      );
+      final response = await _apiService.put('/user/profile', data: data);
 
       final user = UserModel.fromJson(response['data'] as Map<String, dynamic>);
       await _dbHelper.saveUser(user.toJson());
@@ -233,39 +232,27 @@ class AuthRepository {
   ) async {
     await _apiService.post(
       '/auth/change-password',
-      data: {
-        'current_password': currentPassword,
-        'new_password': newPassword,
-      },
+      data: {'current_password': currentPassword, 'new_password': newPassword},
     );
   }
 
   /// Forgot password
   Future<void> forgotPassword(String email) async {
-    await _apiService.post(
-      '/auth/forgot-password',
-      data: {'email': email},
-    );
+    await _apiService.post('/auth/forgot-password', data: {'email': email});
   }
 
   /// Verify OTP
   Future<bool> verifyOtp(String phone, String otp) async {
     final response = await _apiService.post(
       '/auth/verify-otp',
-      data: {
-        'phone': phone,
-        'otp': otp,
-      },
+      data: {'phone': phone, 'otp': otp},
     );
     return response['success'] == true;
   }
 
   /// Resend OTP
   Future<void> resendOtp(String phone) async {
-    await _apiService.post(
-      '/auth/resend-otp',
-      data: {'phone': phone},
-    );
+    await _apiService.post('/auth/resend-otp', data: {'phone': phone});
   }
 
   /// Get user role
@@ -306,11 +293,7 @@ class AuthState {
   final bool isLoading;
   final String? error;
 
-  const AuthState({
-    this.user,
-    this.isLoading = false,
-    this.error,
-  });
+  const AuthState({this.user, this.isLoading = false, this.error});
 
   bool get isAuthenticated => user != null;
 }

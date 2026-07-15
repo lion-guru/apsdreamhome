@@ -57,7 +57,7 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                initialValue: _propertyType,
+                value: _propertyType,
                 decoration: const InputDecoration(
                   labelText: 'Property Type',
                   prefixIcon: Icon(Icons.category),
@@ -87,7 +87,8 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
                   prefixIcon: Icon(Icons.location_on),
                   border: OutlineInputBorder(),
                 ),
-                validator: (v) => v == null || v.isEmpty ? 'Enter location' : null,
+                validator: (v) =>
+                    v == null || v.isEmpty ? 'Enter location' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -107,9 +108,12 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
                 ),
-                child: _isSubmitting 
+                child: _isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Post Property for Approval', style: TextStyle(fontSize: 16)),
+                    : const Text(
+                        'Post Property for Approval',
+                        style: TextStyle(fontSize: 16),
+                      ),
               ),
             ],
           ),
@@ -126,7 +130,7 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
     try {
       final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
       final token = await ref.read(authProvider.notifier).getToken();
-      
+
       final response = await dio.post(
         '${AppConstants.apiVersion}/properties/submit',
         data: {
@@ -142,7 +146,9 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text((response.data['message'] as String?) ?? 'Submitted!'),
+            content: Text(
+              (response.data['message'] as String?) ?? 'Submitted!',
+            ),
             backgroundColor: Colors.green,
           ),
         );

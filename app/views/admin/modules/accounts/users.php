@@ -2,62 +2,7 @@
 // Accounts Module - Users Management
 $module_title = 'Users Management';
 $module_description = 'Manage all registered users, their roles, and permissions';
-
-// Sample data
-$users = [
-    [
-        'id' => 'USR001',
-        'name' => 'Ramesh Kumar',
-        'email' => 'ramesh.kumar@email.com',
-        'phone' => '+91 92771 21112',
-        'role' => 'Client',
-        'status' => 'active',
-        'registered_date' => '2024-01-15',
-        'last_login' => '2024-03-14 10:30 AM',
-        'properties_viewed' => 45,
-        'enquiries_sent' => 12,
-        'location' => 'Gorakhpur, UP'
-    ],
-    [
-        'id' => 'USR002',
-        'name' => 'Priya Singh',
-        'email' => 'priya.singh@email.com',
-        'phone' => '+91 98765 43211',
-        'role' => 'Client',
-        'status' => 'active',
-        'registered_date' => '2024-01-10',
-        'last_login' => '2024-03-14 09:15 AM',
-        'properties_viewed' => 23,
-        'enquiries_sent' => 8,
-        'location' => 'Lucknow, UP'
-    ],
-    [
-        'id' => 'USR003',
-        'name' => 'Amit Verma',
-        'email' => 'amit.verma@email.com',
-        'phone' => '+91 98765 43212',
-        'role' => 'Associate',
-        'status' => 'active',
-        'registered_date' => '2024-01-05',
-        'last_login' => '2024-03-13 04:45 PM',
-        'properties_viewed' => 67,
-        'enquiries_sent' => 0,
-        'location' => 'Kanpur, UP'
-    ],
-    [
-        'id' => 'USR004',
-        'name' => 'Sunita Sharma',
-        'email' => 'sunita.sharma@email.com',
-        'phone' => '+91 98765 43213',
-        'role' => 'Client',
-        'status' => 'inactive',
-        'registered_date' => '2023-12-20',
-        'last_login' => '2024-02-28 02:30 PM',
-        'properties_viewed' => 15,
-        'enquiries_sent' => 3,
-        'location' => 'Delhi, NCR'
-    ]
-];
+$users = $users ?? [];
 ?>
 
 <!-- Users Management Module -->

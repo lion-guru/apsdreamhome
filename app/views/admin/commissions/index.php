@@ -5,7 +5,7 @@
  */
 $page_title = 'Commissions Management';
 $page_description = 'Manage MLM commissions and payouts';
-
+$stats = $stats ?? ['total_commission' => 0, 'paid_out' => 0, 'pending' => 0, 'users' => 0];
 
 ?>
 
@@ -35,7 +35,7 @@ $page_description = 'Manage MLM commissions and payouts';
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Total Commission</h6>
-                            <h3 class="mb-0">₹12.5L</h3>
+                            <h3 class="mb-0">₹<?= number_format((float)$stats['total_commission']) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@ $page_description = 'Manage MLM commissions and payouts';
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Paid Out</h6>
-                            <h3 class="mb-0">₹8.2L</h3>
+                            <h3 class="mb-0">₹<?= number_format((float)$stats['paid_out']) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@ $page_description = 'Manage MLM commissions and payouts';
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Pending</h6>
-                            <h3 class="mb-0">₹4.3L</h3>
+                            <h3 class="mb-0">₹<?= number_format((float)$stats['pending']) ?></h3>
                         </div>
                     </div>
                 </div>
@@ -85,8 +85,8 @@ $page_description = 'Manage MLM commissions and payouts';
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted mb-1">users</h6>
-                            <h3 class="mb-0">234</h3>
+                            <h6 class="text-muted mb-1">Users</h6>
+                            <h3 class="mb-0"><?= (int)$stats['users'] ?></h3>
                         </div>
                     </div>
                 </div>

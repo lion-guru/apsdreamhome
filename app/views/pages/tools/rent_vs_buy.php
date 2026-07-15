@@ -2,7 +2,7 @@
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_rent_vs_buy_title', [], 'Rent vs Buy Calculator'); ?></h1>
-            <p class="text-white-50"><?php echo __('tool_rent_vs_buy_subtitle', [], 'Samjhein kya aapke liye rent karna ya khareedna better hai'); ?></p>
+            <p class="text-white-50"><?php echo __('tool_rent_vs_buy_subtitle', [], 'Understand whether renting or buying is better for you'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8">

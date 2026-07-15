@@ -549,7 +549,22 @@ class CommissionAdminController extends AdminController
     }
     public function commissionsList()
     {
-        $this->data['page_title'] = 'Commissions';
+        try {
+            // Real stats from mlm_commission_ledger
+            $ledger = $this->db->fetchOne("SELECT COUNT(*) as c, COALESCE(SUM(amount),0) as total, COALESCE(SUM(CASE WHEN status='paid' THEN amount ELSE 0 END),0) as paid, COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END),0) as pending FROM mlm_commission_ledger") ?? ['c'=>0,'total'=>0,'paid'=>0,'pending'=>0];
+            $userCount = $this->db->fetchOne("SELECT COUNT(*) as c FROM users WHERE role IN ('associate','agent')")['c'] ?? 0;
+
+            $this->data['page_title'] = 'Commissions';
+            $this->data['stats'] = [
+                'total_commission' => $ledger['total'],
+                'paid_out' => $ledger['paid'],
+                'pending' => $ledger['pending'],
+                'users' => $userCount,
+            ];
+        } catch (\Throwable $e) {
+            $this->data['page_title'] = 'Commissions';
+            $this->data['stats'] = ['total_commission' => 0, 'paid_out' => 0, 'pending' => 0, 'users' => 0];
+        }
         return $this->render('admin/commissions/index', $this->data);
     }
 

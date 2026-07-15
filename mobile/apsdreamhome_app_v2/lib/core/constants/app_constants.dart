@@ -1,11 +1,26 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AppConstants {
   // API Configuration
-  // For Android Emulator: use 10.0.2.2 (points to host localhost)
-  // For Physical Device via ngrok: use ngrok URL
-  // For Physical Device on same WiFi: use PC IP
-  static const String baseUrl = 'http://10.0.2.2/apsdreamhome';
+  // Uses --dart-define=API_BASE_URL=... at build time, or platform detection
+  static String baseUrl = const String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: '',
+  );
+
+  static void initBaseUrl() {
+    if (baseUrl.isNotEmpty) return; // --dart-define was set
+
+    // Platform detection fallback
+    if (kIsWeb) {
+      baseUrl = 'http://localhost/apsdreamhome';
+    } else {
+      // Mobile: use ngrok URL (works from any network)
+      baseUrl =
+          'https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome';
+    }
+  }
 
   static const String apiVersion = 'api/v2/mobile';
 
@@ -29,10 +44,62 @@ class AppConstants {
   static const String plotsEndpoint = '/plots';
   static const String crmPrefix = '/crm';
 
+  // Chat
+  static const String chatStartEndpoint = '/api/chat/start';
+  static const String chatSendEndpoint = '/api/chat/send';
+  static const String chatPollEndpoint = '/api/chat/poll';
+  static const String chatWidgetEndpoint = '/api/chat/widget';
+
+  // In-App Messaging
+  static const String conversationsEndpoint = '/messages/conversations';
+  static const String messagesEndpoint = '/messages';
+  static const String sendMessageEndpoint = '/messages/send';
+  static const String markReadEndpoint = '/messages/read';
+  static const String unreadCountEndpoint = '/messages/unread/count';
+
   // V2 Mobile Attendance
   static const String attendancePunchInEndpoint = '/attendance/punch-in';
   static const String attendancePunchOutEndpoint = '/attendance/punch-out';
   static const String attendanceStatusEndpoint = '/attendance/status';
+
+  // AI Agent / Calling
+  static const String aiAgentChatEndpoint = '/ai-agent/chat';
+  static const String aiAgentProcessLeadEndpoint = '/ai-agent/process-lead';
+  static const String aiAgentRecommendationsEndpoint =
+      '/ai-agent/recommendations';
+  static const String aiAgentAnalyticsEndpoint = '/ai-agent/analytics';
+  static const String voiceStartCallEndpoint = '/voice/start-call';
+  static const String voiceProcessResponseEndpoint = '/voice/process-response';
+  static const String voiceSessionEndpoint = '/voice/session';
+  static const String voiceEndCallEndpoint = '/voice/end-call';
+  static const String voiceScheduleEndpoint = '/voice/schedule';
+  static const String voiceStatsEndpoint = '/voice/stats';
+  static const String voiceCallHistoryEndpoint = '/voice/call-history';
+  static const String callLogEndpoint = '/calls/log';
+  static const String callStatsEndpoint = '/calls/stats';
+  static const String telecallerDashboardEndpoint = '/telecaller/dashboard';
+  static const String telecallerReportEndpoint = '/telecaller/report';
+
+  // Auto-Dialer
+  static const String autoDialerScheduleEndpoint = '/auto-dialer/schedule';
+  static const String autoDialerBulkScheduleEndpoint =
+      '/auto-dialer/bulk-schedule';
+  static const String autoDialerCancelEndpoint = '/auto-dialer/cancel';
+  static const String autoDialerRescheduleEndpoint = '/auto-dialer/reschedule';
+  static const String autoDialerStatsEndpoint = '/auto-dialer/stats';
+  static const String autoDialerHistoryEndpoint = '/auto-dialer/history';
+  static const String autoDialerProcessEndpoint = '/auto-dialer/process';
+  static const String autoDialerSendSmsEndpoint = '/auto-dialer/send-sms';
+  static const String autoDialerSendWhatsAppEndpoint =
+      '/auto-dialer/send-whatsapp';
+  static const String autoDialerBulkSmsEndpoint = '/auto-dialer/bulk-sms';
+  static const String autoDialerBulkWhatsAppEndpoint =
+      '/auto-dialer/bulk-whatsapp';
+  static const String voiceChatEndpoint = '/voice-chat';
+  static const String aiScheduleEndpoint = '/auto-dialer/ai-schedule';
+
+  // Admin
+  static const String adminEmiCollectionEndpoint = '/admin/emi-collection';
 
   // Referral
   static const String referralTrackEndpoint = '/referral/track';
@@ -171,7 +238,7 @@ class AppConstants {
   // App Info
   static const String appName = 'APS Dream Home';
   static const String supportPhone = '7007444842';
-  static const String version = '1.0.0';
+  static const String version = '1.2.0';
 
   // Validation Constants
   static const int minPasswordLength = 6;

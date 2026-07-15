@@ -9,28 +9,29 @@ class NotificationModel with _$NotificationModel {
   const factory NotificationModel({
     @Default('') String id,
     @Default('') String userId,
-    @Default('') String type, // booking, commission, payout, lead, general, promotional
+    @Default('')
+    String type, // booking, commission, payout, lead, general, promotional
     @Default('') String title,
     @Default('') String body,
     String? imageUrl,
-    
+
     // Action
     String? actionType, // open_screen, open_url, show_dialog, none
     String? actionData, // screen_name, url, etc.
     String? actionUrl,
-    
+
     // Related Entity
     String? relatedId,
     String? relatedType,
-    
+
     // Status
     bool? isRead,
     DateTime? readAt,
-    
+
     // Timestamps
     DateTime? createdAt,
     DateTime? expiresAt,
-    
+
     // Delivery
     bool? pushDelivered,
     DateTime? pushDeliveredAt,
@@ -58,4 +59,8 @@ class NotificationTypes {
   static const String achievementUnlocked = 'achievement_unlocked';
   static const String general = 'general';
   static const String promotional = 'promotional';
+  static const String welcome = 'welcome';
+  static const String registrationWelcome = 'registration_welcome';
+  static const String loginAlert = 'login_alert';
+  static const String securityAlert = 'security_alert';
 }

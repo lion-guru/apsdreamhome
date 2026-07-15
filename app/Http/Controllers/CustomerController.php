@@ -11,10 +11,51 @@ class CustomerController extends BaseController
     
     public function profile() 
     {
-        // Customer Profile Management
-        
-        // Get customer data from session
+        // Customer Profile Management (GET = view, POST = update)
         $userId = $_SESSION['user_id'] ?? null;
+
+        // Handle POST — profile update
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!$userId) {
+                $_SESSION['error'] = 'Session expired';
+                header('Location: ' . BASE_URL . '/login');
+                exit;
+            }
+
+            $name = trim($_POST['name'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $address = trim($_POST['address'] ?? '');
+
+            if (empty($name)) {
+                $_SESSION['error'] = 'Name is required';
+                header('Location: ' . BASE_URL . '/customer/profile');
+                exit;
+            }
+
+            try {
+                $svc = new \App\Services\UserRegistrationService();
+                $result = $svc->updateProfile($userId, [
+                    'name' => $name,
+                    'phone' => $phone,
+                    'address' => $address,
+                ]);
+
+                if ($result['success']) {
+                    $_SESSION['user_name'] = $name;
+                    $_SESSION['success'] = $result['message'];
+                } else {
+                    $_SESSION['error'] = $result['message'];
+                }
+            } catch (\Exception $e) {
+                error_log("Customer profile update error: " . $e->getMessage());
+                $_SESSION['error'] = 'Failed to update profile';
+            }
+
+            header('Location: ' . BASE_URL . '/customer/profile');
+            exit;
+        }
+
+        // GET — show profile
         $user = [];
 
         if ($userId) {
@@ -25,22 +66,19 @@ class CustomerController extends BaseController
                 );
             } catch (\Exception $e) {
                 error_log("Error getting customer: " . $e->getMessage());
-            }
-        }
+    }
+}
 
-        // Define BASE_PATH for shared view
         if (!defined('BASE_PATH')) {
             define('BASE_PATH', dirname(__DIR__, 3));
         }
 
-        // Set variables for shared view
         $userRole = 'customer';
         $profileUrl = BASE_URL . '/customer/profile';
-        $securityUrl = null; // users don't have security page yet
+        $securityUrl = null;
         $canEdit = true;
 
-        // Use unified shared profile view
-        $profileView = __DIR__ . '/../../../views/shared/profile.php';
+        $profileView = __DIR__ . '/../../views/shared/profile.php';
         if (file_exists($profileView)) {
             include $profileView;
         } else {

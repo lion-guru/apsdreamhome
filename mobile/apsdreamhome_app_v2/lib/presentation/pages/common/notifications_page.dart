@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -40,7 +41,8 @@ class AppNotification {
       body: json['body']?.toString() ?? '',
       type: json['type']?.toString() ?? 'system',
       isRead: json['is_read'] == true || json['is_read'] == 1,
-      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['created_at']?.toString() ?? '') ??
           DateTime.now(),
       referenceId: json['reference_id']?.toString(),
     );
@@ -122,9 +124,11 @@ class NotificationsState {
             .toList();
       case NotificationFilter.system:
         return notifications
-            .where((n) =>
-                n.type.toLowerCase() == 'system' ||
-                n.type.toLowerCase() == 'alert')
+            .where(
+              (n) =>
+                  n.type.toLowerCase() == 'system' ||
+                  n.type.toLowerCase() == 'alert',
+            )
             .toList();
     }
   }
@@ -163,29 +167,23 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
       final List<dynamic> items;
       if (data is List) {
         items = data;
-      } else if (data is Map<String, dynamic> && data['notifications'] is List) {
+      } else if (data is Map<String, dynamic> &&
+          data['notifications'] is List) {
         items = data['notifications'] as List<dynamic>;
       } else {
         items = <dynamic>[];
       }
 
       final notifications = items
-          .map((json) =>
-              AppNotification.fromJson(json as Map<String, dynamic>))
+          .map((json) => AppNotification.fromJson(json as Map<String, dynamic>))
           .toList();
 
       // Sort newest first
       notifications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-      state = state.copyWith(
-        notifications: notifications,
-        isLoading: false,
-      );
+      state = state.copyWith(notifications: notifications, isLoading: false);
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -201,10 +199,7 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
     );
 
     try {
-      await _api.request(
-        method: 'PUT',
-        endpoint: 'notifications/$id/read',
-      );
+      await _api.request(method: 'PUT', endpoint: 'notifications/$id/read');
     } catch (_) {
       // Revert on failure
       state = state.copyWith(
@@ -221,14 +216,13 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
   Future<void> markAllAsRead() async {
     final previous = state.notifications;
     state = state.copyWith(
-      notifications: state.notifications.map((n) => n.copyWith(isRead: true)).toList(),
+      notifications: state.notifications
+          .map((n) => n.copyWith(isRead: true))
+          .toList(),
     );
 
     try {
-      await _api.request(
-        method: 'PUT',
-        endpoint: 'notifications/read-all',
-      );
+      await _api.request(method: 'POST', endpoint: '/user/notifications/read');
     } catch (_) {
       state = state.copyWith(notifications: previous);
     }
@@ -242,7 +236,10 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
 
   // ---- Navigation ----------------------------------------------------------
 
-  void navigateToNotification(BuildContext context, AppNotification notification) {
+  void navigateToNotification(
+    BuildContext context,
+    AppNotification notification,
+  ) {
     // Mark as read
     if (!notification.isRead) {
       markAsRead(notification.id);
@@ -295,8 +292,8 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
 
 final notificationsProvider =
     StateNotifierProvider<NotificationsNotifier, NotificationsState>((ref) {
-  return NotificationsNotifier(ref);
-});
+      return NotificationsNotifier(ref);
+    });
 
 // ---------------------------------------------------------------------------
 // Time-ago helper
@@ -407,9 +404,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           _buildFilterChips(state),
 
           // ---- Body --------------------------------------------------------
-          Expanded(
-            child: _buildBody(state),
-          ),
+          Expanded(child: _buildBody(state)),
         ],
       ),
     );
@@ -487,11 +482,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.only(bottom: 24),
         itemCount: filtered.length,
-        separatorBuilder: (_, __) => Divider(
-          height: 1,
-          indent: 72,
-          color: Colors.grey.shade200,
-        ),
+        separatorBuilder: (_, __) =>
+            Divider(height: 1, indent: 72, color: Colors.grey.shade200),
         itemBuilder: (context, index) {
           final notification = filtered[index];
           return _NotificationTile(
@@ -535,9 +527,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             ),
             const SizedBox(height: 24),
             Text(
-              isUnreadFilter
-                  ? "You're all caught up!"
-                  : 'No notifications yet',
+              isUnreadFilter ? "You're all caught up!" : 'No notifications yet',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -613,8 +603,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -635,10 +627,7 @@ class _NotificationTile extends StatelessWidget {
   final AppNotification notification;
   final VoidCallback onTap;
 
-  const _NotificationTile({
-    required this.notification,
-    required this.onTap,
-  });
+  const _NotificationTile({required this.notification, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -678,8 +667,7 @@ class _NotificationTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight:
-                            unread ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: unread ? FontWeight.w600 : FontWeight.w500,
                         color: AppTheme.textPrimaryLight,
                       ),
                     ),

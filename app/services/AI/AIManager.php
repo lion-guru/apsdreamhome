@@ -102,7 +102,7 @@ class AIManager
     /**
      * Track user behavior
      */
-    public function track(int $userId, string $action, ?string $pageUrl = null, ?string $targetType = null, ?int $targetId = null, array $metadata = [], ?string $sessionId = null, int $durationMs = 0): void
+    public function track(?int $userId, string $action, ?string $pageUrl = null, ?string $targetType = null, ?int $targetId = null, array $metadata = [], ?string $sessionId = null, int $durationMs = 0): void
     {
         $stmt = $this->db->prepare("
             INSERT INTO user_behavior_tracking

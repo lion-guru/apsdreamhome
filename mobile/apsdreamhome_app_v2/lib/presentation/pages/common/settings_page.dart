@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/router/app_router.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/repositories/kyc_repository_provider.dart';
 
@@ -70,20 +71,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Future<void> _postNotificationPreferences() async {
     try {
       final api = ref.read(apiServiceProvider);
-      await api.post('/user/notification-preferences', data: {
-        'push_notifications': _pushEnabled,
-        'email_notifications': _emailEnabled,
-        'sms_notifications': _smsEnabled,
-      });
+      await api.post(
+        '/user/notification-preferences',
+        data: {
+          'push_notifications': _pushEnabled,
+          'email_notifications': _emailEnabled,
+          'sms_notifications': _smsEnabled,
+        },
+      );
     } catch (_) {}
   }
 
   Future<void> _postUserPreferences() async {
     try {
       final api = ref.read(apiServiceProvider);
-      await api.post('/user/preferences', data: {
-        'language': _selectedLanguage,
-      });
+      await api.post(
+        '/user/preferences',
+        data: {'language': _selectedLanguage},
+      );
     } catch (_) {}
   }
 
@@ -107,7 +112,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Clear', style: TextStyle(color: AppTheme.errorColor)),
+            child: const Text(
+              'Clear',
+              style: TextStyle(color: AppTheme.errorColor),
+            ),
           ),
         ],
       ),
@@ -136,7 +144,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete', style: TextStyle(color: AppTheme.errorColor)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: AppTheme.errorColor),
+            ),
           ),
         ],
       ),
@@ -147,6 +158,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         await api.post('/user/account/delete');
         if (!mounted) return;
         await ref.read(authProvider.notifier).logout();
+        AuthBridge.instance.currentUser.value = null;
         if (!mounted) return;
         context.go('/login');
       } catch (_) {
@@ -201,9 +213,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             leading: CircleAvatar(
               radius: 24,
               backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
-              backgroundImage: avatar.isNotEmpty
-                  ? NetworkImage(avatar)
-                  : null,
+              backgroundImage: avatar.isNotEmpty ? NetworkImage(avatar) : null,
               child: avatar.isEmpty
                   ? Text(
                       name.isNotEmpty ? name[0].toUpperCase() : '?',
@@ -247,7 +257,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           child: Column(
             children: [
               SwitchListTile(
-                secondary: const Icon(Icons.notifications_active, color: AppTheme.primaryColor),
+                secondary: const Icon(
+                  Icons.notifications_active,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('Push Notifications'),
                 subtitle: const Text('Receive push alerts on this device'),
                 value: _pushEnabled,
@@ -259,7 +272,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
               const Divider(height: 1, indent: 56),
               SwitchListTile(
-                secondary: const Icon(Icons.email_outlined, color: AppTheme.primaryColor),
+                secondary: const Icon(
+                  Icons.email_outlined,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('Email Notifications'),
                 subtitle: const Text('Receive updates via email'),
                 value: _emailEnabled,
@@ -271,7 +287,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
               const Divider(height: 1, indent: 56),
               SwitchListTile(
-                secondary: const Icon(Icons.sms_outlined, color: AppTheme.primaryColor),
+                secondary: const Icon(
+                  Icons.sms_outlined,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('SMS Notifications'),
                 subtitle: const Text('Receive alerts via SMS'),
                 value: _smsEnabled,
@@ -300,23 +319,20 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           child: Column(
             children: [
               ListTile(
-                leading: const Icon(Icons.language, color: AppTheme.primaryColor),
-                title: const Text('Language'),
-                subtitle: Text(
-                  _selectedLanguage == 'hi' ? 'हिंदी' : 'English',
+                leading: const Icon(
+                  Icons.language,
+                  color: AppTheme.primaryColor,
                 ),
+                title: const Text('Language'),
+                subtitle: Text(_selectedLanguage == 'hi' ? 'हिंदी' : 'English'),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 56, right: 16, bottom: 12),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: _languageTile('English', 'en'),
-                    ),
+                    Expanded(child: _languageTile('English', 'en')),
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: _languageTile('हिंदी', 'hi'),
-                    ),
+                    Expanded(child: _languageTile('हिंदी', 'hi')),
                   ],
                 ),
               ),
@@ -368,7 +384,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+              isSelected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
               size: 18,
               color: isSelected ? AppTheme.primaryColor : Colors.grey,
             ),
@@ -378,7 +396,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? AppTheme.primaryColor : Colors.grey.shade700,
+                color: isSelected
+                    ? AppTheme.primaryColor
+                    : Colors.grey.shade700,
               ),
             ),
           ],
@@ -398,7 +418,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           child: Column(
             children: [
               SwitchListTile(
-                secondary: const Icon(Icons.shield_outlined, color: AppTheme.primaryColor),
+                secondary: const Icon(
+                  Icons.shield_outlined,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('Two-Factor Authentication'),
                 subtitle: const Text('Add an extra layer of security'),
                 value: _twoFactorEnabled,
@@ -413,7 +436,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
               const Divider(height: 1, indent: 56),
               SwitchListTile(
-                secondary: const Icon(Icons.fingerprint, color: AppTheme.primaryColor),
+                secondary: const Icon(
+                  Icons.fingerprint,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('Biometric Login'),
                 subtitle: const Text('Use fingerprint or face to sign in'),
                 value: _biometricEnabled,
@@ -424,7 +450,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
               const Divider(height: 1, indent: 56),
               ListTile(
-                leading: const Icon(Icons.cleaning_services_outlined, color: AppTheme.primaryColor),
+                leading: const Icon(
+                  Icons.cleaning_services_outlined,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('Clear Cache'),
                 subtitle: const Text('Free up storage space'),
                 trailing: const Icon(Icons.chevron_right),
@@ -449,7 +478,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           child: Column(
             children: [
               ListTile(
-                leading: const Icon(Icons.help_outline, color: AppTheme.primaryColor),
+                leading: const Icon(
+                  Icons.help_outline,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('Help & Support'),
                 subtitle: const Text('Contact us at +91 92771 21112'),
                 trailing: const Icon(Icons.chevron_right),
@@ -462,7 +494,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
               const Divider(height: 1, indent: 56),
               ListTile(
-                leading: const Icon(Icons.bug_report_outlined, color: AppTheme.primaryColor),
+                leading: const Icon(
+                  Icons.bug_report_outlined,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('Report a Bug'),
                 subtitle: const Text('Send us a detailed report'),
                 trailing: const Icon(Icons.chevron_right),
@@ -479,7 +514,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
               const Divider(height: 1, indent: 56),
               ListTile(
-                leading: const Icon(Icons.description_outlined, color: AppTheme.primaryColor),
+                leading: const Icon(
+                  Icons.description_outlined,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('Terms & Conditions'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () async {
@@ -491,7 +529,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
               const Divider(height: 1, indent: 56),
               ListTile(
-                leading: const Icon(Icons.privacy_tip_outlined, color: AppTheme.primaryColor),
+                leading: const Icon(
+                  Icons.privacy_tip_outlined,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('Privacy Policy'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () async {
@@ -520,14 +561,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           child: Column(
             children: [
               ListTile(
-                leading: const Icon(Icons.info_outline, color: AppTheme.primaryColor),
+                leading: const Icon(
+                  Icons.info_outline,
+                  color: AppTheme.primaryColor,
+                ),
                 title: const Text('App Version'),
                 trailing: Text(
                   'v$_appVersion ($_buildNumber)',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                 ),
               ),
               const Divider(height: 1, indent: 56),
@@ -538,7 +579,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
               const Divider(height: 1, indent: 56),
               const ListTile(
-                leading: Icon(Icons.location_on_outlined, color: AppTheme.primaryColor),
+                leading: Icon(
+                  Icons.location_on_outlined,
+                  color: AppTheme.primaryColor,
+                ),
                 title: Text('Gorakhpur, Uttar Pradesh'),
                 subtitle: Text('Head Office'),
               ),
@@ -559,7 +603,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         Card(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: ListTile(
-            leading: const Icon(Icons.delete_forever, color: AppTheme.errorColor),
+            leading: const Icon(
+              Icons.delete_forever,
+              color: AppTheme.errorColor,
+            ),
             title: const Text(
               'Delete Account',
               style: TextStyle(color: AppTheme.errorColor),
@@ -568,7 +615,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               'Permanently remove your account and data',
               style: TextStyle(fontSize: 12),
             ),
-            trailing: const Icon(Icons.chevron_right, color: AppTheme.errorColor),
+            trailing: const Icon(
+              Icons.chevron_right,
+              color: AppTheme.errorColor,
+            ),
             onTap: _deleteAccount,
           ),
         ),

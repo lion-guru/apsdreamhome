@@ -95,7 +95,7 @@ class _NotificationsCenterPageState
   Future<void> _markAllAsRead() async {
     try {
       final api = ref.read(apiServiceProvider);
-      await api.post('/user/notifications/read-all');
+      await api.post('/user/notifications/read');
       setState(() {
         for (var n in _notifications) {
           n['is_read'] = true;
@@ -201,48 +201,46 @@ class _NotificationsCenterPageState
             child: _isLoading
                 ? const Center(
                     child: CircularProgressIndicator(
-                        color: AppTheme.primaryColor),
+                      color: AppTheme.primaryColor,
+                    ),
                   )
                 : _error != null
-                    ? _buildErrorState()
-                    : _filteredNotifications.isEmpty
-                        ? _buildEmptyState()
-                        : RefreshIndicator(
-                            onRefresh: _fetchNotifications,
-                            color: AppTheme.primaryColor,
-                            child: ListView.builder(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8),
-                              itemCount: _filteredNotifications.length,
-                              itemBuilder: (context, index) {
-                                final notification =
-                                    _filteredNotifications[index];
-                                final id = notification['id'] as int? ?? 0;
-                                final isRead =
-                                    notification['is_read'] as bool? ?? false;
-                                final isSelected =
-                                    _selectedIds.contains(id);
-                                return _buildNotificationCard(
-                                  notification: notification,
-                                  isRead: isRead,
-                                  isSelected: isSelected,
-                                  onTap: () {
-                                    if (_isSelectionMode) {
-                                      _toggleSelection(id);
-                                    } else {
-                                      _markAsRead(id);
-                                    }
-                                  },
-                                  onLongPress: () {
-                                    _toggleSelection(id);
-                                  },
-                                  onDelete: () {
-                                    _deleteNotification(id);
-                                  },
-                                );
-                              },
-                            ),
-                          ),
+                ? _buildErrorState()
+                : _filteredNotifications.isEmpty
+                ? _buildEmptyState()
+                : RefreshIndicator(
+                    onRefresh: _fetchNotifications,
+                    color: AppTheme.primaryColor,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      itemCount: _filteredNotifications.length,
+                      itemBuilder: (context, index) {
+                        final notification = _filteredNotifications[index];
+                        final id = notification['id'] as int? ?? 0;
+                        final isRead =
+                            notification['is_read'] as bool? ?? false;
+                        final isSelected = _selectedIds.contains(id);
+                        return _buildNotificationCard(
+                          notification: notification,
+                          isRead: isRead,
+                          isSelected: isSelected,
+                          onTap: () {
+                            if (_isSelectionMode) {
+                              _toggleSelection(id);
+                            } else {
+                              _markAsRead(id);
+                            }
+                          },
+                          onLongPress: () {
+                            _toggleSelection(id);
+                          },
+                          onDelete: () {
+                            _deleteNotification(id);
+                          },
+                        );
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
@@ -311,16 +309,13 @@ class _NotificationsCenterPageState
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: isActive
-                    ? AppTheme.primaryColor
-                    : Colors.grey.shade600,
+                color: isActive ? AppTheme.primaryColor : Colors.grey.shade600,
               ),
             ),
             if (count > 0) ...[
               const SizedBox(width: 6),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: isActive
                       ? AppTheme.primaryColor
@@ -352,7 +347,8 @@ class _NotificationsCenterPageState
     required VoidCallback onDelete,
   }) {
     final title = notification['title']?.toString() ?? '';
-    final body = notification['body']?.toString() ??
+    final body =
+        notification['body']?.toString() ??
         notification['message']?.toString() ??
         '';
     final type = notification['type']?.toString() ?? '';
@@ -391,8 +387,8 @@ class _NotificationsCenterPageState
               color: isSelected
                   ? AppTheme.primaryColor.withValues(alpha: 0.3)
                   : isRead
-                      ? Colors.transparent
-                      : AppTheme.primaryColor.withValues(alpha: 0.1),
+                  ? Colors.transparent
+                  : AppTheme.primaryColor.withValues(alpha: 0.1),
               width: isSelected ? 1.5 : 1,
             ),
             boxShadow: [
@@ -439,8 +435,9 @@ class _NotificationsCenterPageState
                           child: Text(
                             title,
                             style: TextStyle(
-                              fontWeight:
-                                  isRead ? FontWeight.w500 : FontWeight.w600,
+                              fontWeight: isRead
+                                  ? FontWeight.w500
+                                  : FontWeight.w600,
                               fontSize: 14,
                               color: AppTheme.textPrimaryLight,
                             ),
@@ -493,7 +490,9 @@ class _NotificationsCenterPageState
                           const SizedBox(width: 10),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: iconColor.withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(6),
@@ -571,10 +570,7 @@ class _NotificationsCenterPageState
             Text(
               subMessage,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade500,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
             ),
           ],
         ),
@@ -629,8 +625,10 @@ class _NotificationsCenterPageState
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

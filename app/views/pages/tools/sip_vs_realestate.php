@@ -2,7 +2,7 @@
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_sip_vs_re_title', [], 'SIP vs Real Estate Returns'); ?></h1>
-            <p class="text-white-50"><?php echo __('tool_sip_vs_re_subtitle', [], 'Mutual Funds aur Real Estate returns ka comparison dekhein'); ?></p>
+            <p class="text-white-50"><?php echo __('tool_sip_vs_re_subtitle', [], 'Compare returns between Mutual Funds and Real Estate'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8">

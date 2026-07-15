@@ -4163,6 +4163,22 @@ return array(
   'fs_visit_us' => 'हमसे मिलें',
   'fs_location' => 'गोरखपुर, यूपी',
 
+  // Financial Services page - additional keys
+  'fs_enquire_now' => 'अभी पूछताछ करें',
+  'fs_contact_title' => 'वित्तीय सलाह चाहिए?',
+  'fs_contact_desc' => 'हमारे विशेषज्ञ वित्तीय सलाहकार बंधक, ऋण और निवेश योजना में आपकी सहायता के लिए यहाँ हैं।',
+  'fs_name' => 'आपका नाम',
+  'fs_email' => 'ईमेल पता',
+  'fs_phone' => 'फोन नंबर',
+  'fs_service_interested' => 'रुचि की सेवा',
+  'fs_select_service' => 'सेवा चुनें...',
+  'fs_message' => 'आपकी आवश्यकताएं',
+  'fs_message_placeholder' => 'अपनी संपत्ति, बजट, समयरेखा, या कोई विशेष प्रश्न बताएं...',
+  'fs_submit_enquiry' => 'पूछताछ सबमिट करें',
+  'fs_enquiry_submitted' => 'धन्यवाद! हमारे वित्तीय सलाहकार 24 घंटे के भीतर आपसे संपर्क करेंगे।',
+  'fs_enquiry_failed' => 'पूछताछ सबमिट करने में विफल। कृपया पुनः प्रयास करें।',
+  'fs_enquiry_error' => 'कुछ गलत हो गया। कृपया बाद में पुनः प्रयास करें।',
+
   // Interior Design page
   'id_hero_badge' => 'प्रीमियम इंटीरियर डिज़ाइन',
   'id_hero_title' => 'अपने स्थान को बदलें',

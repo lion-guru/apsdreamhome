@@ -39,10 +39,13 @@ class Security
             case 'sql':
                 /**
                  * [STRICTLY DEPRECATED] Use PDO prepared statements.
-                 * This method now logs a warning and returns the input unchanged to prevent false sense of security.
+                 * This method throws an exception to prevent false sense of security.
+                 * Using string escaping for SQL is fundamentally unsafe - use parameterized queries.
                  */
-                error_log("CRITICAL SECURITY WARNING: Security::sanitize('sql') called. Replace with PDO prepared statements.");
-                return $input;
+                throw new \RuntimeException(
+                    "Security::sanitize('sql') is disabled. SQL injection prevention requires PDO prepared statements, "
+                    . "not string escaping. Use Database::query() with parameter binding."
+                );
             default:
                 return htmlspecialchars(trim((string)$input), ENT_QUOTES, 'UTF-8');
         }
@@ -315,29 +318,77 @@ class Security
     }
     
     /**
-     * Encrypt sensitive data
+     * Encrypt sensitive data using AES-256-GCM (authenticated encryption)
+     * GCM provides both encryption AND tamper detection (integrity tag)
+     * Falls back to AES-256-CBC for backward compatibility with existing encrypted data
      */
     public static function encrypt($data, $key = null)
     {
         $key = $key ?? ($_ENV['ENCRYPTION_KEY'] ?? 'default_key_change_me');
-        
+        $key = hash('sha256', $key, true); // Derive 256-bit key
+
+        // Try GCM first (authenticated encryption)
+        if (function_exists('openssl_encrypt')) {
+            $iv = random_bytes(openssl_cipher_iv_length('aes-256-gcm'));
+            $tag = '';
+
+            $encrypted = openssl_encrypt(
+                $data,
+                'aes-256-gcm',
+                $key,
+                OPENSSL_RAW_DATA,
+                $iv,
+                $tag,
+                '',    // no AAD
+                16     // 128-bit auth tag
+            );
+
+            if ($encrypted !== false) {
+                // Prefix: version byte (0x01 = GCM) + IV + tag + ciphertext
+                return base64_encode("\x01" . $iv . $tag . $encrypted);
+            }
+        }
+
+        // Fallback: AES-256-CBC (backward compatible)
         $iv = random_bytes(16);
         $encrypted = openssl_encrypt($data, 'AES-256-CBC', $key, 0, $iv);
-        
-        return base64_encode($iv . $encrypted);
+        return base64_encode("\x00" . $iv . $encrypted);
     }
-    
+
     /**
-     * Decrypt sensitive data
+     * Decrypt sensitive data — auto-detects GCM vs CBC from version byte
      */
     public static function decrypt($encryptedData, $key = null)
     {
         $key = $key ?? ($_ENV['ENCRYPTION_KEY'] ?? 'default_key_change_me');
-        
+        $key = hash('sha256', $key, true);
+
         $data = base64_decode($encryptedData);
-        $iv = substr($data, 0, 16);
-        $encrypted = substr($data, 16);
-        
+        if (strlen($data) < 17) return false;
+
+        $version = $data[0];
+        $payload = substr($data, 1);
+
+        if ($version === "\x01") {
+            // GCM: IV (12 bytes) + tag (16 bytes) + ciphertext
+            if (strlen($payload) < 29) return false;
+            $iv = substr($payload, 0, 12);
+            $tag = substr($payload, 12, 16);
+            $encrypted = substr($payload, 28);
+
+            return openssl_decrypt(
+                $encrypted,
+                'aes-256-gcm',
+                $key,
+                OPENSSL_RAW_DATA,
+                $iv,
+                $tag
+            );
+        }
+
+        // CBC fallback: IV (16 bytes) + ciphertext
+        $iv = substr($payload, 0, 16);
+        $encrypted = substr($payload, 16);
         return openssl_decrypt($encrypted, 'AES-256-CBC', $key, 0, $iv);
     }
     

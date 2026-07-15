@@ -174,9 +174,21 @@ class SMSService
     }
     
     /**
+     * Send login alert SMS
+     */
+    public function sendLoginAlertSMS($mobile, $name, $ip, $device, $time)
+    {
+        $message = "APS Dream Home: New login to your account at {$time} from {$device}. ";
+        $message .= "If this wasn't you, change your password immediately. ";
+        $message .= "Contact support: " . BASE_URL . "/support";
+        
+        return $this->sendSMS($mobile, $message, 'LOGIN_ALERT');
+    }
+    
+    /**
      * Generic SMS send method
      */
-    private function sendSMS($mobile, $message, $type = 'GENERAL')
+    public function sendSMS($mobile, $message, $type = 'GENERAL')
     {
         try {
             $mobile = $this->cleanMobileNumber($mobile);

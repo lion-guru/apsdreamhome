@@ -2,7 +2,7 @@
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-calculator me-2"></i><?php echo __('tool_loan_eligibility_title', [], 'Home Loan Eligibility Calculator'); ?></h1>
-            <p class="text-white-50"><?php echo __('tool_loan_eligibility_subtitle', [], 'Aap kitna home loan le sakte hain jaanein'); ?></p>
+            <p class="text-white-50"><?php echo __('tool_loan_eligibility_subtitle', [], 'Know how much home loan you can avail'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8">

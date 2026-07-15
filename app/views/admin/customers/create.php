@@ -14,7 +14,7 @@
     </div>
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
-            <form method="POST" action="/admin/users/store">
+            <form method="POST" action="/admin/users">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
                     <div class="col-md-6"><label class="form-label">Full Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control" required></div>

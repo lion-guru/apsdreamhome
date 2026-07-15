@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Dialer</title>
+    <link rel="icon" type="image/png" href="http://localhost/apsdreamhome/assets/img/favicon.png">
+    <meta name="description" content="Admin Panel">
+    <meta name="csrf-token" content="195ce2d25b34d5234338fef92de34b2a433e2b03311001c2a9be01df59ac4b52">
+
+    <!-- Skip to content link (a11y) -->
+    <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Admin CSS (page-specific overrides) -->
+    <link href="http://localhost/apsdreamhome/assets/admin/css/admin.css" rel="stylesheet">
+    <link href="http://localhost/apsdreamhome/assets/admin/css/responsive-fixes.css" rel="stylesheet">
+            <style>
+            /* Only overrides that admin.css does not cover */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: var(--font);
+                background: var(--body-bg);
+                overflow-x: hidden;
+            }
+
+            /* Responsive grid for inline grid-template-columns:repeat(4,1fr) */
+            @media (max-width: 992px) {
+                [style*="grid-template-columns:repeat(4"] {
+                    grid-template-columns: repeat(2, 1fr) !important;
+                }
+            }
+            @media (max-width: 576px) {
+                [style*="grid-template-columns:repeat(4"] {
+                    grid-template-columns: 1fr !important;
+                }
+            }
+        </style>
+
+        <!-- CRITICAL: Sidebar functions in HEAD - load before body -->
+        <script>
+            var APS = APS || {};
+            APS._sidebar = null;
+            APS._overlay = null;
+            APS._touchStartX = 0;
+
+            APS._init = function() {
+                APS._sidebar = document.getElementById('sidebarMenu');
+                APS._overlay = document.getElementById('sidebarOverlay');
+                APS._restoreSections();
+                APS._bindSwipe();
+                // Auto-close sidebar on mobile when a link is clicked
+                if (APS._sidebar) {
+                    APS._sidebar.querySelectorAll('a[href]').forEach(function(a) {
+                        a.addEventListener('click', function() {
+                            if (window.innerWidth <= 992) APS.closeSidebar();
+                        });
+                    });
+                }
+            };
+
+            APS.toggleSidebar = function() {
+                if (!APS._sidebar) return;
+                APS._sidebar.classList.toggle('show');
+                if (APS._overlay) APS._overlay.classList.toggle('active', APS._sidebar.classList.contains('show'));
+                document.body.style.overflow = APS._sidebar.classList.contains('show') ? 'hidden' : '';
+            };
+
+            APS.closeSidebar = function() {
+                if (!APS._sidebar) return;
+                APS._sidebar.classList.remove('show');
+                if (APS._overlay) APS._overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+
+            APS.toggleSection = function(id) {
+                var ul = document.getElementById(id);
+                if (!ul) return;
+                var hidden = ul.style.display === 'none';
+                ul.style.display = hidden ? '' : 'none';
+                var arrow = document.getElementById('arrow-' + id);
+                if (arrow) arrow.classList.toggle('collapsed', !hidden);
+                var saved = localStorage.getItem('adminSidebarSections');
+                var state = saved ? JSON.parse(saved) : {};
+                state[id] = hidden;
+                localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+            };
+
+            APS.toggleAllSections = function() {
+                var menus = document.querySelectorAll('.sidebar-menu[id]');
+                var anyHidden = Array.from(menus).some(function(el) {
+                    return el.style.display === 'none';
+                });
+                menus.forEach(function(el) {
+                    el.style.display = anyHidden ? '' : 'none';
+                    var saved = localStorage.getItem('adminSidebarSections');
+                    var state = saved ? JSON.parse(saved) : {};
+                    state[el.id] = anyHidden;
+                    localStorage.setItem('adminSidebarSections', JSON.stringify(state));
+                });
+                document.querySelectorAll('.sidebar-sec-arrow[id^="arrow-sec-"]').forEach(function(arr) {
+                    arr.classList.toggle('collapsed', !anyHidden);
+                });
+            };
+
+            APS._restoreSections = function() {
+                var saved = localStorage.getItem('adminSidebarSections');
+                if (!saved) return;
+                try {
+                    var state = JSON.parse(saved);
+                    Object.keys(state).forEach(function(id) {
+                        var ul = document.getElementById(id);
+                        var arrow = document.getElementById('arrow-' + id);
+                        if (ul) ul.style.display = state[id] ? '' : 'none';
+                        if (arrow) arrow.classList.toggle('collapsed', !state[id]);
+                    });
+                } catch (e) {
+                    /* ignore */ }
+            };
+
+            APS._bindSwipe = function() {
+                if (!APS._sidebar) return;
+                APS._sidebar.addEventListener('touchstart', function(e) {
+                    APS._touchStartX = e.touches[0].clientX;
+                }, {
+                    passive: true
+                });
+                APS._sidebar.addEventListener('touchend', function(e) {
+                    var dx = e.changedTouches[0].clientX - APS._touchStartX;
+                    if (dx < -60) APS.closeSidebar();
+                }, {
+                    passive: true
+                });
+            };
+
+            // Legacy globals for onclick handlers in rbac_sidebar.php
+            window.toggleSidebarSection = APS.toggleSection;
+            window.toggleAllSidebarSections = APS.toggleAllSections;
+
+            document.addEventListener('DOMContentLoaded', APS._init);
+        </script>
+</head>
+
+<body>
+    
+    <!-- Sidebar (DB-driven via rbac_sidebar.php) -->
+    
+<aside class="sidebar" id="sidebarMenu">
+    <div class="sidebar-header">
+        <a href="http://localhost/apsdreamhome/admin/dashboard" class="sidebar-logo">
+            <i class="fas fa-home"></i>
+            <span>APS Dream Home</span>
+        </a>
+        <div class="sidebar-sub">Admin Panel v2.0</div>
+    </div>
+
+    
+    <!-- Expand All / Collapse All toggle -->
+    <div class="sidebar-sec" onclick="toggleAllSidebarSections()">
+        <span><i class="fas fa-layer-group"></i> All Sections</span>
+        <i class="fas fa-chevron-down sidebar-sec-arrow" id="arrow-expand-all"></i>
+    </div>
+
+    
+            <div style="padding:20px; color:#94a3b8; text-align:center;">
+            <i class="fas fa-exclamation-circle" style="font-size:2rem; display:block; margin-bottom:10px;"></i>
+            <strong>No menu items found</strong><br>
+            <span style="font-size:0.8rem;">
+                Check that admin_menu_items table has data<br>
+                and AdminMenuService is working.
+            </span>
+        </div>
+    
+</aside>
+<!-- Sidebar toggle/restore handled by APS namespace (layout head) + admin.js (just before </body>).
+     Both persist collapse state to localStorage. Do NOT redefine toggle functions here. -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="APS.closeSidebar()"></div>
+
+    
+    <!-- Main Content -->
+    <main class="main-content" id="aps-main-content">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-left">
+                <button class="toggle-btn" onclick="APS.toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">Admin</li>
+                        <li class="breadcrumb-item active" id="breadcrumb-title">Auto Dialer</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="nav-right">
+                <!-- Notifications (Leads) -->
+                <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">0</span>
+                </button>
+
+                <!-- Messages / Inquiries -->
+                <button class="nav-icon" onclick="toggleMessages()" title="New Inquiries Today">
+                    <i class="fas fa-envelope"></i>
+                    <span class="badge">0</span>
+                </button>
+
+                <!-- Profile Dropdown (Bootstrap native) -->
+                <div class="dropdown" style="position: relative;">
+                    <div class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="cursor:pointer;">
+                        <div class="user-avatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name">Admin</div>
+                            <div class="user-role">Admin</div>
+                        </div>
+                        <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: #64748b;"></i>
+                    </div>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a href="http://localhost/apsdreamhome/admin/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a></li>
+                        <li><a href="http://localhost/apsdreamhome/admin/profile/security" class="dropdown-item"><i class="fas fa-shield-alt"></i> Security</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a href="http://localhost/apsdreamhome/admin/settings" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a href="http://localhost/apsdreamhome/admin/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div class="page-content" id="page-content">
+            
+            
+            <div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h2 class="mb-0"><i class="fas fa-phone-volume me-2 text-primary"></i>Auto Dialer</h2>
+        <div>
+            <a href="http://localhost/apsdreamhome/admin/ai-calling/call-analytics" class="btn btn-outline-info btn-sm"><i class="fas fa-chart-pie me-1"></i>Call Analytics</a>
+            <a href="http://localhost/apsdreamhome/admin/ai-calling/schedule" class="btn btn-outline-primary btn-sm"><i class="fas fa-calendar me-1"></i>Schedule</a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="aps-cp-card"><div class="aps-cp-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3"><span class="badge bg-primary rounded-pill p-2"><i class="fas fa-phone"></i></span></div>
+                    <div><div class="aps-cp-stat-label">Total Scheduled</div><div class="aps-cp-stat-value">3</div><div class="aps-cp-stat-meta">In queue</div></div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="aps-cp-card"><div class="aps-cp-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3"><span class="badge bg-warning rounded-pill p-2"><i class="fas fa-hourglass-half"></i></span></div>
+                    <div><div class="aps-cp-stat-label">Pending Today</div><div class="aps-cp-stat-value text-warning">0</div><div class="aps-cp-stat-meta">3 total pending</div></div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="aps-cp-card"><div class="aps-cp-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3"><span class="badge bg-success rounded-pill p-2"><i class="fas fa-check-circle"></i></span></div>
+                    <div><div class="aps-cp-stat-label">Completed Today</div><div class="aps-cp-stat-value text-success">0</div><div class="aps-cp-stat-meta">0 total done</div></div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="aps-cp-card"><div class="aps-cp-card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3"><span class="badge bg-info rounded-pill p-2"><i class="fas fa-clipboard-list"></i></span></div>
+                    <div><div class="aps-cp-stat-label">App Call Logs</div><div class="aps-cp-stat-value">0</div><div class="aps-cp-stat-meta">Logged from app</div></div>
+                </div>
+            </div></div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-list-ol me-2 text-primary"></i>Today's Call Queue</h5>
+                    <div>
+                        <button class="btn btn-success btn-sm me-2" id="btn-process"><i class="fas fa-play me-1"></i>Process Queue</button>
+                        <button class="btn btn-primary btn-sm" id="btn-ai-schedule" data-bs-toggle="collapse" data-bs-target="#aiForm"><i class="fas fa-robot me-1"></i>AI Auto-Schedule</button>
+                    </div>
+                </div>
+                <div class="collapse" id="aiForm">
+                    <div class="card-body border-bottom bg-light">
+                        <form id="aiScheduleForm" class="row g-2 align-items-end">
+                            <div class="col-auto">
+                                <label class="form-label mb-0 small">Min Score</label>
+                                <input type="number" name="min_score" class="form-control form-control-sm" value="70" min="0" max="100" style="width:90px">
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label mb-0 small">Date</label>
+                                <input type="date" name="scheduled_date" class="form-control form-control-sm" value="2026-07-14" style="width:150px">
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-magic me-1"></i>Run AI</button>
+                            </div>
+                            <div class="col-12"><small class="text-muted">AI scores all leads and schedules hot leads (≥ min score) for calling.</small></div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr><th>Time</th><th>Lead</th><th>Phone</th><th>Priority</th><th>Script</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                                                    <tr><td colspan="6" class="text-center text-muted py-4">No calls scheduled for today.</td></tr>
+                                                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-rocket me-2 text-info"></i>Upcoming Calls</h5></div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light"><tr><th>Date</th><th>Lead</th><th>Phone</th><th>Time</th><th>Priority</th></tr></thead>
+                            <tbody>
+                                                                    <tr><td colspan="5" class="text-center text-muted py-4">No upcoming calls.</td></tr>
+                                                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-history me-2 text-secondary"></i>Recent App Call Logs</h5></div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                                                    <div class="list-group-item text-muted text-center py-4">No call logs yet.</div>
+                                            </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="http://localhost/apsdreamhome/admin/ai-calling/call-analytics" class="btn btn-sm btn-outline-primary">View Full Analytics</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('btn-process')?.addEventListener('click', function() {
+    const btn = this; btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing…';
+    fetch('http://localhost/apsdreamhome/admin/ai-calling/auto-dialer/process', {method: 'POST', headers:{'X-Requested-With':'XMLHttpRequest'}})
+        .then(r => r.json()).then(d => {
+            alert((d.message || 'Done') + (d.processed !== undefined ? ' (Processed: ' + d.processed + ', Failed: ' + d.failed + ')' : ''));
+            location.reload();
+        }).catch(e => { alert('Error: ' + e); btn.disabled = false; btn.innerHTML = '<i class="fas fa-play me-1"></i>Process Queue'; });
+});
+document.getElementById('aiScheduleForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Running…';
+    const fd = new FormData(this);
+    const params = new URLSearchParams();
+    fd.forEach((v,k) => params.append(k, v));
+    fetch('http://localhost/apsdreamhome/admin/ai-calling/auto-dialer/ai-schedule', {method: 'POST', headers:{'X-Requested-With':'XMLHttpRequest','Content-Type':'application/x-www-form-urlencoded'}, body: params.toString()})
+        .then(r => r.json()).then(d => {
+            alert((d.message || 'Done'));
+            location.reload();
+        }).catch(err => { alert('Error: ' + err); })
+        .finally(() => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-magic me-1"></i>Run AI'; });
+});
+</script>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Admin JS -->
+    <script src="http://localhost/apsdreamhome/assets/admin/js/admin.js"></script>
+    <script>
+    function toggleNotifications() {
+        var panel = document.getElementById('notification-panel');
+        if (panel) { panel.classList.toggle('show'); } else { window.location.href = 'http://localhost/apsdreamhome/admin/notifications'; }
+    }
+    function toggleMessages() {
+        window.location.href = 'http://localhost/apsdreamhome/admin/inquiries';
+    }
+    </script>
+            <!-- Frontend enhancements: a11y, forms, toasts, loading -->
+        <script defer src="http://localhost/apsdreamhome/assets/js/frontend-enhancements.js"></script>
+
+        <!-- Real-time WebSocket Notifications -->
+        <script>
+            window.NOTIFY_USER = {
+                id: null,
+                role: 'guest'
+            };
+        </script>
+        <script defer src="http://localhost/apsdreamhome/assets/js/notification-system.js"></script>
+
+        <script>
+            // AJAX Navigation for Sidebar - sidebar remains fixed, only content updates
+            // Guard: only initialize once per page (prevents double-registration after reRunScripts)
+            if (!window._adminAjaxNavInitialized) {
+                window._adminAjaxNavInitialized = true;
+                (function() {
+                    var baseUrl = 'http://localhost/apsdreamhome';
+
+                    function updateActiveSidebar(url) {
+                        document.querySelectorAll('.sidebar-link').forEach(function(link) {
+                            var href = link.getAttribute('href');
+                            if (href && (url === href || url.startsWith(href + '/'))) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        });
+                    }
+
+                    function loadContent(url, pushState) {
+                        if (pushState !== false) {
+                            history.pushState({
+                                url: url
+                            }, '', url);
+                        }
+                        updateActiveSidebar(url);
+
+                        fetch(url, {
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(function(r) {
+                                return r.text();
+                            })
+                            .then(function(html) {
+                                var parser = new DOMParser();
+                                var doc = parser.parseFromString(html, 'text/html');
+                                var newContent = doc.getElementById('page-content');
+                                var newTitle = doc.getElementById('breadcrumb-title');
+                                if (newContent) {
+                                    document.getElementById('page-content').innerHTML = newContent.innerHTML;
+                                    // Re-initialize any scripts in the new content
+                                    if (typeof reRunScripts === 'function') reRunScripts();
+                                }
+                                if (newTitle) {
+                                    document.getElementById('breadcrumb-title').textContent = newTitle.textContent;
+                                    document.title = newTitle.textContent + ' - APS Dream Home Admin';
+                                }
+                            })
+                            .catch(function(err) {
+                                console.error('AJAX nav error:', err);
+                            });
+                    }
+
+                    // Handle browser back/forward
+                    window.addEventListener('popstate', function(e) {
+                        if (e.state && e.state.url) {
+                            loadContent(e.state.url, false);
+                        }
+                    });
+
+                    // Intercept sidebar links
+                    document.querySelectorAll('.sidebar-link').forEach(function(link) {
+                        link.addEventListener('click', function(e) {
+                            var href = this.getAttribute('href');
+                            if (href && href.startsWith('/') && !href.includes('/logout')) {
+                                e.preventDefault();
+                                loadContent(href);
+                            }
+                        });
+                    });
+                })();
+            }
+        </script>
+</body>
+
+</html>

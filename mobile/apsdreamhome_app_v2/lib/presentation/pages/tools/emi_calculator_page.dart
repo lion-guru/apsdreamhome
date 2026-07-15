@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/router/app_router.dart';
 
 /// EMI Calculator Page
 /// Calculate EMI for plot purchases with different bank rates
-class EMICalculatorPage extends StatefulWidget {
+class EMICalculatorPage extends ConsumerStatefulWidget {
   const EMICalculatorPage({super.key});
 
   @override
-  State<EMICalculatorPage> createState() => _EMICalculatorPageState();
+  ConsumerState<EMICalculatorPage> createState() => _EMICalculatorPageState();
 }
 
-class _EMICalculatorPageState extends State<EMICalculatorPage> {
+class _EMICalculatorPageState extends ConsumerState<EMICalculatorPage> {
   // Input controllers
   final _plotPriceController = TextEditingController();
   final _downPaymentController = TextEditingController();
   final _interestRateController = TextEditingController(text: '8.5');
   final _loanAmountController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
 
   // State variables
   double _plotPrice = 1000000;
@@ -48,6 +52,12 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
     super.initState();
     _plotPriceController.text = _plotPrice.toStringAsFixed(0);
     _downPaymentController.text = _downPayment.toStringAsFixed(0);
+    // Auto-fill name/phone from logged-in user
+    final user = AuthBridge.instance.currentUser.value;
+    if (user != null) {
+      _nameController.text = user.name;
+      _phoneController.text = user.phone ?? '';
+    }
     _calculateEMI();
   }
 
@@ -81,7 +91,7 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
     // EMI Formula: [P × R × (1+R)^N] / [(1+R)^N-1]
     final double emi =
         (_loanAmount * monthlyRate * pow(1 + monthlyRate, totalMonths)) /
-            (pow(1 + monthlyRate, totalMonths) - 1);
+        (pow(1 + monthlyRate, totalMonths) - 1);
 
     final double totalPayment = emi * totalMonths;
     final double totalInterest = totalPayment - _loanAmount;
@@ -167,11 +177,7 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.calculate,
-            size: 48,
-            color: Colors.white,
-          ),
+          const Icon(Icons.calculate, size: 48, color: Colors.white),
           const SizedBox(height: 12),
           const Text(
             'Plot EMI Calculator',
@@ -200,10 +206,7 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
       children: [
         const Text(
           'Select Bank',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -213,9 +216,7 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
             final isSelected = _selectedBank == bank;
             final rate = _bankRates[bank];
             return ChoiceChip(
-              label: Text(
-                bank == 'Custom' ? 'Custom' : '$bank $rate%',
-              ),
+              label: Text(bank == 'Custom' ? 'Custom' : '$bank $rate%'),
               selected: isSelected,
               onSelected: (_) => _selectBank(bank),
               selectedColor: Colors.blue.shade100,
@@ -345,8 +346,10 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.blue.shade100,
                     borderRadius: BorderRadius.circular(20),
@@ -377,10 +380,7 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
             ),
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('5 Years'),
-                Text('20 Years'),
-              ],
+              children: [Text('5 Years'), Text('20 Years')],
             ),
           ],
         ),
@@ -414,10 +414,7 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
                 children: [
                   const Text(
                     'Monthly EMI',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.green,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.green),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -428,10 +425,7 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
                       color: Colors.green,
                     ),
                   ),
-                  const Text(
-                    'per month',
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  const Text('per month', style: TextStyle(color: Colors.grey)),
                 ],
               ),
             ),
@@ -471,16 +465,17 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
     );
   }
 
-  Widget _buildResultItem(String label, String value, Color color,
-      {bool isBold = false}) {
+  Widget _buildResultItem(
+    String label,
+    String value,
+    Color color, {
+    bool isBold = false,
+  }) {
     return Column(
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
         ),
         const SizedBox(height: 4),
         Text(
@@ -518,10 +513,7 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
           children: [
             const Text(
               'Compare Banks',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ..._bankRates.entries.where((e) => e.key != 'Custom').map((entry) {
@@ -531,7 +523,8 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
               // Calculate EMI for this bank
               final double monthlyRate = rate / 12 / 100;
               final int totalMonths = _tenureYears * 12;
-              final double emi = (_loanAmount *
+              final double emi =
+                  (_loanAmount *
                       monthlyRate *
                       pow(1 + monthlyRate, totalMonths)) /
                   (pow(1 + monthlyRate, totalMonths) - 1);
@@ -597,9 +590,7 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
         minimumSize: const Size(double.infinity, 54),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -656,12 +647,12 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
                       ],
                       rows: schedule.map((row) {
                         final double emi = (row['emi'] as num).toDouble();
-                        final double principal =
-                            (row['principal'] as num).toDouble();
-                        final double interest =
-                            (row['interest'] as num).toDouble();
-                        final double balance =
-                            (row['balance'] as num).toDouble();
+                        final double principal = (row['principal'] as num)
+                            .toDouble();
+                        final double interest = (row['interest'] as num)
+                            .toDouble();
+                        final double balance = (row['balance'] as num)
+                            .toDouble();
                         return DataRow(
                           cells: [
                             DataCell(Text('${row['month']}')),
@@ -684,30 +675,55 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
   }
 
   void _showLoanApplicationDialog() {
+    final nameCtl = TextEditingController(text: _nameController.text);
+    final phoneCtl = TextEditingController(text: _phoneController.text);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Apply for Home Loan'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Bank: $_selectedBank'),
-            Text(
-                'Loan Amount: ${AppConstants.currencySymbol}${_formatNumber(_loanAmount)}'),
-            Text(
-                'EMI: ${AppConstants.currencySymbol}${_formatNumber(_emiAmount)}/month'),
-            Text('Tenure: $_tenureYears years'),
-            const SizedBox(height: 16),
-            const Text(
-              'Our loan partner will contact you shortly. Please keep your documents ready:',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-                '• Aadhar Card\n• PAN Card\n• Income Proof\n• Bank Statements (6 months)',
-                style: TextStyle(fontSize: 12)),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: nameCtl,
+                decoration: const InputDecoration(
+                  labelText: 'Full Name',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: phoneCtl,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  prefixText: '+91 ',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Bank: $_selectedBank',
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              Text(
+                'Loan Amount: ${AppConstants.currencySymbol}${_formatNumber(_loanAmount)}',
+              ),
+              Text(
+                'EMI: ${AppConstants.currencySymbol}${_formatNumber(_emiAmount)}/month',
+              ),
+              Text('Tenure: $_tenureYears years'),
+              const SizedBox(height: 12),
+              const Text(
+                'Documents needed: Aadhar, PAN, Income Proof, Bank Statements',
+                style: TextStyle(fontSize: 11, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -720,7 +736,8 @@ class _EMICalculatorPageState extends State<EMICalculatorPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text(
-                      'Loan application submitted! We will contact you soon.'),
+                    'Loan application submitted! We will contact you soon.',
+                  ),
                   backgroundColor: Colors.green,
                 ),
               );

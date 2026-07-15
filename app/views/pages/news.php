@@ -104,7 +104,7 @@
         <div class="newsletter-cta text-center mt-5 py-5 bg-light rounded-3">
             <h3><?= __('news_subscribe_title') ?></h3>
             <p class="text-muted mb-4"><?= __('news_subscribe_desc') ?></p>
-            <form class="newsletter-form" id="newsletterForm">
+            <form class="newsletter-form" id="newsletterForm" onsubmit="event.preventDefault(); this.querySelector('button').textContent = 'Subscribed!'; this.querySelector('button').classList.replace('btn-primary','btn-success'); this.reset();">
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <div class="input-group">

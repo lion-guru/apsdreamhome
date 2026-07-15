@@ -1,8 +1,8 @@
 <?php
 /**
  * Earning & Career Opportunity Page - APS Dream Home
- * Beautifully designed page explaining the Unified 10-Rank Slab Differential Plan,
- * monthly salaries, and insurance benefits.
+ * Beautifully designed page explaining the 7-Rank Slab Differential Plan,
+ * and insurance benefits.
  */
 ?>
 
@@ -144,29 +144,29 @@
                 <div class="glass-card p-4 h-100">
                     <div class="icon-box bg-primary text-white mb-3"><i class="fas fa-wallet"></i></div>
                     <h5 class="fw-bold"><?= __('opp_pillar_salary', [], 'Fixed Monthly Salary') ?></h5>
-                    <p class="text-muted small"><?= __('opp_pillar_salary_desc', [], 'रियल एस्टेट में आमतौर पर केवल कमीशन मिलता है। लेकिन APS Dream Home आपको आपकी सेल्स परफॉर्मेंस के आधार पर एक फिक्स्ड मासिक सैलरी भी प्रदान करता है!') ?></p>
+                    <p class="text-muted small"><?= __('opp_pillar_salary_desc', [], 'In real estate, typically only commission is offered. But APS Dream Home also provides a fixed monthly salary based on your sales performance!') ?></p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="glass-card p-4 h-100">
                     <div class="icon-box bg-success text-white mb-3"><i class="fas fa-heartbeat"></i></div>
                     <h5 class="fw-bold"><?= __('opp_pillar_insurance', [], 'Free Insurance Cover') ?></h5>
-                    <p class="text-muted small"><?= __('opp_pillar_insurance_desc', [], 'हम आपके परिवार की सुरक्षा का ध्यान रखते हैं। सभी सक्रिय पार्टनर्स को स्वास्थ्य, जीवन और दुर्घटना बीमा कवर मुफ्त प्रदान किया जाता है।') ?></p>
+                    <p class="text-muted small"><?= __('opp_pillar_insurance_desc', [], 'We care about your family safety. All active partners receive free health, life, and accident insurance coverage.') ?></p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="glass-card p-4 h-100">
                     <div class="icon-box bg-warning text-white mb-3"><i class="fas fa-graduation-cap"></i></div>
                     <h5 class="fw-bold"><?= __('opp_pillar_training', [], 'Training & Certification') ?></h5>
-                    <p class="text-muted small"><?= __('opp_pillar_training_desc', [], 'कोई अनुभव नहीं? कोई बात नहीं! कंपनी 7-दिवसीय इंडक्शन प्रोग्राम और स्किल वर्कशॉप के जरिए आपको सेल्स और प्रॉपर्टी एक्सपर्ट बनाएगी।') ?></p>
+                    <p class="text-muted small"><?= __('opp_pillar_training_desc', [], 'No experience? No problem! The company provides a 7-day induction program and skill workshops to make you a sales and property expert.') ?></p>
                 </div>
             </div>
         </div>
 
         <!-- Tab Controls -->
         <div class="text-center mb-5">
-            <h3 class="fw-bold mb-3 text-dark"><?= __('opp_tabs_heading', [], 'अपना पार्टनरशिप मॉडल चुनें') ?></h3>
-            <p class="text-muted"><?= __('opp_tabs_subtitle', [], 'हम एसोसिएट्स और स्वतंत्र एजेंट्स दोनों के लिए अनुकूल प्लान प्रदान करते हैं।') ?></p>
+            <h3 class="fw-bold mb-3 text-dark"><?= __('opp_tabs_heading', [], 'Choose Your Partnership Model') ?></h3>
+            <p class="text-muted"><?= __('opp_tabs_subtitle', [], 'We offer suitable plans for both Associates and Independent Agents.') ?></p>
             <div class="plan-tabs">
                 <button class="plan-tab-btn active" onclick="switchPlan('mlm')">
                     <i class="fas fa-sitemap me-2"></i><?= __('opp_tab_mlm', [], '1. MLM Career Associate') ?>
@@ -186,14 +186,14 @@
                     <div class="glass-card p-4 mb-4">
                         <h4 class="fw-bold text-indigo-700 mb-3"><i class="fas fa-money-check-alt me-2"></i><?= __('opp_slab_heading', [], 'Slab-Based Differential Commission') ?></h4>
                         <p class="text-muted small">
-                            आपकी रैंक के अनुसार डायरेक्ट कमीशन **5% से 30%** तक होता है। आपकी टीम की सेल पर आपको आपकी रैंक और आपके डाउनलाइन की रैंक का **अंतर (Slab Difference)** मिलता है।
+                            Your direct commission ranges from **5% to 20%** based on your rank. On your team sales, you receive the **difference (Slab Differential)** between your rank and your downline rank.
                         </p>
                         <div class="bg-light p-3 rounded-3 mb-2 small">
-                            <strong><?= __('opp_example_label', [], 'उदाहरण (Example):') ?></strong><br>
-                            आप **Global Director (30%)** पर हैं और आपकी टीम के एक **Associate (5%)** ने ₹10 लाख का प्लॉट बेचा:
+                            <strong><?= __('opp_example_label', [], 'Example:') ?></strong><br>
+                            You are a <strong>Site Manager (20%)</strong> and an <strong>Associate (5%)</strong> in your team sold a plot worth ₹10 lakh:
                             <ul class="mt-2 mb-0">
-                                <li>उसे सीधे **5% (₹50,000)** डायरेक्ट कमीशन मिलेगा।</li>
-                                <li>आपको स्लैब का अंतर: **25% (30% - 5%) यानी ₹2,50,000** प्राप्त होगा।</li>
+                                <li>They receive direct commission of **5% (₹50,000)**.</li>
+                                <li>You receive slab difference: **15% (20% - 5%) = ₹1,50,000**.</li>
                             </ul>
                         </div>
                     </div>
@@ -230,16 +230,16 @@
                     <div class="card border-0 shadow-sm p-4 bg-white mb-4">
                         <h4 class="fw-bold text-indigo-700 mb-3"><i class="fas fa-shield-alt me-2"></i><?= __('opp_breakaway_heading', [], 'Same-Rank Breakaway Safeguard') ?></h4>
                         <p class="text-muted small">
-                            यदि कोई डाउनलाइन तरक्की करके आपकी ही रैंक पर आ जाता है, तो आपका डिफरेंशियल 0% हो जाता है। ऐसे में कंपनी आपको सुरक्षा कवच देती है:
+                            If a downline member advances to the same rank as yours, your differential becomes 0%. In such cases, the company provides you with a safety shield:
                         </p>
                         <ul class="list-group list-group-flush mb-0 small">
                             <li class="list-group-item bg-transparent border-0 px-0 d-flex gap-2">
                                 <i class="fas fa-check-circle text-success mt-1"></i>
-                                <div><strong>Generation 1 Same-Rank Override: 1.5%</strong> (इमीडिएट डाउनलाइन टीम वॉल्यूम पर)</div>
+                                <div><strong>Generation 1 Same-Rank Override: 2.0%</strong> (On immediate downline team volume)</div>
                             </li>
                             <li class="list-group-item bg-transparent border-0 px-0 d-flex gap-2">
                                 <i class="fas fa-check-circle text-success mt-1"></i>
-                                <div><strong>Generation 2 Same-Rank Override: 1.0%</strong> (उनके नीचे वाले टीम वॉल्यूम पर)</div>
+                                <div><strong>Generation 2 Same-Rank Override: 1.0%</strong> (On their downline team volume)</div>
                             </li>
                         </ul>
                     </div>
@@ -248,7 +248,7 @@
                 <!-- Right Side: 10 Ranks & Salaries -->
                 <div class="col-lg-5">
                     <div class="glass-card p-4">
-                        <h4 class="fw-bold text-dark mb-4"><i class="fas fa-network-wired text-warning me-2"></i><?= __('opp_career_heading', [], '10-Rank Career Path') ?></h4>
+                        <h4 class="fw-bold text-dark mb-4"><i class="fas fa-network-wired text-warning me-2"></i><?= __('opp_career_heading', [], '7-Rank Career Path') ?></h4>
                         
                         <!-- Timeline Ranks -->
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
@@ -256,79 +256,55 @@
                                 <strong>1. <?= __('opp_rank_associate', [], 'Associate') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">5.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_associate_detail', [], 'Business: ₹50K+ | Reward: Starter Path') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_associate_detail', [], 'GBV: ₹0 - ₹10 Lakh') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
                             <div class="d-flex justify-content-between align-items-center">
-                                <strong>2. <?= __('opp_rank_bronze', [], 'Bronze') ?></strong>
+                                <strong>2. <?= __('opp_rank_sr_associate', [], 'Sr. Associate') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">7.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_bronze_detail', [], 'Business: ₹2L+ | Reward: ₹5K/mo salary') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_sr_associate_detail', [], 'GBV: ₹10 Lakh - ₹35 Lakh') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
                             <div class="d-flex justify-content-between align-items-center">
-                                <strong>3. <?= __('opp_rank_silver', [], 'Silver') ?></strong>
+                                <strong>3. <?= __('opp_rank_bdm', [], 'BDM') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">10.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_silver_detail', [], 'Business: ₹5L+ | Reward: ₹8K/mo salary') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_bdm_detail', [], 'GBV: ₹35 Lakh - ₹70 Lakh') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
                             <div class="d-flex justify-content-between align-items-center">
-                                <strong>4. <?= __('opp_rank_gold', [], 'Gold') ?></strong>
-                                <span class="badge bg-indigo-100 text-indigo-700">12.5% <?= __('opp_rate', [], 'Rate') ?></span>
+                                <strong>4. <?= __('opp_rank_sr_bdm', [], 'Sr. BDM') ?></strong>
+                                <span class="badge bg-indigo-100 text-indigo-700">12.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_gold_detail', [], 'Business: ₹10L+ | Reward: ₹12K/mo salary') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_sr_bdm_detail', [], 'GBV: ₹70 Lakh - ₹1.5 Crore') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
                             <div class="d-flex justify-content-between align-items-center">
-                                <strong>5. <?= __('opp_rank_platinum', [], 'Platinum') ?></strong>
+                                <strong>5. <?= __('opp_rank_vice_president', [], 'Vice President') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">15.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_platinum_detail', [], 'Business: ₹25L+ | Reward: ₹15K/mo salary') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_vice_president_detail', [], 'GBV: ₹1.5 Crore - ₹3 Crore') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 mb-2 rounded glass-card">
                             <div class="d-flex justify-content-between align-items-center">
-                                <strong>6. <?= __('opp_rank_diamond', [], 'Diamond') ?></strong>
+                                <strong>6. <?= __('opp_rank_president', [], 'President') ?></strong>
                                 <span class="badge bg-indigo-100 text-indigo-700">18.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_diamond_detail', [], 'Business: ₹50L+ | Reward: ₹20K/mo salary') ?></span>
-                        </div>
-
-                        <div class="rank-badge-item p-3 mb-2 rounded glass-card">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <strong>7. <?= __('opp_rank_executive', [], 'Executive') ?></strong>
-                                <span class="badge bg-indigo-100 text-indigo-700">20.0% <?= __('opp_rate', [], 'Rate') ?></span>
-                            </div>
-                            <span class="small text-muted"><?= __('opp_rank_executive_detail', [], 'Business: ₹1Cr+ | Reward: ₹25K/mo salary') ?></span>
-                        </div>
-
-                        <div class="rank-badge-item p-3 mb-2 rounded glass-card">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <strong>8. <?= __('opp_rank_sr_executive', [], 'Sr. Executive') ?></strong>
-                                <span class="badge bg-indigo-100 text-indigo-700">22.0% <?= __('opp_rate', [], 'Rate') ?></span>
-                            </div>
-                            <span class="small text-muted"><?= __('opp_rank_sr_executive_detail', [], 'Business: ₹2Cr+ | Reward: ₹30K/mo salary') ?></span>
-                        </div>
-
-                        <div class="rank-badge-item p-3 mb-2 rounded glass-card">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <strong>9. <?= __('opp_rank_director', [], 'Director') ?></strong>
-                                <span class="badge bg-indigo-100 text-indigo-700">25.0% <?= __('opp_rate', [], 'Rate') ?></span>
-                            </div>
-                            <span class="small text-muted"><?= __('opp_rank_director_detail', [], 'Business: ₹5Cr+ | Reward: ₹40K/mo salary') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_president_detail', [], 'GBV: ₹3 Crore - ₹5 Crore') ?></span>
                         </div>
 
                         <div class="rank-badge-item p-3 rounded glass-card">
                             <div class="d-flex justify-content-between align-items-center">
-                                <strong>10. <?= __('opp_rank_global_director', [], 'Global Director') ?></strong>
-                                <span class="badge bg-indigo-100 text-indigo-700">30.0% <?= __('opp_rate', [], 'Rate') ?></span>
+                                <strong>7. <?= __('opp_rank_site_manager', [], 'Site Manager') ?></strong>
+                                <span class="badge bg-indigo-100 text-indigo-700">20.0% <?= __('opp_rate', [], 'Rate') ?></span>
                             </div>
-                            <span class="small text-muted"><?= __('opp_rank_global_director_detail', [], 'Business: ₹10Cr+ | Reward: ₹50K/mo salary') ?></span>
+                            <span class="small text-muted"><?= __('opp_rank_site_manager_detail', [], 'GBV: ₹5 Crore+') ?></span>
                         </div>
                     </div>
                 </div>
@@ -340,28 +316,28 @@
             <div class="row g-4">
                 <div class="col-lg-6">
                     <div class="glass-card p-4 h-100">
-                        <h4 class="fw-bold text-primary mb-3"><i class="fas fa-handshake me-2"></i><?= __('opp_independent_heading', [], 'स्वतंत्र एजेंट (Flat Deal) मॉडल') ?></h4>
+                        <h4 class="fw-bold text-primary mb-3"><i class="fas fa-handshake me-2"></i><?= __('opp_independent_heading', [], 'Independent Agent (Flat Deal) Model') ?></h4>
                         <p class="text-muted">
-                            <?= __('opp_independent_desc', [], 'यदि आप MLM टीम बिल्डिंग में रुचि नहीं रखते हैं और स्वतंत्र ब्रोकर की तरह बड़ी कमर्शियल या रेसिडेंशियल डील्स क्लोज करना चाहते हैं, तो यह विकल्प आपके लिए सर्वोत्तम है:') ?>
+                            <?= __('opp_independent_desc', [], 'If you are not interested in MLM team building and want to close large commercial or residential deals like an independent broker, this option is best for you:') ?>
                         </p>
                         
                         <ul class="list-group list-group-flush mb-4">
                             <li class="list-group-item bg-transparent border-0 px-0 d-flex gap-2">
                                 <i class="fas fa-check-circle text-success mt-1"></i>
                                 <div>
-                                    <strong><?= __('opp_flat_pct_title', [], 'तय प्रतिशत (Flat Percentage)') ?></strong>: <?= __('opp_flat_pct_desc', [], 'सीधे कुल बुकिंग/भुगतान का 8% या 10% कमीशन प्राप्त करें।') ?>
+                                    <strong><?= __('opp_flat_pct_title', [], 'Flat Percentage') ?></strong>: <?= __('opp_flat_pct_desc', [], 'Receive 8% or 10% commission directly on total booking/payment amount.') ?>
                                 </div>
                             </li>
                             <li class="list-group-item bg-transparent border-0 px-0 d-flex gap-2">
                                 <i class="fas fa-check-circle text-success mt-1"></i>
                                 <div>
-                                    <strong><?= __('opp_flat_rate_title', [], 'तय दर (Flat Rate Per SqFt)') ?></strong>: <?= __('opp_flat_rate_desc', [], 'प्लॉट के साइज के अनुसार तय दर (जैसे ₹150 प्रति वर्ग फुट) पर सीधा भुगतान पाएं।') ?>
+                                    <strong><?= __('opp_flat_rate_title', [], 'Flat Rate Per SqFt') ?></strong>: <?= __('opp_flat_rate_desc', [], 'Get paid at a fixed rate per square foot (e.g. ₹150/sqft) based on plot size.') ?>
                                 </div>
                             </li>
                             <li class="list-group-item bg-transparent border-0 px-0 d-flex gap-2">
                                 <i class="fas fa-check-circle text-success mt-1"></i>
                                 <div>
-                                    <strong><?= __('opp_upline_title', [], 'Upline से मुक्ति') ?></strong>: <?= __('opp_upline_desc', [], 'स्वतंत्र एजेंट की डील्स पर MLM सीनियर्स को डिफरेंशियल कमीशन नहीं जाता है, जिससे आपके डील्स पूरी तरह सुरक्षित रहते हैं।') ?>
+                                    <strong><?= __('opp_upline_title', [], 'No Upline Interference') ?></strong>: <?= __('opp_upline_desc', [], 'Independent agent deals have no differential commission going to MLM seniors, keeping your deals fully secure.') ?>
                                 </div>
                             </li>
                         </ul>
@@ -370,20 +346,20 @@
 
                 <div class="col-lg-6">
                     <div class="card border-0 shadow-sm p-4 bg-white h-100">
-                        <h4 class="fw-bold text-indigo-700 mb-3"><i class="fas fa-users-cog me-2"></i><?= __('opp_team_heading', [], 'स्वतंत्र टीम प्रबंधन (Sub-Agent Splits)') ?></h4>
+                        <h4 class="fw-bold text-indigo-700 mb-3"><i class="fas fa-users-cog me-2"></i><?= __('opp_team_heading', [], 'Independent Team Management (Sub-Agent Splits)') ?></h4>
                         <p class="text-muted">
-                            <?= __('opp_team_desc', [], 'स्वतंत्र एजेंट्स अपनी डील्स और सब-एजेंट्स के बीच कमीशन का विभाजन खुद तय करते हैं:') ?>
+                            <?= __('opp_team_desc', [], 'Independent agents decide the commission split between their deals and sub-agents:') ?>
                         </p>
                         <div class="bg-light p-3 rounded-3 mb-3 small">
-                            <strong><?= __('opp_workflow_label', [], 'कार्यप्रणाली:') ?></strong>
+                            <strong><?= __('opp_workflow_label', [], 'Workflow:') ?></strong>
                             <ol class="mt-2 mb-0">
-                                <li><?= __('opp_workflow_step1', [], 'कंपनी स्वतंत्र एजेंट को पूरा तय कमीशन डायरेक्ट पे करती है।') ?></li>
-                                <li><?= __('opp_workflow_step2', [], 'एजेंट अपने नीचे जुड़े जूनियर एजेंट्स का कमीशन स्वयं तय और वितरित करता है।') ?></li>
-                                <li><?= __('opp_workflow_step3', [], 'कंपनी इसमें किसी भी प्रकार का हस्तक्षेप नहीं करती, जिससे एजेंट्स को पूर्ण स्वतंत्रता मिलती है।') ?></li>
+                                <li><?= __('opp_workflow_step1', [], 'Company pays the full fixed commission directly to the independent agent.') ?></li>
+                                <li><?= __('opp_workflow_step2', [], 'The agent decides and distributes commission to junior agents below them.') ?></li>
+                                <li><?= __('opp_workflow_step3', [], 'Company has no interference, giving agents complete independence.') ?></li>
                             </ol>
                         </div>
                         <p class="small text-muted mb-0">
-                            <?= __('opp_team_note', [], 'यह मॉडल उन डीलरशिप फर्मों और रियल एस्टेट सलाहकारों के लिए सर्वोत्तम है जो अपने बैनर तले अपनी टीम को संभालते हैं।') ?>
+                            <?= __('opp_team_note', [], 'This model is best for dealership firms and real estate advisors who manage their own team under their banner.') ?>
                         </p>
                     </div>
                 </div>
@@ -395,13 +371,13 @@
 <!-- Call to Action -->
 <section class="py-5 text-center bg-indigo-900 text-white">
     <div class="container py-3">
-        <h2 class="fw-bold mb-3"><?= __('opp_cta_heading', [], 'आज ही हमारे एसोसिएट नेटवर्क का हिस्सा बनें!') ?></h2>
+        <h2 class="fw-bold mb-3"><?= __('opp_cta_heading', [], 'Join Our Associate Network Today!') ?></h2>
         <p class="text-indigo-200 mb-4 mx-auto" style="max-width: 600px;">
             <?= __('opp_cta_desc', [], 'Grow your network, build a career, and earn commissions. Register as a partner today.') ?>
         </p>
         <div class="d-flex justify-content-center gap-3">
-            <a href="/associate/register" class="btn btn-premium btn-lg"><?= __('opp_cta_register', [], 'पार्टनर रजिस्टर करें') ?></a>
-            <a href="/contact" class="btn btn-outline-light btn-lg rounded-3"><?= __('opp_cta_contact', [], 'हमसे संपर्क करें') ?></a>
+            <a href="/associate/register" class="btn btn-premium btn-lg"><?= __('opp_cta_register', [], 'Register as Partner') ?></a>
+            <a href="/contact" class="btn btn-outline-light btn-lg rounded-3"><?= __('opp_cta_contact', [], 'Contact Us') ?></a>
         </div>
     </div>
 </section>

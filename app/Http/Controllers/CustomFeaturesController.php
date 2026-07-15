@@ -271,6 +271,44 @@ class CustomFeaturesController extends BaseController
     }
 
     /**
+     * Neighborhood analytics page
+     */
+    public function neighborhoodPage()
+    {
+        try {
+            return $this->render('custom-features/neighborhood', [
+                'page_title' => 'Neighborhood Analytics',
+                'page_description' => 'Analyze neighborhood data for properties'
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to load neighborhood page',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Investment calculator page
+     */
+    public function investmentPage()
+    {
+        try {
+            return $this->render('custom-features/investment', [
+                'page_title' => 'Investment Calculator',
+                'page_description' => 'Calculate property investment returns'
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to load investment calculator page',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Neighborhood analytics feature
      */
     public function neighborhoodAnalytics($propertyId)

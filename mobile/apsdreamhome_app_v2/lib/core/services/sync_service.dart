@@ -38,8 +38,12 @@ class SyncService {
 
     try {
       // Check connectivity
-      final connectivity = await Connectivity().checkConnectivity();
-      if (connectivity == ConnectivityResult.none) {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      final bool hasConnection = connectivityResult is List<ConnectivityResult>
+          ? (connectivityResult.isNotEmpty &&
+                !connectivityResult.contains(ConnectivityResult.none))
+          : connectivityResult != ConnectivityResult.none;
+      if (!hasConnection) {
         return SyncResult(success: false, message: 'No internet connection');
       }
 
@@ -55,7 +59,9 @@ class SyncService {
       return SyncResult(success: true, message: 'Sync completed successfully');
     } catch (e) {
       return SyncResult(
-          success: false, message: 'Sync failed: ${e.toString()}');
+        success: false,
+        message: 'Sync failed: ${e.toString()}',
+      );
     } finally {
       _isSyncing = false;
     }
@@ -93,7 +99,7 @@ class SyncService {
             AppConstants.syncQueueTable,
             {
               'status': 'failed',
-              'updated_at': DateTime.now().toIso8601String()
+              'updated_at': DateTime.now().toIso8601String(),
             },
             where: 'id = ?',
             whereArgs: [item['id']],
@@ -113,8 +119,12 @@ class SyncService {
     }
   }
 
-  Future<void> _uploadEntity(String entityType, String entityId, String action,
-      Map<String, dynamic> data) async {
+  Future<void> _uploadEntity(
+    String entityType,
+    String entityId,
+    String action,
+    Map<String, dynamic> data,
+  ) async {
     switch (entityType) {
       case AppConstants.leadsTable:
         await _uploadLead(action, data);
@@ -139,8 +149,10 @@ class SyncService {
         await _apiService.post(AppConstants.leadsEndpoint, data: data);
         break;
       case 'update':
-        await _apiService.put('${AppConstants.leadsEndpoint}/${data['id']}',
-            data: data);
+        await _apiService.put(
+          '${AppConstants.leadsEndpoint}/${data['id']}',
+          data: data,
+        );
         break;
       case 'delete':
         await _apiService.delete('${AppConstants.leadsEndpoint}/${data['id']}');
@@ -152,8 +164,9 @@ class SyncService {
     switch (action) {
       case 'update':
         await _apiService.put(
-            '${AppConstants.propertiesEndpoint}/${data['id']}',
-            data: data);
+          '${AppConstants.propertiesEndpoint}/${data['id']}',
+          data: data,
+        );
         break;
       default:
         throw UnknownFailure('Unsupported action for property: $action');
@@ -161,17 +174,16 @@ class SyncService {
   }
 
   Future<void> _uploadCommission(
-      String action, Map<String, dynamic> data) async {
+    String action,
+    Map<String, dynamic> data,
+  ) async {
     // Commissions are typically read-only from mobile
     throw const UnknownFailure('Commissions cannot be modified from mobile');
   }
 
   Future<void> _uploadBooking(String action, Map<String, dynamic> data) async {
     if (action == 'create') {
-      await _apiService.post('/sync', data: {
-        'type': 'booking',
-        'data': data,
-      });
+      await _apiService.post('/sync', data: {'type': 'booking', 'data': data});
     }
   }
 
@@ -203,22 +215,19 @@ class SyncService {
         final leads = updates['leads'] as List;
         for (final lead in leads) {
           final leadMap = lead as Map<String, dynamic>;
-          await DatabaseHelper.insert(
-            AppConstants.leadsTable,
-            {
-              ...leadMap,
-              'last_synced_at': DateTime.now().toIso8601String(),
-              'is_synced': 1,
-            },
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          );
+          await DatabaseHelper.insert(AppConstants.leadsTable, {
+            ...leadMap,
+            'last_synced_at': DateTime.now().toIso8601String(),
+            'is_synced': 1,
+          }, conflictAlgorithm: ConflictAlgorithm.replace);
         }
       }
 
       // 3. Process Commissions (Payouts)
       if (updates.containsKey('mlm_stats') &&
-          (updates['mlm_stats'] as Map<String, dynamic>)
-              .containsKey('payouts')) {
+          (updates['mlm_stats'] as Map<String, dynamic>).containsKey(
+            'payouts',
+          )) {
         final payouts =
             (updates['mlm_stats'] as Map<String, dynamic>)['payouts'] as List;
         for (final payout in payouts) {
@@ -257,22 +266,20 @@ class SyncService {
 
       // 5. Update local user profile if provided in mlm_stats
       if (updates.containsKey('mlm_stats') &&
-          (updates['mlm_stats'] as Map<String, dynamic>)
-              .containsKey('summary')) {
-        final summary = (updates['mlm_stats']
-            as Map<String, dynamic>)['summary'] as Map<String, dynamic>;
+          (updates['mlm_stats'] as Map<String, dynamic>).containsKey(
+            'summary',
+          )) {
+        final summary =
+            (updates['mlm_stats'] as Map<String, dynamic>)['summary']
+                as Map<String, dynamic>;
         final userProfile = await _apiService
             .getProfile(); // Still need profile for full details
         final userProfileData = userProfile['data'] as Map<String, dynamic>;
-        await DatabaseHelper.insert(
-          AppConstants.usersTable,
-          {
-            ...userProfileData,
-            'current_rank': summary['rank'],
-            'last_synced_at': DateTime.now().toIso8601String(),
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
+        await DatabaseHelper.insert(AppConstants.usersTable, {
+          ...userProfileData,
+          'current_rank': summary['rank'],
+          'last_synced_at': DateTime.now().toIso8601String(),
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
       }
     } catch (e) {
       print('Error downloading data: $e');
@@ -291,8 +298,6 @@ class SyncService {
     return await storage.read(key: AppConstants.userIdKey) ?? '';
   }
 
-
-
   Future<void> _updateLastSyncTime() async {
     // This would typically be stored in secure storage
     // For now, we'll just print it
@@ -300,8 +305,12 @@ class SyncService {
   }
 
   // Queue operations for offline changes
-  Future<void> queueChange(String entityType, String entityId, String action,
-      Map<String, dynamic> data) async {
+  Future<void> queueChange(
+    String entityType,
+    String entityId,
+    String action,
+    Map<String, dynamic> data,
+  ) async {
     await DatabaseHelper.insert(AppConstants.syncQueueTable, {
       'entity_type': entityType,
       'entity_id': entityId,

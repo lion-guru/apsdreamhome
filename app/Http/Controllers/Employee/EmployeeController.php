@@ -19,6 +19,7 @@ class EmployeeController extends BaseController
     {
         parent::__construct();
         $this->db = \App\Core\Database\Database::getInstance();
+        $this->layout = 'layouts/employee';
     }
 
     /**
@@ -43,6 +44,13 @@ class EmployeeController extends BaseController
     public function authenticate()
     {
         try {
+            // Validate CSRF token
+            $submittedToken = $_POST['csrf_token'] ?? '';
+            $sessionToken = $_SESSION['csrf_token'] ?? '';
+            if (empty($submittedToken) || empty($sessionToken) || !hash_equals($sessionToken, $submittedToken)) {
+                throw new Exception('Invalid CSRF token. Please try again.');
+            }
+
             $email = $_POST['email'] ?? '';
             $password = $_POST['password'] ?? '';
 
@@ -50,25 +58,86 @@ class EmployeeController extends BaseController
                 throw new Exception('Please fill in all fields');
             }
 
-            // Authenticate against database
-            $query = "SELECT * FROM users WHERE email = ? AND role = 'employee' LIMIT 1";
+            // Authenticate against unified users table (include manager role too)
+            $query = "SELECT * FROM users WHERE email = ? AND role IN ('employee','manager') AND status = 'active' LIMIT 1";
             $employee = $this->db->fetchOne($query, [$email]);
 
             if ($employee && password_verify($password, $employee['password'])) {
-                // Set session
                 $_SESSION['employee_id'] = $employee['id'];
                 $_SESSION['employee_email'] = $employee['email'];
                 $_SESSION['employee_name'] = $employee['name'];
+                $_SESSION['employee_role'] = $employee['role'];
+                $_SESSION['employee_department'] = $employee['department'] ?? '';
                 $_SESSION['login_time'] = time();
+                $_SESSION['csrf_token'] = $this->getCsrfToken();
 
+                $this->logLoginAttempt($email, true);
                 $this->redirect('/employee/dashboard');
             } else {
                 throw new Exception('Invalid email or password');
             }
         } catch (Exception $e) {
+            $this->logLoginAttempt($_POST['email'] ?? '', false, $e->getMessage());
             $_SESSION['error'] = $e->getMessage();
             $this->redirect('/employee/login');
         }
+    }
+
+    /**
+     * Log login attempt to database
+     */
+    private function logLoginAttempt($email, $success, $details = '')
+    {
+        try {
+            $query = "INSERT INTO employee_activity_logs_unified (email, success, ip_address, user_agent, details, created_at)
+                       VALUES (?, ?, ?, ?, ?, NOW())";
+            $this->db->execute($query, [
+                $email,
+                $success ? 1 : 0,
+                $_SERVER['REMOTE_ADDR'] ?? '',
+                $_SERVER['HTTP_USER_AGENT'] ?? '',
+                $details
+            ]);
+        } catch (\Exception $e) {
+            error_log('Login log error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Check if employee has permission for specific action
+     */
+    public function hasPermission($permission): bool
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            return false;
+        }
+
+        $role = $_SESSION['employee_role'] ?? 'employee';
+
+        $permissions = [
+            'employee' => ['view_dashboard', 'view_tasks', 'update_tasks'],
+            'manager' => ['view_dashboard', 'view_tasks', 'update_tasks', 'manage_employees', 'view_reports'],
+            'telecalling_executive' => ['view_dashboard', 'manage_leads', 'log_calls', 'view_scripts'],
+            'hr_manager' => ['view_dashboard', 'manage_employees', 'process_payroll', 'schedule_reviews'],
+            'legal_advisor' => ['view_dashboard', 'review_documents', 'handle_disputes', 'manage_compliance'],
+            'ca' => ['view_dashboard', 'manage_finances', 'process_invoices', 'generate_reports'],
+            'land_manager' => ['view_dashboard', 'manage_properties', 'schedule_visits', 'handle_acquisitions'],
+            'operations_manager' => ['view_dashboard', 'manage_operations', 'approve_requests'],
+            'marketing_executive' => ['view_dashboard', 'manage_campaigns', 'view_analytics'],
+        ];
+
+        return in_array($permission, $permissions[$role] ?? []);
+    }
+
+    /**
+     * Get CSRF token
+     */
+    protected function getCsrfToken(): string
+    {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
     }
 
     /**
@@ -93,9 +162,13 @@ class EmployeeController extends BaseController
         $dashboardData = $this->getEmployeeDashboardData($employeeId);
         $gamify = $this->safeGamify('forEmployee', (int)$employeeId);
 
-        $dashboardView = __DIR__ . '/../../../views/employees/dashboard.php';
-        if (file_exists($dashboardView)) { require_once $dashboardView; }
-        else { echo "<h2>Employee Dashboard</h2><p>Welcome, employee #$employeeId</p>"; }
+        $data = [
+            'page_title' => 'Employee Dashboard',
+            'page_description' => 'Employee portal dashboard for APS Dream Home',
+            'dashboardData' => $dashboardData,
+            'gamify' => $gamify,
+        ];
+        $this->render('employees/dashboard', $data);
     }
 
     /**
@@ -398,7 +471,6 @@ class EmployeeController extends BaseController
             define('BASE_PATH', dirname(__DIR__, 4));
         }
 
-        $this->layout = 'layouts/admin';
         $userRole = 'employee';
         $profileUrl = BASE_URL . '/employee/profile';
         $securityUrl = null;
@@ -449,10 +521,68 @@ class EmployeeController extends BaseController
     }
 
     /**
+     * Show change password page
+     */
+    public function changePasswordView()
+    {
+        $this->middleware('employee.auth');
+        $data = [
+            'page_title' => 'Change Password',
+            'page_description' => 'Update your account password',
+        ];
+        $this->render('employees/change_password', $data);
+    }
+
+    /**
+     * Handle change password POST
+     */
+    public function changePassword()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $currentPassword = $_POST['current_password'] ?? '';
+        $newPassword = $_POST['new_password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+
+        if (empty($currentPassword) || empty($newPassword)) {
+            $_SESSION['error'] = 'All fields are required';
+            $this->redirect('/employee/change-password');
+            return;
+        }
+
+        if (strlen($newPassword) < 6) {
+            $_SESSION['error'] = 'New password must be at least 6 characters';
+            $this->redirect('/employee/change-password');
+            return;
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            $_SESSION['error'] = 'New passwords do not match';
+            $this->redirect('/employee/change-password');
+            return;
+        }
+
+        $svc = new \App\Services\UserRegistrationService();
+        $result = $svc->changePassword($employeeId, $currentPassword, $newPassword);
+
+        if ($result['success']) {
+            $_SESSION['success'] = $result['message'];
+        } else {
+            $_SESSION['error'] = $result['message'];
+        }
+
+        $this->redirect('/employee/change-password');
+    }
+
+    /**
      * Logout employee
      */
     public function logout()
     {
+        if (isset($_SESSION['employee_email'])) {
+            $this->logLoginAttempt($_SESSION['employee_email'], true, 'logout');
+        }
         session_destroy();
         $this->redirect('/employee/login');
     }
@@ -704,6 +834,60 @@ class EmployeeController extends BaseController
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'attendance' => []]);
         }
+        exit;
+    }
+
+    public function notifications()
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            $this->redirect('/employee/login');
+            return;
+        }
+
+        $employeeId = $_SESSION['employee_id'];
+
+        $notifService = new \App\Services\Communication\NotificationService();
+        $notifications = $notifService->getCustomerNotifications($employeeId);
+        $unreadCount = $notifService->getUnreadCount($employeeId);
+
+        $this->render('pages/user_notifications', [
+            'page_title' => 'Notifications - Employee Portal',
+            'user' => ['id' => $employeeId, 'name' => $_SESSION['employee_name'] ?? 'Employee'],
+            'notifications' => $notifications,
+            'unread_count' => $unreadCount,
+        ]);
+    }
+
+    public function markNotificationRead($notificationId)
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+            exit;
+        }
+
+        $notifService = new \App\Services\Communication\NotificationService();
+        $notifService->markAsRead($notificationId);
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
+    public function markAllNotificationsRead()
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+            exit;
+        }
+
+        $employeeId = $_SESSION['employee_id'];
+        $notifService = new \App\Services\Communication\NotificationService();
+        $notifService->markAllAsRead($employeeId);
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
         exit;
     }
 }

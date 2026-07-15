@@ -1,6 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
@@ -14,7 +19,9 @@ import '../../widgets/glass_card.dart';
 import '../../widgets/shimmer_skeletons.dart';
 
 /// Global plots provider — fetches all plots across colonies via colony-scoped endpoints
-final allPlotsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final allPlotsProvider = FutureProvider<List<Map<String, dynamic>>>((
+  ref,
+) async {
   try {
     final api = ref.read(apiServiceProvider);
     // First get colonies, then fetch plots per colony
@@ -54,7 +61,8 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends ConsumerState<HomePage>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _heroAnimController;
   late final Animation<double> _heroScaleAnimation;
 
@@ -107,13 +115,16 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                 ),
                 slivers: [
                   SliverToBoxAdapter(child: _buildAppBar(context)),
-                  SliverToBoxAdapter(child: _buildHeroBanner(context, coloniesAsync)),
+                  SliverToBoxAdapter(
+                    child: _buildHeroBanner(context, coloniesAsync),
+                  ),
                   SliverToBoxAdapter(child: _buildSearchBar(context)),
                   SliverToBoxAdapter(child: _buildQuickActions(context)),
                   SliverToBoxAdapter(child: _buildToolsSection(context)),
-                  SliverToBoxAdapter(child: _buildFeaturedColoniesSection(context, ref, coloniesAsync)),
-                  SliverToBoxAdapter(child: _buildAvailablePlotsSection(context, ref, plotsAsync)),
-                  SliverToBoxAdapter(child: _buildPropertiesSection(context, ref, propertiesAsync)),
+                  _buildFeaturedColoniesSection(context, ref, coloniesAsync),
+                  _buildAvailablePlotsSection(context, ref, plotsAsync),
+                  _buildPremiumPropertiesSection(context, ref),
+                  _buildPropertiesSection(context, ref, propertiesAsync),
                   SliverToBoxAdapter(child: _buildWhyChooseUs(context)),
                   const SliverToBoxAdapter(child: SizedBox(height: 32)),
                 ],
@@ -121,11 +132,7 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
             ),
           ),
         ),
-        const Positioned(
-          bottom: 16,
-          right: 16,
-          child: FloatingAIButton(),
-        ),
+        const Positioned(bottom: 16, right: 16, child: FloatingAIButton()),
       ],
     );
   }
@@ -155,11 +162,7 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                 ),
               ],
             ),
-            child: const Icon(
-              Icons.home_work,
-              color: Colors.white,
-              size: 26,
-            ),
+            child: const Icon(Icons.home_work, color: Colors.white, size: 26),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -204,8 +207,10 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
         final name = featured?.name ?? 'Suryoday Heights';
         final location = featured != null
             ? featured.district.isNotEmpty
-                ? '${featured.district}${featured.state.isNotEmpty ? ', ${featured.state}' : ''}'
-                : (featured.location.isNotEmpty ? featured.location : 'Premium Location')
+                  ? '${featured.district}${featured.state.isNotEmpty ? ', ${featured.state}' : ''}'
+                  : (featured.location.isNotEmpty
+                        ? featured.location
+                        : 'Premium Location')
             : 'Premium Plots in Gorakhpur';
         final tagline = featured != null
             ? 'From ₹${_formatNumber(featured.pricePerSqft)}/sqft'
@@ -289,7 +294,10 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 18,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -305,7 +313,9 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              featured != null ? featured.status.toUpperCase() : 'NEW LAUNCH',
+                              featured != null
+                                  ? featured.status.toUpperCase()
+                                  : 'NEW LAUNCH',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 9,
@@ -424,7 +434,7 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
 
   Widget _buildSearchBar(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push('/location-search'),
+      onTap: () => context.push('/properties'),
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -542,12 +552,164 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
 
   Widget _buildToolsSection(BuildContext context) {
     final tools = [
-      const _ToolItem(Icons.calculate, 'Stamp Duty', '/stamp-duty-calculator', Color(0xFF43A047)),
-      const _ToolItem(Icons.straighten, 'Plot Convert', '/plot-converter', Color(0xFF00897B)),
-      const _ToolItem(Icons.question_answer, 'FAQs', '/faq', AppTheme.infoColor),
-      const _ToolItem(Icons.star_border, 'Reviews', '/testimonials', AppTheme.accentColor),
-      const _ToolItem(Icons.search, 'Saved Search', '/saved-searches', AppTheme.primaryColor),
-      const _ToolItem(Icons.compare_arrows, 'Compare', '/compare', AppTheme.secondaryColor),
+      const _ToolItem(
+        Icons.calculate,
+        'Stamp Duty',
+        '/stamp-duty-calculator',
+        Color(0xFF43A047),
+      ),
+      const _ToolItem(
+        Icons.straighten,
+        'Plot Convert',
+        '/plot-converter',
+        Color(0xFF00897B),
+      ),
+      const _ToolItem(
+        Icons.question_answer,
+        'FAQs',
+        '/faq',
+        AppTheme.infoColor,
+      ),
+      const _ToolItem(
+        Icons.star_border,
+        'Reviews',
+        '/testimonials',
+        AppTheme.accentColor,
+      ),
+      const _ToolItem(
+        Icons.search,
+        'Saved Search',
+        '/saved-searches',
+        AppTheme.primaryColor,
+      ),
+      const _ToolItem(
+        Icons.compare_arrows,
+        'Compare',
+        '/compare',
+        AppTheme.secondaryColor,
+      ),
+      const _ToolItem(
+        Icons.health_and_safety_outlined,
+        'Insurance',
+        '/insurance',
+        Color(0xFF4CAF50),
+      ),
+      const _ToolItem(
+        Icons.receipt_long_outlined,
+        'E-Mandate',
+        '/nach-mandate',
+        Color(0xFF00897B),
+      ),
+      const _ToolItem(
+        Icons.auto_stories_outlined,
+        'Agreements',
+        '/agreements',
+        Color(0xFF1565C0),
+      ),
+      const _ToolItem(
+        Icons.info_outline,
+        'About',
+        '/about',
+        AppTheme.infoColor,
+      ),
+      const _ToolItem(
+        Icons.article_outlined,
+        'Blog',
+        '/blog',
+        AppTheme.secondaryColor,
+      ),
+      const _ToolItem(
+        Icons.work_outline,
+        'Careers',
+        '/careers',
+        AppTheme.accentColor,
+      ),
+      const _ToolItem(
+        Icons.explore_outlined,
+        'How It Works',
+        '/how-it-works',
+        AppTheme.primaryColor,
+      ),
+      const _ToolItem(
+        Icons.storefront_outlined,
+        'Services',
+        '/services',
+        Color(0xFF6A1B9A),
+      ),
+      const _ToolItem(
+        Icons.build_circle_outlined,
+        'Tools Hub',
+        '/tools-hub',
+        Color(0xFF4CAF50),
+      ),
+      const _ToolItem(
+        Icons.business_outlined,
+        'Projects',
+        '/projects',
+        Color(0xFF1565C0),
+      ),
+      const _ToolItem(
+        Icons.shopping_cart_outlined,
+        'Buy',
+        '/buy',
+        Color(0xFF43A047),
+      ),
+      const _ToolItem(Icons.sell_outlined, 'Sell', '/sell', Color(0xFFE65100)),
+      const _ToolItem(
+        Icons.home_work_outlined,
+        'Rent',
+        '/rent',
+        Color(0xFF00897B),
+      ),
+      const _ToolItem(
+        Icons.trending_up_outlined,
+        'Invest',
+        '/invest',
+        Color(0xFF6A1B9A),
+      ),
+      const _ToolItem(
+        Icons.photo_library_outlined,
+        'Gallery',
+        '/gallery',
+        Color(0xFF1565C0),
+      ),
+      const _ToolItem(
+        Icons.contact_phone_outlined,
+        'Contact',
+        '/contact',
+        Color(0xFF4CAF50),
+      ),
+      const _ToolItem(
+        Icons.group_outlined,
+        'Team',
+        '/team',
+        AppTheme.infoColor,
+      ),
+      const _ToolItem(
+        Icons.privacy_tip_outlined,
+        'Privacy',
+        '/privacy',
+        AppTheme.secondaryColor,
+      ),
+      const _ToolItem(
+        Icons.explore_outlined,
+        'Neighborhood',
+        '/neighborhood',
+        Color(0xFF1565C0),
+      ),
+      const _ToolItem(
+        Icons.videocam_outlined,
+        'Virtual Tour',
+        '/virtual-tour',
+        Color(0xFF6A1B9A),
+      ),
+      const _ToolItem(Icons.newspaper, 'News', '/news', Color(0xFFE65100)),
+      const _ToolItem(
+        Icons.chat_bubble_outline_rounded,
+        'Messages',
+        '/inbox',
+        Color(0xFF4F46E5),
+      ),
     ];
 
     return Padding(
@@ -566,7 +728,11 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                   fontWeight: FontWeight.w600,
                   color: Colors.white.withValues(alpha: 0.95),
                   shadows: const [
-                    Shadow(blurRadius: 4, color: Colors.black26, offset: Offset(0, 1)),
+                    Shadow(
+                      blurRadius: 4,
+                      color: Colors.black26,
+                      offset: Offset(0, 1),
+                    ),
                   ],
                 ),
               ),
@@ -659,7 +825,8 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                 ),
               );
             },
-            loading: () => ShimmerSkeletons.horizontalCards(height: 210, cardWidth: 220),
+            loading: () =>
+                ShimmerSkeletons.horizontalCards(height: 210, cardWidth: 220),
             error: (error, stack) => AppWidgets.errorWidget(
               message: 'Failed to load colonies',
               onRetry: () => ref.refresh(coloniesProvider),
@@ -695,7 +862,9 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
               child: SizedBox(
                 height: 120,
                 width: double.infinity,
@@ -749,7 +918,10 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                       top: 8,
                       right: 8,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: AppTheme.successColor,
                           borderRadius: BorderRadius.circular(12),
@@ -880,7 +1052,8 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                 ),
               );
             },
-            loading: () => ShimmerSkeletons.horizontalCards(height: 160, cardWidth: 170),
+            loading: () =>
+                ShimmerSkeletons.horizontalCards(height: 160, cardWidth: 170),
             error: (error, stack) => AppWidgets.errorWidget(
               message: 'Failed to load plots',
               onRetry: () => ref.refresh(allPlotsProvider),
@@ -891,12 +1064,19 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
     );
   }
 
-  Widget _buildPlotHorizontalCard(BuildContext context, Map<String, dynamic> plot) {
-    final plotNumber = plot['plot_number']?.toString() ?? plot['plotNumber']?.toString() ?? '—';
+  Widget _buildPlotHorizontalCard(
+    BuildContext context,
+    Map<String, dynamic> plot,
+  ) {
+    final plotNumber =
+        plot['plot_number']?.toString() ??
+        plot['plotNumber']?.toString() ??
+        '—';
     final area = _parsePlotArea(plot);
     final price = _parsePlotPrice(plot);
     final status = (plot['status']?.toString() ?? 'available').toLowerCase();
-    final colony = plot['colony_name']?.toString() ?? plot['colonyName']?.toString() ?? '';
+    final colony =
+        plot['colony_name']?.toString() ?? plot['colonyName']?.toString() ?? '';
     final id = plot['id']?.toString() ?? '';
     final block = plot['block']?.toString() ?? '';
 
@@ -911,10 +1091,7 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              _statusGradientStart(status),
-            ],
+            colors: [Colors.white, _statusGradientStart(status)],
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
@@ -933,13 +1110,18 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
               children: [
                 Flexible(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      block.isNotEmpty ? '$block · $plotNumber' : 'Plot $plotNumber',
+                      block.isNotEmpty
+                          ? '$block · $plotNumber'
+                          : 'Plot $plotNumber',
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -952,7 +1134,10 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                 ),
                 const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: _statusBadgeColor(status).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(4),
@@ -1056,6 +1241,181 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
 
   // ───────────────────────────── PROPERTIES FOR SALE ─────────────────────────────
 
+  Widget _buildPremiumPropertiesSection(BuildContext context, WidgetRef ref) {
+    return SliverToBoxAdapter(
+      child: FutureBuilder<List<PropertyListing>>(
+        future: _fetchPremiumProperties(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData || snapshot.data!.isEmpty)
+            return const SizedBox.shrink();
+          final premium = snapshot.data!;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppWidgets.sectionHeader(
+                title: '⭐ Premium Listings',
+                subtitle: 'Exclusive handpicked properties',
+                onSeeAll: () => context.push('/properties'),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: premium.length > 5 ? 5 : premium.length,
+                  itemBuilder: (context, index) {
+                    final p = premium[index];
+                    return Container(
+                      width: 200,
+                      margin: const EdgeInsets.only(right: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Stack(
+                              children: [
+                                Container(
+                                  height: 100,
+                                  width: double.infinity,
+                                  color: Colors.grey.shade200,
+                                  child: p.imageUrl != null
+                                      ? Image.network(
+                                          p.imageUrl!,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) => Icon(
+                                            Icons.image,
+                                            size: 40,
+                                            color: Colors.grey.shade400,
+                                          ),
+                                        )
+                                      : Icon(
+                                          Icons.image,
+                                          size: 40,
+                                          color: Colors.grey.shade400,
+                                        ),
+                                ),
+                                Positioned(
+                                  top: 6,
+                                  left: 6,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFFFFD700),
+                                          Color(0xFFFFA000),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.white,
+                                          size: 12,
+                                        ),
+                                        SizedBox(width: 2),
+                                        Text(
+                                          'Premium',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    p.title,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '₹${NumberFormat('#,##,###').format(p.price.toInt())}',
+                                    style: TextStyle(
+                                      color: Colors.blue.shade700,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    p.location,
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 11,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Future<List<PropertyListing>> _fetchPremiumProperties() async {
+    try {
+      final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
+      final response = await dio.get(
+        '/api/v2/mobile/properties/browse?limit=5&featured=true',
+      );
+      final data = response.data;
+      if (data['success'] == true) {
+        final properties = (data['data'] as List?) ?? [];
+        return properties
+            .map((j) => PropertyListing.fromJson(j as Map<String, dynamic>))
+            .take(5)
+            .toList();
+      }
+    } catch (_) {}
+    return [];
+  }
+
   Widget _buildPropertiesSection(
     BuildContext context,
     WidgetRef ref,
@@ -1085,7 +1445,9 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                   actionLabel: 'Refresh',
                 );
               }
-              final display = listings.length > 3 ? listings.sublist(0, 3) : listings;
+              final display = listings.length > 3
+                  ? listings.sublist(0, 3)
+                  : listings;
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
@@ -1318,11 +1680,7 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                         color: feature.color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(
-                        feature.icon,
-                        color: feature.color,
-                        size: 24,
-                      ),
+                      child: Icon(feature.icon, color: feature.color, size: 24),
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -1380,8 +1738,12 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
   }
 
   static double _parsePlotPrice(Map<String, dynamic> plot) {
-    final v = plot['total_price'] ?? plot['totalPrice'] ??
-        plot['base_price'] ?? plot['basePrice'] ?? plot['price'];
+    final v =
+        plot['total_price'] ??
+        plot['totalPrice'] ??
+        plot['base_price'] ??
+        plot['basePrice'] ??
+        plot['price'];
     if (v == null) return 0;
     if (v is num) return v.toDouble();
     return double.tryParse(v.toString()) ?? 0;
@@ -1489,11 +1851,7 @@ class _QuickActionWidgetState extends State<_QuickActionWidget>
                   ),
                 ],
               ),
-              child: Icon(
-                widget.action.icon,
-                color: Colors.white,
-                size: 28,
-              ),
+              child: Icon(widget.action.icon, color: Colors.white, size: 28),
             ),
             const SizedBox(height: 8),
             Text(
@@ -1503,7 +1861,11 @@ class _QuickActionWidgetState extends State<_QuickActionWidget>
                 fontWeight: FontWeight.w600,
                 color: Colors.white.withValues(alpha: 0.95),
                 shadows: const [
-                  Shadow(blurRadius: 4, color: Colors.black26, offset: Offset(0, 1)),
+                  Shadow(
+                    blurRadius: 4,
+                    color: Colors.black26,
+                    offset: Offset(0, 1),
+                  ),
                 ],
               ),
             ),
@@ -1540,10 +1902,7 @@ class _NotificationBell extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppTheme.errorColor,
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppTheme.primaryColor,
-                  width: 1.5,
-                ),
+                border: Border.all(color: AppTheme.primaryColor, width: 1.5),
               ),
             ),
           ),

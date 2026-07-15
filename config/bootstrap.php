@@ -25,6 +25,15 @@ if (!defined('LOG_PATH')) define('LOG_PATH', STORAGE_PATH . '/logs');
 if (!defined('SESSION_PATH')) define('SESSION_PATH', STORAGE_PATH . '/sessions');
 if (!defined('UPLOAD_PATH')) define('UPLOAD_PATH', PUBLIC_PATH . '/uploads');
 
+// Session configuration - MUST be before session_start()
+if (!ini_get('session.save_handler') || ini_get('session.save_handler') === 'files') {
+    ini_set('session.save_path', SESSION_PATH);
+}
+ini_set('session.gc_maxlifetime', 3600);
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_strict_mode', 1);
+ini_set('session.cookie_samesite', 'Lax');
+
 if (!defined('BASE_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
@@ -131,5 +140,38 @@ if (file_exists(CORE_PATH . '/SystemIntegration.php')) {
 // Include global helper functions
 if (file_exists(APP_PATH . '/helpers.php')) {
     require_once APP_PATH . '/helpers.php';
+}
+
+// Validate critical configuration after autoloader is ready
+if (class_exists('App\Core\ConfigService')) {
+    try {
+        $configService = \App\Core\ConfigService::getInstance();
+        
+        // Validate required secrets in production
+        if (defined('APP_ENV') && APP_ENV === 'production') {
+            $requiredSecrets = [
+                'JWT_SECRET' => 'JWT signing secret',
+                'APP_KEY' => 'Application encryption key',
+                'DB_PASS' => 'Database password',
+                'SMTP_PASS' => 'SMTP password',
+            ];
+            
+            foreach ($requiredSecrets as $key => $description) {
+                $value = getenv($key) ?: ($_ENV[$key] ?? '');
+                if (empty($value) || $value === 'generate-with-php-artisan-key-generate' || $value === 'your-secret-here') {
+                    error_log("CRITICAL CONFIG: Missing or default $key ($description) in production!");
+                    // Don't die in production - log and continue, but this should be fixed
+                }
+            }
+        }
+        
+        // Validate database connection
+        $dbConfig = $configService->getDatabaseConfig();
+        if (empty($dbConfig['host']) || empty($dbConfig['database'])) {
+            error_log("WARNING: Database configuration incomplete");
+        }
+    } catch (\Throwable $e) {
+        error_log("Config validation error: " . $e->getMessage());
+    }
 }
 

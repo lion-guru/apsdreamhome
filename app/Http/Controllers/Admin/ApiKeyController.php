@@ -147,6 +147,20 @@ class ApiKeyController extends AdminController
         exit;
     }
 
+    public function guide()
+    {
+        $this->requireAdmin();
+        $this->data = array_merge($this->data, [
+            'page_title' => 'API Keys Guide',
+        ]);
+        return $this->render('admin/features/api_keys_guide', $this->data);
+    }
+
+    public function store()
+    {
+        return $this->create();
+    }
+
     public function test($id)
     {
         $this->requireAdmin();

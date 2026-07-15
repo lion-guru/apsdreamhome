@@ -21,6 +21,10 @@ class FarmerAuthController extends BaseController
             exit;
         }
 
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+
         $error = $_SESSION['flash_error'] ?? null;
         unset($_SESSION['flash_error']);
 
@@ -75,7 +79,7 @@ class FarmerAuthController extends BaseController
         @session_start();
         unset($_SESSION['farmer_id'], $_SESSION['farmer_name'], $_SESSION['farmer_phone'], $_SESSION['farmer_email'], $_SESSION['farmer_role']);
         session_destroy();
-        header('Location: ' . BASE_URL . '/farmer/login');
+        header('Location: ' . BASE_URL . '/auth/login');
         exit;
     }
 }

@@ -57,4 +57,3 @@ class NewsletterController extends BaseApiController
         }
     }
 }
-?>

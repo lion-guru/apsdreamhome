@@ -98,7 +98,7 @@
         <div class="ai-msg ai-bot">
             <div class="ai-msg-av"><i class="fas fa-robot"></i></div>
             <div>
-                <div class="ai-bubble">Namaste! I'm your AI property assistant. I can help you find plots, check prices, schedule site visits, and more. What would you like to know?</div>
+                <div class="ai-bubble">Hello! I'm your AI property assistant. I can help you find plots, check prices, schedule site visits, and more. What would you like to know?</div>
                 <div class="ai-suggestions" id="welcomeSuggestions">
                     <button class="ai-sug-btn" onclick="sendQuick('Show me available properties')">Properties</button>
                     <button class="ai-sug-btn" onclick="sendQuick('What are the prices?')">Prices</button>
@@ -153,7 +153,7 @@
                     appendMsg('bot', data.response, msgId, data.model);
                     if (data.model) { modelBadge.textContent = data.model; modelBadge.classList.add('show'); }
                 } else {
-                    appendMsg('bot', 'Sorry, kuch gadbad ho gayi. Please try again.');
+                    appendMsg('bot', 'Sorry, something went wrong. Please try again.');
                 }
             })
             .catch(function() {
@@ -176,7 +176,7 @@
                 if (msgId) {
                     fb = '<div class="ai-feedback"><button class="ai-fb-btn" onclick="giveFeedback(' + msgId + ',true,this)" title="Helpful">Helpful</button><button class="ai-fb-btn" onclick="giveFeedback(' + msgId + ',false,this)" title="Not helpful">Not helpful</button></div>';
                 }
-                div.innerHTML = av + '<div>' + hdr + '<div class="ai-bubble">' + escapeHtml(text) + '</div>' + fb + '</div>';
+                div.innerHTML = av + '<div>' + hdr + '<div class="ai-bubble">' + formatBotText(text) + '</div>' + fb + '</div>';
             } else {
                 div.innerHTML = '<div class="ai-msg-av"><i class="fas fa-user"></i></div><div class="ai-bubble">' + escapeHtml(text) + '</div>';
             }
@@ -210,6 +210,22 @@
             var div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function linkifyUrls(text) {
+            var urlRegex = /(\bhttps?:\/\/[^\s<>'")\]]+)/gi;
+            return text.replace(urlRegex, function(url) {
+                var cleanUrl = url.replace(/[.,;:!?)}\]]+$/, '');
+                var suffix = url.substring(cleanUrl.length);
+                return '<a href="' + cleanUrl + '" target="_blank" rel="noopener" style="color:#14b8a6;text-decoration:underline;word-break:break-all;">' + cleanUrl + '</a>' + suffix;
+            });
+        }
+
+        function formatBotText(text) {
+            var html = escapeHtml(text);
+            html = linkifyUrls(html);
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            return html;
         }
 
         chatInput.addEventListener('keypress', function(e) {

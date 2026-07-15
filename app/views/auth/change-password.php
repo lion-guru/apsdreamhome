@@ -1,8 +1,29 @@
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="page-title"><?= __('auth_change_password_page_title') ?></h1>
-            <p class="text-muted"><?= __('auth_page_under_construction') ?></p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="mb-4"><i class="fas fa-key me-2 text-primary"></i>Change Password</h4>
+                    <?php if (!empty($error)): ?><div class="alert alert-danger"><?= htmlspecialchars($error) ?></div><?php endif; ?>
+                    <?php if (!empty($success)): ?><div class="alert alert-success"><?= htmlspecialchars($success) ?></div><?php endif; ?>
+                    <form method="POST" action="<?= BASE_URL ?>/auth/change-password">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" name="current_password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" name="new_password" class="form-control" required minlength="8">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" name="confirm_password" class="form-control" required minlength="8">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-2"></i>Change Password</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>

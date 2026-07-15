@@ -704,4 +704,101 @@ class SalaryController extends AdminController
             $this->db->execute("INSERT INTO salary_history (employee_id, field_changed, old_value, new_value, changed_by, changed_at, created_at) VALUES (?,?,?,?,?,NOW(),NOW())", [$employee_id, $field, $old, $new, $changed_by]);
         } catch (\Exception $e) { error_log('SalaryController logHistory: ' . $e->getMessage()); }
     }
+
+    // ──────────────────────────────────────────────
+    // PAYROLL BATCH (Indian PF/ESI/TDS)
+    // ──────────────────────────────────────────────
+
+    public function batchPreview()
+    {
+        $this->requireAdmin();
+        $month = (int)($_GET['month'] ?? date('n'));
+        $year = (int)($_GET['year'] ?? date('Y'));
+
+        $batchService = new \App\Services\PayrollBatchService();
+        $preview = $batchService->previewMonth($month, $year);
+
+        return $this->render('admin/salary/batch_preview', [
+            'page_title' => "Payroll Preview — $month/$year",
+            'month' => $month,
+            'year' => $year,
+            'entries' => $preview['entries'] ?? [],
+            'total_employees' => $preview['total_employees'] ?? 0,
+            'total_gross' => $preview['total_gross'] ?? 0,
+            'total_deductions' => $preview['total_deductions'] ?? 0,
+            'total_net' => $preview['total_net'] ?? 0,
+        ]);
+    }
+
+    public function batchGenerate()
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: ' . BASE_URL . '/admin/salary/batch/preview'); exit; }
+
+        $month = (int)($_POST['month'] ?? date('n'));
+        $year = (int)($_POST['year'] ?? date('Y'));
+        $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+        try {
+            $batchService = new \App\Services\PayrollBatchService();
+            $result = $batchService->generateMonth($month, $year, $adminId);
+            $_SESSION['success'] = "Generated {$result['generated']} payslips for $month/$year. Total: ₹" . number_format($result['total_net']);
+            if (!empty($result['errors'])) {
+                $_SESSION['warning'] = count($result['errors']) . " errors: " . implode('; ', array_slice($result['errors'], 0, 3));
+            }
+        } catch (\Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+        }
+        header('Location: ' . BASE_URL . '/admin/salary/payments');
+        exit;
+    }
+
+    public function batchProcess()
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: ' . BASE_URL . '/admin/salary/payments'); exit; }
+
+        $paymentIds = $_POST['payment_ids'] ?? [];
+        $method = $_POST['payment_method'] ?? 'bank_transfer';
+        $reference = $_POST['bank_reference'] ?? '';
+        $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+
+        if (empty($paymentIds)) {
+            $_SESSION['error'] = 'No payments selected';
+            header('Location: ' . BASE_URL . '/admin/salary/payments');
+            exit;
+        }
+
+        try {
+            $batchService = new \App\Services\PayrollBatchService();
+            $updated = $batchService->processPayments($paymentIds, $method, $reference, $adminId);
+            $_SESSION['success'] = "Processed $updated payments via $method";
+        } catch (\Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+        }
+        header('Location: ' . BASE_URL . '/admin/salary/payments');
+        exit;
+    }
+
+    public function batchHistory()
+    {
+        $this->requireAdmin();
+        try {
+            $history = $this->db->fetchAll("
+                SELECT payment_month, payment_year, COUNT(*) as entries, 
+                       SUM(gross_amount) as total_gross, SUM(net_amount) as total_net,
+                       payment_status, MIN(created_at) as generated_at
+                FROM salary_payments 
+                GROUP BY payment_year, payment_month, payment_status
+                ORDER BY payment_year DESC, payment_month DESC, payment_status
+            ") ?? [];
+        } catch (\Exception $e) {
+            $history = [];
+        }
+
+        return $this->render('admin/salary/batch_history', [
+            'page_title' => 'Payroll Batch History',
+            'history' => $history,
+        ]);
+    }
 }

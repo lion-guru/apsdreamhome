@@ -13,31 +13,39 @@ class ApiService {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   Future<void> initialize() async {
-    _dio = Dio(BaseOptions(
-      baseUrl: '${AppConstants.baseUrl.endsWith('/') ? AppConstants.baseUrl : '${AppConstants.baseUrl}/'}${AppConstants.apiVersion}/',
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl:
+            '${AppConstants.baseUrl.endsWith('/') ? AppConstants.baseUrl : '${AppConstants.baseUrl}/'}${AppConstants.apiVersion}/',
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
 
     // Add auth interceptor
     _dio.interceptors.add(AuthInterceptor(this));
 
     // Add logging interceptor for debug mode
-    _dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: true,
-      logPrint: (object) => print(object),
-    ));
+    _dio.interceptors.add(
+      LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        logPrint: (object) => print(object),
+      ),
+    );
   }
 
   // Check network connectivity
   Future<bool> isConnected() async {
-    final connectivity = await Connectivity().checkConnectivity();
-    return connectivity != ConnectivityResult.none;
+    final result = await Connectivity().checkConnectivity();
+    if (result is List<ConnectivityResult>) {
+      return result.isNotEmpty && !result.contains(ConnectivityResult.none);
+    }
+    return result != ConnectivityResult.none;
   }
 
   // Generic API request method
@@ -93,18 +101,25 @@ class ApiService {
   }
 
   // HTTP methods
-  Future<Map<String, dynamic>> get(String endpoint,
-      {Map<String, dynamic>? queryParameters}) async {
+  Future<Map<String, dynamic>> get(
+    String endpoint, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return request(
-        method: 'GET', endpoint: endpoint, queryParameters: queryParameters);
+      method: 'GET',
+      endpoint: endpoint,
+      queryParameters: queryParameters,
+    );
   }
 
   Future<Map<String, dynamic>> post(String endpoint, {dynamic data}) async {
     return request(method: 'POST', endpoint: endpoint, data: data);
   }
 
-  Future<Map<String, dynamic>> put(String endpoint,
-      {Map<String, dynamic>? data}) async {
+  Future<Map<String, dynamic>> put(
+    String endpoint, {
+    Map<String, dynamic>? data,
+  }) async {
     return request(method: 'PUT', endpoint: endpoint, data: data);
   }
 
@@ -116,10 +131,7 @@ class ApiService {
   Future<Map<String, dynamic>> login(String email, String password) async {
     return post(
       AppConstants.loginEndpoint,
-      data: {
-        'email': email,
-        'password': password,
-      },
+      data: {'email': email, 'password': password},
     );
   }
 
@@ -142,24 +154,33 @@ class ApiService {
     return post(AppConstants.syncEndpoint, data: syncData);
   }
 
-  Future<List<Map<String, dynamic>>> getProperties(
-      {Map<String, dynamic>? filters}) async {
-    final response =
-        await get(AppConstants.propertiesEndpoint, queryParameters: filters);
+  Future<List<Map<String, dynamic>>> getProperties({
+    Map<String, dynamic>? filters,
+  }) async {
+    final response = await get(
+      AppConstants.propertiesEndpoint,
+      queryParameters: filters,
+    );
     return (response['data'] ?? []) as List<Map<String, dynamic>>;
   }
 
-  Future<List<Map<String, dynamic>>> getLeads(
-      {Map<String, dynamic>? filters}) async {
-    final response =
-        await get(AppConstants.leadsEndpoint, queryParameters: filters);
+  Future<List<Map<String, dynamic>>> getLeads({
+    Map<String, dynamic>? filters,
+  }) async {
+    final response = await get(
+      AppConstants.leadsEndpoint,
+      queryParameters: filters,
+    );
     return (response['data'] ?? []) as List<Map<String, dynamic>>;
   }
 
-  Future<List<Map<String, dynamic>>> getCommissions(
-      {Map<String, dynamic>? filters}) async {
-    final response =
-        await get(AppConstants.commissionsEndpoint, queryParameters: filters);
+  Future<List<Map<String, dynamic>>> getCommissions({
+    Map<String, dynamic>? filters,
+  }) async {
+    final response = await get(
+      AppConstants.commissionsEndpoint,
+      queryParameters: filters,
+    );
     return (response['data'] ?? []) as List<Map<String, dynamic>>;
   }
 
@@ -174,24 +195,30 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> getUpdates(
-      String lastSync, String userId) async {
-    final response = await get(AppConstants.updatesEndpoint, queryParameters: {
-      'last_sync': lastSync,
-      'user_id': userId,
-    });
+    String lastSync,
+    String userId,
+  ) async {
+    final response = await get(
+      AppConstants.updatesEndpoint,
+      queryParameters: {'last_sync': lastSync, 'user_id': userId},
+    );
     return (response['data'] ?? {}) as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> uploadDocument(
-      String filePath, String documentType) async {
+    String filePath,
+    String documentType,
+  ) async {
     final fileName = filePath.split('/').last;
     final formData = FormData.fromMap({
       'document_type': documentType,
       'document': await MultipartFile.fromFile(filePath, filename: fileName),
     });
 
-    final response =
-        await post(AppConstants.uploadDocumentEndpoint, data: formData);
+    final response = await post(
+      AppConstants.uploadDocumentEndpoint,
+      data: formData,
+    );
     return response;
   }
 
@@ -200,8 +227,10 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> parseLead(String text) async {
-    final response =
-        await post(AppConstants.parseLeadEndpoint, data: {'text': text});
+    final response = await post(
+      AppConstants.parseLeadEndpoint,
+      data: {'text': text},
+    );
     return (response['data'] ?? {}) as Map<String, dynamic>;
   }
 
@@ -212,13 +241,16 @@ class ApiService {
     required double destLat,
     required double destLng,
   }) async {
-    return post('/site-visit/start', data: {
-      'user_id': userId,
-      'lead_id': leadId,
-      'property_id': propertyId,
-      'dest_lat': destLat,
-      'dest_lng': destLng,
-    });
+    return post(
+      '/site-visit/start',
+      data: {
+        'user_id': userId,
+        'lead_id': leadId,
+        'property_id': propertyId,
+        'dest_lat': destLat,
+        'dest_lng': destLng,
+      },
+    );
   }
 
   Future<Map<String, dynamic>> updateSiteVisitLocation({
@@ -226,19 +258,14 @@ class ApiService {
     required double lat,
     required double lng,
   }) async {
-    return post('/site-visit/update', data: {
-      'visit_id': visitId,
-      'lat': lat,
-      'lng': lng,
-    });
+    return post(
+      '/site-visit/update',
+      data: {'visit_id': visitId, 'lat': lat, 'lng': lng},
+    );
   }
 
-  Future<Map<String, dynamic>> completeSiteVisit({
-    required int visitId,
-  }) async {
-    return post('/site-visit/complete', data: {
-      'visit_id': visitId,
-    });
+  Future<Map<String, dynamic>> completeSiteVisit({required int visitId}) async {
+    return post('/site-visit/complete', data: {'visit_id': visitId});
   }
 }
 
@@ -249,7 +276,9 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     final token = await _apiService.getToken();
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';

@@ -34,6 +34,5 @@ class ApiEnquiryController extends BaseApiController
             "message" => "Property inquiry submitted",
             "data" => $input
         ]);
-    }
+        }
 }
-?>

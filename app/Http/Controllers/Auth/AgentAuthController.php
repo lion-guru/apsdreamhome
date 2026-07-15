@@ -2,6 +2,9 @@
 
 /**
  * Agent Authentication Controller
+ *
+ * @deprecated Use CoreAuthController instead. Kept for backward compatibility.
+ *             Registration now delegates to UserRegistrationService.
  */
 
 namespace App\Http\Controllers\Auth;
@@ -10,9 +13,15 @@ require_once __DIR__ . '/../BaseController.php';
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Services\UserRegistrationService;
 
 class AgentAuthController extends BaseController
 {
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     public function register()
     {
         @session_start();
@@ -52,108 +61,24 @@ class AgentAuthController extends BaseController
         }
 
         try {
-            $db = Database::getInstance();
-            $exists = $db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email]);
-            if ($exists) {
-                $_SESSION['errors'] = ["Email already registered"];
+            $regService = new UserRegistrationService();
+            $result = $regService->createUser('agent', [
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'password' => $password,
+                'referral_code' => $referral,
+                'registration_method' => 'web',
+            ]);
+
+            if (!$result['success']) {
+                $_SESSION['errors'] = [$result['message']];
+                $_SESSION['old_input'] = $_POST;
                 header('Location: ' . BASE_URL . '/agent/register');
                 exit;
             }
 
-            $referrer_id = null;
-            if (!empty($referral)) {
-                $ref = $db->fetchOne("SELECT id FROM users WHERE referral_code = ? LIMIT 1", [$referral]);
-                if ($ref) $referrer_id = $ref['id'];
-            }
-
-            $agent_id = 'AGT' . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-            $referral_code = strtoupper(substr($name, 0, 3)) . date('ymd') . rand(100, 999);
-            $hashed = password_hash($password, PASSWORD_DEFAULT);
-
-            $db->insert('users', [
-                'customer_id' => $agent_id,
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
-                'password' => $hashed,
-                'referral_code' => $referral_code,
-                'referred_by' => $referrer_id,
-                'role' => 'agent',
-                'experience' => $experience,
-                'status' => 'inactive',
-                'registration_status' => 'pending',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-
-            $newUserId = $db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email])['id'];
-
-            // Create wallet entry for new agent
-            $db->insert('wallet_points', [
-                'user_id' => $newUserId,
-                'points_balance' => 0.00,
-                'total_earned' => 0.00,
-                'total_used' => 0.00,
-                'total_transferred_to_emi' => 0.00,
-                'referral_earnings' => 0.00,
-                'commission_earnings' => 0.00,
-                'bonus_earnings' => 0.00,
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-
-            // Handle referral rewards if referral code was used
-            if ($referrer_id) {
-                // Get referrer's wallet
-                $referrerWallet = $db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$referrer_id]);
-
-                if ($referrerWallet) {
-                    // Calculate reward points (250 points for agent referral)
-                    $rewardPoints = 250.00;
-
-                    // Update referrer's wallet
-                    $newBalance = $referrerWallet['points_balance'] + $rewardPoints;
-                    $newTotalEarned = $referrerWallet['total_earned'] + $rewardPoints;
-                    $newReferralEarnings = $referrerWallet['referral_earnings'] + $rewardPoints;
-
-                    $db->query(
-                        "UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?",
-                        [$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $referrer_id]
-                    );
-
-                    // Create transaction record
-                    $db->insert('wallet_transactions', [
-                        'user_id' => $referrer_id,
-                        'transaction_type' => 'credit',
-                        'transaction_category' => 'referral',
-                        'amount' => $rewardPoints,
-                        'balance_before' => $referrerWallet['points_balance'],
-                        'balance_after' => $newBalance,
-                        'description' => "Referral reward for agent: $name",
-                        'reference_id' => $newUserId,
-                        'reference_type' => 'user',
-                        'related_user_id' => $newUserId,
-                        'status' => 'completed',
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
-
-                    // Create referral reward record
-                    $db->insert('referral_rewards', [
-                        'referrer_id' => $referrer_id,
-                        'referred_id' => $newUserId,
-                        'reward_amount' => $rewardPoints,
-                        'reward_type' => 'points',
-                        'reward_percentage' => 0.00,
-                        'referral_code' => $referral,
-                        'status' => 'credited',
-                        'credited_at' => date('Y-m-d H:i:s'),
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
-                }
-            }
-
-            $_SESSION['success'] = "Agent registration successful! ID: $agent_id. Your account is pending admin approval. You will be able to login once approved.";
+            $_SESSION['success'] = $result['message'];
             header('Location: ' . BASE_URL . '/agent/login');
             exit;
         } catch (\Exception $e) {
@@ -237,7 +162,7 @@ class AgentAuthController extends BaseController
     {
         @session_start();
         session_destroy();
-        header('Location: ' . BASE_URL . '/agent/login');
+        header('Location: ' . BASE_URL . '/auth/login');
         exit;
     }
 }

@@ -31,7 +31,7 @@ if (isset($_SESSION['associate_id'])) {
     <!-- Chat Button -->
     <button id="chatbot-toggle" class="chatbot-toggle" onclick="toggleChatbot()">
         <i class="fas fa-robot"></i>
-        <span class="chatbot-label">__('component_aps_ai_label', 'APS AI')</span>
+        <span class="chatbot-label"><?= __('component_aps_ai_label', 'APS AI') ?></span>
     </button>
 
     <!-- Chat Window -->
@@ -42,12 +42,12 @@ if (isset($_SESSION['associate_id'])) {
                 <i class="fas fa-robot"></i>
             </div>
             <div class="chatbot-info">
-                <h5>__('component_aps_ai_assistant', 'APS AI Assistant')</h5>
-                <span class="status"><i class="fas fa-circle"></i> __('component_online', 'Online')</span>
+                <h5><?= __('component_aps_ai_assistant', 'APS AI Assistant') ?></h5>
+                <span class="status"><i class="fas fa-circle"></i> <?= __('component_online', 'Online') ?></span>
             </div>
             <div class="chatbot-actions">
-                <button onclick="clearChat()" title="htmlspecialchars(__('component_clear_chat', 'Clear Chat'))"><i class="fas fa-trash"></i></button>
-                <button onclick="toggleChatbot()" title="htmlspecialchars(__('component_close', 'Close'))"><i class="fas fa-times"></i></button>
+                <button onclick="clearChat()" title="<?= htmlspecialchars(__('component_clear_chat', 'Clear Chat')) ?>"><i class="fas fa-trash"></i></button>
+                <button onclick="toggleChatbot()" title="<?= htmlspecialchars(__('component_close', 'Close')) ?>"><i class="fas fa-times"></i></button>
             </div>
         </div>
 
@@ -84,7 +84,7 @@ if (isset($_SESSION['associate_id'])) {
         <div class="chatbot-input-area">
             <input type="text"
                 id="chatbot-input"
-                placeholder="htmlspecialchars(__('component_type_message_hindi_english', 'Type message in Hindi or English...'))"
+                placeholder="<?= htmlspecialchars(__('component_type_message_hindi_english', 'Type message in Hindi or English...')) ?>"
                 onkeypress="handleKeyPress(event)"
                 autocomplete="off">
             <button onclick="sendMessage()" class="send-btn">
@@ -322,6 +322,48 @@ if (isset($_SESSION['associate_id'])) {
         border-color: #cbd5e1;
     }
 
+    .chatbot-listings {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 6px;
+    }
+
+    .chatbot-listing {
+        display: block;
+        text-decoration: none;
+        background: rgba(13, 148, 136, 0.08);
+        border: 1px solid rgba(13, 148, 136, 0.25);
+        border-radius: 10px;
+        padding: 10px 12px;
+        color: #0f766e;
+        transition: all 0.2s;
+    }
+
+    .chatbot-listing:hover {
+        background: rgba(13, 148, 136, 0.16);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(13, 148, 136, 0.18);
+    }
+
+    .chatbot-listing .cl-colony {
+        font-weight: 700;
+        font-size: 14px;
+        color: #0f766e;
+    }
+
+    .chatbot-listing .cl-sub {
+        font-size: 12px;
+        color: #475569;
+        margin: 2px 0;
+    }
+
+    .chatbot-listing .cl-price {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0d9488;
+    }
+
     .chatbot-input-area {
         padding: 15px;
         background: white;
@@ -471,6 +513,9 @@ if (isset($_SESSION['associate_id'])) {
                 hideTyping();
                 if (data.success) {
                     addMessage(data.response, 'bot');
+                    if (data.listings && data.listings.length) {
+                        renderListings(data.listings);
+                    }
                 } else {
                     addMessage('Sorry, kuch problem ho gayi. Please try again! 🙏', 'bot');
                 }
@@ -534,6 +579,31 @@ if (isset($_SESSION['associate_id'])) {
     function hideTyping() {
         const typing = document.getElementById('typing-indicator');
         if (typing) typing.remove();
+    }
+
+    function renderListings(listings) {
+        const messagesDiv = document.getElementById('chatbot-messages');
+        const cards = listings.map(function(l) {
+            const price = '₹' + Number(l.price).toLocaleString('en-IN');
+            const area = Number(l.area_sqft).toLocaleString('en-IN') + ' sqft';
+            const facing = l.facing ? ' • ' + l.facing + ' facing' : '';
+            return '<a class="chatbot-listing" href="' + l.link + '" target="_blank" rel="noopener">' +
+                '<div class="cl-colony">' + escapeHtml(l.colony) + '</div>' +
+                '<div class="cl-sub">Plot ' + escapeHtml(String(l.plot_number)) + ' • ' + area + facing + '</div>' +
+                '<div class="cl-price">' + price + '</div>' +
+                '</a>';
+        }).join('');
+        const html = '<div class="message bot-message">' +
+            '<div class="message-avatar"><i class="fas fa-robot"></i></div>' +
+            '<div class="message-content"><div class="chatbot-listings">' + cards + '</div></div></div>';
+        messagesDiv.insertAdjacentHTML('beforeend', html);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, function(m) {
+            return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
+        });
     }
 
     function clearChat() {

@@ -431,6 +431,93 @@ class LandInventoryController extends AdminController
     }
 
     // ============================================================
+    //  REGISTER LEAD — form POST handler for registration-form.php
+    //  URL: POST /admin/land-inventory/leads/{leadId}/register
+    // ============================================================
+
+    /**
+     * Handle registration form submission from lead context.
+     * Creates a deal if none exists, then registers it with stamp duty / reg fee.
+     */
+    public function registerSubmit($leadId)
+    {
+        $this->requireAdmin();
+        $this->verifyCsrfOrDie();
+        $leadId = (int)$leadId;
+
+        // Find existing deal for this lead, or create one
+        try {
+            $deal = $this->db->fetchOne("SELECT id FROM land_deals WHERE land_lead_id = ?", [$leadId]);
+
+            if (!$deal) {
+                $this->db->execute(
+                    "INSERT INTO land_deals (land_lead_id, negotiated_price, final_price, broker_commission, status, created_at)
+                     VALUES (?, ?, ?, ?, 'in_progress', NOW())",
+                    [
+                        $leadId,
+                        $this->decOrZero($_POST['negotiated_price'] ?? 0),
+                        $this->decOrZero($_POST['final_price'] ?? 0),
+                        $this->decOrZero($_POST['broker_commission'] ?? 0),
+                    ]
+                );
+                $dealId = (int)$this->db->lastInsertId();
+            } else {
+                $dealId = (int)$deal['id'];
+                $this->db->execute(
+                    "UPDATE land_deals SET negotiated_price = ?, final_price = ?, broker_commission = ? WHERE id = ?",
+                    [
+                        $this->decOrZero($_POST['negotiated_price'] ?? 0),
+                        $this->decOrZero($_POST['final_price'] ?? 0),
+                        $this->decOrZero($_POST['broker_commission'] ?? 0),
+                        $dealId,
+                    ]
+                );
+            }
+
+            // Build registration data mapping form fields to what registerAcquisition expects
+            $regData = [
+                'registration_date'    => $_POST['registration_date'] ?? date('Y-m-d'),
+                'registration_number'  => $_POST['sale_deed_number'] ?? '',
+                'sub_registrar_office' => $_POST['registration_office'] ?? '',
+                'stamp_duty_amount'    => $this->decOrZero($_POST['stamp_duty_amount'] ?? 0),
+                'registration_fee'     => $this->decOrZero($_POST['registration_fee'] ?? 0),
+                'payee_name'           => $_POST['payee_name'] ?? 'Land Owner',
+            ];
+
+            // Optional mutation / RERA fields
+            if (!empty($_POST['mutation_filed_date'])) {
+                $this->db->execute("UPDATE land_deals SET mutation_filed_date = ?, mutation_number = ? WHERE id = ?", [
+                    $_POST['mutation_filed_date'], $_POST['mutation_number'] ?? '', $dealId,
+                ]);
+            }
+            if (!empty($_POST['rera_registration'])) {
+                $this->db->execute("UPDATE land_deals SET rera_registration = ? WHERE id = ?", [
+                    $_POST['rera_registration'], $dealId,
+                ]);
+            }
+
+            $r = $this->service->registerAcquisition($dealId, $regData);
+
+            if (!empty($r['success'])) {
+                $this->setFlash('success', 'Property registered successfully (#D' . $dealId . '). '
+                    . ($r['auto_payments_created'] ?? 0) . ' auto-payment record(s) created.');
+            } else {
+                $this->setFlash('error', 'Registration failed: ' . ($r['error'] ?? 'unknown'));
+            }
+        } catch (\Exception $e) {
+            error_log('LandInventoryController::registerSubmit error: ' . $e->getMessage());
+            $this->setFlash('error', 'Registration error: ' . $e->getMessage());
+        }
+
+        $this->redirect('/admin/land-inventory/leads/' . $leadId);
+    }
+
+    private function decOrZero($val): float
+    {
+        return (float)str_replace(',', '', $val);
+    }
+
+    // ============================================================
     //  PAYMENTS
     // ============================================================
 

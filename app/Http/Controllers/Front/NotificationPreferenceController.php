@@ -20,13 +20,15 @@ use PDO;
 class NotificationPreferenceController extends BaseController
 {
     public const NOTIFICATION_TYPES = [
-        'booking'    => ['Booking Updates',    'Plot/property booking confirmations and status changes'],
-        'payment'    => ['Payment Confirmations', 'Receipts, reminders, payment confirmations'],
-        'agreement'  => ['Agreement Updates',  'When an agreement is generated, signed, or updated'],
-        'registry'   => ['Registry Alerts',    'Registry scheduling and completion notifications'],
-        'possession' => ['Possession Updates', 'Possession, handover, and key collection alerts'],
-        'property'   => ['Property Alerts',    'New properties, price drops, recommendations'],
-        'marketing'  => ['Marketing & Offers', 'New projects, offers, newsletters, promotions'],
+        'booking'     => ['Booking Updates',     'Plot/property booking confirmations and status changes'],
+        'payment'     => ['Payment Confirmations', 'Receipts, reminders, payment confirmations'],
+        'agreement'   => ['Agreement Updates',   'When an agreement is generated, signed, or updated'],
+        'registry'    => ['Registry Alerts',     'Registry scheduling and completion notifications'],
+        'possession'  => ['Possession Updates',  'Possession, handover, and key collection alerts'],
+        'property'    => ['Property Alerts',     'New properties, price drops, recommendations'],
+        'marketing'   => ['Marketing & Offers',  'New projects, offers, newsletters, promotions'],
+        'welcome'     => ['Welcome Messages',    'Account creation and onboarding notifications'],
+        'login_alert' => ['Login Alerts',        'Security alerts for new device/logins (always on)'],
     ];
 
     public const CHANNELS = ['email', 'sms', 'whatsapp', 'push'];

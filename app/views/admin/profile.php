@@ -34,10 +34,14 @@ unset($_SESSION['success'], $_SESSION['error']);
             <div class="col-lg-4 mb-4">
                 <div class="card aps-cp-card">
                     <div class="card-body text-center py-5">
-                        <div class="avatar-lg mx-auto mb-3">
-                            <?php echo strtoupper(substr($user['name'] ?? $user['username'] ?? 'U', 0, 1)); ?>
-                        </div>
-                        <h5 class="mb-1"><?php echo htmlspecialchars($user['name'] ?? $user['username'] ?? 'User'); ?></h5>
+                        <?php
+                        $userId = (int)($user['id'] ?? $_SESSION['admin_id'] ?? 0);
+                        $photoUrl = !empty($user['profile_image']) ? BASE_URL . '/' . $user['profile_image'] : null;
+                        $userName = $user['name'] ?? $user['username'] ?? 'Admin';
+                        $size = 'lg';
+                        include __DIR__ . '/../shared/profile_photo_upload.php';
+                        ?>
+                        <h5 class="mb-1 mt-3"><?php echo htmlspecialchars($user['name'] ?? $user['username'] ?? 'User'); ?></h5>
                         <p class="text-muted mb-3"><?php echo htmlspecialchars($user['email'] ?? ''); ?></p>
                         <span class="role-badge role-<?php echo $user['role'] ?? 'admin'; ?>">
                             <?php echo ucwords(str_replace('_', ' ', $user['role'] ?? 'Admin')); ?>

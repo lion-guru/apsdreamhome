@@ -224,7 +224,7 @@ class CareerController extends BaseController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('careers/applications', $data);
+        return $this->viewRenderer->render('admin/careers/applications', $data);
     }
 
     /**
@@ -266,7 +266,7 @@ class CareerController extends BaseController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('careers/details', $data);
+        return $this->viewRenderer->render('admin/careers/applications', $data);
     }
 
     /**

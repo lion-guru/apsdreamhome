@@ -110,6 +110,33 @@ class VoiceCallService
         $intro = $script['introduction_text'] ?? "I'm calling regarding your inquiry about " . ($schedule['property_interest'] ?? 'our properties') . ".";
         $closing = $script['closing_text'] ?? 'Thank you for your time. We will follow up with you soon.';
 
+        // Make the actual call via AsteriskService
+        $asteriskResult = null;
+        try {
+            $asterisk = new AsteriskService();
+            $phone = $sessionData['phone'];
+            $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+            if (strlen($cleanPhone) === 10) $cleanPhone = '91' . $cleanPhone;
+
+            $asteriskResult = $asterisk->makeCall($cleanPhone, $schedule['script_template'] ?? 'default', [
+                'variables' => [
+                    'SCHEDULE_ID' => (string)$scheduleId,
+                    'SESSION_ID' => (string)$sessionId,
+                    'LEAD_ID' => (string)($schedule['lead_id'] ?? ''),
+                    'LEAD_NAME' => $schedule['lead_name'] ?? '',
+                ]
+            ]);
+
+            if ($asteriskResult['success']) {
+                $this->db->execute(
+                    "UPDATE ai_call_sessions SET call_sid = ? WHERE id = ?",
+                    [$asteriskResult['call_id'], $sessionId]
+                );
+            }
+        } catch (\Exception $e) {
+            error_log("VoiceCallService initiateCall Asterisk error: " . $e->getMessage());
+        }
+
         return [
             'success' => true,
             'schedule_id' => $scheduleId,
@@ -117,6 +144,8 @@ class VoiceCallService
             'lead_name' => $schedule['lead_name'] ?? 'Valued Customer',
             'lead_phone' => $sessionData['phone'],
             'agent_name' => $schedule['agent_name'] ?? 'AI Agent',
+            'call_id' => $asteriskResult['call_id'] ?? null,
+            'asterisk' => $asteriskResult ? ($asteriskResult['success'] ? 'connected' : 'failed') : 'unavailable',
             'script' => [
                 'greeting' => $greeting,
                 'introduction' => $intro,
@@ -124,8 +153,9 @@ class VoiceCallService
                 'closing' => $closing
             ],
             'duration_estimated' => 120,
-            'message' => 'Call initiated successfully',
-            'provider_placeholder' => 'In production, this would call Twilio/Vapi API here'
+            'message' => $asteriskResult && $asteriskResult['success']
+                ? 'Call initiated via SIM card'
+                : 'Session created. ' . ($asteriskResult['message'] ?? 'Asterisk unavailable'),
         ];
     }
 

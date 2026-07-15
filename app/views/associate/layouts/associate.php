@@ -95,9 +95,19 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                     <i class="fas fa-users"></i> My Team
                 </a>
             </li>
-            <li class="sidebar-item">
+<li class="sidebar-item">
                 <a href="<?php echo $base; ?>/associate/commissions" class="sidebar-link <?php echo $current_page == 'commissions' ? 'active' : ''; ?>">
                     <i class="fas fa-rupee-sign"></i> Commissions
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/associate/tools" class="sidebar-link <?php echo $current_page == 'tools' ? 'active' : ''; ?>">
+                    <i class="fas fa-toolbox"></i> Tools
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/associate/profile" class="sidebar-link <?php echo $current_page == 'profile' ? 'active' : ''; ?>">
+                    <i class="fas fa-user"></i> Profile
                 </a>
             </li>
             <li class="sidebar-item">
@@ -116,8 +126,18 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                 </a>
             </li>
             <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/associate/tools" class="sidebar-link <?php echo $current_page == 'tools' ? 'active' : ''; ?>">
+                    <i class="fas fa-toolbox"></i> Tools & Calculators
+                </a>
+            </li>
+            <li class="sidebar-item">
                 <a href="<?php echo $base; ?>/associate/profile" class="sidebar-link <?php echo $current_page == 'profile' ? 'active' : ''; ?>">
                     <i class="fas fa-user"></i> Profile
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/associate/tools" class="sidebar-link <?php echo $current_page == 'tools' ? 'active' : ''; ?>">
+                    <i class="fas fa-toolbox"></i> Smart Tools
                 </a>
             </li>
             <li class="sidebar-item">

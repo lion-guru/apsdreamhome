@@ -9,8 +9,14 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm text-center">
                 <div class="card-body aps-cp-card-body">
-                    <div class="mb-3"><div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width:100px;height:100px;font-size:2.5rem"><?= strtoupper(substr($user['name'] ?? 'U', 0, 1)) ?></div></div>
-                    <h5><?= htmlspecialchars($user['name'] ?? '-') ?></h5>
+                    <?php
+                    $userId = (int)($user['id'] ?? $_SESSION['user_id'] ?? 0);
+                    $photoUrl = !empty($user['profile_image']) ? BASE_URL . '/' . $user['profile_image'] : null;
+                    $userName = $user['name'] ?? 'User';
+                    $size = 'lg';
+                    include __DIR__ . '/../shared/profile_photo_upload.php';
+                    ?>
+                    <h5 class="mt-3"><?= htmlspecialchars($user['name'] ?? '-') ?></h5>
                     <p class="text-muted small mb-1"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($user['email'] ?? '-') ?></p>
                     <p class="text-muted small mb-0"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($user['phone'] ?? '-') ?></p>
                     <hr>

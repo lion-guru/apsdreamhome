@@ -75,7 +75,7 @@ $page_description = 'Analyze customer behavior patterns and insights';
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Segments</h6>
-                            <h3 class="mb-0">5</h3>
+                            <h3 class="mb-0"><?= (int)($stats['segments'] ?? 5) ?></h3>
                         </div>
                     </div>
                 </div>

@@ -47,8 +47,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-eye fa-2x text-primary mb-2"></i>
-                        <h3 class="mb-1">0</h3>
-                        <p class="text-muted mb-0">Total Views</p>
+                        <h3 class="mb-1"><?= (int)($analytics['total_views'] ?? 0) ?></h3>
                     </div>
                 </div>
             </div>
@@ -56,8 +55,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-mouse-pointer fa-2x text-success mb-2"></i>
-                        <h3 class="mb-1">0</h3>
-                        <p class="text-muted mb-0">Clicks</p>
+                        <h3 class="mb-1"><?= (int)($analytics['clicks'] ?? 0) ?></h3>
                     </div>
                 </div>
             </div>
@@ -65,7 +63,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-percentage fa-2x text-warning mb-2"></i>
-                        <h3 class="mb-1">0%</h3>
+                        <h3 class="mb-1"><?= number_format((float)($analytics['conversion_rate'] ?? 0), 1) ?>%</h3>
                         <p class="text-muted mb-0">Conversion Rate</p>
                     </div>
                 </div>
@@ -74,7 +72,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-rupee-sign fa-2x text-info mb-2"></i>
-                        <h3 class="mb-1">₹<?php echo number_format(floatval(campaign['budget'] ?? 0) ?? 0); ?></h3>
+                        <h3 class="mb-1">₹<?php echo number_format(floatval($campaign['budget'] ?? 0)); ?></h3>
                         <p class="text-muted mb-0">Budget</p>
                     </div>
                 </div>
@@ -112,7 +110,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             </tr>
                             <tr>
                                 <td class="text-muted">Expected Revenue</td>
-                                <td class="text-end fw-semibold">₹<?php echo number_format(floatval(campaign['expected_revenue'] ?? 0) ?? 0); ?></td>
+                                <td class="text-end fw-semibold">₹<?php echo number_format(floatval($campaign['expected_revenue'] ?? 0)); ?></td>
                             </tr>
                         </table></div>
                     </div>

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-import 'core/providers/auth_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/services/notification_service.dart';
 import 'core/theme/app_theme.dart';
-import 'data/models/user_model.dart';
 
 /// Global navigator key for deep-link navigation from notifications
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+/// Timestamp of last back press for double-tap-to-exit
+DateTime? _lastBackPress;
 
 class APSDreamHomeApp extends ConsumerStatefulWidget {
   const APSDreamHomeApp({super.key});
@@ -21,22 +24,11 @@ class _APSDreamHomeAppState extends ConsumerState<APSDreamHomeApp> {
   @override
   void initState() {
     super.initState();
-    // Set navigator key for notification deep-link navigation
     setNavigatorKey(navigatorKey);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      ref.listen<User?>(authProvider, (previous, next) {
-        if (previous != next && mounted) {
-          setState(() {});
-        }
-      });
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final router = ref.read(appRouterProvider);
-
     return MaterialApp.router(
       key: navigatorKey,
       title: 'APS Dream Home',
@@ -44,33 +36,42 @@ class _APSDreamHomeAppState extends ConsumerState<APSDreamHomeApp> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
-      routerConfig: router,
+      routerConfig: getRouter(),
       builder: (context, child) {
-        ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-          return Material(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, color: Colors.red, size: 60),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Something went wrong!',
-                    style: Theme.of(context).textTheme.headlineSmall,
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) return;
+
+            final router = getRouter();
+            final currentRoute = router.routerDelegate.currentConfiguration.uri
+                .toString();
+
+            // If on /home or /splash or /login, double-tap to exit
+            if (currentRoute == '/home' ||
+                currentRoute == '/splash' ||
+                currentRoute == '/login') {
+              final now = DateTime.now();
+              if (_lastBackPress != null &&
+                  now.difference(_lastBackPress!) <
+                      const Duration(seconds: 2)) {
+                SystemNavigator.pop();
+              } else {
+                _lastBackPress = now;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Press back again to exit'),
+                    duration: Duration(seconds: 1),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    errorDetails.exception.toString(),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ),
-          );
-        };
-        return child!;
+                );
+              }
+            } else {
+              // Navigate back using GoRouter
+              context.pop();
+            }
+          },
+          child: child ?? const SizedBox.shrink(),
+        );
       },
     );
   }

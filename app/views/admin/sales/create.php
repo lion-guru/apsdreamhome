@@ -14,7 +14,7 @@
     </div>
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
-            <form method="POST" action="/admin/sales/store">
+            <form method="POST" action="/admin/sales/bookings/store">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                 <div class="row g-3">
                     <div class="col-md-4"><label class="form-label">Customer <span class="text-danger">*</span></label><select name="customer_id" class="form-select" required><option value="">Select Customer</option><?php foreach ($users as $c): ?><option value="<?= $c['id'] ?>"><?= $c['name'] ?></option><?php endforeach; ?></select></div>

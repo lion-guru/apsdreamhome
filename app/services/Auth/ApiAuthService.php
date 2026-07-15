@@ -43,7 +43,7 @@ class ApiAuthService
             try {
                 // Fetch full profile info for initial app state
                 $stmt = $this->db->prepare("
-                    SELECT u.id as userId, u.name, u.email, u.phone, 
+                    SELECT u.id as userId, u.name, u.email, u.phone, u.role,
                            COALESCE(u.created_at, NOW()) as createdAt, 
                            COALESCE(u.updated_at, NOW()) as updatedAt,
                            COALESCE(mp.current_level, 'Customer') as rank

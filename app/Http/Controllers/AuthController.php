@@ -31,6 +31,5 @@ class AuthController extends BaseController
     public function verifyEmail()
     {
         include __DIR__ . "/../../views/auth/verify_email.php";
-    }
+        }
 }
-?>

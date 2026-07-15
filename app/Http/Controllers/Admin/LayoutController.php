@@ -13,19 +13,21 @@ class LayoutController extends AdminController {
     }
     
     public function layoutManager() {
-        require_once __DIR__ . '/../../../Services/LayoutManager.php';
         $layoutManager = new \App\Services\LayoutManager($this->db);
         $settings = $layoutManager->getLayoutSettings();
         $site = [];
         $site['nav_json'] = $layoutManager->generateNavigationJson($settings['navigation_items']);
         $site['footer_html'] = $layoutManager->generateFooterHtml($settings['footer_content']);
         $premium_layout = $settings['premium_layout'];
-        require_once __DIR__ . '/../../../views/admin/layout_manager.php';
+        $this->render('admin/layout_manager', [
+            'page_title' => 'Layout Manager',
+            'settings' => $settings,
+            'site' => $site,
+            'premium_layout' => $premium_layout,
+        ], 'layouts/admin');
     }
     
     public function updateLayoutSettings() {
-        require_once __DIR__ . '/../../../Services/LayoutManager.php';
-        
         $layoutManager = new \App\Services\LayoutManager($this->db);
         
         $settings = [

@@ -10,7 +10,7 @@ import '../../widgets/app_widgets.dart';
 
 class PlotsPage extends ConsumerStatefulWidget {
   final String? colonyId;
-  
+
   const PlotsPage({super.key, this.colonyId});
 
   @override
@@ -22,7 +22,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
   String? _selectedFacing;
   bool _cornerOnly = false;
   bool _parkFacingOnly = false;
-  
+
   final List<String> _filters = [
     'all',
     'available',
@@ -31,7 +31,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
     'sold',
     'premium',
   ];
-  
+
   final List<String> _facings = ['North', 'South', 'East', 'West'];
 
   Widget _buildBody() {
@@ -85,7 +85,10 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
         appBar: AppBar(
           title: const Text('Select Plot'),
           actions: [
-            IconButton(onPressed: _showFilterBottomSheet, icon: const Icon(Icons.filter_list)),
+            IconButton(
+              onPressed: _showFilterBottomSheet,
+              icon: const Icon(Icons.filter_list),
+            ),
           ],
         ),
         body: _buildBody(),
@@ -102,16 +105,13 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
       {'color': AppTheme.plotBooked, 'label': 'Booked'},
       {'color': AppTheme.plotSold, 'label': 'Sold'},
     ];
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-          ),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4),
         ],
       ),
       child: Row(
@@ -148,10 +148,26 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildStatItem('Total', colony.totalPlots.toString()),
-          _buildStatItem('Available', colony.availablePlots.toString(), AppTheme.plotAvailable),
-          _buildStatItem('Hold', colony.holdPlots.toString(), AppTheme.plotHold),
-          _buildStatItem('Booked', colony.bookedPlots.toString(), AppTheme.plotBooked),
-          _buildStatItem('Sold', colony.soldPlots.toString(), AppTheme.plotSold),
+          _buildStatItem(
+            'Available',
+            colony.availablePlots.toString(),
+            AppTheme.plotAvailable,
+          ),
+          _buildStatItem(
+            'Hold',
+            colony.holdPlots.toString(),
+            AppTheme.plotHold,
+          ),
+          _buildStatItem(
+            'Booked',
+            colony.bookedPlots.toString(),
+            AppTheme.plotBooked,
+          ),
+          _buildStatItem(
+            'Sold',
+            colony.soldPlots.toString(),
+            AppTheme.plotSold,
+          ),
         ],
       ),
     );
@@ -171,10 +187,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
         const SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 11,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
         ),
       ],
     );
@@ -208,42 +221,42 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
 
   Widget _buildPlotGrid() {
     final plotsAsync = ref.watch(plotsProvider(widget.colonyId!));
-    
+
     return plotsAsync.when(
       data: (plots) {
         // Apply filters
         var filteredPlots = plots;
-        
+
         if (_selectedFilter != 'all' && _selectedFilter != 'premium') {
           filteredPlots = filteredPlots
               .where((p) => p.status == _selectedFilter)
               .toList();
         }
-        
+
         if (_selectedFilter == 'premium') {
           filteredPlots = filteredPlots
               .where((p) => p.hasPremiumLocation)
               .toList();
         }
-        
+
         if (_selectedFacing != null) {
           filteredPlots = filteredPlots
               .where((p) => p.facing == _selectedFacing)
               .toList();
         }
-        
+
         if (_cornerOnly) {
           filteredPlots = filteredPlots
               .where((p) => p.isCorner == true)
               .toList();
         }
-        
+
         if (_parkFacingOnly) {
           filteredPlots = filteredPlots
               .where((p) => p.isParkFacing == true)
               .toList();
         }
-        
+
         if (filteredPlots.isEmpty) {
           return AppWidgets.emptyState(
             title: 'No Plots Found',
@@ -259,7 +272,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
             actionLabel: 'Clear Filters',
           );
         }
-        
+
         return GridView.builder(
           padding: const EdgeInsets.all(16),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -303,10 +316,107 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
   }
 
   Widget _buildAllPlotsList() {
-    // Fetch all plots across colonies
-    return AppWidgets.emptyState(
-      title: 'All Plots',
-      subtitle: 'Select a colony to view plots',
+    final coloniesAsync = ref.watch(coloniesProvider);
+    return coloniesAsync.when(
+      data: (colonies) {
+        if (colonies.isEmpty) {
+          return AppWidgets.emptyState(
+            title: 'No Colonies Found',
+            subtitle: 'No colonies available at the moment',
+          );
+        }
+        return RefreshIndicator(
+          onRefresh: () async => ref.invalidate(coloniesProvider),
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: colonies.length,
+            itemBuilder: (context, index) {
+              final colony = colonies[index];
+              return GestureDetector(
+                onTap: () => context.push('/plots?colonyId=${colony.id}'),
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.primaryColor,
+                              AppTheme.secondaryColor,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.apartment,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              colony.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${colony.totalPlots} plots · ${colony.availablePlots} available',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 13,
+                              ),
+                            ),
+                            if (colony.district.isNotEmpty)
+                              Text(
+                                colony.district,
+                                style: TextStyle(
+                                  color: Colors.grey.shade500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Colors.grey.shade400,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => AppWidgets.emptyState(
+        title: 'Error loading colonies',
+        subtitle: '$error',
+      ),
     );
   }
 
@@ -328,9 +438,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
       default:
         statusColor = Colors.grey;
     }
-    
+
     final canSelect = plot.isAvailable;
-    
+
     return GestureDetector(
       onTap: canSelect
           ? () => _showPlotDetails(plot)
@@ -391,7 +501,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                     ],
                   ),
                 ),
-                
+
                 // Details
                 Padding(
                   padding: const EdgeInsets.all(12),
@@ -416,9 +526,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 4),
-                      
+
                       // Facing
                       Row(
                         children: [
@@ -437,9 +547,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 8),
-                      
+
                       // Premium badges
                       if (plot.hasPremiumLocation)
                         Wrap(
@@ -454,9 +564,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                               _buildPremiumBadge('Main Road', Colors.blue),
                           ],
                         ),
-                      
+
                       const Spacer(),
-                      
+
                       // Price
                       AppWidgets.priceTag(
                         amount: plot.totalPrice,
@@ -472,7 +582,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                 ),
               ],
             ),
-            
+
             // Selection indicator
             if (canSelect)
               Positioned(
@@ -484,11 +594,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                     color: statusColor,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 14,
-                  ),
+                  child: const Icon(Icons.check, color: Colors.white, size: 14),
                 ),
               ),
           ],
@@ -543,9 +649,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                   AppWidgets.statusBadge(status: plot.status),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Details Grid
               GridView.count(
                 shrinkWrap: true,
@@ -554,25 +660,34 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 8,
                 children: [
-                  _buildDetailItem('Area', '${plot.areaSqft.toStringAsFixed(0)} sqft'),
+                  _buildDetailItem(
+                    'Area',
+                    '${plot.areaSqft.toStringAsFixed(0)} sqft',
+                  ),
                   _buildDetailItem('Facing', plot.facing),
-                  _buildDetailItem('Base Price', '₹${plot.basePrice.toStringAsFixed(0)}'),
-                  _buildDetailItem('Price/sqft', '₹${plot.pricePerSqft.toStringAsFixed(0)}'),
+                  _buildDetailItem(
+                    'Base Price',
+                    '₹${plot.basePrice.toStringAsFixed(0)}',
+                  ),
+                  _buildDetailItem(
+                    'Price/sqft',
+                    '₹${plot.pricePerSqft.toStringAsFixed(0)}',
+                  ),
                 ],
               ),
-              
+
               if (plot.hasPremiumLocation) ...[
                 const SizedBox(height: 16),
-                
+
                 Text(
                   'Premium Location Benefits',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -586,9 +701,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                   ],
                 ),
               ],
-              
+
               const SizedBox(height: 24),
-              
+
               // Total Price
               Container(
                 padding: const EdgeInsets.all(16),
@@ -601,9 +716,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                   children: [
                     const Text(
                       'Total Price',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     AppWidgets.priceTag(
                       amount: plot.totalPrice,
@@ -617,9 +730,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Action Buttons
               Row(
                 children: [
@@ -661,18 +774,12 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 11,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
         ),
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -708,9 +815,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Facing Filter
                   Text(
                     'Facing',
@@ -718,9 +825,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -737,9 +844,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                       );
                     }).toList(),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Premium Filters
                   Text(
                     'Premium Location',
@@ -747,9 +854,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   CheckboxListTile(
                     title: const Text('Corner Plot Only'),
                     value: _cornerOnly,
@@ -757,7 +864,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                       setModalState(() => _cornerOnly = value ?? false);
                     },
                   ),
-                  
+
                   CheckboxListTile(
                     title: const Text('Park Facing Only'),
                     value: _parkFacingOnly,
@@ -765,9 +872,9 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                       setModalState(() => _parkFacingOnly = value ?? false);
                     },
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Apply Button
                   SizedBox(
                     width: double.infinity,

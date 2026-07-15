@@ -4,6 +4,9 @@
             <div class="col-lg-8 text-center">
                 <h1 class="display-4 fw-bold mb-3"><?= __('gallery_hero_title') ?></h1>
                 <p class="lead mb-0"><?= __('gallery_hero_subtitle') ?></p>
+                <?php if (!empty($galleryImages)): ?>
+                    <p class="mt-2 text-muted"><i class="fas fa-images me-1"></i> <?= count($galleryImages) ?> photos</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -21,7 +24,9 @@
         <!-- Category Filter -->
         <div class="text-center mb-5">
             <div class="btn-group flex-wrap" role="group">
-                <button type="button" class="btn btn-primary active" data-filter="all"><?= __('gallery_filter_all') ?></button>
+                <button type="button" class="btn btn-primary active" data-filter="all">
+                    <?= __('gallery_filter_all') ?> <span class="badge bg-white text-primary ms-1"><?= count($galleryImages) ?></span>
+                </button>
                 <?php foreach ($galleryCategories as $cat): ?>
                 <button type="button" class="btn btn-outline-primary" data-filter="<?= htmlspecialchars($cat) ?>"><?= ucfirst(htmlspecialchars($cat)) ?></button>
                 <?php endforeach; ?>
@@ -30,9 +35,9 @@
 
         <!-- Gallery Grid -->
         <div class="row g-4" id="galleryGrid">
-            <?php foreach ($galleryImages as $img): ?>
+            <?php foreach ($galleryImages as $idx => $img): ?>
             <div class="col-md-4 col-lg-3 gallery-item" data-category="<?= htmlspecialchars($img['category'] ?? 'all') ?>">
-                <div class="card border-0 shadow-sm overflow-hidden h-100 gallery-card">
+                <div class="card border-0 shadow-sm overflow-hidden h-100 gallery-card" style="cursor:pointer;" onclick="openLightbox(<?= $idx ?>)">
                     <div class="position-relative" style="height: 250px;">
                         <?php if (!empty($img['image_path'])): ?>
                         <img src="<?= BASE_URL ?>/<?= htmlspecialchars($img['image_path']) ?>" alt="<?= htmlspecialchars($img['title'] ?? $img['caption'] ?? '') ?>" class="w-100 h-100" style="object-fit:cover;" loading="lazy">
@@ -42,6 +47,9 @@
                         <?php if (!empty($img['category'])): ?>
                         <span class="badge bg-dark position-absolute top-0 start-0 m-2"><?= ucfirst($img['category']) ?></span>
                         <?php endif; ?>
+                        <div class="position-absolute bottom-0 end-0 m-2">
+                            <span class="badge bg-dark bg-opacity-75"><i class="fas fa-expand"></i></span>
+                        </div>
                     </div>
                     <div class="card-body p-3">
                         <?php if (!empty($img['title'])): ?>
@@ -57,6 +65,67 @@
         </div>
     </div>
 </section>
+
+<!-- Lightbox Modal -->
+<div class="modal fade" id="galleryLightbox" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content bg-dark border-0">
+            <div class="modal-header border-0 py-2">
+                <span class="text-white small" id="lightboxCounter"></span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <img id="lightboxImage" src="" class="img-fluid" style="max-height: 75vh;" alt="">
+                <div class="py-3">
+                    <h6 class="text-white mb-1" id="lightboxTitle"></h6>
+                    <p class="text-white-50 small mb-0" id="lightboxCaption"></p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center py-2">
+                <button class="btn btn-outline-light btn-sm me-2" onclick="navigateLightbox(-1)"><i class="fas fa-chevron-left"></i></button>
+                <button class="btn btn-outline-light btn-sm" onclick="navigateLightbox(1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var galleryData = <?= json_encode(array_values($galleryImages)) ?>;
+var currentLightboxIndex = 0;
+
+function openLightbox(index) {
+    currentLightboxIndex = index;
+    updateLightbox();
+    new bootstrap.Modal(document.getElementById('galleryLightbox')).show();
+}
+
+function navigateLightbox(dir) {
+    currentLightboxIndex = (currentLightboxIndex + dir + galleryData.length) % galleryData.length;
+    updateLightbox();
+}
+
+function updateLightbox() {
+    var img = galleryData[currentLightboxIndex];
+    var src = img.image_path ? '<?= BASE_URL ?>/' + img.image_path : '';
+    document.getElementById('lightboxImage').src = src;
+    document.getElementById('lightboxTitle').textContent = img.title || '';
+    document.getElementById('lightboxCaption').textContent = img.caption || '';
+    document.getElementById('lightboxCounter').textContent = (currentLightboxIndex + 1) + ' / ' + galleryData.length;
+}
+
+document.querySelectorAll('[data-filter]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('[data-filter]').forEach(function(b) { b.classList.remove('active', 'btn-primary'); b.classList.add('btn-outline-primary'); });
+        this.classList.add('active', 'btn-primary');
+        this.classList.remove('btn-outline-primary');
+        var filter = this.dataset.filter;
+        document.querySelectorAll('.gallery-item').forEach(function(item) {
+            item.style.display = (filter === 'all' || item.dataset.category === filter) ? '' : 'none';
+        });
+    });
+});
+</script>
+
 <?php else: ?>
 <section class="py-5">
     <div class="container text-center">
@@ -74,17 +143,3 @@
         <a href="<?= BASE_URL ?>/contact" class="btn btn-primary btn-lg"><i class="fas fa-phone me-2"></i><?= __('gallery_contact_us') ?></a>
     </div>
 </section>
-
-<script>
-document.querySelectorAll('[data-filter]').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('[data-filter]').forEach(b => { b.classList.remove('active', 'btn-primary'); b.classList.add('btn-outline-primary'); });
-        this.classList.add('active', 'btn-primary');
-        this.classList.remove('btn-outline-primary');
-        const filter = this.dataset.filter;
-        document.querySelectorAll('.gallery-item').forEach(item => {
-            item.style.display = (filter === 'all' || item.dataset.category === filter) ? '' : 'none';
-        });
-    });
-});
-</script>

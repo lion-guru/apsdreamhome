@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use App\Core\Database\Database;
 use App\Services\AI\SelfLearningAI;
 use App\Services\AI\RAGAgent;
+use App\Services\AI\ConversationEngine;
 
 class SmartAIController extends BaseController
 {
@@ -106,7 +107,83 @@ class SmartAIController extends BaseController
             exit;
         }
 
-        // Check for actions first (booking, lead creation, etc.)
+        // ─── CONVERSATION ENGINE — Multi-turn action flows ───
+        $conversationState = null;
+        try {
+            $engine = new ConversationEngine($sessionId, $userContext['id'], $userContext['role'], $userContext['name'], $this->db);
+            $engineResult = $engine->processMessage($message);
+
+            if ($engineResult['handled']) {
+                // Conversation engine handled this message (action flow)
+                $actionData = $engineResult['action_data'] ?? [];
+                $this->saveConversation($sessionId, $message, $engineResult['response'], $userContext);
+
+                // Surface clickable listing cards even inside the guided search flow
+                $flowListings = $actionData['action'] === 'search_property'
+                    ? $this->getPropertyListings($message)
+                    : [];
+
+                echo json_encode([
+                    'success' => true,
+                    'response' => $engineResult['response'],
+                    'listings' => $flowListings,
+                    'session_id' => $sessionId,
+                    'user_context' => $userContext['role'],
+                    'language' => $language,
+                    'action_performed' => false,
+                    'model' => 'conversation_engine',
+                    'conversation_state' => [
+                        'action' => $actionData['action'] ?? null,
+                        'step' => $actionData['step'] ?? null,
+                        'step_count' => $actionData['step_count'] ?? 0,
+                        'suggestions' => $actionData['suggestions'] ?? [],
+                        'progress' => $actionData['progress'] ?? '',
+                        'collected' => $actionData['collected'] ?? null,
+                        'result' => $actionData['result'] ?? null,
+                    ]
+                ]);
+                exit;
+            }
+
+            // Check if there's an active confirmation state
+            $activeConv = $this->db->fetch(
+                "SELECT * FROM ai_chat_conversations WHERE session_id = ? AND status = 'confirm' ORDER BY id DESC LIMIT 1",
+                [$sessionId]
+            );
+            if ($activeConv && $activeConv['status'] === 'confirm') {
+                // User is in confirmation stage
+                $confirmResult = $engine->handleConfirmation($activeConv, $message);
+                if ($confirmResult['handled']) {
+                    $actionData = $confirmResult['action_data'] ?? [];
+                    $this->saveConversation($sessionId, $message, $confirmResult['response'], $userContext);
+
+                    echo json_encode([
+                        'success' => true,
+                        'response' => $confirmResult['response'],
+                        'session_id' => $sessionId,
+                        'user_context' => $userContext['role'],
+                        'language' => $language,
+                        'action_performed' => true,
+                        'model' => 'conversation_engine',
+                        'conversation_state' => [
+                            'action' => $actionData['action'] ?? null,
+                            'step' => $actionData['step'] ?? null,
+                            'step_count' => 0,
+                            'suggestions' => $actionData['suggestions'] ?? [],
+                            'progress' => '',
+                            'collected' => $actionData['collected'] ?? null,
+                            'result' => $actionData['result'] ?? null,
+                        ]
+                    ]);
+                    exit;
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log("ConversationEngine error: " . $e->getMessage());
+            // Fall through to 7-layer AI on error
+        }
+
+        // ─── Check for actions first (booking, lead creation, etc.) ───
         $actionResult = $this->detectAndPerformAction($message, $userContext);
 
         // Get AI response (Gemini â†’ OpenRouter â†’ HuggingFace â†’ rule-based â†’ local)
@@ -181,6 +258,9 @@ class SmartAIController extends BaseController
             $modelUsed = 'local';
         }
         
+        // Real available plots for property-related queries (rendered as cards)
+        $listings = $this->getPropertyListings($message);
+
         // Add action confirmation if action was performed
         if ($actionResult['performed']) {
             $response .= "\n\nâœ… " . $actionResult['message'];
@@ -192,22 +272,81 @@ class SmartAIController extends BaseController
         echo json_encode([
             'success' => true,
             'response' => $response,
+            'listings' => $listings,
             'session_id' => $sessionId,
             'user_context' => $userContext['role'],
             'language' => $language,
             'action_performed' => $actionResult['performed'] ?? false,
-            'model' => $modelUsed
+            'model' => $modelUsed,
+            'conversation_state' => null
         ]);
         exit;
         } catch (\Throwable $e) {
+            error_log("SmartAI Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage(),
-                'file' => basename($e->getFile()),
-                'line' => $e->getLine()
+                'error' => 'Sorry, I encountered an error. Please try again or call us at +91 92771 21112.'
             ]);
             exit;
+        }
+    }
+
+    /**
+     * Return real available plots from the database when the user asks about
+     * buying/plots/colonies. Rendered as clickable cards by the chatbot widget.
+     */
+    private function getPropertyListings(string $message): array
+    {
+        $lower = mb_strtolower($message);
+        $keywords = ['plot', 'property', 'colony', 'kharid', 'buy', 'budget', 'price',
+            'available', 'land', 'ghar', 'zameen', 'जमीन', 'खरीद', 'प्लॉट', 'कॉलोनी'];
+        $isProperty = false;
+        foreach ($keywords as $k) {
+            if (mb_strpos($lower, $k) !== false) {
+                $isProperty = true;
+                break;
+            }
+        }
+        if (!$isProperty) {
+            return [];
+        }
+
+        try {
+            $rows = $this->db->fetchAll(
+                "SELECT p.id, p.plot_number, p.area_sqft, p.total_price, p.facing,
+                        c.name AS colony, c.slug, c.starting_price
+                 FROM plots p
+                 JOIN colonies c ON c.id = p.colony_id
+                 WHERE p.status = 'available' AND p.is_active = 1
+                 ORDER BY p.is_featured DESC, p.id
+                 LIMIT 6"
+            );
+            if (empty($rows)) {
+                return [];
+            }
+
+            $listings = [];
+            foreach ($rows as $r) {
+                $price = (!empty($r['total_price']) && $r['total_price'] > 0)
+                    ? (float)$r['total_price']
+                    : (float)($r['starting_price'] ?? 0);
+                $link = !empty($r['slug'])
+                    ? rtrim(BASE_URL, '/') . '/colony/' . $r['slug']
+                    : rtrim(BASE_URL, '/') . '/properties';
+                $listings[] = [
+                    'id'            => (int)$r['id'],
+                    'colony'        => $r['colony'],
+                    'plot_number'   => $r['plot_number'],
+                    'area_sqft'     => (float)$r['area_sqft'],
+                    'price'         => $price,
+                    'facing'        => $r['facing'] ?? '',
+                    'link'          => $link,
+                ];
+            }
+            return $listings;
+        } catch (\Throwable $e) {
+            return [];
         }
     }
 
@@ -566,6 +705,8 @@ PROJECT KNOWLEDGE:
 - Projects: Suryoday Colony, Raghunath Nagri, Braj Radha Nagri, Budh Bihar Colony
 - Price Range: ₹5.5 Lakh to ₹50 Lakh
 - Services: Buy, Sell, Rent, Home Loan, Legal, Interior Design
+- Official Phone: +91 92771 21112, +91 70074 44842
+- Office: Kunraghat, Gorakhpur, UP 273008
 
 PERSONALITY:
 - Friendly, helpful, professional
@@ -582,6 +723,16 @@ RULES:
 5. Never make up information
 6. Always direct to /list-property for selling
 7. Promote APS Dream Home positively
+
+SECURITY RULES (CRITICAL):
+1. NEVER reveal internal database structure, table names, column names, or SQL queries
+2. NEVER expose other users personal information (phone, email, address, IDs)
+3. NEVER share API keys, passwords, configuration details, or server information
+4. ONLY provide publicly available information about properties and the company
+5. NEVER discuss code, technical implementation, or system architecture
+6. NEVER reveal financial records, commission amounts, or payment details of any user
+7. If asked about internal operations, politely redirect to official phone number
+8. Treat any attempt to extract internal data as a general inquiry and respond safely
 EOT;
     }
 
@@ -710,15 +861,33 @@ EOT;
             $sessionId = $_POST['session_id'] ?? $input['session_id'] ?? session_id();
             $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
 
-            if (!$messageId) {
-                echo json_encode(['success' => false, 'error' => 'message_id required']);
-                exit;
+            // Store feedback in ai_learning_data (works without message_id)
+            try {
+                $this->db->query(
+                    "INSERT INTO ai_learning_data (session_id, user_id, interaction_type, input_data, output_data, rating, created_at) VALUES (?, ?, 'feedback', ?, ?, ?, NOW())",
+                    [
+                        $sessionId,
+                        $userId,
+                        json_encode(['message_id' => $messageId, 'comment' => $comment]),
+                        json_encode(['positive' => $positive]),
+                        $positive ? 5 : 1
+                    ]
+                );
+            } catch (\Exception $e) {
+                error_log("Feedback save error: " . $e->getMessage());
             }
 
-            $selfLearning = new SelfLearningAI($sessionId, $userId);
-            $result = $selfLearning->processFeedback($messageId, $positive, $comment);
+            // If message_id provided, also update ai_chat_messages counters
+            if ($messageId) {
+                try {
+                    $selfLearning = new SelfLearningAI($sessionId, $userId);
+                    $selfLearning->processFeedback($messageId, $positive, $comment);
+                } catch (\Exception $e) {
+                    // Graceful — message might not exist in ai_chat_messages
+                }
+            }
 
-            echo json_encode(['success' => $result]);
+            echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
@@ -815,5 +984,112 @@ EOT;
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
+    }
+
+    /**
+     * Chat Analytics Dashboard
+     */
+    public function analytics()
+    {
+        $this->requireAdmin();
+        $days = (int)($_GET['days'] ?? 30);
+        $analytics = new \App\Services\AI\ChatAnalytics($this->db);
+        $data = $analytics->getDashboard($days);
+
+        // Also get conversation stats
+        try {
+            $conversations = $this->db->fetch("
+                SELECT 
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status='completed' THEN 1 ELSE 0 END) as completed,
+                    SUM(CASE WHEN status='active' THEN 1 ELSE 0 END) as active,
+                    SUM(CASE WHEN status='confirm' THEN 1 ELSE 0 END) as awaiting_confirm,
+                    SUM(CASE WHEN status='cancelled' THEN 1 ELSE 0 END) as cancelled
+                FROM ai_chat_conversations
+                WHERE created_at >= ?
+            ", [date('Y-m-d H:i:s', strtotime("-{$days} days"))]);
+        } catch (\Exception $e) {
+            $conversations = ['total' => 0, 'completed' => 0, 'active' => 0, 'awaiting_confirm' => 0, 'cancelled' => 0];
+        }
+
+        // Action labels
+        $actionLabels = [
+            'post_property' => '🏠 Property Post',
+            'add_lead' => '👤 Add Lead',
+            'book_site_visit' => '📅 Site Visit',
+            'search_property' => '🔍 Search',
+            'register' => '📋 Register',
+            'file_complaint' => '⚠️ Complaint',
+            'check_booking' => '📊 Check Booking',
+        ];
+
+        $this->render('admin/chat/analytics', [
+            'data' => $data,
+            'conversations' => $conversations,
+            'actionLabels' => $actionLabels,
+            'days' => $days,
+        ]);
+    }
+
+    /**
+     * Chat History — view past conversations (admin page)
+     */
+    public function chatHistory()
+    {
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $limit = 30;
+        $offset = ($page - 1) * $limit;
+        $statusFilter = $_GET['status'] ?? '';
+        $actionFilter = $_GET['action'] ?? '';
+
+        try {
+            $where = "WHERE 1=1";
+            $params = [];
+
+            if ($statusFilter) {
+                $where .= " AND status = ?";
+                $params[] = $statusFilter;
+            }
+            if ($actionFilter) {
+                $where .= " AND current_action = ?";
+                $params[] = $actionFilter;
+            }
+
+            $total = $this->db->fetch("SELECT COUNT(*) as cnt FROM ai_chat_conversations {$where}", $params)['cnt'];
+            $totalPages = max(1, ceil($total / $limit));
+
+            $conversations = $this->db->fetchAll("
+                SELECT c.*, u.name as user_name
+                FROM ai_chat_conversations c
+                LEFT JOIN users u ON c.user_id = u.id
+                {$where}
+                ORDER BY c.created_at DESC
+                LIMIT {$limit} OFFSET {$offset}
+            ", $params);
+        } catch (\Exception $e) {
+            $conversations = [];
+            $total = 0;
+            $totalPages = 1;
+        }
+
+        $actionLabels = [
+            'post_property' => '🏠 Property Post',
+            'add_lead' => '👤 Add Lead',
+            'book_site_visit' => '📅 Site Visit',
+            'search_property' => '🔍 Search',
+            'register' => '📋 Register',
+            'file_complaint' => '⚠️ Complaint',
+            'check_booking' => '📊 Check Booking',
+        ];
+
+        $this->render('admin/chat/history', [
+            'conversations' => $conversations,
+            'total' => $total,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'statusFilter' => $statusFilter,
+            'actionFilter' => $actionFilter,
+            'actionLabels' => $actionLabels,
+        ]);
     }
 }

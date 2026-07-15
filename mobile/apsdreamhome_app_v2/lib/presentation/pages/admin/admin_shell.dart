@@ -1,77 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/providers/auth_provider.dart';
+import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/user_model.dart';
+import '../../../data/services/auth_service.dart';
 
 /// Admin Shell - Main Layout for Admin Panel
-/// Desktop: sidebar + content side-by-side
-/// Mobile: Drawer sidebar + full-width content
-class AdminShell extends ConsumerStatefulWidget {
+/// Uses AuthBridge (ValueNotifier) instead of Riverpod to avoid InheritedModel assertion.
+class AdminShell extends StatefulWidget {
   final Widget child;
 
-  const AdminShell({
-    super.key,
-    required this.child,
-  });
+  const AdminShell({super.key, required this.child});
 
   @override
-  ConsumerState<AdminShell> createState() => _AdminShellState();
+  State<AdminShell> createState() => _AdminShellState();
 }
 
-class _AdminShellState extends ConsumerState<AdminShell> {
+class _AdminShellState extends State<AdminShell> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authProvider);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
+    return ListenableBuilder(
+      listenable: AuthBridge.instance.currentUser,
+      builder: (context, _) {
+        final user = AuthBridge.instance.currentUser.value;
+        final screenWidth = MediaQuery.of(context).size.width;
+        final isMobile = screenWidth < 768;
 
-    if (user == null || user.role.toLowerCase() != 'admin') {
-      return const Scaffold(
-        body: Center(
-          child: Text('Access Denied - Admin Only'),
-        ),
-      );
-    }
+        if (user == null || !user.isAdmin) {
+          return const Scaffold(
+            body: Center(child: Text('Access Denied - Admin Only')),
+          );
+        }
 
-    // MOBILE: Scaffold with Drawer
-    if (isMobile) {
-      return Scaffold(
-        key: _scaffoldKey,
-        drawer: Drawer(
-          child: _buildSidebar(context, user),
-        ),
-        body: Column(
-          children: [
-            _buildMobileTopBar(context, user),
-            Expanded(child: widget.child),
-          ],
-        ),
-      );
-    }
-
-    // DESKTOP: Row with persistent sidebar
-    return Scaffold(
-      body: Row(
-        children: [
-          SizedBox(
-            width: 260,
-            child: _buildSidebar(context, user),
-          ),
-          Expanded(
-            child: Column(
+        // MOBILE: Scaffold with Drawer
+        if (isMobile) {
+          return Scaffold(
+            key: _scaffoldKey,
+            drawer: Drawer(child: _buildSidebar(context, user)),
+            body: Column(
               children: [
-                _buildDesktopTopBar(context, user),
+                _buildMobileTopBar(context, user),
                 Expanded(child: widget.child),
               ],
             ),
+          );
+        }
+
+        // DESKTOP: Row with persistent sidebar
+        return Scaffold(
+          body: Row(
+            children: [
+              SizedBox(width: 260, child: _buildSidebar(context, user)),
+              Expanded(
+                child: Column(
+                  children: [
+                    _buildDesktopTopBar(context, user),
+                    Expanded(child: widget.child),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -154,7 +148,9 @@ class _AdminShellState extends ConsumerState<AdminShell> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
-              border: Border(top: BorderSide(color: Color(0xFF334155), width: 1)),
+              border: Border(
+                top: BorderSide(color: Color(0xFF334155), width: 1),
+              ),
             ),
             child: Row(
               children: [
@@ -162,7 +158,10 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                   backgroundColor: AppTheme.primaryColor,
                   child: Text(
                     user.name.substring(0, 1).toUpperCase(),
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -172,19 +171,29 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                     children: [
                       Text(
                         user.name,
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         'ADMIN',
-                        style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 11),
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 11,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 IconButton(
                   onPressed: () => _logout(),
-                  icon: const Icon(Icons.logout, color: Colors.white70, size: 20),
+                  icon: const Icon(
+                    Icons.logout,
+                    color: Colors.white70,
+                    size: 20,
+                  ),
                 ),
               ],
             ),
@@ -204,7 +213,6 @@ class _AdminShellState extends ConsumerState<AdminShell> {
     return InkWell(
       onTap: () {
         context.go(route);
-        // Close drawer on mobile
         final isMobile = MediaQuery.of(context).size.width < 768;
         if (isMobile) {
           Navigator.of(context).pop();
@@ -214,17 +222,24 @@ class _AdminShellState extends ConsumerState<AdminShell> {
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.2) : Colors.transparent,
+          color: isSelected
+              ? AppTheme.primaryColor.withValues(alpha: 0.2)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: isSelected
-              ? Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.5), width: 1)
+              ? Border.all(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.5),
+                  width: 1,
+                )
               : null,
         ),
         child: Row(
           children: [
             Icon(
               icon,
-              color: isSelected ? AppTheme.primaryColor : Colors.white.withValues(alpha: 0.7),
+              color: isSelected
+                  ? AppTheme.primaryColor
+                  : Colors.white.withValues(alpha: 0.7),
               size: 22,
             ),
             const SizedBox(width: 12),
@@ -232,7 +247,9 @@ class _AdminShellState extends ConsumerState<AdminShell> {
               child: Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.7),
+                  color: isSelected
+                      ? Colors.white
+                      : Colors.white.withValues(alpha: 0.7),
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   fontSize: 14,
                 ),
@@ -247,7 +264,11 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                 ),
                 child: Text(
                   badge.toString(),
-                  style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
           ],
@@ -256,14 +277,18 @@ class _AdminShellState extends ConsumerState<AdminShell> {
     );
   }
 
-  // MOBILE top bar: hamburger + search + notifications
   Widget _buildMobileTopBar(BuildContext context, User user) {
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -283,10 +308,13 @@ class _AdminShellState extends ConsumerState<AdminShell> {
             child: const Icon(Icons.home_work, color: Colors.white, size: 18),
           ),
           const SizedBox(width: 8),
-          const Text('APS Dream Home', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text(
+            'APS Dream Home',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
           const Spacer(),
           IconButton(
-            onPressed: () {},
+            onPressed: () => context.push('/notifications'),
             icon: const Icon(Icons.notifications_outlined, size: 22),
           ),
         ],
@@ -294,21 +322,24 @@ class _AdminShellState extends ConsumerState<AdminShell> {
     );
   }
 
-  // DESKTOP top bar: search + notifications + user
   Widget _buildDesktopTopBar(BuildContext context, User user) {
     return Container(
       height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+          ),
+        ],
       ),
       child: Row(
         children: [
           Expanded(
-            child: Container(
+            child: SizedBox(
               height: 44,
-              constraints: const BoxConstraints(maxWidth: 400),
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search...',
@@ -327,7 +358,7 @@ class _AdminShellState extends ConsumerState<AdminShell> {
           Stack(
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () => context.push('/notifications'),
                 icon: const Icon(Icons.notifications_outlined),
               ),
               Positioned(
@@ -336,7 +367,10 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                 child: Container(
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
             ],
@@ -348,8 +382,26 @@ class _AdminShellState extends ConsumerState<AdminShell> {
               if (value == 'settings') context.push('/admin/settings');
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'profile', child: Row(children: [Icon(Icons.person_outline), SizedBox(width: 8), Text('Profile')])),
-              const PopupMenuItem(value: 'settings', child: Row(children: [Icon(Icons.settings_outlined), SizedBox(width: 8), Text('Settings')])),
+              const PopupMenuItem(
+                value: 'profile',
+                child: Row(
+                  children: [
+                    Icon(Icons.person_outline),
+                    SizedBox(width: 8),
+                    Text('Profile'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'settings',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings_outlined),
+                    SizedBox(width: 8),
+                    Text('Settings'),
+                  ],
+                ),
+              ),
             ],
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -364,11 +416,18 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                     backgroundColor: AppTheme.primaryColor,
                     child: Text(
                       user.name.substring(0, 1).toUpperCase(),
-                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Text(user.name.split(' ')[0], style: const TextStyle(fontWeight: FontWeight.w500)),
+                  Text(
+                    user.name.split(' ')[0],
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
                   const Icon(Icons.arrow_drop_down),
                 ],
               ),
@@ -381,21 +440,81 @@ class _AdminShellState extends ConsumerState<AdminShell> {
 
   List<Map<String, dynamic>> _getMenuItems(String subRole) {
     final commonItems = [
-      {'icon': Icons.dashboard_outlined, 'label': 'Dashboard', 'route': '/admin', 'badge': 0},
-      {'icon': Icons.campaign_outlined, 'label': 'CRM', 'route': '/admin/crm', 'badge': 28},
-      {'icon': Icons.book_online_outlined, 'label': 'Bookings', 'route': '/admin/bookings', 'badge': 5},
-      {'icon': Icons.people_outline, 'label': 'Customers', 'route': '/admin/customers', 'badge': 0},
-      {'icon': Icons.assessment_outlined, 'label': 'Reports', 'route': '/admin/reports', 'badge': 0},
+      {
+        'icon': Icons.dashboard_outlined,
+        'label': 'Dashboard',
+        'route': '/admin',
+        'badge': 0,
+      },
+      {
+        'icon': Icons.campaign_outlined,
+        'label': 'CRM',
+        'route': '/admin/crm',
+        'badge': 28,
+      },
+      {
+        'icon': Icons.book_online_outlined,
+        'label': 'Bookings',
+        'route': '/admin/bookings',
+        'badge': 5,
+      },
+      {
+        'icon': Icons.people_outline,
+        'label': 'Customers',
+        'route': '/admin/customers',
+        'badge': 0,
+      },
+      {
+        'icon': Icons.assessment_outlined,
+        'label': 'Reports',
+        'route': '/admin/reports',
+        'badge': 0,
+      },
     ];
 
     final directorItems = [
-      {'icon': Icons.location_city_outlined, 'label': 'Colonies', 'route': '/admin/colonies', 'badge': 0},
-      {'icon': Icons.map_outlined, 'label': 'Plots', 'route': '/admin/plots', 'badge': 12},
-      {'icon': Icons.group_outlined, 'label': 'Employees', 'route': '/admin/employees', 'badge': 0},
-      {'icon': Icons.account_balance_wallet_outlined, 'label': 'Commissions', 'route': '/admin/commissions', 'badge': 8},
-      {'icon': Icons.payments_outlined, 'label': 'Payouts', 'route': '/admin/payouts', 'badge': 3},
-      {'icon': Icons.account_balance_outlined, 'label': 'Accounts', 'route': '/admin/accounts', 'badge': 0},
-      {'icon': Icons.settings_outlined, 'label': 'Settings', 'route': '/admin/settings', 'badge': 0},
+      {
+        'icon': Icons.location_city_outlined,
+        'label': 'Colonies',
+        'route': '/admin/colonies',
+        'badge': 0,
+      },
+      {
+        'icon': Icons.map_outlined,
+        'label': 'Plots',
+        'route': '/admin/plots',
+        'badge': 12,
+      },
+      {
+        'icon': Icons.group_outlined,
+        'label': 'Employees',
+        'route': '/admin/employees',
+        'badge': 0,
+      },
+      {
+        'icon': Icons.account_balance_wallet_outlined,
+        'label': 'Commissions',
+        'route': '/admin/commissions',
+        'badge': 8,
+      },
+      {
+        'icon': Icons.payments_outlined,
+        'label': 'Payouts',
+        'route': '/admin/payouts',
+        'badge': 3,
+      },
+      {
+        'icon': Icons.account_balance_outlined,
+        'label': 'Accounts',
+        'route': '/admin/accounts',
+        'badge': 0,
+      },
+      {
+        'icon': Icons.settings_outlined,
+        'label': 'Settings',
+        'route': '/admin/settings',
+        'badge': 0,
+      },
     ];
 
     switch (subRole.toLowerCase()) {
@@ -412,8 +531,11 @@ class _AdminShellState extends ConsumerState<AdminShell> {
     return currentRoute == route || currentRoute.startsWith('$route/');
   }
 
-  void _logout() {
-    ref.read(authProvider.notifier).logout();
-    context.go('/login');
+  Future<void> _logout() async {
+    try {
+      await AuthService().logout();
+    } catch (_) {}
+    AuthBridge.instance.currentUser.value = null;
+    if (mounted) context.go('/login');
   }
 }

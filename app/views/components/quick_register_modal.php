@@ -4,42 +4,42 @@
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title fw-bold" id="quickRegisterModalLabel">
-                    <i class="fas fa-user-plus me-2 text-primary"></i>__('component_quick_register', 'Quick Register')
+                    <i class="fas fa-user-plus me-2 text-primary"></i><?= __('component_quick_register', 'Quick Register') ?>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="text-muted mb-4">__('component_join_aps_seconds', 'Join APS Dream Home in seconds! No password needed.')</p>
+                <p class="text-muted mb-4"><?= __('component_join_aps_seconds', 'Join APS Dream Home in seconds! No password needed.') ?></p>
                 
                 <form id="quickRegisterForm">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">__('component_full_name', 'Full Name') *</label>
-                        <input type="text" class="form-control" id="qrName" name="name" required placeholder="htmlspecialchars(__('component_enter_full_name', 'Enter your full name'))">
+                        <label class="form-label fw-bold"><?= __('component_full_name', 'Full Name') ?> *</label>
+                        <input type="text" class="form-control" id="qrName" name="name" required placeholder="<?= htmlspecialchars(__('component_enter_full_name', 'Enter your full name')) ?>">
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">__('component_email', 'Email') *</label>
-                        <input type="email" class="form-control" id="qrEmail" name="email" required placeholder="htmlspecialchars(__('component_enter_email', 'Enter your email'))">
+                        <label class="form-label fw-bold"><?= __('component_email', 'Email') ?> *</label>
+                        <input type="email" class="form-control" id="qrEmail" name="email" required placeholder="<?= htmlspecialchars(__('component_enter_email', 'Enter your email')) ?>">
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">__('component_phone_number', 'Phone Number') *</label>
-                        <input type="tel" class="form-control" id="qrPhone" name="phone" required placeholder="htmlspecialchars(__('component_enter_phone_10', 'Enter 10-digit phone number'))" pattern="[0-9]{10}">
+                        <label class="form-label fw-bold"><?= __('component_phone_number', 'Phone Number') ?> *</label>
+                        <input type="tel" class="form-control" id="qrPhone" name="phone" required placeholder="<?= htmlspecialchars(__('component_enter_phone_10', 'Enter 10-digit phone number')) ?>" pattern="[0-9]{10}">
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">__('component_referral_code_optional', 'Referral Code (Optional)')</label>
+                        <label class="form-label fw-bold"><?= __('component_referral_code_optional', 'Referral Code (Optional)') ?></label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="qrReferralCode" name="referral_code" placeholder="htmlspecialchars(__('component_enter_referral_placeholder', 'Enter referral code for 5% discount'))">
+                            <input type="text" class="form-control" id="qrReferralCode" name="referral_code" placeholder="<?= htmlspecialchars(__('component_enter_referral_placeholder', 'Enter referral code for 5% discount')) ?>">
                             <button type="button" class="btn btn-outline-primary" onclick="requestReferralCode()">
                                 <i class="fas fa-ticket-alt me-1"></i>Request Code
                             </button>
                         </div>
-                        <small class="text-muted">__('component_get_referral_small', 'Get referral code if you want to join as Associate/Agent')</small>
+                        <small class="text-muted"><?= __('component_get_referral_small', 'Get referral code if you want to join as Associate/Agent') ?></small>
                     </div>
                     
                     <button type="button" class="btn btn-primary w-100 py-3 fw-bold" onclick="submitQuickRegister()">
-                        <i class="fas fa-check-circle me-2"></i>__('component_register_now', 'Register Now')
+                        <i class="fas fa-check-circle me-2"></i><?= __('component_register_now', 'Register Now') ?>
                     </button>
                     
                     <div class="text-center mt-3">
@@ -56,7 +56,7 @@
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
-                        <p class="mt-3">__('component_creating_account', 'Creating your account...')</p>
+                        <p class="mt-3"><?= __('component_creating_account', 'Creating your account...') ?></p>
                     </div>
                 </div>
             </div>
@@ -70,31 +70,31 @@
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title fw-bold" id="referralRequestModalLabel">
-                    <i class="fas fa-ticket-alt me-2 text-primary"></i>__('component_request_referral_code', 'Request Referral Code')
+                    <i class="fas fa-ticket-alt me-2 text-primary"></i><?= __('component_request_referral_code', 'Request Referral Code') ?>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="text-muted mb-4">__('component_get_company_referral', 'Get your company referral code to join as Associate/Agent!')</p>
+                <p class="text-muted mb-4"><?= __('component_get_company_referral', 'Get your company referral code to join as Associate/Agent!') ?></p>
                 
                 <form id="referralRequestForm">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">__('component_full_name', 'Full Name') *</label>
-                        <input type="text" class="form-control" id="rrName" name="name" required placeholder="htmlspecialchars(__('component_enter_full_name', 'Enter your full name'))">
+                        <label class="form-label fw-bold"><?= __('component_full_name', 'Full Name') ?> *</label>
+                        <input type="text" class="form-control" id="rrName" name="name" required placeholder="<?= htmlspecialchars(__('component_enter_full_name', 'Enter your full name')) ?>">
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">__('component_email', 'Email') *</label>
-                        <input type="email" class="form-control" id="rrEmail" name="email" required placeholder="htmlspecialchars(__('component_enter_email', 'Enter your email'))">
+                        <label class="form-label fw-bold"><?= __('component_email', 'Email') ?> *</label>
+                        <input type="email" class="form-control" id="rrEmail" name="email" required placeholder="<?= htmlspecialchars(__('component_enter_email', 'Enter your email')) ?>">
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">__('component_phone_number', 'Phone Number') *</label>
-                        <input type="tel" class="form-control" id="rrPhone" name="phone" required placeholder="htmlspecialchars(__('component_enter_phone_10', 'Enter 10-digit phone number'))" pattern="[0-9]{10}">
+                        <label class="form-label fw-bold"><?= __('component_phone_number', 'Phone Number') ?> *</label>
+                        <input type="tel" class="form-control" id="rrPhone" name="phone" required placeholder="<?= htmlspecialchars(__('component_enter_phone_10', 'Enter 10-digit phone number')) ?>" pattern="[0-9]{10}">
                     </div>
                     
                     <button type="button" class="btn btn-primary w-100 py-3 fw-bold" onclick="submitReferralRequest()">
-                        <i class="fas fa-paper-plane me-2"></i>__('component_request_code_btn2', 'Request Code')
+                        <i class="fas fa-paper-plane me-2"></i><?= __('component_request_code_btn2', 'Request Code') ?>
                     </button>
                 </form>
                 
@@ -103,16 +103,16 @@
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
-                        <p class="mt-3">__('component_processing_request', 'Processing your request...')</p>
+                        <p class="mt-3"><?= __('component_processing_request', 'Processing your request...') ?></p>
                     </div>
                 </div>
                 
                 <div id="rrResult" style="display: none;">
                     <div class="alert alert-success mt-3">
-                        <h6 class="fw-bold"><i class="fas fa-check-circle me-2"></i>__('component_referral_code_sent', 'Referral Code Sent!')</h6>
-                        <p class="mb-2">__('component_your_referral_code', 'Your company referral code:')</p>
+                        <h6 class="fw-bold"><i class="fas fa-check-circle me-2"></i><?= __('component_referral_code_sent', 'Referral Code Sent!') ?></h6>
+                        <p class="mb-2"><?= __('component_your_referral_code', 'Your company referral code:') ?></p>
                         <div class="fs-3 fw-bold text-center py-2" id="rrReferralCode"></div>
-                        <p class="mb-0 small">__('component_use_code_to_join', 'Use this code to join as Associate/Agent')</p>
+                        <p class="mb-0 small"><?= __('component_use_code_to_join', 'Use this code to join as Associate/Agent') ?></p>
                     </div>
                 </div>
             </div>

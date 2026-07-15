@@ -75,7 +75,7 @@ $page_description = 'Track and analyze customer journeys';
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted mb-1">Avg Duration</h6>
-                            <h3 class="mb-0">12 days</h3>
+                            <h3 class="mb-0"><?= ($stats['avg_duration'] ?? null) ? round((float)$stats['avg_duration']) . ' days' : 'N/A' ?></h3>
                         </div>
                     </div>
                 </div>

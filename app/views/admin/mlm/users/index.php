@@ -41,8 +41,9 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="<?= BASE_URL ?>admin/mlm/users/<?= $a['id'] ?? 0 ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
-                                    <a href="<?= BASE_URL ?>admin/mlm/users/edit/<?= $a['id'] ?? 0 ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="<?= BASE_URL ?>admin/users/<?= $a['user_id'] ?? $a['id'] ?? 0 ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
+                                    <a href="<?= BASE_URL ?>admin/users/<?= $a['user_id'] ?? $a['id'] ?? 0 ?>/wallet" class="btn btn-sm btn-outline-success" title="Wallet"><i class="fas fa-wallet"></i></a>
+                                    <a href="<?= BASE_URL ?>admin/users/<?= $a['user_id'] ?? $a['id'] ?? 0 ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

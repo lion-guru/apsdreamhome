@@ -49,8 +49,12 @@ class TeamController extends AdminController
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
         $linkedin = trim($_POST['linkedin'] ?? '');
+        $facebook_url = trim($_POST['facebook_url'] ?? '');
+        $instagram_url = trim($_POST['instagram_url'] ?? '');
         $expertise = trim($_POST['expertise'] ?? '');
         $experience = trim($_POST['experience'] ?? '');
+        $category = trim($_POST['category'] ?? 'department');
+        $group_name = trim($_POST['group_name'] ?? '');
         $sortOrder = (int)($_POST['sort_order'] ?? 0);
         $status = $_POST['status'] ?? 'active';
 
@@ -66,8 +70,8 @@ class TeamController extends AdminController
             }
         }
 
-        $stmt = $this->db->prepare("INSERT INTO team_members (name, position, bio, photo, email, phone, linkedin, expertise, experience, sort_order, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-        $stmt->execute([$name, $position, $bio, $photo, $email, $phone, $linkedin, $expertise, $experience, $sortOrder, $status]);
+        $stmt = $this->db->prepare("INSERT INTO team_members (name, position, bio, photo, email, phone, linkedin, facebook_url, instagram_url, expertise, experience, category, group_name, sort_order, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        $stmt->execute([$name, $position, $bio, $photo, $email, $phone, $linkedin, $facebook_url, $instagram_url, $expertise, $experience, $category, $group_name, $sortOrder, $status]);
 
         $_SESSION['success'] = 'Team member added successfully.';
         header('Location: ' . BASE_URL . '/admin/team');
@@ -118,8 +122,12 @@ class TeamController extends AdminController
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
         $linkedin = trim($_POST['linkedin'] ?? '');
+        $facebook_url = trim($_POST['facebook_url'] ?? '');
+        $instagram_url = trim($_POST['instagram_url'] ?? '');
         $expertise = trim($_POST['expertise'] ?? '');
         $experience = trim($_POST['experience'] ?? '');
+        $category = trim($_POST['category'] ?? 'department');
+        $group_name = trim($_POST['group_name'] ?? '');
         $sortOrder = (int)($_POST['sort_order'] ?? 0);
         $status = $_POST['status'] ?? 'active';
         $photo = $member['photo'];
@@ -138,8 +146,8 @@ class TeamController extends AdminController
             }
         }
 
-        $stmt = $this->db->prepare("UPDATE team_members SET name=?, position=?, bio=?, photo=?, email=?, phone=?, linkedin=?, expertise=?, experience=?, sort_order=?, status=?, updated_at=NOW() WHERE id=?");
-        $stmt->execute([$name, $position, $bio, $photo, $email, $phone, $linkedin, $expertise, $experience, $sortOrder, $status, $id]);
+        $stmt = $this->db->prepare("UPDATE team_members SET name=?, position=?, bio=?, photo=?, email=?, phone=?, linkedin=?, facebook_url=?, instagram_url=?, expertise=?, experience=?, category=?, group_name=?, sort_order=?, status=?, updated_at=NOW() WHERE id=?");
+        $stmt->execute([$name, $position, $bio, $photo, $email, $phone, $linkedin, $facebook_url, $instagram_url, $expertise, $experience, $category, $group_name, $sortOrder, $status, $id]);
 
         $_SESSION['success'] = 'Team member updated successfully.';
         header('Location: ' . BASE_URL . '/admin/team');

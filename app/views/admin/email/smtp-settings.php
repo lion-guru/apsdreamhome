@@ -142,7 +142,7 @@ function testSmtpConnection() {
     const btn = event.target;
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Testing...';
-    fetch('<?= BASE_URL ?>admin/settings/smtp-test', {
+    fetch('<?= BASE_URL ?>admin/settings/email-config/test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         body: JSON.stringify({ test: true })

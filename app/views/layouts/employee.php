@@ -131,7 +131,7 @@ use App\Services\PortalMenuService;
                 </nav>
             </div>
             <div class="header-actions">
-                <a href="<?= BASE_URL ?>/user/notifications" class="btn-icon" title="Notifications"><i class="fas fa-bell"></i></a>
+                <a href="<?= BASE_URL ?>/employee/notifications" class="btn-icon" title="Notifications"><i class="fas fa-bell"></i></a>
             </div>
         </header>
         <div class="content-wrapper" id="aps-main-content">

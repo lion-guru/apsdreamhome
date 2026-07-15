@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 
 class FaqPage extends StatefulWidget {
@@ -173,17 +175,13 @@ class _FaqPageState extends State<FaqPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Help Center'),
-      ),
+      appBar: AppBar(title: const Text('Help Center')),
       body: Column(
         children: [
           _buildSearchBar(),
           _buildCategoryTabs(),
           Expanded(
-            child: _filteredFaqs.isEmpty
-                ? _buildEmptyState()
-                : _buildFaqList(),
+            child: _filteredFaqs.isEmpty ? _buildEmptyState() : _buildFaqList(),
           ),
         ],
       ),
@@ -200,8 +198,11 @@ class _FaqPageState extends State<FaqPage> {
         style: const TextStyle(fontSize: 14),
         decoration: InputDecoration(
           hintText: 'Search questions...',
-          prefixIcon:
-              const Icon(Icons.search, size: 20, color: AppTheme.primaryColor),
+          prefixIcon: const Icon(
+            Icons.search,
+            size: 20,
+            color: AppTheme.primaryColor,
+          ),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.clear, size: 18),
@@ -217,8 +218,10 @@ class _FaqPageState extends State<FaqPage> {
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
         ),
       ),
     );
@@ -296,8 +299,7 @@ class _FaqPageState extends State<FaqPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.help_outline,
-                size: 64, color: Colors.grey.shade300),
+            Icon(Icons.help_outline, size: 64, color: Colors.grey.shade300),
             const SizedBox(height: 16),
             const Text(
               'No questions found',
@@ -310,10 +312,7 @@ class _FaqPageState extends State<FaqPage> {
             const SizedBox(height: 8),
             Text(
               'Try a different search term or category',
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey.shade500,
-              ),
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
             ),
           ],
         ),
@@ -326,9 +325,7 @@ class _FaqPageState extends State<FaqPage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
-        border: Border(
-          top: BorderSide(color: Colors.grey.shade200),
-        ),
+        border: Border(top: BorderSide(color: Colors.grey.shade200)),
       ),
       child: SafeArea(
         top: false,
@@ -348,7 +345,17 @@ class _FaqPageState extends State<FaqPage> {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final phoneUri = Uri.parse(
+                        'tel:${AppConstants.supportPhone}',
+                      );
+                      if (await canLaunchUrl(phoneUri)) {
+                        await launchUrl(
+                          phoneUri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    },
                     icon: const Icon(Icons.phone_outlined, size: 18),
                     label: const Text('Call Us'),
                     style: OutlinedButton.styleFrom(
@@ -364,7 +371,17 @@ class _FaqPageState extends State<FaqPage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final emailUri = Uri.parse(
+                        'mailto:support@apsdreamhome.com',
+                      );
+                      if (await canLaunchUrl(emailUri)) {
+                        await launchUrl(
+                          emailUri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    },
                     icon: const Icon(Icons.email_outlined, size: 18),
                     label: const Text('Email Support'),
                     style: ElevatedButton.styleFrom(
@@ -463,11 +480,7 @@ class _FaqExpansionTileState extends State<_FaqExpansionTile> {
           ),
           if (_expanded)
             Padding(
-              padding: const EdgeInsets.only(
-                left: 50,
-                right: 16,
-                bottom: 16,
-              ),
+              padding: const EdgeInsets.only(left: 50, right: 16, bottom: 16),
               child: Text(
                 widget.answer,
                 style: TextStyle(

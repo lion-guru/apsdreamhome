@@ -22,7 +22,7 @@ $job_types = $job_types ?? ['Full-time', 'Part-time', 'Contract', 'Internship'];
 
     <div class="card shadow-sm">
         <div class="card-body aps-cp-card-body">
-            <form id="createJobForm" method="POST" action="<?php echo BASE_URL; ?>/admin/jobs/store">
+            <form id="createJobForm" method="POST" action="<?php echo BASE_URL; ?>/admin/jobs/manage/store">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row">
                     <div class="col-md-6 mb-3">

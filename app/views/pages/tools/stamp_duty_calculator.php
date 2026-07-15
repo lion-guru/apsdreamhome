@@ -2,7 +2,7 @@
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><i class="fas fa-file-invoice-dollar me-2"></i><?php echo __('tool_stamp_duty_calc_title', [], 'Stamp Duty & Registration Calculator'); ?></h1>
-            <p class="text-white-50"><?php echo __('tool_stamp_duty_calc_subtitle', [], 'Property khareedne se pehle total government charges calculate karein'); ?></p>
+            <p class="text-white-50"><?php echo __('tool_stamp_duty_calc_subtitle', [], 'Calculate total government charges before buying property'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8">

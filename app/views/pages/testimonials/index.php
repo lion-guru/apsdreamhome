@@ -43,9 +43,10 @@ $stats = $stats ?? [];
     <?php if (!empty($featured)): ?>
         <div class="row g-4 mb-5">
             <?php foreach (array_slice($featured, 0, 3) as $t):
-                $initials = strtoupper(substr($t['customer_name'] ?? 'A', 0, 1));
-                if (strpos($t['customer_name'] ?? '', ' ') !== false) {
-                    $parts = explode(' ', $t['customer_name']);
+                $customerName = $t['customer_name'] ?? 'Happy Customer';
+                $initials = strtoupper(substr($customerName, 0, 1));
+                if (strpos($customerName, ' ') !== false) {
+                    $parts = explode(' ', $customerName);
                     $initials = strtoupper(substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''));
                 }
             ?>
@@ -87,10 +88,11 @@ $stats = $stats ?? [];
         </div>
     <?php else: ?>
         <div class="row g-4">
-            <?php foreach ($testimonials as $t):
-                $initials = strtoupper(substr($t['customer_name'] ?? 'A', 0, 1));
-                if (strpos($t['customer_name'] ?? '', ' ') !== false) {
-                    $parts = explode(' ', $t['customer_name']);
+<?php foreach ($testimonials as $t):
+                $customerName = $t['customer_name'] ?? 'Happy Customer';
+                $initials = strtoupper(substr($customerName, 0, 1));
+                if (strpos($customerName, ' ') !== false) {
+                    $parts = explode(' ', $customerName);
                     $initials = strtoupper(substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''));
                 }
             ?>
@@ -105,7 +107,7 @@ $stats = $stats ?? [];
                         <div class="d-flex align-items-center">
                             <div class="testimonial-avatar me-3"><?= $initials ?></div>
                             <div>
-                                <strong class="d-block"><?= htmlspecialchars($t['customer_name']) ?></strong>
+                                <strong class="d-block"><?= htmlspecialchars($customerName) ?></strong>
                                 <small class="text-muted">
                                     <?php if ($t['project_name']): ?>
                                         <i class="fas fa-building me-1"></i><?= htmlspecialchars($t['project_name']) ?>

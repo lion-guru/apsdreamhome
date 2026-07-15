@@ -195,18 +195,30 @@ if (defined('APP_ROOT')) {
     $autoloader->addClassMap('App\Http\Controllers\Api\ReferralController', \APP_ROOT . '/app/Http/Controllers/Admin/ReferralController.php');
     $autoloader->addClassMap('App\Http\Controllers\Api\AuthController', \APP_ROOT . '/app/Http/Controllers/AuthController.php');
 
-    // Register BaseAgent (class is in Agents/ directory but namespace says 'users')
+    // Register BaseAgent (class is in Agents/ directory but namespace was 'users')
     $autoloader->addClassMap('App\Services\AI\users\BaseAgent', \APP_ROOT . '/app/Services/AI/Agents/BaseAgent.php');
     $autoloader->addClassMap('App\Services\AI\users\AgentInterface', \APP_ROOT . '/app/Services/AI/Agents/AgentInterface.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\BaseAgent', \APP_ROOT . '/app/Services/AI/Agents/BaseAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\AgentInterface', \APP_ROOT . '/app/Services/AI/Agents/AgentInterface.php');
+    // WhatsAppAgent archived — broken require_once deps, never instantiated
+    $autoloader->addClassMap('App\Services\AI\users\specialized\LeadGenerationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/LeadGenerationAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\LeadGenerationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/LeadGenerationAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\EMICollectionAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/EMICollectionAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\EMICollectionAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/EMICollectionAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\ResearchAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/ResearchAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\ResearchAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/ResearchAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\DataAnalysisAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/DataAnalysisAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\DataAnalysisAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/DataAnalysisAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\ContentCreationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/ContentCreationAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\ContentCreationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/ContentCreationAgent.php');
+    $autoloader->addClassMap('App\Services\AI\users\specialized\RecommendationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/RecommendationAgent.php');
+    $autoloader->addClassMap('App\Services\AI\Agents\specialized\RecommendationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/RecommendationAgent.php');
 
     // Register legacy managers for backward compatibility
     $autoloader->addClassMap('Cache', \APP_ROOT . '/app/Core/Cache.php');
     $autoloader->addClassMap('App\Core\Cache', \APP_ROOT . '/app/Core/Cache.php');
     $autoloader->addClassMap('RedisCache', \APP_ROOT . '/app/Core/RedisCache.php');
     $autoloader->addClassMap('App\Core\RedisCache', \APP_ROOT . '/app/Core/RedisCache.php');
-    $autoloader->addClassMap('UserManager', \APP_ROOT . '/includes/managers.php');
-    $autoloader->addClassMap('PropertyManager', \APP_ROOT . '/includes/managers.php');
-    $autoloader->addClassMap('ContactManager', \APP_ROOT . '/includes/managers.php');
     $autoloader->addClassMap('UploadValidator', \APP_ROOT . '/app/helpers/UploadValidator.php');
 
     // Alias the namespaced CacheService to the legacy global name
@@ -215,23 +227,6 @@ if (defined('APP_ROOT')) {
     if (PHP_VERSION_ID >= 80000 && !class_exists('CacheService', false)) {
         class_alias('App\Services\CacheService', 'CacheService');
     }
-}
-
-// Register legacy managers for backward compatibility
-$autoloader->addClassMap('Cache', \APP_ROOT . '/app/Core/Cache.php');
-$autoloader->addClassMap('App\Core\Cache', \APP_ROOT . '/app/Core/Cache.php');
-$autoloader->addClassMap('RedisCache', \APP_ROOT . '/app/Core/RedisCache.php');
-$autoloader->addClassMap('App\Core\RedisCache', \APP_ROOT . '/app/Core/RedisCache.php');
-$autoloader->addClassMap('UserManager', \APP_ROOT . '/includes/managers.php');
-$autoloader->addClassMap('PropertyManager', \APP_ROOT . '/includes/managers.php');
-$autoloader->addClassMap('ContactManager', \APP_ROOT . '/includes/managers.php');
-$autoloader->addClassMap('UploadValidator', \APP_ROOT . '/app/helpers/UploadValidator.php');
-
-// Alias the namespaced CacheService to the legacy global name
-// so any pre-namespace references (e.g. `CacheService::getProjects()`)
-// continue to work.
-if (PHP_VERSION_ID >= 80000 && !class_exists('CacheService', false)) {
-    class_alias('App\\Services\\CacheService', 'CacheService');
 }
 
 // Ensure AppConfig is autoloaded from legacy config

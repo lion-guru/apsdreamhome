@@ -7,7 +7,8 @@ class AdminNotificationController extends AdminController
 
     public function __construct() {
         parent::__construct();
-        $this->notificationService = new \App\Services\AdminNotificationService();
+        $db = \App\Core\Database\Database::getInstance();
+        $this->notificationService = new \App\Services\NotificationService($db);
     }
 
     public function index() {

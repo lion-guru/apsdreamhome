@@ -4,16 +4,11 @@
  * APS Dream Home - Public Index (Main Entry Point)
  */
 
-// Start session FIRST
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Define APS_ROOT
+// Define APS_ROOT FIRST
 define('APS_ROOT', dirname(__DIR__));
 define('APS_PUBLIC', __DIR__);
 
-// Load the proper bootstrap (config, autoloader, BASE_URL, everything)
+// Load bootstrap (config, session settings, autoloader, BASE_URL, everything)
 require_once APS_ROOT . '/config/bootstrap.php';
 
 // Define APS-specific constants
@@ -21,6 +16,11 @@ if (!defined('APS_APP')) define('APS_APP', APS_ROOT . '/app');
 if (!defined('APS_CONFIG')) define('APS_CONFIG', APS_ROOT . '/config');
 if (!defined('APS_STORAGE')) define('APS_STORAGE', APS_ROOT . '/storage');
 if (!defined('APS_LOGS')) define('APS_LOGS', APS_ROOT . '/logs');
+
+// Session configuration from bootstrap - session_start() will use these settings
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Error reporting
 error_reporting(E_ALL);

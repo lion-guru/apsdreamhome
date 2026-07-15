@@ -50,18 +50,19 @@ class LeadController extends AdminController
             $email = trim($_POST['email'] ?? '');
             $source = trim($_POST['source'] ?? 'manual');
             $status = trim($_POST['status'] ?? 'new');
-            $notes = trim($_POST['notes'] ?? '');
+            $notes = trim($_POST['notes'] ?? $_POST['message'] ?? '');
             $assigned_to = !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
             $budget = !empty($_POST['budget']) ? floatval($_POST['budget']) : null;
             $location_pref = trim($_POST['location_preference'] ?? '');
+            $source_id = !empty($_POST['source_id']) ? (int)$_POST['source_id'] : null;
 
             if (empty($name)) {
                 $this->setFlash('error', 'Lead name is required');
                 return $this->redirect('/admin/leads/create');
             }
 
-            $stmt = $db->prepare("INSERT INTO leads (name, phone, email, source, status, assigned_to, budget, location_preference, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-            $stmt->execute([$name, $phone, $email, $source, $status, $assigned_to, $budget, $location_pref, $notes]);
+            $stmt = $db->prepare("INSERT INTO leads (name, phone, email, source, source_id, status, assigned_to, budget, location_preference, notes, message, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->execute([$name, $phone, $email, $source, $source_id, $status, $assigned_to, $budget, $location_pref, $notes, $notes]);
             $leadId = $db->lastInsertId();
 
             try {
@@ -301,9 +302,11 @@ class LeadController extends AdminController
     public function destroy($id) { try { \App\Models\Lead::delete($id); $this->setFlash('success', 'Lead deleted'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect('/admin/leads'); }
     public function addNote($id) {
         try {
+            $noteText = $_POST['note'] ?? '';
             \App\Models\LeadNote::create([
                 'lead_id' => $id,
-                'note' => $_POST['note'] ?? '',
+                'note' => $noteText,
+                'content' => $noteText,
                 'created_by' => $_SESSION['admin_id'] ?? 0,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);

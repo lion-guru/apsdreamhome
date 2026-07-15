@@ -86,13 +86,27 @@ class ReportsPage extends ConsumerWidget {
                   Row(
                     children: [
                       OutlinedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Date filter: This Month'),
+                            ),
+                          );
+                        },
                         icon: const Icon(Icons.calendar_today),
                         label: const Text('This Month'),
                       ),
                       const SizedBox(width: 12),
                       ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Export report via web admin panel',
+                              ),
+                            ),
+                          );
+                        },
                         icon: const Icon(Icons.download),
                         label: const Text('Export'),
                       ),
@@ -234,7 +248,18 @@ class ReportsPage extends ConsumerWidget {
                   child: Icon(icon, color: color),
                 ),
                 const Spacer(),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+                IconButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '$title — Details available on web admin panel',
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.more_vert),
+                ),
               ],
             ),
             const Spacer(),

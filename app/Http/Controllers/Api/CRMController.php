@@ -19,9 +19,43 @@ class CRMController extends BaseController
     }
 
     private function getUser() {
+        // Check session first (web admin panel)
+        $userId = $_SESSION['user_id'] ?? null;
+        $role = $_SESSION['role'] ?? null;
+
+        // Fallback: check Bearer token (Flutter mobile app)
+        if (!$userId) {
+            $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+            if (preg_match('/^Bearer\s+(.+)$/i', $authHeader, $m)) {
+                $token = $m[1];
+                try {
+                    $db = \App\Core\Database::getInstance()->getPdo();
+                    $stmt = $db->prepare("SELECT user_id FROM api_tokens WHERE token = ? AND expires_at > NOW() LIMIT 1");
+                    $stmt->execute([$token]);
+                    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                    if ($row) {
+                        $userId = (int)$row['user_id'];
+                        // Fetch user role
+                        $stmt2 = $db->prepare("SELECT role FROM users WHERE id = ?");
+                        $stmt2->execute([$userId]);
+                        $u = $stmt2->fetch(\PDO::FETCH_ASSOC);
+                        $role = $u['role'] ?? 'associate';
+                    }
+                } catch (\Throwable $e) {
+                    // ignore
+                }
+            }
+        }
+
+        // Also check $GLOBALS set by ApiAuthMiddleware
+        if (!$userId) {
+            $userId = $GLOBALS['api_user_id'] ?? null;
+            $role = $GLOBALS['api_user_role'] ?? null;
+        }
+
         return [
-            'id' => $_SESSION['user_id'] ?? null,
-            'role' => $_SESSION['role'] ?? null,
+            'id' => $userId,
+            'role' => $role,
         ];
     }
 
@@ -125,6 +159,11 @@ class CRMController extends BaseController
         }
 
         $result = $this->crm->createLead($input);
+        if ($result['success'] && !empty($result['lead_id'])) {
+            // Fetch the full lead object so Flutter can parse it
+            $lead = $this->crm->getLeadById($result['lead_id']);
+            $result['data'] = $lead ?? $result;
+        }
         $this->json($result, $result['success'] ? 201 : 400);
     }
 

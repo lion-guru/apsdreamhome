@@ -338,10 +338,11 @@ class HybridCommissionEngine
             }
 
             // ── 1. Compute global cap envelope ────────────────────
-            $totalCap    = $amountReceived * (self::GLOBAL_CAP_PCT / 100);
-            $trackABudget = $amountReceived * (self::TRACK_A_CAP_PCT / 100);
-            $trackBBudget = $amountReceived * (self::TRACK_B_CAP_PCT / 100);
-            $trackCBudget = $amountReceived * (self::TRACK_C_CAP_PCT / 100);
+            $caps = $this->getActivePlanCaps();
+            $totalCap    = $amountReceived * ($caps['global_cap'] / 100);
+            $trackABudget = $amountReceived * ($caps['track_a'] / 100);
+            $trackBBudget = $amountReceived * ($caps['track_b'] / 100);
+            $trackCBudget = $amountReceived * ($caps['track_c'] / 100);
 
             // ── 2. Resolve booking + agent context ────────────────
             $booking  = $this->fetchBooking($bookingId);
@@ -859,9 +860,14 @@ class HybridCommissionEngine
 
     /**
      * Get the commission rate for a given rank.
+     * Reads from DB first, falls back to hardcoded constants.
      */
     public function getRankRate(string $rankSlug): float
     {
+        $dbSlabs = $this->loadRankSlabsFromDb();
+        if (isset($dbSlabs[$rankSlug])) {
+            return (float)($dbSlabs[$rankSlug]['commission_rate'] ?? 0);
+        }
         return self::RANK_SLABS[$rankSlug]['rate'] ?? 0;
     }
 
@@ -871,7 +877,7 @@ class HybridCommissionEngine
 
     public function getRankSlabs(): array
     {
-        return self::RANK_SLABS;
+        return $this->loadRankSlabsFromDb();
     }
 
     public function getSalaryTiers(): array
@@ -952,9 +958,12 @@ class HybridCommissionEngine
         $ledgerIds  = [];
         $distributed = 0.0;
 
+        // Load rank slabs from DB (falls back to hardcoded if empty)
+        $rankSlabs = $this->loadRankSlabsFromDb();
+
         // Resolve the executing agent's own rank and rate
         $agentRank = $this->resolveRank($agentId);
-        $agentRate = self::RANK_SLABS[$agentRank]['rate'];
+        $agentRate = $rankSlabs[$agentRank]['commission_rate'] ?? (self::RANK_SLABS[$agentRank]['rate'] ?? 0);
 
         // Build upline chain (up to 7 levels deep)
         $upline = $this->getUplineChain($agentId, 7);
@@ -978,7 +987,7 @@ class HybridCommissionEngine
         $prevRate = $agentRate;
         foreach ($upline as $gen) {
             $uplineRank = $gen['rank'];
-            $uplineRate = self::RANK_SLABS[$uplineRank]['rate'];
+            $uplineRate = $rankSlabs[$uplineRank]['commission_rate'] ?? (self::RANK_SLABS[$uplineRank]['rate'] ?? 0);
             $userId     = $gen['user_id'];
 
             // Cap reached — stop
@@ -1264,6 +1273,7 @@ class HybridCommissionEngine
 
     /**
      * Write a single commission row to mlm_commission_ledger.
+     * PLAN SAFETY: Captures plan snapshot so past entries are immutable.
      *
      * @return int ledger row id
      */
@@ -1279,12 +1289,17 @@ class HybridCommissionEngine
         int    $receiptId,
         string $notes
     ): int {
+        // Capture plan snapshot for this calculation
+        $planSnapshot = $this->getActivePlanSnapshot();
+
         $stmt = $this->pdo->prepare("
             INSERT INTO mlm_commission_ledger
                 (beneficiary_user_id, source_user_id, commission_type, amount,
                  level, sale_amount, commission_percentage, status, notes,
-                 property_id, booking_id, receipt_id, hold_until, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 45 DAY), NOW())
+                 property_id, booking_id, receipt_id, hold_until, created_at,
+                 plan_id, plan_version, plan_snapshot, calculation_engine)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 45 DAY), NOW(),
+                    ?, ?, ?, 'hybrid')
         ");
         $stmt->execute([
             $beneficiaryId,
@@ -1298,6 +1313,9 @@ class HybridCommissionEngine
             null, // property_id
             $bookingId > 0 ? $bookingId : null,
             $receiptId > 0 ? $receiptId : null,
+            $planSnapshot['plan_id'] ?? null,
+            $planSnapshot['plan_version'] ?? null,
+            $planSnapshot ? json_encode($planSnapshot) : null,
         ]);
         $ledgerId = (int) $this->pdo->lastInsertId();
 
@@ -1472,7 +1490,8 @@ class HybridCommissionEngine
     public function contributeToRoyaltyPool(int $bookingId, float $amountReceived): array
     {
         try {
-            $contribution = round($amountReceived * (self::ROYALTY_POOL_PCT / 100), 2);
+            $caps = $this->getActivePlanCaps();
+            $contribution = round($amountReceived * ($caps['royalty_pool'] / 100), 2);
             if ($contribution <= 0) {
                 return ['success' => true, 'contribution' => 0, 'pool_total' => 0];
             }
@@ -1568,14 +1587,22 @@ class HybridCommissionEngine
             $ledgerIds = [];
 
             foreach ($qualified as $mgr) {
+                $planSnapshot = $this->getActivePlanSnapshot();
                 $stmt = $this->pdo->prepare("
                     INSERT INTO mlm_commission_ledger
                         (beneficiary_user_id, source_user_id, commission_type, amount, sale_amount,
-                         commission_percentage, status, notes, created_at)
-                    VALUES (?, ?, 'royalty_pool', ?, ?, 0, 'pending', ?, NOW())
+                         commission_percentage, status, notes, created_at,
+                         plan_id, plan_version, plan_snapshot, calculation_engine)
+                    VALUES (?, ?, 'royalty_pool', ?, ?, 0, 'pending', ?, NOW(),
+                            ?, ?, ?, 'hybrid')
                 ");
                 $note = "Site Manager Royalty Pool — {$monthYear} share (Pool: ₹" . number_format($poolAmount) . " ÷ {$managerCount} managers)";
-                $stmt->execute([$mgr['user_id'], $mgr['user_id'], $perShare, $poolAmount, $note]);
+                $stmt->execute([
+                    $mgr['user_id'], $mgr['user_id'], $perShare, $poolAmount, $note,
+                    $planSnapshot['plan_id'] ?? null,
+                    $planSnapshot['plan_version'] ?? null,
+                    $planSnapshot ? json_encode($planSnapshot) : null,
+                ]);
                 $ledgerIds[] = $this->pdo->lastInsertId();
             }
 
@@ -1712,6 +1739,119 @@ class HybridCommissionEngine
     }
 
     /**
+     * Get active plan snapshot for ledger entries.
+     * Returns full plan data + rates + caps as immutable snapshot.
+     * This ensures past commission entries are NEVER affected by future plan changes.
+     */
+    public function getActivePlanSnapshot(): ?array
+    {
+        try {
+            $plan = $this->pdo->query("
+                SELECT p.*, GROUP_CONCAT(
+                    CONCAT(l.level_name, ':', l.direct_commission, ':', l.team_commission, ':',
+                           l.level_bonus, ':', l.matching_bonus, ':', l.leadership_bonus, ':',
+                           l.performance_bonus, ':', l.monthly_target)
+                    ORDER BY l.level_order SEPARATOR '|'
+                ) as levels_data
+                FROM mlm_commission_plans p
+                LEFT JOIN mlm_plan_levels l ON l.plan_id = p.id
+                WHERE p.status = 'active'
+                GROUP BY p.id
+                ORDER BY p.version DESC
+                LIMIT 1
+            ")->fetch(PDO::FETCH_ASSOC);
+
+            if (!$plan) return null;
+
+            $snapshot = [
+                'plan_id' => (int)$plan['id'],
+                'plan_name' => $plan['plan_name'],
+                'plan_code' => $plan['plan_code'],
+                'plan_version' => (int)$plan['version'],
+                'plan_type' => $plan['plan_type'],
+                'effective_date' => $plan['effective_date'],
+                'global_cap_pct' => (float)$plan['global_cap_pct'],
+                'track_a_pct' => (float)$plan['track_a_pct'],
+                'track_b_pct' => (float)$plan['track_b_pct'],
+                'track_c_pct' => (float)$plan['track_c_pct'],
+                'royalty_pool_pct' => (float)$plan['royalty_pool_pct'],
+                'same_level_override_gen1' => (float)$plan['same_level_override_gen1'],
+                'same_level_override_gen2' => (float)$plan['same_level_override_gen2'],
+                'snapshot_taken_at' => date('Y-m-d H:i:s'),
+            ];
+
+            // Parse levels from GROUP_CONCAT
+            $levels = [];
+            if (!empty($plan['levels_data'])) {
+                foreach (explode('|', $plan['levels_data']) as $levelStr) {
+                    $parts = explode(':', $levelStr);
+                    if (count($parts) >= 8) {
+                        $levels[] = [
+                            'level_name' => $parts[0],
+                            'direct_commission' => (float)$parts[1],
+                            'team_commission' => (float)$parts[2],
+                            'level_bonus' => (float)$parts[3],
+                            'matching_bonus' => (float)$parts[4],
+                            'leadership_bonus' => (float)$parts[5],
+                            'performance_bonus' => (float)$parts[6],
+                            'monthly_target' => (float)$parts[7],
+                        ];
+                    }
+                }
+            }
+            $snapshot['levels'] = $levels;
+
+            return $snapshot;
+        } catch (Exception $e) {
+            error_log("[HybridCommissionEngine] getActivePlanSnapshot FAILED: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get active plan's cap percentages for calculations.
+     * Reads from DB plan table, falls back to hardcoded constants.
+     */
+    private function getActivePlanCaps(): array
+    {
+        try {
+            $plan = $this->pdo->query("
+                SELECT global_cap_pct, track_a_pct, track_b_pct, track_c_pct,
+                       royalty_pool_pct, same_level_override_gen1, same_level_override_gen2
+                FROM mlm_commission_plans
+                WHERE status = 'active'
+                ORDER BY version DESC
+                LIMIT 1
+            ")->fetch(PDO::FETCH_ASSOC);
+
+            if ($plan) {
+                return [
+                    'global_cap'       => (float)$plan['global_cap_pct'],
+                    'track_a'          => (float)$plan['track_a_pct'],
+                    'track_b'          => (float)$plan['track_b_pct'],
+                    'track_c'          => (float)$plan['track_c_pct'],
+                    'royalty_pool'     => (float)$plan['royalty_pool_pct'],
+                    'same_level_gen1'  => (float)$plan['same_level_override_gen1'],
+                    'same_level_gen2'  => (float)$plan['same_level_override_gen2'],
+                ];
+            }
+        } catch (Exception $e) {
+            error_log("[HybridCommissionEngine] getActivePlanCaps FAILED: " . $e->getMessage());
+        }
+
+        // Fallback to hardcoded constants
+        return [
+            'global_cap'       => self::GLOBAL_CAP_PCT,
+            'track_a'          => self::TRACK_A_CAP_PCT,
+            'track_b'          => self::TRACK_B_CAP_PCT,
+            'track_c'          => self::TRACK_C_CAP_PCT,
+            'royalty_pool'     => self::ROYALTY_POOL_PCT,
+            'same_level_gen1'  => self::SAME_LEVEL_OVERRIDES[1],
+            'same_level_gen2'  => self::SAME_LEVEL_OVERRIDES[2],
+        ];
+    }
+
+    /**
      * Load rank slabs from the mlm_rank_slabs table.
      * Falls back to hardcoded RANK_SLABS if the table is empty.
      */
@@ -1787,16 +1927,17 @@ class HybridCommissionEngine
         }
 
         $sellerRate = (float) $sellerSlab['commission_rate'];
+        $caps = $this->getActivePlanCaps();
         $results = [
             'success'          => true,
             'sale_amount'      => $saleAmount,
             'seller_rank'      => $sellerRankSlug,
             'seller_rate'      => $sellerRate,
-            'global_cap'       => round($saleAmount * (self::GLOBAL_CAP_PCT / 100), 2),
-            'track_a_budget'   => round($saleAmount * (self::TRACK_A_CAP_PCT / 100), 2),
-            'track_b_budget'   => round($saleAmount * (self::TRACK_B_CAP_PCT / 100), 2),
-            'track_c_budget'   => round($saleAmount * (self::TRACK_C_CAP_PCT / 100), 2),
-            'royalty_contribution' => round($saleAmount * (self::ROYALTY_POOL_PCT / 100), 2),
+            'global_cap'       => round($saleAmount * ($caps['global_cap'] / 100), 2),
+            'track_a_budget'   => round($saleAmount * ($caps['track_a'] / 100), 2),
+            'track_b_budget'   => round($saleAmount * ($caps['track_b'] / 100), 2),
+            'track_c_budget'   => round($saleAmount * ($caps['track_c'] / 100), 2),
+            'royalty_contribution' => round($saleAmount * ($caps['global_cap'] > 0 ? 2 : 2), 2),
             'track_a_entries'  => [],
             'track_b_entries'  => [],
             'track_c_entries'  => [],

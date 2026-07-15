@@ -2,9 +2,9 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-namespace App\Services\AI\users\specialized;
+namespace App\Services\AI\Agents\specialized;
 
-use App\Services\AI\users\BaseAgent;
+use App\Services\AI\Agents\BaseAgent;
 
 /**
  * DataAnalysisAgent - Specialized agent for data cleaning and visualization

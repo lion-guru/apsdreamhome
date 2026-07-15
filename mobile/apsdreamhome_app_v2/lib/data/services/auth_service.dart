@@ -18,11 +18,11 @@ class AuthService {
   final AuthRepository _repository;
 
   AuthService()
-      : _repository = AuthRepository(
-          ApiService(),
-          DatabaseHelper(),
-          const FlutterSecureStorage(),
-        );
+    : _repository = AuthRepository(
+        ApiService(),
+        DatabaseHelper(),
+        const FlutterSecureStorage(),
+      );
 
   // In-memory login flag — set by login(), cleared by logout().
   // Allows the synchronous `currentUser` getter to work without async storage.
@@ -109,6 +109,7 @@ class AuthService {
         phone: phone,
         password: password,
         role: role,
+        parentReferralCode: parentReferralCode,
       );
       _isLoggedIn = true;
       AppLogger.info('REGISTRATION SUCCESS: ${user.email}');
@@ -227,10 +228,7 @@ class AuthService {
     dynamic bankDetails,
   }) async {
     try {
-      await _repository.updateProfile(
-        name: name,
-        phone: null,
-      );
+      await _repository.updateProfile(name: name, phone: null);
       AppLogger.info('Profile updated successfully');
     } catch (e) {
       AppLogger.error('Profile update failed', e);

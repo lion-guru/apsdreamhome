@@ -406,8 +406,10 @@
             <?php
                 $cat = !empty($m->category) ? ucfirst(str_replace('_', ' ', $m->category)) : 'Team';
                 $catSlug = strtolower(preg_replace('/[^a-zA-Z0-9]/', '-', trim($cat)));
-                $photoUrl = !empty($m->photo) ? BASE_URL . '/assets/images/' . htmlspecialchars($m->photo) : '';
-                $hasPhoto = !empty($m->photo) && file_exists(__DIR__ . '/../../assets/images/' . $m->photo);
+                // DB stores full relative path like "assets/images/team/name.jpg"
+                $photoPath = ltrim($m->photo ?? '', '/');
+                $photoUrl = !empty($photoPath) ? BASE_URL . '/' . htmlspecialchars($photoPath) : '';
+                $hasPhoto = !empty($photoPath) && file_exists(__DIR__ . '/../../../' . $photoPath);
                 $groupColors = ['APS Warriors' => '#dc2626', 'Dream Builders' => '#2563eb', 'Nari Shakti' => '#d946ef', 'Tech Pioneers' => '#059669'];
                 $gColor = $groupColors[$m->group_name ?? ''] ?? '#0d9488';
             ?>
@@ -510,7 +512,7 @@
                     <div class="col-md-6">
                         <div class="team-card" style="cursor:default;">
                             <div class="team-card-photo" style="height:150px;">
-                                <?php $wPhoto = !empty($w->photo) && file_exists(__DIR__ . '/../../assets/images/' . $w->photo) ? BASE_URL . '/assets/images/' . htmlspecialchars($w->photo) : ''; ?>
+                                <?php $wPhotoPath = ltrim($w->photo ?? '', '/'); $wPhoto = !empty($wPhotoPath) && file_exists(__DIR__ . '/../../../' . $wPhotoPath) ? BASE_URL . '/' . htmlspecialchars($wPhotoPath) : ''; ?>
                                 <?php if ($wPhoto): ?>
                                 <img src="<?= $wPhoto ?>" alt="">
                                 <?php else: ?>

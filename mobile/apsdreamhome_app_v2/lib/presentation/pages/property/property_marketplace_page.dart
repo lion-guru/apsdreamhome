@@ -17,7 +17,8 @@ class PropertyMarketplacePage extends ConsumerStatefulWidget {
       _PropertyMarketplacePageState();
 }
 
-class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePage>
+class _PropertyMarketplacePageState
+    extends ConsumerState<PropertyMarketplacePage>
     with SingleTickerProviderStateMixin {
   // --- Search ---
   bool _showSearchBar = false;
@@ -316,7 +317,9 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
                             _filterSectionTitle('Price Range'),
                             const SizedBox(height: 4),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -432,12 +435,12 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
             child: _isLoading
                 ? _buildShimmer()
                 : _properties.isEmpty
-                    ? _buildEmptyState()
-                    : RefreshIndicator(
-                        color: AppTheme.primaryColor,
-                        onRefresh: _onRefresh,
-                        child: _isGridView ? _buildGridView() : _buildListView(),
-                      ),
+                ? _buildEmptyState()
+                : RefreshIndicator(
+                    color: AppTheme.primaryColor,
+                    onRefresh: _onRefresh,
+                    child: _isGridView ? _buildGridView() : _buildListView(),
+                  ),
           ),
         ],
       ),
@@ -464,11 +467,19 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
                 style: const TextStyle(color: Colors.white, fontSize: 16),
                 decoration: InputDecoration(
                   hintText: 'Search properties...',
-                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-                  prefixIcon: Icon(Icons.search, color: Colors.white.withValues(alpha: 0.7)),
+                  hintStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
-                          icon: Icon(Icons.clear, color: Colors.white.withValues(alpha: 0.7)),
+                          icon: Icon(
+                            Icons.clear,
+                            color: Colors.white.withValues(alpha: 0.7),
+                          ),
                           onPressed: () {
                             _searchController.clear();
                             _onSearchChanged('');
@@ -478,7 +489,10 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
                   border: InputBorder.none,
                   filled: true,
                   fillColor: Colors.white.withValues(alpha: 0.15),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 0,
+                  ),
                 ),
               ),
             ),
@@ -495,7 +509,10 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
           ),
           if (!_showSearchBar)
             IconButton(
-              icon: Icon(_isGridView ? Icons.view_list : Icons.grid_view, color: Colors.white),
+              icon: Icon(
+                _isGridView ? Icons.view_list : Icons.grid_view,
+                color: Colors.white,
+              ),
               onPressed: () => setState(() => _isGridView = !_isGridView),
               tooltip: _isGridView ? 'List view' : 'Grid view',
             ),
@@ -687,9 +704,11 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
 
   Widget _buildGridCard(PropertyListing property) {
     final typeColor = _typeColors[property.type] ?? Colors.grey;
-    final typeName = property.type[0].toUpperCase() + property.type.substring(1);
-    final locationText =
-        property.city != null ? '${property.city}, ${property.state ?? ''}' : property.location;
+    final typeName =
+        property.type[0].toUpperCase() + property.type.substring(1);
+    final locationText = property.city != null
+        ? '${property.city}, ${property.state ?? ''}'
+        : property.location;
 
     return GestureDetector(
       onTap: () => context.push('/property-detail/${property.id}'),
@@ -711,7 +730,12 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
             // Image area
             Stack(
               children: [
-                _buildImagePlaceholder(property, typeColor, height: 110, isGrid: true),
+                _buildImagePlaceholder(
+                  property,
+                  typeColor,
+                  height: 110,
+                  isGrid: true,
+                ),
                 if (property.isVerified)
                   Positioned(
                     top: 6,
@@ -767,25 +791,71 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
                 Positioned(
                   bottom: 6,
                   left: 6,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: property.purpose.toLowerCase() == 'rent'
-                          ? AppTheme.infoColor
-                          : AppTheme.warningColor,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      property.purposeLabel,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w600,
+                  child: Row(
+                    children: [
+                      if (property.isHighlighted) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                            ),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                property.isPremium
+                                    ? Icons.star
+                                    : property.isFeatured
+                                    ? Icons.trending_up
+                                    : Icons.priority_high,
+                                color: Colors.white,
+                                size: 11,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                property.isPremium
+                                    ? 'Premium'
+                                    : property.isFeatured
+                                    ? 'Featured'
+                                    : 'Urgent',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                      ],
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: property.purpose.toLowerCase() == 'rent'
+                              ? AppTheme.infoColor
+                              : AppTheme.warningColor,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          property.purposeLabel,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ],
@@ -810,7 +880,11 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.location_on, size: 11, color: Colors.grey.shade500),
+                        Icon(
+                          Icons.location_on,
+                          size: 11,
+                          color: Colors.grey.shade500,
+                        ),
                         const SizedBox(width: 2),
                         Expanded(
                           child: Text(
@@ -880,9 +954,11 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
 
   Widget _buildListCard(PropertyListing property) {
     final typeColor = _typeColors[property.type] ?? Colors.grey;
-    final typeName = property.type[0].toUpperCase() + property.type.substring(1);
-    final locationText =
-        property.city != null ? '${property.city}, ${property.state ?? ''}' : property.location;
+    final typeName =
+        property.type[0].toUpperCase() + property.type.substring(1);
+    final locationText = property.city != null
+        ? '${property.city}, ${property.state ?? ''}'
+        : property.location;
 
     return GestureDetector(
       onTap: () => context.push('/property-detail/${property.id}'),
@@ -904,7 +980,12 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
             // Image
             Stack(
               children: [
-                _buildImagePlaceholder(property, typeColor, height: 140, isGrid: false),
+                _buildImagePlaceholder(
+                  property,
+                  typeColor,
+                  height: 140,
+                  isGrid: false,
+                ),
                 if (property.isVerified)
                   Positioned(
                     top: 6,
@@ -985,7 +1066,11 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.location_on, size: 13, color: Colors.grey.shade500),
+                        Icon(
+                          Icons.location_on,
+                          size: 13,
+                          color: Colors.grey.shade500,
+                        ),
                         const SizedBox(width: 3),
                         Expanded(
                           child: Text(
@@ -1158,10 +1243,7 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
   Widget _filterSectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-      ),
+      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
     );
   }
 
@@ -1186,9 +1268,7 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
             color: isActive ? AppTheme.primaryColor : Colors.grey.shade700,
           ),
           side: BorderSide(
-            color: isActive
-                ? AppTheme.primaryColor
-                : Colors.grey.shade300,
+            color: isActive ? AppTheme.primaryColor : Colors.grey.shade300,
           ),
           onSelected: (_) => onSelected(opt.$2),
         );
@@ -1199,7 +1279,8 @@ class _PropertyMarketplacePageState extends ConsumerState<PropertyMarketplacePag
   // ──────────────────────────── Helpers ──────────────────────────────────
 
   String _formatPriceShort(double price) {
-    if (price >= 10000000) return '₹${(price / 10000000).toStringAsFixed(1)} Cr';
+    if (price >= 10000000)
+      return '₹${(price / 10000000).toStringAsFixed(1)} Cr';
     if (price >= 100000) return '₹${(price / 100000).toStringAsFixed(1)} L';
     if (price >= 1000) return '₹${(price / 1000).toStringAsFixed(0)} K';
     if (price == 0) return '₹0';

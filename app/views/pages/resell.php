@@ -119,43 +119,43 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="card resell-property-card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
                             <div class="position-relative">
-                                <?php if ($prop->is_featured): ?>
+                                <?php if (!empty($prop['is_featured'])): ?>
                                     <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-3 z-index-2">
                                         <i class="fas fa-star me-1"></i> <?= __('featured_badge') ?>
                                     </span>
                                 <?php endif; ?>
 
                                 <span class="badge bg-primary position-absolute top-0 end-0 m-3 z-index-2">
-                                    <?= htmlspecialchars($prop->status ?? 'Available') ?>
+                                    <?= htmlspecialchars($prop['status'] ?? 'Available') ?>
                                 </span>
 
-                                <img src="<?= !empty($prop->image) ? htmlspecialchars(get_asset_url($prop->image)) : 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80' ?>" class="card-img-top resell-card-img img-fluid" alt="<?= htmlspecialchars($prop->title) ?>" loading="lazy">
+                                <img src="<?= !empty($prop['image']) ? htmlspecialchars(get_asset_url($prop['image'])) : 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80' ?>" class="card-img-top resell-card-img img-fluid" alt="<?= htmlspecialchars($prop['title'] ?? '') ?>" loading="lazy">
 
                                 <div class="price-badge position-absolute bottom-0 start-0 bg-dark text-white px-3 py-2 rounded-end-3 mb-3">
-                                    ₹<?= number_format($prop->price) ?>
+                                    ₹<?= number_format($prop['price'] ?? 0) ?>
                                 </div>
                             </div>
 
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-2">
-                                    <small class="text-muted"><i class="fas fa-map-marker-alt me-1 text-primary"></i> <?= htmlspecialchars($prop->city) ?></small>
-                                    <small class="text-muted ms-auto"><i class="fas fa-building me-1 text-primary"></i> <?= htmlspecialchars($prop->property_type) ?></small>
+                                    <small class="text-muted"><i class="fas fa-map-marker-alt me-1 text-primary"></i> <?= htmlspecialchars($prop['city'] ?? '') ?></small>
+                                    <small class="text-muted ms-auto"><i class="fas fa-building me-1 text-primary"></i> <?= htmlspecialchars($prop['type'] ?? '') ?></small>
                                 </div>
 
-                                <h5 class="card-title mb-3 text-truncate"><?= htmlspecialchars($prop->title) ?></h5>
+                                <h5 class="card-title mb-3 text-truncate"><?= htmlspecialchars($prop['title'] ?? '') ?></h5>
 
                                 <div class="row g-2 mb-3 text-center small text-muted">
                                     <div class="col-4 border-end">
                                         <i class="fas fa-bed d-block mb-1 fa-lg"></i>
-                                        <?= $prop->bedrooms ?> <?= __('resell_beds') ?>
+                                        <?= $prop['bedrooms'] ?? 0 ?> <?= __('resell_beds') ?>
                                     </div>
                                     <div class="col-4 border-end">
                                         <i class="fas fa-bath d-block mb-1 fa-lg"></i>
-                                        <?= $prop->bathrooms ?> <?= __('resell_baths') ?>
+                                        <?= $prop['bathrooms'] ?? 0 ?> <?= __('resell_baths') ?>
                                     </div>
                                     <div class="col-4">
                                         <i class="fas fa-vector-square d-block mb-1 fa-lg"></i>
-                                        <?= $prop->area ?> <?= __('resell_sqft') ?>
+                                        <?= $prop['area_sqft'] ?? 0 ?> <?= __('resell_sqft') ?>
                                     </div>
                                 </div>
 
@@ -171,7 +171,7 @@
                                             <span class="text-dark fw-bold"><?= htmlspecialchars($prop->full_name ?? __('resell_verified_seller')) ?></span>
                                         </small>
                                     </div>
-                                    <a href="<?= BASE_URL ?>/property/<?= $prop->id ?>" class="btn btn-outline-primary btn-sm rounded-pill px-3"><?= __('featured_view_details') ?></a>
+                                    <a href="<?= BASE_URL ?>/property/<?= $prop['id'] ?>" class="btn btn-outline-primary btn-sm rounded-pill px-3"><?= __('featured_view_details') ?></a>
                                 </div>
                             </div>
                         </div>

@@ -1,89 +1,106 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../core/constants/app_constants.dart';
+import '../../../core/providers/auth_provider.dart';
 
-/// Site Visit Scheduler Page
-/// Book site visits with automatic agent assignment
-class SiteVisitSchedulerPage extends StatefulWidget {
+class SiteVisitSchedulerPage extends ConsumerStatefulWidget {
   const SiteVisitSchedulerPage({super.key});
 
   @override
-  State<SiteVisitSchedulerPage> createState() => _SiteVisitSchedulerPageState();
+  ConsumerState<SiteVisitSchedulerPage> createState() =>
+      _SiteVisitSchedulerPageState();
 }
 
-class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
-  // Form controllers
+class _SiteVisitSchedulerPageState
+    extends ConsumerState<SiteVisitSchedulerPage> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
   final _pickupAddressController = TextEditingController();
   final _notesController = TextEditingController();
 
-  // State
   DateTime? _selectedDate;
   String? _selectedTimeSlot;
   String? _selectedColony;
   int _guestCount = 1;
   bool _needPickup = false;
   bool _isSubmitting = false;
+  bool _isLoadingColonies = true;
+  bool _isLoadingSlots = false;
 
-  // Sample colonies (would come from database)
-  final List<Map<String, dynamic>> _colonies = [
-    {
-      'id': '1',
-      'name': 'Suryoday Heights Phase 1',
-      'location': 'Gorakhpur',
-      'distance': '5 km'
-    },
-    {
-      'id': '2',
-      'name': 'Raghunath City Center',
-      'location': 'Gorakhpur',
-      'distance': '8 km'
-    },
-    {
-      'id': '3',
-      'name': 'Braj Radha Enclave',
-      'location': 'Lucknow',
-      'distance': '120 km'
-    },
-    {
-      'id': '4',
-      'name': 'Budh Bihar Colony',
-      'location': 'Kushinagar',
-      'distance': '45 km'
-    },
-    {
-      'id': '5',
-      'name': 'Ganga Nagri',
-      'location': 'Varanasi',
-      'distance': '180 km'
-    },
-  ];
+  List<Map<String, dynamic>> _colonies = [];
+  List<Map<String, dynamic>> _timeSlots = [];
 
-  // Time slots
-  final List<String> _timeSlots = [
-    '09:00 AM - 11:00 AM',
-    '11:00 AM - 01:00 PM',
-    '02:00 PM - 04:00 PM',
-    '04:00 PM - 06:00 PM',
-  ];
-
-  // Sample assigned agent
-  final Map<String, dynamic> _assignedAgent = {
-    'name': 'Amit Sharma',
-    'phone': '+91 98765 43210',
-    'photo': null,
-    'rating': 4.8,
-    'visits': 156,
-    'experience': '3 years',
-  };
+  Dio get _dio => Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _phoneController.dispose();
-    _pickupAddressController.dispose();
-    _notesController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _fetchColonies();
+    _prefillUserData();
+  }
+
+  void _prefillUserData() {
+    final user = ref.read(authProvider);
+    if (user != null) {
+      _nameController.text = user.name ?? '';
+      _phoneController.text = user.phone ?? '';
+      _emailController.text = user.email ?? '';
+    }
+  }
+
+  Future<void> _fetchColonies() async {
+    try {
+      final response = await _dio.get('/api/v2/mobile/colonies');
+      if (response.data['success'] == true) {
+        final data = response.data['data'] as List;
+        setState(() {
+          _colonies = data.cast<Map<String, dynamic>>();
+          _isLoadingColonies = false;
+        });
+      } else {
+        setState(() => _isLoadingColonies = false);
+      }
+    } catch (e) {
+      setState(() => _isLoadingColonies = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load colonies: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _fetchTimeSlots() async {
+    if (_selectedDate == null) return;
+    setState(() => _isLoadingSlots = true);
+    try {
+      final dateStr = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+      final response = await _dio.get(
+        '/api/v2/mobile/site-visit/slots',
+        queryParameters: {
+          'date': dateStr,
+          if (_selectedColony != null) 'colony_id': _selectedColony,
+        },
+      );
+      if (response.data['success'] == true) {
+        final slots = response.data['data']['slots'] as List;
+        setState(() {
+          _timeSlots = slots.cast<Map<String, dynamic>>();
+          _isLoadingSlots = false;
+          _selectedTimeSlot = null;
+        });
+      } else {
+        setState(() => _isLoadingSlots = false);
+      }
+    } catch (e) {
+      setState(() => _isLoadingSlots = false);
+    }
   }
 
   Future<void> _selectDate() async {
@@ -92,44 +109,21 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
       initialDate: DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 30)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Colors.blue.shade700,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: ColorScheme.light(primary: Colors.blue.shade700),
+        ),
+        child: child!,
+      ),
     );
-
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
+    if (picked != null && picked != _selectedDate) {
+      setState(() => _selectedDate = picked);
+      _fetchTimeSlots();
     }
   }
 
-  Future<void> _submitBooking() async {
-    if (!_validateForm()) return;
-
-    setState(() {
-      _isSubmitting = true;
-    });
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() {
-      _isSubmitting = false;
-    });
-
-    _showBookingConfirmation();
-  }
-
   bool _validateForm() {
-    if (_nameController.text.isEmpty) {
+    if (_nameController.text.trim().isEmpty) {
       _showError('Please enter your name');
       return false;
     }
@@ -149,14 +143,56 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
       _showError('Please select a time slot');
       return false;
     }
-    if (_needPickup && _pickupAddressController.text.isEmpty) {
+    if (_needPickup && _pickupAddressController.text.trim().isEmpty) {
       _showError('Please enter pickup address');
       return false;
     }
     return true;
   }
 
-  void _showBookingConfirmation() {
+  Future<void> _submitBooking() async {
+    if (!_validateForm()) return;
+    setState(() => _isSubmitting = true);
+
+    try {
+      final token = await ref.read(authProvider.notifier).getToken();
+      final response = await _dio.post(
+        '/api/v2/mobile/site-visit/book',
+        data: {
+          'colony_id': int.tryParse(_selectedColony ?? '') ?? 0,
+          'visit_date': DateFormat('yyyy-MM-dd').format(_selectedDate!),
+          'visit_time': _selectedTimeSlot!,
+          'name': _nameController.text.trim(),
+          'phone': _phoneController.text.trim(),
+          'email': _emailController.text.trim(),
+          'need_pickup': _needPickup,
+          'pickup_address': _pickupAddressController.text.trim(),
+          'guest_count': _guestCount,
+          'notes': _notesController.text.trim(),
+        },
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      final resData = response.data as Map<String, dynamic>;
+      if (resData['success'] == true) {
+        setState(() => _isSubmitting = false);
+        _showBookingConfirmation(resData['data'] as Map<String, dynamic>);
+      } else {
+        setState(() => _isSubmitting = false);
+        _showError((resData['message'] as String?) ?? 'Booking failed');
+      }
+    } catch (e) {
+      setState(() => _isSubmitting = false);
+      _showError('Booking failed: $e');
+    }
+  }
+
+  void _showBookingConfirmation(Map<String, dynamic> data) {
+    final colonyMatch = _colonies.firstWhere(
+      (c) => c['id'].toString() == _selectedColony,
+      orElse: () => {'name': 'N/A'},
+    );
+    final String colonyName = (colonyMatch['name'] as String?) ?? 'N/A';
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -172,10 +208,10 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Your site visit has been scheduled for ${DateFormat('dd MMM yyyy').format(_selectedDate!)} at $_selectedTimeSlot',
+              'Your site visit has been scheduled for ${DateFormat('dd MMM yyyy').format(_selectedDate!)} at ${data['visit_time'] ?? _selectedTimeSlot}',
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -184,32 +220,15 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
               ),
               child: Column(
                 children: [
-                  const Text(
-                    'Assigned Agent',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(_assignedAgent['name'] as String),
                   Text(
-                    _assignedAgent['phone'] as String,
-                    style: TextStyle(color: Colors.grey.shade600),
+                    colonyName,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.green.shade50,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.qr_code, color: Colors.green),
-                  SizedBox(width: 8),
-                  Text('Visit QR Code Generated'),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Visit ID: #${data['visit_id']}',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                  ),
                 ],
               ),
             ),
@@ -225,12 +244,11 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
           ),
           ElevatedButton.icon(
             onPressed: () {
-              // Add to calendar
               Navigator.pop(context);
-              _showSuccess('Added to calendar!');
+              Navigator.pushReplacementNamed(context, '/site-visits');
             },
-            icon: const Icon(Icons.calendar_today),
-            label: const Text('Add to Calendar'),
+            icon: const Icon(Icons.list),
+            label: const Text('View My Visits'),
           ),
         ],
       ),
@@ -244,6 +262,13 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
         title: const Text('Book Site Visit'),
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'My Visits',
+            onPressed: () => Navigator.pushNamed(context, '/site-visits'),
+          ),
+        ],
       ),
       body: _isSubmitting
           ? const Center(
@@ -261,35 +286,20 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
                   _buildHeader(),
                   const SizedBox(height: 24),
-
-                  // Personal Details
                   _buildPersonalDetails(),
                   const SizedBox(height: 24),
-
-                  // Colony Selection
                   _buildColonySelection(),
                   const SizedBox(height: 24),
-
-                  // Date & Time Selection
                   _buildDateTimeSelection(),
                   const SizedBox(height: 24),
-
-                  // Pickup Option
                   _buildPickupOption(),
                   const SizedBox(height: 24),
-
-                  // Additional Notes
                   _buildNotesSection(),
                   const SizedBox(height: 24),
-
-                  // Visit Summary
                   _buildVisitSummary(),
                   const SizedBox(height: 32),
-
-                  // Submit Button
                   _buildSubmitButton(),
                   const SizedBox(height: 32),
                 ],
@@ -304,8 +314,6 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [Colors.blue.shade700, Colors.blue.shade500],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -342,10 +350,7 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
                     SizedBox(height: 4),
                     Text(
                       'Visit any colony with our expert agent',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.white70),
                     ),
                   ],
                 ),
@@ -371,10 +376,7 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
       children: [
         Icon(icon, color: Colors.white70, size: 24),
         const SizedBox(height: 4),
-        Text(
-          text,
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
-        ),
+        Text(text, style: const TextStyle(color: Colors.white70, fontSize: 12)),
       ],
     );
   }
@@ -388,26 +390,20 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
           children: [
             const Text(
               'Your Details',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-
-            // Name
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
                 labelText: 'Full Name *',
                 prefixIcon: const Icon(Icons.person),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 16),
-
-            // Phone
             TextField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
@@ -416,14 +412,25 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
                 labelText: 'Phone Number *',
                 prefixIcon: const Icon(Icons.phone),
                 prefixText: '+91 ',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 counterText: '',
               ),
             ),
             const SizedBox(height: 16),
-
-            // Guest Count
+            TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: 'Email (optional)',
+                prefixIcon: const Icon(Icons.email),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             Row(
               children: [
                 const Text(
@@ -477,94 +484,105 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
           children: [
             const Text(
               'Select Colony to Visit *',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            ..._colonies.map((colony) {
-              final isSelected = _selectedColony == colony['id'];
-              final String colonyName = colony['name'] as String;
-              final String location = colony['location'] as String;
-              final String distance = colony['distance'] as String;
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      _selectedColony = colony['id'] as String;
-                    });
-                  },
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? Colors.blue.shade50
-                          : Colors.grey.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
+            if (_isLoadingColonies)
+              const Center(child: CircularProgressIndicator())
+            else if (_colonies.isEmpty)
+              const Text(
+                'No colonies available',
+                style: TextStyle(color: Colors.grey),
+              )
+            else
+              ..._colonies.map((colony) {
+                final isSelected = _selectedColony == colony['id'].toString();
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() => _selectedColony = colony['id'].toString());
+                      if (_selectedDate != null) _fetchTimeSlots();
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
                         color: isSelected
-                            ? Colors.blue.shade300
-                            : Colors.grey.shade300,
-                        width: isSelected ? 2 : 1,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? Colors.blue.shade100
-                                : Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            Icons.location_city,
-                            color:
-                                isSelected ? Colors.blue.shade700 : Colors.grey,
-                            size: 32,
-                          ),
+                            ? Colors.blue.shade50
+                            : Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isSelected
+                              ? Colors.blue.shade300
+                              : Colors.grey.shade300,
+                          width: isSelected ? 2 : 1,
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                colonyName,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(Icons.location_on,
-                                      size: 14, color: Colors.grey.shade600),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '$location • $distance away',
-                                    style: TextStyle(
-                                      fontSize: 13,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? Colors.blue.shade100
+                                  : Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.location_city,
+                              color: isSelected
+                                  ? Colors.blue.shade700
+                                  : Colors.grey,
+                              size: 32,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  (colony['name'] as String?) ?? '',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_on,
+                                      size: 14,
                                       color: Colors.grey.shade600,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      (colony['district_name'] as String?) ??
+                                          (colony['location'] as String?) ??
+                                          '',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        if (isSelected)
-                          Icon(Icons.check_circle, color: Colors.blue.shade700),
-                      ],
+                          if (isSelected)
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.blue.shade700,
+                            ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
           ],
         ),
       ),
@@ -580,14 +598,9 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
           children: [
             const Text(
               'Select Date & Time *',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-
-            // Date Picker
             InkWell(
               onTap: _selectDate,
               child: Container(
@@ -605,8 +618,10 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
                         color: Colors.blue.shade100,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(Icons.calendar_today,
-                          color: Colors.blue.shade700),
+                      child: Icon(
+                        Icons.calendar_today,
+                        color: Colors.blue.shade700,
+                      ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -620,8 +635,9 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
                           const SizedBox(height: 4),
                           Text(
                             _selectedDate != null
-                                ? DateFormat('EEEE, dd MMM yyyy')
-                                    .format(_selectedDate!)
+                                ? DateFormat(
+                                    'EEEE, dd MMM yyyy',
+                                  ).format(_selectedDate!)
                                 : 'Select a date',
                             style: TextStyle(
                               color: _selectedDate != null
@@ -638,43 +654,82 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Time Slots
-            if (_selectedDate != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            if (_selectedDate != null) ...[
+              Row(
                 children: [
                   const Text(
                     'Available Time Slots',
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _timeSlots.map((slot) {
-                      final isSelected = _selectedTimeSlot == slot;
-                      return ChoiceChip(
-                        label: Text(slot),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          setState(() {
-                            _selectedTimeSlot = selected ? slot : null;
-                          });
-                        },
-                        selectedColor: Colors.blue.shade100,
-                        backgroundColor: Colors.grey.shade100,
-                        labelStyle: TextStyle(
-                          color:
-                              isSelected ? Colors.blue.shade700 : Colors.black,
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                  if (_isLoadingSlots) ...[
+                    const SizedBox(width: 8),
+                    const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ],
                 ],
               ),
+              const SizedBox(height: 12),
+              if (_timeSlots.isEmpty && !_isLoadingSlots)
+                const Text(
+                  'No slots available for this date',
+                  style: TextStyle(color: Colors.grey),
+                )
+              else
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _timeSlots.map((slot) {
+                    final String displayTime =
+                        (slot['display_time'] as String?) ??
+                        (slot['time_slot'] as String?) ??
+                        '';
+                    final bool isSelected =
+                        _selectedTimeSlot == slot['time_slot'];
+                    final int remaining = (slot['remaining'] is int)
+                        ? slot['remaining'] as int
+                        : int.tryParse('${slot['remaining']}') ?? 0;
+                    return ChoiceChip(
+                      label: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            displayTime,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Colors.blue.shade700
+                                  : Colors.black,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                          if (remaining > 0)
+                            Text(
+                              '$remaining left',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                        ],
+                      ),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(
+                          () => _selectedTimeSlot = selected
+                              ? (slot['time_slot'] as String?)
+                              : null,
+                        );
+                      },
+                      selectedColor: Colors.blue.shade100,
+                      backgroundColor: Colors.grey.shade100,
+                    );
+                  }).toList(),
+                ),
+            ],
           ],
         ),
       ),
@@ -694,19 +749,12 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
                 const SizedBox(width: 8),
                 const Text(
                   'Need Pickup?',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 Switch(
                   value: _needPickup,
-                  onChanged: (value) {
-                    setState(() {
-                      _needPickup = value;
-                    });
-                  },
+                  onChanged: (value) => setState(() => _needPickup = value),
                   activeThumbColor: Colors.blue.shade700,
                 ),
               ],
@@ -725,7 +773,8 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
                   labelText: 'Pickup Address *',
                   prefixIcon: const Icon(Icons.location_on),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ],
@@ -744,10 +793,7 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
           children: [
             const Text(
               'Additional Notes',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -755,8 +801,9 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: 'Any special requirements or questions...',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ],
@@ -771,10 +818,18 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
         _selectedTimeSlot == null) {
       return const SizedBox.shrink();
     }
-
-    final selectedColony =
-        _colonies.firstWhere((c) => c['id'] == _selectedColony);
-    final String colonyName = selectedColony['name'] as String;
+    final selectedColony = _colonies.firstWhere(
+      (c) => c['id'].toString() == _selectedColony,
+      orElse: () => {'name': 'N/A'},
+    );
+    final String displayTime =
+        (_timeSlots.firstWhere(
+              (s) => s['time_slot'] == _selectedTimeSlot,
+              orElse: () => {'display_time': _selectedTimeSlot},
+            )['display_time']
+            as String?) ??
+        _selectedTimeSlot ??
+        '';
 
     return Card(
       color: Colors.blue.shade50,
@@ -789,26 +844,25 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
                 SizedBox(width: 8),
                 Text(
                   'Visit Summary',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            _buildSummaryRow('Colony', colonyName),
             _buildSummaryRow(
-                'Date', DateFormat('dd MMM yyyy').format(_selectedDate!)),
-            _buildSummaryRow('Time', _selectedTimeSlot!),
-            _buildSummaryRow('Guests',
-                '$_guestCount ${_guestCount == 1 ? 'person' : 'people'}'),
-            if (_needPickup) _buildSummaryRow('Pickup', 'Yes'),
-            const Divider(height: 24),
-            _buildSummaryRow(
-              'Assigned Agent',
-              '${_assignedAgent['name']} (${_assignedAgent['phone']})',
+              'Colony',
+              (selectedColony['name'] as String?) ?? '',
             ),
+            _buildSummaryRow(
+              'Date',
+              DateFormat('dd MMM yyyy').format(_selectedDate!),
+            ),
+            _buildSummaryRow('Time', displayTime),
+            _buildSummaryRow(
+              'Guests',
+              '$_guestCount ${_guestCount == 1 ? 'person' : 'people'}',
+            ),
+            if (_needPickup) _buildSummaryRow('Pickup', 'Yes'),
           ],
         ),
       ),
@@ -825,19 +879,13 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
             width: 100,
             child: Text(
               '$label:',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 13,
-              ),
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 13,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
             ),
           ),
         ],
@@ -854,24 +902,7 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
         minimumSize: const Size(double.infinity, 54),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    );
-  }
-
-  void _showSuccess(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white),
-            const SizedBox(width: 8),
-            Text(message),
-          ],
-        ),
-        backgroundColor: Colors.green,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -889,5 +920,15 @@ class _SiteVisitSchedulerPageState extends State<SiteVisitSchedulerPage> {
         backgroundColor: Colors.red,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _pickupAddressController.dispose();
+    _notesController.dispose();
+    super.dispose();
   }
 }

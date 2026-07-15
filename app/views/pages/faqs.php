@@ -321,10 +321,9 @@ if (!function_exists('__')) {
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end">
-                <a href="<?php echo BASE_URL; ?>/docs/USER_GUIDE.md"
-                   class="btn btn-light btn-lg text-primary fw-bold"
-                   target="_blank" rel="noopener">
-                    <i class="fas fa-external-link-alt me-2"></i><?= __('faqs_userguide_button') ?>
+                <a href="<?php echo BASE_URL; ?>/tools-hub"
+                   class="btn btn-light btn-lg text-primary fw-bold">
+                    <i class="fas fa-tools me-2"></i><?= __('faqs_userguide_button') ?>
                 </a>
             </div>
         </div>

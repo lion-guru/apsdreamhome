@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../../core/services/ai_agent_service.dart';
 import '../../core/services/ai_employee_agent.dart';
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../../core/constants/app_constants.dart';
+import '../../../core/services/api_service.dart';
 
 /// EMI Collection Page - For Field Agents
 /// Door-to-door EMI collection with GPS tracking
@@ -13,82 +16,57 @@ class EMICollectionPage extends ConsumerStatefulWidget {
 }
 
 class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
+  final ApiService _api = ApiService();
   int _selectedIndex = 0;
-  final bool _isOnline = true;
+  bool _isLoading = true;
+  String? _error;
 
-  // Sample EMI dues data
-  final List<Map<String, dynamic>> _todayDues = [
-    {
-      'customerId': 'C001',
-      'customerName': 'Ramesh Kumar',
-      'phone': '+91 98765 43210',
-      'address': '123, Gandhi Nagar, Gorakhpur',
-      'landmark': 'Near HDFC Bank',
-      'bookingId': 'B001',
-      'plotNumber': 'P-45',
-      'colonyName': 'Suryoday Heights',
-      'emiAmount': 5000,
-      'dueDate': DateTime.now(),
-      'daysOverdue': 0,
-      'priority': 'regular',
-      'status': 'pending',
-    },
-    {
-      'customerId': 'C002',
-      'customerName': 'Sunita Devi',
-      'phone': '+91 98765 43211',
-      'address': '456, Rajendra Nagar, Gorakhpur',
-      'landmark': 'Opposite Petrol Pump',
-      'bookingId': 'B002',
-      'plotNumber': 'P-67',
-      'colonyName': 'Raghunath City',
-      'emiAmount': 7500,
-      'dueDate': DateTime.now().subtract(const Duration(days: 5)),
-      'daysOverdue': 5,
-      'priority': 'high',
-      'status': 'pending',
-    },
-    {
-      'customerId': 'C003',
-      'customerName': 'Amit Singh',
-      'phone': '+91 98765 43212',
-      'address': '789, Civil Lines, Gorakhpur',
-      'landmark': 'Near Railway Station',
-      'bookingId': 'B003',
-      'plotNumber': 'P-23',
-      'colonyName': 'Braj Radha Enclave',
-      'emiAmount': 10000,
-      'dueDate': DateTime.now().subtract(const Duration(days: 12)),
-      'daysOverdue': 12,
-      'priority': 'high',
-      'status': 'pending',
-    },
-    {
-      'customerId': 'C004',
-      'customerName': 'Priya Sharma',
-      'phone': '+91 98765 43213',
-      'address': '321, Mohaddipur, Gorakhpur',
-      'landmark': 'Near DM Office',
-      'bookingId': 'B004',
-      'plotNumber': 'P-89',
-      'colonyName': 'Ganga Nagri',
-      'emiAmount': 6000,
-      'dueDate': DateTime.now().add(const Duration(days: 2)),
-      'daysOverdue': -2,
-      'priority': 'regular',
-      'status': 'pending',
-    },
-  ];
+  Map<String, dynamic> _data = {};
+  List<Map<String, dynamic>> _todayDues = [];
+  Map<String, dynamic> _todayStats = {};
+  List<Map<String, dynamic>> _todayCollections = [];
+  List<Map<String, dynamic>> _history = [];
+  Map<String, dynamic> _earnings = {};
 
-  final Map<String, dynamic> _todayStats = {
-    'target': 20,
-    'visited': 8,
-    'collected': 5,
-    'partial': 1,
-    'notHome': 2,
-    'amountCollected': 42500,
-    'commission': 425,
-  };
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() => _isLoading = true);
+    try {
+      final res = await _api.get(AppConstants.adminEmiCollectionEndpoint);
+      if (res['success'] == true && res['data'] != null) {
+        final d = res['data'] as Map<String, dynamic>;
+        setState(() {
+          _data = d;
+          _todayDues =
+              (d['today_dues'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+          _todayStats = (d['today_stats'] as Map<String, dynamic>?) ?? {};
+          _todayCollections =
+              (d['today_collections'] as List?)?.cast<Map<String, dynamic>>() ??
+              [];
+          _history =
+              (d['history'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+          _earnings = (d['earnings'] as Map<String, dynamic>?) ?? {};
+          _isLoading = false;
+          _error = null;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+          _error = 'Failed to load EMI data';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _error = 'Error: $e';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,41 +74,25 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
       appBar: AppBar(
         title: const Text('EMI Collection'),
         actions: [
-          // Online/Offline indicator
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: _isOnline ? Colors.green : Colors.orange,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  _isOnline ? Icons.wifi : Icons.wifi_off,
-                  color: Colors.white,
-                  size: 16,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  _isOnline ? 'Online' : 'Offline',
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ],
-            ),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _isLoading ? null : _fetchData,
           ),
         ],
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          _buildTodayDuesTab(),
-          _buildRouteTab(),
-          _buildHistoryTab(),
-          _buildEarningsTab(),
-        ],
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+          ? _buildErrorState()
+          : IndexedStack(
+              index: _selectedIndex,
+              children: [
+                _buildTodayDuesTab(),
+                _buildRouteTab(),
+                _buildHistoryTab(),
+                _buildEarningsTab(),
+              ],
+            ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) =>
@@ -158,41 +120,92 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
           ),
         ],
       ),
-      floatingActionButton: _selectedIndex == 0
-          ? FloatingActionButton.extended(
-              onPressed: () => _syncData(),
-              icon: const Icon(Icons.sync),
-              label: const Text('Sync'),
-            )
-          : null,
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+            const SizedBox(height: 16),
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _fetchData,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildTodayDuesTab() {
+    final totalDue =
+        int.tryParse((_todayStats['total_due'] ?? 0).toString()) ?? 0;
+    final overdueCount =
+        int.tryParse((_todayStats['overdue_count'] ?? 0).toString()) ?? 0;
+    final totalAmount =
+        double.tryParse((_todayStats['total_amount_due'] ?? 0).toString()) ?? 0;
+    final collectedAmt =
+        double.tryParse((_earnings['total_collected'] ?? 0).toString()) ?? 0;
+
     return Column(
       children: [
-        // Stats Card
-        _buildStatsCard(),
-
-        // Priority Filter
-        _buildPriorityFilter(),
-
-        // Due List
+        _buildStatsCard(totalDue, overdueCount, totalAmount, collectedAmt),
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: _todayDues.length,
-            itemBuilder: (context, index) {
-              final due = _todayDues[index];
-              return _buildDueCard(due);
-            },
-          ),
+          child: _todayDues.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        size: 64,
+                        color: Colors.green[300],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No pending dues!',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : RefreshIndicator(
+                  onRefresh: _fetchData,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _todayDues.length,
+                    itemBuilder: (context, index) {
+                      return _buildDueCard(_todayDues[index]);
+                    },
+                  ),
+                ),
         ),
       ],
     );
   }
 
-  Widget _buildStatsCard() {
+  Widget _buildStatsCard(
+    int totalDue,
+    int overdueCount,
+    double totalAmount,
+    double collectedAmt,
+  ) {
     return Card(
       margin: const EdgeInsets.all(16),
       color: Colors.blue.shade50,
@@ -204,14 +217,11 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Today's Progress",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  "Today's Overview",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '${_todayStats['visited']}/${_todayStats['target']}',
+                  '$totalDue pending',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -226,14 +236,26 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildStatItem('Collected', '${_todayStats['collected']}',
-                      Icons.check_circle, Colors.green),
-                  const SizedBox(width: 16),
-                  _buildStatItem('Partial', '${_todayStats['partial']}',
-                      Icons.timelapse, Colors.orange),
-                  const SizedBox(width: 16),
-                  _buildStatItem('Not Home', '${_todayStats['notHome']}',
-                      Icons.home_outlined, Colors.grey),
+                  _buildStatItem(
+                    'Overdue',
+                    '$overdueCount',
+                    Icons.warning,
+                    Colors.red,
+                  ),
+                  const SizedBox(width: 24),
+                  _buildStatItem(
+                    'Pending',
+                    '${totalDue - overdueCount}',
+                    Icons.pending,
+                    Colors.orange,
+                  ),
+                  const SizedBox(width: 24),
+                  _buildStatItem(
+                    'Total Due',
+                    '₹${NumberFormat('#,##0').format(totalAmount)}',
+                    Icons.currency_rupee,
+                    Colors.blue,
+                  ),
                 ],
               ),
             ),
@@ -245,11 +267,11 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Amount Collected',
+                      'Collected (This Month)',
                       style: TextStyle(color: Colors.grey),
                     ),
                     Text(
-                      '₹${_todayStats['amountCollected']}',
+                      '₹${NumberFormat('#,##0').format(collectedAmt)}',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -259,20 +281,19 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
                   ],
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.orange.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
                     children: [
-                      const Text(
-                        'Commission',
-                        style: TextStyle(fontSize: 12),
-                      ),
+                      const Text('Late Fees', style: TextStyle(fontSize: 12)),
                       Text(
-                        '₹${_todayStats['commission']}',
+                        '₹${NumberFormat('#,##0').format(double.tryParse((_earnings['total_late_fees'] ?? 0).toString()) ?? 0)}',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -291,74 +312,33 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
   }
 
   Widget _buildStatItem(
-      String label, String value, IconData icon, Color color) {
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Column(
       children: [
         Icon(icon, color: color, size: 28),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],
     );
   }
 
-  Widget _buildPriorityFilter() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          FilterChip(
-            label: const Text('All'),
-            selected: true,
-            onSelected: (selected) {},
-          ),
-          const SizedBox(width: 8),
-          FilterChip(
-            label: const Text('Overdue'),
-            selected: false,
-            onSelected: (selected) {},
-          ),
-          const SizedBox(width: 8),
-          FilterChip(
-            label: const Text('Due Today'),
-            selected: false,
-            onSelected: (selected) {},
-          ),
-          const SizedBox(width: 8),
-          FilterChip(
-            label: const Text('High Priority'),
-            selected: false,
-            onSelected: (selected) {},
-            backgroundColor: Colors.red.withValues(alpha: 0.2),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildDueCard(Map<String, dynamic> due) {
-    final daysOverdue = due['daysOverdue'] as int;
-    final customerName = due['customerName'] as String;
-    final plotNumber = due['plotNumber'] as String;
-    final colonyName = due['colonyName'] as String;
-    final address = due['address'] as String;
-    final landmark = due['landmark'] as String;
-    final phone = due['phone'] as String;
-    final emiAmount = due['emiAmount'] as int;
-    final dueDate = due['dueDate'] as DateTime;
+    final daysOverdue =
+        int.tryParse((due['days_overdue'] ?? 0).toString()) ?? 0;
+    final customerName = (due['customer_name'] ?? 'Unknown').toString();
+    final plotNumber = (due['plot_number'] ?? '-').toString();
+    final colonyName = (due['colony_name'] ?? '-').toString();
+    final emiAmount = double.tryParse((due['emi_amount'] ?? 0).toString()) ?? 0;
+    final dueDate = (due['due_date'] ?? '').toString();
+    final phone = (due['phone'] ?? '').toString();
 
     Color priorityColor;
     String priorityText;
@@ -408,22 +388,20 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildInfoRow(Icons.location_on, address),
-                _buildInfoRow(Icons.landscape, 'Landmark: $landmark'),
-                _buildInfoRow(Icons.phone, phone),
+                if (phone.isNotEmpty) _buildInfoRow(Icons.phone, phone),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'EMI Amount: ₹$emiAmount',
+                      'EMI: ₹${NumberFormat('#,##0').format(emiAmount)}',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      'Due: ${DateFormat('dd MMM').format(dueDate)}',
+                      'Due: ${dueDate}',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                   ],
@@ -434,43 +412,30 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
           const Divider(),
           Padding(
             padding: const EdgeInsets.all(8),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
+            child: Row(
               children: [
-                SizedBox(
-                  width: double.infinity,
+                Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () => _showCollectDialog(due),
-                    icon: const Icon(Icons.check_circle),
-                    label: const Text('COLLECT'),
+                    icon: const Icon(Icons.check_circle, size: 18),
+                    label: const Text('Collect'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () => _showPartialDialog(due),
-                    icon: const Icon(Icons.timelapse),
-                    label: const Text('PARTIAL'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
+                const SizedBox(width: 8),
                 IconButton(
-                  onPressed: () => _showNotHomeDialog(due),
-                  icon: const Icon(Icons.home_outlined),
-                  color: Colors.grey,
+                  onPressed: () => _launchPhone(phone),
+                  icon: const Icon(Icons.call),
+                  color: Colors.blue,
                 ),
                 IconButton(
                   onPressed: () => _openMap(due),
                   icon: const Icon(Icons.map),
-                  color: Colors.blue,
+                  color: Colors.grey,
                 ),
               ],
             ),
@@ -517,13 +482,20 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Optimized route for ${_todayStats['visited']} customers\nTotal distance: 12.5 km',
+            '${_todayDues.length} dues to collect today',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey[600]),
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: () async {
+              final mapUri = Uri.parse(
+                'https://maps.google.com/?q=APS+Dream+Home+Gorakhpur',
+              );
+              if (await canLaunchUrl(mapUri)) {
+                await launchUrl(mapUri, mode: LaunchMode.externalApplication);
+              }
+            },
             icon: const Icon(Icons.navigation),
             label: const Text('Start Navigation'),
           ),
@@ -533,30 +505,45 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
   }
 
   Widget _buildHistoryTab() {
+    if (_history.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.history, size: 64, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            Text(
+              'No collection history for last 30 days',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: 5,
+      itemCount: _history.length,
       itemBuilder: (context, index) {
+        final h = _history[index];
+        final collected =
+            double.tryParse((h['collected'] ?? 0).toString()) ?? 0;
+        final count = (h['count'] ?? 0).toString();
+        final date = (h['date'] ?? '').toString();
         return Card(
           child: ListTile(
-            leading: const CircleAvatar(
-              backgroundColor: Colors.green,
-              child: Icon(Icons.check, color: Colors.white),
+            leading: CircleAvatar(
+              backgroundColor: Colors.green.withValues(alpha: 0.2),
+              child: const Icon(Icons.check, color: Colors.green),
             ),
-            title: Text('Collection #${1000 + index}'),
-            subtitle: const Text('Ramesh Kumar - ₹5,000'),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const Text('₹5,000'),
-                Text(
-                  DateFormat('dd MMM, hh:mm a').format(
-                    DateTime.now().subtract(Duration(days: index)),
-                  ),
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-              ],
+            title: Text('$count collections'),
+            subtitle: Text(date),
+            trailing: Text(
+              '₹${NumberFormat('#,##0').format(collected)}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
             ),
           ),
         );
@@ -565,68 +552,115 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
   }
 
   Widget _buildEarningsTab() {
+    final totalCollected =
+        double.tryParse((_earnings['total_collected'] ?? 0).toString()) ?? 0;
+    final totalPaidCount =
+        int.tryParse((_earnings['total_paid_count'] ?? 0).toString()) ?? 0;
+    final lateFees =
+        double.tryParse((_earnings['total_late_fees'] ?? 0).toString()) ?? 0;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Card(
             color: Colors.orange.shade50,
-            child: const Padding(
-              padding: EdgeInsets.all(24),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  Text(
-                    'This Month Earnings',
+                  const Text(
+                    'This Month Collection',
                     style: TextStyle(fontSize: 18),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    '₹18,450',
-                    style: TextStyle(
+                    '₹${NumberFormat('#,##0').format(totalCollected)}',
+                    style: const TextStyle(
                       fontSize: 42,
                       fontWeight: FontWeight.bold,
                       color: Colors.orange,
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '$totalPaidCount installments paid',
+                    style: TextStyle(color: Colors.grey[600]),
                   ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 16),
-          _buildEarningBreakdown(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEarningBreakdown() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Earnings Breakdown',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Earnings Breakdown',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildEarningRow(
+                    'Total Collected',
+                    '₹${NumberFormat('#,##0').format(totalCollected)}',
+                    Colors.green,
+                  ),
+                  const Divider(),
+                  _buildEarningRow(
+                    'Late Fees Collected',
+                    '₹${NumberFormat('#,##0').format(lateFees)}',
+                    Colors.orange,
+                  ),
+                  const Divider(),
+                  _buildEarningRow(
+                    'Installments Paid',
+                    '$totalPaidCount',
+                    Colors.blue,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            _buildEarningRow('Base Salary', '₹12,000', Colors.blue),
-            const Divider(),
-            _buildEarningRow(
-                'Collection Commission (0.5%)', '₹4,250', Colors.orange),
-            const Divider(),
-            _buildEarningRow(
-                'Per Collection Bonus (85 × ₹20)', '₹1,700', Colors.green),
-            const Divider(),
-            _buildEarningRow('Target Achievement Bonus', '₹500', Colors.purple),
-            const Divider(),
-            _buildTotalEarningRow(),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          if (_todayCollections.isNotEmpty)
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Today's Collections",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ...(_todayCollections.take(5).map((c) {
+                      final name = (c['customer_name'] ?? 'Unknown').toString();
+                      final amt =
+                          double.tryParse((c['paid_amount'] ?? 0).toString()) ??
+                          0;
+                      return ListTile(
+                        dense: true,
+                        leading: const Icon(
+                          Icons.check_circle,
+                          color: Colors.green,
+                          size: 20,
+                        ),
+                        title: Text(name),
+                        trailing: Text('₹${NumberFormat('#,##0').format(amt)}'),
+                      );
+                    })),
+                  ],
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -642,67 +676,39 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
               Container(
                 width: 12,
                 height: 12,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
               const SizedBox(width: 12),
               Text(label),
             ],
           ),
-          Text(
-            amount,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTotalEarningRow() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Total Earnings',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            '₹18,450',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.orange,
-            ),
-          ),
+          Text(amount, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
   }
 
   void _showCollectDialog(Map<String, dynamic> due) {
+    final emiAmount = double.tryParse((due['emi_amount'] ?? 0).toString()) ?? 0;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Collect EMI - ${due['customerName']}'),
+      builder: (ctx) => AlertDialog(
+        title: Text('Collect - ${due['customer_name']}'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('EMI Amount: ₹${due['emiAmount']}'),
+            Text('EMI Amount: ₹${NumberFormat('#,##0').format(emiAmount)}'),
             const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              decoration: const InputDecoration(
                 labelText: 'Amount Collected',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
+              controller: TextEditingController(
+                text: emiAmount.toStringAsFixed(0),
+              ),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
@@ -710,126 +716,51 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
                 labelText: 'Payment Mode',
                 border: OutlineInputBorder(),
               ),
-              items: ['Cash', 'UPI', 'Cheque', 'Online']
-                  .map((mode) => DropdownMenuItem(
-                        value: mode,
-                        child: Text(mode),
-                      ))
-                  .toList(),
-              onChanged: (value) {},
+              items: [
+                'Cash',
+                'UPI',
+                'Cheque',
+                'Online',
+              ].map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
+              onChanged: (_) {},
             ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(ctx),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
-              _generateReceipt(due);
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Collection recorded. Receipt will be generated.',
+                  ),
+                  backgroundColor: Colors.green,
+                ),
+              );
             },
-            child: const Text('Collect & Generate Receipt'),
+            child: const Text('Record Collection'),
           ),
         ],
       ),
     );
   }
 
-  void _showPartialDialog(Map<String, dynamic> due) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Partial Collection'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Total Due: ₹${due['emiAmount']}'),
-            const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
-                labelText: 'Amount Collected',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
-                labelText: 'Reason for Partial Payment',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 2,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Submit'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showNotHomeDialog(Map<String, dynamic> due) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Customer Not Home'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('When should we try again?'),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              children: [
-                'Today Evening',
-                'Tomorrow',
-                'Next Week',
-              ]
-                  .map((option) => ActionChip(
-                        label: Text(option),
-                        onPressed: () {},
-                      ))
-                  .toList(),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Schedule Follow-up'),
-          ),
-        ],
-      ),
-    );
+  void _launchPhone(String phone) async {
+    if (phone.isEmpty) return;
+    final uri = Uri.parse('tel:${phone.replaceAll(RegExp(r'\s+'), '')}');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
   }
 
   void _openMap(Map<String, dynamic> due) {
-    // Open map with customer location
-  }
-
-  void _generateReceipt(Map<String, dynamic> due) {
-    // Navigate to receipt generation
-    context.push('/emi/receipt', extra: due);
-  }
-
-  void _syncData() {
-    // Sync with server when online
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Syncing data...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Map navigation coming soon')));
   }
 }

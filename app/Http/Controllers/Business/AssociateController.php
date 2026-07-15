@@ -5,10 +5,6 @@ namespace App\Http\Controllers\Business;
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\Business\AssociateService;
 
-/**
- * Associate Controller - APS Dream Home
- * Custom MVC implementation without Laravel dependencies
- */
 class AssociateController extends AdminController
 {
     private $associateService;
@@ -19,113 +15,158 @@ class AssociateController extends AdminController
         $this->associateService = new AssociateService();
     }
 
-    /**
-     * Show users list
-     */
-    private function buildRequest($routerParam = null): array
+    public function index()
     {
-        $params = [];
-        if ($routerParam !== null && !is_array($routerParam)) {
-            $params = ['id' => $routerParam];
-        } elseif (is_array($routerParam) && isset($routerParam['params'])) {
-            $params = $routerParam['params'];
-        }
-        return [
-            'get' => $_GET,
-            'post' => $_POST,
-            'params' => $params,
-            'server' => $_SERVER
-        ];
-    }
-
-    public function index($request = null)
-    {
-        $request = $this->buildRequest($request);
-        // Check authentication
         $this->requireAdmin();
 
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $limit = min(50, max(10, (int)($_GET['limit'] ?? 20)));
+        $filters = [
+            'status' => $_GET['status'] ?? '',
+            'search' => trim($_GET['q'] ?? ''),
+        ];
+
+        $result = $this->associateService->getAllAssociates($page, $limit, $filters);
+
+        $this->render('admin/business/associates/index', [
+            'page_title' => 'Associates - Business',
+            'associates' => $result['data'] ?? [],
+            'pagination' => [
+                'total' => $result['total'] ?? 0,
+                'per_page' => $result['per_page'] ?? $limit,
+                'current_page' => $result['current_page'] ?? $page,
+                'last_page' => $result['last_page'] ?? 1,
+            ],
+            'filters' => $filters,
+            'success' => $_SESSION['success'] ?? null,
+            'error' => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function show($id)
+    {
+        $this->requireAdmin();
+        $id = (int)$id;
+
+        $result = $this->associateService->getAssociateDetails($id);
+
+        if (!$result['success']) {
+            $_SESSION['error'] = $result['message'];
+            $this->redirect('/admin/business/associates');
+            return;
+        }
+
+        $this->render('admin/business/associates/show', [
+            'page_title' => 'Associate #' . $id,
+            'associate' => $result['data']['associate'] ?? [],
+            'recent_sales' => $result['data']['recent_sales'] ?? [],
+            'metrics' => $result['data']['metrics'] ?? [],
+            'monthly_performance' => $result['data']['monthly_performance'] ?? [],
+            'success' => $_SESSION['success'] ?? null,
+            'error' => $_SESSION['error'] ?? null,
+        ]);
+        unset($_SESSION['success'], $_SESSION['error']);
+    }
+
+    public function create()
+    {
+        $this->requireAdmin();
+
+        $this->render('admin/business/associates/create', [
+            'page_title' => 'Create Associate',
+            'old' => $_SESSION['old_input'] ?? [],
+            'errors' => $_SESSION['errors'] ?? [],
+        ]);
+        unset($_SESSION['old_input'], $_SESSION['errors']);
+    }
+
+    public function store()
+    {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/business/associates/create');
+            return;
+        }
+
         $data = [
-            'name' => trim($request['post']['name'] ?? ''),
-            'email' => trim($request['post']['email'] ?? ''),
-            'phone' => trim($request['post']['phone'] ?? ''),
-            'address' => trim($request['post']['address'] ?? ''),
-            'joining_date' => $request['post']['joining_date'] ?? date('Y-m-d'),
-            'commission_rate' => floatval($request['post']['commission_rate'] ?? 0),
-            'status' => $request['post']['status'] ?? 'active'
+            'name' => trim($_POST['name'] ?? ''),
+            'email' => trim($_POST['email'] ?? ''),
+            'phone' => trim($_POST['phone'] ?? ''),
+            'address' => trim($_POST['address'] ?? ''),
+            'joining_date' => $_POST['joining_date'] ?? date('Y-m-d'),
+            'commission_rate' => (float)($_POST['commission_rate'] ?? 0),
+            'status' => $_POST['status'] ?? 'active',
         ];
 
         $result = $this->associateService->createAssociate($data);
 
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];
-            $this->redirect('/users');
+            $this->redirect('/admin/business/associates');
         } else {
             $_SESSION['errors'] = $result['errors'] ?? [$result['message']];
             $_SESSION['old_input'] = $data;
-            $this->redirect('/users/create');
+            $this->redirect('/admin/business/associates/create');
         }
-
-        return $result;
     }
 
-    /**
-     * Show edit associate form
-     */
-    public function edit($request = null)
+    public function edit($id)
     {
-        $request = $this->buildRequest($request);
-        // Check authentication
         $this->requireAdmin();
+        $id = (int)$id;
 
-        $id = $request['params']['id'] ?? null;
+        $result = $this->associateService->getAssociateDetails($id);
 
-        if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Associate ID is required'
-            ];
+        if (!$result['success']) {
+            $_SESSION['error'] = $result['message'];
+            $this->redirect('/admin/business/associates');
+            return;
+        }
+
+        $this->render('admin/business/associates/edit', [
+            'page_title' => 'Edit Associate #' . $id,
+            'associate' => $result['data']['associate'] ?? [],
+            'errors' => $_SESSION['errors'] ?? [],
+        ]);
+        unset($_SESSION['errors']);
+    }
+
+    public function update($id)
+    {
+        $this->requireAdmin();
+        $id = (int)$id;
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect("/admin/business/associates/edit/{$id}");
+            return;
         }
 
         $data = [
-            'name' => trim($request['post']['name'] ?? ''),
-            'email' => trim($request['post']['email'] ?? ''),
-            'phone' => trim($request['post']['phone'] ?? ''),
-            'address' => trim($request['post']['address'] ?? ''),
-            'commission_rate' => floatval($request['post']['commission_rate'] ?? 0),
-            'status' => $request['post']['status'] ?? 'active'
+            'name' => trim($_POST['name'] ?? ''),
+            'email' => trim($_POST['email'] ?? ''),
+            'phone' => trim($_POST['phone'] ?? ''),
+            'address' => trim($_POST['address'] ?? ''),
+            'commission_rate' => (float)($_POST['commission_rate'] ?? 0),
+            'status' => $_POST['status'] ?? 'active',
         ];
 
         $result = $this->associateService->updateAssociate($id, $data);
 
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];
-            $this->redirect("/users/$id");
+            $this->redirect("/admin/business/associates/show/{$id}");
         } else {
             $_SESSION['errors'] = $result['errors'] ?? [$result['message']];
-            $_SESSION['old_input'] = $data;
-            $this->redirect("/users/$id/edit");
+            $this->redirect("/admin/business/associates/edit/{$id}");
         }
-
-        return $result;
     }
 
-    /**
-     * Delete associate
-     */
-    public function destroy($request = null)
+    public function destroy($id)
     {
-        $request = $this->buildRequest($request);
-        // Check authentication
         $this->requireAdmin();
-
-        $id = $request['params']['id'] ?? null;
-
-        if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Associate ID is required'
-            ];
-        }
+        $id = (int)$id;
 
         $result = $this->associateService->deleteAssociate($id);
 
@@ -135,118 +176,78 @@ class AssociateController extends AdminController
             $_SESSION['errors'] = [$result['message']];
         }
 
-        $this->redirect('/users');
-
-        return $result;
+        $this->redirect('/admin/business/associates');
     }
 
-    /**
-     * Update commission rate (AJAX)
-     */
-    public function updateCommissionRate($request = null)
+    public function updateCommissionRate()
     {
-        $request = $this->buildRequest($request);
-        // Check authentication
         $this->requireAdmin();
 
-        $id = $request['post']['associate_id'] ?? null;
-        $rate = floatval($request['post']['commission_rate'] ?? 0);
+        $id = (int)($_POST['associate_id'] ?? 0);
+        $rate = (float)($_POST['commission_rate'] ?? 0);
 
         if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Associate ID is required'
-            ];
+            return $this->jsonResponse(['success' => false, 'message' => 'Associate ID is required']);
         }
 
-        return $this->associateService->updateCommissionRate($id, $rate);
+        $result = $this->associateService->updateCommissionRate($id, $rate);
+        return $this->jsonResponse($result);
     }
 
-    /**
-     * Get performance report
-     */
-    public function performanceReport($request = null)
+    public function performanceReport()
     {
-        $request = $this->buildRequest($request);
-        // Check authentication
         $this->requireAdmin();
 
-        $limit = intval($request['get']['limit'] ?? 10);
-        $period = $request['get']['period'] ?? 'month';
-
-        return $this->associateService->getTopPerformers($limit, $period);
-    }
-
-    /**
-     * Export users (AJAX)
-     */
-    public function exportAssociates($request = null)
-    {
-        $request = $this->buildRequest($request);
-        // Check authentication
-        $this->requireAdmin();
-
-        $format = $request['post']['format'] ?? 'csv';
         $filters = [
-            'status' => $request['post']['status'] ?? ''
+            'start_date' => $_GET['start_date'] ?? '',
+            'end_date' => $_GET['end_date'] ?? '',
         ];
 
-        return $this->associateService->exportAssociates($format, $filters);
+        $result = $this->associateService->getPerformanceReport($filters);
+        return $this->jsonResponse($result);
     }
 
-    /**
-     * Search users (AJAX)
-     */
-    public function searchAssociates($request = null)
+    public function getTopPerformers()
     {
-        $request = $this->buildRequest($request);
-        // Check authentication
         $this->requireAdmin();
 
-        $query = trim($request['get']['q'] ?? '');
-        $limit = intval($request['get']['limit'] ?? 20);
+        $limit = min(50, max(1, (int)($_GET['limit'] ?? 10)));
+        $period = in_array($_GET['period'] ?? 'month', ['month', 'quarter', 'year']) ? $_GET['period'] : 'month';
+
+        $result = $this->associateService->getTopPerformers($limit, $period);
+        return $this->jsonResponse($result);
+    }
+
+    public function exportAssociates()
+    {
+        $this->requireAdmin();
+
+        $format = $_POST['format'] ?? 'csv';
+        $filters = ['status' => $_POST['status'] ?? ''];
+
+        $result = $this->associateService->exportAssociates($format, $filters);
+        return $this->jsonResponse($result);
+    }
+
+    public function searchAssociates()
+    {
+        $this->requireAdmin();
+
+        $query = trim($_GET['q'] ?? '');
+        $limit = min(50, max(1, (int)($_GET['limit'] ?? 20)));
 
         if (empty($query)) {
-            return [
-                'success' => false,
-                'message' => 'Search query is required'
-            ];
+            return $this->jsonResponse(['success' => false, 'message' => 'Search query is required']);
         }
 
-        try {
-            $users = \App\Models\Associate::search($query, $limit);
-
-            return [
-                'success' => true,
-                'data' => array_map(function ($associate) {
-                    return $associate->toArray();
-                }, $users)
-            ];
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'Search failed'
-            ];
-        }
+        $result = $this->associateService->getAllAssociates(1, $limit, ['search' => $query]);
+        return $this->jsonResponse(['success' => true, 'data' => $result['data'] ?? []]);
     }
 
-    /**
-     * Activate associate
-     */
-    public function activate($request = null)
+    public function activate($id)
     {
-        $request = $this->buildRequest($request);
-        // Check authentication
         $this->requireAdmin();
-
-        $id = $request['params']['id'] ?? null;
-
-        if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Associate ID is required'
-            ];
-        }
+        $id = (int)$id;
 
         $result = $this->associateService->updateAssociate($id, ['status' => 'active']);
 
@@ -256,28 +257,13 @@ class AssociateController extends AdminController
             $_SESSION['errors'] = [$result['message']];
         }
 
-        $this->redirect('/users');
-
-        return $result;
+        $this->redirect('/admin/business/associates');
     }
 
-    /**
-     * Deactivate associate
-     */
-    public function deactivate($request = null)
+    public function deactivate($id)
     {
-        $request = $this->buildRequest($request);
-        // Check authentication
         $this->requireAdmin();
-
-        $id = $request['params']['id'] ?? null;
-
-        if (!$id) {
-            return [
-                'success' => false,
-                'message' => 'Associate ID is required'
-            ];
-        }
+        $id = (int)$id;
 
         $result = $this->associateService->updateAssociate($id, ['status' => 'inactive']);
 
@@ -287,9 +273,6 @@ class AssociateController extends AdminController
             $_SESSION['errors'] = [$result['message']];
         }
 
-        $this->redirect('/users');
-
-        return $result;
+        $this->redirect('/admin/business/associates');
     }
-
 }

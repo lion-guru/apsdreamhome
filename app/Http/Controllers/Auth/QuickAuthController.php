@@ -15,6 +15,11 @@ class QuickAuthController extends BaseController
         $this->db = Database::getInstance();
     }
 
+    public function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     /**
      * Quick registration for casual visitors
      */

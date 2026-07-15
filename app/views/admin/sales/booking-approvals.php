@@ -141,7 +141,7 @@ $statusBadge = function ($s) {
                     <p>Approve booking <strong><?= htmlspecialchars($b['booking_number'] ?? '') ?></strong> for customer <strong><?= htmlspecialchars($b['customer_name'] ?? '') ?></strong>?</p>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Approval Notes</label>
-                        <textarea class="form-control" name="approval_notes" rows="3" placeholder="Optional notes about approval...">Approved by admin. All documents verified.</textarea>
+                        <textarea class="form-control" name="approval_notes" rows="3" placeholder="Optional notes about approval..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -199,7 +199,7 @@ class ComprehensiveTestRunner
             'App\Services\Queue\QueueService',
             'App\Services\Map\MapService',
             'App\Services\I18n\LocalizationService',
-            'App\Services\Notification\NotificationCenterService',
+            'App\Services\NotificationService',
             'App\Services\Analytics\AdvancedAnalyticsService',
             'App\Services\Scheduler\TaskSchedulerService',
             'App\Services\File\FileManagerService',
@@ -238,7 +238,7 @@ class ComprehensiveTestRunner
             ['service' => 'App\Services\Cache\CacheService', 'method' => 'get'],
             ['service' => 'App\Services\Cache\CacheService', 'method' => 'set'],
             ['service' => 'App\Services\Loyalty\LoyaltyRewardsService', 'method' => 'getOrCreateAccount'],
-            ['service' => 'App\Services\Notification\NotificationCenterService', 'method' => 'send']
+            ['service' => 'App\Services\NotificationService', 'method' => 'notify']
         ];
         
         $failedMethods = [];
@@ -555,7 +555,8 @@ class ComprehensiveTestRunner
         echo "\n📢 Testing Notification Channels...\n";
         
         try {
-            $notificationService = new \App\Services\Notification\NotificationCenterService();
+            $db = \App\Core\Database\Database::getInstance();
+            $notificationService = new \App\Services\NotificationService($db);
             
             // Test template retrieval
             $templates = ['booking_confirmed', 'payment_received', 'site_visit_reminder'];

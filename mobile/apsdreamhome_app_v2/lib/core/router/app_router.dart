@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 // Auth
+import '../../core/providers/auth_provider.dart';
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
 import '../../presentation/pages/auth/forgot_password_page.dart';
@@ -39,6 +40,33 @@ import '../../presentation/pages/common/settings_page.dart';
 import '../../presentation/pages/common/notifications_center_page.dart';
 import '../../presentation/pages/common/faq_page.dart';
 import '../../presentation/pages/common/testimonials_page.dart';
+import '../../presentation/pages/common/about_page.dart';
+import '../../presentation/pages/common/blog_page.dart';
+import '../../presentation/pages/common/blog_detail_page.dart';
+import '../../presentation/pages/common/careers_page.dart';
+import '../../presentation/pages/common/career_detail_page.dart';
+import '../../presentation/pages/common/how_it_works_page.dart';
+import '../../presentation/pages/common/insurance_page.dart';
+import '../../presentation/pages/common/nach_mandate_page.dart';
+import '../../presentation/pages/common/agreement_page.dart';
+import '../../presentation/pages/common/services_directory_page.dart';
+import '../../presentation/pages/common/tools_hub_page.dart';
+import '../../presentation/pages/common/projects_page.dart';
+import '../../presentation/pages/common/legal_documents_page.dart';
+import '../../presentation/pages/common/legal_document_detail_page.dart';
+import '../../presentation/pages/common/legal_document_preview_page.dart';
+import '../../presentation/pages/common/contact_page.dart';
+import '../../presentation/pages/common/team_page.dart';
+import '../../presentation/pages/common/privacy_policy_page.dart';
+import '../../presentation/pages/common/buy_page.dart';
+import '../../presentation/pages/common/sell_page.dart';
+import '../../presentation/pages/common/rent_page.dart';
+import '../../presentation/pages/common/invest_page.dart';
+import '../../presentation/pages/common/gallery_page.dart';
+import '../../presentation/pages/common/welcome_screen_page.dart';
+import '../../presentation/pages/common/inbox_page.dart';
+import '../../presentation/pages/common/chat_detail_page.dart';
+import '../../presentation/pages/customer/payment_history_page.dart';
 
 // Customer Features
 import '../../presentation/pages/customer/saved_searches_page.dart';
@@ -51,19 +79,37 @@ import '../../presentation/pages/customer/support_tickets_page.dart';
 // Tools
 import '../../presentation/pages/tools/stamp_duty_calculator_page.dart';
 import '../../presentation/pages/tools/plot_converter_page.dart';
+import '../../presentation/pages/tools/capital_gains_page.dart';
+import '../../presentation/pages/tools/construction_cost_page.dart';
+import '../../presentation/pages/tools/rental_yield_page.dart';
+import '../../presentation/pages/tools/rent_vs_buy_page.dart';
+import '../../presentation/pages/tools/property_tax_page.dart';
+import '../../presentation/pages/tools/sip_vs_realestate_page.dart';
+import '../../presentation/pages/tools/gst_calculator_page.dart';
+import '../../presentation/pages/tools/rera_lookup_page.dart';
+import '../../presentation/pages/tools/title_protection_page.dart';
+import '../../presentation/pages/tools/property_verification_page.dart';
+import '../../presentation/pages/tools/investment_calculator_page.dart';
+import '../../presentation/pages/tools/neighborhood_page.dart';
+import '../../presentation/pages/tools/virtual_tour_page.dart';
+import '../../presentation/pages/tools/news_page.dart';
 
 // Customer Shell
 import '../../presentation/pages/customer/customer_shell.dart';
+import '../../presentation/pages/customer/customer_dashboard_page.dart';
 
 // Tools
 import '../../presentation/pages/tools/emi_calculator_page.dart';
+import '../../presentation/pages/tools/home_loan_eligibility_page.dart';
 import '../../presentation/pages/tools/property_valuation_page.dart';
 import '../../presentation/pages/tools/site_visit_scheduler_page.dart';
+import '../../presentation/pages/tools/my_site_visits_page.dart';
 import '../../presentation/pages/tools/map_view_page.dart';
 import '../../presentation/pages/tools/live_chat_page.dart';
 
 // AI
 import '../../presentation/pages/ai/advanced_ai_chat_page.dart';
+import '../../presentation/pages/ai/ai_agent_dashboard_page.dart';
 
 // Payment
 import '../../presentation/pages/payment/payment_page.dart';
@@ -83,6 +129,7 @@ import '../../presentation/pages/agent/lead_kanban_page.dart';
 import '../../presentation/pages/agent/deal_pipeline_page.dart';
 import '../../presentation/pages/agent/commission_approval_page.dart';
 import '../../presentation/pages/agent/agent_crm_page.dart';
+import '../../presentation/pages/agent/lead_create_page.dart';
 
 // Employee
 import '../../presentation/pages/employee/employee_shell.dart';
@@ -113,22 +160,64 @@ import '../../presentation/pages/admin/dev_tools_page.dart';
 // MLM
 import '../../presentation/pages/mlm/mlm_dashboard_page.dart';
 
-// Auth provider
-import '../providers/auth_provider.dart';
+// Orphaned pages (wired in Session 52)
+import '../../presentation/pages/properties/sell_property_page.dart';
+import '../../presentation/pages/voice/voice_to_lead_page.dart';
+import '../../presentation/pages/mlm/document_locker_page.dart';
+import '../../presentation/pages/mlm/incentive_dashboard_page.dart';
+import '../../presentation/pages/receipt/receipt_view_page.dart';
+import '../../presentation/pages/site_visit/site_visit_page.dart';
+import '../../presentation/pages/telecaller/telecaller_dashboard_page.dart';
+import '../../presentation/pages/telecaller/auto_dialer_dashboard_page.dart';
+import '../../presentation/pages/telecaller/templates_page.dart';
+import '../../presentation/pages/telecaller/bulk_operations_page.dart';
+import '../../presentation/pages/telecaller/voice_call_page.dart';
+
 // User model
 import '../../data/models/user_model.dart';
 
-final appRouterProvider = Provider<GoRouter>((ref) {
+/// Global auth state bridge — ValueNotifier avoids Riverpod ↔ InheritedModel conflict in GoRouter redirect
+class AuthBridge {
+  AuthBridge._();
+  static final AuthBridge instance = AuthBridge._();
+  final ValueNotifier<User?> currentUser = ValueNotifier<User?>(null);
+}
+
+/// Global router instance — NOT a Riverpod Provider to avoid InheritedModel assertion
+GoRouter? _globalRouter;
+
+GoRouter getRouter() {
+  _globalRouter ??= createRouter();
+  return _globalRouter!;
+}
+
+void refreshRouter() {
+  _globalRouter = createRouter();
+}
+
+/// Centralized logout — clears everything and navigates to /login.
+/// Pass BuildContext + optional WidgetRef to clear Riverpod state too.
+Future<void> appLogout(BuildContext context, [dynamic ref]) async {
+  try {
+    // Clear Riverpod auth state (full token + DB cleanup)
+    if (ref != null) {
+      await ref.read(authProvider.notifier).logout();
+    }
+  } catch (_) {}
+  // Clear GoRouter auth bridge
+  AuthBridge.instance.currentUser.value = null;
+  // Navigate to login (replaces entire nav stack)
+  if (context.mounted) {
+    context.go('/login');
+  }
+}
+
+GoRouter createRouter() {
   final router = GoRouter(
     initialLocation: '/splash',
     redirect: (context, state) {
-      User? authState;
-      try {
-        authState = ref.read(authProvider);
-      } catch (_) {
-        authState = null;
-      }
-      final isAuthenticated = authState != null;
+      final authUser = AuthBridge.instance.currentUser.value;
+      final isAuthenticated = authUser != null;
       final uri = state.uri.toString();
 
       // Auth pages
@@ -153,22 +242,109 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isMap = uri == '/map';
       final isLiveChat = uri == '/live-chat';
       final isAiChat = uri == '/ai-chat';
+      final isAiAgent = uri == '/ai-agent';
+      final isHowItWorks = uri == '/how-it-works';
+      final isInsurance = uri == '/insurance';
+      final isNachMandate = uri == '/nach-mandate';
+      final isAgreements = uri == '/agreements';
+      final isServices = uri == '/services';
+      final isToolsHub = uri == '/tools-hub';
+      final isProjects = uri == '/projects';
+      final isHomeLoanEligibility = uri == '/home-loan-eligibility';
+      final isBlog = uri == '/blog';
+      final isBlogDetail = uri.startsWith('/blog/');
+      final isLegalDocs = uri == '/legal-documents';
+      final isLegalDocDetail = uri.startsWith('/legal-documents/');
+      final isContact = uri == '/contact';
+      final isTeam = uri == '/team';
+      final isPrivacy = uri == '/privacy';
+      final isBuy = uri == '/buy';
+      final isSell = uri == '/sell';
+      final isRent = uri == '/rent';
+      final isInvest = uri == '/invest';
+      final isGallery = uri == '/gallery';
+      final isCapitalGains = uri == '/capital-gains-calculator';
+      final isConstructionCost = uri == '/construction-cost-estimator';
+      final isRentalYield = uri == '/rental-yield-calculator';
+      final isRentVsBuy = uri == '/rent-vs-buy';
+      final isPropertyTax = uri == '/property-tax-calculator';
+      final isSipVsRealestate = uri == '/sip-vs-realestate';
+      final isGst = uri == '/gst-calculator';
+      final isReraLookup = uri == '/rera-lookup';
+      final isTitleProtection = uri == '/title-protection';
+      final isPropertyVerification = uri == '/property-verification';
+      final isInvestmentCalculator = uri == '/investment-calculator';
+      final isNeighborhood = uri == '/neighborhood';
+      final isVirtualTour = uri == '/virtual-tour';
+      final isNews = uri == '/news';
+      final isWelcome = uri == '/welcome';
+      final isSellProperty = uri == '/sell-property';
 
-      final isPublicRoute = isSplash || isLoginPage || isRegisterPage ||
-          isForgotPassword || isOtp || isHomePage || isColonies ||
-          isColonyDetail || isColonyPlots || isPlots || isPlotDetail ||
-          isProperties || isPropertyDetail || isEmiCalc || isValuation ||
-          isSiteVisit || isMap || isLiveChat || isAiChat;
+      final isPublicRoute =
+          isSplash ||
+          isLoginPage ||
+          isRegisterPage ||
+          isForgotPassword ||
+          isOtp ||
+          isHomePage ||
+          isColonies ||
+          isColonyDetail ||
+          isColonyPlots ||
+          isPlots ||
+          isPlotDetail ||
+          isProperties ||
+          isPropertyDetail ||
+          isEmiCalc ||
+          isValuation ||
+          isSiteVisit ||
+          isMap ||
+          isLiveChat ||
+          isAiChat ||
+          isAiAgent ||
+          isHowItWorks ||
+          isInsurance ||
+          isNachMandate ||
+          isAgreements ||
+          isServices ||
+          isToolsHub ||
+          isProjects ||
+          isHomeLoanEligibility ||
+          isContact ||
+          isTeam ||
+          isPrivacy ||
+          isBuy ||
+          isSell ||
+          isRent ||
+          isInvest ||
+          isGallery ||
+          isCapitalGains ||
+          isConstructionCost ||
+          isRentalYield ||
+          isRentVsBuy ||
+          isPropertyTax ||
+          isSipVsRealestate ||
+          isGst ||
+          isBlog ||
+          isBlogDetail ||
+          isReraLookup ||
+          isTitleProtection ||
+          isPropertyVerification ||
+          isInvestmentCalculator ||
+          isNeighborhood ||
+          isVirtualTour ||
+          isNews ||
+          isWelcome ||
+          isSellProperty;
 
       // Allow all public and auth routes
       if (isPublicRoute) {
         // If logged in and on splash, redirect to role home
         if (isAuthenticated && isSplash) {
-          return _defaultRouteForRole(authState);
+          return defaultRouteForRole(authUser);
         }
         // If logged in and on login/register, redirect to role home
         if (isAuthenticated && (isLoginPage || isRegisterPage)) {
-          return _defaultRouteForRole(authState);
+          return defaultRouteForRole(authUser);
         }
         return null;
       }
@@ -182,16 +358,61 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       // ─── Splash ───
+      GoRoute(path: '/splash', builder: (context, state) => const SplashPage()),
+
+      // ─── Public Routes ───
       GoRoute(
-        path: '/splash',
-        builder: (context, state) => const SplashPage(),
+        path: '/how-it-works',
+        builder: (context, state) => const HowItWorksPage(),
+      ),
+      GoRoute(
+        path: '/insurance',
+        builder: (context, state) => const InsurancePage(),
+      ),
+      GoRoute(
+        path: '/nach-mandate',
+        builder: (context, state) => const NACHMandatePage(),
+      ),
+      GoRoute(
+        path: '/agreements',
+        builder: (context, state) => const AgreementPage(),
+      ),
+      GoRoute(
+        path: '/services',
+        builder: (context, state) => const ServicesDirectoryPage(),
+      ),
+      GoRoute(
+        path: '/tools-hub',
+        builder: (context, state) => const ToolsHubPage(),
+      ),
+      GoRoute(
+        path: '/home-loan-eligibility',
+        builder: (context, state) => const HomeLoanEligibilityPage(),
+      ),
+      GoRoute(
+        path: '/projects',
+        builder: (context, state) => const ProjectsPage(),
+      ),
+      GoRoute(
+        path: '/contact',
+        builder: (context, state) => const ContactPage(),
+      ),
+      GoRoute(path: '/team', builder: (context, state) => const TeamPage()),
+      GoRoute(
+        path: '/privacy',
+        builder: (context, state) => const PrivacyPolicyPage(),
+      ),
+      GoRoute(path: '/buy', builder: (context, state) => const BuyPage()),
+      GoRoute(path: '/sell', builder: (context, state) => const SellPage()),
+      GoRoute(path: '/rent', builder: (context, state) => const RentPage()),
+      GoRoute(path: '/invest', builder: (context, state) => const InvestPage()),
+      GoRoute(
+        path: '/gallery',
+        builder: (context, state) => const GalleryPage(),
       ),
 
       // ─── Auth Routes ───
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginPage(),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(
         path: '/register',
         builder: (context, state) => const RegisterPage(),
@@ -200,9 +421,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/forgot-password',
         builder: (context, state) => const ForgotPasswordPage(),
       ),
+      GoRoute(path: '/otp', builder: (context, state) => const OTPPage()),
       GoRoute(
-        path: '/otp',
-        builder: (context, state) => const OTPPage(),
+        path: '/welcome',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return WelcomeScreenPage(
+            userName: (extra['userName'] as String?) ?? 'User',
+            role: (extra['role'] as String?) ?? 'customer',
+            registeredOnMobile: (extra['registeredOnMobile'] as bool?) ?? true,
+          );
+        },
       ),
 
       // ─── Customer Shell (bottom nav for authenticated customers) ───
@@ -211,33 +440,33 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/home',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: HomePage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: HomePage()),
+          ),
+          GoRoute(
+            path: '/customer-dashboard',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: CustomerDashboardPage()),
           ),
           GoRoute(
             path: '/properties',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: PropertyMarketplacePage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: PropertyMarketplacePage()),
           ),
           GoRoute(
             path: '/colonies',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ColoniesPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: ColoniesPage()),
           ),
           GoRoute(
             path: '/plots',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: PlotsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: PlotsPage()),
           ),
           GoRoute(
             path: '/profile',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ProfilePage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: ProfilePage()),
           ),
         ],
       ),
@@ -257,19 +486,34 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               type: extra?['type'] as String? ?? '',
               description: extra?['description'] as String? ?? '',
               image: extra?['image'] as String? ?? '',
+              images:
+                  (extra?['images'] as List<dynamic>?)
+                      ?.map((e) => e.toString())
+                      .toList() ??
+                  [],
             ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.05),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-                  child: child,
-                ),
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    ),
+                    child: SlideTransition(
+                      position:
+                          Tween<Offset>(
+                            begin: const Offset(0, 0.05),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeOutCubic,
+                            ),
+                          ),
+                      child: child,
+                    ),
+                  );
+                },
           );
         },
       ),
@@ -280,18 +524,28 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             child: ColonyDetailPage(
               colonyId: state.pathParameters['colonyId']!,
             ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.05),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-                  child: child,
-                ),
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    ),
+                    child: SlideTransition(
+                      position:
+                          Tween<Offset>(
+                            begin: const Offset(0, 0.05),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeOutCubic,
+                            ),
+                          ),
+                      child: child,
+                    ),
+                  );
+                },
           );
         },
       ),
@@ -305,18 +559,28 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               colonyId: colonyId,
               colonyName: extra?['colonyName'] as String? ?? 'Colony',
             ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.05),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-                  child: child,
-                ),
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    ),
+                    child: SlideTransition(
+                      position:
+                          Tween<Offset>(
+                            begin: const Offset(0, 0.05),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeOutCubic,
+                            ),
+                          ),
+                      child: child,
+                    ),
+                  );
+                },
           );
         },
       ),
@@ -324,21 +588,29 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/plot-detail/:plotId',
         pageBuilder: (context, state) {
           return CustomTransitionPage<void>(
-            child: PlotDetailPage(
-              plotId: state.pathParameters['plotId']!,
-            ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.05),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-                  child: child,
-                ),
-              );
-            },
+            child: PlotDetailPage(plotId: state.pathParameters['plotId']!),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    ),
+                    child: SlideTransition(
+                      position:
+                          Tween<Offset>(
+                            begin: const Offset(0, 0.05),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeOutCubic,
+                            ),
+                          ),
+                      child: child,
+                    ),
+                  );
+                },
           );
         },
       ),
@@ -346,55 +618,87 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/booking/:plotId',
         pageBuilder: (context, state) {
           return CustomTransitionPage<void>(
-            child: BookingPage(
-              plotId: state.pathParameters['plotId']!,
-            ),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 0.08),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-                child: FadeTransition(
-                  opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-                  child: child,
-                ),
-              );
-            },
+            child: BookingPage(plotId: state.pathParameters['plotId']!),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(0, 0.08),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeOutCubic,
+                          ),
+                        ),
+                    child: FadeTransition(
+                      opacity: CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeOut,
+                      ),
+                      child: child,
+                    ),
+                  );
+                },
           );
         },
       ),
       GoRoute(
         path: '/my-bookings',
-        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: MyBookingsPage(), transitionsBuilder: _slideTransition),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: MyBookingsPage(),
+          transitionsBuilder: _slideTransition,
+        ),
       ),
       GoRoute(
         path: '/customer-bookings',
-        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: CustomerBookingsPage(), transitionsBuilder: _slideTransition),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: CustomerBookingsPage(),
+          transitionsBuilder: _slideTransition,
+        ),
       ),
       GoRoute(
         path: '/emi-schedule',
-        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: EmiSchedulePage(), transitionsBuilder: _slideTransition),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: EmiSchedulePage(),
+          transitionsBuilder: _slideTransition,
+        ),
       ),
       GoRoute(
         path: '/favorites',
-        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: FavoritesPage(), transitionsBuilder: _slideTransition),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: FavoritesPage(),
+          transitionsBuilder: _slideTransition,
+        ),
       ),
       GoRoute(
         path: '/documents',
-        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: DocumentsPage(), transitionsBuilder: _slideTransition),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: DocumentsPage(),
+          transitionsBuilder: _slideTransition,
+        ),
       ),
       GoRoute(
         path: '/kyc-verification',
-        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: KYCVerificationPage(), transitionsBuilder: _slideTransition),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: KYCVerificationPage(),
+          transitionsBuilder: _slideTransition,
+        ),
       ),
       GoRoute(
         path: '/kyc-status',
-        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: KYCStatusPage(), transitionsBuilder: _slideTransition),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: KYCStatusPage(),
+          transitionsBuilder: _slideTransition,
+        ),
       ),
       GoRoute(
         path: '/post-property',
-        pageBuilder: (context, state) => const CustomTransitionPage<void>(child: PostPropertyPage(), transitionsBuilder: _slideTransition),
+        pageBuilder: (context, state) => const CustomTransitionPage<void>(
+          child: PostPropertyPage(),
+          transitionsBuilder: _slideTransition,
+        ),
       ),
 
       // ─── Tools Routes ───
@@ -411,9 +715,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SiteVisitSchedulerPage(),
       ),
       GoRoute(
-        path: '/map',
-        builder: (context, state) => const MapViewPage(),
+        path: '/site-visits',
+        builder: (context, state) => const MySiteVisitsPage(),
       ),
+      GoRoute(path: '/map', builder: (context, state) => const MapViewPage()),
       GoRoute(
         path: '/live-chat',
         builder: (context, state) => const LiveChatPage(),
@@ -432,13 +737,63 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/notifications-center',
         builder: (context, state) => const NotificationsCenterPage(),
       ),
-      GoRoute(
-        path: '/faq',
-        builder: (context, state) => const FaqPage(),
-      ),
+      GoRoute(path: '/faq', builder: (context, state) => const FaqPage()),
       GoRoute(
         path: '/testimonials',
         builder: (context, state) => const TestimonialsPage(),
+      ),
+      GoRoute(path: '/about', builder: (context, state) => const AboutPage()),
+      GoRoute(path: '/blog', builder: (context, state) => const BlogPage()),
+      GoRoute(
+        path: '/blog/:slug',
+        builder: (context, state) =>
+            BlogDetailPage(slug: state.pathParameters['slug']!),
+      ),
+      GoRoute(
+        path: '/careers',
+        builder: (context, state) => const CareersPage(),
+      ),
+      GoRoute(
+        path: '/careers/:jobId',
+        builder: (context, state) =>
+            CareerDetailPage(jobId: state.pathParameters['jobId']!),
+      ),
+      GoRoute(
+        path: '/payment-history',
+        builder: (context, state) => const PaymentHistoryPage(),
+      ),
+
+      // ─── In-App Messaging Routes ───
+      GoRoute(path: '/inbox', builder: (context, state) => const InboxPage()),
+      GoRoute(
+        path: '/inbox/chat/:userId',
+        builder: (context, state) {
+          final userId = int.parse(state.pathParameters['userId']!);
+          final extra = state.extra as Map<String, dynamic>?;
+          return ChatDetailPage(
+            otherUserId: userId,
+            otherUserName: extra?['userName'] as String? ?? 'User',
+            otherUserRole: extra?['userRole'] as String? ?? '',
+          );
+        },
+      ),
+
+      // ─── Legal Document Routes ───
+      GoRoute(
+        path: '/legal-documents',
+        builder: (context, state) => const LegalDocumentsPage(),
+      ),
+      GoRoute(
+        path: '/legal-documents/:id',
+        builder: (context, state) => LegalDocumentDetailPage(
+          documentId: int.parse(state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: '/legal-documents/:id/preview',
+        builder: (context, state) => LegalDocumentPreviewPage(
+          documentId: int.parse(state.pathParameters['id']!),
+        ),
       ),
 
       // ─── Customer Feature Routes ───
@@ -476,8 +831,65 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/plot-converter',
         builder: (context, state) => const PlotConverterPage(),
       ),
+      GoRoute(
+        path: '/capital-gains-calculator',
+        builder: (context, state) => const CapitalGainsPage(),
+      ),
+      GoRoute(
+        path: '/construction-cost-estimator',
+        builder: (context, state) => const ConstructionCostPage(),
+      ),
+      GoRoute(
+        path: '/rental-yield-calculator',
+        builder: (context, state) => const RentalYieldPage(),
+      ),
+      GoRoute(
+        path: '/rent-vs-buy',
+        builder: (context, state) => const RentVsBuyPage(),
+      ),
+      GoRoute(
+        path: '/property-tax-calculator',
+        builder: (context, state) => const PropertyTaxPage(),
+      ),
+      GoRoute(
+        path: '/sip-vs-realestate',
+        builder: (context, state) => const SipVsRealestatePage(),
+      ),
+      GoRoute(
+        path: '/gst-calculator',
+        builder: (context, state) => const GstCalculatorPage(),
+      ),
+      GoRoute(
+        path: '/rera-lookup',
+        builder: (context, state) => const ReraLookupPage(),
+      ),
+      GoRoute(
+        path: '/title-protection',
+        builder: (context, state) => const TitleProtectionPage(),
+      ),
+      GoRoute(
+        path: '/property-verification',
+        builder: (context, state) => const PropertyVerificationPage(),
+      ),
+      GoRoute(
+        path: '/investment-calculator',
+        builder: (context, state) => const InvestmentCalculatorPage(),
+      ),
+      GoRoute(
+        path: '/neighborhood',
+        builder: (context, state) => const NeighborhoodPage(),
+      ),
+      GoRoute(
+        path: '/virtual-tour',
+        builder: (context, state) => const VirtualTourPage(),
+      ),
+      GoRoute(path: '/news', builder: (context, state) => const NewsPage()),
 
       // ─── AI ───
+      GoRoute(
+        path: '/ai-agent',
+        builder: (context, state) => const AIAgentDashboardPage(),
+      ),
       GoRoute(
         path: '/ai-chat',
         builder: (context, state) => const AdvancedAIChatPage(),
@@ -537,10 +949,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/mlm',
         builder: (context, state) => const AssociateDashboardPage(),
       ),
-      GoRoute(
-        path: '/leads',
-        builder: (context, state) => const LeadsPage(),
-      ),
+      GoRoute(path: '/leads', builder: (context, state) => const LeadsPage()),
       GoRoute(
         path: '/offline-booking',
         builder: (context, state) => const OfflineBookingPage(),
@@ -572,39 +981,100 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AgentCRMPage(),
       ),
 
+      // Lead creation (full-page form for agents/associates)
+      GoRoute(
+        path: '/agent/leads/create',
+        builder: (context, state) => const LeadCreatePage(),
+      ),
+      GoRoute(
+        path: '/leads/add',
+        builder: (context, state) => const LeadCreatePage(),
+      ),
+
+      // ─── Orphaned Pages (wired Session 52) ───
+      GoRoute(
+        path: '/sell-property',
+        builder: (context, state) => const SellPropertyPage(),
+      ),
+      GoRoute(
+        path: '/voice-to-lead',
+        builder: (context, state) => const VoiceToLeadPage(),
+      ),
+      GoRoute(
+        path: '/document-locker',
+        builder: (context, state) => const DocumentLockerPage(),
+      ),
+      GoRoute(
+        path: '/incentive-dashboard',
+        builder: (context, state) => const IncentiveDashboardPage(),
+      ),
+      GoRoute(
+        path: '/receipt-view',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return ReceiptViewPage(
+            receiptData: extra?['receiptData'] as Map<String, dynamic>?,
+            receiptType: extra?['receiptType'] as String?,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/site-visit-tracker',
+        builder: (context, state) => const SiteVisitPage(),
+      ),
+      GoRoute(
+        path: '/telecaller/dashboard',
+        builder: (context, state) => const TelecallerDashboardPage(),
+      ),
+      GoRoute(
+        path: '/auto-dialer',
+        builder: (context, state) => const AutoDialerDashboardPage(),
+      ),
+      GoRoute(
+        path: '/auto-dialer/templates',
+        builder: (context, state) => const TemplatesPage(),
+      ),
+      GoRoute(
+        path: '/auto-dialer/bulk',
+        builder: (context, state) => const BulkOperationsPage(),
+      ),
+      GoRoute(
+        path: '/auto-dialer/voice',
+        builder: (context, state) => VoiceCallPage(
+          leadId: state.uri.queryParameters['leadId'] != null
+              ? int.tryParse(state.uri.queryParameters['leadId']!)
+              : null,
+        ),
+      ),
+
       // ─── Employee Shell ───
       ShellRoute(
         builder: (context, state, child) => EmployeeShell(child: child),
         routes: [
           GoRoute(
             path: '/employee/dashboard',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: EmployeeDashboardPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: EmployeeDashboardPage()),
           ),
           GoRoute(
             path: '/employee/tasks',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: EmployeeTasksPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: EmployeeTasksPage()),
           ),
           GoRoute(
             path: '/employee/check-in',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: CheckInPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: CheckInPage()),
           ),
           GoRoute(
             path: '/employee/profile',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: EmployeeProfilePage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: EmployeeProfilePage()),
           ),
           GoRoute(
             path: '/employee/crm',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: EmployeeCRMPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: EmployeeCRMPage()),
           ),
         ],
       ),
@@ -615,135 +1085,113 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/admin',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AdminDashboardPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AdminDashboardPage()),
           ),
           GoRoute(
             path: '/admin/crm',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: CRMPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: CRMPage()),
           ),
           GoRoute(
             path: '/admin/bookings',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: BookingApprovalsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: BookingApprovalsPage()),
           ),
           GoRoute(
             path: '/admin/customers',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: UserManagementPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: UserManagementPage()),
           ),
           GoRoute(
             path: '/admin/reports',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ReportsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: ReportsPage()),
           ),
           GoRoute(
             path: '/admin/colonies',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ColonyManagementPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: ColonyManagementPage()),
           ),
           GoRoute(
             path: '/admin/plots',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: PlotManagementPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: PlotManagementPage()),
           ),
           GoRoute(
             path: '/admin/employees',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: EmployeeManagementPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: EmployeeManagementPage()),
           ),
           GoRoute(
             path: '/admin/commissions',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: CommissionApprovalsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: CommissionApprovalsPage()),
           ),
           GoRoute(
             path: '/admin/accounts',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AccountsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AccountsPage()),
           ),
           GoRoute(
             path: '/admin/analytics',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AnalyticsDashboardPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AnalyticsDashboardPage()),
           ),
           GoRoute(
             path: '/admin/marketing',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: CampaignManagementPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: CampaignManagementPage()),
           ),
           GoRoute(
             path: '/admin/bulk-marketing',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: BulkMarketingPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: BulkMarketingPage()),
           ),
           GoRoute(
             path: '/admin/tools',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AdminToolsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AdminToolsPage()),
           ),
           GoRoute(
             path: '/admin/dev-tools',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: DevToolsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: DevToolsPage()),
           ),
           GoRoute(
             path: '/admin/payouts',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AccountsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AccountsPage()),
           ),
           GoRoute(
             path: '/admin/invoices',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AccountsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AccountsPage()),
           ),
           GoRoute(
             path: '/admin/ledger',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AccountsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AccountsPage()),
           ),
           GoRoute(
             path: '/admin/emi',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AccountsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AccountsPage()),
           ),
           GoRoute(
             path: '/admin/leads',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: CRMPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: CRMPage()),
           ),
           GoRoute(
             path: '/admin/settings',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: SettingsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: SettingsPage()),
           ),
           GoRoute(
             path: '/admin/profile',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ProfilePage(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: ProfilePage()),
           ),
         ],
       ),
@@ -752,12 +1200,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   );
 
   return router;
-});
+}
 
-String _defaultRouteForRole(User? user) {
+String defaultRouteForRole(User? user) {
   if (user == null) return '/home';
   if (user.isAdmin) return '/admin';
   if (user.isAgent) return '/agent/dashboard';
+  if (user.isTelecaller) return '/employee/dashboard';
   if (user.isAssociate) return '/associate/dashboard';
   if (user.isEmployee) return '/employee/dashboard';
   return '/home';

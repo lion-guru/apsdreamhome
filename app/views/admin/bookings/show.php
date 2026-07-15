@@ -386,7 +386,7 @@ $extraHead = '<style>
     }
 
     function viewReceipt(receiptNumber) {
-        window.open('<?= BASE_URL ?>admin/receipts/' + receiptNumber, '_blank');
+        window.open('<?= BASE_URL ?>admin/payments/receipt/' + receiptNumber, '_blank');
     }
 </script>
 

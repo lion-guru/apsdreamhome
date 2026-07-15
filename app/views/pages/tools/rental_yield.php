@@ -2,7 +2,7 @@
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_rental_yield_title', [], 'Rental Yield Calculator'); ?></h1>
-            <p class="text-white-50"><?php echo __('tool_rental_yield_subtitle', [], 'Apni property se expected rental return jaanein'); ?></p>
+            <p class="text-white-50"><?php echo __('tool_rental_yield_subtitle', [], 'Know the expected rental return from your property'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-6">

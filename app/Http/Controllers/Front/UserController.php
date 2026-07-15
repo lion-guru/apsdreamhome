@@ -780,13 +780,19 @@ class UserController extends BaseController
                     $user['phone'] = $phone;
                 }
             } else {
-                $stmt = $this->db->prepare("UPDATE users SET name = ?, phone = ? WHERE id = ?");
-                $stmt->execute([$name, $phone, $_SESSION['user_id']]);
-
-                $_SESSION['user_name'] = $name;
-                $success = true;
-                $user['name'] = $name;
-                $user['phone'] = $phone;
+                $svc = new \App\Services\UserRegistrationService();
+                $result = $svc->updateProfile($_SESSION['user_id'], [
+                    'name' => $name,
+                    'phone' => $phone,
+                ]);
+                if ($result['success']) {
+                    $_SESSION['user_name'] = $name;
+                    $success = true;
+                    $user['name'] = $name;
+                    $user['phone'] = $phone;
+                } else {
+                    $error = $result['message'];
+                }
             }
         }
 

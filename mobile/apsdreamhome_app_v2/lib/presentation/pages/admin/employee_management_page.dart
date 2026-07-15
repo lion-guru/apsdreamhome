@@ -418,7 +418,15 @@ class _EmployeeManagementPageState
                         tooltip: 'View',
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Edit ${emp['name'] ?? 'employee'} via the web admin panel',
+                              ),
+                            ),
+                          );
+                        },
                         icon: const Icon(
                           Icons.edit,
                           size: 20,

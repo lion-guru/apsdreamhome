@@ -2,7 +2,7 @@
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_plot_converter_title', [], 'Plot Size Converter'); ?></h1>
-            <p class="text-white-50"><?php echo __('tool_plot_converter_subtitle', [], 'Square feet, gaj, yard, aur bigha mein convert karein'); ?></p>
+            <p class="text-white-50"><?php echo __('tool_plot_converter_subtitle', [], 'Convert between Square feet, Gaj, Yard, and Bigha'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-6">

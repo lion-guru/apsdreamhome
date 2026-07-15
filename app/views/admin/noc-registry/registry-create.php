@@ -111,7 +111,7 @@ $stamp_duty = $stamp_duty ?? [];
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <span class="small">Other Charges:</span>
-                    <span class="fw-bold" id="calcOther">₹1,000</span>
+                    <span class="fw-bold" id="calcOther">₹<?= number_format($stamp_duty['other_charges'] ?? 1000) ?></span>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between">

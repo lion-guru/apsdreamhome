@@ -2,6 +2,9 @@
 
 /**
  * Associate Authentication Controller
+ *
+ * @deprecated Use CoreAuthController instead. Kept for backward compatibility.
+ *             Registration now delegates to UserRegistrationService.
  */
 
 namespace App\Http\Controllers\Auth;
@@ -10,9 +13,15 @@ require_once __DIR__ . '/../BaseController.php';
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Services\UserRegistrationService;
 
 class AssociateAuthController extends BaseController
 {
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     public function associateRegister()
     {
         @session_start();
@@ -51,196 +60,29 @@ class AssociateAuthController extends BaseController
         }
 
         try {
-            $db = Database::getInstance();
-            $exists = $db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email]);
-            if ($exists) {
-                $_SESSION['errors'] = ["Email already registered"];
+            $regService = new UserRegistrationService();
+            $result = $regService->createUser('associate', [
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'password' => $password,
+                'referral_code' => $referral,
+                'registration_method' => 'web',
+            ]);
+
+            if (!$result['success']) {
+                $_SESSION['errors'] = [$result['message']];
+                $_SESSION['old_input'] = $_POST;
                 header('Location: ' . BASE_URL . '/associate/register');
                 exit;
             }
 
-            $referrer_id = null;
-            if (!empty($referral)) {
-                $ref = $db->fetchOne("SELECT id FROM users WHERE referral_code = ? LIMIT 1", [$referral]);
-                if ($ref) $referrer_id = $ref['id'];
-            }
-
-            $associate_id = 'ASC' . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-            $referral_code = strtoupper(substr($name, 0, 3)) . date('ymd') . rand(100, 999);
-            $hashed = password_hash($password, PASSWORD_DEFAULT);
-
-            // Auto-approve if valid sponsor code, else pending
-            $hasValidSponsor = !empty($referrer_id);
-            $regStatus = $hasValidSponsor ? 'approved' : 'pending';
-            $userStatus = $hasValidSponsor ? 'active' : 'inactive';
-
-            $db->insert('users', [
-                'customer_id' => $associate_id,
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
-                'password' => $hashed,
-                'referral_code' => $referral_code,
-                'referred_by' => $referrer_id,
-                'role' => 'associate',
-                'status' => $userStatus,
-                'registration_status' => $regStatus,
-                'approved_at' => $hasValidSponsor ? date('Y-m-d H:i:s') : null,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-
-            $newUserId = $db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email])['id'];
-
-            // Create wallet entry for new associate
-            $db->insert('wallet_points', [
-                'user_id' => $newUserId,
-                'points_balance' => 0.00,
-                'total_earned' => 0.00,
-                'total_used' => 0.00,
-                'total_transferred_to_emi' => 0.00,
-                'referral_earnings' => 0.00,
-                'commission_earnings' => 0.00,
-                'bonus_earnings' => 0.00,
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-
-            // Create associates extension record
-            $db->insert('associates', [
-                'user_id' => $newUserId,
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
-                'referral_code' => $referral_code,
-                'sponsor_id' => $referrer_id,
-                'level' => 'associate',
-                'status' => 'active',
-                'joining_date' => date('Y-m-d'),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-
-            // Create mlm_profile for new associate
-            $db->insert('mlm_profiles', [
-                'user_id' => $newUserId,
-                'referral_code' => $referral_code,
-                'sponsor_user_id' => $referrer_id,
-                'sponsor_code' => $referral ?: null,
-                'user_type' => 'associate',
-                'current_level' => 'associate',
-                'total_team_size' => 0,
-                'direct_referrals' => 0,
-                'total_commission' => 0.00,
-                'pending_commission' => 0.00,
-                'lifetime_sales' => 0.00,
-                'verification_status' => 'pending',
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-
-            // Create network_tree entry
-            $rootId = $newUserId;
-            $parentId = null;
-            $level = 1;
-            $position = 'left';
-
-            if ($referrer_id) {
-                $referrerTree = $db->fetchOne("SELECT id, root_id, level FROM network_tree WHERE associate_id = ? LIMIT 1", [$referrer_id]);
-                if ($referrerTree) {
-                    $rootId = $referrerTree['root_id'];
-                    $parentId = $referrer_id;
-                    $level = (int)$referrerTree['level'] + 1;
-                    // Auto-assign position: prefer side with fewer members
-                    $leftCount = (int)$db->fetchColumn("SELECT COUNT(*) FROM network_tree WHERE parent_id = ? AND position = 'left'", [$referrer_id]);
-                    $rightCount = (int)$db->fetchColumn("SELECT COUNT(*) FROM network_tree WHERE parent_id = ? AND position = 'right'", [$referrer_id]);
-                    $position = $leftCount <= $rightCount ? 'left' : 'right';
-                }
-            }
-
-            $db->insert('network_tree', [
-                'associate_id' => $newUserId,
-                'root_id' => $rootId,
-                'parent_id' => $parentId,
-                'level' => $level,
-                'position' => $position,
-                'total_left_count' => 0,
-                'total_right_count' => 0,
-                'total_left_bv' => 0.00,
-                'total_right_bv' => 0.00,
-                'personal_bv' => 0.00,
-                'is_active' => 1,
-                'joined_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-
-            // Update referrer's direct_referrals count in mlm_profiles
-            if ($referrer_id) {
-                $db->query("UPDATE mlm_profiles SET direct_referrals = direct_referrals + 1, total_team_size = total_team_size + 1, updated_at = ? WHERE user_id = ?", [date('Y-m-d H:i:s'), $referrer_id]);
-            }
-
-            // Handle referral rewards if referral code was used
-            if ($referrer_id) {
-                // Get referrer's wallet
-                $referrerWallet = $db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$referrer_id]);
-
-                if ($referrerWallet) {
-                    // Calculate reward points (200 points for associate referral)
-                    $rewardPoints = 200.00;
-
-                    // Update referrer's wallet
-                    $newBalance = $referrerWallet['points_balance'] + $rewardPoints;
-                    $newTotalEarned = $referrerWallet['total_earned'] + $rewardPoints;
-                    $newReferralEarnings = $referrerWallet['referral_earnings'] + $rewardPoints;
-
-                    $db->query(
-                        "UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = ? WHERE user_id = ?",
-                        [$newBalance, $newTotalEarned, $newReferralEarnings, date('Y-m-d H:i:s'), $referrer_id]
-                    );
-
-                    // Create transaction record
-                    $db->insert('wallet_transactions', [
-                        'user_id' => $referrer_id,
-                        'transaction_type' => 'credit',
-                        'transaction_category' => 'referral',
-                        'amount' => $rewardPoints,
-                        'balance_before' => $referrerWallet['points_balance'],
-                        'balance_after' => $newBalance,
-                        'description' => "Referral reward for associate: $name",
-                        'reference_id' => $newUserId,
-                        'reference_type' => 'user',
-                        'related_user_id' => $newUserId,
-                        'status' => 'completed',
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
-
-                    // Create referral reward record
-                    $db->insert('referral_rewards', [
-                        'referrer_id' => $referrer_id,
-                        'referred_id' => $newUserId,
-                        'reward_amount' => $rewardPoints,
-                        'reward_type' => 'points',
-                        'reward_percentage' => 0.00,
-                        'referral_code' => $referral,
-                        'status' => 'credited',
-                        'credited_at' => date('Y-m-d H:i:s'),
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
-                }
-            }
-
-            if ($hasValidSponsor) {
-                $_SESSION['success'] = "Associate registration successful! ID: $associate_id. You can now login.";
-            } else {
-                $_SESSION['success'] = "Associate registration successful! ID: $associate_id. Your account is pending admin approval. You will be notified once approved.";
-            }
+            $_SESSION['success'] = $result['message'];
 
             // Mark visitor as converted
             try {
                 $visitorTracking = new \App\Services\VisitorTrackingService();
-                $visitorTracking->markAsConverted($newUserId);
+                $visitorTracking->markAsConverted($result['user_id']);
             } catch (\Exception $e) {
                 error_log("Visitor conversion tracking failed: " . $e->getMessage());
             }
@@ -332,7 +174,7 @@ class AssociateAuthController extends BaseController
     {
         @session_start();
         session_destroy();
-        header('Location: ' . BASE_URL . '/associate/login');
+        header('Location: ' . BASE_URL . '/auth/login');
         exit;
     }
 

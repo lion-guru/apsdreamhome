@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'colony_model.freezed.dart';
@@ -71,17 +73,47 @@ class ColonyModel with _$ColonyModel {
     String? mapLink,
   }) = _ColonyModel;
 
-  factory ColonyModel.fromJson(Map<String, dynamic> json) =>
-      _$ColonyModelFromJson(json);
+  factory ColonyModel.fromJson(Map<String, dynamic> raw) {
+    // Preprocess: API detail endpoint returns different types than list endpoint
+    // - starting_price: string "17050000.00" vs number 1400
+    // - amenities: stringified JSON array "[\"...\"]" vs null/actual array
+    // - is_active/is_featured: int 1 vs boolean true
+    final json = Map<String, dynamic>.from(raw);
+
+    // starting_price: ensure numeric
+    if (json['starting_price'] is String) {
+      json['starting_price'] =
+          double.tryParse(json['starting_price'] as String) ?? 0.0;
+    }
+
+    // amenities: stringified JSON array → actual list
+    if (json['amenities'] is String) {
+      try {
+        final decoded = jsonDecode(json['amenities'] as String);
+        json['amenities'] = decoded is List ? decoded : null;
+      } catch (_) {
+        json['amenities'] = null;
+      }
+    }
+
+    // is_active / is_featured: int → bool
+    if (json['is_active'] is int) {
+      json['is_active'] = (json['is_active'] as int) == 1;
+    }
+    if (json['is_featured'] is int) {
+      json['is_featured'] = (json['is_featured'] as int) == 1;
+    }
+
+    return _$ColonyModelFromJson(json);
+  }
 
   const ColonyModel._();
 
   /// Computed status string from isActive flag
   String get status => isActive ? 'active' : 'upcoming';
 
-  double get progressPercentage => totalPlots > 0
-      ? (soldPlots / totalPlots) * 100
-      : 0;
+  double get progressPercentage =>
+      totalPlots > 0 ? (soldPlots / totalPlots) * 100 : 0;
 
   bool get isUpcoming => status == 'upcoming';
   bool get isLaunching => status == 'launching';

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 // import 'package:upi_india/upi_india.dart';  // Disabled - dependency issue
 import '../../domain/services/upi_payment_service.dart';
 import '../../domain/services/phonepe_payment_service.dart';

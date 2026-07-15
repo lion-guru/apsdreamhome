@@ -18,7 +18,11 @@ class AdminAuthController extends BaseController
     {
         @session_start();
 
+        // DEBUG
+        error_log("adminLogin called, test_login=" . ($_GET['test_login'] ?? 'NOT SET') . ", APP_ENV=" . APP_ENV . ", admin_id=" . ($_SESSION['admin_id'] ?? 'NOT SET') . ", session_id=" . session_id() . ", cookie_params=" . json_encode(session_get_cookie_params()));
+
         if (isset($_GET['test_login']) && (APP_ENV === 'development' || APP_ENV === 'testing')) {
+            error_log("test_login branch entered, mode=" . $_GET['test_login']);
             $db = Database::getInstance();
             $admin = null;
             $loginMode = $_GET['test_login'];
@@ -27,7 +31,7 @@ class AdminAuthController extends BaseController
             if ($loginMode == '2') {
                 $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin') ORDER BY id LIMIT 1");
             } elseif ($loginMode == '1') {
-                $admin = $db->fetchOne("SELECT * FROM users WHERE (name = 'testadmin' OR email = 'testadmin@example.com') AND role IN ('super_admin','admin','manager') LIMIT 1");
+                $admin = $db->fetchOne("SELECT * FROM users WHERE role IN ('super_admin','admin','manager') ORDER BY id LIMIT 1");
             }
             // test_login=3 → telecaller, =4 → employee, =5 → associate, =6 → agent, =7 → customer
             elseif ($loginMode == '3') {
@@ -48,6 +52,8 @@ class AdminAuthController extends BaseController
                     $admin = ['id' => 1, 'name' => 'Admin User', 'email' => 'admin@apsdreamhome.com', 'password' => '', 'role' => 'super_admin'];
                 }
             }
+            
+            error_log("test_login: admin found=" . ($admin ? $admin['email'] . ' role=' . $admin['role'] : 'NONE'));
 
             $_SESSION['user_id'] = $admin['id'];
             $_SESSION['role'] = $admin['role'] ?? 'admin';
@@ -80,7 +86,10 @@ class AdminAuthController extends BaseController
                 }
             }
 
+            error_log("test_login: redirecting to " . BASE_URL . "/admin/dashboard");
+            session_write_close();
             header('Location: ' . BASE_URL . '/admin/dashboard');
+            error_log("test_login: after header call");
             exit;
         }
 
@@ -234,7 +243,7 @@ class AdminAuthController extends BaseController
     {
         @session_start();
         session_destroy();
-        header('Location: ' . BASE_URL . '/admin/login');
+        header('Location: ' . BASE_URL . '/auth/login');
         exit;
     }
 }

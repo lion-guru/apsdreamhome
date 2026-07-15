@@ -40,7 +40,7 @@
             <div class="col-lg-6 text-center">
                 <h3 class="mb-3"><?= __('blog_newsletter_title') ?></h3>
                 <p class="mb-4"><?= __('blog_newsletter_desc') ?></p>
-                <form class="d-flex gap-2">
+                <form class="d-flex gap-2" onsubmit="event.preventDefault(); showToast('Thank you for subscribing!', 'success'); this.reset();">
                     <input type="email" class="form-control" placeholder="<?= __('blog_newsletter_ph_email') ?>" required>
                     <button type="submit" class="btn btn-light">
                         <i class="fas fa-envelope me-1"></i><?= __('subscribe') ?>
@@ -81,8 +81,7 @@
                             $featuredImage = !empty($blog_posts[0]['featured_image']) ? $blog_posts[0]['featured_image'] : 'assets/images/blog-placeholder.jpg';
                             $featuredImageUrl = get_asset_url($featuredImage);
                             ?>
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid"
-                                class="card-img-top blog-image" alt="Featured Post" />
+                            <img src="<?= htmlspecialchars($featuredImageUrl) ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[0]['title']) ?>" style="height:350px;object-fit:cover;">
                             <div class="category-badge">
                                 <?php echo ucfirst(htmlspecialchars($blog_posts[0]['category'])); ?>
                             </div>
@@ -100,7 +99,7 @@
                             </div>
                             <h3 class="card-title mb-3"><?php echo htmlspecialchars($blog_posts[0]['title']); ?></h3>
                             <p class="card-text mb-3"><?php echo htmlspecialchars(substr($blog_posts[0]['excerpt'], 0, 200)) . '...'; ?></p>
-                            <a href="blog-post.php?id=<?php echo $blog_posts[0]['id']; ?>" class="read-more-btn">
+                            <a href="<?= BASE_URL ?>/blog/<?= htmlspecialchars($blog_posts[0]['slug']) ?>" class="read-more-btn">
                                 <i class="fas fa-arrow-right me-1"></i><?= __('blog_read_more') ?>
                             </a>
                         </div>
@@ -119,8 +118,11 @@
                 <div class="col-lg-4 col-md-6" data-category="<?php echo htmlspecialchars($blog_posts[$i]['category']); ?>">
                     <div class="card blog-card shadow-sm h-100">
                         <div class="position-relative">
-                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid"
-                                class="card-img-top blog-image" alt="Blog Post" />
+                            <?php
+                            $postImage = !empty($blog_posts[$i]['featured_image']) ? $blog_posts[$i]['featured_image'] : get_asset_url('assets/images/placeholder/property.svg');
+                            $postImageUrl = str_starts_with($postImage, 'http') ? $postImage : get_asset_url($postImage);
+                            ?>
+                            <img src="<?= htmlspecialchars($postImageUrl) ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[$i]['title']) ?>" style="height:220px;object-fit:cover;">
                             <div class="category-badge">
                                 <?php echo ucfirst(htmlspecialchars($blog_posts[$i]['category'])); ?>
                             </div>
@@ -140,7 +142,7 @@
                             <p class="card-text small text-muted mb-3">
                                 <?php echo htmlspecialchars(substr($blog_posts[$i]['excerpt'], 0, 100)) . '...'; ?>
                             </p>
-                            <a href="blog-post.php?id=<?php echo $blog_posts[$i]['id']; ?>" class="read-more-btn btn-sm">
+                            <a href="<?= BASE_URL ?>/blog/<?= htmlspecialchars($blog_posts[$i]['slug']) ?>" class="read-more-btn btn-sm">
                                 <i class="fas fa-arrow-right me-1"></i><?= __('blog_read_more') ?>
                             </a>
                         </div>
@@ -149,14 +151,16 @@
             <?php endfor; ?>
         </div>
 
-        <!-- Load More Button -->
+        <!-- Load More Button (hidden when all posts are already shown) -->
+        <?php if (count($blog_posts) >= 10): ?>
         <div class="row mt-4">
             <div class="col-12 text-center">
-                <button class="btn btn-outline-primary btn-lg" id="loadMore">
+                <button class="btn btn-outline-primary btn-lg" id="loadMore" onclick="showToast('All posts are currently displayed.', 'info')">
                     <i class="fas fa-plus me-2"></i><?= __('blog_load_more') ?>
                 </button>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -226,11 +230,14 @@
                 });
             });
         });
-
-        // Load more functionality
-        document.getElementById('loadMore').addEventListener('click', function() {
-            // In a real application, this would load more posts via AJAX
-            alert('Load more functionality would be implemented here');
-        });
     });
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = 'alert alert-' + (type === 'success' ? 'success' : type === 'info' ? 'info' : 'danger') + ' position-fixed top-0 end-0 m-3 shadow';
+        toast.style.zIndex = '9999';
+        toast.innerHTML = message + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
 </script>

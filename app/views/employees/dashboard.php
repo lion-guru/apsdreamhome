@@ -1,588 +1,374 @@
 <?php
-// Auth check removed: session_start() + auth bypass deleted (Phase 1.4)
-// EmployeeController::dashboard() already enforces auth at the controller level
-// (lines 79-81 in EmployeeController.php: if (!isset($_SESSION['employee_id'])) redirect).
-
-// Set page variables
-$page_title = 'Employee Dashboard - APS Dream Home';
-$page_description = 'Employee portal dashboard for APS Dream Home';
-$active_page = 'dashboard';
-
-// Get employee data from controller
 $employee = $dashboardData['employee'] ?? [];
 $tasks = $dashboardData['tasks'] ?? [];
 $performance = $dashboardData['performance'] ?? [];
 $attendance = $dashboardData['attendance'] ?? [];
 $activities = $dashboardData['activities'] ?? [];
+$gamify = $gamify ?? [];
+
+$completedTasks = $performance['completed_tasks'] ?? 0;
+$pendingTasks = $performance['pending_tasks'] ?? 0;
+$attendanceDays = count($attendance);
+$totalActivities = count($activities);
+
+$employeeName = htmlspecialchars($employee['name'] ?? $_SESSION['employee_name'] ?? 'Employee');
+$employeeEmail = htmlspecialchars($employee['email'] ?? $_SESSION['employee_email'] ?? '');
+$todayCheckedIn = false;
+foreach ($attendance as $att) {
+    if (date('Y-m-d', strtotime($att['attendance_date'] ?? '')) === date('Y-m-d')) {
+        $todayCheckedIn = true;
+        break;
+    }
+}
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?></title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <style>
-        body {
-            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
-            min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
+<style>
+    .emp-welcome {
+        background: linear-gradient(135deg, #7c2d12 0%, #c2410c 50%, #ea580c 100%);
+        color: #fff; border-radius: 16px; padding: 30px; margin-bottom: 24px;
+        position: relative; overflow: hidden;
+    }
+    .emp-welcome::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23g)"/></svg>');
+        opacity: 0.4;
+    }
+    .emp-welcome * { position: relative; z-index: 1; }
+    .emp-stat {
+        background: #fff; border-radius: 14px; padding: 22px; text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;
+        transition: all 0.3s ease;
+    }
+    .emp-stat:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
+    .emp-stat-icon {
+        width: 52px; height: 52px; border-radius: 14px; display: flex;
+        align-items: center; justify-content: center; font-size: 1.3rem; margin: 0 auto 12px; color: #fff;
+    }
+    .emp-stat-num { font-size: 2rem; font-weight: 800; color: #1e293b; line-height: 1; }
+    .emp-stat-label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
 
-        .dashboard-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            margin: 20px auto;
-            max-width: 1400px;
-            padding: 30px;
-        }
+    .emp-card {
+        background: #fff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        border: 1px solid #f1f5f9; margin-bottom: 20px; overflow: hidden;
+    }
+    .emp-card-header {
+        padding: 16px 22px; border-bottom: 1px solid #f1f5f9; display: flex;
+        justify-content: space-between; align-items: center; background: #fafbfc;
+    }
+    .emp-card-header h6 { margin: 0; font-weight: 700; color: #1e293b; }
+    .emp-card-body { padding: 20px 22px; }
 
-        .welcome-header {
-            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-        }
+    .emp-action-btn {
+        display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+        border-radius: 10px; font-weight: 600; font-size: 0.85rem; text-decoration: none;
+        transition: all 0.3s ease; border: none; cursor: pointer;
+    }
+    .emp-action-btn:hover { transform: translateY(-2px); }
+    .emp-checkin { background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; }
+    .emp-checkin:hover { color: #fff; box-shadow: 0 6px 20px rgba(22,163,74,0.4); }
+    .emp-checkout { background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff; }
+    .emp-checkout:hover { color: #fff; box-shadow: 0 6px 20px rgba(220,38,38,0.4); }
+    .emp-quick { background: linear-gradient(135deg, #7c2d12, #c2410c); color: #fff; }
+    .emp-quick:hover { color: #fff; box-shadow: 0 6px 20px rgba(124,45,18,0.4); }
 
-        .welcome-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
-        }
+    .emp-task-item {
+        display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #f1f5f9;
+    }
+    .emp-task-item:last-child { border-bottom: none; }
+    .emp-task-badge {
+        padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    }
+    .badge-pending { background: #fef3c7; color: #d97706; }
+    .badge-in-progress { background: #dbeafe; color: #2563eb; }
+    .badge-completed { background: #d1fae5; color: #059669; }
 
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(102, 126, 234, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
+    .emp-activity-item {
+        display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #f1f5f9;
+    }
+    .emp-activity-item:last-child { border-bottom: none; }
+    .emp-activity-dot {
+        width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center;
+        justify-content: center; margin-right: 12px; font-size: 0.85rem; color: #fff; flex-shrink: 0;
+    }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #0d9488, #0f766e);
-        }
+    .emp-attendance-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 0; border-bottom: 1px solid #f1f5f9;
+    }
+    .emp-attendance-row:last-child { border-bottom: none; }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
+    @media (max-width: 768px) {
+        .emp-welcome { padding: 20px; }
+        .emp-welcome h4 { font-size: 1.2rem; }
+        .emp-stat-num { font-size: 1.5rem; }
+        .emp-action-btn { width: 100%; justify-content: center; }
+    }
+</style>
 
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: white;
-        }
+<div class="emp-welcome">
+    <div class="row align-items-center">
+        <div class="col-md-7">
+            <h4 class="fw-bold mb-2">
+                <i class="fas fa-user-tie me-2"></i>Welcome, <?= $employeeName ?>!
+            </h4>
+            <p class="mb-2 opacity-75">
+                <?= date('l, F j, Y') ?> &mdash; <?= date('h:i A') ?>
+            </p>
+            <p class="mb-0 small opacity-60">
+                <?php if (!empty($employee['department'])): ?>
+                    Department: <?= htmlspecialchars(ucfirst($employee['department'])) ?>
+                <?php endif; ?>
+            </p>
+        </div>
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <?php if ($todayCheckedIn): ?>
+                <button class="emp-action-btn emp-checkout" onclick="checkOut()">
+                    <i class="fas fa-sign-out-alt"></i> Check Out
+                </button>
+            <?php else: ?>
+                <button class="emp-action-btn emp-checkin" onclick="checkIn()">
+                    <i class="fas fa-sign-in-alt"></i> Check In
+                </button>
+            <?php endif; ?>
+            <a href="<?= BASE_URL ?>/employee/profile" class="emp-action-btn emp-quick mt-2">
+                <i class="fas fa-user"></i> My Profile
+            </a>
+        </div>
+    </div>
+</div>
 
-        .stat-icon.tasks { background: linear-gradient(135deg, #0d9488, #0f766e); }
-        .stat-icon.performance { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        .stat-icon.attendance { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-        .stat-icon.activities { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="emp-stat">
+            <div class="emp-stat-icon" style="background: linear-gradient(135deg, #7c2d12, #c2410c);"><i class="fas fa-tasks"></i></div>
+            <div class="emp-stat-num"><?= $pendingTasks ?></div>
+            <div class="emp-stat-label">Pending Tasks</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="emp-stat">
+            <div class="emp-stat-icon" style="background: linear-gradient(135deg, #059669, #10b981);"><i class="fas fa-check-circle"></i></div>
+            <div class="emp-stat-num"><?= $completedTasks ?></div>
+            <div class="emp-stat-label">Completed</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="emp-stat">
+            <div class="emp-stat-icon" style="background: linear-gradient(135deg, #2563eb, #3b82f6);"><i class="fas fa-calendar-check"></i></div>
+            <div class="emp-stat-num"><?= $attendanceDays ?></div>
+            <div class="emp-stat-label">Attendance Days</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="emp-stat">
+            <div class="emp-stat-icon" style="background: linear-gradient(135deg, #d97706, #f59e0b);"><i class="fas fa-history"></i></div>
+            <div class="emp-stat-num"><?= $totalActivities ?></div>
+            <div class="emp-stat-label">Activities</div>
+        </div>
+    </div>
+</div>
 
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .quick-actions {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .action-btn {
-            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .action-btn:hover {
-            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .task-item {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid #0d9488;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .task-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .task-priority {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .priority-high { background: #ffe4e6; color: #dc2626; }
-        .priority-medium { background: #fef3c7; color: #d97706; }
-        .priority-low { background: #dbeafe; color: #2563eb; }
-
-        .activity-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 1rem;
-            color: white;
-        }
-
-        .chart-container {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
-            border-radius: 15px;
-            padding: 15px 25px;
-            margin-bottom: 30px;
-        }
-
-        .navbar-brand {
-            color: white !important;
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-
-        .navbar-text {
-            color: white !important;
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-container {
-                margin: 10px;
-                padding: 20px;
-            }
-            
-            .stat-number {
-                font-size: 2rem;
-            }
-            
-            .welcome-header {
-                padding: 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <nav class="navbar">
-            <div class="container-fluid">
-                <span class="navbar-brand">
-                    <i class="fas fa-building me-2"></i>
-                    APS Dream Home
-                </span>
-                <span class="navbar-text">
-                    <i class="fas fa-user-tie me-2"></i>
-                    Welcome, <?php echo htmlspecialchars($_SESSION['employee_name'] ?? 'Employee'); ?>
-                </span>
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="emp-card">
+            <div class="emp-card-header">
+                <h6><i class="fas fa-tasks me-2"></i>My Tasks</h6>
+                <a href="<?= BASE_URL ?>/employee/tasks" class="small text-decoration-none" style="color:#c2410c;">View All</a>
             </div>
-        </nav>
-
-        <div class="dashboard-container">
-            <!-- Welcome Header -->
-            <div class="welcome-header">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h1 class="display-4 fw-bold mb-3">
-                            <i class="fas fa-user-tie me-3"></i>
-                            Employee Dashboard
-                        </h1>
-                        <p class="lead mb-0">
-                            Welcome back, <?php echo htmlspecialchars($employee['name'] ?? 'Employee'); ?>!
-                            Here's your workspace overview.
-                        </p>
-                    </div>
-                    <div class="col-md-4">
-                        <?php $gamify = $gamify ?? []; if (!empty($gamify) && !empty($gamify['level'])): ?>
-                            <?php include __DIR__ . '/../components/gamification_widget.php'; ?>
-                        <?php endif; ?>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <div class="d-flex flex-column align-items-end">
-                            <div class="text-white-50 small">Current Time</div>
-                            <div class="h4 mb-0" id="currentTime"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Statistics Cards -->
-            <div class="row mb-4">
-                <div class="col-md-3 col-sm-6 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon tasks">
-                            <i class="fas fa-tasks"></i>
-                        </div>
-                        <div class="stat-number"><?php echo count($tasks); ?></div>
-                        <div class="stat-label">Active Tasks</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon performance">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="stat-number"><?php echo $performance['completed_tasks'] ?? 0; ?></div>
-                        <div class="stat-label">Completed</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon attendance">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="stat-number"><?php echo count($attendance); ?></div>
-                        <div class="stat-label">Attendance Days</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon activities">
-                            <i class="fas fa-history"></i>
-                        </div>
-                        <div class="stat-number"><?php echo count($activities); ?></div>
-                        <div class="stat-label">Activities</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <h4 class="mb-3">
-                    <i class="fas fa-bolt me-2"></i>
-                    Quick Actions
-                </h4>
-                <div class="row">
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <button class="action-btn w-100" onclick="checkIn()">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Check In
-                        </button>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <button class="action-btn w-100" onclick="checkOut()">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Check Out
-                        </button>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="<?php echo BASE_URL; ?>/employee/profile" class="action-btn w-100">
-                            <i class="fas fa-user"></i>
-                            Profile
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="<?php echo BASE_URL; ?>/employee/logout" class="action-btn w-100">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Logout
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <div class="row">
-                <!-- Tasks Section -->
-                <div class="col-md-6 mb-4">
-                    <div class="chart-container">
-                        <h4 class="mb-3">
-                            <i class="fas fa-tasks me-2"></i>
-                            Recent Tasks
-                        </h4>
-                        <?php if (!empty($tasks)): ?>
-                            <?php foreach (array_slice($tasks, 0, 5) as $task): ?>
-                                <div class="task-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1"><?php echo htmlspecialchars($task['title'] ?? 'Untitled Task'); ?></h6>
-                                            <p class="text-muted small mb-2"><?php echo htmlspecialchars($task['description'] ?? 'No description'); ?></p>
-                                            <small class="text-muted">
-                                                <i class="fas fa-clock me-1"></i>
-                                                <?php echo date('M d, Y', strtotime($task['created_at'] ?? 'now')); ?>
-                                            </small>
-                                        </div>
-                                        <span class="task-priority priority-medium">
-                                            <?php echo htmlspecialchars($task['status'] ?? 'pending'); ?>
+            <div class="emp-card-body">
+                <?php if (!empty($tasks)): ?>
+                    <?php foreach (array_slice($tasks, 0, 6) as $task): ?>
+                        <div class="emp-task-item">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1" style="font-size:0.9rem;"><?= htmlspecialchars($task['title'] ?? 'Untitled Task') ?></h6>
+                                <small class="text-muted">
+                                    <?php if (!empty($task['description'])): ?>
+                                        <?= htmlspecialchars(mb_strimwidth($task['description'], 0, 60, '...')) ?>
+                                    <?php endif; ?>
+                                </small>
+                                <br>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    <?= date('M d', strtotime($task['created_at'] ?? 'now')) ?>
+                                    <?php if (!empty($task['priority'])): ?>
+                                        &middot;
+                                        <span class="text-uppercase fw-bold" style="font-size:0.7rem; color: <?= $task['priority'] === 'high' ? '#dc2626' : ($task['priority'] === 'medium' ? '#d97706' : '#2563eb') ?>;">
+                                            <?= $task['priority'] ?>
                                         </span>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="text-center py-4">
-                                <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">No tasks assigned yet</p>
+                                    <?php endif; ?>
+                                </small>
                             </div>
-                        <?php endif; ?>
+                            <?php
+                            $statusClass = 'badge-pending';
+                            if (($task['status'] ?? '') === 'in_progress') $statusClass = 'badge-in-progress';
+                            elseif (($task['status'] ?? '') === 'completed') $statusClass = 'badge-completed';
+                            ?>
+                            <span class="emp-task-badge <?= $statusClass ?>"><?= htmlspecialchars($task['status'] ?? 'pending') ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="text-center py-4">
+                        <i class="fas fa-clipboard-check fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No tasks assigned yet</p>
                     </div>
-                </div>
-
-                <!-- Activities Section -->
-                <div class="col-md-6 mb-4">
-                    <div class="chart-container">
-                        <h4 class="mb-3">
-                            <i class="fas fa-history me-2"></i>
-                            Recent Activities
-                        </h4>
-                        <?php if (!empty($activities)): ?>
-                            <?php foreach (array_slice($activities, 0, 5) as $activity): ?>
-                                <div class="activity-item">
-                                    <div class="activity-icon" style="background: linear-gradient(135deg, #0d9488, #0f766e);">
-                                        <i class="fas fa-bell"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1"><?php echo htmlspecialchars($activity['activity'] ?? 'Activity'); ?></h6>
-                                        <small class="text-muted">
-                                            <?php echo date('M d, Y H:i', strtotime($activity['created_at'] ?? 'now')); ?>
-                                        </small>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="text-center py-4">
-                                <i class="fas fa-history fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">No recent activities</p>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
+        </div>
 
-            <!-- Performance Chart -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="chart-container">
-                        <h4 class="mb-3">
-                            <i class="fas fa-chart-bar me-2"></i>
-                            Performance Overview
-                        </h4>
-                        <canvas id="performanceChart" height="100"></canvas>
+        <div class="emp-card">
+            <div class="emp-card-header">
+                <h6><i class="fas fa-history me-2"></i>Recent Activity</h6>
+                <a href="<?= BASE_URL ?>/employee/activities" class="small text-decoration-none" style="color:#c2410c;">View All</a>
+            </div>
+            <div class="emp-card-body">
+                <?php if (!empty($activities)): ?>
+                    <?php foreach (array_slice($activities, 0, 5) as $activity): ?>
+                        <div class="emp-activity-item">
+                            <div class="emp-activity-dot" style="background: linear-gradient(135deg, #7c2d12, #c2410c);">
+                                <i class="fas fa-circle" style="font-size:0.5rem;"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <p class="mb-1" style="font-size:0.85rem;"><?= htmlspecialchars($activity['activity'] ?? $activity['description'] ?? 'Activity') ?></p>
+                                <small class="text-muted"><?= date('M d, Y h:i A', strtotime($activity['created_at'] ?? 'now')) ?></small>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="text-center py-4">
+                        <i class="fas fa-stream fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">No recent activities</p>
                     </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Update current time
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: true 
-            });
-            document.getElementById('currentTime').textContent = timeString;
-        }
-        
-        updateTime();
-        setInterval(updateTime, 1000);
+    <div class="col-lg-4">
+        <div class="emp-card">
+            <div class="emp-card-header">
+                <h6><i class="fas fa-calendar me-2"></i>Quick Links</h6>
+            </div>
+            <div class="emp-card-body">
+                <div class="d-grid gap-2">
+                    <a href="<?= BASE_URL ?>/employee/tasks" class="emp-action-btn emp-quick justify-content-center">
+                        <i class="fas fa-clipboard-list"></i> My Tasks
+                    </a>
+                    <a href="<?= BASE_URL ?>/employee/attendance" class="emp-action-btn emp-quick justify-content-center">
+                        <i class="fas fa-fingerprint"></i> Attendance
+                    </a>
+                    <a href="<?= BASE_URL ?>/employee/leaves" class="emp-action-btn emp-quick justify-content-center">
+                        <i class="fas fa-umbrella-beach"></i> Apply Leave
+                    </a>
+                    <a href="<?= BASE_URL ?>/employee/payroll" class="emp-action-btn emp-quick justify-content-center">
+                        <i class="fas fa-money-check-alt"></i> Payroll
+                    </a>
+                    <a href="<?= BASE_URL ?>/employee/documents" class="emp-action-btn emp-quick justify-content-center">
+                        <i class="fas fa-file-alt"></i> Documents
+                    </a>
+                    <a href="<?= BASE_URL ?>/employee/performance" class="emp-action-btn emp-quick justify-content-center">
+                        <i class="fas fa-chart-line"></i> Performance
+                    </a>
+                </div>
+            </div>
+        </div>
 
-        // Check In function
-        async function checkIn() {
-            try {
-                const response = await fetch('<?php echo BASE_URL; ?>/employee/checkin', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showNotification('success', 'Checked in successfully!');
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    showNotification('error', result.message || 'Check in failed');
-                }
-            } catch (error) {
-                showNotification('error', 'Network error. Please try again.');
-            }
-        }
-
-        // Check Out function
-        async function checkOut() {
-            try {
-                const response = await fetch('<?php echo BASE_URL; ?>/employee/checkout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showNotification('success', 'Checked out successfully!');
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    showNotification('error', result.message || 'Check out failed');
-                }
-            } catch (error) {
-                showNotification('error', 'Network error. Please try again.');
-            }
-        }
-
-        // Show notification
-        function showNotification(type, message) {
-            const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-            const alert = document.createElement('div');
-            alert.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
-            alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-            alert.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.body.appendChild(alert);
-            
-            setTimeout(() => {
-                if (alert.parentNode) {
-                    alert.remove();
-                }
-            }, 5000);
-        }
-
-        // Performance Chart
-        const ctx = document.getElementById('performanceChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Completed Tasks', 'Pending Tasks', 'Attendance', 'Activities'],
-                datasets: [{
-                    label: 'Performance Metrics',
-                    data: [
-                        <?php echo $performance['completed_tasks'] ?? 0; ?>,
-                        <?php echo $performance['pending_tasks'] ?? 0; ?>,
-                        <?php echo count($attendance); ?>,
-                        <?php echo count($activities); ?>
-                    ],
-                    backgroundColor: [
-                        'rgba(102, 126, 234, 0.8)',
-                        'rgba(118, 75, 162, 0.8)',
-                        'rgba(79, 172, 254, 0.8)',
-                        'rgba(67, 233, 123, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(102, 126, 234, 1)',
-                        'rgba(118, 75, 162, 1)',
-                        'rgba(79, 172, 254, 1)',
-                        'rgba(67, 233, 123, 1)'
-                    ],
-                    borderWidth: 2,
-                    borderRadius: 10
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            borderDash: [5, 5]
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
+        <div class="emp-card">
+            <div class="emp-card-header">
+                <h6><i class="fas fa-calendar-check me-2"></i>Attendance This Week</h6>
+            </div>
+            <div class="emp-card-body">
+                <?php
+                $weekDays = [];
+                for ($i = 6; $i >= 0; $i--) {
+                    $date = date('Y-m-d', strtotime("-{$i} days"));
+                    $dayLabel = date('D', strtotime($date));
+                    $checkedIn = false;
+                    foreach ($attendance as $att) {
+                        if (date('Y-m-d', strtotime($att['attendance_date'] ?? '')) === $date) {
+                            $checkedIn = true;
+                            break;
                         }
                     }
+                    $weekDays[] = ['date' => $date, 'day' => $dayLabel, 'checked' => $checkedIn];
                 }
-            }
-        });
+                ?>
+                <div class="d-flex justify-content-between">
+                    <?php foreach ($weekDays as $wd): ?>
+                        <div class="text-center">
+                            <div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;margin:0 auto 4px;background:<?= $wd['checked'] ? '#d1fae5' : '#f1f5f9' ?>;color:<?= $wd['checked'] ? '#059669' : '#94a3b8' ?>;">
+                                <?php if ($wd['checked']): ?>
+                                    <i class="fas fa-check"></i>
+                                <?php else: ?>
+                                    <?= strtoupper(substr($wd['day'], 0, 1)) ?>
+                                <?php endif; ?>
+                            </div>
+                            <small class="text-muted" style="font-size:0.65rem;"><?= $wd['day'] ?></small>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
 
-        // Auto-refresh dashboard every 30 seconds
-        setInterval(() => {
-            // Optional: Add auto-refresh functionality
-        }, 30000);
-    </script>
-</body>
-</html>
+        <div class="emp-card">
+            <div class="emp-card-header">
+                <h6><i class="fas fa-chart-pie me-2"></i>Performance</h6>
+            </div>
+            <div class="emp-card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="text-muted">Tasks Completed</small>
+                        <small class="fw-bold"><?= $completedTasks ?></small>
+                    </div>
+                    <div class="progress" style="height:8px;">
+                        <div class="progress-bar" role="progressbar" style="width:<?= ($completedTasks + $pendingTasks) > 0 ? round(($completedTasks / ($completedTasks + $pendingTasks)) * 100) : 0 ?>%;background:linear-gradient(90deg,#16a34a,#10b981);"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="text-muted">Pending Tasks</small>
+                        <small class="fw-bold"><?= $pendingTasks ?></small>
+                    </div>
+                    <div class="progress" style="height:8px;">
+                        <div class="progress-bar" role="progressbar" style="width:<?= ($completedTasks + $pendingTasks) > 0 ? round(($pendingTasks / ($completedTasks + $pendingTasks)) * 100) : 0 ?>%;background:linear-gradient(90deg,#d97706,#f59e0b);"></div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <div class="fw-bold" style="font-size:1.5rem;color:#1e293b;">
+                        <?= ($completedTasks + $pendingTasks) > 0 ? round(($completedTasks / ($completedTasks + $pendingTasks)) * 100) : 0 ?>%
+                    </div>
+                    <small class="text-muted">Completion Rate</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function checkIn() {
+    try {
+        const res = await fetch('<?= BASE_URL ?>/employee/checkin', { method: 'POST', headers: {'Content-Type':'application/json'} });
+        const data = await res.json();
+        if (data.success) { showToast('success', 'Checked in successfully!'); setTimeout(() => location.reload(), 1000); }
+        else { showToast('error', data.message || 'Check-in failed'); }
+    } catch(e) { showToast('error', 'Network error. Please try again.'); }
+}
+
+async function checkOut() {
+    try {
+        const res = await fetch('<?= BASE_URL ?>/employee/checkout', { method: 'POST', headers: {'Content-Type':'application/json'} });
+        const data = await res.json();
+        if (data.success) { showToast('success', 'Checked out successfully!'); setTimeout(() => location.reload(), 1000); }
+        else { showToast('error', data.message || 'Check-out failed'); }
+    } catch(e) { showToast('error', 'Network error. Please try again.'); }
+}
+
+function showToast(type, message) {
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    const el = document.createElement('div');
+    el.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+    el.style.cssText = 'top:20px;right:20px;z-index:9999;min-width:300px;';
+    el.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+    document.body.appendChild(el);
+    setTimeout(() => { if (el.parentNode) el.remove(); }, 4000);
+}
+</script>

@@ -2,7 +2,7 @@
     <div class="container">
         <div class="text-center mb-4">
             <h1 class="text-white fw-bold"><?php echo __('tool_property_tax_title', [], 'Property Tax Calculator'); ?></h1>
-            <p class="text-white-50"><?php echo __('tool_property_tax_subtitle', [], 'Apni property ka estimated annual tax jaanein'); ?></p>
+            <p class="text-white-50"><?php echo __('tool_property_tax_subtitle', [], 'Know the estimated annual tax on your property'); ?></p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-6">

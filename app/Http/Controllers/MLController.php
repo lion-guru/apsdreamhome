@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Core\Database\Database;
-use App\Services\AI\AIRecommendationEngine;
-use App\Services\AI\PropertyRecommendationService;
+use App\Services\RecommendationService;
 use App\Services\ML\FraudDetectionService;
 
 /**
@@ -75,8 +74,8 @@ class MLController extends BaseController
         }
 
         try {
-            $recommendationService = new PropertyRecommendationService();
-            $recommendations = $recommendationService->getRecommendationsForUser($userId);
+            $recommendationService = new RecommendationService();
+            $recommendations = $recommendationService->getRecommendations($userId);
 
             echo json_encode([
                 "success" => true,

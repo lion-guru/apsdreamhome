@@ -7,6 +7,7 @@
 $page_title = $page_title ?? 'Review Testimonial';
 $t = $testimonial ?? [];
 $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
+$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 ?>
 
 <div class="container-fluid py-4">
@@ -152,7 +153,7 @@ $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <small class="text-muted">
-                        <i class="fas fa-user me-1"></i>Reviewed by: <?php echo htmlspecialchars(t['reviewed_by_name'] ?? ''); ?><br>
+                        <i class="fas fa-user me-1"></i>Reviewed by: <?php echo htmlspecialchars($t['reviewed_by_name'] ?? ''); ?><br>
                         <i class="fas fa-clock me-1"></i>Reviewed at: <?php echo date('M d, Y H:i', strtotime($t['reviewed_at'] ?? 'now')); ?>
                     </small>
                 </div>
@@ -168,7 +169,7 @@ document.getElementById('testimonialActionForm').addEventListener('submit', func
     
     const formData = new FormData(this);
     
-    fetch('<?php echo BASE_URL; ?>/admin/testimonials/update-status/<?php echo $t['id'] ?? 0; ?>', {
+    fetch('<?php echo BASE_URL; ?>/admin/testimonials/<?php echo $t['id'] ?? 0; ?>/status', {
         method: 'POST',
         body: formData,
         headers: {

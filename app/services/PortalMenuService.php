@@ -150,6 +150,7 @@ class PortalMenuService
             $this->item('leads', 'Main', 'My Leads', '/associate/leads', 'fas fa-user-friends', $this->countTable('leads', 'assigned_to')),
             $this->item('leads-import', 'Main', 'Import Leads', '/associate/leads/import', 'fas fa-file-import'),
             $this->item('leads-bulk-wa', 'Main', 'Bulk WhatsApp', '/associate/leads/bulk-whatsapp', 'fab fa-whatsapp'),
+            $this->item('leads-export', 'Main', 'Export Leads', '/associate/leads/export', 'fas fa-file-export'),
             $this->item('followups', 'Main', 'Follow-ups', '/associate/followups', 'fas fa-calendar-check', $this->countTable('crm_tasks', 'assigned_to', 'status', 'pending')),
             $this->item('properties', 'Main', 'My Properties', '/associate/properties', 'fas fa-building', $this->countTable('user_properties', 'posted_by')),
 

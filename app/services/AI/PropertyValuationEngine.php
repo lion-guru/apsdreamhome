@@ -397,4 +397,120 @@ class PropertyValuationEngine
             'sources' => ['magicbricks', '99acres', 'housing.com']
         ];
     }
+
+    /**
+     * Income-Approach Valuation
+     * Professional real estate appraisal: rental yield × 12 as property value component
+     * Combined with 5-factor weighted formula: location 25%, condition 20%, comparables 30%, income 15%, market 10%
+     */
+    public function calculateIncomeValuation($propertyData): array
+    {
+        $monthlyRent = $propertyData['expected_rent'] ?? 0;
+        $propertyAge = $propertyData['age'] ?? 0;
+        $size = $propertyData['size'] ?? 1000;
+        $location = $propertyData['location'] ?? '';
+
+        // Rental yield calculation: annual rent / property value
+        // In India, typical rental yield is 2-4% for residential, 6-9% for commercial
+        $isCommercial = in_array(strtolower($propertyData['type'] ?? ''), ['commercial', 'shop', 'office']);
+
+        // Expected rental yield by location (annual %)
+        $rentalYields = [
+            'lucknow'    => $isCommercial ? 0.075 : 0.030,
+            'varanasi'   => $isCommercial ? 0.068 : 0.028,
+            'gorakhpur'  => $isCommercial ? 0.072 : 0.032,
+            'kushinagar' => $isCommercial ? 0.065 : 0.025,
+        ];
+        $loc = strtolower(trim(explode(',', $location)[0]));
+        $expectedYield = $rentalYields[$loc] ?? ($isCommercial ? 0.07 : 0.028);
+
+        // Income-based value: if monthly rent = X, what property price gives expected yield?
+        $annualRent = $monthlyRent * 12;
+        $incomeBasedValue = $expectedYield > 0 ? $annualRent / $expectedYield : 0;
+
+        // Age depreciation: 1.5% per year, max 30% reduction
+        $depreciationRate = min(0.30, $propertyAge * 0.015);
+        $conditionMultiplier = 1.0 - $depreciationRate;
+
+        // Size-based valuation (area × location rate)
+        $pricePerSqft = $this->getPricePerSqft($location);
+        $sizeBasedValue = $size * $pricePerSqft;
+
+        // 5-factor weighted formula
+        $locationScore = $this->getLocationMultiplier($location);
+        $conditionScore = $conditionMultiplier;
+        $comparableScore = $this->getComparableAnalysis($propertyData);
+        $incomeScore = $incomeBasedValue > 0 ? 1.0 : 0.0;
+        $marketScore = $this->getMarketTrendAdjustment($location);
+
+        // Weighted factors: location 25%, condition 20%, comparables 30%, income 15%, market 10%
+        $weightedScore = ($locationScore * 0.25)
+            + ($conditionScore * 0.20)
+            + ($comparableScore * 0.30)
+            + ($incomeScore * 0.15)
+            + ($marketScore * 0.10);
+
+        // Final valuation: blend income-based and size-based
+        $baseValuation = $incomeBasedValue > 0
+            ? ($incomeBasedValue * 0.6) + ($sizeBasedValue * 0.4)
+            : $sizeBasedValue;
+
+        $finalValuation = $baseValuation * $weightedScore;
+
+        // Confidence score
+        $confidence = 0.5;
+        if ($monthlyRent > 0) $confidence += 0.2;
+        if ($propertyAge > 0) $confidence += 0.1;
+        if (count($this->getComparableProperties($propertyData)) > 0) $confidence += 0.2;
+
+        // Monthly rental income estimate
+        $estimatedMonthlyRent = $monthlyRent > 0
+            ? $monthlyRent
+            : round($finalValuation * $expectedYield / 12);
+
+        return [
+            'method' => 'income_approach',
+            'estimated_price' => round($finalValuation),
+            'income_based_value' => round($incomeBasedValue),
+            'size_based_value' => round($sizeBasedValue),
+            'expected_rental_yield' => round($expectedYield * 100, 2) . '%',
+            'estimated_monthly_rent' => $estimatedMonthlyRent,
+            'annual_rental_income' => round($estimatedMonthlyRent * 12),
+            'condition_score' => round($conditionScore, 2),
+            'age_depreciation' => round($depreciationRate * 100, 1) . '%',
+            'weighted_factors' => [
+                'location'   => round($locationScore, 3) . ' (25%)',
+                'condition'  => round($conditionScore, 3) . ' (20%)',
+                'comparables'=> round($comparableScore, 3) . ' (30%)',
+                'income'     => round($incomeScore, 3) . ' (15%)',
+                'market'     => round($marketScore, 3) . ' (10%)',
+            ],
+            'confidence' => round(min(1.0, $confidence), 2),
+            'is_commercial' => $isCommercial,
+        ];
+    }
+
+    /**
+     * Get 5-factor valuation breakdown (for API/dashboard display)
+     */
+    public function getValuationBreakdown($propertyData): array
+    {
+        $income = $this->calculateIncomeValuation($propertyData);
+        $traditional = $this->calculateValuation($propertyData);
+
+        return [
+            'income_approach' => $income,
+            'traditional_approach' => [
+                'estimated_price' => $traditional['estimated_price'],
+                'confidence_score' => $traditional['confidence_score'],
+            ],
+            'recommended_price' => round(
+                ($income['estimated_price'] * 0.5) + ($traditional['estimated_price'] * 0.5)
+            ),
+            'price_range' => [
+                'low' => round($income['estimated_price'] * 0.85),
+                'high' => round($income['estimated_price'] * 1.15),
+            ],
+        ];
+    }
 }

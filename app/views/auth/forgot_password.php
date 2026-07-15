@@ -162,7 +162,7 @@ $page_description = __('forgot_password_page_description');
                     <div class="quick-links">
                         <div class="row">
                             <div class="col-md-6">
-                                <a href="<?= BASE_URL ?>auth/universal_login" class="quick-link">
+                                <a href="<?= BASE_URL ?>login" class="quick-link">
                                     <i class="fas fa-sign-in-alt me-2"></i><?= __('forgot_password_link_login') ?>
                                 </a>
                             </div>

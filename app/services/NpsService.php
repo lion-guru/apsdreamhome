@@ -217,7 +217,7 @@ class NpsService
     {
         try {
             // Get some users to survey (simplified)
-            $users = $this->pdo->query("SELECT id FROM users WHERE user_type IN ('customer','agent','associate') LIMIT " . (int)$limit)->fetchAll(\PDO::FETCH_COLUMN);
+            $users = $this->pdo->query("SELECT id FROM users WHERE role IN ('customer','agent','associate') LIMIT " . (int)$limit)->fetchAll(\PDO::FETCH_COLUMN);
             $scheduled = 0;
             foreach ($users as $userId) {
                 // Check if already scheduled

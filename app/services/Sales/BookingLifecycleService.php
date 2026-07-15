@@ -568,6 +568,13 @@ class BookingLifecycleService
                 error_log("[BookingLifecycleService::recordPayment] broadcast failed: " . $e->getMessage());
             }
 
+            // Auto-calculate commission after successful payment
+            try {
+                $this->calculateCommission((int)$inst['booking_id']);
+            } catch (\Throwable $e) {
+                error_log("[BookingLifecycleService::recordPayment] commission calculation failed: " . $e->getMessage());
+            }
+
             return [
                 'success'        => true,
                 'receipt_id'     => $receiptId,

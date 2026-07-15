@@ -17,6 +17,22 @@ $profile = $profile ?? [];
     </div>
 
     <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card profile-card-f">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="mb-0"><i class="fas fa-user-circle text-info me-2"></i>Profile Photo</h5>
+                </div>
+                <div class="card-body text-center py-4">
+                    <?php
+                    $userId = (int)($farmer['id'] ?? $_SESSION['user_id'] ?? 0);
+                    $photoUrl = !empty($farmer['profile_image']) ? BASE_URL . '/' . $farmer['profile_image'] : null;
+                    $userName = $farmer['name'] ?? 'Farmer';
+                    $size = 'lg';
+                    include __DIR__ . '/../shared/profile_photo_upload.php';
+                    ?>
+                </div>
+            </div>
+        </div>
         <div class="col-lg-8">
             <div class="card profile-card-f">
                 <div class="card-header bg-white border-0 py-3">

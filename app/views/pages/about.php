@@ -164,6 +164,37 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 .cert-card .cert-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.5rem}
 .cert-card h6{font-weight:700;color:#1e293b;margin-bottom:6px;font-size:0.95rem}
 .cert-card p{color:#64748b;font-size:0.82rem;margin:0;line-height:1.5}
+
+/* ---- Service Cards (clickable) ---- */
+.service-card{cursor:pointer;position:relative}
+.service-card:focus{outline:2px solid #0d9488;outline-offset:3px}
+.service-more{display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:#0d9488;font-size:0.8rem;font-weight:700;opacity:0;transform:translateX(-6px);transition:all 0.3s}
+.service-card:hover .service-more{opacity:1;transform:translateX(0)}
+.service-card .icon-wrap{transition:transform 0.3s}
+.service-card:hover .icon-wrap{transform:scale(1.08)}
+
+/* ---- Service Modal ---- */
+.service-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all 0.3s}
+.service-modal-overlay.active{opacity:1;visibility:visible}
+.service-modal{background:#fff;border-radius:24px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,0.3);transform:translateY(30px) scale(0.96);transition:all 0.35s cubic-bezier(0.175,0.885,0.32,1.275);position:relative}
+.service-modal-overlay.active .service-modal{transform:translateY(0) scale(1)}
+.service-modal-close{position:absolute;top:16px;right:18px;width:36px;height:36px;border:none;background:rgba(255,255,255,0.2);color:#fff;border-radius:50%;font-size:1.5rem;line-height:1;cursor:pointer;z-index:3;transition:all 0.2s}
+.service-modal-close:hover{background:rgba(255,255,255,0.35);transform:rotate(90deg)}
+.service-modal-header{display:flex;align-items:center;gap:18px;padding:32px 32px 24px;color:#fff;background:linear-gradient(135deg,#0d9488,#0f766e)}
+.service-modal-icon{width:64px;height:64px;border-radius:18px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0}
+.service-modal-header h3{font-weight:800;margin:0;font-size:1.4rem}
+.service-modal-body{padding:28px 32px}
+.service-modal-desc{color:#475569;font-size:0.95rem;line-height:1.7;margin-bottom:22px}
+.service-modal-steps-title{font-weight:700;color:#1e293b;font-size:0.95rem;margin-bottom:14px}
+.service-modal-steps{margin:0;padding:0;list-style:none;counter-reset:step}
+.service-modal-steps li{counter-increment:step;position:relative;padding:10px 0 10px 44px;border-bottom:1px solid #f1f5f9;color:#475569;font-size:0.9rem;line-height:1.5}
+.service-modal-steps li:last-child{border-bottom:none}
+.service-modal-steps li::before{content:counter(step);position:absolute;left:0;top:8px;width:30px;height:30px;border-radius:50%;background:#f0fdfa;color:#0d9488;font-weight:800;font-size:0.85rem;display:flex;align-items:center;justify-content:center}
+.service-modal-footer{display:flex;gap:12px;padding:0 32px 32px}
+.service-modal-btn-primary{display:inline-flex;align-items:center;gap:8px;flex:1;justify-content:center;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;padding:14px 24px;border-radius:12px;font-weight:700;text-decoration:none;font-size:0.9rem;transition:all 0.3s}
+.service-modal-btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(13,148,136,0.35);color:#fff}
+.service-modal-btn-secondary{background:#f1f5f9;color:#475569;padding:14px 24px;border:none;border-radius:12px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s}
+.service-modal-btn-secondary:hover{background:#e2e8f0}
 </style>
 
 <!-- ============================================ -->
@@ -233,80 +264,113 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         </div>
         <div class="row g-4">
             <div class="col-md-3 col-6">
-                <div class="highlight-card scroll-reveal">
+                <div class="highlight-card service-card scroll-reveal" data-service="plot-selling" role="button" tabindex="0">
                     <div class="icon-wrap" style="background:#f0fdfa;color:#0d9488">
                         <i class="fas fa-map-marked-alt"></i>
                     </div>
                     <h5>Plot Selling</h5>
                     <p>Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. RERA registered with clear titles.</p>
+                    <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card scroll-reveal">
+                <div class="highlight-card service-card scroll-reveal" data-service="construction" role="button" tabindex="0">
                     <div class="icon-wrap" style="background:#eff6ff;color:#3b82f6">
                         <i class="fas fa-hard-hat"></i>
                     </div>
                     <h5>Construction & Development</h5>
                     <p>Complete colony development with roads, drainage, water supply, electricity, parks and community spaces. From raw land to livable neighborhoods.</p>
+                    <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card scroll-reveal">
+                <div class="highlight-card service-card scroll-reveal" data-service="legal" role="button" tabindex="0">
                     <div class="icon-wrap" style="background:#fef3c7;color:#f59e0b">
                         <i class="fas fa-file-contract"></i>
                     </div>
                     <h5>Legal & Documentation</h5>
                     <p>In-house legal team handles title verification, sale agreements, registry, mutation, and all paperwork. Every deal is legally airtight.</p>
+                    <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card scroll-reveal">
+                <div class="highlight-card service-card scroll-reveal" data-service="payment" role="button" tabindex="0">
                     <div class="icon-wrap" style="background:#fce7f3;color:#ec4899">
                         <i class="fas fa-hand-holding-usd"></i>
                     </div>
                     <h5>Flexible Payment Plans</h5>
                     <p>EMI options, easy installment plans, and transparent pricing. No hidden charges — what you see is what you pay.</p>
+                    <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card scroll-reveal">
+                <div class="highlight-card service-card scroll-reveal" data-service="resale" role="button" tabindex="0">
                     <div class="icon-wrap" style="background:#f0fdf4;color:#16a34a">
                         <i class="fas fa-home"></i>
                     </div>
                     <h5>Resale & Resale Assistance</h5>
                     <p>Want to sell your plot? We help you find genuine buyers, handle documentation, and ensure fair market value for your property.</p>
+                    <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card scroll-reveal">
+                <div class="highlight-card service-card scroll-reveal" data-service="site-visit" role="button" tabindex="0">
                     <div class="icon-wrap" style="background:#fef2f2;color:#dc2626">
                         <i class="fas fa-car"></i>
                     </div>
                     <h5>Free Site Visits</h5>
                     <p>Visit any of our colonies before you buy. Our team arranges guided site visits with transport from Gorakhpur, Lucknow or nearby areas.</p>
+                    <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card scroll-reveal">
+                <div class="highlight-card service-card scroll-reveal" data-service="flats" role="button" tabindex="0">
                     <div class="icon-wrap" style="background:#f5f3ff;color:#7c3aed">
                         <i class="fas fa-couch"></i>
                     </div>
                     <h5>Furnished Flats</h5>
                     <p>Ready-to-move flats in APS Heights, Prayagraj. 2BHK & 3BHK options with modern fittings, modular kitchen and parking.</p>
+                    <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="highlight-card scroll-reveal">
+                <div class="highlight-card service-card scroll-reveal" data-service="community" role="button" tabindex="0">
                     <div class="icon-wrap" style="background:#ecfeff;color:#0891b2">
                         <i class="fas fa-users"></i>
                     </div>
                     <h5>Community Building</h5>
                     <p>We don't just sell plots — we build neighborhoods. Parks, temples, schools nearby, and community events for all residents.</p>
+                    <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- ============================================ -->
+<!-- SERVICE DETAIL MODAL -->
+<!-- ============================================ -->
+<div class="service-modal-overlay" id="serviceModal" aria-hidden="true">
+    <div class="service-modal" role="dialog" aria-modal="true" aria-labelledby="serviceModalTitle">
+        <button class="service-modal-close" id="serviceModalClose" aria-label="Close">&times;</button>
+        <div class="service-modal-header" id="serviceModalHeader">
+            <div class="service-modal-icon" id="serviceModalIcon"></div>
+            <div>
+                <h3 id="serviceModalTitle"></h3>
+                <p id="serviceModalSubtitle" style="margin:0;opacity:.85;font-size:.85rem"></p>
+            </div>
+        </div>
+        <div class="service-modal-body">
+            <p id="serviceModalDesc" class="service-modal-desc"></p>
+            <h6 class="service-modal-steps-title"><i class="fas fa-list-check me-2"></i> How It Works</h6>
+            <ol class="service-modal-steps" id="serviceModalSteps"></ol>
+        </div>
+        <div class="service-modal-footer">
+            <button class="service-modal-btn-secondary" id="serviceModalClose2">Close</button>
+            <a class="service-modal-btn-primary" id="serviceModalLink" href="#">Learn More &nbsp;<i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+</div>
 
 <!-- ============================================ -->
 <!-- LEADERSHIP TEAM (from DB) -->
@@ -332,7 +396,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                         <img loading="lazy" 
                              src="<?= BASE_URL ?>/<?= htmlspecialchars($photo) ?>" 
                              alt="<?= htmlspecialchars($name) ?>">
-                        <div class="leader-badge"><i class="fas fa-crown"></i> <?= $i === 1 ? 'Founder' : 'Director' ?></div>
+                        <div class="leader-badge"><i class="fas fa-crown"></i> <?= $i === 1 ? 'Founder' : ($role === 'Senior Property Advisor' ? 'Advisor' : 'Director') ?></div>
                     </div>
                     <div class="leader-body">
                         <h5 class="leader-name"><?= htmlspecialchars($name) ?></h5>
@@ -733,9 +797,10 @@ function aboutContent($sc, $key, $fallbackKey = '') {
     </div>
 </section>
 
-<!-- Scroll Reveal Init -->
+<!-- Scroll Reveal Init + Service Modal -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Scroll reveal
     const reveals = document.querySelectorAll('.scroll-reveal');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -752,5 +817,168 @@ document.addEventListener('DOMContentLoaded', function() {
         el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
         observer.observe(el);
     });
+
+    // Service modal data
+    const SERVICES = {
+        'plot-selling': {
+            title: 'Plot Selling',
+            subtitle: 'RERA-registered plots with clear titles',
+            icon: 'fas fa-map-marked-alt',
+            desc: 'Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. Every plot comes with clear legal title, RERA registration, and transparent pricing — so you invest with complete peace of mind.',
+            steps: [
+                'Browse available plots & colonies on our listings',
+                'Shortlist by location, budget & plot size',
+                'Book your plot with a token amount',
+                'Complete registry & get possession of your land'
+            ],
+            link: '<?= BASE_URL ?>/properties',
+            linkText: 'Browse Plots'
+        },
+        'construction': {
+            title: 'Construction & Development',
+            subtitle: 'From raw land to livable neighborhoods',
+            icon: 'fas fa-hard-hat',
+            desc: 'We handle complete colony development — internal roads, drainage, 24x7 water supply, electricity, street lighting, parks and community spaces. Our in-house team manages the entire lifecycle from land acquisition to a finished, livable township.',
+            steps: [
+                'Land survey, planning & layout design',
+                'Infrastructure: roads, drainage, water & power',
+                'Amenities: parks, lighting, community spaces',
+                'Quality checks & handover-ready colonies'
+            ],
+            link: '<?= BASE_URL ?>/construction-services',
+            linkText: 'View Developments'
+        },
+        'legal': {
+            title: 'Legal & Documentation',
+            subtitle: 'Every deal is legally airtight',
+            icon: 'fas fa-file-contract',
+            desc: 'Our in-house legal team handles title verification, sale agreements, registry, mutation and all paperwork. We ensure a clean, dispute-free transfer of ownership so your investment is fully protected.',
+            steps: [
+                'Title & document verification',
+                'Drafting of sale agreement',
+                'Registry & stamp duty processing',
+                'Mutation & post-sale documentation'
+            ],
+            link: '<?= BASE_URL ?>/legal/services',
+            linkText: 'Legal Services'
+        },
+        'payment': {
+            title: 'Flexible Payment Plans',
+            subtitle: 'No hidden charges, ever',
+            icon: 'fas fa-hand-holding-usd',
+            desc: 'Choose from EMI options and easy installment plans designed around your cash flow. Transparent pricing means what you see is exactly what you pay — no surprises, no hidden charges.',
+            steps: [
+                'Pick a plan: EMI or installment',
+                'Pay a comfortable booking amount',
+                'Schedule payments across the tenure',
+                'Clear dues & receive registry on completion'
+            ],
+            link: '<?= BASE_URL ?>/contact',
+            linkText: 'Talk to an Advisor'
+        },
+        'resale': {
+            title: 'Resale & Resale Assistance',
+            subtitle: 'Sell at fair market value',
+            icon: 'fas fa-home',
+            desc: 'Want to sell your plot? We connect you with genuine, verified buyers, handle all the documentation, and ensure you get fair market value — making resale simple and secure.',
+            steps: [
+                'List your property with us',
+                'We match verified interested buyers',
+                'Negotiation & fair-value agreement',
+                'Documentation & secure handover'
+            ],
+            link: '<?= BASE_URL ?>/resell',
+            linkText: 'Sell Your Plot'
+        },
+        'site-visit': {
+            title: 'Free Site Visits',
+            subtitle: 'See before you decide',
+            icon: 'fas fa-car',
+            desc: 'Visit any of our colonies before you buy. Our team arranges guided site visits with transport from Gorakhpur, Lucknow or nearby areas — so you can experience the location, roads and surroundings firsthand.',
+            steps: [
+                'Request a site visit (call or form)',
+                'We schedule & arrange transport',
+                'Guided tour with our property expert',
+                'Get clarity on plots, pricing & plans'
+            ],
+            link: '<?= BASE_URL ?>/contact',
+            linkText: 'Book a Visit'
+        },
+        'flats': {
+            title: 'Furnished Flats',
+            subtitle: 'Ready-to-move in APS Heights, Prayagraj',
+            icon: 'fas fa-couch',
+            desc: 'Move in without the hassle. Our ready-to-move flats in APS Heights, Prayagraj offer 2BHK & 3BHK options with modern fittings, modular kitchen and dedicated parking — fully furnished and livable from day one.',
+            steps: [
+                'Explore available flat configurations',
+                'Visit the model flat on site',
+                'Choose 2BHK / 3BHK & book',
+                'Move in — fully furnished & ready'
+            ],
+            link: '<?= BASE_URL ?>/properties',
+            linkText: 'View Flats'
+        },
+        'community': {
+            title: 'Community Building',
+            subtitle: 'We build neighborhoods, not just plots',
+            icon: 'fas fa-users',
+            desc: 'We don’t just sell plots — we build neighborhoods. Parks, temples, schools nearby and regular community events make every APS colony a place where families grow and communities flourish.',
+            steps: [
+                'Planned green & community spaces',
+                'Nearby temples, schools & essentials',
+                'Resident welfare & community events',
+                'A thriving neighborhood for your family'
+            ],
+            link: '<?= BASE_URL ?>/about',
+            linkText: 'Our Story'
+        }
+    };
+
+    const overlay = document.getElementById('serviceModal');
+    const elTitle = document.getElementById('serviceModalTitle');
+    const elSub = document.getElementById('serviceModalSubtitle');
+    const elIcon = document.getElementById('serviceModalIcon');
+    const elDesc = document.getElementById('serviceModalDesc');
+    const elSteps = document.getElementById('serviceModalSteps');
+    const elLink = document.getElementById('serviceModalLink');
+    const header = document.getElementById('serviceModalHeader');
+
+    function openModal(key) {
+        const s = SERVICES[key];
+        if (!s) return;
+        elTitle.textContent = s.title;
+        elSub.textContent = s.subtitle;
+        elIcon.innerHTML = '<i class="' + s.icon + '"></i>';
+        elDesc.textContent = s.desc;
+        elSteps.innerHTML = '';
+        s.steps.forEach(step => {
+            const li = document.createElement('li');
+            li.textContent = step;
+            elSteps.appendChild(li);
+        });
+        elLink.href = s.link;
+        elLink.innerHTML = (s.linkText || 'Learn More') + ' &nbsp;<i class="fas fa-arrow-right"></i>';
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.service-card').forEach(card => {
+        card.addEventListener('click', () => openModal(card.getAttribute('data-service')));
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card.getAttribute('data-service')); }
+        });
+    });
+
+    document.getElementById('serviceModalClose').addEventListener('click', closeModal);
+    document.getElementById('serviceModalClose2').addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 });
 </script>

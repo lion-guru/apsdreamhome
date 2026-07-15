@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/providers/auth_provider.dart';
+import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 
 /// Customer Shell — Bottom Navigation for authenticated customers.
-/// Guests see the page content only (no bottom nav, no AppBar).
-class CustomerShell extends ConsumerStatefulWidget {
+/// Uses AuthBridge (ValueNotifier) instead of Riverpod to avoid InheritedModel assertion.
+class CustomerShell extends StatefulWidget {
   final Widget child;
   const CustomerShell({super.key, required this.child});
 
   @override
-  ConsumerState<CustomerShell> createState() => _CustomerShellState();
+  State<CustomerShell> createState() => _CustomerShellState();
 }
 
-class _CustomerShellState extends ConsumerState<CustomerShell> {
+class _CustomerShellState extends State<CustomerShell> {
   int _currentIndex = 0;
 
   static const _tabs = [
@@ -54,14 +53,14 @@ class _CustomerShellState extends ConsumerState<CustomerShell> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authProvider);
+    final user = AuthBridge.instance.currentUser.value;
 
-    // ── Guest: render child page only (no shell) ──
+    // Guest: render child page only (no shell)
     if (user == null) {
       return widget.child;
     }
 
-    // ── Authenticated customer: full shell with bottom nav ──
+    // Authenticated customer: full shell with bottom nav
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -91,14 +90,21 @@ class _CustomerShellState extends ConsumerState<CustomerShell> {
             padding: const EdgeInsets.only(right: 8),
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  user.name.split(' ').first,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
+                  user.name?.split(' ').first ?? '',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),

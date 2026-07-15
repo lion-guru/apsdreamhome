@@ -3,9 +3,6 @@
 namespace App\Services;
 
 use App\Core\Database;
-use App\Services\PropertyService;
-use App\Services\UserService;
-use App\Services\LeadService;
 
 class AdminService {
     private $db;

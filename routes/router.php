@@ -104,7 +104,41 @@ class Router
 
         // Step 5b: Global CSRF validation for POST/PUT/DELETE
         if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'DELETE'])) {
-            $excludedPaths = ['/subscribe', '/api/', '/ad-click/', '/register', '/login', '/associate/login', '/associate/register', '/agent/login', '/agent/register', '/ai/property-valuation/generate', '/ai/', '/csp-report', '/webhook/', '/compare/', '/careers/submit-application'];
+            $excludedPaths = [
+                '/subscribe',
+                '/api/',
+                '/ad-click/',
+                '/register',
+                '/login',
+                '/logout',
+                '/auth/',
+                '/profile/photo/',
+                '/associate/login',
+                '/associate/register',
+                '/associate/logout',
+                '/agent/login',
+                '/agent/register',
+                '/agent/logout',
+                '/farmer/login',
+                '/farmer/register',
+                '/farmer/logout',
+                '/employee/login',
+                '/employee/register',
+                '/employee/logout',
+                '/ai/property-valuation/generate',
+                '/ai/',
+                '/csp-report',
+                '/webhook/',
+                '/compare/',
+                '/careers/submit-application',
+                '/forgot-password',
+                '/reset-password',
+                '/verify-otp',
+                '/resend-otp',
+                '/check-user',
+                '/check-referrer',
+                '/firebase-login',
+            ];
             $skip = false;
             foreach ($excludedPaths as $path) {
                 if (strpos($uri, $path) === 0) {

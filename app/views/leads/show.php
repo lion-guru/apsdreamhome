@@ -25,7 +25,7 @@
 
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/leads">लीड्स</a></li>
+                    <li class="breadcrumb-item"><a href="/leads">Leads</a></li>
                     <li class="breadcrumb-item active" aria-current="page">
                         <?= h($lead['name']) ?>
                     </li>
@@ -66,7 +66,7 @@
                                     </div>
                                     <p class="text-muted mb-0">
                                         <i class="fas fa-clock mr-2"></i>
-                                        बनाया गया: <?= date('d M Y, h:i A', strtotime($lead['created_at'])) ?>
+                                        Created: <?= date('d M Y, h:i A', strtotime($lead['created_at'])) ?>
                                     </p>
                                 </div>
                             </div>
@@ -74,28 +74,28 @@
                         <div class="col-md-4 text-right">
                             <div class="btn-group-vertical">
                                 <button type="button" class="btn btn-primary" onclick="addActivity()">
-                                    <i class="fas fa-plus mr-2"></i>गतिविधि जोड़ें
+                                    <i class="fas fa-plus mr-2"></i>Add Activity
                                 </button>
                                 <button type="button" class="btn btn-info" onclick="addNote()">
-                                    <i class="fas fa-sticky-note mr-2"></i>नोट जोड़ें
+                                    <i class="fas fa-sticky-note mr-2"></i>Add Note
                                 </button>
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
-                                        <i class="fas fa-cog mr-2"></i>एक्शन
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false>
+                                        <i class="fas fa-cog mr-2"></i>Actions
                                     </button>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="/leads/<?= $lead['id'] ?>/edit">
-                                            <i class="fas fa-edit mr-2"></i>एडिट करें
+                                            <i class="fas fa-edit mr-2"></i>Edit
                                         </a>
                                         <a class="dropdown-item" href="mailto:<?= h($lead['email']) ?>">
-                                            <i class="fas fa-envelope mr-2"></i>ईमेल भेजें
+                                            <i class="fas fa-envelope mr-2"></i>Send Email
                                         </a>
                                         <a class="dropdown-item" href="tel:<?= h($lead['phone']) ?>">
-                                            <i class="fas fa-phone mr-2"></i>कॉल करें
+                                            <i class="fas fa-phone mr-2"></i>Call
                                         </a>
                                         <div class="dropdown-divider"></div>
                                         <button class="dropdown-item text-danger" onclick="deleteLead()">
-                                            <i class="fas fa-trash mr-2"></i>डिलीट करें
+                                            <i class="fas fa-trash mr-2"></i>Delete
                                         </button>
                                     </div>
                                 </div>
@@ -114,14 +114,14 @@
             <div class="card shadow mb-4">
                 <div class="card-header aps-cp-card-header">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-info-circle mr-2"></i>लीड जानकारी
+                        <i class="fas fa-info-circle mr-2"></i>Lead Information
                     </h6>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="info-item mb-3">
-                                <label class="text-muted small">पूरा नाम</label>
+                                <label class="text-muted small">Full Name</label>
                                 <div class="font-weight-bold">
                                     <?= h($lead['name']) ?>
                                 </div>
@@ -129,21 +129,21 @@
                         </div>
                         <div class="col-md-6">
                             <div class="info-item mb-3">
-                                <label class="text-muted small">ईमेल पता</label>
+                                <label class="text-muted small">Email Address</label>
                                 <div class="font-weight-bold">
                                     <?php if ($lead['email']): ?>
                                         <a href="mailto:<?= h($lead['email']) ?>">
                                             <?= h($lead['email']) ?>
                                         </a>
                                     <?php else: ?>
-                                        <span class="text-muted">उपलब्ध नहीं</span>
+                                        <span class="text-muted">Not Available</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="info-item mb-3">
-                                <label class="text-muted small">फोन नंबर</label>
+                                <label class="text-muted small">Phone Number</label>
                                 <div class="font-weight-bold">
                                     <a href="tel:<?= h($lead['phone']) ?>">
                                         <i class="fas fa-phone mr-1"></i>
@@ -154,19 +154,19 @@
                         </div>
                         <div class="col-md-6">
                             <div class="info-item mb-3">
-                                <label class="text-muted small">कंपनी</label>
+                                <label class="text-muted small">Company</label>
                                 <div class="font-weight-bold">
                                     <?php if ($lead['company']): ?>
                                         <?= h($lead['company']) ?>
                                     <?php else: ?>
-                                        <span class="text-muted">उपलब्ध नहीं</span>
+                                        <span class="text-muted">Not Available</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="info-item mb-3">
-                                <label class="text-muted small">लीड स्रोत</label>
+                                <label class="text-muted small">Lead Source</label>
                                 <div class="font-weight-bold">
                                     <i class="fas fa-bullhorn mr-1 text-info"></i>
                                     <?= h($lead['source_name']) ?>
@@ -175,13 +175,13 @@
                         </div>
                         <div class="col-md-6">
                             <div class="info-item mb-3">
-                                <label class="text-muted small">असाइन किया गया</label>
+                                <label class="text-muted small">Assigned</label>
                                 <div class="font-weight-bold">
                                     <?php if ($lead['assigned_user_name']): ?>
                                         <i class="fas fa-user mr-1 text-success"></i>
                                         <?= h($lead['assigned_user_name']) ?>
                                     <?php else: ?>
-                                        <span class="text-muted">कोई असाइन नहीं</span>
+                                        <span class="text-muted">Not Assigned</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -194,24 +194,24 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="info-item mb-3">
-                                    <label class="text-muted small">बजट</label>
+                                    <label class="text-muted small">Budget</label>
                                     <div class="font-weight-bold">
                                         <?php if ($lead['budget']): ?>
                                             ₹<?= number_format($lead['budget']) ?>
                                         <?php else: ?>
-                                            <span class="text-muted">उपलब्ध नहीं</span>
+                                            <span class="text-muted">Not Available</span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="info-item mb-3">
-                                    <label class="text-muted small">आवश्यकताएं</label>
+                                    <label class="text-muted small">Requirements</label>
                                     <div class="font-weight-bold">
                                         <?php if ($lead['requirements']): ?>
                                             <?= nl2br(h($lead['requirements'])) ?>
                                         <?php else: ?>
-                                            <span class="text-muted">उपलब्ध नहीं</span>
+                                            <span class="text-muted">Not Available</span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -226,13 +226,13 @@
                 <div class="card-header aps-cp-card-header">
                     <ul class="nav nav-tabs card-header-tabs">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#activities" data-toggle="tab">
-                                <i class="fas fa-list mr-1"></i>गतिविधियां (<?= count($activities) ?>)
+                            <a class="nav-link active" href="#activities" data-bs-toggle="tab">
+                                <i class="fas fa-list mr-1"></i>Activities (<?= count($activities) ?>)
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#notes" data-toggle="tab">
-                                <i class="fas fa-sticky-note mr-1"></i>नोट्स (<?= count($notes) ?>)
+                            <a class="nav-link" href="#notes" data-bs-toggle="tab">
+                                <i class="fas fa-sticky-note mr-1"></i>Notes (<?= count($notes) ?>)
                             </a>
                         </li>
                     </ul>
@@ -244,9 +244,9 @@
                             <?php if (empty($activities)): ?>
                                 <div class="text-center py-4">
                                     <i class="fas fa-list fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">कोई गतिविधि नहीं मिली</p>
+                                    <p class="text-muted">No Activity Found</p>
                                     <button class="btn btn-primary" onclick="addActivity()">
-                                        पहली गतिविधि जोड़ें
+                                        पहली Add Activity
                                     </button>
                                 </div>
                             <?php else: ?>
@@ -268,7 +268,7 @@
                                                 </div>
                                                 <div class="mt-2">
                                                     <small class="text-muted">
-                                                        द्वारा: <?= h($activity['user_name']) ?>
+                                                        By: <?= h($activity['user_name']) ?>
                                                     </small>
                                                 </div>
                                             </div>
@@ -283,9 +283,9 @@
                             <?php if (empty($notes)): ?>
                                 <div class="text-center py-4">
                                     <i class="fas fa-sticky-note fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">कोई नोट नहीं मिला</p>
+                                    <p class="text-muted">No Note Found</p>
                                     <button class="btn btn-primary" onclick="addNote()">
-                                        पहला नोट जोड़ें
+                                        पहला Add Note
                                     </button>
                                 </div>
                             <?php else: ?>
@@ -317,13 +317,13 @@
             <div class="card shadow mb-4">
                 <div class="card-header aps-cp-card-header">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-chart-bar mr-2"></i>सांख्यिकी
+                        <i class="fas fa-chart-bar mr-2"></i>Statistics
                     </h6>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="stats-item mb-3">
                         <div class="d-flex justify-content-between">
-                            <span>कुल गतिविधियां</span>
+                            <span>कुल Activities</span>
                             <span class="badge badge-primary">
                                 <?= count($activities) ?>
                             </span>
@@ -331,7 +331,7 @@
                     </div>
                     <div class="stats-item mb-3">
                         <div class="d-flex justify-content-between">
-                            <span>कुल नोट्स</span>
+                            <span>कुल Notes</span>
                             <span class="badge badge-info">
                                 <?= count($notes) ?>
                             </span>
@@ -339,7 +339,7 @@
                     </div>
                     <div class="stats-item mb-3">
                         <div class="d-flex justify-content-between">
-                            <span>अंतिम अपडेट</span>
+                            <span>Last Update</span>
                             <span class="badge badge-success">
                                 <?= date('d M Y', strtotime($lead['updated_at'])) ?>
                             </span>
@@ -352,22 +352,22 @@
             <div class="card shadow mb-4">
                 <div class="card-header aps-cp-card-header">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-bolt mr-2"></i>त्वरित कार्रवाई
+                        <i class="fas fa-bolt mr-2"></i>Quick Actions
                     </h6>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
                         <button class="btn btn-primary" onclick="addActivity()">
-                            <i class="fas fa-plus mr-2"></i>गतिविधि जोड़ें
+                            <i class="fas fa-plus mr-2"></i>Add Activity
                         </button>
                         <button class="btn btn-info" onclick="addNote()">
-                            <i class="fas fa-sticky-note mr-2"></i>नोट जोड़ें
+                            <i class="fas fa-sticky-note mr-2"></i>Add Note
                         </button>
                         <a href="mailto:<?= h($lead['email']) ?>" class="btn btn-success">
-                            <i class="fas fa-envelope mr-2"></i>ईमेल भेजें
+                            <i class="fas fa-envelope mr-2"></i>Send Email
                         </a>
                         <a href="tel:<?= h($lead['phone']) ?>" class="btn btn-warning">
-                            <i class="fas fa-phone mr-2"></i>कॉल करें
+                            <i class="fas fa-phone mr-2"></i>Call
                         </a>
                     </div>
                 </div>
@@ -377,7 +377,7 @@
             <div class="card shadow mb-4">
                 <div class="card-header aps-cp-card-header">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-history mr-2"></i>लीड टाइमलाइन
+                        <i class="fas fa-history mr-2"></i>Lead Timeline
                     </h6>
                 </div>
                 <div class="card-body aps-cp-card-body">
@@ -385,7 +385,7 @@
                         <div class="timeline-item">
                             <div class="timeline-marker bg-success"></div>
                             <div class="timeline-content">
-                                <small class="text-muted">लीड बनाया गया</small>
+                                <small class="text-muted">Lead Created</small>
                                 <br>
                                 <small class="font-weight-bold">
                                     <?= date('d M Y, h:i A', strtotime($lead['created_at'])) ?>
@@ -397,7 +397,7 @@
                                 <div class="timeline-marker bg-info"></div>
                                 <div class="timeline-content">
                                     <small class="text-muted">
-                                        असाइन किया गया: <?= h($lead['assigned_user_name']) ?>
+                                        Assigned: <?= h($lead['assigned_user_name']) ?>
                                     </small>
                                 </div>
                             </div>
@@ -426,30 +426,30 @@
             <form method="POST" action="/leads/<?= $lead['id'] ?>/activity">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header">
-                    <h5 class="modal-title">गतिविधि जोड़ें</h5>
-                    <button type="button" class="close" data-dismiss="modal">
+                    <h5 class="modal-title">Add Activity</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="activity_type">गतिविधि का प्रकार</label>
+                        <label for="activity_type">Activity Type</label>
                         <select class="form-control" id="activity_type" name="activity_id" required>
-                            <option value="">चुनें</option>
-                            <option value="1">कॉल</option>
-                            <option value="2">ईमेल</option>
-                            <option value="3">मीटिंग</option>
-                            <option value="4">फॉलो-अप</option>
+                            <option value="">Select</option>
+                            <option value="1">Call</option>
+                            <option value="2">Email</option>
+                            <option value="3">Meeting</option>
+                            <option value="4">Follow-up</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="activity_notes">नोट्स</label>
+                        <label for="activity_notes">Notes</label>
                         <textarea class="form-control" id="activity_notes" name="notes" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">रद्द करें</button>
-                    <button type="submit" class="btn btn-primary">जोड़ें</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
                 </div>
             </form>
         </div>
@@ -463,20 +463,20 @@
             <form method="POST" action="/leads/<?= $lead['id'] ?>/note">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header">
-                    <h5 class="modal-title">नोट जोड़ें</h5>
-                    <button type="button" class="close" data-dismiss="modal">
+                    <h5 class="modal-title">Add Note</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="note_content">नोट सामग्री</label>
+                        <label for="note_content">Note Content</label>
                         <textarea class="form-control" id="note_content" name="note" rows="4" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">रद्द करें</button>
-                    <button type="submit" class="btn btn-primary">जोड़ें</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
                 </div>
             </form>
         </div>
@@ -485,15 +485,15 @@
 
 <script>
 function addActivity() {
-    $('#activityModal').modal('show');
+    new bootstrap.Modal(document.getElementById('activityModal')).show();
 }
 
 function addNote() {
-    $('#noteModal').modal('show');
+    new bootstrap.Modal(document.getElementById('noteModal')).show();
 }
 
 function deleteLead() {
-    if (confirm('क्या आप वाकई इस लीड को डिलीट करना चाहते हैं?')) {
+    if (confirm('Are you sure you want to delete this lead?')) {
         window.location.href = '/leads/<?= $lead['id'] ?>/delete';
     }
 }
