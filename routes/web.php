@@ -2499,6 +2499,7 @@ $router->get('/admin/chatbot/train/delete/{id}', 'App\\Http\\Controllers\\Admin\
 $router->get('/admin/ai-analytics', 'App\\Http\\Controllers\\Admin\\AIAnalyticsController@index');
 
 // AI Calling
+$router->get('/admin/ai-calling', 'App\\Http\\Controllers\\Admin\\AICallingController@index');
 $router->get('/admin/ai-calling/dashboard', 'App\\Http\\Controllers\\Admin\\AICallingController@dashboard');
 $router->get('/admin/ai-calling/schedule', 'App\\Http\\Controllers\\Admin\\AICallingController@schedule');
 $router->get('/admin/ai-calling/sessions', 'App\\Http\\Controllers\\Admin\\AICallingController@sessions');
@@ -2509,6 +2510,8 @@ $router->get('/admin/ai-calling/auto-dialer', 'App\\Http\\Controllers\\Admin\\AI
 $router->get('/admin/ai-calling/call-analytics', 'App\\Http\\Controllers\\Admin\\AICallingController@callAnalytics');
 $router->post('/admin/ai-calling/auto-dialer/process', 'App\\Http\\Controllers\\Admin\\AICallingController@autoDialerProcess');
 $router->post('/admin/ai-calling/auto-dialer/ai-schedule', 'App\\Http\\Controllers\\Admin\\AICallingController@autoDialerAiSchedule');
+$router->get('/admin/ai-calling/call-logs', 'App\\Http\\Controllers\\Admin\\AICallingController@callLogs');
+$router->get('/admin/ai-calling/call-detail', 'App\\Http\\Controllers\\Admin\\AICallingController@callDetail');
 
 // Telecalling
 $router->get('/admin/telecalling/dashboard', 'App\\Http\\Controllers\\Employee\\TelecallingController@dashboard');
