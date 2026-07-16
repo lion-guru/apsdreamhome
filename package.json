@@ -17,7 +17,7 @@
     "workflow:database": "node scripts/sequential-workflow-manager.js database-setup",
     "workflow:test": "node scripts/sequential-workflow-manager.js full-system-test",
     "workflow:quality": "node scripts/sequential-workflow-manager.js code-quality",
-    "build": "npm run lint && npm run format && npm run test",
+    "build": "npm run build:css",
     "build:css": "vite build",
     "css:watch": "vite",
     "start": "concurrently \"npm run dev\" \"npm run test:watch\"",

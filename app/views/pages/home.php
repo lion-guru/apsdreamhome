@@ -9,35 +9,35 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 ?>
 <main id="main-content">
     <!-- Hero Section (Modern + Particles + Typed Text) -->
-    <section class="hero-modern" aria-labelledby="hero-title" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero/hero-bg.jpg');background-size:cover;background-position:center;">
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">.hero{background:none!important;background-color:transparent!important;}.hero.hero-with-bg{background-image:url('/apsdreamhome/assets/images/hero/hero-bg.jpg')!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;}</style>
+    <section class="hero hero-modern hero-with-bg" aria-labelledby="hero-title">
         <!-- Particles Canvas -->
-        <canvas id="particles-canvas"></canvas>
+        <canvas id="particles-canvas" style="position:absolute;inset:0;z-index:0;pointer-events:none;"></canvas>
         <!-- Gradient Overlay -->
-        <div style="position:absolute;inset:0;background:linear-gradient(135deg, rgba(15,23,42,0.88) 0%, rgba(30,41,59,0.82) 50%, rgba(51,65,85,0.75) 100%);z-index:1;"></div>
-        <div class="container" style="position:relative;z-index:2;">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
             <div class="row align-items-center g-5">
                 <div class="col-lg-7">
-                    <div class="reveal">
-                        <span class="badge px-3 py-2 mb-3 badge-pulse"
-                            style="background:rgba(129,140,248,0.2); border: 1px solid rgba(129,140,248,0.4); color:#5eead4; backdrop-filter:blur(8px);">
+                    <div class="premium-reveal">
+                        <span class="badge px-3 py-2 mb-3 badge-pulse hero-badge">
                             <i class="fas fa-star me-1" style="color:#f59e0b;"></i>
                             <?= __('trusted_by') ?> <?= __('home_families_count') ?>
                         </span>
                     </div>
-                    <h1 id="hero-title" class="fw-bold text-white reveal" style="font-size:clamp(1.8rem, 5vw, 3.2rem);line-height:1.15;animation:fadeInUp 0.8s ease;">
+                    <h1 id="hero-title" class="fw-bold text-white premium-reveal hero-title">
                         <?= __('hero_title') ?>
                     </h1>
-                    <p class="lead mb-4 reveal" style="color:rgba(255,255,255,0.8);font-size:1.2rem;animation:fadeInUp 0.8s ease 0.15s both;">
+                    <p class="lead mb-4 premium-reveal hero-subtitle">
                         <?= __('hero_subtitle') ?>
                     </p>
                     <!-- Typed Text Subtitle -->
-                    <div class="mb-4 reveal" style="animation:fadeInUp 0.8s ease 0.25s both;">
-                        <span style="color:rgba(255,255,255,0.6);font-size:0.95rem;">
+                    <div class="mb-4 premium-reveal">
+                        <span class="hero-typed-label">
                             <i class="fas fa-circle me-1" style="color:#10b981;font-size:0.5rem;vertical-align:middle;"></i>
                             <?= __('home_we_offer') ?> <span id="typed-text" class="fw-semibold gradient-text-gold" data-strings="<?= __('hero_typed_strings') ?>||Premium Plots in Gorakhpur||Smart Investment Opportunities||Trusted by 5000+ Families||"></span><span class="typing-cursor" style="color:#14b8a6;"></span>
                         </span>
                     </div>
-                    <div class="d-flex gap-3 flex-wrap reveal" style="animation:fadeInUp 0.8s ease 0.35s both;">
+                    <div class="d-flex gap-3 flex-wrap premium-reveal">
                         <?php
                         $heroVariant = $_SESSION['experiments']['homepage_cta'] ?? null;
                         $heroCtaText = match ($heroVariant) {
@@ -66,67 +66,67 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         </a>
                     </div>
                     <!-- Trust Badges -->
-                    <div class="d-flex gap-4 mt-4 flex-wrap reveal" style="animation:fadeInUp 0.8s ease 0.45s both;">
-                        <div class="d-flex align-items-center gap-2" style="color:rgba(255,255,255,0.7);">
+                    <div class="d-flex gap-4 mt-4 flex-wrap premium-reveal">
+                        <div class="d-flex align-items-center gap-2 hero-trust-badge">
                             <i class="fas fa-shield-halved" style="color:#10b981;"></i>
                             <span class="small">RERA Registered</span>
                         </div>
-                        <div class="d-flex align-items-center gap-2" style="color:rgba(255,255,255,0.7);">
+                        <div class="d-flex align-items-center gap-2 hero-trust-badge">
                             <i class="fas fa-vector-square" style="color:#f59e0b;"></i>
                             <span class="small">5000+ Plots Sold</span>
                         </div>
-                        <div class="d-flex align-items-center gap-2" style="color:rgba(255,255,255,0.7);">
+                        <div class="d-flex align-items-center gap-2 hero-trust-badge">
                             <i class="fas fa-users" style="color:#14b8a6;"></i>
                             <span class="small">500+ Happy Families</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-5">
-                    <div class="hero-search-glass float-slow">
+                    <div class="hero-search-glass float-slow glass-card premium-reveal">
                         <div class="card-header text-center py-3">
                             <h5 class="mb-0 fw-semibold" style="color:#fff;"><i class="fas fa-search me-2" style="color:#14b8a6;"></i><?= __('search') ?> <?= __('properties') ?></h5>
                         </div>
                         <div class="card-body p-4">
                             <form action="<?php echo BASE_URL; ?>/properties" method="GET">
                                 <div class="mb-3">
-                                    <select name="listing" class="form-select" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:10px;">
-                                        <option value="" style="background:#1e293b;color:#fff;"><?= __('home_buy_rent') ?></option>
-                                        <option value="sell" style="background:#1e293b;color:#fff;"><?= __('home_buy') ?></option>
-                                        <option value="rent" style="background:#1e293b;color:#fff;"><?= __('home_rent') ?></option>
+                                    <select name="listing" class="form-select">
+                                        <option value=""><?= __('home_buy_rent') ?></option>
+                                        <option value="sell"><?= __('home_buy') ?></option>
+                                        <option value="rent"><?= __('home_rent') ?></option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <select name="type" class="form-select" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:10px;">
-                                        <option value="" style="background:#1e293b;color:#fff;"><?= __('home_property_type') ?></option>
-                                        <option value="residential" style="background:#1e293b;color:#fff;"><?= __('home_residential') ?></option>
-                                        <option value="commercial" style="background:#1e293b;color:#fff;"><?= __('home_commercial') ?></option>
-                                        <option value="plot" style="background:#1e293b;color:#fff;"><?= __('home_plot_land') ?></option>
-                                        <option value="house" style="background:#1e293b;color:#fff;"><?= __('home_house_villa') ?></option>
-                                        <option value="flat" style="background:#1e293b;color:#fff;"><?= __('home_flat_apartment') ?></option>
+                                    <select name="type" class="form-select">
+                                        <option value=""><?= __('home_property_type') ?></option>
+                                        <option value="residential"><?= __('home_residential') ?></option>
+                                        <option value="commercial"><?= __('home_commercial') ?></option>
+                                        <option value="plot"><?= __('home_plot_land') ?></option>
+                                        <option value="house"><?= __('home_house_villa') ?></option>
+                                        <option value="flat"><?= __('home_flat_apartment') ?></option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <select name="location" class="form-select" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:10px;">
-                                        <option value="" style="background:#1e293b;color:#fff;"><?= __('home_select_location') ?></option>
-                                        <option value="Gorakhpur" style="background:#1e293b;color:#fff;"><?= __('loc_gorakhpur') ?></option>
-                                        <option value="Lucknow" style="background:#1e293b;color:#fff;"><?= __('loc_lucknow') ?></option>
-                                        <option value="Kushinagar" style="background:#1e293b;color:#fff;"><?= __('loc_kushinagar') ?></option>
-                                        <option value="Varanasi" style="background:#1e293b;color:#fff;"><?= __('loc_varanasi') ?></option>
-                                        <option value="Ayodhya" style="background:#1e293b;color:#fff;"><?= __('loc_ayodhya') ?></option>
-                                        <option value="Other" style="background:#1e293b;color:#fff;"><?= __('home_other') ?></option>
+                                    <select name="location" class="form-select">
+                                        <option value=""><?= __('home_select_location') ?></option>
+                                        <option value="Gorakhpur"><?= __('loc_gorakhpur') ?></option>
+                                        <option value="Lucknow"><?= __('loc_lucknow') ?></option>
+                                        <option value="Kushinagar"><?= __('loc_kushinagar') ?></option>
+                                        <option value="Varanasi"><?= __('loc_varanasi') ?></option>
+                                        <option value="Ayodhya"><?= __('loc_ayodhya') ?></option>
+                                        <option value="Other"><?= __('home_other') ?></option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <select name="budget" class="form-select" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:10px;">
-                                        <option value="" style="background:#1e293b;color:#fff;"><?= __('home_budget') ?></option>
-                                        <option value="under_5l" style="background:#1e293b;color:#fff;"><?= __('home_budget_under_5l') ?></option>
-                                        <option value="5_10l" style="background:#1e293b;color:#fff;"><?= __('home_budget_5_10l') ?></option>
-                                        <option value="10_20l" style="background:#1e293b;color:#fff;"><?= __('home_budget_10_20l') ?></option>
-                                        <option value="20_50l" style="background:#1e293b;color:#fff;"><?= __('home_budget_20_50l') ?></option>
-                                        <option value="above_50l" style="background:#1e293b;color:#fff;"><?= __('home_budget_above_50l') ?></option>
+                                    <select name="budget" class="form-select">
+                                        <option value=""><?= __('home_budget') ?></option>
+                                        <option value="under_5l"><?= __('home_budget_under_5l') ?></option>
+                                        <option value="5_10l"><?= __('home_budget_5_10l') ?></option>
+                                        <option value="10_20l"><?= __('home_budget_10_20l') ?></option>
+                                        <option value="20_50l"><?= __('home_budget_20_50l') ?></option>
+                                        <option value="above_50l"><?= __('home_budget_above_50l') ?></option>
                                     </select>
                                 </div>
-                                <button type="submit" class="btn w-100 btn-lg btn-glow btn-shine" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-radius:12px;padding:0.75rem;">
+                                <button type="submit" class="btn w-100 btn-lg btn-glow btn-shine btn-submit">
                                     <i class="fas fa-search me-2"></i><?= __('search') ?> <?= __('properties') ?>
                                 </button>
                             </form>
@@ -186,47 +186,47 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     </section>
 
     <!-- Stats - Big Company Feel -->
-    <section class="py-0" style="margin-top:-20px;position:relative;z-index:10;">
+    <section class="py-0 stats-section">
         <div class="container">
-            <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#0d9488 100%);border-radius:24px;padding:40px 30px;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15)">
-                <div style="position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 70%);border-radius:50%"></div>
-                <div style="position:absolute;bottom:-30%;left:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(16,185,129,0.15) 0%,transparent 70%);border-radius:50%"></div>
+            <div class="stats-banner">
+                <div class="deco-circle-1"></div>
+                <div class="deco-circle-2"></div>
                 
-                <div class="row g-4 align-items-center position-relative" style="z-index:2">
+                <div class="row g-4 align-items-center position-relative">
                     <div class="col-lg-3 col-6">
                         <div class="text-center">
-                            <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;border:1px solid rgba(255,255,255,0.15)">
+                            <div class="stats-icon-wrap">
                                 <i class="fas fa-vector-square fa-lg" style="color:#10b981"></i>
                             </div>
-                            <div class="stat-number" data-target="5000" data-suffix="+" style="color:#fff;font-size:clamp(1.5rem, 4vw, 2.2rem);font-weight:800;line-height:1">0</div>
-                            <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:500;margin-top:4px">Plots Sold</div>
+                            <div class="stat-number" data-target="5000" data-suffix="+">0</div>
+                            <div class="stat-label">Plots Sold</div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
                         <div class="text-center">
-                            <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;border:1px solid rgba(255,255,255,0.15)">
+                            <div class="stats-icon-wrap">
                                 <i class="fas fa-home fa-lg" style="color:#3b82f6"></i>
                             </div>
-                            <div class="stat-number" data-target="500" data-suffix="+" style="color:#fff;font-size:clamp(1.5rem, 4vw, 2.2rem);font-weight:800;line-height:1">0</div>
-                            <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:500;margin-top:4px">Happy Families</div>
+                            <div class="stat-number" data-target="500" data-suffix="+">0</div>
+                            <div class="stat-label">Happy Families</div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
                         <div class="text-center">
-                            <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;border:1px solid rgba(255,255,255,0.15)">
+                            <div class="stats-icon-wrap">
                                 <i class="fas fa-city fa-lg" style="color:#f59e0b"></i>
                             </div>
-                            <div class="stat-number" data-target="4" data-suffix="" style="color:#fff;font-size:clamp(1.5rem, 4vw, 2.2rem);font-weight:800;line-height:1">0</div>
-                            <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:500;margin-top:4px">Colonies Delivered</div>
+                            <div class="stat-number" data-target="4" data-suffix="">0</div>
+                            <div class="stat-label">Colonies Delivered</div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
                         <div class="text-center">
-                            <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;border:1px solid rgba(255,255,255,0.15)">
+                            <div class="stats-icon-wrap">
                                 <i class="fas fa-calendar-alt fa-lg" style="color:#ec4899"></i>
                             </div>
-                            <div class="stat-number" data-target="4" data-suffix="+" style="color:#fff;font-size:clamp(1.5rem, 4vw, 2.2rem);font-weight:800;line-height:1">0</div>
-                            <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:500;margin-top:4px">Years of Trust</div>
+                            <div class="stat-number" data-target="4" data-suffix="+">0</div>
+                            <div class="stat-label">Years of Trust</div>
                         </div>
                     </div>
                 </div>
@@ -325,7 +325,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         </div>
     </section>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     function calcEMI() {
         const P = parseFloat(document.getElementById('loanAmount').value);
         const R = parseFloat(document.getElementById('interestRate').value) / 12 / 100;
@@ -383,7 +383,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     </script>
 
     <!-- Construction Excellence - Builder Section -->
-    <section class="py-5" style="background:#f8fafc" aria-labelledby="construction-title">
+    <section class="py-5 section-gray" aria-labelledby="construction-title">
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6">
@@ -399,7 +399,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </p>
                     <div class="row g-3 mb-4">
                         <div class="col-6">
-                            <div style="background:#fff;border-radius:12px;padding:16px;border:1px solid #f1f5f9">
+                            <div class="feature-card">
                                 <div style="display:flex;align-items:center;gap:10px">
                                     <div style="width:40px;height:40px;border-radius:10px;background:#f0fdfa;display:flex;align-items:center;justify-content:center">
                                         <i class="fas fa-drafting-compass" style="color:#0d9488"></i>
@@ -412,7 +412,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             </div>
                         </div>
                         <div class="col-6">
-                            <div style="background:#fff;border-radius:12px;padding:16px;border:1px solid #f1f5f9">
+                            <div class="feature-card">
                                 <div style="display:flex;align-items:center;gap:10px">
                                     <div style="width:40px;height:40px;border-radius:10px;background:#eff6ff;display:flex;align-items:center;justify-content:center">
                                         <i class="fas fa-road" style="color:#3b82f6"></i>
@@ -425,7 +425,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             </div>
                         </div>
                         <div class="col-6">
-                            <div style="background:#fff;border-radius:12px;padding:16px;border:1px solid #f1f5f9">
+                            <div class="feature-card">
                                 <div style="display:flex;align-items:center;gap:10px">
                                     <div style="width:40px;height:40px;border-radius:10px;background:#fef3c7;display:flex;align-items:center;justify-content:center">
                                         <i class="fas fa-tree" style="color:#f59e0b"></i>
@@ -438,7 +438,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                             </div>
                         </div>
                         <div class="col-6">
-                            <div style="background:#fff;border-radius:12px;padding:16px;border:1px solid #f1f5f9">
+                            <div class="feature-card">
                                 <div style="display:flex;align-items:center;gap:10px">
                                     <div style="width:40px;height:40px;border-radius:10px;background:#fce7f3;display:flex;align-items:center;justify-content:center">
                                         <i class="fas fa-bolt" style="color:#ec4899"></i>
@@ -489,11 +489,11 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             
             <div class="row g-4">
                 <div class="col-md-4">
-                    <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%" class="scroll-reveal">
+                    <div class="colony-card scroll-reveal">
                         <div style="position:relative;height:220px;overflow:hidden">
                             <img src="<?= BASE_URL ?>/assets/images/colony-dev-1.jpg" alt="Colony Development" style="width:100%;height:100%;object-fit:cover" loading="lazy">
                             <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,0.7))">
-                                <span style="background:#10b981;color:#fff;font-size:0.7rem;font-weight:700;padding:4px 12px;border-radius:50px">Delivered</span>
+                                <span class="capsule-badge badge-delivered">Delivered</span>
                             </div>
                         </div>
                         <div style="padding:20px">
@@ -507,11 +507,11 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%" class="scroll-reveal">
+                    <div class="colony-card scroll-reveal">
                         <div style="position:relative;height:220px;overflow:hidden">
                             <img src="<?= BASE_URL ?>/assets/images/colony-dev-2.jpg" alt="Colony Development" style="width:100%;height:100%;object-fit:cover" loading="lazy">
                             <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,0.7))">
-                                <span style="background:#f59e0b;color:#fff;font-size:0.7rem;font-weight:700;padding:4px 12px;border-radius:50px">Ongoing</span>
+                                <span class="capsule-badge badge-ongoing">Ongoing</span>
                             </div>
                         </div>
                         <div style="padding:20px">
@@ -525,11 +525,11 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%" class="scroll-reveal">
+                    <div class="colony-card scroll-reveal">
                         <div style="position:relative;height:220px;overflow:hidden">
                             <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" alt="Colony Development" style="width:100%;height:100%;object-fit:cover" loading="lazy">
                             <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,0.7))">
-                                <span style="background:#3b82f6;color:#fff;font-size:0.7rem;font-weight:700;padding:4px 12px;border-radius:50px">Upcoming</span>
+                                <span class="capsule-badge badge-upcoming">Upcoming</span>
                             </div>
                         </div>
                         <div style="padding:20px">
@@ -605,7 +605,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                 <span><i class="fas fa-vector-square"></i> <?= $p['plots'] ?> Plots</span>
                                 <span><i class="fas fa-expand-arrows-alt"></i> <?= $p['area'] ?></span>
                             </div>
-                            <div style="background:#f0fdf4;color:#166534;font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:10px">
+                            <div class="price-tag">
                                 <i class="fas fa-check-circle me-1"></i> <?= $p['sold'] ?>
                             </div>
                             <div class="ps-card-bottom">
@@ -659,7 +659,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                                 <?php endif; ?>
                             </div>
                             <?php if (!empty($project['sold'])): ?>
-                            <div style="background:#f0fdf4;color:#166534;font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:10px">
+                            <div class="price-tag">
                                 <i class="fas fa-check-circle me-1"></i> <?= $project['sold'] ?>
                             </div>
                             <?php endif; ?>
@@ -674,7 +674,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 <?php endif; ?>
             </div>
 
-            <script>
+            <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
             document.addEventListener('DOMContentLoaded', function() {
                 var btns = document.querySelectorAll('.ps-filter-btn');
                 var items = document.querySelectorAll('.project-card-item');
@@ -715,7 +715,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     </section>
 
     <!-- Platform Users - Big Company Social Proof -->
-    <section class="py-5" style="background:#f8fafc" aria-labelledby="users-title">
+    <section class="py-5 section-gray" aria-labelledby="users-title">
         <div class="container">
             <div class="text-center mb-5">
                 <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.08);color:#f59e0b;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px">
@@ -732,7 +732,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             <div class="row g-4">
                 <!-- Buyers -->
                 <div class="col-lg-3 col-md-6">
-                    <div style="background:#fff;border-radius:20px;padding:28px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%;border:1px solid #f1f5f9" class="scroll-reveal">
+                    <div class="trust-card scroll-reveal">
                         <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#0f172a,#1e3a5f);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#fff">
                             <i class="fas fa-shopping-cart"></i>
                         </div>
@@ -744,7 +744,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 
                 <!-- Sellers -->
                 <div class="col-lg-3 col-md-6">
-                    <div style="background:#fff;border-radius:20px;padding:28px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%;border:1px solid #f1f5f9" class="scroll-reveal">
+                    <div class="trust-card scroll-reveal">
                         <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#fff">
                             <i class="fas fa-hand-holding-usd"></i>
                         </div>
@@ -756,7 +756,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 
                 <!-- Renters -->
                 <div class="col-lg-3 col-md-6">
-                    <div style="background:#fff;border-radius:20px;padding:28px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%;border:1px solid #f1f5f9" class="scroll-reveal">
+                    <div class="trust-card scroll-reveal">
                         <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#3b82f6,#14b8a6);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#fff">
                             <i class="fas fa-key"></i>
                         </div>
@@ -768,7 +768,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 
                 <!-- Agents/Associates -->
                 <div class="col-lg-3 col-md-6">
-                    <div style="background:#fff;border-radius:20px;padding:28px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all 0.3s;height:100%;border:1px solid #f1f5f9" class="scroll-reveal">
+                    <div class="trust-card scroll-reveal">
                         <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#f59e0b,#ec4899);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;color:#fff">
                             <i class="fas fa-user-tie"></i>
                         </div>
@@ -812,368 +812,8 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         </div>
     </section>
 
-    <style>
-    @keyframes scrollTestimonials {
-        0% { transform: translateY(0); }
-        20% { transform: translateY(0); }
-        25% { transform: translateY(-24px); }
-        45% { transform: translateY(-24px); }
-        50% { transform: translateY(-48px); }
-        70% { transform: translateY(-48px); }
-        75% { transform: translateY(-72px); }
-        95% { transform: translateY(-72px); }
-        100% { transform: translateY(0); }
-    }
-    </style>
-
-    <style>
-    /* ===== PROJECTS SECTION — Mobile First ===== */
-    .projects-section {
-        padding: 2.5rem 0;
-        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-    }
-    .ps-section-header { margin-bottom: 1.5rem; }
-    .ps-heading {
-        font-size: 1.4rem;
-        font-weight: 800;
-        color: #1e293b;
-        margin-bottom: 0.4rem;
-        letter-spacing: -0.5px;
-    }
-    .ps-subtitle {
-        color: #64748b;
-        font-size: 0.88rem;
-        margin-bottom: 0.5rem;
-    }
-
-    /* Filter Tabs */
-    .ps-filter-scroll {
-        margin-bottom: 1.5rem;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        margin-left: -1rem;
-        margin-right: -1rem;
-        padding: 0 1rem;
-    }
-    .ps-filter-scroll::-webkit-scrollbar { display: none; }
-    .ps-filter-bar {
-        display: inline-flex;
-        gap: 6px;
-        padding: 4px;
-        background: #fff;
-        border-radius: 50px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        border: 1px solid #e2e8f0;
-        min-width: max-content;
-    }
-    .ps-filter-btn {
-        border: none;
-        background: transparent;
-        padding: 7px 14px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: #64748b;
-        border-radius: 50px;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        white-space: nowrap;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-    }
-    .ps-filter-btn i { font-size: 0.7rem; }
-    .ps-filter-btn:hover { color: #0d9488; background: rgba(13,148,136,0.06); }
-    .ps-filter-btn.active {
-        background: linear-gradient(135deg, #0d9488, #0f766e);
-        color: #fff;
-        box-shadow: 0 3px 12px rgba(13,148,136,0.3);
-    }
-
-    /* Card Grid */
-    .ps-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-
-    /* Card */
-    .ps-card {
-        background: #fff;
-        border-radius: 14px;
-        overflow: hidden;
-        border: 1px solid #e2e8f0;
-        transition: all 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
-        display: flex;
-        flex-direction: column;
-    }
-    .ps-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 16px 40px rgba(0,0,0,0.1);
-        border-color: #0d9488;
-    }
-
-    /* Card Image */
-    .ps-card-img {
-        position: relative;
-        height: 160px;
-        overflow: hidden;
-    }
-    .ps-card-img img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-    .ps-card:hover .ps-card-img img { transform: scale(1.06); }
-    .ps-card-img-grad {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(15,23,42,0.55) 0%, transparent 50%);
-        pointer-events: none;
-    }
-
-    /* Badges */
-    .ps-badge {
-        position: absolute;
-        font-size: 0.65rem;
-        font-weight: 700;
-        padding: 3px 10px;
-        border-radius: 20px;
-        z-index: 2;
-        letter-spacing: 0.3px;
-    }
-    .ps-badge-status {
-        top: 10px;
-        right: 10px;
-        background: #10b981;
-        color: #fff;
-    }
-    .ps-badge-type {
-        top: 10px;
-        left: 10px;
-        background: rgba(255,255,255,0.92);
-        color: #0d9488;
-        backdrop-filter: blur(6px);
-    }
-    .ps-card-location-chip {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-        background: rgba(0,0,0,0.55);
-        backdrop-filter: blur(6px);
-        color: #fff;
-        font-size: 0.68rem;
-        font-weight: 600;
-        padding: 4px 10px;
-        border-radius: 20px;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        z-index: 2;
-    }
-    .ps-card-location-chip i { color: #ef4444; font-size: 0.6rem; }
-
-    /* Card Body */
-    .ps-card-body {
-        padding: 14px;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
-    .ps-card-title {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 8px;
-        line-height: 1.3;
-    }
-    .ps-card-stats {
-        display: flex;
-        gap: 14px;
-        padding: 8px 0;
-        border-top: 1px solid #f1f5f9;
-        margin-bottom: 10px;
-    }
-    .ps-card-stats span {
-        font-size: 0.72rem;
-        color: #64748b;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-    .ps-card-stats i { color: #0d9488; font-size: 0.65rem; }
-
-    /* Card Bottom */
-    .ps-card-bottom {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: auto;
-        gap: 8px;
-    }
-    .ps-price {
-        display: flex;
-        flex-direction: column;
-        font-size: 0.95rem;
-        font-weight: 800;
-        color: #0d9488;
-        line-height: 1.2;
-    }
-    .ps-price small {
-        font-size: 0.62rem;
-        font-weight: 500;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    .ps-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        background: linear-gradient(135deg, #0d9488, #0f766e);
-        color: #fff;
-        font-size: 0.7rem;
-        font-weight: 600;
-        padding: 7px 14px;
-        border-radius: 10px;
-        text-decoration: none;
-        transition: all 0.25s ease;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-    .ps-btn:hover {
-        transform: translateX(3px);
-        box-shadow: 0 4px 12px rgba(13,148,136,0.3);
-        color: #fff;
-    }
-    .ps-btn i { font-size: 0.65rem; transition: transform 0.25s ease; }
-    .ps-btn:hover i { transform: translateX(2px); }
-
-    /* View All */
-    .ps-viewall-wrap { margin-top: 1.5rem; }
-    .ps-viewall-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(135deg, #0d9488, #0f766e);
-        color: #fff;
-        font-size: 0.85rem;
-        font-weight: 700;
-        padding: 12px 24px;
-        border-radius: 12px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 16px rgba(13,148,136,0.25);
-    }
-    .ps-viewall-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(13,148,136,0.35);
-        color: #fff;
-    }
-    .ps-viewall-btn i:last-child { transition: transform 0.3s ease; }
-    .ps-viewall-btn:hover i:last-child { transform: translateX(3px); }
-
-    /* ===== TABLET (>= 576px) ===== */
-    @media (min-width: 576px) {
-        .projects-section { padding: 3.5rem 0; }
-        .ps-heading { font-size: 1.7rem; }
-        .ps-subtitle { font-size: 0.95rem; }
-        .ps-filter-btn { padding: 8px 18px; font-size: 0.8rem; }
-        .ps-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .ps-card-img { height: 170px; }
-        .ps-card-body { padding: 16px; }
-        .ps-card-title { font-size: 1rem; }
-        .ps-price { font-size: 1rem; }
-        .ps-btn { padding: 8px 16px; font-size: 0.72rem; }
-        .ps-viewall-btn { padding: 13px 28px; font-size: 0.9rem; }
-    }
-
-    /* ===== DESKTOP (>= 992px) ===== */
-    @media (min-width: 992px) {
-        .projects-section { padding: 5rem 0; }
-        .ps-section-header { margin-bottom: 2rem; }
-        .ps-heading { font-size: 2.2rem; }
-        .ps-subtitle { font-size: 1.05rem; }
-        .ps-filter-scroll { margin-left: 0; margin-right: 0; padding: 0; }
-        .ps-filter-bar { min-width: auto; }
-        .ps-filter-btn { padding: 10px 22px; font-size: 0.875rem; }
-        .ps-filter-btn i { font-size: 0.8rem; }
-        .ps-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .ps-card-img { height: 200px; }
-        .ps-card-body { padding: 20px; }
-        .ps-card-title { font-size: 1.1rem; }
-        .ps-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.12); }
-        .ps-card-bottom { flex-direction: column; align-items: flex-start; gap: 10px; }
-        .ps-btn { width: 100%; justify-content: center; padding: 10px; }
-        .ps-viewall-btn { padding: 14px 36px; font-size: 1rem; }
-    }
-
-    /* ===== CONSTRUCTION GRID — Mobile ===== */
-    @media (max-width: 576px) {
-        .construction-grid {
-            grid-template-columns: 1fr !important;
-        }
-        .construction-grid > div:last-child {
-            grid-column: span 1 !important;
-        }
-        .construction-grid img {
-            height: 160px !important;
-        }
-    }
-
-    /* ===== TESTIMONIAL TICKER — Mobile ===== */
-    @media (max-width: 768px) {
-        #testimonial-ticker {
-            animation: none !important;
-            height: auto !important;
-            overflow: visible !important;
-        }
-        #testimonial-ticker p {
-            height: auto !important;
-            line-height: 1.5 !important;
-            margin-bottom: 8px !important;
-        }
-    }
-
-    /* ===== INVEST CARDS — Mobile ===== */
-    @media (max-width: 576px) {
-        .invest-card {
-            padding: 1rem !important;
-            text-align: center;
-        }
-        .invest-card .return-pct {
-            font-size: 1.5rem !important;
-        }
-    }
-
-    /* ===== HERO SECTION — Mobile Polish ===== */
-    @media (max-width: 768px) {
-        .hero-modern .row.g-5 {
-            gap: 1.5rem !important;
-        }
-        .hero-modern .d-flex.gap-3 {
-            flex-direction: column;
-        }
-        .hero-modern .d-flex.gap-3 .btn {
-            width: 100%;
-            text-align: center;
-        }
-        .hero-modern .d-flex.gap-4 {
-            flex-direction: column;
-            gap: 8px !important;
-        }
-        .hero-search-glass .card-body {
-            padding: 1rem !important;
-        }
-        .hero-search-glass .mb-3 {
-            margin-bottom: 0.75rem !important;
-        }
-    }
-    </style>
-
     <!-- Services (Modern Cards) -->
-    <section class="py-5" style="background:linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);" aria-labelledby="services-title">
+    <section class="py-5 section-gradient-gray" aria-labelledby="services-title">
         <div class="container">
             <div class="text-center mb-5 reveal">
                 <span class="section-label" style="background:rgba(16,185,129,0.08);color:#059669;">Expertise</span>
@@ -1184,7 +824,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             <div class="row g-4 stagger-children">
                 <div class="col-lg-4 col-md-6 reveal">
                     <div class="service-card-modern" onclick="openServiceModal('loan')" style="--service-color:#10b981;">
-                        <div class="service-icon" style="background:rgba(16,185,129,0.1);">
+                        <div class="service-icon icon-green">
                             <i class="fas fa-hand-holding-usd fa-2x" style="color:#10b981;"></i>
                         </div>
                         <h5 class="fw-bold mb-2"><?= __('home_service_home_loan') ?></h5>
@@ -1194,7 +834,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
                     <div class="service-card-modern" onclick="openServiceModal('legal')" style="--service-color:#6366f1;">
-                        <div class="service-icon" style="background:rgba(99,102,241,0.1);">
+                        <div class="service-icon icon-indigo">
                             <i class="fas fa-gavel fa-2x" style="color:#6366f1;"></i>
                         </div>
                         <h5 class="fw-bold mb-2"><?= __('home_service_legal') ?></h5>
@@ -1204,7 +844,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
                     <div class="service-card-modern" onclick="openServiceModal('interior')" style="--service-color:#f59e0b;">
-                        <div class="service-icon" style="background:rgba(245,158,11,0.1);">
+                        <div class="service-icon icon-amber">
                             <i class="fas fa-couch fa-2x" style="color:#f59e0b;"></i>
                         </div>
                         <h5 class="fw-bold mb-2"><?= __('home_service_interior') ?></h5>
@@ -1214,7 +854,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
                     <div class="service-card-modern" onclick="openServiceModal('registry')" style="--service-color:#ef4444;">
-                        <div class="service-icon" style="background:rgba(239,68,68,0.1);">
+                        <div class="service-icon icon-red">
                             <i class="fas fa-file-signature fa-2x" style="color:#ef4444;"></i>
                         </div>
                         <h5 class="fw-bold mb-2"><?= __('home_service_registry') ?></h5>
@@ -1224,7 +864,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
                     <div class="service-card-modern" onclick="openServiceModal('rental')" style="--service-color:#14b8a6;">
-                        <div class="service-icon" style="background:rgba(20,184,166,0.1);">
+                        <div class="service-icon icon-teal">
                             <i class="fas fa-file-contract fa-2x" style="color:#14b8a6;"></i>
                         </div>
                         <h5 class="fw-bold mb-2"><?= __('home_service_rental') ?></h5>
@@ -1234,7 +874,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
                     <div class="service-card-modern" onclick="openServiceModal('tax')" style="--service-color:#06b6d4;">
-                        <div class="service-icon" style="background:rgba(6,182,212,0.1);">
+                        <div class="service-icon icon-cyan">
                             <i class="fas fa-file-invoice-dollar fa-2x" style="color:#06b6d4;"></i>
                         </div>
                         <h5 class="fw-bold mb-2"><?= __('home_service_tax') ?></h5>
@@ -1272,7 +912,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         </div>
     </div>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     window.HOME_T = {
         service_home_loan: <?= json_encode(__('svc_home_loan')) ?>,
         service_home_loan_sub: <?= json_encode(__('svc_home_loan_sub')) ?>,
@@ -1669,7 +1309,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
             <div class="row g-3 g-md-4 mb-5">
                 <div class="col-md-3 col-6">
                     <div class="invest-card" style="border-top:4px solid #10b981;">
-                        <div class="icon-circle" style="background:rgba(16,185,129,0.08);">
+                        <div class="icon-circle ic-green">
                             <i class="fas fa-vector-square fa-2x" style="color:#10b981;"></i>
                         </div>
                         <h5 class="fw-bold" style="color:#10b981;"><?= __('home_invest_real_estate') ?></h5>
@@ -1684,7 +1324,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="invest-card" style="border-top:4px solid #f59e0b;">
-                        <div class="icon-circle" style="background:rgba(245,158,11,0.08);">
+                        <div class="icon-circle ic-amber">
                             <i class="fas fa-coins fa-2x" style="color:#f59e0b;"></i>
                         </div>
                         <h5 class="fw-bold" style="color:#f59e0b;"><?= __('home_invest_fd') ?></h5>
@@ -1698,7 +1338,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="invest-card" style="border-top:4px solid #ef4444;">
-                        <div class="icon-circle" style="background:rgba(239,68,68,0.08);">
+                        <div class="icon-circle ic-red">
                             <i class="fas fa-chart-line fa-2x" style="color:#ef4444;"></i>
                         </div>
                         <h5 class="fw-bold" style="color:#ef4444;"><?= __('home_invest_stock') ?></h5>
@@ -1712,7 +1352,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="invest-card" style="border-top:4px solid #0d9488;">
-                        <div class="icon-circle" style="background:rgba(13,148,136,0.08);">
+                        <div class="icon-circle ic-teal">
                             <i class="fas fa-ring fa-2x" style="color:#0d9488;"></i>
                         </div>
                         <h5 class="fw-bold" style="color:#0d9488;"><?= __('home_invest_gold') ?></h5>
@@ -1738,7 +1378,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="checklist-item">
-                                <div class="check-icon" style="background:rgba(16,185,129,0.1);color:#10b981;">
+                                <div class="check-icon ci-green">
                                     <i class="fas fa-shield-halved"></i>
                                 </div>
                                 <div>
@@ -1749,7 +1389,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         </div>
                         <div class="col-md-6">
                             <div class="checklist-item">
-                                <div class="check-icon" style="background:rgba(245,158,11,0.1);color:#f59e0b;">
+                                <div class="check-icon ci-amber">
                                     <i class="fas fa-hand-holding-dollar"></i>
                                 </div>
                                 <div>
@@ -1760,7 +1400,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         </div>
                         <div class="col-md-6">
                             <div class="checklist-item">
-                                <div class="check-icon" style="background:rgba(13,148,136,0.1);color:#0d9488;">
+                                <div class="check-icon ci-teal">
                                     <i class="fas fa-building-columns"></i>
                                 </div>
                                 <div>
@@ -1771,7 +1411,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
                         </div>
                         <div class="col-md-6">
                             <div class="checklist-item">
-                                <div class="check-icon" style="background:rgba(239,68,68,0.1);color:#ef4444;">
+                                <div class="check-icon ci-red">
                                     <i class="fas fa-flag-checkered"></i>
                                 </div>
                                 <div>
@@ -1864,7 +1504,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         </div>
     </section>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     function calcGrowth() {
         const amt = parseFloat(document.getElementById('invAmount').value);
         const yrs = parseFloat(document.getElementById('invYears').value);
@@ -1998,7 +1638,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
         </div>
     </div>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     var T = {
         tool: <?= json_encode(__('home_tool')) ?>,
         calcInstantly: <?= json_encode(__('home_calculate_instantly')) ?>,
@@ -2547,7 +2187,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
     -->
 
     <!-- CTA (Modern) -->
-    <section class="py-5 text-white text-center cta-modern" style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);position:relative;overflow:hidden;">
+    <section class="py-5 text-white text-center cta-modern section-teal-gradient">
         <!-- Decorative elements -->
         <div style="position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;"></div>
         <div style="position:absolute;bottom:-30px;left:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;"></div>

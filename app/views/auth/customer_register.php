@@ -21,7 +21,7 @@ $base = BASE_URL;
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <style>
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         body {
             min-height: 100vh;
             background: linear-gradient(135deg, #0d9488, #0f766e);
@@ -107,7 +107,7 @@ $base = BASE_URL;
                         <button type="submit" class="btn btn-primary w-100 py-2 reg-step-2-btn" id="reg-step-2-submit" style="background:linear-gradient(135deg,#0d9488,#0f766e);border:none;display:none">
                             <i class="fas fa-user-plus me-2"></i><?= __('register_button_submit') ?>
                         </button>
-                        <script>
+                        <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
                         (function(){
                             var btn1 = document.getElementById('reg-step-1-continue');
                             var btn2 = document.getElementById('reg-step-2-submit');

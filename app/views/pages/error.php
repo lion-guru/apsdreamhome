@@ -114,7 +114,7 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
         .error-code {
             font-size: 8rem;
             font-weight: 900;
-            color: var(--primary-color);
+            color: var(--primary);
             margin: 0;
             line-height: 1;
             opacity: 0.1;
@@ -126,7 +126,7 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
 
         .error-icon {
             font-size: 4rem;
-            color: var(--secondary-color);
+            color: var(--secondary);
             margin-bottom: 20px;
         }
 
@@ -148,7 +148,7 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
         }
 
         .btn-home {
-            background-color: var(--primary-color);
+            background-color: var(--primary);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -190,7 +190,7 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
             top: 5px;
             bottom: 5px;
             border: none;
-            background: var(--primary-color);
+            background: var(--primary);
             color: white;
             border-radius: 50px;
             padding: 0 25px;

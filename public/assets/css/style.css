@@ -5,23 +5,53 @@
 
 /* ===== CSS VARIABLES ===== */
 :root {
-  --primary-color: #2c3e50;
-  --secondary-color: #34495e;
-  --accent-color: #3498db;
-  --success-color: #27ae60;
-  --warning-color: #f39c12;
-  --danger-color: #e74c3c;
-  --light-color: #ecf0f1;
-  --dark-color: #2c3e50;
+  /* ── Legacy variable names (used by style.css components) ── */
+  --primary-color: #0f172a;       /* Slate-900 for text and dark headers */
+  --secondary-color: #4f46e5;     /* Indigo-600 for premium branding */
+  --accent-color: #0d9488;        /* Teal-600 for vibrant accents and CTAs */
+  --success-color: #10b981;       /* Emerald-500 */
+  --warning-color: #f59e0b;       /* Amber-500 */
+  --danger-color: #ef4444;        /* Rose-500 */
+  --light-color: #f8fafc;         /* Slate-50 background tint */
+  --dark-color: #0f172a;
   --white-color: #ffffff;
-  --text-color: #333333;
-  --text-muted: #6c757d;
-  --border-color: #dee2e6;
-  --shadow-color: rgba(0, 0, 0, 0.1);
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --border-radius: 8px;
-  --transition: all 0.3s ease;
+  --text-color: #1e293b;          /* Slate-800 for high-readability text */
+  --text-muted: #64748b;          /* Slate-500 */
+  --border-color: #e2e8f0;        /* Slate-200 */
+  --shadow-color: rgba(15, 23, 42, 0.08);
+  --gradient-primary: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);  /* Rich teal gradient */
+  --gradient-secondary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); /* Deep indigo-purple */
+  --border-radius: 12px;          /* More modern rounded corners */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Bridge aliases — maps frontend.css var names to style.css values ── */
+  /* This removes the two-variable-system conflict without changing any HTML */
+  --primary: var(--secondary-color);       /* #4f46e5 indigo */
+  --primary-dark: #4338ca;
+  --primary-light: #818cf8;
+  --secondary: #7c3aed;
+  --accent: var(--accent-color);           /* #0d9488 teal */
+  --success: var(--success-color);
+  --danger: var(--danger-color);
+  --info: #06b6d4;
+  --dark: var(--dark-color);
+  --radius-sm: 8px;
+  --radius-md: var(--border-radius);       /* 12px */
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
+  --shadow-xl: 0 20px 50px rgba(0,0,0,0.15);
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
 }
 
 /* ===== RESET & BASE ===== */
@@ -41,7 +71,7 @@ body {
     sans-serif;
   line-height: 1.6;
   color: var(--text-color);
-  background-color: var(--white-color);
+  background-color: var(--light-color);
   overflow-x: hidden;
   padding-top: 70px;
 }
@@ -159,35 +189,8 @@ h6 {
   background-clip: text;
 }
 
-.nav-link {
-  color: var(--text-color);
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius);
-  transition: var(--transition);
-  position: relative;
-}
-
-.nav-link:hover {
-  color: var(--accent-color);
-  background-color: rgba(52, 152, 219, 0.1);
-}
-
-.nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: var(--accent-color);
-  transition: var(--transition);
-  transform: translateX(-50%);
-}
-
-.nav-link:hover::after {
-  width: 80%;
-}
+/* nav-link unscoped rules removed — header.css handles .premium-header .nav-link
+   and Bootstrap handles default .nav-link. Unscoped rules caused hover color conflict. */
 
 /* ===== HERO SECTION ===== */
 .hero-section {
@@ -272,8 +275,9 @@ h6 {
   margin-top: -50px;
 }
 
-.form-control,
-.form-select {
+/* Scope form controls away from .hero context to prevent conflicts */
+.form-control:not(.hero *),
+.form-select:not(.hero *) {
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: 0.75rem 1rem;
@@ -282,8 +286,8 @@ h6 {
   background: var(--white-color);
 }
 
-.form-control:focus,
-.form-select:focus {
+.form-control:not(.hero *):focus,
+.form-select:not(.hero *):focus {
   border-color: var(--accent-color);
   box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
   outline: none;
@@ -377,39 +381,7 @@ h6 {
 .services-section {
   background: var(--white-color);
 }
-
-.service-card {
-  background: var(--white-color);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: 2rem;
-  text-align: center;
-  transition: var(--transition);
-  height: 100%;
-}
-
-.service-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 30px var(--shadow-color);
-  border-color: var(--accent-color);
-}
-
-.service-icon {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--gradient-primary);
-  border-radius: 50%;
-  color: var(--white-color);
-  transition: var(--transition);
-}
-
-.service-card:hover .service-icon {
-  transform: scale(1.1) rotate(5deg);
-}
+/* .service-card block removed - using superior version from frontend.css */
 
 /* ===== STATISTICS SECTION ===== */
 .statistics-section {
@@ -435,19 +407,20 @@ h6 {
   z-index: 1;
 }
 
-.stat-number {
+/* Stats on dark background (statistics-section) — white text */
+.statistics-section .stat-number {
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
   color: var(--white-color);
 }
-
-.stat-label {
+.statistics-section .stat-label {
   font-size: 1.1rem;
   color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+/* stats on light background (frontend.css .stat-number with gradient) win by default */
 
 /* ===== CONTACT SECTION ===== */
 .contact-section {
@@ -866,7 +839,7 @@ h6 {
   }
 }
 
-/* ===== DARK MODE SUPPORT ===== */
+/* ===== DARK MODE SUPPORT (Commented out to prevent black-on-black text conflicts on system dark-mode browsers)
 @media (prefers-color-scheme: dark) {
   :root {
     --white-color: #1a1a1a;
@@ -887,6 +860,7 @@ h6 {
     border-color: var(--border-color);
   }
 }
+*/
 
 /* ===== UTILITY CLASSES ===== */
 .rounded-3 {

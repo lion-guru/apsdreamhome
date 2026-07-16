@@ -47,7 +47,7 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
     </div>
 </div>
 
-<style>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 .vbw { position: fixed; left: 18px; bottom: 18px; z-index: 99990; font-family: 'Inter', system-ui, sans-serif; }
 .vbw-toggle {
     width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer;
@@ -97,7 +97,7 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
 .vbw-send { margin-top: 8px; width: 100%; border: none; background: #0d9488; color: #fff; border-radius: 10px; padding: 9px; font-weight: 600; cursor: pointer; }
 </style>
 
-<script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 (function () {
     var BASE = window.BASE_URL || '';
     var endpoint = BASE + '/api/v2/mobile/voice-chat';

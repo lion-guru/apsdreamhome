@@ -3,6 +3,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     @session_start();
 }
+$GLOBALS['_html_doc_started'] = true;
 ?>
 
 <!DOCTYPE html>

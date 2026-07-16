@@ -15,7 +15,7 @@ $base = BASE_URL;
     <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token) ?>">
     <title>Choose Your Role - APS Dream Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .container { width: 100%; max-width: 640px; }
@@ -90,7 +90,7 @@ $base = BASE_URL;
         </div>
     </div>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         function selectRole(el, role) {
             document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');

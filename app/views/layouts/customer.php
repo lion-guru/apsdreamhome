@@ -1,3 +1,6 @@
+<?php
+$GLOBALS['_html_doc_started'] = true;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,10 +25,9 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- Consolidated APS CSS Bundles -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
     <style>
         /* ===== CUSTOMER PORTAL MOBILE RESPONSIVENESS ===== */
         @media (max-width: 768px) {

@@ -168,6 +168,9 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     </div>
 </footer>
 
+<!-- APS Premium Animations -->
+<script src="<?php echo BASE_URL; ?>/assets/js/premium-animations.js"></script>
+
 <script>
 // Newsletter Form Handler
 document.getElementById('newsletterForm')?.addEventListener('submit', function(e) {
@@ -222,6 +225,8 @@ if ($ga4_footer_enabled):
 </script>
 <?php endif; ?>
 
+<!-- Premium Animations (scroll reveal + card tilt) -->
+<script src="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>/assets/js/premium-animations.js"></script>
 <?php if (isset($GLOBALS['_html_doc_started']) && !isset($GLOBALS['_layout_handles_close'])): ?>
 </body>
 </html>

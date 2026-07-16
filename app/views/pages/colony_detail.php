@@ -4,12 +4,26 @@ $availablePlots = $availablePlots ?? [];
 $highlights = !empty($colony['key_highlights']) ? (json_decode($colony['key_highlights'], true) ?? []) : [];
 $nearbyPlaces = !empty($colony['nearby_places']) ? (json_decode($colony['nearby_places'], true) ?? []) : [];
 $galleryImages = !empty($colony['gallery_images']) ? (json_decode($colony['gallery_images'], true) ?? []) : [];
-$amenities = array_filter(array_map('trim', explode("\n", $colony['amenities'] ?? '')));
+$amenitiesRaw = $colony['amenities'] ?? '';
+$amenities = [];
+if (!empty($amenitiesRaw)) {
+    $decodedStr = html_entity_decode($amenitiesRaw, ENT_QUOTES, 'UTF-8');
+    $decoded = json_decode($decodedStr, true);
+    if (is_string($decoded)) {
+        $decoded = json_decode($decoded, true);
+    }
+    if (is_array($decoded)) {
+        $amenities = $decoded;
+    } else {
+        $clean = trim($decodedStr, '[]"\' ');
+        $amenities = array_filter(array_map(function($a) { return trim(trim($a, '"\'')); }, explode(",", $clean)));
+    }
+}
 $page_title = $colony['meta_title'] ?: ($colony['name'] . ' - APS Dream Home');
 $page_description = $colony['meta_description'] ?: ($colony['name'] . ' - Premium residential plots and properties');
 $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_image'], '/') : '';
 ?>
-<style>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 .hero-section { position:relative; min-height:60vh; display:flex; align-items:center; background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); overflow:hidden; }
 .hero-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:url('<?php echo $bannerImage ?: BASE_URL . '/assets/images/default-banner.jpg'; ?>') center/cover no-repeat; opacity:0.3; }
 .hero-content { position:relative; z-index:2; color:#fff; padding:80px 0; }

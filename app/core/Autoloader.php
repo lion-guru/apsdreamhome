@@ -204,6 +204,9 @@ if (defined('APP_ROOT')) {
     $autoloader->addClassMap('App\Services\AI\users\specialized\LeadGenerationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/LeadGenerationAgent.php');
     $autoloader->addClassMap('App\Services\AI\Agents\specialized\LeadGenerationAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/LeadGenerationAgent.php');
     $autoloader->addClassMap('App\Services\AI\users\specialized\EMICollectionAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/EMICollectionAgent.php');
+
+    // Register Auth services
+    $autoloader->addClassMap('App\Core\Auth\UnifiedAuthService', \APP_ROOT . '/app/Core/Auth/AuthService.php');
     $autoloader->addClassMap('App\Services\AI\Agents\specialized\EMICollectionAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/EMICollectionAgent.php');
     $autoloader->addClassMap('App\Services\AI\users\specialized\ResearchAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/ResearchAgent.php');
     $autoloader->addClassMap('App\Services\AI\Agents\specialized\ResearchAgent', \APP_ROOT . '/app/Services/AI/Agents/specialized/ResearchAgent.php');

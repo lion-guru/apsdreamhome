@@ -1,6 +1,7 @@
 <?php
 use App\Services\PortalMenuService;
 // session is already started by the framework
+$GLOBALS['_html_doc_started'] = true;
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -45,11 +45,8 @@ SetEnvIf Authorization (.*) HTTP_AUTHORIZATION=$1
     # Permissions policy — disable unused browser features
     Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
-    # Content Security Policy
-    # Allows: self, Bootstrap CDN (jsdelivr/cdnjs), FontAwesome (cdnjs), Chart.js (jsdelivr),
-    #         Google Fonts (fonts.googleapis.com + fonts.gstatic.com), Google Analytics + Tag Manager,
-    #         inline styles (Bootstrap classes), inline scripts (for legacy views), eval (for some libs)
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com; frame-ancestors 'self';"
+    # Content Security Policy — handled by BaseController::setSecurityHeaders() with nonce support
+    # DO NOT set CSP here; duplicate header causes nonce mismatch and blocks all inline styles
 
     # Disable server signature / powered-by leaks
     Header always unset X-Powered-By

@@ -123,7 +123,7 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
     </div>
 </div>
 
-<style>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     .reset-password-section {
         min-height: 100vh;
         background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
@@ -316,7 +316,7 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
     }
 </style>
 
-<script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     // Password visibility toggle
     function togglePassword(fieldId) {
         const field = document.getElementById(fieldId);

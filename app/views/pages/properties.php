@@ -62,7 +62,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 ]));
 ?>
 
-<style>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 .props-hero{position:relative;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#0d9488 100%);padding:60px 0 50px;overflow:hidden;margin-bottom:-30px}
 .props-hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
 .props-hero .hero-content{position:relative;z-index:2}
@@ -297,7 +297,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
         <?php if (!empty($properties)): ?>
             <?php foreach ($properties as $idx => $property): ?>
                 <div class="<?= htmlspecialchars($cardColClass) ?> mb-4 scroll-reveal" style="animation-delay:<?= min($idx * 50, 400) ?>ms">
-                    <div class="card props-grid-card h-100" data-property-id="<?= (int)($property['id'] ?? 0) ?>">
+                    <div class="card props-grid-card glass-card h-100" data-property-id="<?= (int)($property['id'] ?? 0) ?>">
                         <div class="card-img-wrap">
                             <?php
                                 $imgSrc = BASE_URL . '/assets/images/properties/' . htmlspecialchars($property['image'] ?? '');
@@ -447,7 +447,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 <?php endif; ?>
 <?php include __DIR__ . '/../components/save_search_modal.php'; ?>
 
-<script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 document.getElementById('advancedFilters')?.addEventListener('show.bs.collapse', () => {
     document.getElementById('filterChevron').style.transform = 'rotate(180deg)';
 });
@@ -595,10 +595,10 @@ function submitPropertyInterest(e) {
     </div>
 </div>
 
-<style>.prop-budget-chip.active{background:#0d9488!important;color:#fff!important;border-color:#0d9488!important}</style>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">.prop-budget-chip.active{background:#0d9488!important;color:#fff!important;border-color:#0d9488!important}</style>
 
 <!-- Smart Registration Behavior Tracking -->
-<script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 (function() {
     var token = (document.cookie.match('(^|;)\\s*smart_reg_token\\s*=\\s*([^;]+)') || [])[2];
     if (!token) return;

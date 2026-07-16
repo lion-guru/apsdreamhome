@@ -212,8 +212,8 @@ include __DIR__ . '/../layouts/base.php';
 
     .nav-tabs .nav-link.active {
         background: rgba(41, 98, 255, 0.1) !important;
-        border-bottom: 2px solid var(--primary-color) !important;
-        color: var(--primary-color) !important;
+        border-bottom: 2px solid var(--primary) !important;
+        color: var(--primary) !important;
     }
 
     .thumbnail-hover {
@@ -223,7 +223,7 @@ include __DIR__ . '/../layouts/base.php';
 
     .thumbnail-hover:hover {
         transform: scale(1.05);
-        border-color: var(--primary-color);
+        border-color: var(--primary);
     }
 
     .form-control::placeholder {

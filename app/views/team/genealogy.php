@@ -55,7 +55,7 @@ include __DIR__ . '/../layouts/base.php';
 
     .node circle {
         fill: #fff;
-        stroke: var(--primary-color);
+        stroke: var(--primary);
         stroke-width: 3px;
         transition: all 0.3s ease;
     }

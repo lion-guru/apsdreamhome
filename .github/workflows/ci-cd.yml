@@ -1,0 +1,223 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ========================================================================
+  # STATIC ANALYSIS & LINTING
+  # ========================================================================
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql, redis, opcache
+          ini-values: memory_limit=512M
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+
+      - name: PHP Syntax Check
+        run: find app -name "*.php" -exec php -l {} \;
+
+      - name: PHPStan Static Analysis
+        run: |
+          composer require --dev phpstan/phpstan --no-interaction
+          vendor/bin/phpstan analyse app --level=5 --memory-limit=512M
+
+      - name: Psalm Static Analysis
+        run: |
+          composer require --dev vimeo/psalm --no-interaction
+          vendor/bin/psalm --no-cache
+
+  # ========================================================================
+  # UNIT TESTS
+  # ========================================================================
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: apsdreamhome_test
+          MYSQL_USER: test
+          MYSQL_PASSWORD: test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping -h localhost" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql, redis, opcache
+          ini-values: memory_limit=512M
+          coverage: xdebug
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Create test database
+        run: |
+          mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS apsdreamhome_test;"
+          mysql -h 127.0.0.1 -u root -proot apsdreamhome_test < database/apsdreamhome.sql
+
+      - name: Run PHPUnit Tests
+        run: vendor/bin/phpunit --testdox --coverage-text
+
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/clover.xml
+
+  # ========================================================================
+  # E2E TESTS
+  # ========================================================================
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: [static-analysis, unit-tests]
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: apsdreamhome_test
+          MYSQL_USER: test
+          MYSQL_PASSWORD: test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping -h localhost" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql, redis, opcache
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Setup database
+        run: |
+          mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS apsdreamhome_test;"
+          mysql -h 127.0.0.1 -u root -proot apsdreamhome_test < database/apsdreamhome.sql
+
+      - name: Start Apache/PHP server
+        run: |
+          php -S 0.0.0.0:8000 -t public &
+          sleep 5
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E Tests
+        run: node testing/visual_tests/E2E_MASTER_TEST.mjs
+        env:
+          BASE_URL: http://localhost:8000
+          APP_URL: http://localhost:8000
+
+  # ========================================================================
+  # DOCKER BUILD
+  # ========================================================================
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: [static-analysis, unit-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ========================================================================
+  # DEPLOY TO PRODUCTION
+  # ========================================================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [docker-build, e2e-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SERVER_HOST }}
+          username: ${{ secrets.PROD_SERVER_USER }}
+          key: ${{ secrets.PROD_SERVER_SSH_KEY }}
+          port: 22
+          script: |
+            cd /opt/apsdreamhome
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            docker image prune -f
+            echo "Deployment complete!"
+
+      - name: Health check
+        run: |
+          sleep 30
+          curl -f https://yourdomain.com/health || exit 1

@@ -103,7 +103,7 @@ include __DIR__ . '/../layouts/base.php';
 
     .form-control:focus, .form-select:focus {
         background: rgba(255, 255, 255, 0.1);
-        border-color: var(--primary-color);
+        border-color: var(--primary);
         box-shadow: none;
         color: #fff;
     }

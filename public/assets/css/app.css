@@ -37,4 +37,4 @@
    ADMIN STYLES (if needed for frontend)
    ============================================================ */
 @import './admin.css';
-@import './responsive-fixes.css';
+@import '../admin/css/responsive-fixes.css';

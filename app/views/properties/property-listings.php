@@ -87,7 +87,7 @@ try {
 
         /* Hero Section */
         .hero-section {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             padding: 120px 0 80px;
             color: white;
             position: relative;
@@ -157,13 +157,13 @@ try {
 
         .form-control:focus,
         .form-select:focus {
-            border-color: var(--primary-color);
+            border-color: var(--primary);
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
             outline: none;
         }
 
         .btn-search {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             padding: 15px 35px;
             border-radius: 50px;
@@ -244,7 +244,7 @@ try {
             top: 15px;
             right: 15px;
             background: white;
-            color: var(--primary-color);
+            color: var(--primary);
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -256,7 +256,7 @@ try {
         }
 
         .property-favorite:hover {
-            background: var(--primary-color);
+            background: var(--primary);
             color: white;
             transform: scale(1.1);
         }
@@ -271,7 +271,7 @@ try {
         .property-price {
             font-size: 1.8rem;
             font-weight: 800;
-            color: var(--primary-color);
+            color: var(--primary);
             margin-bottom: 10px;
         }
 
@@ -291,7 +291,7 @@ try {
         }
 
         .property-location i {
-            color: var(--primary-color);
+            color: var(--primary);
             margin-right: 8px;
         }
 
@@ -311,7 +311,7 @@ try {
         }
 
         .property-feature i {
-            color: var(--primary-color);
+            color: var(--primary);
         }
 
         .property-description {
@@ -337,7 +337,7 @@ try {
         }
 
         .btn-primary-property {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
         }
 
@@ -349,12 +349,12 @@ try {
 
         .btn-outline-property {
             background: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
+            border: 2px solid var(--primary);
+            color: var(--primary);
         }
 
         .btn-outline-property:hover {
-            background: var(--primary-color);
+            background: var(--primary);
             color: white;
         }
 
@@ -408,7 +408,7 @@ try {
 
         /* Stats Section */
         .stats-section {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             padding: 80px 0;
             color: white;
         }
@@ -454,7 +454,7 @@ try {
             .property-price {
                 font-size: 1.8rem;
                 font-weight: 800;
-                color: var(--primary-color);
+                color: var(--primary);
                 margin-bottom: 10px;
             }
 
@@ -474,7 +474,7 @@ try {
             }
 
             .property-location i {
-                color: var(--primary-color);
+                color: var(--primary);
                 margin-right: 8px;
             }
 
@@ -494,7 +494,7 @@ try {
             }
 
             .property-feature i {
-                color: var(--primary-color);
+                color: var(--primary);
             }
 
             .property-description {
@@ -520,7 +520,7 @@ try {
             }
 
             .btn-primary-property {
-                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                background: linear-gradient(135deg, var(--primary), var(--secondary));
                 color: white;
             }
 
@@ -532,12 +532,12 @@ try {
 
             .btn-outline-property {
                 background: transparent;
-                border: 2px solid var(--primary-color);
-                color: var(--primary-color);
+                border: 2px solid var(--primary);
+                color: var(--primary);
             }
 
             .btn-outline-property:hover {
-                background: var(--primary-color);
+                background: var(--primary);
                 color: white;
             }
 
@@ -591,7 +591,7 @@ try {
 
             /* Stats Section */
             .stats-section {
-                background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+                background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
                 padding: 80px 0;
                 color: white;
             }
@@ -838,7 +838,7 @@ try {
                                             <?php elseif (!empty($property['status']) && $property['status'] != 'available'): ?>
                                                 <span class="property-badge"><?php echo ucfirst(htmlspecialchars($property['status'])); ?></span>
                                             <?php elseif (!empty($property['source']) && $property['source'] == 'ai_fetched'): ?>
-                                                <span class="property-badge" style="background: var(--secondary-color);"><i class="fas fa-globe me-1"></i>Web Listing</span>
+                                                <span class="property-badge" style="background: var(--secondary);"><i class="fas fa-globe me-1"></i>Web Listing</span>
                                             <?php else: ?>
                                                 <span class="property-badge new">Available</span>
                                             <?php endif; ?>
@@ -997,13 +997,13 @@ try {
                 if (icon.classList.contains('far')) {
                     icon.classList.remove('far');
                     icon.classList.add('fas');
-                    this.style.background = 'var(--primary-color)';
+                    this.style.background = 'var(--primary)';
                     this.style.color = 'white';
                 } else {
                     icon.classList.remove('fas');
                     icon.classList.add('far');
                     this.style.background = 'white';
-                    this.style.color = 'var(--primary-color)';
+                    this.style.color = 'var(--primary)';
                 }
             });
         });

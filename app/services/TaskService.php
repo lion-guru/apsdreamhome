@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Core\Database;
-use App\Core\Auth;
+use App\Core\Auth\UnifiedAuthService;
 use Exception;
 use PDO;
 
@@ -15,7 +15,7 @@ class TaskService
     public function __construct()
     {
         $this->db = Database::getInstance()->getConnection();
-        $this->auth = new Auth();
+        $this->auth = UnifiedAuthService::getInstance();
     }
 
     /**
@@ -25,17 +25,21 @@ class TaskService
     {
         try {
             // RBAC: If not admin, only show assigned tasks or created tasks
-            if (!$this->auth->isAdmin()) {
-                $userId = $this->auth->id();
-                // Force filter to current user if not explicitly filtering (or enforce it)
-                // For now, let's enforce: User can only see tasks assigned to them or created by them
-                // unless they are admin.
+            $isAdmin = $this->auth->isAdminLoggedIn();
+            if (!$isAdmin) {
+                $currentUser = $this->auth->getCurrentUser();
+                if (!$currentUser) {
+                    return [
+                        'tasks' => [],
+                        'total' => 0,
+                        'page' => 1,
+                        'per_page' => 25,
+                        'total_pages' => 0,
+                    ];
+                }
+                $userId = $currentUser['id'];
                 
-                // However, the original code allowed filtering by 'assigned_to'.
-                // If a user filters by 'assigned_to' = themselves, it's fine.
-                // If they filter by someone else, they shouldn't see it unless they are admin.
-                
-                // Let's add a base condition for non-admins
+                // Force filter to current user if not explicitly filtering
                 $filters['user_context'] = $userId;
             }
 

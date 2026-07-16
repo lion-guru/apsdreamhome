@@ -1,0 +1,149 @@
+/* ==========================================================================
+   PREMIUM THEME (LUXURY REAL ESTATE) - APS DREAM HOME
+   ========================================================================== */
+
+/* Import Premium Font (Plus Jakarta Sans) */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    /* LUXURY COLOR PALETTE */
+    --premium-navy: #0A192F;       /* Deep rich dark blue for backgrounds/headers */
+    --premium-gold: #D4AF37;       /* Champagne Gold for accents/buttons */
+    --premium-gold-hover: #b5952f;
+    --premium-emerald: #14B8A6;    /* Modern teal/emerald for success/highlights */
+    --premium-dark: #1E293B;       /* Slate dark */
+    --premium-light: #F8FAFC;      /* Off-white background */
+    --premium-white: #FFFFFF;
+
+    /* RE-MAPPING EXISTING VARIABLES TO PREMIUM COLORS */
+    --primary: var(--premium-navy);
+    --primary-color: var(--premium-navy);
+    --primary-dark: #060d1a;
+    --primary-light: #1e3a5f;
+    
+    --secondary: var(--premium-gold);
+    --secondary-color: var(--premium-gold);
+    
+    --accent: var(--premium-emerald);
+    --accent-color: var(--premium-emerald);
+
+    /* GRADIENTS */
+    --gradient-luxury: linear-gradient(135deg, var(--premium-navy) 0%, #172a45 100%);
+    --gradient-gold: linear-gradient(135deg, #F8E231 0%, var(--premium-gold) 100%);
+
+    /* TYPOGRAPHY */
+    --font-primary: 'Plus Jakarta Sans', sans-serif;
+    
+    /* BORDERS & RADIUS (Modern smooth curves) */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --border-radius: 16px; /* Override old 12px */
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+
+    /* PREMIUM SHADOWS (Soft, diffused) */
+    --shadow-soft: 0 10px 40px -10px rgba(10, 25, 47, 0.08);
+    --shadow-hover: 0 20px 40px -10px rgba(10, 25, 47, 0.15);
+    --shadow-gold: 0 10px 20px -5px rgba(212, 175, 55, 0.3);
+}
+
+/* BASE OVERRIDES */
+body {
+    font-family: var(--font-primary) !important;
+    background-color: var(--premium-light);
+    color: var(--premium-dark);
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: var(--font-primary) !important;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* UTILITY CLASSES */
+.text-gold { color: var(--premium-gold) !important; }
+.bg-gold { background-color: var(--premium-gold) !important; }
+.bg-navy { background-color: var(--premium-navy) !important; }
+
+/* GLASSMORPHISM UTILS */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+.glass-dark {
+    background: rgba(10, 25, 47, 0.7) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-soft);
+    border-radius: var(--border-radius);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* PREMIUM BUTTONS */
+.btn-premium {
+    background: var(--gradient-gold);
+    color: var(--premium-navy) !important;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px; /* Pill shape */
+    padding: 0.75rem 2rem;
+    box-shadow: var(--shadow-gold);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px -5px rgba(212, 175, 55, 0.4);
+    color: var(--premium-navy) !important;
+}
+
+.btn-outline-premium {
+    background: transparent;
+    color: var(--premium-gold) !important;
+    border: 2px solid var(--premium-gold);
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 0.75rem 2rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-premium:hover {
+    background: var(--premium-gold);
+    color: var(--premium-navy) !important;
+}
+
+.btn-glow {
+    position: relative;
+}
+.btn-glow::after {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: inherit;
+    filter: blur(8px);
+    opacity: 0.6;
+    border-radius: inherit;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+}
+.btn-glow:hover::after {
+    opacity: 0.9;
+}

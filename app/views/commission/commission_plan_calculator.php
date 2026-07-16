@@ -200,7 +200,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
             border-radius: 15px;
             padding: 2rem;
             margin: 1rem 0;
-            border-left: 5px solid var(--primary-color);
+            border-left: 5px solid var(--primary);
         }
 
         .result-card {
@@ -213,7 +213,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
         }
 
         .summary-card {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border-radius: 15px;
             padding: 2rem;
@@ -264,13 +264,13 @@ if (isset($_GET['calculated']) && $calculation_result) {
         }
 
         .input-group-text {
-            background: var(--primary-color);
+            background: var(--primary);
             color: white;
             border: none;
         }
 
         .form-control:focus {
-            border-color: var(--primary-color);
+            border-color: var(--primary);
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
 

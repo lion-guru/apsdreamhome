@@ -1,0 +1,137 @@
+version: '3.8'
+
+services:
+  # Main Application Container
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: apsdreamhome-app
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./public/uploads:/var/www/html/public/uploads
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+      - ./docker/php/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/supervisor/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=apsdreamhome
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - aps-network
+
+  # Database - MySQL 8.0
+  db:
+    image: mysql:8.0
+    container_name: apsdreamhome-db
+    restart: unless-stopped
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/apsdreamhome.sql:/docker-entrypoint-initdb.d/apsdreamhome.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=apsdreamhome
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb_buffer_pool_size=512M
+      - --max_connections=200
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p${DB_ROOT_PASSWORD}']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - aps-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: apsdreamhome-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', '${REDIS_PASSWORD}', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - aps-network
+
+  # Optional: phpMyAdmin for DB management
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: apsdreamhome-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+      - PMA_USER=${DB_USERNAME}
+      - PMA_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    depends_on:
+      - db
+    profiles:
+      - tools
+    networks:
+      - aps-network
+
+  # Optional: Mailhog for email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: apsdreamhome-mailhog
+    restart: unless-stopped
+    ports:
+      - '1025:1025' # SMTP
+      - '8025:8025' # Web UI
+    profiles:
+      - tools
+    networks:
+      - aps-network
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  aps-network:
+    driver: bridge

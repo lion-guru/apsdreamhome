@@ -2372,14 +2372,11 @@ public function colonyDetail($slug = null)
             return;
         }
         $availablePlots = $this->db->fetchAll("SELECT id, plot_number, block, area_sqft, width_ft, length_ft, total_price, status, price_per_sqft, corner_plot, park_facing FROM plots WHERE colony_id = ? AND status = 'available' ORDER BY plot_number LIMIT 20", [$colony['id']]);
-        $allPlots = $this->db->fetchAll("SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, gata_number FROM plots WHERE colony_id = ? ORDER BY block, plot_number", [$colony['id']]);
-        $mapData = $this->buildPlotGeoJson($allPlots, $colony);
         $this->render('pages/colony_detail', [
-            'page_title' => $colony['meta_title'] ?: $colony['name'] . ' - APS Dream Home',
+            'page_title'       => $colony['meta_title'] ?: $colony['name'] . ' - APS Dream Home',
             'page_description' => $colony['meta_description'] ?: $colony['name'] . ' - Premium residential plots',
-            'colony' => $colony,
-            'availablePlots' => $availablePlots,
-            'mapData' => $mapData,
+            'colony'           => $colony,
+            'availablePlots'   => $availablePlots,
         ]);
     }
 

@@ -63,7 +63,7 @@
 
         /* Header */
         .team-header {
-            background: linear-gradient(135deg, var(--primary-color), #1976d2);
+            background: linear-gradient(135deg, var(--primary), #1976d2);
             color: white;
             padding: 1rem 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -116,7 +116,7 @@
             padding: 1.5rem;
             box-shadow: var(--card-shadow);
             transition: all 0.3s ease;
-            border-left: 4px solid var(--primary-color);
+            border-left: 4px solid var(--primary);
         }
 
         .overview-card:hover {
@@ -124,7 +124,7 @@
             box-shadow: var(--card-shadow-hover);
         }
 
-        .overview-card.members { border-left-color: var(--secondary-color); }
+        .overview-card.members { border-left-color: var(--secondary); }
         .overview-card.performance { border-left-color: var(--warning-color); }
         .overview-card.earnings { border-left-color: var(--success-color); }
 
@@ -139,8 +139,8 @@
             margin-bottom: 1rem;
         }
 
-        .overview-icon.primary { background: rgba(41, 98, 255, 0.1); color: var(--primary-color); }
-        .overview-icon.success { background: rgba(76, 175, 80, 0.1); color: var(--secondary-color); }
+        .overview-icon.primary { background: rgba(41, 98, 255, 0.1); color: var(--primary); }
+        .overview-icon.success { background: rgba(76, 175, 80, 0.1); color: var(--secondary); }
         .overview-icon.warning { background: rgba(255, 152, 0, 0.1); color: var(--warning-color); }
         .overview-icon.info { background: rgba(23, 162, 184, 0.1); color: var(--info-color); }
 
@@ -163,7 +163,7 @@
             margin-top: 0.5rem;
         }
 
-        .overview-change.positive { color: var(--secondary-color); }
+        .overview-change.positive { color: var(--secondary); }
         .overview-change.negative { color: var(--danger-color); }
 
         /* Hierarchy Visualization */
@@ -182,7 +182,7 @@
 
         .hierarchy-node {
             background: white;
-            border: 2px solid var(--primary-color);
+            border: 2px solid var(--primary);
             border-radius: 12px;
             padding: 1rem;
             text-align: center;
@@ -198,11 +198,11 @@
         }
 
         .hierarchy-node.root {
-            border-color: var(--primary-color);
+            border-color: var(--primary);
             background: linear-gradient(135deg, rgba(41, 98, 255, 0.1), rgba(25, 118, 210, 0.1));
         }
 
-        .hierarchy-node.level-1 { border-color: var(--secondary-color); }
+        .hierarchy-node.level-1 { border-color: var(--secondary); }
         .hierarchy-node.level-2 { border-color: var(--warning-color); }
         .hierarchy-node.level-3 { border-color: var(--info-color); }
 
@@ -235,7 +235,7 @@
             margin-left: 0.5rem;
         }
 
-        .node-status.active { background: var(--secondary-color); }
+        .node-status.active { background: var(--secondary); }
         .node-status.inactive { background: var(--danger-color); }
 
         /* Performance Charts */
@@ -306,7 +306,7 @@
             flex-shrink: 0;
         }
 
-        .activity-icon.registration { background: rgba(76, 175, 80, 0.1); color: var(--secondary-color); }
+        .activity-icon.registration { background: rgba(76, 175, 80, 0.1); color: var(--secondary); }
         .activity-icon.commission { background: rgba(255, 152, 0, 0.1); color: var(--warning-color); }
 
         .activity-content h4 {
@@ -341,11 +341,11 @@
             border-radius: 12px;
             padding: 1rem;
             margin-bottom: 1rem;
-            border-left: 4px solid var(--primary-color);
+            border-left: 4px solid var(--primary);
         }
 
         .incentive-item.achieved {
-            border-left-color: var(--secondary-color);
+            border-left-color: var(--secondary);
             background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(46, 125, 50, 0.05));
         }
 
@@ -368,7 +368,7 @@
 
         .incentive-amount {
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--primary);
         }
 
         .incentive-description {
@@ -387,7 +387,7 @@
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
             border-radius: 3px;
         }
 
@@ -425,21 +425,21 @@
 
         .action-btn.primary {
             background: linear-gradient(135deg, rgba(41, 98, 255, 0.1), rgba(25, 118, 210, 0.1));
-            border-color: var(--primary-color);
+            border-color: var(--primary);
         }
 
         .action-btn.primary:hover {
-            background: linear-gradient(135deg, var(--primary-color), #1976d2);
+            background: linear-gradient(135deg, var(--primary), #1976d2);
             color: white;
         }
 
         .action-btn.success {
             background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(46, 125, 50, 0.1));
-            border-color: var(--secondary-color);
+            border-color: var(--secondary);
         }
 
         .action-btn.success:hover {
-            background: linear-gradient(135deg, var(--secondary-color), #2e7d32);
+            background: linear-gradient(135deg, var(--secondary), #2e7d32);
             color: white;
         }
 
@@ -542,7 +542,7 @@
             width: 20px;
             height: 20px;
             border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary-color);
+            border-top: 3px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }

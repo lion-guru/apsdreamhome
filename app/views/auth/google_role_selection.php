@@ -7,7 +7,7 @@
     <title><?php echo __('auth_complete_registration_title', 'Complete Registration'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <style>
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * {
             margin: 0;
             padding: 0;
@@ -257,7 +257,7 @@
         </div>
     </div>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         let selectedRole = null;
         const companyReferralCode = '<?php echo $companyReferralCode; ?>';
 

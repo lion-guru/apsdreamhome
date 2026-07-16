@@ -39,7 +39,7 @@ $selectedRole = $selectedRole ?? 'customer';
     <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token) ?>">
     <title>Register - APS Dream Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -244,7 +244,7 @@ $selectedRole = $selectedRole ?? 'customer';
         </div>
     </div>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         // Role Selection
         function selectRole(el, role) {
             document.querySelectorAll('.role-card').forEach(t => t.classList.remove('selected'));

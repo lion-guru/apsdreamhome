@@ -1,3 +1,6 @@
+<?php
+$GLOBALS['_html_doc_started'] = true;
+?>
 <!DOCTYPE html>
 <html lang="en">
 

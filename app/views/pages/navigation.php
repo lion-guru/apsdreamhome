@@ -63,7 +63,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
         }
 
         .hero-section {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             padding: 80px 0 60px;
             color: white;
             text-align: center;
@@ -108,7 +108,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
         }
 
         .nav-icon {
@@ -118,7 +118,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
         }
 
         .nav-icon.main {
-            color: var(--primary-color);
+            color: var(--primary);
         }
 
         .nav-icon.feature {
@@ -147,7 +147,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
         }
 
         .nav-link {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             padding: 12px 25px;
             border-radius: 50px;
@@ -194,7 +194,7 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
         }
 
         .action-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             padding: 15px 30px;
             border-radius: 50px;
@@ -214,12 +214,12 @@ $page_description = __('nav_page_desc', 'Navigate through all pages of APS Dream
 
         .action-btn.secondary {
             background: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
+            border: 2px solid var(--primary);
+            color: var(--primary);
         }
 
         .action-btn.secondary:hover {
-            background: var(--primary-color);
+            background: var(--primary);
             color: white;
         }
 

@@ -754,7 +754,7 @@ footer p.text-light {
 
 .company-info h2 {
   margin-bottom: 20px;
-  color: var(--primary-color);
+  color: var(--primary);
 }
 
 .company-info p {
@@ -794,7 +794,7 @@ footer p.text-light {
 
 .team-info h4 {
   margin-bottom: 5px;
-  color: var(--primary-color);
+  color: var(--primary);
 }
 
 .team-info p {
@@ -806,7 +806,7 @@ footer p.text-light {
   display: inline-block;
   width: 35px;
   height: 35px;
-  background-color: var(--primary-color);
+  background-color: var(--primary);
   color: #fff;
   border-radius: 50%;
   line-height: 35px;
@@ -815,7 +815,7 @@ footer p.text-light {
 }
 
 .social-icons a:hover {
-  background-color: var(--secondary-color);
+  background-color: var(--secondary);
   transform: translateY(-3px);
 }
 
@@ -842,7 +842,7 @@ footer p.text-light {
 .mission-card h3,
 .vision-card h3 {
   margin-bottom: 20px;
-  color: var(--primary-color);
+  color: var(--primary);
   position: relative;
   padding-bottom: 15px;
 }
@@ -855,7 +855,7 @@ footer p.text-light {
   left: 0;
   width: 50px;
   height: 2px;
-  background-color: var(--primary-color);
+  background-color: var(--primary);
 }
 
 @media (max-width: 767px) {
@@ -878,7 +878,7 @@ footer p.text-light {
 }
 
 .contact-info {
-  background-color: var(--primary-color);
+  background-color: var(--primary);
   padding: 30px;
   border-radius: 10px;
   color: #fff;
@@ -931,7 +931,7 @@ footer p.text-light {
 }
 
 .contact-form .btn-submit {
-  background-color: var(--primary-color);
+  background-color: var(--primary);
   color: #fff;
   padding: 12px 30px;
   border: none;
@@ -941,7 +941,7 @@ footer p.text-light {
 }
 
 .contact-form .btn-submit:hover {
-  background-color: var(--secondary-color);
+  background-color: var(--secondary);
   transform: translateY(-3px);
 }
 

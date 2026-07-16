@@ -12,7 +12,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
      APS AI Chatbot + WhatsApp — Combined Widget v2
      Features: Voice STT/TTS, RBAC-aware, WhatsApp templates, tracking
      ═══════════════════════════════════════════════════════════════ -->
-<style>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 .cw-wrap{position:fixed;bottom:20px;right:16px;z-index:9999;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 @media(min-width:768px){.cw-wrap{bottom:24px;right:24px}}
 
@@ -214,7 +214,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     </div>
 </div>
 
-<script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 (function(){
     var cwSession = localStorage.getItem('cw_session') || ('web_' + Date.now());
     localStorage.setItem('cw_session', cwSession);

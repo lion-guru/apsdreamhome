@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+         bootstrap="config/bootstrap.php"
          colors="true"
-         cacheDirectory=".phpunit.cache"
-         cacheResult="true"
-         cacheTokens="true"
          testdox="true"
          verbose="true">
     <php>
@@ -42,26 +39,8 @@
         </whitelist>
     </filter>
 
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">app/Services</directory>
-            <directory suffix=".php">app/Http/Controllers</directory>
-            <directory suffix=".php">app/Models</directory>
-            <directory suffix=".php">app/Core</directory>
-        </include>
-        <report>
-            <html outputDirectory="coverage/html"/>
-            <clover outputFile="coverage/clover.xml"/>
-            <text outputFile="coverage/coverage.txt"/>
-        </report>
-    </coverage>
-
     <logging>
         <junit outputFile="build/logs/junit.xml"/>
         <teamcity outputFile="build/logs/teamcity.xml"/>
     </logging>
-
-    <extensions>
-        <extension class="PHPUnit\Runner\Extension\CoverageExtension"/>
-    </extensions>
 </phpunit>
