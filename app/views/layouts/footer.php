@@ -79,7 +79,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                     <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $sc('contact_whatsapp')) ?>" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-whatsapp"></i></a>
                     <?php endif; ?>
                 </div>
-                <style>
+                <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
                     .social-icon {
                         display: inline-flex;
                         align-items: center;
@@ -168,7 +168,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     </div>
 </footer>
 
-<!-- APS Premium Animations -->
+<!-- APS Premium Animations (scroll reveal + card tilt) -->
 <script src="<?php echo BASE_URL; ?>/assets/js/premium-animations.js"></script>
 
 <script>
@@ -224,9 +224,6 @@ if ($ga4_footer_enabled):
   }
 </script>
 <?php endif; ?>
-
-<!-- Premium Animations (scroll reveal + card tilt) -->
-<script src="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>/assets/js/premium-animations.js"></script>
 <?php if (isset($GLOBALS['_html_doc_started']) && !isset($GLOBALS['_layout_handles_close'])): ?>
 </body>
 </html>

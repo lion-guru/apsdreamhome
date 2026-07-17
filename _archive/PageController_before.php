@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use Exception;
-use PDO;
 
 class PageController extends BaseController
 {
@@ -69,7 +68,7 @@ class PageController extends BaseController
                     'title' => $siteName,
                     'location' => ($project->district ?? '') . ', ' . ($project->state ?? ''),
                     'city' => $project->district ?? '',
-                    'price' => 'Starting from Γé╣5.5 Lakhs',
+                    'price' => 'Starting from ₹5.5 Lakhs',
                     'slug' => $slug,
                     'type' => ucfirst($project->site_type ?? 'Residential'),
                     'status' => ($project->status === 'active') ? 'Available' : 'Completed',
@@ -655,7 +654,7 @@ public function properties()
         $perPage = 12;
         $offset = ($page - 1) * $perPage;
 
-        // ╬ô├╢├ç╬ô├╢├ç Hot-path cache: property listings (5 min TTL) ╬ô├╢├ç╬ô├╢├ç
+        // ΓöÇΓöÇ Hot-path cache: property listings (5 min TTL) ΓöÇΓöÇ
         $filterHash = [
             'q' => $keyword,
             'type' => $type,
@@ -1129,7 +1128,7 @@ public function propertyInterest()
                     "UPDATE leads SET property_interest = CONCAT(COALESCE(property_interest, ''), ?), notes = CONCAT(COALESCE(notes, ''), ?), lead_score = LEAST(100, lead_score + 10), updated_at = NOW() WHERE id = ?",
                     [
                         ($propName ? ", $propName" : ''),
-                        "\n" . date('Y-m-d H:i') . " ╬ô├ç├╢ Expressed interest in: $propName (Budget: $budget)",
+                        "\n" . date('Y-m-d H:i') . " ΓÇö Expressed interest in: $propName (Budget: $budget)",
                         $existingLead['id']
                     ]
                 );
@@ -1609,7 +1608,7 @@ public function constructionInquiry()
 
         try {
             $stmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, 'project', 'pending', 'medium', NOW())");
-            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: ╬ô├⌐Γòú{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
+            $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: Γé╣{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
 
             // Auto-wire to CRM lead
             try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>"Construction: {$project_type}",'type'=>'project']); } catch (\Exception $e3) {}
@@ -1617,7 +1616,7 @@ public function constructionInquiry()
             // Also save to service_interests if table exists
             try {
                 $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, created_at) VALUES (?, 'construction', 'pending', ?, NOW())");
-                $sStmt->execute([$this->db->lastInsertId(), "Budget: ╬ô├⌐Γòú{$budget}, Location: {$location}, Type: {$project_type}"]);
+                $sStmt->execute([$this->db->lastInsertId(), "Budget: Γé╣{$budget}, Location: {$location}, Type: {$project_type}"]);
             } catch (\Exception $e) {
                 error_log('PageController constructionInquiry service interests: ' . $e->getMessage());
             }
@@ -2373,11 +2372,14 @@ public function colonyDetail($slug = null)
             return;
         }
         $availablePlots = $this->db->fetchAll("SELECT id, plot_number, block, area_sqft, width_ft, length_ft, total_price, status, price_per_sqft, corner_plot, park_facing FROM plots WHERE colony_id = ? AND status = 'available' ORDER BY plot_number LIMIT 20", [$colony['id']]);
+        $allPlots = $this->db->fetchAll("SELECT id, plot_number, block, area_sqft, width_ft, length_ft, status, price_per_sqft, total_price, corner_plot, park_facing, gata_number FROM plots WHERE colony_id = ? ORDER BY block, plot_number", [$colony['id']]);
+        $mapData = $this->buildPlotGeoJson($allPlots, $colony);
         $this->render('pages/colony_detail', [
-            'page_title'       => $colony['meta_title'] ?: $colony['name'] . ' - APS Dream Home',
+            'page_title' => $colony['meta_title'] ?: $colony['name'] . ' - APS Dream Home',
             'page_description' => $colony['meta_description'] ?: $colony['name'] . ' - Premium residential plots',
-            'colony'           => $colony,
-            'availablePlots'   => $availablePlots,
+            'colony' => $colony,
+            'availablePlots' => $availablePlots,
+            'mapData' => $mapData,
         ]);
     }
 
@@ -2542,243 +2544,5 @@ public function location($slug = null)
             return;
         }
         $this->render('locations/' . $slug, ['page_title' => ucwords(str_replace(['-', '/'], [' ', ' '], $slug))]);
-    }
-
-    /**
-     * Run property list query with filters
-     */
-    private function runPropertyListQuery(
-        ?string $keyword,
-        ?string $type,
-        ?string $listingType,
-        ?string $location,
-        ?float $minPrice,
-        ?float $maxPrice,
-        ?int $bedrooms,
-        ?int $bathrooms,
-        ?string $furnished,
-        ?int $yearBuilt,
-        ?int $areaMin,
-        ?int $areaMax,
-        ?string $sortBy,
-        int $perPage,
-        int $offset
-    ): array {
-        $where = ['p.status = \'active\''];
-        $params = [];
-
-        if ($keyword) {
-            $where[] = '(p.name LIKE ? OR p.description LIKE ? OR p.address LIKE ?)';
-            $kw = '%' . $keyword . '%';
-            $params[] = $kw;
-            $params[] = $kw;
-            $params[] = $kw;
-        }
-        if ($type) {
-            $where[] = 'p.type = ?';
-            $params[] = $type;
-        }
-        if ($listingType) {
-            $where[] = 'p.listing_type = ?';
-            $params[] = $listingType;
-        }
-        if ($location) {
-            $where[] = '(p.city LIKE ? OR p.address LIKE ?)';
-            $loc = '%' . $location . '%';
-            $params[] = $loc;
-            $params[] = $loc;
-        }
-        if ($minPrice) {
-            $where[] = 'p.price >= ?';
-            $params[] = (float)$minPrice;
-        }
-        if ($maxPrice) {
-            $where[] = 'p.price <= ?';
-            $params[] = (float)$maxPrice;
-        }
-        if ($bedrooms) {
-            $where[] = 'p.bedrooms >= ?';
-            $params[] = (int)$bedrooms;
-        }
-        if ($bathrooms) {
-            $where[] = 'p.bathrooms >= ?';
-            $params[] = (int)$bathrooms;
-        }
-        if ($furnished) {
-            $where[] = 'p.furnished = ?';
-            $params[] = $furnished;
-        }
-        if ($yearBuilt) {
-            $where[] = 'p.year_built >= ?';
-            $params[] = (int)$yearBuilt;
-        }
-        if ($areaMin) {
-            $where[] = 'p.area_sqft >= ?';
-            $params[] = (int)$areaMin;
-        }
-        if ($areaMax) {
-            $where[] = 'p.area_sqft <= ?';
-            $params[] = (int)$areaMax;
-        }
-
-        $whereClause = 'WHERE ' . implode(' AND ', $where);
-
-        // Get total count
-        $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM user_properties p $whereClause");
-        $countStmt->execute($params);
-        $total = (int)($countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
-
-        // Order by
-        $orderBy = match ($sortBy) {
-            'price_low' => 'p.price ASC',
-            'price_high' => 'p.price DESC',
-            'area_large' => 'p.area_sqft DESC',
-            'area_small' => 'p.area_sqft ASC',
-            default => 'p.created_at DESC',
-        };
-
-        // Get paginated results
-        $params[] = $perPage;
-        $params[] = $offset;
-        $sql = "SELECT p.*, u.name as user_name, u.phone as user_phone, u.email as user_email
-                FROM user_properties p
-                LEFT JOIN users u ON u.id = p.user_id
-                $whereClause
-                ORDER BY $orderBy
-                LIMIT ? OFFSET ?";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
-        $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-
-        return ['properties' => $properties, 'total' => $total];
-    }
-
-    /**
-     * Create user_properties table if it doesn't exist
-     */
-    private function createUserPropertiesTable(): void
-    {
-        $sql = "
-            CREATE TABLE IF NOT EXISTS user_properties (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                posted_by INT NOT NULL,
-                posted_by_type VARCHAR(50) NOT NULL,
-                name VARCHAR(255) NOT NULL,
-                phone VARCHAR(20) NOT NULL,
-                email VARCHAR(255),
-                property_type VARCHAR(50) NOT NULL,
-                listing_type VARCHAR(20) NOT NULL,
-                address TEXT,
-                area_sqft INT,
-                width_ft INT,
-                length_ft INT,
-                price DECIMAL(15,2),
-                price_type VARCHAR(20) DEFAULT 'lakh',
-                description TEXT,
-                image VARCHAR(500),
-                facing VARCHAR(50),
-                corner_plot TINYINT(1) DEFAULT 0,
-                park_facing TINYINT(1) DEFAULT 0,
-                state_id INT,
-                district_id INT,
-                city_name VARCHAR(100),
-                status VARCHAR(20) DEFAULT 'pending',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_user_id (user_id),
-                INDEX idx_status (status),
-                INDEX idx_type (property_type),
-                INDEX idx_listing_type (listing_type),
-                INDEX idx_city (city_name),
-                INDEX idx_price (price),
-                INDEX idx_area (area_sqft)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-        ";
-        $this->db->exec($sql);
-    }
-
-    /**
-     * Track property view
-     */
-    private function trackPropertyView(int $propertyId): void
-    {
-        try {
-            $this->db->exec("
-                INSERT INTO property_views (property_id, viewed_at, ip_address, user_agent)
-                VALUES ($propertyId, NOW(), '{$_SERVER['REMOTE_ADDR']}', '{$_SERVER['HTTP_USER_AGENT']}')
-                ON DUPLICATE KEY UPDATE view_count = view_count + 1, viewed_at = NOW()
-            ");
-        } catch (\Throwable $e) {
-            error_log('trackPropertyView error: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Create service_interests table if it doesn't exist
-     */
-    private function createServiceInterestsTable(): void
-    {
-        $sql = "
-            CREATE TABLE IF NOT EXISTS service_interests (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                service_category VARCHAR(50) NOT NULL,
-                service_type VARCHAR(50),
-                budget_min INT,
-                budget_max INT,
-                location VARCHAR(100),
-                description TEXT,
-                status VARCHAR(20) DEFAULT 'pending',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_user_id (user_id),
-                INDEX idx_category (service_category),
-                INDEX idx_status (status)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-        ";
-        $this->db->exec($sql);
-    }
-
-    /**
-     * Track service interest
-     */
-    private function trackServiceInterests(string $name, string $phone, string $email, string $requirement, int $inquiryId): void
-    {
-        try {
-            // Map requirement to category
-            $categoryMap = [
-                'financial' => 'financial_services',
-                'legal' => 'legal_services',
-                'interior' => 'interior_design',
-                'construction' => 'construction_services',
-                'documents' => 'documents',
-                'resell' => 'resell',
-                'other' => 'other'
-            ];
-            $category = $categoryMap[$requirement] ?? 'other';
-
-            // Try to get user_id from session
-            $userId = $_SESSION['user_id'] ?? 0;
-
-            $stmt = $this->db->prepare("
-                INSERT INTO service_interests (user_id, service_category, service_type, budget_min, budget_max, location, description, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
-            ");
-            $stmt->execute([
-                $userId,
-                $category,
-                'quick_inquiry',
-                null,
-                null,
-                null,
-                "Quick inquiry: {$requirement}. Name: {$name}, Phone: {$phone}, Email: {$email}, Inquiry ID: {$inquiryId}",
-                'pending',
-                (int)date('YmdHis')
-            ]);
-        } catch (\Throwable $e) {
-            error_log('trackServiceInterests error: ' . $e->getMessage());
-        }
     }
 }

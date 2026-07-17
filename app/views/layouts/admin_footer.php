@@ -86,7 +86,7 @@ if (!isset($sc)) {
         </div>
     </footer>
 
-    <style>
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         .admin-footer {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);

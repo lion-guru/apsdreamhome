@@ -28,7 +28,7 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
-    <style>
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         /* ===== CUSTOMER PORTAL MOBILE RESPONSIVENESS ===== */
         @media (max-width: 768px) {
             .top-header { padding: 10px 12px 10px 65px !important; flex-wrap: wrap; }

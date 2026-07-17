@@ -159,18 +159,23 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
+    <?php
+    $isAdminPage = isset($admin_layout) && $admin_layout === true;
+    $isPremiumPage = isset($premium_layout) && $premium_layout === true;
+    ?>
     <!-- Consolidated APS CSS Bundles -->
+    <?php if ($isPremiumPage): ?>
     <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=3" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=3" rel="stylesheet">
+    <?php endif; ?>
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=3" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
 
-    <!-- Scroll fix -->
+    <!-- Scroll fix (Cleaned) -->
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-        html, body { height: auto !important; overflow-y: auto !important; overflow-x: hidden; background-image: none !important; background: #F8FAFC !important; }
-        #main-content { height: auto !important; overflow: visible !important; }
+        html, body { overflow-x: hidden; }
         header.premium-header { overflow: visible; }
         header.premium-header .navbar-collapse { overflow: visible; }
     </style>
@@ -195,24 +200,12 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
             window.addEventListener('resize', setHeaderHeight);
         })();
     </script>
-
-    <!-- Page-specific styles (deferred, non-critical) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/advanced-features.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/ai-chat.css?v=20260716" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/ai-chat-enhanced.css?v=20260716" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/chatbot.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/modern-style.css" rel="stylesheet">
-
 </head>
 
 <body>
     <?php
     // Mark document as started so header.php doesn't emit duplicate DOCTYPE/head/body
     $GLOBALS['_html_doc_started'] = true;
-
-    // Admin pages skip public header entirely
-    $isAdminPage = isset($admin_layout) && $admin_layout === true;
-    $isPremiumPage = isset($premium_layout) && $premium_layout === true;
 
     if (!$isAdminPage) {
         if ($isPremiumPage) {

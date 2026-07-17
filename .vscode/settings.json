@@ -95,7 +95,7 @@
   },
   "security.workspace.trust.untrustedFiles": "open",
   "security.allowedUntrustedRootFolders": ["c:\\xampp\\htdocs\\apsdreamhome"],
-  "workbench.colorTheme": "Visual Studio Light",
+  "workbench.colorTheme": "Visual Studio Dark",
   "workbench.iconTheme": "vscode-icons",
   "workbench.editor.enablePreview": false,
   "workbench.sideBar.location": "left",

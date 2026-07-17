@@ -20,7 +20,7 @@ $GLOBALS['_html_doc_started'] = true;
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-    <style>
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * {
             margin: 0;
             padding: 0;

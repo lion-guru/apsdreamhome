@@ -85,7 +85,7 @@ $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['associate_id']) ||
         </div>
     </nav>
 </header>
-<style>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     /* Fix navbar alignment - logo strictly on left */
     .premium-header .navbar {
         display: flex !important;

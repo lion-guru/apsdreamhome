@@ -9,7 +9,7 @@ $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>');
 ?>
 <main id="main-content">
     <!-- Hero Section (Modern + Particles + Typed Text) -->
-    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">.hero{background:none!important;background-color:transparent!important;}.hero.hero-with-bg{background-image:url('/apsdreamhome/assets/images/hero/hero-bg.jpg')!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;}</style>
+    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">#main-content{padding-top:0!important;}.hero{background:none!important;background-color:transparent!important;padding:0!important;min-height:85vh;}.hero.hero-with-bg{background-image:url('/apsdreamhome/assets/images/hero/hero-bg.jpg')!important;background-size:cover!important;background-position:center 60%!important;background-repeat:no-repeat!important;}</style>
     <section class="hero hero-modern hero-with-bg" aria-labelledby="hero-title">
         <!-- Particles Canvas -->
         <canvas id="particles-canvas" style="position:absolute;inset:0;z-index:0;pointer-events:none;"></canvas>
