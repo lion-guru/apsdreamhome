@@ -354,7 +354,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [
                               AppTheme.primaryColor,
                               AppTheme.secondaryColor,

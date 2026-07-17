@@ -438,7 +438,7 @@ class _ComparePropertiesPageState extends ConsumerState<ComparePropertiesPage> {
                         width: 220,
                         height: 140,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _imagePlaceholder(type),
+                        errorBuilder: (_, _, _) => _imagePlaceholder(type),
                       )
                     : _imagePlaceholder(type),
               ),

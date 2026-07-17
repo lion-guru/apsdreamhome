@@ -251,7 +251,7 @@ class _EmployeeCRMPageState extends ConsumerState<EmployeeCRMPage>
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: cards.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (ctx, i) {
           final c = cards[i];
           return Container(
@@ -402,7 +402,7 @@ class _EmployeeCRMPageState extends ConsumerState<EmployeeCRMPage>
                             horizontal: 16, vertical: 8),
                         itemCount:
                             _leadsList.length + (_hasMore ? 1 : 0),
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: 10),
                         itemBuilder: (ctx, i) {
                           if (i == _leadsList.length) {
@@ -1551,7 +1551,7 @@ class _LeadDetailSheetState extends State<_LeadDetailSheet> {
                             style: TextStyle(color: Colors.grey)))
                     : ListView.separated(
                         itemCount: _interactions.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: 8),
                         itemBuilder: (ctx, i) =>
                             _buildInteractionItem(_interactions[i]),

@@ -47,8 +47,8 @@ class _ConstructionCostPageState extends State<ConstructionCostPage> {
     final floors = double.tryParse(_floorsController.text) ?? 1;
     if (area <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Enter a valid area'),
+        const SnackBar(
+          content: Text('Enter a valid area'),
           backgroundColor: AppTheme.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
@@ -319,8 +319,8 @@ class _ConstructionCostPageState extends State<ConstructionCostPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [const Color(0xFFFB8C00), const Color(0xFFFFA726)],
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFB8C00), Color(0xFFFFA726)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

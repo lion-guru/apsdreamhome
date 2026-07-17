@@ -39,8 +39,8 @@ class _RentalYieldPageState extends State<RentalYieldPage> {
 
     if (pv <= 0 || rent <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Enter property value and monthly rent'),
+        const SnackBar(
+          content: Text('Enter property value and monthly rent'),
           backgroundColor: AppTheme.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
@@ -241,8 +241,8 @@ class _RentalYieldPageState extends State<RentalYieldPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [const Color(0xFF8E24AA), const Color(0xFF6A1B9A)],
+        gradient: const LinearGradient(
+          colors: [Color(0xFF8E24AA), Color(0xFF6A1B9A)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

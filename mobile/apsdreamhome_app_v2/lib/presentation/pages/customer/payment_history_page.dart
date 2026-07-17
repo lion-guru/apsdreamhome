@@ -52,7 +52,7 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
 
   String _formatCurrency(dynamic amount) {
     final amt = (amount is num)
-        ? (amount as num).toDouble()
+        ? (amount).toDouble()
         : double.tryParse(amount.toString()) ?? 0.0;
     return '₹${NumberFormat('#,##,###').format(amt.toInt())}';
   }

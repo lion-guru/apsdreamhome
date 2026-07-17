@@ -82,7 +82,7 @@ class _BlogDetailPageState extends ConsumerState<BlogDetailPage> {
                       child: Image.network(
                         _post!['featured_image'].toString(),
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                        errorBuilder: (_, _, _) => _imagePlaceholder(),
                       ),
                     )
                   else

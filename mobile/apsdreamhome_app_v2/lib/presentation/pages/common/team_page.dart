@@ -329,7 +329,7 @@ class _TeamPageState extends State<TeamPage>
                 color: AppTheme.accentColor.withValues(alpha: 0.3),
               ),
             ),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
@@ -337,7 +337,7 @@ class _TeamPageState extends State<TeamPage>
                   color: AppTheme.accentColor,
                   size: 16,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   '8 Core Members • 75+ Years Combined Experience',
                   style: TextStyle(

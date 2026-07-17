@@ -25,8 +25,9 @@ class PropertyListingService {
       if (purpose != null && purpose != 'all') params['purpose'] = purpose;
       if (location != null && location != 'all') params['location'] = location;
       if (minPrice != null && minPrice > 0) params['min_price'] = minPrice;
-      if (maxPrice != null && maxPrice < 100000000)
+      if (maxPrice != null && maxPrice < 100000000) {
         params['max_price'] = maxPrice;
+      }
 
       final response = await _api.get(
         '/properties/browse',
@@ -128,20 +129,23 @@ class PropertyListing {
 
   List<Map<String, dynamic>> get badges {
     final badges = <Map<String, dynamic>>[];
-    if (isPremium)
+    if (isPremium) {
       badges.add({'label': 'Premium', 'color': '#FFD700', 'icon': 'star'});
-    if (isFeatured)
+    }
+    if (isFeatured) {
       badges.add({
         'label': 'Featured',
         'color': '#4CAF50',
         'icon': 'trending_up',
       });
-    if (isUrgent)
+    }
+    if (isUrgent) {
       badges.add({
         'label': 'Urgent',
         'color': '#FF5722',
         'icon': 'priority_high',
       });
+    }
     return badges;
   }
 

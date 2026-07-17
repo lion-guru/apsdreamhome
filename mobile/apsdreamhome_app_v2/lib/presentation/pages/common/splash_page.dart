@@ -106,7 +106,7 @@ class _SplashPageState extends State<SplashPage>
                       child: Image.asset(
                         'assets/images/aps_logo.png',
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(
+                        errorBuilder: (_, _, _) => const Icon(
                           Icons.home_rounded,
                           size: 70,
                           color: AppTheme.primaryColor,

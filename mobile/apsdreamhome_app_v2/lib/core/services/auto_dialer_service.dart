@@ -22,7 +22,7 @@ class AutoDialerService {
     ),
   );
 
-  bool _useMock = false;
+  final bool _useMock = false;
 
   Map<String, dynamic> _handleResponse(Response response) {
     final data = response.data;
@@ -227,7 +227,7 @@ class AutoDialerService {
         data: {
           'phone': phone,
           'message': message,
-          if (templateCode != null) 'template_code': templateCode,
+          'template_code': ?templateCode,
         },
       );
       return _handleResponse(response);
@@ -251,7 +251,7 @@ class AutoDialerService {
         data: {
           'phone': phone,
           'message': message,
-          if (templateName != null) 'template_name': templateName,
+          'template_name': ?templateName,
         },
       );
       return _handleResponse(response);
@@ -275,7 +275,7 @@ class AutoDialerService {
         data: {
           'leads': leads,
           'message': message,
-          if (templateCode != null) 'template_code': templateCode,
+          'template_code': ?templateCode,
         },
       );
       return _handleResponse(response);
@@ -299,7 +299,7 @@ class AutoDialerService {
         data: {
           'leads': leads,
           'message': message,
-          if (templateName != null) 'template_name': templateName,
+          'template_name': ?templateName,
         },
       );
       return _handleResponse(response);
@@ -415,8 +415,8 @@ class AutoDialerService {
         '${AppConstants.apiVersion}/voice-chat',
         data: {
           'message': message,
-          if (sessionId != null) 'session_id': sessionId,
-          if (leadId != null) 'lead_id': leadId,
+          'session_id': ?sessionId,
+          'lead_id': ?leadId,
         },
       );
       return _handleResponse(response);

@@ -571,31 +571,31 @@ class _AgreementData {
 }
 
 final _agreements = [
-  _AgreementData(
+  const _AgreementData(
     'Plot Sale Agreement',
     'Standard sale agreement for residential plots with all terms and conditions.',
     Icons.description_rounded,
     Color(0xFFFF9800),
   ),
-  _AgreementData(
+  const _AgreementData(
     'Construction Contract',
     'Agreement for construction services with material and timeline specifications.',
     Icons.construction_rounded,
     Color(0xFF2196F3),
   ),
-  _AgreementData(
+  const _AgreementData(
     'Allotment Letter',
     'Official allotment letter confirming your property allocation.',
     Icons.check_circle_rounded,
     Color(0xFF4CAF50),
   ),
-  _AgreementData(
+  const _AgreementData(
     'Maintenance Agreement',
     'Terms for common area maintenance and society charges.',
     Icons.handyman_rounded,
     Color(0xFF9C27B0),
   ),
-  _AgreementData(
+  const _AgreementData(
     'Rental Agreement',
     'Leave and license agreement for rental properties.',
     Icons.real_estate_agent_rounded,
@@ -610,10 +610,10 @@ class _ESignStepData {
 }
 
 final _esignSteps = [
-  _ESignStepData(1, 'Review the agreement document carefully'),
-  _ESignStepData(2, 'Authenticate via Aadhaar OTP or mobile OTP'),
-  _ESignStepData(3, 'Apply your digital signature'),
-  _ESignStepData(4, 'Receive signed copy via email & document locker'),
+  const _ESignStepData(1, 'Review the agreement document carefully'),
+  const _ESignStepData(2, 'Authenticate via Aadhaar OTP or mobile OTP'),
+  const _ESignStepData(3, 'Apply your digital signature'),
+  const _ESignStepData(4, 'Receive signed copy via email & document locker'),
 ];
 
 class _FAQItem {
@@ -623,19 +623,19 @@ class _FAQItem {
 }
 
 final _faqItems = [
-  _FAQItem(
+  const _FAQItem(
     'What is E-Sign?',
     'E-Sign is a legally valid digital signature under the IT Act, 2000. It uses Aadhaar-based authentication to sign documents electronically.',
   ),
-  _FAQItem(
+  const _FAQItem(
     'Is E-Sign legally binding?',
     'Yes, E-Sign documents are legally valid and enforceable in Indian courts under the Information Technology Act.',
   ),
-  _FAQItem(
+  const _FAQItem(
     'How long does it take?',
     'The entire E-Sign process takes less than 5 minutes once you review the document.',
   ),
-  _FAQItem(
+  const _FAQItem(
     'Can I download signed agreements?',
     'Yes, all signed agreements are available for download from the document locker section.',
   ),

@@ -163,7 +163,7 @@ class _BookingApprovalsPageState extends ConsumerState<BookingApprovalsPage> {
         );
       },
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
     );
   }
 
@@ -223,7 +223,7 @@ class _BookingApprovalsPageState extends ConsumerState<BookingApprovalsPage> {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         itemCount: statuses.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (ctx, i) {
           final s = statuses[i];
           final selected = _filterStatus == s;
@@ -508,8 +508,9 @@ class _BookingApprovalsPageState extends ConsumerState<BookingApprovalsPage> {
   }
 
   String _formatAmount(double amount) {
-    if (amount >= 10000000)
+    if (amount >= 10000000) {
       return '${(amount / 10000000).toStringAsFixed(2)} Cr';
+    }
     if (amount >= 100000) return '${(amount / 100000).toStringAsFixed(2)} L';
     if (amount >= 1000) return '${(amount / 1000).toStringAsFixed(1)}K';
     return amount.toStringAsFixed(0);

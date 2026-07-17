@@ -426,7 +426,7 @@ class _HomePageState extends ConsumerState<HomePage>
         );
       },
       loading: () => ShimmerSkeletons.heroBanner(),
-      error: (_, __) => ShimmerSkeletons.heroBanner(),
+      error: (_, _) => ShimmerSkeletons.heroBanner(),
     );
   }
 
@@ -744,7 +744,7 @@ class _HomePageState extends ConsumerState<HomePage>
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: tools.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              separatorBuilder: (_, _) => const SizedBox(width: 10),
               itemBuilder: (context, index) {
                 final tool = tools[index];
                 return GestureDetector(
@@ -818,7 +818,7 @@ class _HomePageState extends ConsumerState<HomePage>
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: colonies.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  separatorBuilder: (_, _) => const SizedBox(width: 12),
                   itemBuilder: (context, index) {
                     return _buildColonyHorizontalCard(context, colonies[index]);
                   },
@@ -875,7 +875,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         ? Image.network(
                             colony.displayImages.first,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _colonyPlaceholder(),
+                            errorBuilder: (_, _, _) => _colonyPlaceholder(),
                           )
                         : _colonyPlaceholder(),
                     // Gradient overlay at bottom
@@ -1045,7 +1045,7 @@ class _HomePageState extends ConsumerState<HomePage>
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: display.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  separatorBuilder: (_, _) => const SizedBox(width: 12),
                   itemBuilder: (context, index) {
                     return _buildPlotHorizontalCard(context, display[index]);
                   },
@@ -1246,8 +1246,9 @@ class _HomePageState extends ConsumerState<HomePage>
       child: FutureBuilder<List<PropertyListing>>(
         future: _fetchPremiumProperties(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.data!.isEmpty)
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const SizedBox.shrink();
+          }
           final premium = snapshot.data!;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1295,7 +1296,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                       ? Image.network(
                                           p.imageUrl!,
                                           fit: BoxFit.cover,
-                                          errorBuilder: (_, __, ___) => Icon(
+                                          errorBuilder: (_, _, _) => Icon(
                                             Icons.image,
                                             size: 40,
                                             color: Colors.grey.shade400,
@@ -1500,7 +1501,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     ? Image.network(
                         listing.imageUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _propertyPlaceholder(),
+                        errorBuilder: (_, _, _) => _propertyPlaceholder(),
                       )
                     : _propertyPlaceholder(),
               ),

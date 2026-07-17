@@ -331,7 +331,7 @@ class ServicesDirectoryPage extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _featuredListings.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final listing = _featuredListings[index];
           return GestureDetector(
@@ -458,7 +458,7 @@ class ServicesDirectoryPage extends StatelessWidget {
             'Gurgaon',
             '₹25K-40K/month',
             Icons.sell_rounded,
-            Color(0xFF1A237E),
+            const Color(0xFF1A237E),
           ),
           const Divider(color: Colors.white12, height: 24),
           _buildJobRow(
@@ -467,7 +467,7 @@ class ServicesDirectoryPage extends StatelessWidget {
             'Delhi NCR',
             '₹30K-50K/month',
             Icons.apartment_rounded,
-            Color(0xFF4CAF50),
+            const Color(0xFF4CAF50),
           ),
           const Divider(color: Colors.white12, height: 24),
           _buildJobRow(
@@ -476,7 +476,7 @@ class ServicesDirectoryPage extends StatelessWidget {
             'Mumbai',
             '₹50K-80K/month',
             Icons.gavel_rounded,
-            Color(0xFFFF6F00),
+            const Color(0xFFFF6F00),
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -553,7 +553,7 @@ class ServicesDirectoryPage extends StatelessWidget {
         ),
         Text(
           salary,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.accentColor,
             fontWeight: FontWeight.w600,
             fontSize: 12,

@@ -216,7 +216,7 @@ class _NewsPageState extends State<NewsPage> {
                   style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
                 const Spacer(),
-                Text(
+                const Text(
                   'Read more',
                   style: TextStyle(
                     fontSize: 12,
@@ -224,7 +224,7 @@ class _NewsPageState extends State<NewsPage> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Icon(
+                const Icon(
                   Icons.arrow_forward_rounded,
                   size: 14,
                   color: AppTheme.primaryColor,

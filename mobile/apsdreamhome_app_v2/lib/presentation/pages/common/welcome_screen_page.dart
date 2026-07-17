@@ -31,30 +31,30 @@ class _WelcomeScreenPageState extends State<WelcomeScreenPage>
   int _currentStep = 0;
 
   final List<_WelcomeFeature> _features = [
-    _WelcomeFeature(
+    const _WelcomeFeature(
       icon: Icons.home_rounded,
       title: 'Explore Properties',
       description: 'Browse colonies, plots, and premium listings near you',
       color: AppTheme.primaryColor,
     ),
-    _WelcomeFeature(
+    const _WelcomeFeature(
       icon: Icons.account_balance_wallet_rounded,
       title: 'Track Your Investments',
       description: 'Monitor EMI payments, commissions, and wallet balance',
-      color: const Color(0xFF22C55E),
+      color: Color(0xFF22C55E),
     ),
-    _WelcomeFeature(
+    const _WelcomeFeature(
       icon: Icons.people_rounded,
       title: 'Build Your Network',
       description: 'Refer friends and earn through our MLM program',
-      color: const Color(0xFFF59E0B),
+      color: Color(0xFFF59E0B),
     ),
-    _WelcomeFeature(
+    const _WelcomeFeature(
       icon: Icons.notifications_active_rounded,
       title: 'Stay Updated',
       description:
           'Get real-time alerts on WhatsApp, SMS, and push notifications',
-      color: const Color(0xFF3B82F6),
+      color: Color(0xFF3B82F6),
     ),
   ];
 
@@ -220,8 +220,8 @@ class _WelcomeScreenPageState extends State<WelcomeScreenPage>
   }
 
   Widget _buildNotificationBadges() {
-    return GlassCard(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+    return const GlassCard(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       opacity: 0.08,
       blur: 6,
       child: Row(
@@ -230,25 +230,25 @@ class _WelcomeScreenPageState extends State<WelcomeScreenPage>
           _NotificationBadge(
             icon: Icons.email_rounded,
             label: 'Email',
-            color: const Color(0xFF3B82F6),
+            color: Color(0xFF3B82F6),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           _NotificationBadge(
             icon: Icons.sms_rounded,
             label: 'SMS',
-            color: const Color(0xFF22C55E),
+            color: Color(0xFF22C55E),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           _NotificationBadge(
             icon: Icons.chat_rounded,
             label: 'WhatsApp',
-            color: const Color(0xFF25D366),
+            color: Color(0xFF25D366),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           _NotificationBadge(
             icon: Icons.notifications_active_rounded,
             label: 'Push',
-            color: const Color(0xFFF59E0B),
+            color: Color(0xFFF59E0B),
           ),
         ],
       ),

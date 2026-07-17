@@ -858,13 +858,13 @@ class _ProfileHeader extends StatelessWidget {
                             fit: BoxFit.cover,
                             width: 96,
                             height: 96,
-                            placeholder: (_, __) => const Center(
+                            placeholder: (_, _) => const Center(
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 color: AppTheme.primaryColor,
                               ),
                             ),
-                            errorWidget: (_, __, ___) => const Icon(
+                            errorWidget: (_, _, _) => const Icon(
                               Icons.person,
                               size: 48,
                               color: AppTheme.primaryColor,

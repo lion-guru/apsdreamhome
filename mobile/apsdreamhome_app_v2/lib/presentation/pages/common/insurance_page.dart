@@ -197,7 +197,7 @@ class InsurancePage extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       plan.price,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppTheme.accentColor,
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
@@ -416,20 +416,20 @@ class _InsurancePlan {
 }
 
 final _benefits = [
-  _BenefitData(
+  const _BenefitData(
     Icons.check_circle_rounded,
     'Coverage up to ₹50L for structural damage',
   ),
-  _BenefitData(
+  const _BenefitData(
     Icons.check_circle_rounded,
     '24/7 claim support and quick settlement',
   ),
-  _BenefitData(
+  const _BenefitData(
     Icons.check_circle_rounded,
     'Zero depreciation cover on select plans',
   ),
-  _BenefitData(Icons.check_circle_rounded, 'Transferable if property is sold'),
-  _BenefitData(
+  const _BenefitData(Icons.check_circle_rounded, 'Transferable if property is sold'),
+  const _BenefitData(
     Icons.check_circle_rounded,
     'Add-on covers for natural disasters',
   ),

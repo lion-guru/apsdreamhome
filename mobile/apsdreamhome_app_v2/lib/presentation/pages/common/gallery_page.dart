@@ -101,7 +101,7 @@ class GalleryPage extends StatelessWidget {
                         Image.network(
                           album.photos.first,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
+                          errorBuilder: (_, _, _) => Container(
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
@@ -292,7 +292,7 @@ class _AlbumViewerPageState extends State<_AlbumViewerPage> {
                         ),
                       );
                     },
-                    errorBuilder: (_, __, ___) => const Center(
+                    errorBuilder: (_, _, _) => const Center(
                       child: Icon(
                         Icons.broken_image_rounded,
                         size: 64,
@@ -311,7 +311,7 @@ class _AlbumViewerPageState extends State<_AlbumViewerPage> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               itemCount: album.photos.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
               itemBuilder: (_, i) {
                 final isSelected = i == _selectedIndex;
                 return GestureDetector(
@@ -329,7 +329,7 @@ class _AlbumViewerPageState extends State<_AlbumViewerPage> {
                     child: Image.network(
                       album.photos[i],
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, _, _) => Container(
                         color: Colors.grey.shade800,
                         child: const Icon(
                           Icons.broken_image,

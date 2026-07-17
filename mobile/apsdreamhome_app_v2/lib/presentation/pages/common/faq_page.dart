@@ -235,7 +235,7 @@ class _FaqPageState extends State<FaqPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final cat = categories[index];
           final isSelected = _selectedCategory == cat && _searchQuery.isEmpty;
@@ -280,7 +280,7 @@ class _FaqPageState extends State<FaqPage> {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       itemCount: _filteredFaqs.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final faq = _filteredFaqs[index];
         return _FaqExpansionTile(

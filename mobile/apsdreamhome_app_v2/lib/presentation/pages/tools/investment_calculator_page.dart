@@ -60,8 +60,8 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
 
     // EMI calculation (reducing balance)
     if (_loanAmount > 0 && _interestRate > 0) {
-      double monthlyRate = _interestRate / 100 / 12;
-      int months = _loanTermYears * 12;
+      final double monthlyRate = _interestRate / 100 / 12;
+      final int months = _loanTermYears * 12;
       _monthlyPayment =
           _loanAmount *
           monthlyRate *
@@ -90,21 +90,21 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
     // Property appreciation
     _propertyValueIn10Yr =
         _propertyPrice * pow(1 + _appreciationRate / 100, 10);
-    double capitalGain10Yr = _propertyValueIn10Yr - _propertyPrice;
-    double totalRent10Yr = _annualRentIncome * 10;
-    double totalCost10Yr = _downPaymentAmount + (_monthlyPayment * 120);
-    double totalReturn10Yr = capitalGain10Yr + totalRent10Yr;
+    final double capitalGain10Yr = _propertyValueIn10Yr - _propertyPrice;
+    final double totalRent10Yr = _annualRentIncome * 10;
+    final double totalCost10Yr = _downPaymentAmount + (_monthlyPayment * 120);
+    final double totalReturn10Yr = capitalGain10Yr + totalRent10Yr;
     _tenYearROI = totalCost10Yr > 0
         ? ((totalReturn10Yr / totalCost10Yr) * 100)
         : 0;
 
     // 5-year ROI
-    double propertyValue5Yr =
+    final double propertyValue5Yr =
         _propertyPrice * pow(1 + _appreciationRate / 100, 5);
-    double capitalGain5Yr = propertyValue5Yr - _propertyPrice;
-    double totalRent5Yr = _annualRentIncome * 5;
-    double totalCost5Yr = _downPaymentAmount + (_monthlyPayment * 60);
-    double totalReturn5Yr = capitalGain5Yr + totalRent5Yr;
+    final double capitalGain5Yr = propertyValue5Yr - _propertyPrice;
+    final double totalRent5Yr = _annualRentIncome * 5;
+    final double totalCost5Yr = _downPaymentAmount + (_monthlyPayment * 60);
+    final double totalReturn5Yr = capitalGain5Yr + totalRent5Yr;
     _fiveYearROI = totalCost5Yr > 0
         ? ((totalReturn5Yr / totalCost5Yr) * 100)
         : 0;
@@ -272,9 +272,9 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -288,7 +288,7 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
               style: const TextStyle(color: Colors.white, fontSize: 16),
               decoration: InputDecoration(
                 labelText: label,
-                labelStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
                 border: InputBorder.none,
               ),
               onChanged: onChange,
@@ -311,9 +311,9 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -325,7 +325,7 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
               Text(
                 label,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 14,
                 ),
               ),
@@ -344,9 +344,9 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
           SliderTheme(
             data: SliderThemeData(
               activeTrackColor: color,
-              inactiveTrackColor: color.withOpacity(0.2),
+              inactiveTrackColor: color.withValues(alpha: 0.2),
               thumbColor: color,
-              overlayColor: color.withOpacity(0.1),
+              overlayColor: color.withValues(alpha: 0.1),
             ),
             child: Slider(
               value: value,
@@ -366,14 +366,14 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFFFFD700).withOpacity(0.15),
-            const Color(0xFFFF8C00).withOpacity(0.15),
+            const Color(0xFFFFD700).withValues(alpha: 0.15),
+            const Color(0xFFFF8C00).withValues(alpha: 0.15),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.3)),
       ),
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -422,9 +422,9 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
   Widget _buildROISection() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -502,9 +502,9 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -520,7 +520,7 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
           Text(
             label,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 12,
             ),
           ),
@@ -532,9 +532,9 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
   Widget _buildBreakEvenSection() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -570,7 +570,7 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
                       ? 'Time to recover down payment via rent'
                       : 'Add monthly rent to calculate break-even',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
+                    color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 13,
                   ),
                   textAlign: TextAlign.center,
@@ -608,7 +608,7 @@ class _InvestmentCalculatorPageState extends State<InvestmentCalculatorPage> {
           Text(
             label,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 14,
             ),
           ),

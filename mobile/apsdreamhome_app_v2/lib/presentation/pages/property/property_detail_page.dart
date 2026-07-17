@@ -75,7 +75,7 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
       final referralService = ref.read(referralServiceProvider);
       final code = await referralService.getReferralCode();
       if (mounted && code != null) {
-        setState(() => _referralCode = code!);
+        setState(() => _referralCode = code);
       }
     } catch (_) {}
   }
@@ -582,7 +582,7 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                           ),
                         );
                       },
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, _, _) => Container(
                         height: 260,
                         decoration: BoxDecoration(
                           color: Colors.white10,
@@ -707,7 +707,7 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: images.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
               itemBuilder: (_, i) {
                 final isSelected = i == _galleryIndex;
                 return GestureDetector(
@@ -727,7 +727,7 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                     child: Image.network(
                       images[i],
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, _, _) => Container(
                         color: Colors.white10,
                         child: const Icon(
                           Icons.broken_image,
@@ -838,7 +838,7 @@ class _PropertyImageViewerState extends State<_PropertyImageViewer> {
                         ),
                       );
                     },
-                    errorBuilder: (_, __, ___) => const Center(
+                    errorBuilder: (_, _, _) => const Center(
                       child: Icon(
                         Icons.broken_image_rounded,
                         size: 64,
@@ -857,7 +857,7 @@ class _PropertyImageViewerState extends State<_PropertyImageViewer> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               itemCount: widget.images.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
               itemBuilder: (_, i) {
                 final isSelected = i == _selectedIndex;
                 return GestureDetector(
@@ -875,7 +875,7 @@ class _PropertyImageViewerState extends State<_PropertyImageViewer> {
                     child: Image.network(
                       widget.images[i],
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, _, _) => Container(
                         color: Colors.grey.shade800,
                         child: const Icon(
                           Icons.broken_image,

@@ -11,7 +11,7 @@ class NACHMandatePage extends StatefulWidget {
 }
 
 class _NACHMandatePageState extends State<NACHMandatePage> {
-  int _currentStep = 0;
+  final int _currentStep = 0;
 
   static const _steps = [
     _NachStepData(

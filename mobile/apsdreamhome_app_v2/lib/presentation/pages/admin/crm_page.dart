@@ -210,7 +210,7 @@ class _CRMPageState extends ConsumerState<CRMPage>
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: cards.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (ctx, i) {
           final c = cards[i];
           return Container(
@@ -284,7 +284,7 @@ class _CRMPageState extends ConsumerState<CRMPage>
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             itemCount: _stages.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 6),
+            separatorBuilder: (_, _) => const SizedBox(width: 6),
             itemBuilder: (ctx, i) {
               final stage = _stages[i];
               final isSelected = _selectedStageIdx == i;
@@ -350,7 +350,7 @@ class _CRMPageState extends ConsumerState<CRMPage>
               : ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: leads.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  separatorBuilder: (_, _) => const SizedBox(height: 8),
                   itemBuilder: (ctx, i) => _buildLeadCard(leads[i], stage.status),
                 ),
         ),
@@ -559,7 +559,7 @@ class _CRMPageState extends ConsumerState<CRMPage>
                       child: ListView.separated(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         itemCount: _leadsList.length + (_hasMore ? 1 : 0),
-                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        separatorBuilder: (_, _) => const SizedBox(height: 8),
                         itemBuilder: (ctx, i) {
                           if (i == _leadsList.length) {
                             _currentPage++;
@@ -685,7 +685,7 @@ class _CRMPageState extends ConsumerState<CRMPage>
       child: ListView.separated(
         padding: const EdgeInsets.all(12),
         itemCount: _tasks.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        separatorBuilder: (_, _) => const SizedBox(height: 8),
         itemBuilder: (ctx, i) => _buildTaskCard(_tasks[i]),
       ),
     );
@@ -1131,7 +1131,7 @@ class _LeadDetailSheetState extends State<_LeadDetailSheet> {
                     ? const Center(child: Text('No interactions yet', style: TextStyle(color: Colors.grey)))
                     : ListView.separated(
                         itemCount: _interactions.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        separatorBuilder: (_, _) => const SizedBox(height: 8),
                         itemBuilder: (ctx, i) => _buildInteractionItem(_interactions[i]),
                       ),
           ),

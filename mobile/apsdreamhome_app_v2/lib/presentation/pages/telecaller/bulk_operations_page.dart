@@ -93,9 +93,8 @@ class _BulkOperationsPageState extends ConsumerState<BulkOperationsPage> {
         .replaceAll('{{time}}', '10:00 AM')
         .replaceAll(
           '{{amount}}',
-          (num.tryParse((lead['budget'] ?? 0).toString()) ?? 0 / 100000)
-                  .toStringAsFixed(1) +
-              'L',
+          '${(num.tryParse((lead['budget'] ?? 0).toString()) ?? 0 / 100000)
+                  .toStringAsFixed(1)}L',
         )
         .replaceAll('{{colony}}', (lead['city'] ?? 'our colony').toString())
         .replaceAll(

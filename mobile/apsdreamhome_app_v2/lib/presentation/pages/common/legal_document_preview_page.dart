@@ -18,23 +18,23 @@ class LegalDocumentPreviewPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final previewAsync = ref.watch(documentPreviewProvider(documentId));
-    String _title = 'Document Preview';
-    String _content = '';
+    String title = 'Document Preview';
+    String content = '';
 
-    void _share() {
-      if (_content.isNotEmpty) {
-        Share.share('$_title\n\n$_content', subject: _title);
+    void share() {
+      if (content.isNotEmpty) {
+        Share.share('$title\n\n$content', subject: title);
       }
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_title),
+        title: Text(title),
         centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
-            onPressed: _content.isNotEmpty ? _share : null,
+            onPressed: content.isNotEmpty ? share : null,
             tooltip: 'Share',
           ),
         ],
@@ -76,8 +76,8 @@ class LegalDocumentPreviewPage extends ConsumerWidget {
           if (result == null) {
             return const Center(child: Text('Document not found'));
           }
-          _title = result['title']?.toString() ?? 'Document';
-          _content = result['content']?.toString() ?? '';
+          title = result['title']?.toString() ?? 'Document';
+          content = result['content']?.toString() ?? '';
           final docNumber = result['document_number']?.toString();
 
           return Column(
@@ -93,7 +93,7 @@ class LegalDocumentPreviewPage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _title,
+                      title,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -117,7 +117,7 @@ class LegalDocumentPreviewPage extends ConsumerWidget {
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
                   child: SelectableText(
-                    _content,
+                    content,
                     style: TextStyle(
                       fontSize: 14,
                       height: 1.8,

@@ -47,8 +47,8 @@ class _RentVsBuyPageState extends State<RentVsBuyPage> {
 
     if (price <= 0 || rent <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Enter property price and monthly rent'),
+        const SnackBar(
+          content: Text('Enter property price and monthly rent'),
           backgroundColor: AppTheme.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
@@ -365,8 +365,8 @@ class _RentVsBuyPageState extends State<RentVsBuyPage> {
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [const Color(0xFFE53935), const Color(0xFFC62828)],
+            gradient: const LinearGradient(
+              colors: [Color(0xFFE53935), Color(0xFFC62828)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

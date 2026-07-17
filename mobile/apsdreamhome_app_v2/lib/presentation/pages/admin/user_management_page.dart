@@ -170,7 +170,7 @@ class _UserManagementPageState extends ConsumerState<UserManagementPage> {
         );
       },
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
     );
   }
 
@@ -247,7 +247,7 @@ class _UserManagementPageState extends ConsumerState<UserManagementPage> {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
             itemCount: roles.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (ctx, i) {
               final r = roles[i];
               final selected = _filterRole == r;

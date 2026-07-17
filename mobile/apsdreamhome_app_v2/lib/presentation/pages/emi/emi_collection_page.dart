@@ -401,7 +401,7 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
                       ),
                     ),
                     Text(
-                      'Due: ${dueDate}',
+                      'Due: $dueDate',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                   ],

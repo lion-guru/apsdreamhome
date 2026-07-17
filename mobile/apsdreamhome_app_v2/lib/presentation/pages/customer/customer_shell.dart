@@ -99,7 +99,7 @@ class _CustomerShellState extends State<CustomerShell> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  user.name?.split(' ').first ?? '',
+                  user.name.split(' ').first ?? '',
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,

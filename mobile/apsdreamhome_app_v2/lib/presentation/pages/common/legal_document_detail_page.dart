@@ -226,7 +226,7 @@ class LegalDocumentDetailPage extends ConsumerWidget {
                 padding: const EdgeInsets.only(top: 12),
                 child: Row(
                   children: [
-                    Icon(Icons.verified, color: Colors.teal, size: 18),
+                    const Icon(Icons.verified, color: Colors.teal, size: 18),
                     const SizedBox(width: 6),
                     Text(
                       'KYC Verified',
@@ -246,12 +246,15 @@ class LegalDocumentDetailPage extends ConsumerWidget {
 
   Widget _buildInfoSection(Map<String, dynamic> doc) {
     final items = <MapEntry<String, String>>[];
-    if (doc['category_name'] != null)
+    if (doc['category_name'] != null) {
       items.add(MapEntry('Category', doc['category_name'].toString()));
-    if (doc['entity_type'] != null)
+    }
+    if (doc['entity_type'] != null) {
       items.add(MapEntry('Entity Type', doc['entity_type'].toString()));
-    if (doc['entity_name'] != null)
+    }
+    if (doc['entity_name'] != null) {
       items.add(MapEntry('Entity', doc['entity_name'].toString()));
+    }
     if (doc['created_at'] != null) {
       try {
         items.add(

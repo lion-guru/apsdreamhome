@@ -103,33 +103,33 @@ class ContactPage extends StatelessWidget {
 
   Widget _buildContactInfo() {
     final contacts = [
-      _ContactItem(
+      const _ContactItem(
         Icons.phone_rounded,
         'Call Us',
         '+91 70074 44842',
         'Mon-Sat 9AM-7PM',
         AppTheme.primaryColor,
       ),
-      _ContactItem(
+      const _ContactItem(
         Icons.email_rounded,
         'Email Us',
         'info@apsdreamhome.com',
         '24hr response time',
         AppTheme.successColor,
       ),
-      _ContactItem(
+      const _ContactItem(
         Icons.location_on_rounded,
         'Visit Office',
         'Gorakhpur, Uttar Pradesh',
         'Get directions',
         AppTheme.warningColor,
       ),
-      _ContactItem(
+      const _ContactItem(
         Icons.chat_rounded,
         'WhatsApp',
         '+91 70074 44842',
         'Instant chat support',
-        const Color(0xFF25D366),
+        Color(0xFF25D366),
       ),
     ];
 
@@ -435,33 +435,33 @@ class _ContactItem {
 }
 
 final _offices = [
-  _OfficeData(
+  const _OfficeData(
     'Head Office',
     'Gorakhpur, Uttar Pradesh\nNear Medical College',
     '+91 70074 44842',
     Icons.business_rounded,
     AppTheme.primaryColor,
   ),
-  _OfficeData(
+  const _OfficeData(
     'Site Office - Suryoday',
     'Suryoday Heights, Gorakhpur',
     '+91 70074 44843',
     Icons.location_city_rounded,
     AppTheme.successColor,
   ),
-  _OfficeData(
+  const _OfficeData(
     'Site Office - Braj Radha',
     'Braj Radha Colony, Gorakhpur',
     '+91 70074 44844',
     Icons.location_city_rounded,
-    const Color(0xFFFF9800),
+    Color(0xFFFF9800),
   ),
-  _OfficeData(
+  const _OfficeData(
     'Site Office - Raghunath',
     'Raghunath Nagri, Gorakhpur',
     '+91 70074 44845',
     Icons.location_city_rounded,
-    const Color(0xFF9C27B0),
+    Color(0xFF9C27B0),
   ),
 ];
 

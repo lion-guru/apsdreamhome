@@ -68,8 +68,8 @@ class _CapitalGainsPageState extends State<CapitalGainsPage> {
 
     if (salePrice <= 0 || purchasePrice <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Enter sale & purchase prices'),
+        const SnackBar(
+          content: Text('Enter sale & purchase prices'),
           backgroundColor: AppTheme.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
@@ -346,7 +346,7 @@ class _CapitalGainsPageState extends State<CapitalGainsPage> {
     ValueChanged<int?> onChanged,
   ) {
     return DropdownButtonFormField<int>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
@@ -447,7 +447,7 @@ class _CapitalGainsPageState extends State<CapitalGainsPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

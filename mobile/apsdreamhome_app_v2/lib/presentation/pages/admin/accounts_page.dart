@@ -125,7 +125,7 @@ class _AccountsPageState extends ConsumerState<AccountsPage>
               height: 80,
               child: Center(child: CircularProgressIndicator()),
             ),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
 
           // Tabs

@@ -293,6 +293,7 @@ $GLOBALS['_html_doc_started'] = true;
     </script>
     <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo $extra_js; ?><?php endif; ?>
         <!-- Frontend enhancements: a11y, forms, toasts, loading -->
+        <script defer src="<?php echo BASE_URL; ?>/assets/js/toast-notifications.js"></script>
         <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
 
         <!-- Real-time WebSocket Notifications -->

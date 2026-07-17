@@ -39,10 +39,8 @@ class SyncService {
     try {
       // Check connectivity
       final connectivityResult = await Connectivity().checkConnectivity();
-      final bool hasConnection = connectivityResult is List<ConnectivityResult>
-          ? (connectivityResult.isNotEmpty &&
-                !connectivityResult.contains(ConnectivityResult.none))
-          : connectivityResult != ConnectivityResult.none;
+      final bool hasConnection = (connectivityResult.isNotEmpty &&
+                !connectivityResult.contains(ConnectivityResult.none));
       if (!hasConnection) {
         return SyncResult(success: false, message: 'No internet connection');
       }

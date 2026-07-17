@@ -57,7 +57,7 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _propertyType,
+                initialValue: _propertyType,
                 decoration: const InputDecoration(
                   labelText: 'Property Type',
                   prefixIcon: Icon(Icons.category),

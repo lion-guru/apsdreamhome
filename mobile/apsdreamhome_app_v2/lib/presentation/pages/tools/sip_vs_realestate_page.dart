@@ -35,8 +35,8 @@ class _SipVsRealestatePageState extends State<SipVsRealestatePage> {
 
     if (sipMonthly <= 0 && lumpsum <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Enter investment amount'),
+        const SnackBar(
+          content: Text('Enter investment amount'),
           backgroundColor: AppTheme.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
@@ -313,8 +313,8 @@ class _SipVsRealestatePageState extends State<SipVsRealestatePage> {
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [const Color(0xFF43A047), const Color(0xFF2E7D32)],
+            gradient: const LinearGradient(
+              colors: [Color(0xFF43A047), Color(0xFF2E7D32)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

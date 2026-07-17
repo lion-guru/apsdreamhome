@@ -304,7 +304,7 @@ class VirtualTourPage extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      Icon(
+                      const Icon(
                         Icons.play_circle_fill_rounded,
                         size: 18,
                         color: AppTheme.primaryColor,

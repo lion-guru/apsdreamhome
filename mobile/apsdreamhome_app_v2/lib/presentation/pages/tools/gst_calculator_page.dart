@@ -22,8 +22,8 @@ class _GstCalculatorPageState extends State<GstCalculatorPage> {
     final value = double.tryParse(_valueController.text) ?? 0;
     if (value <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Enter property value'),
+        const SnackBar(
+          content: Text('Enter property value'),
           backgroundColor: AppTheme.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
@@ -335,8 +335,8 @@ class _GstCalculatorPageState extends State<GstCalculatorPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [const Color(0xFF7B1FA2), const Color(0xFF6A1B9A)],
+        gradient: const LinearGradient(
+          colors: [Color(0xFF7B1FA2), Color(0xFF6A1B9A)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

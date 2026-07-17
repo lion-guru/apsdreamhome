@@ -298,7 +298,7 @@ class _AgentCRMPageState extends ConsumerState<AgentCRMPage> {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               sliver: SliverList.separated(
                 itemCount: _leads.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                separatorBuilder: (_, _) => const SizedBox(height: 10),
                 itemBuilder: (ctx, i) => _buildLeadCard(_leads[i]),
               ),
             ),
@@ -377,7 +377,7 @@ class _AgentCRMPageState extends ConsumerState<AgentCRMPage> {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         itemCount: cards.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (_, i) {
           final c = cards[i];
           return Container(
@@ -447,7 +447,7 @@ class _AgentCRMPageState extends ConsumerState<AgentCRMPage> {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         itemCount: _chips.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 6),
+        separatorBuilder: (_, _) => const SizedBox(width: 6),
         itemBuilder: (_, i) {
           final (value, label, color) = _chips[i];
           final isSelected = _selectedChip == value;
@@ -1237,7 +1237,7 @@ class _AgentLeadDetailSheetState extends State<_AgentLeadDetailSheet> {
                             style: TextStyle(color: Colors.grey)))
                     : ListView.separated(
                         itemCount: _interactions.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        separatorBuilder: (_, _) => const SizedBox(height: 8),
                         itemBuilder: (ctx, i) => _buildInteractionItem(_interactions[i]),
                       ),
           ),

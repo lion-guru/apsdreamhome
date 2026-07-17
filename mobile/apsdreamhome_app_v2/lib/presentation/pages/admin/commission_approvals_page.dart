@@ -144,7 +144,7 @@ class _CommissionApprovalsPageState
         );
       },
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
     );
   }
 
@@ -496,8 +496,9 @@ class _CommissionApprovalsPageState
   }
 
   String _formatAmount(double amount) {
-    if (amount >= 10000000)
+    if (amount >= 10000000) {
       return '${(amount / 10000000).toStringAsFixed(2)} Cr';
+    }
     if (amount >= 100000) return '${(amount / 100000).toStringAsFixed(2)} L';
     if (amount >= 1000) return '${(amount / 1000).toStringAsFixed(1)}K';
     return amount.toStringAsFixed(0);

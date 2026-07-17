@@ -210,7 +210,7 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
                   const SizedBox(height: 12),
                   // Document type selector
                   DropdownButtonFormField<String>(
-                    value: _documentType,
+                    initialValue: _documentType,
                     decoration: const InputDecoration(
                       labelText: 'Document Type',
                       border: OutlineInputBorder(),
@@ -431,7 +431,7 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
                       width: double.infinity,
                       height: double.infinity,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Center(
+                      errorBuilder: (_, _, _) => Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

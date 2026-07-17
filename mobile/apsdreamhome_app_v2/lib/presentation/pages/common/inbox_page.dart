@@ -135,7 +135,7 @@ class _InboxPageState extends ConsumerState<InboxPage> {
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 itemCount: _conversations.length,
-                separatorBuilder: (_, __) =>
+                separatorBuilder: (_, _) =>
                     const Divider(height: 1, indent: 80),
                 itemBuilder: (context, index) {
                   final conv = _conversations[index];

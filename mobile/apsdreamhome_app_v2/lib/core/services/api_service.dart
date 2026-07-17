@@ -42,9 +42,7 @@ class ApiService {
   // Check network connectivity
   Future<bool> isConnected() async {
     final result = await Connectivity().checkConnectivity();
-    if (result is List<ConnectivityResult>) {
-      return result.isNotEmpty && !result.contains(ConnectivityResult.none);
-    }
+    return result.isNotEmpty && !result.contains(ConnectivityResult.none);
     return result != ConnectivityResult.none;
   }
 

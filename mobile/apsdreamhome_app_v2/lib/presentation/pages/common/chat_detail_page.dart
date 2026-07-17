@@ -197,7 +197,7 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
             CircleAvatar(
               radius: 18,
               backgroundColor: Colors.white.withAlpha(51),
-              child: Icon(Icons.person_rounded, color: Colors.white, size: 20),
+              child: const Icon(Icons.person_rounded, color: Colors.white, size: 20),
             ),
             const SizedBox(width: 12),
             Column(

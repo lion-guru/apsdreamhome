@@ -1045,7 +1045,7 @@ class _TelecallerDashboardPageState
     final data = dashboardAsync.when(
       data: (d) => d,
       loading: () => <String, dynamic>{},
-      error: (_, __) => <String, dynamic>{},
+      error: (_, _) => <String, dynamic>{},
     );
     final leads = (data['leads'] as List? ?? []).cast<Map<String, dynamic>>();
 
@@ -1096,7 +1096,7 @@ class _TelecallerDashboardPageState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
               'Report submitted',
             ), // Show success even if API fails (offline support)

@@ -184,7 +184,7 @@ class CRMService {
     try {
       await _api.post('/crm/leads/$leadId/assign', data: {
         'assigned_to': assignTo,
-        if (reason != null) 'reason': reason,
+        'reason': ?reason,
       });
       return true;
     } catch (e, st) {

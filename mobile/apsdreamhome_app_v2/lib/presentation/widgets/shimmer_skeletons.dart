@@ -85,8 +85,8 @@ class ShimmerSkeletons {
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: 3,
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (_, __) => Container(
+          separatorBuilder: (_, _) => const SizedBox(width: 12),
+          itemBuilder: (_, _) => Container(
             width: cardWidth,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -349,7 +349,7 @@ class ShimmerSkeletons {
             mainAxisSpacing: 12,
           ),
           itemCount: 4,
-          itemBuilder: (_, __) => Container(
+          itemBuilder: (_, _) => Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: Colors.white,

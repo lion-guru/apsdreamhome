@@ -419,7 +419,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: NotificationFilter.values.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final filter = NotificationFilter.values[index];
           final isSelected = state.filter == filter;
@@ -482,7 +482,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.only(bottom: 24),
         itemCount: filtered.length,
-        separatorBuilder: (_, __) =>
+        separatorBuilder: (_, _) =>
             Divider(height: 1, indent: 72, color: Colors.grey.shade200),
         itemBuilder: (context, index) {
           final notification = filtered[index];

@@ -278,7 +278,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: filters.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final isSelected = index == 0;
           return FilterChip(
@@ -535,12 +535,15 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> {
   }
 
   Color _getStatusColor(String status) {
-    if (status == 'Active' || status.contains('Ready'))
+    if (status == 'Active' || status.contains('Ready')) {
       return const Color(0xFF4CAF50);
-    if (status.contains('Under') || status.contains('Development'))
+    }
+    if (status.contains('Under') || status.contains('Development')) {
       return const Color(0xFFFF9800);
-    if (status == 'Coming Soon' || status.contains('Launch'))
+    }
+    if (status == 'Coming Soon' || status.contains('Launch')) {
       return const Color(0xFF2196F3);
+    }
     return AppTheme.primaryColor;
   }
 

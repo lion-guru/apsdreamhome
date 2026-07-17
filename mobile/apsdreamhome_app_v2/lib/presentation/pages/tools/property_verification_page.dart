@@ -458,7 +458,7 @@ class PropertyVerificationPage extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.help_outline_rounded,
                 size: 18,
                 color: AppTheme.primaryColor,

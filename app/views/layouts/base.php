@@ -294,6 +294,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
     <!-- Custom JS -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/toast-notifications.js"></script>
     <!-- Frontend enhancements: a11y, forms, toasts, loading -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
@@ -342,15 +343,10 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         }
     </script>
     <script>
+    // Polyfill or fallback mapping if needed, toast is handled by toast-notifications.js
     function showToast(message, type) {
-        if (typeof APS !== 'undefined' && APS.toast) {
-            APS.toast(message, type || 'info');
-        } else {
-            var toast = document.createElement('div');
-            toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;background:#3b82f6;color:#fff;border-radius:8px;z-index:99999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:fadeIn 0.3s';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(function() { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(function() { toast.remove(); }, 300); }, 3000);
+        if (typeof window.APS !== 'undefined' && window.APS.toast) {
+            window.APS.toast(message, type || 'info');
         }
     }
     </script>

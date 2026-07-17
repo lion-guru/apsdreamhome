@@ -79,7 +79,7 @@ void main() async {
             (ref) => AuthRepository(apiService, dbHelper, secureStorage),
           ),
         ],
-        child: AuthBridgeWidget(child: const APSDreamHomeApp()),
+        child: const AuthBridgeWidget(child: APSDreamHomeApp()),
       ),
     );
   } catch (e, stackTrace) {

@@ -83,15 +83,18 @@ class _LeadCreatePageState extends ConsumerState<LeadCreatePage> {
         'name': _nameCtrl.text.trim(),
         'phone': _phoneCtrl.text.trim(),
       };
-      if (_emailCtrl.text.trim().isNotEmpty)
+      if (_emailCtrl.text.trim().isNotEmpty) {
         data['email'] = _emailCtrl.text.trim();
+      }
       if (_selectedSource != null) data['source'] = _selectedSource;
-      if (_selectedProperty != null)
+      if (_selectedProperty != null) {
         data['property_interest'] = _selectedProperty;
+      }
       if (_selectedBudget != null) data['budget_range'] = _selectedBudget;
       data['priority'] = _selectedPriority;
-      if (_notesCtrl.text.trim().isNotEmpty)
+      if (_notesCtrl.text.trim().isNotEmpty) {
         data['notes'] = _notesCtrl.text.trim();
+      }
 
       final crm = CRMService();
       final lead = await crm.createLead(data);
@@ -156,10 +159,10 @@ class _LeadCreatePageState extends ConsumerState<LeadCreatePage> {
                   color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(Icons.person_add, color: AppTheme.primaryColor),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         'Add a new lead to track and follow up. Fill in what you know — phone and name are required.',
@@ -231,7 +234,7 @@ class _LeadCreatePageState extends ConsumerState<LeadCreatePage> {
 
               // Source dropdown
               DropdownButtonFormField<String>(
-                value: _selectedSource,
+                initialValue: _selectedSource,
                 decoration: InputDecoration(
                   labelText: 'Lead Source',
                   prefixIcon: const Icon(Icons.source_outlined),
@@ -248,7 +251,7 @@ class _LeadCreatePageState extends ConsumerState<LeadCreatePage> {
 
               // Property interest
               DropdownButtonFormField<String>(
-                value: _selectedProperty,
+                initialValue: _selectedProperty,
                 decoration: InputDecoration(
                   labelText: 'Interested In',
                   prefixIcon: const Icon(Icons.home_outlined),
@@ -265,7 +268,7 @@ class _LeadCreatePageState extends ConsumerState<LeadCreatePage> {
 
               // Budget
               DropdownButtonFormField<String>(
-                value: _selectedBudget,
+                initialValue: _selectedBudget,
                 decoration: InputDecoration(
                   labelText: 'Budget Range',
                   prefixIcon: const Icon(Icons.currency_rupee_outlined),
@@ -281,7 +284,7 @@ class _LeadCreatePageState extends ConsumerState<LeadCreatePage> {
               const SizedBox(height: 16),
 
               // Priority
-              Text(
+              const Text(
                 'Priority',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),

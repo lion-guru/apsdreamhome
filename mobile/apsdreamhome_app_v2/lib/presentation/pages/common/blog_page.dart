@@ -291,7 +291,7 @@ class _BlogPageState extends ConsumerState<BlogPage> {
                   child: Image.network(
                     image,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                    errorBuilder: (_, _, _) => _imagePlaceholder(),
                     loadingBuilder: (_, child, progress) {
                       if (progress == null) return child;
                       return Container(

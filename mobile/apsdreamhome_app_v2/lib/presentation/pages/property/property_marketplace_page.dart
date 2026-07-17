@@ -588,7 +588,7 @@ class _PropertyMarketplacePageState
         childAspectRatio: 0.68,
       ),
       itemCount: 6,
-      itemBuilder: (_, __) => _shimmerCard(isGrid: true),
+      itemBuilder: (_, _) => _shimmerCard(isGrid: true),
     );
   }
 
@@ -597,7 +597,7 @@ class _PropertyMarketplacePageState
       padding: const EdgeInsets.all(12),
       physics: const NeverScrollableScrollPhysics(),
       itemCount: 4,
-      itemBuilder: (_, __) => _shimmerCard(isGrid: false),
+      itemBuilder: (_, _) => _shimmerCard(isGrid: false),
     );
   }
 
@@ -1147,7 +1147,7 @@ class _PropertyMarketplacePageState
           height: height,
           width: width,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _fallbackPlaceholder(
+          errorBuilder: (_, _, _) => _fallbackPlaceholder(
             property,
             typeColor: typeColor,
             height: height,
@@ -1279,8 +1279,9 @@ class _PropertyMarketplacePageState
   // ──────────────────────────── Helpers ──────────────────────────────────
 
   String _formatPriceShort(double price) {
-    if (price >= 10000000)
+    if (price >= 10000000) {
       return '₹${(price / 10000000).toStringAsFixed(1)} Cr';
+    }
     if (price >= 100000) return '₹${(price / 100000).toStringAsFixed(1)} L';
     if (price >= 1000) return '₹${(price / 1000).toStringAsFixed(0)} K';
     if (price == 0) return '₹0';

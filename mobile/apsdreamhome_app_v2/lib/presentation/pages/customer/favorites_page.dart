@@ -279,8 +279,8 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _filters.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
-              itemBuilder: (_, __) => Container(
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
+              itemBuilder: (_, _) => Container(
                 width: 72,
                 height: 36,
                 decoration: BoxDecoration(
@@ -300,7 +300,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
                 childAspectRatio: 0.68,
               ),
               itemCount: 6,
-              itemBuilder: (_, __) => _buildShimmerCard(),
+              itemBuilder: (_, _) => _buildShimmerCard(),
             ),
           ),
         ],
@@ -575,7 +575,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: _filters.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (context, index) {
             final filter = _filters[index];
             final isSelected = _selectedFilter == filter;
@@ -680,7 +680,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
                                 imageUrl,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => _imagePlaceholder(type),
+                                errorBuilder: (_, _, _) => _imagePlaceholder(type),
                               )
                             : _imagePlaceholder(type),
                       ),

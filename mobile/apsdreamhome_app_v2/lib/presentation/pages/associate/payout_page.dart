@@ -137,7 +137,7 @@ class _PayoutPageState extends ConsumerState<PayoutPage> {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               sliver: SliverList.separated(
                 itemCount: _filteredPayouts.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
                 itemBuilder: (context, index) => _buildPayoutCard(_filteredPayouts[index]),
               ),
             ),
@@ -276,7 +276,7 @@ class _PayoutPageState extends ConsumerState<PayoutPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         scrollDirection: Axis.horizontal,
         itemCount: filters.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final f = filters[index];
           final isActive = _activeFilter == f['value'];

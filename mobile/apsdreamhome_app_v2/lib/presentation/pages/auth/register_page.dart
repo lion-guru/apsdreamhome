@@ -335,8 +335,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               keyboardType: TextInputType.emailAddress,
               validator: (v) {
                 if (v == null || v.isEmpty) return 'Please enter your email';
-                if (!v.contains('@') || !v.contains('.'))
+                if (!v.contains('@') || !v.contains('.')) {
                   return 'Please enter a valid email';
+                }
                 return null;
               },
             ),
@@ -350,10 +351,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               maxLength: 10,
               prefixText: '+91 ',
               validator: (v) {
-                if (v == null || v.isEmpty)
+                if (v == null || v.isEmpty) {
                   return 'Please enter your phone number';
-                if (v.length != 10)
+                }
+                if (v.length != 10) {
                   return 'Please enter a valid 10 digit number';
+                }
                 return null;
               },
             ),
@@ -401,10 +404,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 ),
               ),
               validator: (v) {
-                if (v == null || v.isEmpty)
+                if (v == null || v.isEmpty) {
                   return 'Please confirm your password';
-                if (v != _passwordController.text)
+                }
+                if (v != _passwordController.text) {
                   return 'Passwords do not match';
+                }
                 return null;
               },
             ),
@@ -569,7 +574,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Already have an account? ",
+          'Already have an account? ',
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.7),
             fontSize: 14,

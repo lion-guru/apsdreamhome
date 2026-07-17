@@ -215,7 +215,7 @@ class _TemplatesPageState extends ConsumerState<TemplatesPage>
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: category,
+                  initialValue: category,
                   dropdownColor: const Color(0xFF0D1B2A),
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
@@ -473,7 +473,7 @@ class _TemplatesPageState extends ConsumerState<TemplatesPage>
               style: TextStyle(color: Colors.white54, fontSize: 16),
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'Tap + to create your first template',
               style: TextStyle(color: Colors.white38, fontSize: 13),
             ),

@@ -34,7 +34,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         setState(() {
           final rawContent = data['content'] ?? {};
           if (rawContent is Map) {
-            _content = (rawContent as Map).map(
+            _content = (rawContent).map(
               (k, v) => MapEntry(k.toString(), v.toString()),
             );
           }
@@ -272,7 +272,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _team.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
                 final member = _team[index];
                 return Container(

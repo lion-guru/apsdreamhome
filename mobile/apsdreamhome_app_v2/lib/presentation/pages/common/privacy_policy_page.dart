@@ -61,7 +61,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
                 sliver: SliverList.separated(
                   itemCount: _sections.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 16),
+                  separatorBuilder: (_, _) => const SizedBox(height: 16),
                   itemBuilder: (context, index) => GlassCard(
                     padding: const EdgeInsets.all(20),
                     opacity: 0.08,

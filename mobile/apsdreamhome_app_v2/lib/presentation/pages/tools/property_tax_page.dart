@@ -34,8 +34,8 @@ class _PropertyTaxPageState extends State<PropertyTaxPage> {
     final value = double.tryParse(_valueController.text) ?? 0;
     if (value <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Enter property value'),
+        const SnackBar(
+          content: Text('Enter property value'),
           backgroundColor: AppTheme.errorColor,
           behavior: SnackBarBehavior.floating,
         ),
@@ -284,8 +284,8 @@ class _PropertyTaxPageState extends State<PropertyTaxPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [const Color(0xFF5C6BC0), const Color(0xFF3F51B5)],
+        gradient: const LinearGradient(
+          colors: [Color(0xFF5C6BC0), Color(0xFF3F51B5)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

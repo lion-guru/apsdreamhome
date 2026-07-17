@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../data/services/chat_service.dart';
-import '../../../core/theme/app_theme.dart';
 
 /// Live Chat Page with real backend API + graceful mock fallback.
 class LiveChatPage extends ConsumerStatefulWidget {
