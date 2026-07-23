@@ -14,9 +14,14 @@ $templates = $templates ?? [];
                 <h1 class="h3 mb-1"><i class="fas fa-envelope me-2 text-primary"></i>Email Templates</h1>
                 <p class="text-muted">Manage email templates for automated communications</p>
             </div>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#templateModal">
-                <i class="fas fa-plus me-1"></i> New Template
-            </button>
+            <div class="d-flex gap-2">
+                <a href="<?= BASE_URL ?>/docs/COMMUNICATION_SETUP_GUIDE.md#-email-templates-setup" target="_blank" class="btn btn-outline-primary">
+                    <i class="fas fa-book me-1"></i> View Setup Guide
+                </a>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#templateModal">
+                    <i class="fas fa-plus me-1"></i> New Template
+                </button>
+            </div>
         </div>
     </div>
 

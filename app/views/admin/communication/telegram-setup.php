@@ -9,9 +9,14 @@ $settings = $settings ?? [];
 
 <div class="container-fluid py-4">
     <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="h3 mb-2"><i class="fab fa-telegram me-2 text-primary"></i>Telegram Bot Setup</h1>
-            <p class="text-muted">Configure Telegram Bot for automated messaging and customer communication</p>
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-1"><i class="fab fa-telegram me-2 text-primary"></i>Telegram Bot Setup</h1>
+                <p class="text-muted">Configure Telegram Bot for automated messaging and customer communication</p>
+            </div>
+            <a href="<?= BASE_URL ?>/docs/COMMUNICATION_SETUP_GUIDE.md#-telegram-bot-setup" target="_blank" class="btn btn-outline-primary">
+                <i class="fas fa-book me-1"></i> View Setup Guide
+            </a>
         </div>
     </div>
 

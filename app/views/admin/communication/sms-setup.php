@@ -9,9 +9,14 @@ $settings = $settings ?? [];
 
 <div class="container-fluid py-4">
     <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="h3 mb-2"><i class="fas fa-sms me-2 text-warning"></i>SMS Gateway Setup (MSG91)</h1>
-            <p class="text-muted">Configure MSG91 SMS gateway for transactional and promotional messaging</p>
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-1"><i class="fas fa-sms me-2 text-warning"></i>SMS Gateway Setup (MSG91)</h1>
+                <p class="text-muted">Configure MSG91 SMS gateway for transactional and promotional messaging</p>
+            </div>
+            <a href="<?= BASE_URL ?>/docs/COMMUNICATION_SETUP_GUIDE.md#-sms-gateway-setup-msg91" target="_blank" class="btn btn-outline-warning text-dark">
+                <i class="fas fa-book me-1"></i> View Setup Guide
+            </a>
         </div>
     </div>
 
