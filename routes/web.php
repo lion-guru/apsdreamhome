@@ -4764,7 +4764,6 @@ $router->post('/api/whatsapp/webhook', function() {
 
 // ============================================================
 // ADMIN TOOLS (ToolsAdminController — Document AI, eSign, Stamp Duty, Landmarks, WhatsApp Templates)
-// ============================================================
 $router->get('/admin/tools/document-extraction',          'App\\Http\\Controllers\\Admin\\ToolsAdminController@documentExtraction');
 $router->get('/admin/tools/esign',                        'App\\Http\\Controllers\\Admin\\ToolsAdminController@esignDashboard');
 $router->get('/admin/tools/stamp-duty',                   'App\\Http\\Controllers\\Admin\\ToolsAdminController@stampDutyConfig');
@@ -4776,7 +4775,15 @@ $router->get('/admin/tools/whatsapp-templates',           'App\\Http\\Controller
 $router->post('/admin/tools/whatsapp-templates/save',     'App\\Http\\Controllers\\Admin\\ToolsAdminController@whatsappTemplatesSave');
 $router->post('/admin/tools/whatsapp-templates/{id}/delete', 'App\\Http\\Controllers\\Admin\\ToolsAdminController@whatsappTemplatesDelete');
 
-// ============================================================
+// COMMUNICATION AUTOMATION ADMIN
+$router->get('/admin/communication/automation',           'App\\Http\\Controllers\\Admin\\CommunicationAdminController@index');
+$router->get('/admin/communication/whatsapp-setup',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@whatsappSetup');
+$router->get('/admin/communication/telegram-setup',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@telegramSetup');
+$router->get('/admin/communication/sms-setup',            'App\\Http\\Controllers\\Admin\\CommunicationAdminController@smsSetup');
+$router->get('/admin/communication/email-templates',      'App\\Http\\Controllers\\Admin\\CommunicationAdminController@emailTemplates');
+$router->get('/admin/communication/logs',                 'App\\Http\\Controllers\\Admin\\CommunicationAdminController@logs');
+$router->post('/admin/communication/test-send',           'App\\Http\\Controllers\\Admin\\CommunicationAdminController@testSend');
+
 // PUBLIC API — Stamp Duty Calculator
 // ============================================================
 $router->post('/api/stamp-duty/calculate', 'Api\\StampDutyController@calculate');
@@ -4800,3 +4807,19 @@ $router->get('/api/landmarks/nearby', 'Api\\LandmarksApiController@nearby');
 $router->get('/api/landmarks/list', 'Api\\LandmarksApiController@list');
 $router->get('/api/landmarks/types', 'Api\\LandmarksApiController@types');
 $router->get('/api/landmarks/colony/{colonyId}', 'Api\\LandmarksApiController@byColony');
+
+// ============================================================
+// ADMIN COMMUNICATION AUTOMATION
+// ============================================================
+$router->get('/admin/communication/automation',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@automation');
+$router->get('/admin/communication/whatsapp-setup',   'App\\Http\\Controllers\\Admin\\CommunicationAdminController@whatsappSetup');
+$router->post('/admin/communication/whatsapp-setup',  'App\\Http\\Controllers\\Admin\\CommunicationAdminController@whatsappSetupSave');
+$router->get('/admin/communication/telegram-setup',   'App\\Http\\Controllers\\Admin\\CommunicationAdminController@telegramSetup');
+$router->post('/admin/communication/telegram-setup',  'App\\Http\\Controllers\\Admin\\CommunicationAdminController@telegramSetupSave');
+$router->get('/admin/communication/sms-setup',        'App\\Http\\Controllers\\Admin\\CommunicationAdminController@smsSetup');
+$router->post('/admin/communication/sms-setup',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@smsSetupSave');
+$router->get('/admin/communication/email-templates',  'App\\Http\\Controllers\\Admin\\CommunicationAdminController@emailTemplates');
+$router->post('/admin/communication/email-templates', 'App\\Http\\Controllers\\Admin\\CommunicationAdminController@emailTemplatesSave');
+$router->post('/admin/communication/email-templates/{id}/delete', 'App\\Http\\Controllers\\Admin\\CommunicationAdminController@emailTemplatesDelete');
+$router->get('/admin/communication/logs',             'App\\Http\\Controllers\\Admin\\CommunicationAdminController@logs');
+$router->post('/admin/communication/test-send',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@testSend');
