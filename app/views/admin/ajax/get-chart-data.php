@@ -92,7 +92,7 @@ function getMonthlySalesData($db, &$response, $mlSupport) {
         $response['status'] = 'success';
         $response['data'] = array_values($months);
         $response['message'] = h($mlSupport->translate('Data fetched successfully'));
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         $response['message'] = h($e->getMessage());
     }
 }
@@ -111,7 +111,7 @@ function getInventoryStatusData($db, &$response, $mlSupport) {
         $response['status'] = 'success';
         $response['data'] = $data;
         $response['message'] = h($mlSupport->translate('Data fetched successfully'));
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         $response['message'] = h($e->getMessage());
     }
 }

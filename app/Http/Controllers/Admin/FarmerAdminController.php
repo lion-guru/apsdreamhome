@@ -8,20 +8,14 @@ class FarmerAdminController extends AdminController
         $this->requireAdmin();
         try {
             $farmers = $this->db->fetchAll("
-                SELECT *, 'kisaan' as source FROM kisaan_land_management
-                UNION ALL
-                SELECT kl.*, u.name as farmer_name, u.phone as farmer_mobile, '' as bank_name, '' as account_number, '' as bank_ifsc, '' as site_name,
-                       kl.land_area, 0 as total_land_price, 0 as total_paid_amount, 0 as amount_pending, '' as gata_number,
-                       kl.location as district, '' as tehsil, '' as city, '' as gram, kl.kyc_doc as land_paper,
-                       '' as land_manager_name, '' as land_manager_mobile, '' as agreement_status,
-                       'legacy' as source
-                FROM farmers_legacy kl
-                LEFT JOIN users u ON kl.user_id = u.id
+                SELECT *, 'farmer' as source, 'किसान' as source_hi FROM farmer_land_management
+                ORDER BY id DESC
             ");
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
+            $farmers = [];
         }
-        $totalFarmers = count($farmers);
+        $totalFarmers = count($farmers ?? []);
         $activeAgreements = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_agreements WHERE status = 'active'");
         $activeLoans = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_loans WHERE status IN ('sanctioned','disbursed','active')");
         $this->render('admin/farmers/index', [
@@ -37,35 +31,11 @@ class FarmerAdminController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $farmer = $this->db->fetch("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
+            $farmer = $this->db->fetch("SELECT * FROM farmer_land_management WHERE id = ?", [$id]);
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }
         if (!$farmer) {
-            try {
-                $farmerLegacy = $this->db->fetch("
-                    SELECT kl.*, u.name as farmer_name, u.phone as farmer_mobile, u.email
-                    FROM farmers_legacy kl LEFT JOIN users u ON kl.user_id = u.id WHERE kl.id = ?
-                ", [$id]);
-            } catch (\Throwable $e) {
-                // Gracefully handle dropped table ref
-            }
-            if ($farmerLegacy) {
-                $agreements = $this->db->fetchAll("SELECT * FROM farmer_agreements WHERE farmer_id = ? ORDER BY created_at DESC", [$id]);
-                $loans = $this->db->fetchAll("SELECT * FROM farmer_loans WHERE farmer_id = ? ORDER BY created_at DESC", [$id]);
-                $transactions = $this->db->fetchAll("SELECT * FROM farmer_transactions WHERE farmer_id = ? ORDER BY payment_date DESC", [$id]);
-                $documents = $this->db->fetchAll("SELECT * FROM documents WHERE entity_type = 'farmer' AND entity_id = ? ORDER BY uploaded_on DESC", [$id]);
-                $this->render('admin/farmers/show', [
-                    'page_title' => 'Farmer: ' . ($farmerLegacy['farmer_name'] ?? 'Unknown'),
-                    'farmer' => $farmerLegacy,
-                    'agreements' => $agreements,
-                    'loans' => $loans,
-                    'transactions' => $transactions,
-                    'documents' => $documents,
-                    'is_legacy' => true,
-                ]);
-                return;
-            }
             $this->setFlash('error', 'Farmer not found');
             $this->redirect('/admin/farmers');
             return;
@@ -92,13 +62,13 @@ class FarmerAdminController extends AdminController
             $agreements = $this->db->fetchAll("
                 SELECT a.*, k.farmer_name, k.farmer_mobile
                 FROM farmer_agreements a
-                LEFT JOIN kisaan_land_management k ON a.farmer_id = k.id
+                LEFT JOIN farmer_land_management k ON a.farmer_id = k.id
                 ORDER BY a.created_at DESC
             ");
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }
-        $totalAgreements = count($agreements);
+        $totalAgreements = count($agreements ?? []);
         $activeCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_agreements WHERE status = 'active'");
         $completedCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_agreements WHERE status = 'completed'");
         $terminatedCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_agreements WHERE status = 'terminated'");
@@ -119,7 +89,7 @@ class FarmerAdminController extends AdminController
             $agreement = $this->db->fetch("
                 SELECT a.*, k.farmer_name, k.farmer_mobile, k.district, k.city
                 FROM farmer_agreements a
-                LEFT JOIN kisaan_land_management k ON a.farmer_id = k.id
+                LEFT JOIN farmer_land_management k ON a.farmer_id = k.id
                 WHERE a.id = ?
             ", [$id]);
         } catch (\Throwable $e) {
@@ -188,13 +158,13 @@ class FarmerAdminController extends AdminController
             $loans = $this->db->fetchAll("
                 SELECT l.*, k.farmer_name, k.farmer_mobile
                 FROM farmer_loans l
-                LEFT JOIN kisaan_land_management k ON l.farmer_id = k.id
+                LEFT JOIN farmer_land_management k ON l.farmer_id = k.id
                 ORDER BY l.created_at DESC
             ");
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }
-        $totalLoans = count($loans);
+        $totalLoans = count($loans ?? []);
         $sanctionedCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_loans WHERE status = 'sanctioned'");
         $activeCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_loans WHERE status IN ('disbursed','active')");
         $closedCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM farmer_loans WHERE status = 'closed'");
@@ -215,7 +185,7 @@ class FarmerAdminController extends AdminController
             $loan = $this->db->fetch("
                 SELECT l.*, k.farmer_name, k.farmer_mobile, k.district, k.city
                 FROM farmer_loans l
-                LEFT JOIN kisaan_land_management k ON l.farmer_id = k.id
+                LEFT JOIN farmer_land_management k ON l.farmer_id = k.id
                 WHERE l.id = ?
             ", [$id]);
         } catch (\Throwable $e) {
@@ -315,3 +285,4 @@ class FarmerAdminController extends AdminController
         $this->redirect('/admin/farmers/gata');
     }
 }
+

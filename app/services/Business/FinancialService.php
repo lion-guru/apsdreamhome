@@ -140,7 +140,7 @@ class FinancialService
                 'total_pages' => ceil($total / $limit)
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("FinancialService::getAllTransactions - Error: " . $e->getMessage());
             return [
                 'transactions' => [],
@@ -212,7 +212,7 @@ class FinancialService
                 'message' => 'Transaction created successfully'
             ];
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("FinancialService::createTransaction - Error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -249,7 +249,7 @@ class FinancialService
                 'message' => 'Transaction status updated successfully'
             ];
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("FinancialService::updateTransactionStatus - Error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -298,7 +298,7 @@ class FinancialService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("FinancialService::getCommissionReport - Error: " . $e->getMessage());
             return [];
         }
@@ -327,7 +327,7 @@ class FinancialService
             
             return $this->db->fetch($sql);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("FinancialService::getFinancialStatistics - Error: " . $e->getMessage());
             return null;
         }
@@ -355,7 +355,7 @@ class FinancialService
             
             return $this->db->fetchAll($sql, [$year]);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("FinancialService::getMonthlyRevenueReport - Error: " . $e->getMessage());
             return [];
         }
@@ -394,7 +394,7 @@ class FinancialService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("FinancialService::getAssociateCommissionDetails - Error: " . $e->getMessage());
             return [];
         }
@@ -472,7 +472,7 @@ class FinancialService
                 'message' => 'Commission processed successfully'
             ];
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("FinancialService::processCommissionPayment - Error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -500,7 +500,7 @@ class FinancialService
             
             $this->db->execute($sql, $params);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("FinancialService::logActivity - Error: " . $e->getMessage());
         }
     }

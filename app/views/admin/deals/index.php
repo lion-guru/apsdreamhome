@@ -136,6 +136,21 @@ $page_title = 'Deal Tracking - APS Dream Home';
                         </tr>
                     </thead>
                     <tbody>
+                        <?php if (empty($deals ?? [])): ?>
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="fas fa-handshake fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No deals in pipeline</h5>
+                                <p class="text-muted mb-3">Start tracking your sales deals through the pipeline. Create a deal from a qualified lead to begin managing your sales process.</p>
+                                <a href="<?= BASE_URL ?>/admin/deals/create" class="btn btn-primary me-2">
+                                    <i class="fas fa-plus me-1"></i> Create Deal
+                                </a>
+                                <a href="<?= BASE_URL ?>/admin/deals/kanban" class="btn btn-outline-secondary">
+                                    <i class="fas fa-columns me-1"></i> Kanban View
+                                </a>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($deals as $deal):
                             $stageColor = array_column($stages, 'color', 'id')[$deal['stage']] ?? 'secondary';
                         ?>
@@ -167,6 +182,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                                 </td>
                             </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -181,7 +197,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
         }
 
         var csrf = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>';
-        fetch('<?= BASE_URL ?>admin/deals/' + dealId + '/stage', {
+        fetch('<?= BASE_URL ?>/admin/deals/' + dealId + '/stage', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'

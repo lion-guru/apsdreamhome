@@ -1,7 +1,7 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4><i class="fas fa-chart-bar"></i> MLM Commission Analytics</h4>
-        <a href="/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+        <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 
     <div class="row g-2 mb-4">
@@ -19,7 +19,16 @@
             <div class="table-responsive"><table class="table table-striped mb-0">
                 <thead><tr><th>Associate</th><th>Period</th><th>Earned</th><th>Paid</th><th>Pending</th><th>Direct</th><th>Team</th><th>Bonus</th></tr></thead>
                 <tbody>
-                    <?php foreach ($analytics ?? [] as $a): ?>
+                    <?php if (empty($analytics ?? [])): ?>
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <i class="fas fa-chart-bar fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                            <h5 class="text-muted">No analytics data yet</h5>
+                            <p class="text-muted mb-3">Analytics are generated automatically once associates start earning commissions over multiple periods.</p>
+                        </td>
+                    </tr>
+                    <?php else: ?>
+                    <?php foreach ($analytics as $a): ?>
                     <tr>
                         <td><?= htmlspecialchars($a['associate_name'] ?? 'N/A') ?></td>
                         <td><?= $a['period_date'] ?></td>
@@ -31,6 +40,7 @@
                         <td>&#8377;<?= number_format((float)($a['bonus_commissions']??0),2) ?></td>
                     </tr>
                     <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table></div>
         </div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $pageTitle = 'Property Details';
 
 // Initialize variables with defaults if not passed from controller
@@ -13,14 +13,14 @@ $property = $property ?? [
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-building me-2"></i>Property Details</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/properties">Properties</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/properties">Properties</a></li>
                     <li class="breadcrumb-item active"><?= htmlspecialchars($property['title'] ?? 'Property') ?></li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/properties/edit/<?= $property['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
-                <a href="/admin/properties" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+                <a href="<?= BASE_URL ?>/admin/properties/<?= $property['id'] ?? 0 ?>/edit" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
+                <a href="<?= BASE_URL ?>/admin/properties" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
             </div>
         </div>
     </div>

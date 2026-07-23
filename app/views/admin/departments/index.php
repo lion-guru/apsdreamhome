@@ -1,4 +1,4 @@
-<!-- Department Management - Index -->
+﻿<!-- Department Management - Index -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -8,7 +8,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
                         <li class="breadcrumb-item active">Departments</li>
                     </ol>
                 </div>
@@ -75,10 +75,10 @@
 
             <!-- Action Bar -->
             <div class="mb-3">
-                <a href="/admin/departments/create" class="btn btn-primary">
+                <a href="<?= BASE_URL ?>/admin/departments/create" class="btn btn-primary">
                     <i class="fas fa-plus mr-1"></i> Add Department
                 </a>
-                <a href="/admin/designations" class="btn btn-outline-secondary">
+                <a href="<?= BASE_URL ?>/admin/designations" class="btn btn-outline-secondary">
                     <i class="fas fa-user-tag mr-1"></i> Manage Designations
                 </a>
             </div>
@@ -105,7 +105,12 @@
                         </thead>
                         <tbody>
                             <?php if (empty($departments)): ?>
-                                <tr><td colspan="9" class="text-center text-muted py-4">No departments found.</td></tr>
+                                <tr><td colspan="9" class="text-center py-5">
+                                    <i class="fas fa-building fa-3x text-muted mb-3 d-block"></i>
+                                    <h5 class="text-muted">No departments yet</h5>
+                                    <p class="text-muted mb-3">Create your first department to organize your team structure.</p>
+                                    <a href="<?= BASE_URL ?>/admin/departments/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add Department</a>
+                                </td></tr>
                             <?php else: ?>
                                 <?php foreach ($departments as $dept): ?>
                                     <tr>
@@ -124,10 +129,10 @@
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <a href="/admin/departments/<?= $dept['id'] ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <a href="<?= BASE_URL ?>/admin/departments/<?= $dept['id'] ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="POST" action="/admin/departments/<?= $dept['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this department? Designations will be orphaned.')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/departments/<?= $dept['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this department? Designations will be orphaned.')">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>

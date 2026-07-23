@@ -89,6 +89,15 @@ $isEligible   = $eligibility['eligible'] ?? false;
                         </tr>
                     </thead>
                     <tbody>
+                        <?php if (empty($eligibility['reasons'] ?? [])): ?>
+                        <tr>
+                            <td colspan="2" class="text-center py-5">
+                                <i class="fas fa-check-circle fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No blocking reasons</h5>
+                                <p class="text-muted mb-3">There are no outstanding issues preventing registry or NOC generation.</p>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach (($eligibility['reasons'] ?? []) as $i => $reason): ?>
                             <tr>
                                 <td><?= $i + 1 ?></td>
@@ -98,6 +107,7 @@ $isEligible   = $eligibility['eligible'] ?? false;
                                 </td>
                             </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

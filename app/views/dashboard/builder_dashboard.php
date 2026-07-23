@@ -15,7 +15,7 @@
 try {
     $db = \App\Core\Database::getInstance();
     $conn = $db->getConnection();
-} catch (Exception $e) {
+} catch (\Exception $e) {
     die("Database connection failed: " . $e->getMessage());
 }
 

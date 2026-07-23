@@ -1,6 +1,6 @@
 <?php
 // Standalone Admin Dashboard - Content partial (layout provided by admin.php)
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 
 <!-- Page Header -->

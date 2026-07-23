@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Plot Cost Calculator - Index
  * Lists all colonies with cost summary
@@ -27,7 +27,7 @@ $page_title = 'Plot Development Cost Calculator - APS Dream Home';
             <?php if (empty($colonies)): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
-                    <p class="text-muted">No colonies found. <a href="/admin/colonies/add">Add a colony</a> to start tracking costs.</p>
+                    <p class="text-muted">No colonies found. <a href="<?= BASE_URL ?>/admin/colonies/add">Add a colony</a> to start tracking costs.</p>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
@@ -65,10 +65,10 @@ $page_title = 'Plot Development Cost Calculator - APS Dream Home';
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="/admin/plot-costs/colony/<?= $colony['id'] ?>" class="btn btn-primary" title="View Details">
+                                        <a href="<?= BASE_URL ?>/admin/plot-costs/colony/<?= $colony['id'] ?>" class="btn btn-primary" title="View Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="/admin/plot-costs/report/<?= $colony['id'] ?>" class="btn btn-info" title="Cost Report">
+                                        <a href="<?= BASE_URL ?>/admin/plot-costs/report/<?= $colony['id'] ?>" class="btn btn-info" title="Cost Report">
                                             <i class="fas fa-file-alt"></i>
                                         </a>
                                     </div>

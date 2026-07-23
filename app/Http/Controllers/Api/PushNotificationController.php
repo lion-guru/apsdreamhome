@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-class PushNotificationController extends \App\Http\Controllers\BaseController
+class PushNotificationController extends BaseApiController
 {
     public function subscribe()
     {
@@ -30,6 +30,7 @@ class PushNotificationController extends \App\Http\Controllers\BaseController
     {
         $body = json_decode(file_get_contents('php://input'), true) ?: [];
         $endpoint = $body['endpoint'] ?? $_POST['endpoint'] ?? '';
+        $userId = (int)($_SESSION['user_id'] ?? 0);
 
         if (!$endpoint) {
             $this->json(['success' => false, 'error' => 'Endpoint required'], 400);
@@ -37,7 +38,7 @@ class PushNotificationController extends \App\Http\Controllers\BaseController
         }
 
         $service = new \App\Services\PushNotificationService();
-        $service->unsubscribe($endpoint);
+        $service->unsubscribe($userId, $endpoint);
         $this->json(['success' => true]);
     }
 

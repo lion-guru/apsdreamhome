@@ -1,11 +1,13 @@
 <!-- Hero Section -->
-<section class="page-hero" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('<?= get_asset_url('assets/images/hero-2.jpg') ?>'); background-size: cover; background-position: center;">
-    <div class="container">
+<section class="premium-hero page-hero position-relative" style="background: url('<?= get_asset_url('assets/images/hero-2.jpg') ?>'); background-size: cover; background-position: center;">
+    <div class="hero-overlay"></div>
+    <div class="container position-relative z-1">
         <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
+            <div class="col-lg-8 text-center text-white">
+                <span class="badge bg-gold text-dark mb-3 px-3 py-2 rounded-pill fw-bold">Updates</span>
                 <h1 class="display-4 fw-bold mb-4"><?= __('blog_hero_title') ?></h1>
-                <p class="lead mb-4"><?= __('blog_hero_lead') ?></p>
-                <p class="mb-0"><?= __('blog_hero_desc') ?></p>
+                <p class="lead mb-4 text-white-50"><?= __('blog_hero_lead') ?></p>
+                <p class="mb-0 text-white-50"><?= __('blog_hero_desc') ?></p>
             </div>
         </div>
     </div>
@@ -34,18 +36,19 @@
 </div>
 
 <!-- Newsletter Section -->
-<section class="newsletter-section">
+<section class="py-5 bg-navy text-white">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6 text-center">
-                <h3 class="mb-3"><?= __('blog_newsletter_title') ?></h3>
-                <p class="mb-4"><?= __('blog_newsletter_desc') ?></p>
-                <form class="d-flex gap-2" onsubmit="event.preventDefault(); showToast('Thank you for subscribing!', 'success'); this.reset();">
-                    <input type="email" class="form-control" placeholder="<?= __('blog_newsletter_ph_email') ?>" required>
-                    <button type="submit" class="btn btn-light">
+                <h3 class="mb-3 text-gold"><?= __('blog_newsletter_title') ?></h3>
+                <p class="mb-4 text-white-50"><?= __('blog_newsletter_desc') ?></p>
+                <form class="d-flex gap-2" id="blogNewsletterForm">
+                    <input type="email" class="form-control" name="email" placeholder="<?= __('blog_newsletter_ph_email') ?>" required style="border-radius: 8px;">
+                    <button type="submit" class="btn btn-gold px-4 fw-bold" style="border-radius: 8px;">
                         <i class="fas fa-envelope me-1"></i><?= __('subscribe') ?>
                     </button>
                 </form>
+                <div id="blogNewsletterMsg" class="mt-2 small" style="display:none;"></div>
             </div>
         </div>
     </div>
@@ -59,7 +62,7 @@
             <div class="col-12">
                 <div class="text-center">
                     <button class="filter-btn active" data-category="all"><?= __('blog_filter_all') ?></button>
-                    <?php foreach ($categories as $category): ?>
+                    <?php foreach (($categories ?? []) as $category): ?>
                         <button class="filter-btn" data-category="<?php echo htmlspecialchars($category['category']); ?>">
                             <?php echo ucfirst(htmlspecialchars($category['category'])); ?>
                         </button>
@@ -79,7 +82,9 @@
                         <div class="position-relative">
                             <?php
                             $featuredImage = !empty($blog_posts[0]['featured_image']) ? $blog_posts[0]['featured_image'] : 'assets/images/blog-placeholder.jpg';
-                            $featuredImageUrl = get_asset_url($featuredImage);
+                            $featuredImageUrl = (strpos($featuredImage, 'http://') === 0 || strpos($featuredImage, 'https://') === 0)
+                                ? $featuredImage
+                                : get_asset_url($featuredImage);
                             ?>
                             <img src="<?= htmlspecialchars($featuredImageUrl) ?>" class="img-fluid card-img-top blog-image" alt="<?= htmlspecialchars($blog_posts[0]['title']) ?>" style="height:350px;object-fit:cover;">
                             <div class="category-badge">
@@ -94,7 +99,7 @@
                                 </small>
                                 <small class="text-muted">
                                     <i class="fas fa-clock me-1"></i>
-                                    <?php echo htmlspecialchars($blog_posts[0]['read_time']); ?> min read
+                                    <?php echo htmlspecialchars($blog_posts[0]['read_time'] ?? '5'); ?> min read
                                 </small>
                             </div>
                             <h3 class="card-title mb-3"><?php echo htmlspecialchars($blog_posts[0]['title']); ?></h3>
@@ -135,7 +140,7 @@
                                 </small>
                                 <small class="text-muted">
                                     <i class="fas fa-clock me-1"></i>
-                                    <?php echo htmlspecialchars($blog_posts[$i]['read_time']); ?> min
+                                    <?php echo htmlspecialchars($blog_posts[$i]['read_time'] ?? '5'); ?> min
                                 </small>
                             </div>
                             <h6 class="card-title mb-2"><?php echo htmlspecialchars($blog_posts[$i]['title']); ?></h6>
@@ -207,20 +212,16 @@
 </section>
 
 <script>
-    // Filter functionality
     document.addEventListener('DOMContentLoaded', function() {
+        // Filter functionality
         const filterButtons = document.querySelectorAll('.filter-btn');
         const blogCards = document.querySelectorAll('[data-category]');
 
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const category = this.getAttribute('data-category');
-
-                // Update active button
                 filterButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
-
-                // Filter posts
                 blogCards.forEach(card => {
                     if (category === 'all' || card.getAttribute('data-category') === category) {
                         card.style.display = 'block';
@@ -230,6 +231,44 @@
                 });
             });
         });
+
+        // Newsletter subscription
+        var nlForm = document.getElementById('blogNewsletterForm');
+        if (nlForm) {
+            nlForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var btn = this.querySelector('button');
+                var msg = document.getElementById('blogNewsletterMsg');
+                var email = this.querySelector('input[name="email"]').value;
+                btn.disabled = true;
+                fetch('<?= BASE_URL ?>/api/newsletter', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email: email})
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(d) {
+                    msg.style.display = 'block';
+                    if (d.success) {
+                        msg.className = 'mt-2 small text-success';
+                        msg.textContent = '✓ Subscribed successfully!';
+                        btn.innerHTML = '<i class="fas fa-check me-1"></i>Subscribed!';
+                        btn.classList.replace('btn-gold', 'btn-success');
+                        nlForm.reset();
+                    } else {
+                        msg.className = 'mt-2 small text-danger';
+                        msg.textContent = d.message || 'Already subscribed.';
+                        btn.disabled = false;
+                    }
+                })
+                .catch(function() {
+                    msg.style.display = 'block';
+                    msg.className = 'mt-2 small text-danger';
+                    msg.textContent = 'Network error.';
+                    btn.disabled = false;
+                });
+            });
+        }
     });
 
     function showToast(message, type) {

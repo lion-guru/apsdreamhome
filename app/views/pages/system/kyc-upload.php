@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $response = ['status' => 'error', 'message' => implode(', ', $upload_errors)];
         }
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         $response = ['status' => 'error', 'message' => 'An error occurred: ' . $e->getMessage()];
     }
 

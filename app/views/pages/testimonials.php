@@ -76,7 +76,7 @@
                         <i class="far fa-comments fa-4x text-muted mb-3"></i>
                         <h3><?= __('testi_empty_title', null, 'No testimonials yet') ?></h3>
                         <p class="text-muted"><?= __('testi_empty_desc', null, 'Be the first to share your experience with us!') ?></p>
-                        <a href="<?= BASE_URL ?>contact" class="btn btn-primary mt-3"><?= __('testi_empty_btn', null, 'Share Feedback') ?></a>
+                        <a href="<?= BASE_URL ?>/contact" class="btn btn-primary mt-3"><?= __('testi_empty_btn', null, 'Share Feedback') ?></a>
                     </div>
                 </div>
             <?php endif; ?>

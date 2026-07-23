@@ -108,7 +108,7 @@ class CEODashboardController extends AdminController
             ];
 
             return $this->render('admin/dashboards/ceo');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("CEO Dashboard Error: " . $e->getMessage());
             $this->setFlash('error', 'Dashboard loading failed');
             return $this->redirect('admin/dashboard');
@@ -132,7 +132,7 @@ class CEODashboardController extends AdminController
                 GROUP BY DATE(payment_date)
                 ORDER BY date DESC"
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $analytics = [];
         }
         echo json_encode(['success' => true, 'data' => $analytics ?? []]);
@@ -158,7 +158,7 @@ class CEODashboardController extends AdminController
                 GROUP BY u.role
                 ORDER BY user_count DESC"
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $performance = [];
         }
         echo json_encode(['success' => true, 'data' => $performance ?? []]);

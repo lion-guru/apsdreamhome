@@ -1,14 +1,14 @@
-<?php
+﻿<?php
 $page_title = 'Edit Booking';
 $active_page = 'bookings';
 ?>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Edit Booking</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="/admin/bookings/<?= $booking['id'] ?>" class="btn btn-outline-primary">
+        <a href="<?= BASE_URL ?>/admin/bookings/<?= $booking['id'] ?>" class="btn btn-outline-primary">
             <i class="fas fa-eye"></i> View Booking
         </a>
-        <a href="/admin/bookings" class="btn btn-secondary ms-2">
+        <a href="<?= BASE_URL ?>/admin/bookings" class="btn btn-secondary ms-2">
             <i class="fas fa-arrow-left"></i> Back to Bookings
         </a>
     </div>
@@ -31,7 +31,7 @@ $active_page = 'bookings';
         </h5>
     </div>
     <div class="card-body aps-cp-card-body">
-        <form method="POST" action="/admin/bookings/<?= $booking['id'] ?>/update">
+        <form method="POST" action="<?= BASE_URL ?>/admin/bookings/<?= $booking['id'] ?>/update">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
             <!-- Booking Overview -->
@@ -178,10 +178,10 @@ $active_page = 'bookings';
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Update Booking
                     </button>
-                    <a href="/admin/bookings/<?= $booking['id'] ?>" class="btn btn-secondary ms-2">
+                    <a href="<?= BASE_URL ?>/admin/bookings/<?= $booking['id'] ?>" class="btn btn-secondary ms-2">
                         <i class="fas fa-times"></i> Cancel
                     </a>
-                    <a href="/admin/bookings/<?= $booking['id'] ?>/print" class="btn btn-outline-primary ms-2" target="_blank">
+                    <a href="<?= BASE_URL ?>/admin/bookings/<?= $booking['id'] ?>/print" class="btn btn-outline-primary ms-2" target="_blank">
                         <i class="fas fa-print"></i> Print Booking
                     </a>
                 </div>

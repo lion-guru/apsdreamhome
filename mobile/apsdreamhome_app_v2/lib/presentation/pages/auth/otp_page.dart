@@ -47,15 +47,12 @@ class _OTPPageState extends ConsumerState<OTPPage> {
 
     try {
       if (mounted) {
-        AppWidgets.showInfoSnackBar(
-          context,
-          'OTP verification coming soon. Use email/password login.',
-        );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'OTP login is under development. Please use email/password.',
+              'OTP login is under development. Please use email/password to login.',
             ),
+            duration: Duration(seconds: 3),
           ),
         );
         if (mounted) context.pop();

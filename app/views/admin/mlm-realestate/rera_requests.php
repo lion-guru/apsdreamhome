@@ -6,6 +6,15 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light"><tr><th>ID</th><th>User</th><th>Email</th><th>Amount</th><th>Status</th><th>RERA #</th><th>RERA Approved</th><th>Date</th><th>Action</th></tr></thead>
                     <tbody>
+                        <?php if (empty($requests ?? [])): ?>
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="fas fa-gavel fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No RERA requests found</h5>
+                                <p class="text-muted mb-3">RERA compliance requests from associates will appear here for review.</p>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($requests as $r): ?>
                         <tr>
                             <td>#<?= $r['id'] ?></td>
@@ -23,6 +32,7 @@
                             </td>
                         </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

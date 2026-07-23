@@ -1,8 +1,8 @@
-<?php $page_title = $page_title ?? 'Voice Call'; $lead = $lead ?? []; ?>
+﻿<?php $page_title = $page_title ?? 'Voice Call'; $lead = $lead ?? []; ?>
 <style>.voice-call-ui{max-width:500px;margin:0 auto;text-align:center;padding:40px 20px}.lead-avatar-lg{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:700;color:#fff;margin:0 auto 20px}.call-btn{width:70px;height:70px;border-radius:50%;border:none;font-size:24px;color:#fff;cursor:pointer;transition:.3s}.call-btn:hover{transform:scale(1.1)}.call-btn.end{background:#ef4444}.call-btn.mute{background:#6b7280}.call-btn.note{background:#3b82f6}</style>
 
 <div class="container-fluid px-4 py-4">
-    <a href="/admin/crm/voice" class="btn btn-outline-secondary mb-3"><i class="fas fa-arrow-left me-1"></i>Back to Voice CRM</a>
+    <a href="<?= BASE_URL ?>/admin/crm/voice" class="btn btn-outline-secondary mb-3"><i class="fas fa-arrow-left me-1"></i>Back to Voice CRM</a>
 
     <div class="voice-call-ui">
         <?php $initials = strtoupper(substr($lead['name'] ?? 'L', 0, 1)); ?>
@@ -54,7 +54,7 @@ function endCall() {
     document.getElementById('btn-call').disabled = false;
     document.getElementById('btn-end').disabled = true;
     document.getElementById('btn-mute').disabled = true;
-    if(callSeconds>0){fetch('/admin/crm/voice/note',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead_id:leadId,transcript:'Call duration: '+callSeconds+' seconds'})});}
+    if(callSeconds>0){fetch('<?= BASE_URL ?>/admin/crm/voice/note',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead_id:leadId,transcript:'Call duration: '+callSeconds+' seconds'})});}
     callSeconds=0;
 }
 
@@ -70,13 +70,13 @@ function startDictation(){
 
 function saveNote(){
     const text=document.getElementById('note-text').value.trim();if(!text)return;
-    fetch('/admin/crm/voice/note',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead_id:leadId,transcript:text})})
+    fetch('<?= BASE_URL ?>/admin/crm/voice/note',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead_id:leadId,transcript:text})})
     .then(r=>r.json()).then(d=>{if(d.success){document.getElementById('note-text').value='';alert('Note saved!');}});
 }
 
 function sendCommand(){
     const cmd=document.getElementById('voice-cmd').value.trim();if(!cmd)return;
-    fetch('/admin/crm/voice/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:cmd})})
+    fetch('<?= BASE_URL ?>/admin/crm/voice/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:cmd})})
     .then(r=>r.json()).then(d=>{document.getElementById('cmd-result').innerHTML='<div class="alert alert-info mb-0">'+d.message+'</div>';});
 }
 </script>

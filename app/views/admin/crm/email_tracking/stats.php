@@ -1,11 +1,11 @@
-<?php $page_title = $page_title ?? 'Email Tracking'; $overall = $overall ?? []; $daily = $daily ?? []; $top_links = $top_links ?? []; $days = $days ?? 30; ?>
+﻿<?php $page_title = $page_title ?? 'Email Tracking'; $overall = $overall ?? []; $daily = $daily ?? []; $top_links = $top_links ?? []; $days = $days ?? 30; ?>
 <style>.et-stat{background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:20px;text-align:center}.et-stat .val{font-size:28px;font-weight:800}.et-stat .label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px}</style>
 
 <div class="container-fluid px-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold mb-0"><i class="fas fa-envelope-open me-2 text-primary"></i>Email Tracking</h4>
         <div class="d-flex gap-2">
-            <?php foreach ([7=>7,14=>14,30=>30,90=>90] as $v=>$l): ?><a href="/admin/crm/email-tracking/stats?days=<?= $v ?>" class="btn btn-sm <?= $days==$v ? 'btn-primary' : 'btn-outline-secondary' ?>"><?= $l ?>d</a><?php endforeach; ?>
+            <?php foreach ([7=>7,14=>14,30=>30,90=>90] as $v=>$l): ?><a href="<?= BASE_URL ?>/admin/crm/email-tracking/stats?days=<?= $v ?>" class="btn btn-sm <?= $days==$v ? 'btn-primary' : 'btn-outline-secondary' ?>"><?= $l ?>d</a><?php endforeach; ?>
         </div>
     </div>
 

@@ -473,7 +473,7 @@ class SavedSearchService
      */
     public function buildAlertEmailBody(array $search, array $property): string
     {
-        $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome';
+        $baseUrl = BASE_URL;
         $link = $baseUrl . '/properties?q=' . urlencode($property['name'] ?? '') . '&type=' . urlencode($property['property_type'] ?? '');
         $propertyUrl = $baseUrl . '/listing/' . (int)($property['id'] ?? 0);
         $image = !empty($property['image']) ? $baseUrl . '/assets/images/properties/' . htmlspecialchars($property['image']) : $baseUrl . '/assets/images/placeholder/property.svg';

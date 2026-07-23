@@ -24,8 +24,6 @@ class VirtualTourController extends BaseController
 
     // Define constants
     const UPLOADS_PATH = __DIR__ . '/../../../public/uploads/virtual_tours/';
-    const BASE_URL = 'https://example.com'; // Replace with your base URL
-    const APP_NAME = 'APSDreamHome'; // Replace with your app name
 
     /**
      * Send JSON response
@@ -179,7 +177,20 @@ class VirtualTourController extends BaseController
     {
         try {
             if (!$this->db) {
-                return [];
+                return ['panoramas' => [], 'floor_plans' => [], 'hotspots' => [], 'property_id' => $property_id, 'status' => 'no_database'];
+            }
+
+            // Check if virtual tour tables exist
+            $tablesExist = false;
+            try {
+                $this->db->query("SELECT 1 FROM property_panoramas LIMIT 1");
+                $tablesExist = true;
+            } catch (\Throwable $e) {
+                // Tables don't exist yet
+            }
+
+            if (!$tablesExist) {
+                return ['panoramas' => [], 'floor_plans' => [], 'hotspots' => [], 'property_id' => $property_id, 'status' => 'not_configured'];
             }
 
             // Get panorama images
@@ -204,11 +215,12 @@ class VirtualTourController extends BaseController
                 'panoramas' => $panoramas,
                 'floor_plans' => $floor_plans,
                 'hotspots' => $hotspots,
-                'property_id' => $property_id
+                'property_id' => $property_id,
+                'status' => 'ok'
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Virtual tour data error: ' . $e->getMessage());
-            return [];
+            return ['panoramas' => [], 'floor_plans' => [], 'hotspots' => [], 'property_id' => $property_id, 'status' => 'error'];
         }
     }
 

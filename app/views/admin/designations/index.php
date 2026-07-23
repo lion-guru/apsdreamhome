@@ -1,4 +1,4 @@
-<!-- Designation Management - Index -->
+﻿<!-- Designation Management - Index -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -8,7 +8,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
                         <li class="breadcrumb-item active">Designations</li>
                     </ol>
                 </div>
@@ -58,15 +58,15 @@
             <!-- Filter + Action Bar -->
             <div class="row mb-3">
                 <div class="col-md-8">
-                    <a href="/admin/designations/create" class="btn btn-primary">
+                    <a href="<?= BASE_URL ?>/admin/designations/create" class="btn btn-primary">
                         <i class="fas fa-plus mr-1"></i> Add Designation
                     </a>
-                    <a href="/admin/departments" class="btn btn-outline-secondary ml-2">
+                    <a href="<?= BASE_URL ?>/admin/departments" class="btn btn-outline-secondary ml-2">
                         <i class="fas fa-building mr-1"></i> Departments
                     </a>
                 </div>
                 <div class="col-md-4 text-right">
-                    <form method="GET" action="/admin/designations" class="form-inline justify-content-end">
+                    <form method="GET" action="<?= BASE_URL ?>/admin/designations" class="form-inline justify-content-end">
                         <label class="mr-2">Filter by Dept:</label>
                         <select name="department_id" class="form-control form-control-sm" onchange="this.form.submit()">
                             <option value="">All Departments</option>
@@ -101,7 +101,12 @@
                         </thead>
                         <tbody>
                             <?php if (empty($designations)): ?>
-                                <tr><td colspan="8" class="text-center text-muted py-4">No designations found.</td></tr>
+                                <tr><td colspan="8" class="text-center py-5">
+                                    <i class="fas fa-user-tag fa-3x text-muted mb-3 d-block"></i>
+                                    <h5 class="text-muted">No designations yet</h5>
+                                    <p class="text-muted mb-3">Define designations with salary bands and role levels for your departments.</p>
+                                    <a href="<?= BASE_URL ?>/admin/designations/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add Designation</a>
+                                </td></tr>
                             <?php else: ?>
                                 <?php foreach ($designations as $desig): ?>
                                     <tr>
@@ -128,10 +133,10 @@
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <a href="/admin/designations/<?= $desig['id'] ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <a href="<?= BASE_URL ?>/admin/designations/<?= $desig['id'] ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="POST" action="/admin/designations/<?= $desig['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this designation?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/designations/<?= $desig['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this designation?')">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>

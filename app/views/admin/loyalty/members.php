@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Loyalty Members';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $members = $members ?? [];
 ?>
 <div class="container-fluid">
@@ -41,7 +41,7 @@ $members = $members ?? [];
                                     <span class="badge bg-<?= $s === 'active' ? 'success' : 'danger' ?>"><?= ucfirst($s) ?></span>
                                 </td>
                                 <td>
-                                    <a href="<?= $base ?>/admin/loyalty/member/<?= $m['id'] ?? 0 ?>" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
+                                    <a href="<?= $base ?>/admin/loyalty/members/<?= $m['id'] ?? 0 ?>" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

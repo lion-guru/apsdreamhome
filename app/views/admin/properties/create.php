@@ -90,10 +90,41 @@ $active_page = 'properties';
                         <div class="form-text">Property price in Indian Rupees</div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="location" class="form-label">Location *</label>
-                        <textarea class="form-control" id="location" name="location" rows="2" required></textarea>
+<div class="mb-3">
+                        <label for="location" class="form-label">Address *</label>
+                        <div class="input-group">
+                            <textarea class="form-control" id="location" name="location" rows="2" required data-autofill="address"></textarea>
+                            <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="location" title="Pick on Map">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </button>
+                        </div>
                         <div class="form-text">Full address or location description</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" class="form-control" id="city" name="city" data-autofill="city">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" id="state" name="state" data-autofill="state">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="pincode" class="form-label">Pincode</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="pincode" name="pincode" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
+                                    <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use My Location">
+                                        <i class="fas fa-location-crosshairs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row">

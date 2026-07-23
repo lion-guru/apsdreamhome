@@ -74,7 +74,7 @@ class Sentinel
                 // Sleep for 1 second before next cycle (reduced from 60)
                 sleep(1);
                 
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->sendSlackAlert("🚨 Sentinel Error", "Monitoring failed: " . $e->getMessage());
                 $this->log("ERROR: " . $e->getMessage());
                 sleep(30); // Wait before retry
@@ -430,7 +430,7 @@ class Sentinel
                     $stmt = $this->db->query("REPAIR TABLE `$table`");
                     $this->log("🔧 Repaired table: $table");
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->log("❌ Failed to optimize $table: " . $e->getMessage());
             }
         }
@@ -516,7 +516,7 @@ class Sentinel
         try {
             $stmt = $this->db->query("SELECT ip_address FROM blocked_ips WHERE unblocked_at IS NULL");
             $this->blockedIPs = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Table might not exist yet
             $this->createBlockedIPsTable();
         }

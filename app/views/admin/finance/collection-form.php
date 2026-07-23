@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Record Collection';
 $page_heading = $page_heading ?? 'Record Cash Collection';
 $collectors = $collectors ?? [];
@@ -7,7 +7,7 @@ $bookings = $bookings ?? [];
 <div class="aps-cp-container">
     <div class="aps-cp-page-header">
         <h1 class="aps-cp-page-title"><?= htmlspecialchars($page_heading) ?></h1>
-        <a href="/admin/finance/collections" class="aps-cp-btn aps-cp-btn-outline">
+        <a href="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-btn aps-cp-btn-outline">
             <i class="fas fa-arrow-left"></i> Back to Collections
         </a>
     </div>
@@ -17,7 +17,7 @@ $bookings = $bookings ?? [];
             <span><i class="fas fa-edit"></i> Collection Details</span>
         </div>
         <div class="aps-cp-card-body">
-            <form method="POST" action="/admin/finance/collections/store" enctype="multipart/form-data">
+            <form method="POST" action="<?= BASE_URL ?>/admin/finance/collections/store" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
                 <div class="aps-cp-form-group">
@@ -86,7 +86,7 @@ $bookings = $bookings ?? [];
 
                 <div style="display:flex;gap:12px;margin-top:20px;">
                     <button type="submit" class="aps-cp-btn aps-cp-btn-primary"><i class="fas fa-save"></i> Save Collection</button>
-                    <a href="/admin/finance/collections" class="aps-cp-btn aps-cp-btn-outline">Cancel</a>
+                    <a href="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-btn aps-cp-btn-outline">Cancel</a>
                 </div>
             </form>
         </div>

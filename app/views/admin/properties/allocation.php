@@ -1,12 +1,12 @@
-<?php $pageTitle = 'Property Allocations'; ?>
+﻿<?php $pageTitle = 'Property Allocations'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-handshake me-2"></i>Property Allocations</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/properties">Properties</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/properties">Properties</a></li>
                     <li class="breadcrumb-item active">Allocations</li>
                 </ul>
             </div>

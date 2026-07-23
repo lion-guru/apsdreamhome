@@ -54,6 +54,9 @@ class MarketingAutomationService
             ];
             
             foreach ($tables as $sql) {
+                if (empty(trim($sql))) {
+                    continue;
+                }
                 $this->database->query($sql);
             }
             
@@ -517,8 +520,9 @@ class MarketingAutomationService
                         $this->updateLeadStatus($leadId, $action['status']);
                         break;
                     case 'delay':
-                        // Simulate delay (in real implementation, this would be handled by a queue)
-                        sleep($action['seconds'] ?? 1);
+                        // Queue-based delay placeholder — cap to prevent process blocking
+                        $delaySeconds = min((int)($action['seconds'] ?? 1), 5);
+                        sleep($delaySeconds);
                         break;
                 }
             }

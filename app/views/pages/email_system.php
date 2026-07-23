@@ -52,7 +52,7 @@ class APS_Email {
                 };
             }
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("PHPMailer initialization failed: " . $this->mail->ErrorInfo);
         }
     }
@@ -82,7 +82,7 @@ class APS_Email {
                 return ['success' => true, 'message' => 'Welcome email sent successfully'];
             }
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->log_email('welcome', $user_email, 'failed', $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -123,7 +123,7 @@ class APS_Email {
                 return ['success' => true, 'message' => 'Notifications sent successfully'];
             }
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->log_email('inquiry_notification', $inquiry_data['email'], 'failed', $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -151,7 +151,7 @@ class APS_Email {
 
             $this->mail->send();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Inquiry confirmation failed: " . $e->getMessage());
         }
     }
@@ -183,7 +183,7 @@ class APS_Email {
                 return ['success' => true, 'message' => 'Newsletter sent successfully'];
             }
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->log_email('newsletter', $subscriber_email, 'failed', $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -216,7 +216,7 @@ class APS_Email {
                 return ['success' => true, 'message' => 'Password reset email sent'];
             }
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->log_email('password_reset', $user_email, 'failed', $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }

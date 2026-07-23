@@ -31,7 +31,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                     <?php endforeach; ?>
                 <?php else: ?>
                     <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><?= __('nav_home', null, 'Home') ?></a></li>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>careers"><?= __('careers_breadcrumb', null, 'Careers') ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/careers"><?= __('careers_breadcrumb', null, 'Careers') ?></a></li>
                     <li class="breadcrumb-item active" aria-current="page"><?= __('career_apply_breadcrumb', null, 'Apply') ?></li>
                 <?php endif; ?>
             </ol>
@@ -66,7 +66,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                             <?php unset($_SESSION['success']); ?>
                         <?php endif; ?>
 
-                        <form action="<?= BASE_URL ?>careers/apply" method="POST" enctype="multipart/form-data">
+                        <form action="<?= BASE_URL ?>/careers/apply" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row">
                                 <div class="col-md-6 mb-3">

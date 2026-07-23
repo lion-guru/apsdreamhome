@@ -126,10 +126,14 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
         @session_start();
 
         $userId = $_SESSION['user_id'] ?? null;
-        $userType = $_SESSION['role'] ?? null;
+        $userRole = $_SESSION['role'] ?? null;
 
-        // Allow admin to view any user's tree
-        $viewUserId = $_GET['user_id'] ?? $userId;
+        // Only allow admin/super_admin to view other users' trees
+        $isAdmin = in_array($userRole, ['admin', 'super_admin'], true);
+        $viewUserId = $userId;
+        if ($isAdmin && isset($_GET['user_id'])) {
+            $viewUserId = (int)$_GET['user_id'];
+        }
 
         if (!$userId) {
             header('Location: ' . BASE_URL . '/login');
@@ -174,8 +178,8 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
 
         @session_start();
 
-        $userId = $_GET['root_id'] ?? ($_SESSION['user_id'] ?? null);
-        $levels = min($_GET['levels'] ?? 5, 10); // Max 10 levels
+        $userId = isset($_GET['root_id']) ? (int)$_GET['root_id'] : ($_SESSION['user_id'] ?? null);
+        $levels = min((int)($_GET['levels'] ?? 5), 10); // Max 10 levels
 
         if (!$userId) {
             echo json_encode(['error' => 'Unauthorized']);

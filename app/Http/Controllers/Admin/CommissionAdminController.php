@@ -511,40 +511,125 @@ class CommissionAdminController extends AdminController
         return $this->redirect('admin/commission/telecaller/commissions');
     }
 
-    // Legacy method stubs (keep for backward compat)
+    // Legacy method stubs (keep for backward compat) - NOW WIRED TO REAL DATA
     public function rules()
     {
         $this->data['page_title'] = 'Commission Rules';
+        try {
+            $this->data['rules'] = $this->db->fetchAll("SELECT * FROM telecaller_commission_rules ORDER BY commission_type");
+            $this->data['mlm_levels'] = $this->db->fetchAll("SELECT * FROM mlm_rank_benefits ORDER BY id");
+        } catch (\Exception $e) {
+            $this->data['rules'] = [];
+            $this->data['mlm_levels'] = [];
+        }
         return $this->render('admin/commission/rules', $this->data);
     }
     public function createRule()
     {
         $this->data['page_title'] = 'Create Commission Rule';
+        $this->data['rule_types'] = ['direct_sale','mlm_level_1','mlm_level_2','mlm_level_3','performance_bonus','team_bonus','royalty_pool'];
         return $this->render('admin/commission/create_rule', $this->data);
     }
     public function editRule($id)
     {
         $this->data['page_title'] = 'Edit Commission Rule';
+        try {
+            $this->data['rule'] = $this->db->fetch("SELECT * FROM telecaller_commission_rules WHERE id=?", [(int)$id]);
+            $this->data['rule_types'] = ['direct_sale','mlm_level_1','mlm_level_2','mlm_level_3','performance_bonus','team_bonus','royalty_pool'];
+        } catch (\Exception $e) {
+            $this->data['rule'] = null;
+        }
         return $this->render('admin/commission/edit_rule', $this->data);
     }
     public function calculations()
     {
         $this->data['page_title'] = 'Commission Calculations';
+        try {
+            $this->data['calculations'] = $this->db->fetchAll(
+                "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
+                 LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
+                 ORDER BY mcl.created_at DESC LIMIT 100"
+            );
+        } catch (\Exception $e) {
+            $this->data['calculations'] = [];
+        }
         return $this->render('admin/commission/calculations', $this->data);
     }
     public function payments()
     {
         $this->data['page_title'] = 'Commission Payments';
+        try {
+            $this->data['payouts'] = $this->db->fetchAll(
+                "SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl
+                 LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
+                 WHERE mcl.status='paid' ORDER BY mcl.payout_date DESC LIMIT 100"
+            );
+        } catch (\Exception $e) {
+            $this->data['payouts'] = [];
+        }
         return $this->render('admin/commission/payments', $this->data);
     }
     public function reports()
     {
         $this->data['page_title'] = 'Commission Reports';
+        try {
+            $this->data['summary'] = $this->db->fetch("
+                SELECT COALESCE(SUM(amount),0) as total_earned,
+                       COALESCE(SUM(CASE WHEN status='paid' THEN amount ELSE 0 END),0) as total_paid,
+                       COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END),0) as total_pending,
+                       COALESCE(SUM(CASE WHEN commission_type='direct_sale' THEN amount ELSE 0 END),0) as direct,
+                       COALESCE(SUM(CASE WHEN commission_type LIKE 'mlm_level_%' THEN amount ELSE 0 END),0) as team,
+                       COALESCE(SUM(CASE WHEN commission_type IN ('performance_bonus','team_bonus') THEN amount ELSE 0 END),0) as bonus
+                FROM mlm_commission_ledger
+            ");
+            $this->data['by_type'] = $this->db->fetchAll("
+                SELECT commission_type, COUNT(*) as count, COALESCE(SUM(amount),0) as total
+                FROM mlm_commission_ledger GROUP BY commission_type ORDER BY total DESC
+            ");
+        } catch (\Exception $e) {
+            $this->data['summary'] = ['total_earned'=>0,'total_paid'=>0,'total_pending'=>0,'direct'=>0,'team'=>0,'bonus'=>0];
+            $this->data['by_type'] = [];
+        }
         return $this->render('admin/commission/reports', $this->data);
     }
     public function payouts()
     {
-        $this->data['page_title'] = 'Commission Payouts';
+        try {
+            $this->data['page_title'] = 'Commission Payouts';
+
+            // Approved commissions ready for payout
+            $this->data['approved_commissions'] = $this->db->fetchAll("
+                SELECT mcl.*, u.name as associate_name, u.email as associate_email,
+                       u.bank_account, u.bank_name, u.ifsc_code
+                FROM mlm_commission_ledger mcl
+                JOIN users u ON mcl.associate_id = u.id
+                WHERE mcl.status = 'approved' AND (mcl.payout_date IS NULL OR mcl.payout_date = '')
+                ORDER BY mcl.approved_at ASC
+            ") ?: [];
+
+            // Payout history
+            $this->data['payout_history'] = $this->db->fetchAll("
+                SELECT mcl.*, u.name as associate_name, u.email as associate_email
+                FROM mlm_commission_ledger mcl
+                JOIN users u ON mcl.associate_id = u.id
+                WHERE mcl.status = 'paid' AND mcl.payout_date IS NOT NULL
+                ORDER BY mcl.payout_date DESC
+                LIMIT 20
+            ") ?: [];
+
+            // Stats
+            $this->data['stats'] = [
+                'approved_total' => array_sum(array_column($this->data['approved_commissions'], 'amount')),
+                'approved_count' => count($this->data['approved_commissions']),
+                'paid_total' => array_sum(array_column($this->data['payout_history'], 'amount')),
+                'paid_count' => count($this->data['payout_history']),
+            ];
+        } catch (\Throwable $e) {
+            $this->data['page_title'] = 'Commission Payouts';
+            $this->data['approved_commissions'] = [];
+            $this->data['payout_history'] = [];
+            $this->data['stats'] = ['approved_total' => 0, 'approved_count' => 0, 'paid_total' => 0, 'paid_count' => 0];
+        }
         return $this->render('admin/commission/payouts', $this->data);
     }
     public function commissionsList()

@@ -105,7 +105,7 @@ class LeadGenerationAgent extends BaseAgent {
                     [$score, $message, $details, $phone]
                 );
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error generating lead: " . $e->getMessage());
         }
     }

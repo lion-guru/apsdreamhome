@@ -46,7 +46,7 @@
                             <td><small class="text-muted"><?= ($prop['last_updated'] ?? 'Never') ?></small></td>
                             <td>
                                 <a href="<?= $base ?? BASE_URL ?>virtual-tour/<?= ($prop['id'] ?? '') ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
-                                <button class="btn btn-sm btn-outline-success" onclick="alert('Upload panorama for property #<?= ($prop['id'] ?? '') ?>')"><i class="fas fa-upload"></i></button>
+                                <a href="<?= $base ?? BASE_URL ?>admin/properties/<?= (int)($prop['id'] ?? 0) ?>" class="btn btn-sm btn-outline-success" title="Edit Property (upload panoramas)"><i class="fas fa-upload"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

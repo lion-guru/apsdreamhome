@@ -1,4 +1,4 @@
-
+﻿
 
 <div class="container-fluid">
     <div class="row">
@@ -6,13 +6,13 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-map-marked-alt"></i> Location Management</h2>
                 <div>
-                    <a href="/admin/locations/states/create" class="btn btn-primary">
+                    <a href="<?= BASE_URL ?>/admin/locations/states/create" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Add State
                     </a>
-                    <a href="/admin/locations/districts" class="btn btn-info">
+                    <a href="<?= BASE_URL ?>/admin/locations/districts" class="btn btn-info">
                         <i class="fas fa-city"></i> Districts
                     </a>
-                    <a href="/admin/locations/colonies" class="btn btn-success">
+                    <a href="<?= BASE_URL ?>/admin/locations/colonies" class="btn btn-success">
                         <i class="fas fa-home"></i> Colonies
                     </a>
                 </div>
@@ -75,6 +75,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php if (empty($states ?? [])): ?>
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <i class="fas fa-map-marked-alt fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                        <h5 class="text-muted">No states found</h5>
+                                        <p class="text-muted mb-3">Add states to start building your location hierarchy.</p>
+                                    </td>
+                                </tr>
+                                <?php else: ?>
                                 <?php foreach ($states as $state): ?>
                                 <tr>
                                     <td><?php echo $state['id']; ?></td>
@@ -85,7 +94,7 @@
                                         <span class="badge bg-secondary"><?php echo htmlspecialchars($state['code']); ?></span>
                                     </td>
                                     <td>
-                                        <a href="/admin/locations/districts?state_id=<?php echo $state['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="<?= BASE_URL ?>/admin/locations/districts?state_id=<?php echo $state['id']; ?>" class="btn btn-sm btn-outline-primary">
                                             <?php echo $state['district_count']; ?> Districts
                                         </a>
                                     </td>
@@ -96,19 +105,20 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="/admin/locations/districts?state_id=<?php echo $state['id']; ?>" class="btn btn-outline-info" title="View Districts">
+                                            <a href="<?= BASE_URL ?>/admin/locations/districts?state_id=<?php echo $state['id']; ?>" class="btn btn-outline-info" title="View Districts">
                                                 <i class="fas fa-city"></i>
                                             </a>
-                                            <a href="/admin/locations/states/edit/<?php echo $state['id']; ?>" class="btn btn-outline-primary" title="Edit">
+                                            <a href="<?= BASE_URL ?>/admin/locations/states/edit/<?php echo $state['id']; ?>" class="btn btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="/admin/locations/states/delete/<?php echo $state['id']; ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                                            <a href="<?= BASE_URL ?>/admin/locations/states/delete/<?php echo $state['id']; ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>

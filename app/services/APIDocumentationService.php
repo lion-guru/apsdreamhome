@@ -43,7 +43,7 @@ class APIDocumentationService
             'info' => $this->apiInfo,
             'servers' => [
                 ['url' => 'https://apsdreamhome.com/api', 'description' => 'Production Server'],
-                ['url' => (defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome') . '/api', 'description' => 'Local Development']
+                ['url' => (rtrim(BASE_URL, '/')) . '/api', 'description' => 'Local Development']
             ],
             'paths' => $this->generatePaths(),
             'components' => [

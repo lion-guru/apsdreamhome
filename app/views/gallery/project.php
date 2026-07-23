@@ -37,7 +37,7 @@ function handleError($message, $file = null, $line = null) {
 function safeExecute($callback, $errorMsg = 'Operation failed') {
     try {
         return $callback();
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         handleError($errorMsg . ': ' . $e->getMessage(), $e->getFile(), $e->getLine());
         return null;
     }

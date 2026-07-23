@@ -8,7 +8,7 @@
 // Get current user info from session
 $admin_name = $admin_name ?? ($_SESSION['admin_name'] ?? 'Admin');
 $admin_role = $admin_role ?? ($_SESSION['admin_role'] ?? 'admin');
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 // Get current page for active state
 $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
@@ -21,9 +21,9 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <title><?php echo htmlspecialchars($page_title ?? 'APS Dream Home Admin'); ?></title>
-    <link rel="icon" type="image/png" href="/apsdreamhome/assets/img/favicon.png">
+    <link rel="icon" type="image/png" href="<?php echo $base; ?>/assets/img/favicon.png">
     <!-- Admin CSS -->
-    <link rel="stylesheet" href="/apsdreamhome/assets/admin/css/admin.css">
+    <link rel="stylesheet" href="<?php echo $base; ?>/assets/admin/css/admin.css">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -236,8 +236,8 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Admin JS - FIXED PATH -->
-    <script src="/apsdreamhome/assets/admin/js/admin.js"></script>
-    <script src="/apsdreamhome/assets/js/notification-widget.js"></script>
+    <script src="<?php echo $base; ?>/assets/admin/js/admin.js"></script>
+    <script src="<?php echo $base; ?>/assets/js/notification-widget.js"></script>
 
     <!-- Admin Form Enhancer (SmartFormAutocomplete + validation) -->
     <script src="<?php echo BASE_URL; ?>/assets/admin/js/admin-form-enhancer.js"></script>

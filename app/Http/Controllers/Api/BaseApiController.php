@@ -31,7 +31,7 @@ class BaseApiController extends BaseController
         \header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
         \header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, X-API-Key");
 
-        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
             \header("HTTP/1.1 200 OK");
             exit();
         }
@@ -132,14 +132,53 @@ class BaseApiController extends BaseController
 
     public function model($modelName)
     {
-        return $this->models[$modelName] ?? null;
+        if (!isset($this->models[$modelName])) {
+            $class = "App\\Models\\{$modelName}";
+            if (!class_exists($class)) {
+                throw new \RuntimeException("Model not found: {$class}");
+            }
+            $this->models[$modelName] = new $class();
+        }
+        return $this->models[$modelName];
+    }
+
+    /**
+     * Get merged request input (query + parsed body + raw JSON fallback).
+     * The framework's createFromGlobals() may fail to parse the JSON body
+     * when php://input is consumed upstream, so fall back to decoding it directly.
+     */
+    protected function getJsonInput()
+    {
+        $input = $this->request()->request->all();
+        $raw = file_get_contents('php://input');
+        if (!empty($raw)) {
+            $decoded = json_decode($raw, true);
+            if (is_array($decoded)) {
+                $input = array_merge($decoded, $input);
+            }
+        }
+        return $input;
+    }
+
+    /**
+     * Get a single request input value with JSON fallback.
+     */
+    protected function inputWithJson($key, $default = null)
+    {
+        $all = $this->getJsonInput();
+        return $all[$key] ?? $default;
     }
 
     public function render($view, $data = [], $layout = null, $echo = true)
     {
-        // Define BASE_URL if not defined
+        // Define BASE_URL if not defined — auto-detect from request
         if (!defined('BASE_URL')) {
-            define('BASE_URL', 'http://localhost/apsdreamhome');
+            $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+            $scheme = $isHttps ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+            $basePath = preg_replace('#/public$#', '', str_replace('\\', '/', $scriptDir));
+            define('BASE_URL', rtrim("$scheme://$host$basePath", '/'));
         }
         
         $data = array_merge($this->data, $data);
@@ -152,7 +191,7 @@ class BaseApiController extends BaseController
         $viewPath = $basePath . ltrim(str_replace('\\', '/', $view), '/') . '.php';
 
         if (!file_exists($viewPath)) {
-            throw new Exception("View not found: {$viewPath}");
+            throw new \Exception("View not found: {$viewPath}");
         }
 
         ob_start();
@@ -189,9 +228,10 @@ class BaseApiController extends BaseController
         return $content;
     }
 
-    public function renderError($message)
+    public function renderError($title, $message = null, $code = 500)
     {
-        return $this->notFound($message);
+        $msg = $message ?? $title;
+        return $this->notFound($msg);
     }
 
     public function getBaseUrl()

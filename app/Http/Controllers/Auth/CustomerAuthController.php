@@ -82,10 +82,21 @@ class CustomerAuthController extends BaseController
             exit;
         }
 
-        // ── Progressive throttle delay ──
+        // ── Progressive throttle delay (non-blocking) ──
         $attempts = $this->getRecentAttempts($db, $email);
         if ($attempts > 0 && $attempts <= count(self::THROTTLE_DELAY)) {
-            sleep(self::THROTTLE_DELAY[$attempts - 1]);
+            $requiredDelay = self::THROTTLE_DELAY[$attempts - 1];
+            $lastAttempt = (int)($db->fetchOne(
+                "SELECT MAX(created_at) as last FROM login_attempts WHERE identifier = ? AND success = 0",
+                [$email]
+            )['last'] ?? 0);
+            $elapsed = time() - strtotime($lastAttempt);
+            if ($elapsed < $requiredDelay) {
+                $remaining = $requiredDelay - $elapsed;
+                $_SESSION['login_error'] = "Too many attempts. Please wait {$remaining} seconds.";
+                header('Location: ' . BASE_URL . '/login');
+                exit;
+            }
         }
 
         try {

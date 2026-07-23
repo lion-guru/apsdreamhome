@@ -143,7 +143,7 @@ class MarketingContentGenerator
     private function templateBlog(string $topic, string $lang): string
     {
         if ($lang === 'hi') {
-            return "आज हम बात करेंगे: $topic। गोरखपुर में रियल एस्टेट निवेश का सही समय है। "
+            return "आज हम बात करेंगे: {$topic}। गोरखपुर में रियल एस्टेट निवेश का सही समय है। "
                 . "स्पष्ट टाइटल, बेहतरीन लोकेशन और आसान भुगतान विकल्प APS Dream Home के साथ उपलब्ध हैं। "
                 . "अधिक जानकारी के लिए हमसे संपर्क करें।";
         }

@@ -33,7 +33,7 @@ class EmployeeDashboardController extends BaseController
             @session_start();
         }
 
-        $this->employeeId = $_SESSION['employee_id'] ?? null;
+        $this->employeeId = $_SESSION['employee_id'] ?? $_SESSION['user_id'] ?? null;
         $this->employeeRole = $_SESSION['employee_role'] ?? null;
 
         // Redirect if not logged in
@@ -78,7 +78,7 @@ class EmployeeDashboardController extends BaseController
                 'role_specific_data' => $this->getRoleSpecificData(),
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleError($e->getMessage());
         }
     }
@@ -638,7 +638,7 @@ class EmployeeDashboardController extends BaseController
             
             return ['success' => false, 'message' => 'Failed to update task'];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -671,7 +671,7 @@ class EmployeeDashboardController extends BaseController
             $socialShares    = 0;
             $campaigns       = $this->db->fetchAll("SELECT name, type, status, leads_count FROM campaigns ORDER BY created_at DESC LIMIT 5");
             $leadSources     = $this->db->fetchAll("SELECT source, COUNT(*) as count FROM leads GROUP BY source ORDER BY count DESC LIMIT 5");
-        } catch (Exception $e) { error_log('Marketing dashboard error: ' . $e->getMessage()); $activeCampaigns = $totalLeads = $blogPosts = $socialShares = 0; $campaigns = $leadSources = []; }
+        } catch (\Exception $e) { error_log('Marketing dashboard error: ' . $e->getMessage()); $activeCampaigns = $totalLeads = $blogPosts = $socialShares = 0; $campaigns = $leadSources = []; }
         $this->render('employee/marketing_dashboard', compact('activeCampaigns', 'totalLeads', 'blogPosts', 'socialShares', 'campaigns', 'leadSources'));
     }
 
@@ -688,7 +688,7 @@ class EmployeeDashboardController extends BaseController
             $taxDeadlines      = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM tax_reminders WHERE due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)")['c'] ?? 0);
             $recentTransactions = $this->db->fetchAll("SELECT DATE(created_at) as date, description, amount, status FROM payment_transactions ORDER BY created_at DESC LIMIT 5");
             $budgetVariance    = $this->db->fetchAll("SELECT department, (allocated - spent) as variance FROM department_budgets WHERE year = YEAR(CURDATE()) LIMIT 5");
-        } catch (Exception $e) { error_log('Finance dashboard error: ' . $e->getMessage()); $totalIncome = $totalExpenses = $pendingInvoices = $taxDeadlines = 0; $recentTransactions = $budgetVariance = []; }
+        } catch (\Exception $e) { error_log('Finance dashboard error: ' . $e->getMessage()); $totalIncome = $totalExpenses = $pendingInvoices = $taxDeadlines = 0; $recentTransactions = $budgetVariance = []; }
         $this->render('employee/finance_dashboard', compact('totalIncome', 'totalExpenses', 'pendingInvoices', 'taxDeadlines', 'recentTransactions', 'budgetVariance'));
     }
 
@@ -711,7 +711,7 @@ class EmployeeDashboardController extends BaseController
                 ['component' => 'WebSocket', 'status' => 'ok'],
                 ['component' => 'Storage', 'status' => 'ok'],
             ];
-        } catch (Exception $e) { error_log('IT dashboard error: ' . $e->getMessage()); $systemUptime = '99.9%'; $openTickets = $securityAlerts = 0; $dbSize = '0 MB'; $deployments = $systemHealth = []; }
+        } catch (\Exception $e) { error_log('IT dashboard error: ' . $e->getMessage()); $systemUptime = '99.9%'; $openTickets = $securityAlerts = 0; $dbSize = '0 MB'; $deployments = $systemHealth = []; }
         $this->render('employee/it_dashboard', compact('systemUptime', 'openTickets', 'securityAlerts', 'dbSize', 'deployments', 'systemHealth'));
     }
 
@@ -728,7 +728,7 @@ class EmployeeDashboardController extends BaseController
             $siteVisitsToday = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM visits WHERE DATE(visit_date) = CURDATE()")['c'] ?? 0);
             $pendingOperations = $this->db->fetchAll("SELECT title, assigned_to, DATE(due_date) as due_date, priority FROM daily_operations_log WHERE status = 'pending' ORDER BY due_date ASC LIMIT 5");
             $projectStatus = $this->db->fetchAll("SELECT name as label, status, COUNT(*) as count FROM projects GROUP BY status LIMIT 5");
-        } catch (Exception $e) { error_log('Ops dashboard error: ' . $e->getMessage()); $activeProjects = $pendingApprovals = $activeVendors = $siteVisitsToday = 0; $pendingOperations = $projectStatus = []; }
+        } catch (\Exception $e) { error_log('Ops dashboard error: ' . $e->getMessage()); $activeProjects = $pendingApprovals = $activeVendors = $siteVisitsToday = 0; $pendingOperations = $projectStatus = []; }
         $this->render('employee/ops_dashboard', compact('activeProjects', 'pendingApprovals', 'activeVendors', 'siteVisitsToday', 'pendingOperations', 'projectStatus'));
     }
 
@@ -747,7 +747,7 @@ class EmployeeDashboardController extends BaseController
             $conversionRate = $totalLeads > 0 ? round(($closedDeals / $totalLeads) * 100, 1) : 0;
             $deals = $this->db->fetchAll("SELECT d.*, l.name as customer_name, p.title as property_name FROM deals d LEFT JOIN leads l ON d.lead_id = l.id LEFT JOIN properties p ON d.property_id = p.id WHERE d.stage NOT IN ('closed_won','closed_lost') ORDER BY d.deal_value DESC LIMIT 5");
             $salesByColony = $this->db->fetchAll("SELECT c.name as colony, COALESCE(SUM(d.deal_value),0) as total FROM deals d LEFT JOIN plots pl ON d.property_id = pl.id LEFT JOIN colonies c ON pl.colony_id = c.id WHERE d.stage = 'closed_won' GROUP BY c.id, c.name ORDER BY total DESC LIMIT 5");
-        } catch (Exception $e) { error_log('Sales dashboard error: ' . $e->getMessage()); $totalSales = $activeDeals = $pendingFollowups = $conversionRate = 0; $deals = $salesByColony = []; }
+        } catch (\Exception $e) { error_log('Sales dashboard error: ' . $e->getMessage()); $totalSales = $activeDeals = $pendingFollowups = $conversionRate = 0; $deals = $salesByColony = []; }
         $this->render('employee/sales_dashboard', compact('totalSales', 'activeDeals', 'pendingFollowups', 'conversionRate', 'deals', 'salesByColony'));
     }
 }

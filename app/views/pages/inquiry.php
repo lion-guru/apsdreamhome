@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
@@ -13,7 +13,7 @@
                 <h1 class="h3 mb-4"><?= __('inquiry_heading') ?></h1>
                 <div class="card aps-cp-card">
                     <div class="card-body aps-cp-card-body">
-                        <form method="POST" action="/inquiry">
+                        <form method="POST" action="<?= BASE_URL ?>/inquiry">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row">
                                 <div class="col-md-6">

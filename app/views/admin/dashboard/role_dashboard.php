@@ -1,5 +1,5 @@
 <?php
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 $role = $role ?? 'admin';
 $userName = $userName ?? ($_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? 'User');
 $stats = $stats ?? [];

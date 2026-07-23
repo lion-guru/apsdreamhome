@@ -551,7 +551,7 @@ class CampaignService
 
     private function unsubscribeUrl(array $user, string $channel): string
     {
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
         $uid = (int) ($user['id'] ?? 0);
         return $base . '/unsubscribe?uid=' . $uid . '&channel=' . urlencode($channel);
     }

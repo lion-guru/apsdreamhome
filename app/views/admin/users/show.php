@@ -1,6 +1,6 @@
 <?php
 $user = $user ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 $activeTab = $_GET['tab'] ?? 'overview';
 $csrf = $_SESSION['csrf_token'] ?? '';
 

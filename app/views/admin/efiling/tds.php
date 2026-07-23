@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'TDS E-Filing';
 ob_start();
 ?>
@@ -7,7 +7,7 @@ ob_start();
         <h4 class="mb-1"><i class="fas fa-file-invoice-dollar me-2 text-danger"></i><?= htmlspecialchars($page_title) ?></h4>
         <span class="text-muted">FY <?= htmlspecialchars($fy) ?> | Quarter <?= htmlspecialchars($quarter) ?></span>
     </div>
-    <a href="/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
+    <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
 
 <?php if (!empty($_SESSION['flash_success'])): ?>
@@ -75,7 +75,7 @@ ob_start();
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-cogs me-2"></i>Generate Form 26Q</h6></div>
     <div class="card-body aps-cp-card-body">
-        <form method="POST" action="/admin/efiling/tds/generate" class="row g-2 align-items-end">
+        <form method="POST" action="<?= BASE_URL ?>/admin/efiling/tds/generate" class="row g-2 align-items-end">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="col-auto">
                 <select name="fy" class="form-select form-select-sm">
@@ -104,7 +104,7 @@ ob_start();
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom d-flex justify-content-between">
         <h6 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Filing Submissions</h6>
-        <a href="/admin/efiling/submissions?type=tds_return&fy=<?= urlencode($fy) ?>" class="btn btn-sm btn-outline-primary">View All</a>
+        <a href="<?= BASE_URL ?>/admin/efiling/submissions?type=tds_return&fy=<?= urlencode($fy) ?>" class="btn btn-sm btn-outline-primary">View All</a>
     </div>
     <div class="card-body p-0">
         <?php if (empty($submissions)): ?>
@@ -122,7 +122,7 @@ ob_start();
                             <td>₹<?= number_format($s['total_amount'], 0) ?></td>
                             <td><span class="badge bg-<?= $s['status'] === 'accepted' ? 'success' : ($s['status'] === 'rejected' ? 'danger' : ($s['status'] === 'submitted' ? 'primary' : 'secondary')) ?>"><?= ucfirst($s['status']) ?></span></td>
                             <td class="small"><?= htmlspecialchars($s['portal_reference'] ?? '-') ?></td>
-                            <td><a href="/admin/efiling/submissions/<?= $s['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a></td>
+                            <td><a href="<?= BASE_URL ?>/admin/efiling/submissions/<?= $s['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

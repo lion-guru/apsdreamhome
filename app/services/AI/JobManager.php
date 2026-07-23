@@ -92,7 +92,7 @@ class JobManager {
                 $this->handleJobFailure($jobId, $job['attempts'], $result['error'] ?? 'Unknown AI error');
                 return false;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleJobFailure($jobId, $job['attempts'], $e->getMessage());
             return false;
         }

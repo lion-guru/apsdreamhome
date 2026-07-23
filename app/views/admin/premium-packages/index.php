@@ -9,7 +9,16 @@
         <thead><tr><th>ID</th><th>Name</th><th>Badge</th><th>Price</th><th>Duration</th><th>Priority</th><th>Active</th><th>Purchases</th><th>Actions</th></tr></thead>
         <tbody>
           <?php if (empty($packages)): ?>
-            <tr><td colspan="9" class="text-center text-muted py-4">No packages defined yet</td></tr>
+            <tr>
+                <td colspan="9" class="text-center py-5">
+                    <i class="fas fa-crown fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                    <h5 class="text-muted">No packages defined yet</h5>
+                    <p class="text-muted mb-3">Create premium membership packages to offer exclusive benefits and priority listing access to customers.</p>
+                    <a href="<?= BASE_URL ?>/admin/premium-packages/create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Create Package
+                    </a>
+                </td>
+            </tr>
           <?php else: ?>
             <?php foreach ($packages as $pkg): ?>
               <?php $features = json_decode($pkg['features'] ?? '[]', true); ?>

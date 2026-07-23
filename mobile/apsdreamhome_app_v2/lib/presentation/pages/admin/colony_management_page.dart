@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../data/services/colony_service.dart';
@@ -549,12 +550,20 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
   }
 
   void _showEditColonyDialog(ColonyModel colony) {
+    final url = Uri.parse(
+      'http://localhost/apsdreamhome/admin/locations/colonies/${colony.id}/edit',
+    );
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          'Edit "${colony.name}" — Use the web admin panel for full editing',
+        content: Text('Edit "${colony.name}" on web admin panel'),
+        action: SnackBarAction(
+          label: 'Open Web',
+          onPressed: () async {
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+            }
+          },
         ),
-        action: SnackBarAction(label: 'Open Web', onPressed: () {}),
       ),
     );
   }

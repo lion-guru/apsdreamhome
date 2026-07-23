@@ -4,7 +4,7 @@
     </div>
     <div class="card shadow mb-4">
         <div class="card-body aps-cp-card-body">
-            <p class="text-muted">Role management module - configure via <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>/admin/menu-permissions">Menu Permissions</a>.</p>
+            <p class="text-muted">Role management module - configure via <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'); ?>/admin/menu-permissions">Menu Permissions</a>.</p>
         </div>
     </div>
 </div>

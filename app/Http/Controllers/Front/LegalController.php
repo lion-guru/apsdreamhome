@@ -145,7 +145,7 @@ class LegalController extends PageController
             'page_description' => 'Legal services for property',
             'pageContent' => $pageContent,
         ];
-        $this->render('pages/legal_services', $data);
+        $this->render('pages/legal/services', $data);
     }
 
     public function documents()
@@ -156,15 +156,28 @@ class LegalController extends PageController
             'page_description' => 'Legal documents and templates',
             'pageContent' => $pageContent,
         ];
-        $this->render('pages/legal_documents', $data);
+        $this->render('pages/legal/documents', $data);
     }
 
     public function index()
     {
+        $legal_docs = [];
+        try {
+            $stmt = $this->db->query("SELECT * FROM legal_documents WHERE status = 'active' ORDER BY created_at DESC");
+            $legal_docs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("Legal index error: " . $e->getMessage());
+        }
+
         $data = [
             'page_title' => 'Legal - APS Dream Home',
             'page_description' => 'Legal information and documents',
+            'legal_docs' => $legal_docs,
+            'breadcrumbs' => [
+                ['title' => 'Home', 'url' => BASE_URL],
+                ['title' => 'Legal', 'url' => ''],
+            ],
         ];
-        $this->render('pages/legal', $data);
+        $this->render('pages/legal/legal', $data);
     }
 }

@@ -61,7 +61,7 @@ class EmailService
             // HTML email format
             $this->mailer->isHTML(true);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("PHPMailer initialization failed: " . $e->getMessage());
         }
     }
@@ -394,7 +394,7 @@ class EmailService
             
             return $result;
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Email send failed: " . $e->getMessage());
             $this->logEmail($to, $subject, $body, 'failed', $e->getMessage());
             return false;

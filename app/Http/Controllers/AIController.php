@@ -68,15 +68,21 @@ class AIController extends AdminController
             return;
         }
 
-        // Forward to fixed backend
-        $backend_url = __DIR__ . '/../../ai_backend_fixed.php';
-
-        if (file_exists($backend_url)) {
-            // Include the backend file
-            $_POST = $input;
-            include $backend_url;
-        } else {
-            echo json_encode(['error' => 'AI backend not found']);
+        // Use AIGateway for chat processing
+        try {
+            if (class_exists('App\Services\AIGateway')) {
+                $gateway = \App\Services\AIGateway::getInstance();
+                $message = $input['message'] ?? $input['query'] ?? '';
+                $response = $gateway->processRequest('chat', $message, [
+                    'user_id' => $this->getUserId(),
+                    'context' => $input['context'] ?? 'general',
+                ]);
+                echo json_encode(['success' => true, 'response' => $response['response'] ?? $response]);
+            } else {
+                echo json_encode(['error' => 'AI service not configured']);
+            }
+        } catch (\Throwable $e) {
+            echo json_encode(['error' => 'AI processing failed']);
         }
     }
 
@@ -137,14 +143,20 @@ class AIController extends AdminController
         $input['created_by'] = $this->getUserId();
         $input['user_role'] = $this->getUserRole();
 
-        // Forward to lead management
-        $lead_file = __DIR__ . '/../../save_lead.php';
-
-        if (file_exists($lead_file)) {
-            $_POST = $input;
-            include $lead_file;
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Lead management not found']);
+        // Save lead to database
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("INSERT INTO leads (name, email, phone, message, source, created_by, created_at) VALUES (?, ?, ?, ?, 'ai_chat', ?, NOW())");
+            $stmt->execute([
+                $input['name'] ?? '',
+                $input['email'] ?? '',
+                $input['phone'] ?? '',
+                $input['message'] ?? '',
+                $input['created_by']
+            ]);
+            echo json_encode(['success' => true, 'message' => 'Lead saved successfully']);
+        } catch (\Throwable $e) {
+            echo json_encode(['success' => false, 'error' => 'Failed to save lead']);
         }
     }
 
@@ -155,11 +167,11 @@ class AIController extends AdminController
     {
         header('Content-Type: application/json');
 
-        $lead_file = __DIR__ . '/../../get_lead_count.php';
-
-        if (file_exists($lead_file)) {
-            include $lead_file;
-        } else {
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $count = $db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL")->fetchColumn();
+            echo json_encode(['success' => true, 'count' => (int)$count]);
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'count' => 0]);
         }
     }
@@ -209,7 +221,7 @@ class AIController extends AdminController
 
         // Call backend
         $ch = curl_init();
-        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $baseUrl = rtrim(BASE_URL, '/');
         curl_setopt($ch, CURLOPT_URL, $baseUrl . '/ai_backend_fixed.php');
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($test_data));

@@ -99,7 +99,7 @@ class CareerController extends AdminController
             ];
 
             return $this->render('admin/careers/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Career Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load careers');
             return $this->redirect('admin/dashboard');
@@ -120,7 +120,7 @@ class CareerController extends AdminController
             ];
 
             return $this->render('admin/careers/create', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Career Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load career form');
             return $this->redirect('admin/careers');
@@ -191,7 +191,7 @@ class CareerController extends AdminController
             }
 
             return $this->jsonError('Failed to create career', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Career Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create career', 500);
         }
@@ -247,7 +247,7 @@ class CareerController extends AdminController
             ];
 
             return $this->render('admin/careers/show', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Career Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load career details');
             return $this->redirect('admin/careers');
@@ -286,7 +286,7 @@ class CareerController extends AdminController
             ];
 
             return $this->render('admin/careers/edit', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Career Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load career form');
             return $this->redirect('admin/careers');
@@ -405,7 +405,7 @@ class CareerController extends AdminController
             }
 
             return $this->jsonError('Failed to update career', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Career Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update career', 500);
         }
@@ -462,11 +462,11 @@ class CareerController extends AdminController
                     'success' => true,
                     'message' => 'Career deleted successfully'
                 ]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Career Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete career', 500);
         }
@@ -549,7 +549,7 @@ class CareerController extends AdminController
             ];
 
             return $this->render('admin/careers/applicants', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Applicants error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load applicants');
             return $this->redirect('admin/careers');
@@ -598,7 +598,7 @@ class CareerController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Career Stats error: " . $e->getMessage());
             http_response_code(200);
             header('Content-Type: application/json');

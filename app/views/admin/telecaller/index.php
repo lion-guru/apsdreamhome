@@ -152,7 +152,14 @@ $telecallerFilter = $telecallerFilter ?? '';
                     <tbody>
                         <?php if (empty($tasks)): ?>
                             <tr>
-                                <td colspan="11" class="text-center text-muted py-4">No daily tasks found</td>
+                                <td colspan="11" class="text-center py-5">
+                                    <i class="fas fa-phone-alt fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <h5 class="text-muted">No daily tasks found</h5>
+                                    <p class="text-muted mb-3">Assign daily calling tasks to your telecallers to track lead outreach, follow-ups, and conversions.</p>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                                        <i class="fas fa-plus me-1"></i> Add Daily Task
+                                    </button>
+                                </td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($tasks as $t): ?>

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Task Details';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'status' => '', 'last_run' => '', 'next_run' => '', 'schedule' => '', 'enabled' => false];
 ?>
 <div class="container-fluid">

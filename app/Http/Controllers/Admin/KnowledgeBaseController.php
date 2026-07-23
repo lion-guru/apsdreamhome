@@ -77,7 +77,7 @@ class KnowledgeBaseController extends AdminController
             ]);
 
             $_SESSION['success'] = 'Article added successfully!';
-            header('Location: ' . BASE_URL . '/admin/knowledge-base');
+            header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
             exit;
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error adding article: ' . $e->getMessage();
@@ -106,12 +106,12 @@ class KnowledgeBaseController extends AdminController
 
             if (!$article) {
                 $_SESSION['error'] = 'Article not found';
-                header('Location: ' . BASE_URL . '/admin/knowledge-base');
+                header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
                 exit;
             }
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error loading article';
-            header('Location: ' . BASE_URL . '/admin/knowledge-base');
+            header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
             exit;
         }
 
@@ -138,12 +138,12 @@ class KnowledgeBaseController extends AdminController
 
             if (!$article) {
                 $_SESSION['error'] = 'Article not found';
-                header('Location: ' . BASE_URL . '/admin/knowledge-base');
+                header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
                 exit;
             }
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error loading article';
-            header('Location: ' . BASE_URL . '/admin/knowledge-base');
+            header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
             exit;
         }
 
@@ -180,7 +180,7 @@ class KnowledgeBaseController extends AdminController
             ]);
 
             $_SESSION['success'] = 'Article updated successfully!';
-            header('Location: ' . BASE_URL . '/admin/knowledge-base');
+            header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
             exit;
         } catch (\Exception $e) {
             $_SESSION['error'] = 'Error updating article: ' . $e->getMessage();
@@ -207,7 +207,7 @@ class KnowledgeBaseController extends AdminController
             $_SESSION['error'] = 'Error deleting article: ' . $e->getMessage();
         }
 
-        header('Location: ' . BASE_URL . '/admin/knowledge-base');
+        header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
         exit;
     }
 }

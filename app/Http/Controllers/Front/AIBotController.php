@@ -160,7 +160,7 @@ class AIBotController extends BaseController
             $existing = $stmt->fetch();
 
             if (!$existing) {
-                $stmt = $this->db->prepare("INSERT INTO leads (name, phone, message, source, source_detail, status, created_at) VALUES (?, ?, ?, 'whatsapp', 'whatsapp_bot', 'new', NOW())");
+                $stmt = $this->db->prepare("INSERT INTO leads (name, phone, message, source, status, created_at) VALUES (?, ?, ?, 'whatsapp', 'new', NOW())");
                 $stmt->execute(['WhatsApp User', $phone, $message]);
 
                 $leadId = (int)$this->db->lastInsertId();
@@ -204,7 +204,7 @@ class AIBotController extends BaseController
     public function recommend()
     {
         header('Content-Type: application/json');
-        $userId = (int)($_SESSION['user_id'] ?? $_GET['user_id'] ?? 0);
+        $userId = (int)($_SESSION['user_id'] ?? 0);
         $limit = (int)($_GET['limit'] ?? 10);
 
         if (!$userId) { echo json_encode(['error' => 'login required']); exit; }

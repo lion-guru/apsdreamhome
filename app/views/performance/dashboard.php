@@ -148,7 +148,7 @@ $metrics = $metrics ?? [];
                     <table class="table table-sm mb-0">
                         <tbody>
                             <tr><td>PHP Version</td><td><?= phpversion() ?></td></tr>
-                            <tr><td>Server Software</td><td><?= $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown' ?></td></tr>
+                            <tr><td>Server Software</td><td><?= htmlspecialchars($_SERVER['SERVER_SOFTWARE'] ?? 'Unknown', ENT_QUOTES, 'UTF-8') ?></td></tr>
                             <tr><td>OS</td><td><?= php_uname('s') . ' ' . php_uname('r') ?></td></tr>
                             <tr><td>Memory Limit</td><td><?= ini_get('memory_limit') ?></td></tr>
                             <tr><td>Max Execution Time</td><td><?= ini_get('max_execution_time') ?>s</td></tr>

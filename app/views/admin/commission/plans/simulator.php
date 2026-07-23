@@ -42,7 +42,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
             <div class="row mb-3">
                 <div class="col-md-2">
                     <label class="cp-label">Sale Amount (₹)</label>
-                    <input type="number" name="sale_amount" class="cp-input" value="<?= $_POST['sale_amount'] ?? 1500000 ?>" step="10000" min="0">
+                    <input type="number" name="sale_amount" class="cp-input" value="<?= htmlspecialchars($_POST['sale_amount'] ?? 1500000, ENT_QUOTES, 'UTF-8') ?>" step="10000" min="0">
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Plan A</label>

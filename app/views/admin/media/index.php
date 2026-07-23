@@ -3,7 +3,7 @@ $media = $media ?? [];
 $page = $page ?? 1;
 $total = $total ?? 0;
 $page_title = $page_title ?? 'Media Library';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -12,9 +12,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <p class="text-muted mb-0">Manage all media files</p>
             </div>
             <div>
-                <button class="btn btn-primary me-2" onclick="showToast('Upload feature coming soon', 'info')">
+                <a href="<?php echo $base; ?>/admin/media/create" class="btn btn-primary me-2">
                     <i class="fas fa-upload me-2"></i>Upload New
-                </button>
+                </a>
                 <a href="<?php echo $base; ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>
             </div>
         </div>
@@ -68,9 +68,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="text-center py-5">
                         <i class="fas fa-images fa-3x text-muted mb-3"></i>
                         <p class="text-muted">No media files found</p>
-                        <button class="btn btn-primary" onclick="showToast('Upload feature coming soon', 'info')">
+                        <a href="<?php echo $base; ?>/admin/media/create" class="btn btn-primary">
                             <i class="fas fa-upload me-2"></i>Upload First File
-                        </button>
+                        </a>
                     </div>
                 <?php endif; ?>
             </div>

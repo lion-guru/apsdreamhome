@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Storage Dashboard';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $storage_stats = $storage_stats ?? ['used_space' => 0, 'total_space' => 0, 'file_count' => 0, 'by_category' => [], 'used_percent' => 0];
 ?>
 <div class="container-fluid">

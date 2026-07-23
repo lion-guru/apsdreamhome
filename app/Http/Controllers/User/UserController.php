@@ -40,7 +40,7 @@ class UserController extends BaseController
             ];
             
             $this->render('user/dashboard', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error loading user dashboard', $e->getMessage());
         }
     }
@@ -60,7 +60,7 @@ class UserController extends BaseController
             ];
             
             $this->render('user/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error loading users', $e->getMessage());
         }
     }
@@ -114,7 +114,7 @@ class UserController extends BaseController
                     throw new Exception('Failed to create user');
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error creating user', $e->getMessage());
         }
     }
@@ -140,7 +140,7 @@ class UserController extends BaseController
             ];
             
             $this->render('user/edit', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error loading user', $e->getMessage());
         }
     }
@@ -174,7 +174,7 @@ class UserController extends BaseController
                     throw new Exception('Failed to update user');
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error updating user', $e->getMessage());
         }
     }
@@ -193,7 +193,7 @@ class UserController extends BaseController
             } else {
                 throw new Exception('Failed to delete user');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error deleting user', $e->getMessage());
         }
     }
@@ -219,7 +219,7 @@ class UserController extends BaseController
             ];
             
             $this->render('user/show', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error loading user details', $e->getMessage());
         }
     }
@@ -245,7 +245,7 @@ class UserController extends BaseController
             ];
             
             $this->render('user/profile', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error loading user profile', $e->getMessage());
         }
     }
@@ -276,7 +276,7 @@ class UserController extends BaseController
                     throw new Exception('Failed to update user profile');
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error updating user profile', $e->getMessage());
         }
     }
@@ -301,7 +301,7 @@ class UserController extends BaseController
             ];
             
             $this->render('user/change-password', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error loading password change form', $e->getMessage());
         }
     }
@@ -334,7 +334,7 @@ class UserController extends BaseController
                     throw new Exception('Failed to update password');
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error updating password', $e->getMessage());
         }
     }
@@ -357,7 +357,7 @@ class UserController extends BaseController
                     throw new Exception('Failed to update user status');
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error updating user status', $e->getMessage());
         }
     }
@@ -378,7 +378,7 @@ class UserController extends BaseController
             ];
             
             $this->render('user/by-role', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->renderError('Error loading users by role', $e->getMessage());
         }
     }

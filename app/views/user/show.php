@@ -5,7 +5,7 @@
 $user = $user ?? [];
 $preferences = $preferences ?? [];
 $page_title = $page_title ?? 'User Details - APS Dream Home';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 
     <div class="container py-4">

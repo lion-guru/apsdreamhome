@@ -1,0 +1,1171 @@
+{
+    "ok": [
+        {
+            "url": "\/admin\/activity-log",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/activity-log"
+        },
+        {
+            "url": "\/admin\/ads",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ads"
+        },
+        {
+            "url": "\/admin\/ads\/settings",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ads\/settings"
+        },
+        {
+            "url": "\/admin\/agreements",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/agreements"
+        },
+        {
+            "url": "\/admin\/ai_settings",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai_settings"
+        },
+        {
+            "url": "\/admin\/ai-calling\/auto-dialer",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-calling\/auto-dialer"
+        },
+        {
+            "url": "\/admin\/ai-calling\/call-analytics",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-calling\/call-analytics"
+        },
+        {
+            "url": "\/admin\/ai-calling\/call-logs",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-calling\/call-logs"
+        },
+        {
+            "url": "\/admin\/ai-calling\/dashboard",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-calling\/dashboard"
+        },
+        {
+            "url": "\/admin\/ai-calling\/extracted-leads",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-calling\/extracted-leads"
+        },
+        {
+            "url": "\/admin\/ai-calling\/health",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-calling\/health"
+        },
+        {
+            "url": "\/admin\/ai-calling\/schedule",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-calling\/schedule"
+        },
+        {
+            "url": "\/admin\/ai-calling\/sessions",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-calling\/sessions"
+        },
+        {
+            "url": "\/admin\/ai-system",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-system"
+        },
+        {
+            "url": "\/admin\/ai-system\/market-report",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-system\/market-report"
+        },
+        {
+            "url": "\/admin\/ai-system\/qualifier",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-system\/qualifier"
+        },
+        {
+            "url": "\/admin\/analytics",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/analytics"
+        },
+        {
+            "url": "\/admin\/api-docs",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/api-docs"
+        },
+        {
+            "url": "\/admin\/api\/developers",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/api\/developers"
+        },
+        {
+            "url": "\/admin\/api\/integrations",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/api\/integrations"
+        },
+        {
+            "url": "\/admin\/associate-extensions",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/associate-extensions"
+        },
+        {
+            "url": "\/admin\/audit-log",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/audit-log"
+        },
+        {
+            "url": "\/admin\/backoffice",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/backoffice"
+        },
+        {
+            "url": "\/admin\/backoffice\/attendance",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/backoffice\/attendance"
+        },
+        {
+            "url": "\/admin\/backup",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/backup"
+        },
+        {
+            "url": "\/admin\/bank-import",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/bank-import"
+        },
+        {
+            "url": "\/admin\/banking",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/banking"
+        },
+        {
+            "url": "\/admin\/blog",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/blog"
+        },
+        {
+            "url": "\/admin\/bookings",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/bookings"
+        },
+        {
+            "url": "\/admin\/bulk-operations",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/bulk-operations"
+        },
+        {
+            "url": "\/admin\/bulk\/property-import",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/bulk\/property-import"
+        },
+        {
+            "url": "\/admin\/cache",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/cache"
+        },
+        {
+            "url": "\/admin\/campaigns",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/campaigns"
+        },
+        {
+            "url": "\/admin\/careers",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/careers"
+        },
+        {
+            "url": "\/admin\/careers\/manage",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/careers\/manage"
+        },
+        {
+            "url": "\/admin\/cash-collections",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/cash-collections"
+        },
+        {
+            "url": "\/admin\/colonies",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/colonies"
+        },
+        {
+            "url": "\/admin\/colony-feasibility",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/colony-feasibility"
+        },
+        {
+            "url": "\/admin\/colony-pipeline",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/colony-pipeline"
+        },
+        {
+            "url": "\/admin\/commission",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/commission"
+        },
+        {
+            "url": "\/admin\/commission-plans",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/commission-plans"
+        },
+        {
+            "url": "\/admin\/commission\/recalculations",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/commission\/recalculations"
+        },
+        {
+            "url": "\/admin\/communication\/queue",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/communication\/queue"
+        },
+        {
+            "url": "\/admin\/company-credentials",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/company-credentials"
+        },
+        {
+            "url": "\/admin\/company-loans",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/company-loans"
+        },
+        {
+            "url": "\/admin\/company-loans\/offers",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/company-loans\/offers"
+        },
+        {
+            "url": "\/admin\/company\/settings",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/company\/settings"
+        },
+        {
+            "url": "\/admin\/crm\/agentic",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/agentic"
+        },
+        {
+            "url": "\/admin\/crm\/analytics",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/analytics"
+        },
+        {
+            "url": "\/admin\/crm\/bulk-send",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/bulk-send"
+        },
+        {
+            "url": "\/admin\/crm\/custom-fields",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/custom-fields"
+        },
+        {
+            "url": "\/admin\/crm\/dedup",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/dedup"
+        },
+        {
+            "url": "\/admin\/crm\/drip",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/drip"
+        },
+        {
+            "url": "\/admin\/crm\/email-tracking\/stats",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/email-tracking\/stats"
+        },
+        {
+            "url": "\/admin\/crm\/forms",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/forms"
+        },
+        {
+            "url": "\/admin\/crm\/role-dashboard",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/role-dashboard"
+        },
+        {
+            "url": "\/admin\/crm\/segments",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/segments"
+        },
+        {
+            "url": "\/admin\/crm\/sla",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/sla"
+        },
+        {
+            "url": "\/admin\/crm\/templates",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/templates"
+        },
+        {
+            "url": "\/admin\/crm\/voice",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/crm\/voice"
+        },
+        {
+            "url": "\/admin\/custom-features",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/custom-features"
+        },
+        {
+            "url": "\/admin\/custom-features\/investment-calculator",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/custom-features\/investment-calculator"
+        },
+        {
+            "url": "\/admin\/custom-features\/neighborhood",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/custom-features\/neighborhood"
+        },
+        {
+            "url": "\/admin\/dashboard",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/dashboard"
+        },
+        {
+            "url": "\/admin\/dashboard\/ceo",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/dashboard\/ceo"
+        },
+        {
+            "url": "\/admin\/dashboard\/cfo",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/dashboard\/cfo"
+        },
+        {
+            "url": "\/admin\/dashboard\/sales",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/dashboard\/sales"
+        },
+        {
+            "url": "\/admin\/deals",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/deals"
+        },
+        {
+            "url": "\/admin\/departments",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/departments"
+        },
+        {
+            "url": "\/admin\/designations",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/designations"
+        },
+        {
+            "url": "\/admin\/directory",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/directory"
+        },
+        {
+            "url": "\/admin\/directory\/categories",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/directory\/categories"
+        },
+        {
+            "url": "\/admin\/directory\/jobs",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/directory\/jobs"
+        },
+        {
+            "url": "\/admin\/directory\/listings",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/directory\/listings"
+        },
+        {
+            "url": "\/admin\/directory\/materials",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/directory\/materials"
+        },
+        {
+            "url": "\/admin\/directory\/reviews",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/directory\/reviews"
+        },
+        {
+            "url": "\/admin\/drip-campaigns",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/drip-campaigns"
+        },
+        {
+            "url": "\/admin\/efiling",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/efiling"
+        },
+        {
+            "url": "\/admin\/efiling\/calendar",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/efiling\/calendar"
+        },
+        {
+            "url": "\/admin\/efiling\/gst",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/efiling\/gst"
+        },
+        {
+            "url": "\/admin\/efiling\/tds",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/efiling\/tds"
+        },
+        {
+            "url": "\/admin\/erp",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/erp"
+        },
+        {
+            "url": "\/admin\/expense",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/expense"
+        },
+        {
+            "url": "\/admin\/faqs",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/faqs"
+        },
+        {
+            "url": "\/admin\/features\/security",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/features\/security"
+        },
+        {
+            "url": "\/admin\/finance\/cash-book",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/finance\/cash-book"
+        },
+        {
+            "url": "\/admin\/finance\/cash-flow",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/finance\/cash-flow"
+        },
+        {
+            "url": "\/admin\/finance\/emi-auto-pay",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/finance\/emi-auto-pay"
+        },
+        {
+            "url": "\/admin\/finance\/penalties",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/finance\/penalties"
+        },
+        {
+            "url": "\/admin\/finance\/reconciliation",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/finance\/reconciliation"
+        },
+        {
+            "url": "\/admin\/finance\/tds",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/finance\/tds"
+        },
+        {
+            "url": "\/admin\/finance\/vendors",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/finance\/vendors"
+        },
+        {
+            "url": "\/admin\/gallery",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/gallery"
+        },
+        {
+            "url": "\/admin\/gateways",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/gateways"
+        },
+        {
+            "url": "\/admin\/godmode",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/godmode"
+        },
+        {
+            "url": "\/admin\/gst",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/gst"
+        },
+        {
+            "url": "\/admin\/inquiries",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/inquiries"
+        },
+        {
+            "url": "\/admin\/invoices",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/invoices"
+        },
+        {
+            "url": "\/admin\/kyc",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/kyc"
+        },
+        {
+            "url": "\/admin\/land-inventory\/acquisitions",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/land-inventory\/acquisitions"
+        },
+        {
+            "url": "\/admin\/land-inventory\/brokers",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/land-inventory\/brokers"
+        },
+        {
+            "url": "\/admin\/land-inventory\/leads",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/land-inventory\/leads"
+        },
+        {
+            "url": "\/admin\/land\/records",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/land\/records"
+        },
+        {
+            "url": "\/admin\/lead-kanban",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/lead-kanban"
+        },
+        {
+            "url": "\/admin\/leads",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/leads"
+        },
+        {
+            "url": "\/admin\/leads\/scoring",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/leads\/scoring"
+        },
+        {
+            "url": "\/admin\/legal-pages",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/legal-pages"
+        },
+        {
+            "url": "\/admin\/legal\/ai-composer",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/legal\/ai-composer"
+        },
+        {
+            "url": "\/admin\/legal\/ai-prompts",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/legal\/ai-prompts"
+        },
+        {
+            "url": "\/admin\/legal\/categories",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/legal\/categories"
+        },
+        {
+            "url": "\/admin\/legal\/clauses",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/legal\/clauses"
+        },
+        {
+            "url": "\/admin\/legal\/dashboard",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/legal\/dashboard"
+        },
+        {
+            "url": "\/admin\/legal\/deadlines",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/legal\/deadlines"
+        },
+        {
+            "url": "\/admin\/legal\/disputes",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/legal\/disputes"
+        },
+        {
+            "url": "\/admin\/legal\/templates",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/legal\/templates"
+        },
+        {
+            "url": "\/admin\/localization",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/localization"
+        },
+        {
+            "url": "\/admin\/locations\/colonies",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/locations\/colonies"
+        },
+        {
+            "url": "\/admin\/locations\/districts",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/locations\/districts"
+        },
+        {
+            "url": "\/admin\/locations\/states",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/locations\/states"
+        },
+        {
+            "url": "\/admin\/marketing-campaigns",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/marketing-campaigns"
+        },
+        {
+            "url": "\/admin\/marketing\/marketplace",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/marketing\/marketplace"
+        },
+        {
+            "url": "\/admin\/marketing\/strategies",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/marketing\/strategies"
+        },
+        {
+            "url": "\/admin\/menu-permissions",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/menu-permissions"
+        },
+        {
+            "url": "\/admin\/mlm",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/mlm"
+        },
+        {
+            "url": "\/admin\/mlm-settings\/evaluate",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/mlm-settings\/evaluate"
+        },
+        {
+            "url": "\/admin\/mlm-settings\/rules",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/mlm-settings\/rules"
+        },
+        {
+            "url": "\/admin\/mlm\/associate-ranks",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/mlm\/associate-ranks"
+        },
+        {
+            "url": "\/admin\/mlm\/associates",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/mlm\/associates"
+        },
+        {
+            "url": "\/admin\/mlm\/clawbacks",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/mlm\/clawbacks"
+        },
+        {
+            "url": "\/admin\/mlm\/rank-benefits",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/mlm\/rank-benefits"
+        },
+        {
+            "url": "\/admin\/mlm\/rewards",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/mlm\/rewards"
+        },
+        {
+            "url": "\/admin\/mlm\/withdrawals",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/mlm\/withdrawals"
+        },
+        {
+            "url": "\/admin\/network\/tree",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/network\/tree"
+        },
+        {
+            "url": "\/admin\/news",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/news"
+        },
+        {
+            "url": "\/admin\/notification-dashboard",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/notification-dashboard"
+        },
+        {
+            "url": "\/admin\/nps",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/nps"
+        },
+        {
+            "url": "\/admin\/pages",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/pages"
+        },
+        {
+            "url": "\/admin\/payout-batches",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/payout-batches"
+        },
+        {
+            "url": "\/admin\/payouts",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/payouts"
+        },
+        {
+            "url": "\/admin\/payroll",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/payroll"
+        },
+        {
+            "url": "\/admin\/pdfs",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/pdfs"
+        },
+        {
+            "url": "\/admin\/plot-costs",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/plot-costs"
+        },
+        {
+            "url": "\/admin\/plots",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/plots"
+        },
+        {
+            "url": "\/admin\/plots\/categories",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/plots\/categories"
+        },
+        {
+            "url": "\/admin\/possession",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/possession"
+        },
+        {
+            "url": "\/admin\/production-checklist",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/production-checklist"
+        },
+        {
+            "url": "\/admin\/projects",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/projects"
+        },
+        {
+            "url": "\/admin\/projects\/progress",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/projects\/progress"
+        },
+        {
+            "url": "\/admin\/properties",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/properties"
+        },
+        {
+            "url": "\/admin\/property-alerts",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/property-alerts"
+        },
+        {
+            "url": "\/admin\/referrals",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/referrals"
+        },
+        {
+            "url": "\/admin\/referrals\/leaderboard",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/referrals\/leaderboard"
+        },
+        {
+            "url": "\/admin\/referrals\/share-analytics",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/referrals\/share-analytics"
+        },
+        {
+            "url": "\/admin\/referrals\/tiers",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/referrals\/tiers"
+        },
+        {
+            "url": "\/admin\/registry",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/registry"
+        },
+        {
+            "url": "\/admin\/reports",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/reports"
+        },
+        {
+            "url": "\/admin\/resell-properties",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/resell-properties"
+        },
+        {
+            "url": "\/admin\/roles",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/roles"
+        },
+        {
+            "url": "\/admin\/sales\/approvals",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/sales\/approvals"
+        },
+        {
+            "url": "\/admin\/sales\/rera",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/sales\/rera"
+        },
+        {
+            "url": "\/admin\/security-test",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/security-test"
+        },
+        {
+            "url": "\/admin\/service-configs",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/service-configs"
+        },
+        {
+            "url": "\/admin\/services",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/services"
+        },
+        {
+            "url": "\/admin\/settings",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/settings"
+        },
+        {
+            "url": "\/admin\/settings\/email",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/settings\/email"
+        },
+        {
+            "url": "\/admin\/settings\/payment",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/settings\/payment"
+        },
+        {
+            "url": "\/admin\/settings\/sms",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/settings\/sms"
+        },
+        {
+            "url": "\/admin\/sim-calling",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/sim-calling"
+        },
+        {
+            "url": "\/admin\/site-content",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/site-content"
+        },
+        {
+            "url": "\/admin\/site-settings",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/site-settings"
+        },
+        {
+            "url": "\/admin\/sites",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/sites"
+        },
+        {
+            "url": "\/admin\/support-tickets",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/support-tickets"
+        },
+        {
+            "url": "\/admin\/system-health",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/system-health"
+        },
+        {
+            "url": "\/admin\/telecaller",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/telecaller"
+        },
+        {
+            "url": "\/admin\/testimonials",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/testimonials"
+        },
+        {
+            "url": "\/admin\/training\/certificates",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/training\/certificates"
+        },
+        {
+            "url": "\/admin\/training\/enrollments",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/training\/enrollments"
+        },
+        {
+            "url": "\/admin\/training\/modules",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/training\/modules"
+        },
+        {
+            "url": "\/admin\/user-properties",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/user-properties"
+        },
+        {
+            "url": "\/admin\/users",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/users"
+        },
+        {
+            "url": "\/admin\/visits",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/visits"
+        },
+        {
+            "url": "\/admin\/voice-agents",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/voice-agents"
+        },
+        {
+            "url": "\/admin\/voice-scheduler",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/voice-scheduler"
+        },
+        {
+            "url": "\/admin\/webhooks",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/webhooks"
+        },
+        {
+            "url": "\/admin\/whatsapp\/settings",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/whatsapp\/settings"
+        },
+        {
+            "url": "\/employee\/attendance",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/attendance"
+        },
+        {
+            "url": "\/employee\/documents",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/documents"
+        },
+        {
+            "url": "\/employee\/leaves",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/leaves"
+        },
+        {
+            "url": "\/employee\/payroll",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/payroll"
+        },
+        {
+            "url": "\/employee\/performance",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/performance"
+        },
+        {
+            "url": "\/employee\/tasks",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/tasks"
+        },
+        {
+            "url": "\/property-comparison",
+            "code": 200,
+            "final": "http:\/\/localhost\/apsdreamhome\/property-comparison"
+        }
+    ],
+    "redirect": [
+        {
+            "url": "\/admin\/ai-calling",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/ai-calling"
+        },
+        {
+            "url": "\/admin\/dashboard\/finance",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/dashboard\/finance"
+        },
+        {
+            "url": "\/admin\/employees",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/employees"
+        },
+        {
+            "url": "\/admin\/payments",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/payments"
+        },
+        {
+            "url": "\/admin\/training\/courses",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/training\/courses"
+        },
+        {
+            "url": "\/employee\/dashboard",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/dashboard"
+        },
+        {
+            "url": "\/employee\/finance-dashboard",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/finance-dashboard"
+        },
+        {
+            "url": "\/employee\/hr-dashboard",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/hr-dashboard"
+        },
+        {
+            "url": "\/employee\/it-dashboard",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/it-dashboard"
+        },
+        {
+            "url": "\/employee\/land-dashboard",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/land-dashboard"
+        },
+        {
+            "url": "\/employee\/legal-dashboard",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/legal-dashboard"
+        },
+        {
+            "url": "\/employee\/logout",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/logout"
+        },
+        {
+            "url": "\/employee\/marketing-dashboard",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/marketing-dashboard"
+        },
+        {
+            "url": "\/employee\/ops-dashboard",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/ops-dashboard"
+        },
+        {
+            "url": "\/employee\/profile",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/profile"
+        },
+        {
+            "url": "\/employee\/sales-dashboard",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/sales-dashboard"
+        },
+        {
+            "url": "\/employee\/settings",
+            "code": 302,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/settings"
+        }
+    ],
+    "404": [
+        {
+            "url": "\/employee\/campaigns",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/campaigns"
+        },
+        {
+            "url": "\/employee\/complaints",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/complaints"
+        },
+        {
+            "url": "\/employee\/compliance",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/compliance"
+        },
+        {
+            "url": "\/employee\/construction-dashboard",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/construction-dashboard"
+        },
+        {
+            "url": "\/employee\/cs-dashboard",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/cs-dashboard"
+        },
+        {
+            "url": "\/employee\/deals",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/deals"
+        },
+        {
+            "url": "\/employee\/employees",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/employees"
+        },
+        {
+            "url": "\/employee\/infrastructure",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/infrastructure"
+        },
+        {
+            "url": "\/employee\/leads",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/leads"
+        },
+        {
+            "url": "\/employee\/projects",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/projects"
+        },
+        {
+            "url": "\/employee\/quality",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/quality"
+        },
+        {
+            "url": "\/employee\/recruitment",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/recruitment"
+        },
+        {
+            "url": "\/employee\/reports",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/reports"
+        },
+        {
+            "url": "\/employee\/surveys",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/surveys"
+        },
+        {
+            "url": "\/employee\/tax",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/tax"
+        },
+        {
+            "url": "\/employee\/vendors",
+            "code": 404,
+            "final": "http:\/\/localhost\/apsdreamhome\/employee\/vendors"
+        }
+    ],
+    "error": [
+        {
+            "url": "\/admin\/compliance-scorecard",
+            "code": 500,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/compliance-scorecard"
+        },
+        {
+            "url": "\/admin\/features\/registrations",
+            "code": 500,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/features\/registrations"
+        },
+        {
+            "url": "\/admin\/meetings",
+            "code": 500,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/meetings"
+        },
+        {
+            "url": "\/admin\/messages",
+            "code": 500,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/messages"
+        },
+        {
+            "url": "\/admin\/noc-registry",
+            "code": 500,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/noc-registry"
+        },
+        {
+            "url": "\/admin\/saved-searches",
+            "code": 500,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/saved-searches"
+        },
+        {
+            "url": "\/admin\/smart-registration",
+            "code": 500,
+            "final": "http:\/\/localhost\/apsdreamhome\/admin\/smart-registration"
+        }
+    ],
+    "login_redirect": []
+}

@@ -54,7 +54,14 @@
                                 <?php endforeach; ?>
                                 <?php if (empty($articles ?? [])): ?>
                                 <tr>
-                                    <td colspan="7" class="text-center">No knowledge base articles found.</td>
+                                    <td colspan="7" class="text-center py-5">
+                                        <i class="fas fa-book fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                        <h5 class="text-muted">No knowledge base articles found</h5>
+                                        <p class="text-muted mb-3">Build a knowledge base to help customers find answers to common questions about properties, payments, and processes.</p>
+                                        <a href="<?= BASE_URL ?>/admin/knowledge-base/create" class="btn btn-primary">
+                                            <i class="fas fa-plus me-1"></i> Create Article
+                                        </a>
+                                    </td>
                                 </tr>
                                 <?php endif; ?>
                             </tbody>

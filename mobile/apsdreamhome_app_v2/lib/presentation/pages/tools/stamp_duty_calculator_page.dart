@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 
 class StampDutyCalculatorPage extends StatefulWidget {
@@ -18,89 +22,39 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
   String _propertyType = 'Residential';
   String _buyerType = 'First-time buyer';
   bool _calculated = false;
+  bool _loading = false;
 
   double _stampDuty = 0;
   double _registrationFee = 0;
-  double _gstAmount = 0;
+  double _surcharge = 0;
+  double _cess = 0;
   double _totalCost = 0;
   double _propertyValue = 0;
+  double _stampDutyRate = 0;
+  double _registrationRate = 0;
 
-  static const Map<String, Map<String, dynamic>> _stateRates = {
-    'Uttar Pradesh': {
-      'stampDuty': 0.05,
-      'stampDutyMale': 0.07,
-      'registration': 0.01,
-      'gst': false,
-      'nriSurcharge': 0.0,
-    },
-    'Maharashtra': {
-      'stampDuty': 0.06,
-      'registration': 0.01,
-      'gst': false,
-      'nriSurcharge': 0.0,
-    },
-    'Karnataka': {
-      'stampDuty': 0.056,
-      'registration': 0.01,
-      'gst': false,
-      'nriSurcharge': 0.0,
-    },
-    'Delhi': {
-      'stampDuty': 0.04,
-      'registration': 0.01,
-      'gst': false,
-      'nriSurcharge': 0.0,
-    },
-    'Gujarat': {
-      'stampDuty': 0.049,
-      'registration': 0.01,
-      'gst': false,
-      'nriSurcharge': 0.0,
-    },
-    'Tamil Nadu': {
-      'stampDuty': 0.07,
-      'registration': 0.01,
-      'gst': false,
-      'nriSurcharge': 0.0,
-    },
-    'Rajasthan': {
-      'stampDuty': 0.05,
-      'registration': 0.01,
-      'gst': false,
-      'nriSurcharge': 0.0,
-    },
-    'Madhya Pradesh': {
-      'stampDuty': 0.05,
-      'registration': 0.01,
-      'gst': false,
-      'nriSurcharge': 0.0,
-    },
-    'Bihar': {
-      'stampDuty': 0.06,
-      'registration': 0.01,
-      'gst': false,
-      'nriSurcharge': 0.0,
-    },
-    'West Bengal': {
-      'stampDuty': 0.06,
-      'registration': 0.01,
-      'gst': false,
-      'nriSurcharge': 0.0,
-    },
+  List<Map<String, dynamic>> _statesFromApi = [];
+
+  // State name → state code mapping
+  static const Map<String, String> _stateCodeMap = {
+    'Uttar Pradesh': 'UP',
+    'Maharashtra': 'MH',
+    'Karnataka': 'KA',
+    'Delhi': 'DL',
+    'Gujarat': 'GJ',
+    'Tamil Nadu': 'TN',
+    'Rajasthan': 'RJ',
+    'Madhya Pradesh': 'MP',
+    'Bihar': 'BR',
+    'West Bengal': 'WB',
+    'Andhra Pradesh': 'AP',
+    'Telangana': 'TS',
+    'Kerala': 'KL',
+    'Punjab': 'PB',
+    'Haryana': 'HR',
+    'Odisha': 'OD',
+    'Jharkhand': 'JH',
   };
-
-  static const List<String> _states = [
-    'Uttar Pradesh',
-    'Maharashtra',
-    'Karnataka',
-    'Delhi',
-    'Gujarat',
-    'Tamil Nadu',
-    'Rajasthan',
-    'Madhya Pradesh',
-    'Bihar',
-    'West Bengal',
-  ];
 
   static const List<String> _propertyTypes = [
     'Residential',
@@ -115,49 +69,187 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _fetchStates();
+  }
+
+  @override
   void dispose() {
     _valueController.dispose();
     super.dispose();
   }
 
-  void _calculate() {
-    final value = double.tryParse(_valueController.text) ?? 0;
-    if (value <= 0) return;
+  /// Fetch available states from API
+  Future<void> _fetchStates() async {
+    try {
+      final url = '${AppConstants.baseUrl}/api/stamp-duty/states';
+      final response = await http.get(Uri.parse(url));
 
-    final rates = _stateRates[_selectedState]!;
-    double stampRate = rates['stampDuty'] as double;
-
-    if (_selectedState == 'Uttar Pradesh' && _buyerType == 'First-time buyer') {
-      stampRate = rates['stampDutyMale'] as double;
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data is Map && data['data'] != null) {
+          final statesData = data['data'];
+          if (statesData is Map && statesData['states'] != null) {
+            final rawStates = statesData['states'];
+            setState(() {
+              _statesFromApi = rawStates is List
+                  ? rawStates.cast<Map<String, dynamic>>()
+                  : <Map<String, dynamic>>[];
+            });
+            return;
+          }
+        }
+      }
+    } catch (e) {
+      // Fall back to hardcoded list
     }
+
+    setState(() {});
+  }
+
+  /// Calculate stamp duty via API
+  Future<void> _calculate() async {
+    final value = double.tryParse(_valueController.text) ?? 0;
+    if (value <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid property value'),
+          backgroundColor: AppTheme.errorColor,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    final stateCode = _stateCodeMap[_selectedState] ?? 'UP';
+    final genderMap = {
+      'First-time buyer': 'male',
+      'Second property': 'male',
+      'NRI': 'male',
+    };
+
+    setState(() => _loading = true);
+
+    try {
+      final url = '${AppConstants.baseUrl}/api/stamp-duty/calculate';
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'property_value': value,
+          'state_code': stateCode,
+          'buyer_gender': genderMap[_buyerType] ?? 'male',
+          'property_type': _propertyType.toLowerCase(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data is Map && data['success'] == true) {
+          final result = data['data'] ?? data;
+          setState(() {
+            _propertyValue = value;
+            _stampDuty =
+                double.tryParse('${result['stamp_duty_amount'] ?? 0}') ?? 0;
+            _stampDutyRate =
+                double.tryParse('${result['stamp_duty_rate'] ?? 0}') ?? 0;
+            _registrationFee =
+                double.tryParse('${result['registration_fee_amount'] ?? 0}') ??
+                0;
+            _registrationRate =
+                double.tryParse('${result['registration_fee_rate'] ?? 0}') ?? 0;
+            _surcharge =
+                double.tryParse('${result['surcharge_amount'] ?? 0}') ?? 0;
+            _cess = double.tryParse('${result['cess_amount'] ?? 0}') ?? 0;
+            _totalCost = double.tryParse('${result['total_amount'] ?? 0}') ?? 0;
+            _calculated = true;
+            _loading = false;
+          });
+          return;
+        }
+      }
+
+      // API failed — fall back to local calculation
+      _calculateLocal(value);
+    } catch (e) {
+      // Network error — fall back to local calculation
+      _calculateLocal(value);
+    }
+
+    setState(() => _loading = false);
+  }
+
+  /// Local fallback calculation (same logic as backend)
+  void _calculateLocal(double value) {
+    final rates = _getLocalRates(_selectedState);
+    double stampRate = rates['stampDuty']!;
 
     if (_buyerType == 'NRI') {
-      stampRate += rates['nriSurcharge'] as double;
+      stampRate += rates['nriSurcharge']!;
     }
 
-    _stampDuty = value * stampRate;
-    _registrationFee = value * (rates['registration'] as double);
+    final regRate = rates['registration']!;
 
-    if (rates['gst'] == true && _propertyType == 'Commercial') {
-      _gstAmount = value * 0.18;
-    } else {
-      _gstAmount = 0;
-    }
-
-    _totalCost = _stampDuty + _registrationFee + _gstAmount;
+    _stampDuty = value * stampRate / 100;
+    _registrationFee = value * regRate / 100;
+    _surcharge = 0;
+    _cess = 0;
+    _totalCost = _stampDuty + _registrationFee;
     _propertyValue = value;
+    _stampDutyRate = stampRate;
+    _registrationRate = regRate;
 
     setState(() => _calculated = true);
   }
 
+  Map<String, double> _getLocalRates(String state) {
+    const rateMap = {
+      'Uttar Pradesh': {
+        'stampDuty': 7.0,
+        'registration': 1.0,
+        'nriSurcharge': 0.0,
+      },
+      'Maharashtra': {
+        'stampDuty': 6.0,
+        'registration': 1.0,
+        'nriSurcharge': 0.0,
+      },
+      'Karnataka': {'stampDuty': 5.6, 'registration': 1.0, 'nriSurcharge': 0.0},
+      'Delhi': {'stampDuty': 4.0, 'registration': 1.0, 'nriSurcharge': 0.0},
+      'Gujarat': {'stampDuty': 4.9, 'registration': 1.0, 'nriSurcharge': 0.0},
+      'Tamil Nadu': {
+        'stampDuty': 7.0,
+        'registration': 1.0,
+        'nriSurcharge': 0.0,
+      },
+      'Rajasthan': {'stampDuty': 5.0, 'registration': 1.0, 'nriSurcharge': 0.0},
+      'Madhya Pradesh': {
+        'stampDuty': 5.0,
+        'registration': 1.0,
+        'nriSurcharge': 0.0,
+      },
+      'Bihar': {'stampDuty': 6.0, 'registration': 1.0, 'nriSurcharge': 0.0},
+      'West Bengal': {
+        'stampDuty': 6.0,
+        'registration': 1.0,
+        'nriSurcharge': 0.0,
+      },
+    };
+    return rateMap[state] ??
+        {'stampDuty': 7.0, 'registration': 1.0, 'nriSurcharge': 0.0};
+  }
+
   void _shareResult() {
-    final text = 'Stamp Duty Calculation\n'
+    final text =
+        'Stamp Duty Calculation\n'
         'State: $_selectedState\n'
         'Property Type: $_propertyType\n'
         'Property Value: ₹${_formatIndian(_propertyValue)}\n'
-        'Stamp Duty: ₹${_formatIndian(_stampDuty)}\n'
-        'Registration Fee: ₹${_formatIndian(_registrationFee)}\n'
-        '${_gstAmount > 0 ? 'GST: ₹${_formatIndian(_gstAmount)}\n' : ''}'
+        'Stamp Duty (${_stampDutyRate.toStringAsFixed(2)}%): ₹${_formatIndian(_stampDuty)}\n'
+        'Registration Fee (${_registrationRate.toStringAsFixed(2)}%): ₹${_formatIndian(_registrationFee)}\n'
+        '${_surcharge > 0 ? 'Surcharge: ₹${_formatIndian(_surcharge)}\n' : ''}'
+        '${_cess > 0 ? 'Cess: ₹${_formatIndian(_cess)}\n' : ''}'
         'Total Cost: ₹${_formatIndian(_totalCost)}';
 
     Share.share(text);
@@ -185,8 +277,10 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
     if (intPart.length > 3) {
       final lastThree = intPart.substring(intPart.length - 3);
       final remaining = intPart.substring(0, intPart.length - 3);
-      final formatted =
-          remaining.replaceAllMapped(RegExp(r'(\d{2})(?=\d)'), (m) => '${m[1]},');
+      final formatted = remaining.replaceAllMapped(
+        RegExp(r'(\d{2})(?=\d)'),
+        (m) => '${m[1]},',
+      );
       intPart = '$formatted,$lastThree';
     }
 
@@ -194,12 +288,21 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
     return '$intPart.$decPart';
   }
 
+  // Build state list — merge API states with fallback hardcoded list
+  List<String> get _states {
+    if (_statesFromApi.isNotEmpty) {
+      return _statesFromApi
+          .map((s) => s['state_name']?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList();
+    }
+    return _stateCodeMap.keys.toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Stamp Duty Calculator'),
-      ),
+      appBar: AppBar(title: const Text('Stamp Duty Calculator')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -283,10 +386,7 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
               controller: _valueController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               decoration: InputDecoration(
                 prefixIcon: const Padding(
                   padding: EdgeInsets.only(left: 12, right: 4),
@@ -299,16 +399,20 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
                     ),
                   ),
                 ),
-                prefixIconConstraints:
-                    const BoxConstraints(minWidth: 36, minHeight: 0),
+                prefixIconConstraints: const BoxConstraints(
+                  minWidth: 36,
+                  minHeight: 0,
+                ),
                 hintText: 'e.g. 5000000',
                 hintStyle: TextStyle(color: Colors.grey.shade400),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
                 focusedBorder: const OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: AppTheme.primaryColor, width: 2),
+                  borderSide: BorderSide(
+                    color: AppTheme.primaryColor,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -319,6 +423,12 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
   }
 
   Widget _buildDropdowns() {
+    final stateList = _states;
+    // Ensure selected state is in the list
+    if (!stateList.contains(_selectedState) && stateList.isNotEmpty) {
+      _selectedState = stateList.first;
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -327,7 +437,7 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
             _buildDropdown(
               label: 'State',
               value: _selectedState,
-              items: _states,
+              items: stateList,
               icon: Icons.map_outlined,
               onChanged: (val) => setState(() {
                 _selectedState = val!;
@@ -384,17 +494,20 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
         DropdownButtonFormField<String>(
           initialValue: value,
           isExpanded: true,
-          icon: const Icon(Icons.keyboard_arrow_down, color: AppTheme.primaryColor),
+          icon: const Icon(
+            Icons.keyboard_arrow_down,
+            color: AppTheme.primaryColor,
+          ),
           decoration: InputDecoration(
             prefixIcon: Icon(icon, size: 20, color: AppTheme.primaryColor),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 14,
+            ),
           ),
           items: items.map((String item) {
             return DropdownMenuItem<String>(value: item, child: Text(item));
@@ -410,7 +523,7 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
       width: double.infinity,
       height: 52,
       child: ElevatedButton(
-        onPressed: _calculate,
+        onPressed: _loading ? null : _calculate,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryColor,
           foregroundColor: Colors.white,
@@ -419,13 +532,19 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
           ),
           elevation: 2,
         ),
-        child: const Text(
-          'Calculate',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        child: _loading
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
+                ),
+              )
+            : const Text(
+                'Calculate',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
       ),
     );
   }
@@ -453,8 +572,11 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
           children: [
             const Row(
               children: [
-                Icon(Icons.summarize_outlined,
-                    size: 22, color: AppTheme.primaryColor),
+                Icon(
+                  Icons.summarize_outlined,
+                  size: 22,
+                  color: AppTheme.primaryColor,
+                ),
                 SizedBox(width: 10),
                 Text(
                   'Breakdown',
@@ -478,23 +600,32 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
             ),
             const SizedBox(height: 20),
             _buildBreakdownRow(
-              'Stamp Duty',
+              'Stamp Duty (${_stampDutyRate.toStringAsFixed(2)}%)',
               '₹${_formatIndian(_stampDuty)}',
               AppTheme.primaryColor,
               Icons.receipt,
             ),
             const SizedBox(height: 14),
             _buildBreakdownRow(
-              'Registration Fee',
+              'Registration Fee (${_registrationRate.toStringAsFixed(2)}%)',
               '₹${_formatIndian(_registrationFee)}',
               AppTheme.infoColor,
               Icons.app_registration,
             ),
-            if (_gstAmount > 0) ...[
+            if (_surcharge > 0) ...[
               const SizedBox(height: 14),
               _buildBreakdownRow(
-                'GST (18%)',
-                '₹${_formatIndian(_gstAmount)}',
+                'Surcharge',
+                '₹${_formatIndian(_surcharge)}',
+                AppTheme.warningColor,
+                Icons.receipt_long,
+              ),
+            ],
+            if (_cess > 0) ...[
+              const SizedBox(height: 14),
+              _buildBreakdownRow(
+                'Cess',
+                '₹${_formatIndian(_cess)}',
                 AppTheme.warningColor,
                 Icons.receipt_long,
               ),
@@ -530,7 +661,11 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
   }
 
   Widget _buildBreakdownRow(
-      String label, String value, Color color, IconData icon) {
+    String label,
+    String value,
+    Color color,
+    IconData icon,
+  ) {
     return Row(
       children: [
         Container(

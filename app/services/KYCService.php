@@ -136,7 +136,7 @@ class KYCService
     /**
      * Log verification attempt
      */
-    private function logVerification(string $type, string $identifier, bool $success, string $message): void
+    public function logVerification(string $type, string $identifier, bool $success, string $message): void
     {
         try {
             $this->db->prepare("

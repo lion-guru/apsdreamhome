@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Ensure variables are available (extract() may not work in all contexts)
 $_conn = $connected ?? false;
 $_cfg = $config ?? [];
@@ -13,8 +13,8 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
-                        <li class="breadcrumb-item"><a href="/admin/sim-calling">SIM Calling</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/sim-calling">SIM Calling</a></li>
                         <li class="breadcrumb-item active">Settings</li>
                     </ol>
                 </div>
@@ -91,7 +91,7 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
                             </div>
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-teal"><i class="fas fa-save"></i> Save Settings</button>
-                                <a href="/admin/sim-calling" class="btn btn-secondary">Cancel</a>
+                                <a href="<?= BASE_URL ?>/admin/sim-calling" class="btn btn-secondary">Cancel</a>
                             </div>
                         </form>
                     </div>
@@ -115,13 +115,13 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
                         <div class="card-header"><h3 class="card-title">Quick Links</h3></div>
                         <div class="card-body p-0">
                             <div class="list-group list-group-flush">
-                                <a href="/admin/sim-calling" class="list-group-item list-group-item-action">
+                                <a href="<?= BASE_URL ?>/admin/sim-calling" class="list-group-item list-group-item-action">
                                     <i class="fas fa-tachometer-alt text-teal"></i> Dashboard
                                 </a>
-                                <a href="/admin/sim-calling/generate-dialplan" class="list-group-item list-group-item-action">
+                                <a href="<?= BASE_URL ?>/admin/sim-calling/generate-dialplan" class="list-group-item list-group-item-action">
                                     <i class="fas fa-download text-info"></i> Download Dialplan
                                 </a>
-                                <a href="/admin/voice-agents" class="list-group-item list-group-item-action">
+                                <a href="<?= BASE_URL ?>/admin/voice-agents" class="list-group-item list-group-item-action">
                                     <i class="fas fa-robot text-purple"></i> Voice Agents
                                 </a>
                             </div>
@@ -160,7 +160,7 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
 <script>
 async function testConnection() {
     try {
-        const res = await fetch('/admin/sim-calling/api/status');
+        const res = await fetch('<?= BASE_URL ?>/admin/sim-calling/api/status');
         const data = await res.json();
         if (data.connected) {
             alert('Connected to Asterisk AMI!\nActive channels: ' + data.active_channels);

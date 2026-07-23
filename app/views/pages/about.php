@@ -195,6 +195,12 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 .service-modal-btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(13,148,136,0.35);color:#fff}
 .service-modal-btn-secondary{background:#f1f5f9;color:#475569;padding:14px 24px;border:none;border-radius:12px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s}
 .service-modal-btn-secondary:hover{background:#e2e8f0}
+
+/* ---- Hero Responsive ---- */
+@media(max-width:768px){
+  section.position-relative[style*="min-height:500px"]{min-height:350px!important;padding:80px 0 50px!important}
+  .display-3{font-size:1.8rem!important}
+}
 </style>
 
 <!-- ============================================ -->

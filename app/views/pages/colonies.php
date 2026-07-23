@@ -13,7 +13,7 @@
                     <a href="#colonies-container" class="btn btn-light btn-lg px-4 py-3">
                         <i class="fas fa-building me-2"></i><?= __('colonies_explore') ?>
                     </a>
-                    <a href="<?php echo BASE_URL; ?>contact" class="btn btn-outline-light btn-lg px-4 py-3">
+                    <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-outline-light btn-lg px-4 py-3">
                         <i class="fas fa-phone me-2"></i><?= __('colonies_get_quote') ?>
                     </a>
                 </div>
@@ -164,9 +164,8 @@
                         </div>
                     </div>
                 </div>
+            <?php endforeach; ?>
         </div>
-    <?php endforeach; ?>
-    </div>
     </div>
 </section>
 
@@ -180,10 +179,10 @@
                     <?= __('colonies_cta_desc') ?>
                 </p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
-                    <a href="<?php echo BASE_URL; ?>contact" class="btn btn-warning btn-lg px-5 py-3">
+                    <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-warning btn-lg px-5 py-3">
                         <i class="fas fa-calendar me-2"></i><?= __('colonies_schedule_visit') ?>
                     </a>
-                    <a href="<?php echo BASE_URL; ?>careers" class="btn btn-outline-light btn-lg px-5 py-3">
+                    <a href="<?php echo BASE_URL; ?>/become-associate" class="btn btn-outline-light btn-lg px-5 py-3">
                         <i class="fas fa-handshake me-2"></i><?= __('colonies_become_associate') ?>
                     </a>
                 </div>

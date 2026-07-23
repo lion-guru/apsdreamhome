@@ -86,10 +86,19 @@ ob_start();
                         <option value="other"><?= __('user_address_type_other', null, 'Other') ?></option>
                     </select>
                 </div>
-                <div class="aps-cp-form-section">
-                    <label class="aps-cp-label" for="address_line1"><?= __('user_address_line1', null, 'Address Line 1') ?> *</label>
-                    <input type="text" name="address_line1" id="address_line1" class="aps-cp-input" placeholder="<?= __('user_address_line1_placeholder', null, 'House/Flat, Street') ?>" required>
-                </div>
+<div class="aps-cp-form-section">
+                        <label class="aps-cp-label" for="address_line1"><?= __('user_address_line1', null, 'Address Line 1') ?> *</label>
+                        <div class="input-group">
+                            <input type="text" name="address_line1" id="address_line1" class="aps-cp-input" placeholder="House/Flat No., Building, Street" required data-autofill="address">
+                            <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="address_line1" title="Pick on Map">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="aps-cp-form-section">
+                        <label class="aps-cp-label" for="address_line2"><?= __('user_address_line2', null, 'Address Line 2') ?></label>
+                        <input type="text" name="address_line2" id="address_line2" class="aps-cp-input" placeholder="Area, Sector, Landmark">
+                    </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="address_line2"><?= __('user_address_line2', null, 'Address Line 2') ?></label>
                     <input type="text" name="address_line2" id="address_line2" class="aps-cp-input" placeholder="<?= __('user_address_line2_placeholder', null, 'Landmark, Area') ?>">
@@ -97,22 +106,27 @@ ob_start();
                 <div class="aps-cp-form-row">
                     <div class="aps-cp-form-section">
                         <label class="aps-cp-label" for="pincode"><?= __('user_address_pincode', null, 'Pincode') ?> *</label>
-                        <input type="text" name="pincode" id="pincode" class="aps-cp-input" pattern="[0-9]{4,10}" placeholder="273001" required>
+                        <div class="input-group">
+                            <input type="text" name="pincode" id="pincode" class="aps-cp-input" pattern="[0-9]{4,10}" placeholder="273001" required data-autofill="pincode" maxlength="6">
+                            <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use My Location">
+                                <i class="fas fa-location-crosshairs"></i>
+                            </button>
+                        </div>
                         <small id="pincodeStatus" class="aps-cp-muted"></small>
                     </div>
                     <div class="aps-cp-form-section">
                         <label class="aps-cp-label" for="city"><?= __('user_address_city', null, 'City') ?> *</label>
-                        <input type="text" name="city" id="city" class="aps-cp-input" required>
+                        <input type="text" name="city" id="city" class="aps-cp-input" required data-autofill="city">
                     </div>
                 </div>
                 <div class="aps-cp-form-row">
                     <div class="aps-cp-form-section">
                         <label class="aps-cp-label" for="state"><?= __('user_address_state', null, 'State') ?> *</label>
-                        <input type="text" name="state" id="state" class="aps-cp-input" required>
+                        <input type="text" name="state" id="state" class="aps-cp-input" required data-autofill="state">
                     </div>
                     <div class="aps-cp-form-section">
-                        <label class="aps-cp-label" for="country"><?= __('user_address_country', null, 'Country') ?></label>
-                        <input type="text" name="country" id="country" class="aps-cp-input" value="India">
+                        <label class="aps-cp-label" for="district"><?= __('user_address_district', null, 'District') ?></label>
+                        <input type="text" name="district" id="district" class="aps-cp-input" data-autofill="district">
                     </div>
                 </div>
                 <div class="aps-cp-form-section">

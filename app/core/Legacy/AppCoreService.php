@@ -343,7 +343,7 @@ class App
         
         // Basic routing logic
         if ($uri === "" || $uri === "/") {
-            return $this->loadController("HomeController", "index");
+            return $this->loadController("Front\\PageController", "home");
         } elseif ($uri === "/home") {
             return $this->loadController("Front\\PageController", "home");
         } elseif ($uri === "/about") {
@@ -419,32 +419,30 @@ class App
         
         // Admin routes
         elseif ($uri === "/admin") {
-            return $this->loadController("Admin\\AdminControllerSimple", "index");
+            return $this->loadController("Admin\\AdminController", "index");
         } elseif ($uri === "/admin/dashboard") {
-            return $this->loadController("Admin\\AdminControllerSimple", "index");
+            return $this->loadController("Admin\\AdminController", "index");
         } elseif ($uri === "/admin/properties") {
-            return $this->loadController("Admin\\AdminControllerSimple", "properties");
+            return $this->loadController("Admin\\PropertyController", "index");
         } elseif ($uri === "/admin/projects") {
-            return $this->loadController("Admin\\AdminControllerSimple", "index");
+            return $this->loadController("Admin\\AdminController", "index");
         } elseif ($uri === "/admin/users") {
-            return $this->loadController("Admin\\AdminControllerSimple", "users");
+            return $this->loadController("Admin\\UserController", "index");
         } elseif ($uri === "/admin/leads") {
-            return $this->loadController("Admin\\AdminControllerSimple", "leads");
-        } elseif ($uri === "/admin/users") {
-            return $this->loadController("Admin\\AdminControllerSimple", "index");
+            return $this->loadController("Admin\\CRMController", "index");
         } elseif ($uri === "/admin/settings") {
-            return $this->loadController("Admin\\AdminControllerSimple", "settings");
+            return $this->loadController("Admin\\SettingsController", "index");
         }
         
         // Property routes
         elseif ($uri === "/properties") {
             return $this->loadController("Property\\PropertyController", "index");
         } elseif (preg_match('/^\/properties\/(\d+)$/', $uri, $matches)) {
-            return $this->loadController("HomeController", "propertyDetail", [$matches[1]]);
+            return $this->loadController("Front\\PageController", "propertyDetail", [$matches[1]]);
         } elseif ($uri === "/projects") {
-            return $this->loadController("HomeController", "projects");
+            return $this->loadController("Front\\PageController", "projects");
         } elseif ($uri === "/contact") {
-            return $this->loadController("HomeController", "contact");
+            return $this->loadController("Front\\PageController", "contact");
         }
         
         // Agent routes

@@ -1,11 +1,11 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-8">
             <h2 style="color:#e0e0e0;"><i class="fas fa-money-check-alt me-2" style="color:#28a745;"></i> Payout Batches</h2>
             <p style="color:#aaa;">Commission payout management with approval workflow</p>
         </div>
         <div class="col-4 text-end">
-            <a href="/admin/payout-batches/create" class="btn btn-success"><i class="fas fa-plus me-1"></i> New Batch</a>
+            <a href="<?= BASE_URL ?>/admin/payout-batches/create" class="btn btn-success"><i class="fas fa-plus me-1"></i> New Batch</a>
         </div>
     </div>
 
@@ -35,9 +35,9 @@
 
     <!-- Filters -->
     <div class="mb-3">
-        <a href="/admin/payout-batches" class="btn btn-sm <?= empty($status_filter) ? 'btn-success' : 'btn-outline-secondary' ?>">All</a>
+        <a href="<?= BASE_URL ?>/admin/payout-batches" class="btn btn-sm <?= empty($status_filter) ? 'btn-success' : 'btn-outline-secondary' ?>">All</a>
         <?php foreach ($statusConfig as $sKey => $sCfg): ?>
-            <a href="/admin/payout-batches?status=<?= $sKey ?>" class="btn btn-sm <?= $status_filter === $sKey ? 'btn-success' : 'btn-outline-secondary' ?>"><?= str_replace('_', ' ', ucfirst($sKey)) ?></a>
+            <a href="<?= BASE_URL ?>/admin/payout-batches?status=<?= $sKey ?>" class="btn btn-sm <?= $status_filter === $sKey ? 'btn-success' : 'btn-outline-secondary' ?>"><?= str_replace('_', ' ', ucfirst($sKey)) ?></a>
         <?php endforeach; ?>
     </div>
 
@@ -48,7 +48,7 @@
                 <div class="text-center p-5">
                     <i class="fas fa-inbox fa-3x" style="color:#555;"></i>
                     <h5 style="color:#ccc;margin-top:15px;">No payout batches found</h5>
-                    <a href="/admin/payout-batches/create" class="btn btn-success mt-2"><i class="fas fa-plus me-1"></i> Create First Batch</a>
+                    <a href="<?= BASE_URL ?>/admin/payout-batches/create" class="btn btn-success mt-2"><i class="fas fa-plus me-1"></i> Create First Batch</a>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
@@ -93,7 +93,7 @@
                                     <td><small><?= htmlspecialchars($item['created_by_name'] ?? 'Admin') ?></small></td>
                                     <td><small><?= date('d M H:i', strtotime($item['created_at'])) ?></small></td>
                                     <td>
-                                        <a href="/admin/payout-batches/<?= $item['id'] ?>" class="btn btn-sm btn-outline-info">
+                                        <a href="<?= BASE_URL ?>/admin/payout-batches/<?= $item['id'] ?>" class="btn btn-sm btn-outline-info">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
@@ -109,7 +109,7 @@
                         <small style="color:#888;">Page <?= $page ?> of <?= $total_pages ?></small>
                         <div>
                             <?php for ($i = max(1, $page - 2); $i <= min($total_pages, $page + 2); $i++): ?>
-                                <a href="/admin/payout-batches?status=<?= $status_filter ?>&page=<?= $i ?>"
+                                <a href="<?= BASE_URL ?>/admin/payout-batches?status=<?= $status_filter ?>&page=<?= $i ?>"
                                    class="btn btn-sm <?= $i === $page ? 'btn-success' : 'btn-outline-secondary' ?>"><?= $i ?></a>
                             <?php endfor; ?>
                         </div>

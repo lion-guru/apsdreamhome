@@ -24,7 +24,7 @@ class RateLimiter {
                 $redis = new Redis();
                 $redis->connect('127.0.0.1', 6379);
                 $this->storage = new RedisStorage($redis);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->storage = new FileStorage();
             }
         } else {

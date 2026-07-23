@@ -31,8 +31,11 @@
                                         <td><?= htmlspecialchars($c['scheduled_at'] ?? $c['schedule_time'] ?? '-') ?></td>
                                         <td><span class="badge bg-<?= ($c['status'] ?? 'scheduled') === 'scheduled' ? 'primary' : (($c['status'] ?? '') === 'in_progress' ? 'warning' : 'success') ?>"><?= ucfirst(str_replace('_', ' ', $c['status'] ?? 'scheduled')) ?></span></td>
                                         <td>
-                                            <button class="btn btn-sm btn-outline-danger" onclick="alert('Cancel call')"><i class="fas fa-times"></i></button>
-                                            <button class="btn btn-sm btn-outline-success" onclick="alert('Reschedule call')"><i class="fas fa-calendar-alt"></i></button>
+                                            <form method="post" action="<?= BASE_URL ?>admin/voice-users/cancel-schedule/<?= (int)($c['id'] ?? 0) ?>" class="d-inline" onsubmit="return confirm('Cancel this call?')">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times"></i></button>
+                                            </form>
+                                            <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#rescheduleModal" data-schedule-id="<?= (int)($c['id'] ?? 0) ?>" data-customer="<?= htmlspecialchars(($c['customer_name'] ?? $c['name'] ?? ''), ENT_QUOTES) ?>"><i class="fas fa-calendar-alt"></i></button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -75,3 +78,27 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="rescheduleModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Reschedule Call</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form method="post" action="<?= BASE_URL ?>admin/voice-users/reschedule/0" id="rescheduleForm">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+        <input type="hidden" name="schedule_id" id="rescheduleId">
+        <div class="modal-body">
+            <p id="rescheduleCustomer"></p>
+            <div class="mb-3"><label class="form-label">New Date</label><input type="date" name="new_date" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">New Time</label><input type="time" name="new_time" class="form-control"></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-success">Reschedule</button></div>
+    </form>
+</div></div></div>
+
+<script>
+document.getElementById('rescheduleModal').addEventListener('show.bs.modal', function(e) {
+    var btn = e.relatedTarget;
+    var id = btn.getAttribute('data-schedule-id');
+    document.getElementById('rescheduleId').value = id;
+    document.getElementById('rescheduleCustomer').textContent = 'Rescheduling: ' + btn.getAttribute('data-customer');
+    document.getElementById('rescheduleForm').action = '<?= BASE_URL ?>admin/voice-users/reschedule/' + id;
+});
+</script>

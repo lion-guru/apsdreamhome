@@ -31,7 +31,7 @@ class EMI extends Model
     public function createPlan($data)
     {
         try {
-            $db = self::getConnection();
+            $db = self::getDb()->getConnection();
             $db->beginTransaction();
 
             // Calculate EMI amount
@@ -140,7 +140,7 @@ class EMI extends Model
      */
     public function getStats()
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
         $currentMonth = date('Y-m');
 
         // 1. Active EMI plans count
@@ -190,7 +190,7 @@ class EMI extends Model
      */
     public function getPlanDetails($id)
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
         $sql = "SELECT ep.*, u.name as customer_name, u.email as customer_email, u.phone as customer_phone,
                        p.title as property_title, p.location as property_location
                 FROM emi_plans ep
@@ -208,7 +208,7 @@ class EMI extends Model
      */
     public function getInstallments($planId)
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
         $sql = "SELECT * FROM emi_installments WHERE emi_plan_id = ? ORDER BY installment_number ASC";
 
         $stmt = $db->prepare($sql);
@@ -221,7 +221,7 @@ class EMI extends Model
      */
     public function recordInstallmentPayment($data)
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
 
         try {
             $db->beginTransaction();
@@ -321,7 +321,7 @@ class EMI extends Model
      */
     public function getFilteredPlans($params)
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
 
         $start = $params['start'] ?? 0;
         $length = $params['length'] ?? 10;
@@ -441,7 +441,7 @@ class EMI extends Model
     public function getSchedule($emiPlanId)
     {
         $sql = "SELECT * FROM emi_payments WHERE emi_plan_id = ? ORDER BY due_date ASC";
-        $stmt = self::getConnection()->prepare($sql);
+        $stmt = self::getDb()->getConnection()->prepare($sql);
         $stmt->execute([$emiPlanId]);
         return $stmt->fetchAll();
     }
@@ -454,7 +454,7 @@ class EMI extends Model
         $sql = "INSERT INTO emi_payments (emi_plan_id, amount, payment_date, transaction_id, status, notes, created_at) 
                 VALUES (?, ?, ?, ?, ?, ?, NOW())";
 
-        $stmt = self::getConnection()->prepare($sql);
+        $stmt = self::getDb()->getConnection()->prepare($sql);
         return $stmt->execute([
             $data['emi_plan_id'],
             $data['amount'],
@@ -471,7 +471,7 @@ class EMI extends Model
     public function updateStatus($id, $status)
     {
         $sql = "UPDATE emi_plans SET status = ?, updated_at = NOW() WHERE id = ?";
-        $stmt = self::getConnection()->prepare($sql);
+        $stmt = self::getDb()->getConnection()->prepare($sql);
         return $stmt->execute([$status, $id]);
     }
 
@@ -481,7 +481,7 @@ class EMI extends Model
      */
     public function calculateForeclosureAmount($planId)
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
         $sql = "SELECT SUM(principal_component) 
                 FROM emi_installments 
                 WHERE emi_plan_id = ? AND status != 'paid'";
@@ -495,7 +495,7 @@ class EMI extends Model
      */
     public function foreclosePlan($data)
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
 
         try {
             $db->beginTransaction();
@@ -592,7 +592,7 @@ class EMI extends Model
      */
     public function getForeclosureStats()
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
 
         // Use foreclosure_logs if available for complete history including attempts
         try {
@@ -637,7 +637,7 @@ class EMI extends Model
      */
     public function getForeclosureTrend($months = 12)
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
 
         try {
             $sql = "SELECT 
@@ -679,7 +679,7 @@ class EMI extends Model
      */
     public function getForeclosureReportData($filters = [])
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
 
         try {
             $sql = "SELECT 
@@ -773,7 +773,7 @@ class EMI extends Model
      */
     public function getInstallmentReceiptDetails($installmentId)
     {
-        $db = self::getConnection();
+        $db = self::getDb()->getConnection();
         $query = "SELECT ei.*, ep.*, u.name as customer_name, u.phone as customer_phone,
                          u.email as customer_email, p.title as property_title,
                          p.address as property_address, p.location as property_location, py.transaction_id,
@@ -789,21 +789,3 @@ class EMI extends Model
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 }
-
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 791 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//

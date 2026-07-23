@@ -52,7 +52,7 @@ class AIAssistantController extends BaseController
     public function recommendations()
     {
         header('Content-Type: application/json');
-        $userId = $_GET['user_id'] ?? $GLOBALS['api_user_id'] ?? null;
+        $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
         try {
             $stmt = $this->db->query("SELECT id, title, price, city, property_type, images FROM properties WHERE status = 'active' ORDER BY RAND() LIMIT 5");
             $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);

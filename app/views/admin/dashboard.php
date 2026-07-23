@@ -266,11 +266,35 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                     <h5 class="card-title"><i class="fas fa-server me-2"></i><?= __('admin_system_overview', null, 'System Overview') ?></h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-1">
+<div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
                             <span><?= __('admin_database_tables', null, 'Database Tables') ?></span>
-                            <span class="fw-semibold">633</span>
+                            <span class="fw-semibold"><?php echo $stats['database_tables'] ?? '—'; ?></span>
                         </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-primary" style="width: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><?= __('admin_active_users', null, 'Active Users') ?></span>
+                            <span class="fw-semibold"><?php echo number_format($stats['active_users'] ?? 0); ?></span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: <?php echo $stats['active_users_pct'] ?? 0; ?>%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><?= __('admin_system_health', null, 'System Health') ?></span>
+                            <span class="fw-semibold text-success"><?php echo number_format($stats['system_health_pct'] ?? 99.9, 1); ?>%</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-info" style="width: <?php echo $stats['system_health_pct'] ?? 99.9; ?>%;"></div>
+                        </div>
+                    </div>
                         <div class="progress" style="height: 6px;">
                             <div class="progress-bar bg-primary" style="width: 100%;"></div>
                         </div>
@@ -279,20 +303,20 @@ if (isset($layout_content) || (isset($is_standalone) && !$is_standalone)) {
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-1">
                             <span><?= __('admin_active_users', null, 'Active Users') ?></span>
-                            <span class="fw-semibold"><?php echo number_format($stats['total_users']); ?></span>
+                            <span class="fw-semibold"><?php echo number_format($stats['active_users'] ?? 0); ?></span>
                         </div>
                         <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-success" style="width: 75%;"></div>
+                            <div class="progress-bar bg-success" style="width: <?php echo $stats['total_users'] > 0 ? round(($stats['active_users'] ?? 0) / $stats['total_users'] * 100) : 0; ?>%;"></div>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-1">
                             <span><?= __('admin_system_health', null, 'System Health') ?></span>
-                            <span class="fw-semibold text-success">99.9%</span>
+                            <span class="fw-semibold text-success"><?php echo number_format($stats['system_health_pct'] ?? 99.9, 1); ?>%</span>
                         </div>
                         <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-info" style="width: 99.9%;"></div>
+                            <div class="progress-bar bg-info" style="width: <?php echo number_format($stats['system_health_pct'] ?? 99.9, 1); ?>%;"></div>
                         </div>
                     </div>
 

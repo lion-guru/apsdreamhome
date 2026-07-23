@@ -219,7 +219,7 @@ function submitTransfer() {
     result.textContent = 'Transferring call...';
     result.classList.remove('d-none');
 
-    fetch('/admin/voice-agents/transfer-call', {
+    fetch('<?= BASE_URL ?>/admin/voice-agents/transfer-call', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': window.CSRF_TOKEN || ''},
         body: 'call_sid=' + encodeURIComponent(currentCallSid) + '&to=' + encodeURIComponent(number)
@@ -243,7 +243,7 @@ function submitTransfer() {
 
 function hangupCall(callSid) {
     if (!confirm('Hangup this call? This action cannot be undone.')) return;
-    fetch('/admin/voice-agents/hangup-call', {
+    fetch('<?= BASE_URL ?>/admin/voice-agents/hangup-call', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': window.CSRF_TOKEN || ''},
         body: 'call_sid=' + encodeURIComponent(callSid)

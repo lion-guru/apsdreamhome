@@ -19,6 +19,15 @@
                 </tr>
             </thead>
             <tbody>
+                <?php if (empty($rules)): ?>
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <i class="fas fa-cogs fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                        <h5 class="text-muted">No commission rules found</h5>
+                        <p class="text-muted mb-3">Define commission rules to configure rank-based payout rates.</p>
+                    </td>
+                </tr>
+                <?php else: ?>
                 <?php foreach ($rules as $r): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($r['rule_name']); ?></td>
@@ -40,6 +49,7 @@
                     </td>
                 </tr>
                 <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $property = $data['property'] ?? null;
 $property_images = $data['property_images'] ?? [];
 $related = $data['related_properties'] ?? [];
@@ -370,7 +370,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                 <h5><i class="fas fa-paper-plane me-2"></i> Interested in this property?</h5>
             </div>
             <div class="card-body-padded pd-enquiry-form">
-                <form action="/contact" method="POST" id="enquiryFormElement">
+                <form action="<?= BASE_URL ?>/contact" method="POST" id="enquiryFormElement">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                     <input type="hidden" name="property_id" value="<?= $property['id'] ?? 0 ?>">
                     <div class="mb-3">
@@ -463,7 +463,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
 
         <hr style="margin:24px 0;border-color:#f1f5f9">
         <h6 class="fw-bold mb-3" style="color:#1e293b">Write a Review</h6>
-        <form action="/property/review" method="POST">
+        <form action="<?= BASE_URL ?>/property/review" method="POST">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="property_id" value="<?= $property['id'] ?? 0 ?>">
             <div class="row mb-3">

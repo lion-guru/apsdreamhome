@@ -13,6 +13,12 @@ use Exception;
 
 class PWAController extends BaseController
 {
+    private const PUSH_ENABLED = false; // Enable when push_subscriptions table is created
+
+    private function pushNotAvailable()
+    {
+        $this->jsonResponse(['success' => false, 'error' => 'Push notifications require database setup. Coming soon.'], 503);
+    }
 
     /**
      * PWA manifest.json generator
@@ -520,6 +526,8 @@ function removeOfflineMessage(id) {
      */
     public function subscribeNotifications()
     {
+        if (!self::PUSH_ENABLED) { $this->pushNotAvailable(); return; }
+
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -578,6 +586,8 @@ function removeOfflineMessage(id) {
      */
     public function sendPushNotification()
     {
+        if (!self::PUSH_ENABLED) { $this->pushNotAvailable(); return; }
+
         if (!$this->isAdmin()) {
             $this->jsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
         }
@@ -645,6 +655,8 @@ function removeOfflineMessage(id) {
      */
     public function getPWAStats()
     {
+        if (!self::PUSH_ENABLED) { $this->pushNotAvailable(); return; }
+
         header('Content-Type: application/json');
 
         if (!$this->isAdmin()) {
@@ -733,6 +745,8 @@ function removeOfflineMessage(id) {
      */
     public function logInstallPrompt()
     {
+        if (!self::PUSH_ENABLED) { $this->jsonResponse(['success' => false, 'error' => 'Feature not available'], 503); return; }
+
         header('Content-Type: application/json');
 
         try {
@@ -768,6 +782,8 @@ function removeOfflineMessage(id) {
      */
     public function logInstallation()
     {
+        if (!self::PUSH_ENABLED) { $this->jsonResponse(['success' => false, 'error' => 'Feature not available'], 503); return; }
+
         header('Content-Type: application/json');
 
         try {

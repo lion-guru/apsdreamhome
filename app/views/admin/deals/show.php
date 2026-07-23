@@ -63,9 +63,9 @@
         <div class="card mb-3">
             <div class="card-header aps-cp-card-header">Actions</div>
             <div class="card-body d-grid gap-2">
-                <button class="btn btn-primary" onclick="alert('Move Stage')"><i class="fas fa-arrow-right"></i> Move Stage</button>
-                <button class="btn btn-success" onclick="alert('Mark as Won')"><i class="fas fa-check-circle"></i> Mark Won</button>
-                <button class="btn btn-danger" onclick="alert('Mark as Lost')"><i class="fas fa-times-circle"></i> Mark Lost</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#moveStageModal"><i class="fas fa-arrow-right"></i> Move Stage</button>
+                <button class="btn btn-success" onclick="markDealStatus('won')"><i class="fas fa-check-circle"></i> Mark Won</button>
+                <button class="btn btn-danger" onclick="markDealStatus('lost')"><i class="fas fa-times-circle"></i> Mark Lost</button>
             </div>
         </div>
         <div class="card aps-cp-card">
@@ -86,3 +86,37 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="moveStageModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Move to Next Stage</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form method="post" action="<?= BASE_URL ?>admin/deals/<?= (int)($deal['id'] ?? 0) ?>/stage">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+        <div class="modal-body">
+            <div class="mb-3">
+                <label class="form-label">Select Stage</label>
+                <select name="stage" class="form-select" required>
+                    <option value="lead" <?= $stageLower === 'lead' ? 'selected' : '' ?>>Lead</option>
+                    <option value="qualified" <?= $stageLower === 'qualified' ? 'selected' : '' ?>>Qualified</option>
+                    <option value="proposal" <?= $stageLower === 'proposal' ? 'selected' : '' ?>>Proposal</option>
+                    <option value="negotiating" <?= $stageLower === 'negotiating' ? 'selected' : '' ?>>Negotiating</option>
+                    <option value="won" <?= $stageLower === 'won' ? 'selected' : '' ?>>Won</option>
+                    <option value="lost" <?= $stageLower === 'lost' ? 'selected' : '' ?>>Lost</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Update Stage</button></div>
+    </form>
+</div></div></div>
+
+<script>
+function markDealStatus(status) {
+    if (!confirm('Mark this deal as ' + status.toUpperCase() + '?')) return;
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<?= BASE_URL ?>admin/deals/<?= (int)($deal['id'] ?? 0) ?>/stage';
+    var csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>';
+    var stage = document.createElement('input'); stage.type = 'hidden'; stage.name = 'stage'; stage.value = status;
+    form.appendChild(csrf); form.appendChild(stage);
+    document.body.appendChild(form); form.submit();
+}
+</script>

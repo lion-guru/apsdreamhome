@@ -13,7 +13,7 @@ $site_visits = $site_visits ?? [];
 $performance = $performance ?? [];
 $gamify = $gamify ?? [];
 
-$base = BASE_URL ?? '/apsdreamhome';
+$base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $agent_name = $_SESSION['user_name'] ?? 'Agent';
 $active_page = 'dashboard';
 ?>

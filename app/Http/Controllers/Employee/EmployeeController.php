@@ -76,7 +76,7 @@ class EmployeeController extends BaseController
             } else {
                 throw new Exception('Invalid email or password');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logLoginAttempt($_POST['email'] ?? '', false, $e->getMessage());
             $_SESSION['error'] = $e->getMessage();
             $this->redirect('/employee/login');
@@ -265,7 +265,7 @@ class EmployeeController extends BaseController
             $data['activities'] = $this->getEmployeeActivities($employeeId);
 
             return $data;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Dashboard data error: " . $e->getMessage());
             return [];
         }
@@ -305,7 +305,7 @@ class EmployeeController extends BaseController
             $performance['pending_tasks'] = $pending['pending'] ?? 0;
 
             return $performance;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Performance data error: " . $e->getMessage());
             return [];
         }
@@ -328,7 +328,7 @@ class EmployeeController extends BaseController
             $query .= " ORDER BY attendance_date DESC, check_in DESC LIMIT 30";
 
             return $this->db->fetchAll($query, $params);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Attendance data error: " . $e->getMessage());
             return [];
         }
@@ -346,7 +346,7 @@ class EmployeeController extends BaseController
                 // Gracefully handle dropped table ref
             }
             return $this->db->fetchAll($query, [$employeeId]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Activities data error: " . $e->getMessage());
             return [];
         }
@@ -379,7 +379,7 @@ class EmployeeController extends BaseController
                 'success' => true,
                 'message' => 'Checked in successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -413,7 +413,7 @@ class EmployeeController extends BaseController
                 'success' => true,
                 'message' => 'Checked out successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -445,7 +445,7 @@ class EmployeeController extends BaseController
                 'success' => true,
                 'message' => 'Task updated successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -512,7 +512,7 @@ class EmployeeController extends BaseController
                 'success' => true,
                 'message' => 'Profile updated successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -809,7 +809,7 @@ class EmployeeController extends BaseController
         header('Content-Type: application/json');
         try {
             echo json_encode(['success' => true, 'tasks' => $this->getEmployeeTasks($_SESSION['employee_id'] ?? 0)]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => false, 'tasks' => []]);
         }
         exit;
@@ -820,7 +820,7 @@ class EmployeeController extends BaseController
         header('Content-Type: application/json');
         try {
             echo json_encode(['success' => true, 'performance' => $this->getEmployeePerformance($_SESSION['employee_id'] ?? 0)]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => false, 'performance' => []]);
         }
         exit;
@@ -831,7 +831,7 @@ class EmployeeController extends BaseController
         header('Content-Type: application/json');
         try {
             echo json_encode(['success' => true, 'attendance' => $this->getEmployeeAttendance($_SESSION['employee_id'] ?? 0)]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => false, 'attendance' => []]);
         }
         exit;
@@ -889,5 +889,62 @@ class EmployeeController extends BaseController
         header('Content-Type: application/json');
         echo json_encode(['success' => true]);
         exit;
+    }
+
+    /**
+     * Generic department page — serves 16 missing employee sidebar routes
+     * Maps slug → department config and renders shared department view
+     */
+    public function departmentPage($slug = 'reports')
+    {
+        if (!$this->isEmployeeLoggedIn()) {
+            $this->redirect('/employee/login');
+            return;
+        }
+
+        $departments = [
+            'reports'               => ['title' => 'Reports & Analytics', 'icon' => 'fas fa-chart-bar', 'desc' => 'View and generate business reports, analytics dashboards, and performance metrics.', 'color' => '#3b82f6'],
+            'tax'                   => ['title' => 'TDS & GST', 'icon' => 'fas fa-file-invoice-dollar', 'desc' => 'Manage TDS deductions, GST filings, tax compliance, and financial documentation.', 'color' => '#8b5cf6'],
+            'leads'                 => ['title' => 'My Leads', 'icon' => 'fas fa-user-plus', 'desc' => 'View and manage assigned leads, track follow-ups, and update lead status.', 'color' => '#06b6d4'],
+            'deals'                 => ['title' => 'Deals Pipeline', 'icon' => 'fas fa-handshake', 'desc' => 'Track deals through the sales pipeline, view value, and manage negotiations.', 'color' => '#10b981'],
+            'employees'             => ['title' => 'Employees', 'icon' => 'fas fa-users', 'desc' => 'View team members, department structure, and employee information.', 'color' => '#f59e0b'],
+            'recruitment'           => ['title' => 'Recruitment', 'icon' => 'fas fa-user-tie', 'desc' => 'Manage job postings, review applications, and track hiring pipeline.', 'color' => '#ef4444'],
+            'infrastructure'        => ['title' => 'Infrastructure', 'icon' => 'fas fa-server', 'desc' => 'Monitor IT infrastructure, network status, and system health.', 'color' => '#6366f1'],
+            'compliance'            => ['title' => 'Compliance', 'icon' => 'fas fa-shield-alt', 'desc' => 'Track regulatory compliance, KYC status, and audit requirements.', 'color' => '#14b8a6'],
+            'surveys'               => ['title' => 'Site Surveys', 'icon' => 'fas fa-map-marked-alt', 'desc' => 'Schedule and track site visits, survey reports, and location assessments.', 'color' => '#f97316'],
+            'construction-dashboard'=> ['title' => 'Construction Dashboard', 'icon' => 'fas fa-hard-hat', 'desc' => 'Monitor ongoing construction, progress tracking, and milestone management.', 'color' => '#84cc16'],
+            'projects'              => ['title' => 'Projects', 'icon' => 'fas fa-project-diagram', 'desc' => 'Track project timelines, deliverables, and resource allocation.', 'color' => '#ec4899'],
+            'quality'               => ['title' => 'Quality Control', 'icon' => 'fas fa-clipboard-check', 'desc' => 'Track quality audits, defect reports, and improvement actions.', 'color' => '#22c55e'],
+            'campaigns'             => ['title' => 'Marketing Campaigns', 'icon' => 'fas fa-bullhorn', 'desc' => 'Manage marketing campaigns, track performance, and ROI analytics.', 'color' => '#a855f7'],
+            'vendors'               => ['title' => 'Vendors', 'icon' => 'fas fa-truck', 'desc' => 'Manage vendor relationships, contracts, and payment tracking.', 'color' => '#0ea5e9'],
+            'cs-dashboard'          => ['title' => 'Customer Success', 'icon' => 'fas fa-smile-beam', 'desc' => 'Track customer satisfaction, support tickets, and retention metrics.', 'color' => '#f43f5e'],
+            'complaints'            => ['title' => 'Complaints', 'icon' => 'fas fa-exclamation-triangle', 'desc' => 'View and resolve customer complaints, track resolution time.', 'color' => '#dc2626'],
+            'hr-dashboard'          => ['title' => 'HR Dashboard', 'icon' => 'fas fa-users-cog', 'desc' => 'Human resources overview: attendance, leaves, payroll, and employee management.', 'color' => '#f59e0b'],
+            'it-dashboard'          => ['title' => 'IT Dashboard', 'icon' => 'fas fa-laptop-code', 'desc' => 'IT operations: system health, network status, and technology infrastructure.', 'color' => '#6366f1'],
+            'legal-dashboard'       => ['title' => 'Legal Dashboard', 'icon' => 'fas fa-gavel', 'desc' => 'Legal operations: document management, compliance tracking, and case management.', 'color' => '#8b5cf6'],
+            'land-dashboard'        => ['title' => 'Land Dashboard', 'icon' => 'fas fa-map', 'desc' => 'Land acquisition: parcel tracking, survey status, and land bank overview.', 'color' => '#10b981'],
+            'marketing-dashboard'   => ['title' => 'Marketing Dashboard', 'icon' => 'fas fa-bullseye', 'desc' => 'Marketing overview: campaigns, lead sources, and performance metrics.', 'color' => '#a855f7'],
+            'ops-dashboard'         => ['title' => 'Operations Dashboard', 'icon' => 'fas fa-cogs', 'desc' => 'Operations overview: daily tasks, vendor management, and workflow tracking.', 'color' => '#0ea5e9'],
+        ];
+
+        $dept = $departments[$slug] ?? null;
+        if (!$dept) {
+            $this->redirect('/employee/dashboard');
+            return;
+        }
+
+        $employeeId = $_SESSION['employee_id'] ?? $_SESSION['user_id'] ?? 0;
+        $employeeName = $_SESSION['employee_name'] ?? $_SESSION['user_name'] ?? 'Employee';
+
+        return $this->render('employees/department', [
+            'page_title' => $dept['title'],
+            'dept_title' => $dept['title'],
+            'dept_icon'  => $dept['icon'],
+            'dept_desc'  => $dept['desc'],
+            'dept_color' => $dept['color'],
+            'dept_slug'  => $slug,
+            'employee_id' => $employeeId,
+            'employee_name' => $employeeName,
+        ]);
     }
 }

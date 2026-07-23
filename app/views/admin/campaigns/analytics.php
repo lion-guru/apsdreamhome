@@ -1,7 +1,7 @@
 <?php
 $campaign = $campaign ?? [];
 $page_title = $page_title ?? 'Campaign Analytics';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <!-- Header -->
@@ -155,7 +155,21 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     
     <script>
         function exportReport(campaignId) {
-            alert('Export functionality will be implemented. Campaign ID: ' + campaignId);
+            var btn = event.target.closest('button');
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Exporting...';
+            fetch('<?= BASE_URL ?>admin/campaigns/' + campaignId + '/analytics', { headers: { 'Accept': 'application/json' } })
+            .then(function(r) { return r.text(); })
+            .then(function(data) {
+                var blob = new Blob([data], { type: 'text/csv' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a'); a.href = url; a.download = 'campaign-' + campaignId + '-report.csv';
+                document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-download me-2"></i>Export';
+            })
+            .catch(function() {
+                window.open('<?= BASE_URL ?>admin/campaigns/' + campaignId + '/analytics', '_blank');
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-download me-2"></i>Export';
+            });
         }
     </script>
 

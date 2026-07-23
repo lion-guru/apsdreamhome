@@ -6,7 +6,7 @@ class SitemapController extends BaseApiController {
     
     public function generate() {
         header('Content-Type: application/xml; charset=utf-8');
-        $base = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $base = rtrim(BASE_URL, '/');
         
         echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";

@@ -1,4 +1,4 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
             <h2 style="color:#e0e0e0;"><i class="fas fa-calculator me-2" style="color:#ffc107;"></i> Commission Recalculations</h2>
@@ -48,7 +48,7 @@
             <h5 style="color:#ffc107;margin:0;"><i class="fas fa-layer-group me-2"></i> Bulk Recalculation Request</h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="/admin/commission/recalculations/bulk-request">
+            <form method="POST" action="<?= BASE_URL ?>/admin/commission/recalculations/bulk-request">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="row">
                     <div class="col-md-3">
@@ -89,10 +89,10 @@
 
     <!-- Filter Tabs -->
     <div class="mb-3">
-        <a href="/admin/commission/recalculations" class="btn btn-sm <?= empty($status_filter) ? 'btn-warning' : 'btn-outline-secondary' ?>">All</a>
-        <a href="/admin/commission/recalculations?status=pending" class="btn btn-sm <?= $status_filter === 'pending' ? 'btn-warning' : 'btn-outline-secondary' ?>">Pending</a>
-        <a href="/admin/commission/recalculations?status=applied" class="btn btn-sm <?= $status_filter === 'applied' ? 'btn-success' : 'btn-outline-secondary' ?>">Applied</a>
-        <a href="/admin/commission/recalculations?status=rejected" class="btn btn-sm <?= $status_filter === 'rejected' ? 'btn-danger' : 'btn-outline-secondary' ?>">Rejected</a>
+        <a href="<?= BASE_URL ?>/admin/commission/recalculations" class="btn btn-sm <?= empty($status_filter) ? 'btn-warning' : 'btn-outline-secondary' ?>">All</a>
+        <a href="<?= BASE_URL ?>/admin/commission/recalculations?status=pending" class="btn btn-sm <?= $status_filter === 'pending' ? 'btn-warning' : 'btn-outline-secondary' ?>">Pending</a>
+        <a href="<?= BASE_URL ?>/admin/commission/recalculations?status=applied" class="btn btn-sm <?= $status_filter === 'applied' ? 'btn-success' : 'btn-outline-secondary' ?>">Applied</a>
+        <a href="<?= BASE_URL ?>/admin/commission/recalculations?status=rejected" class="btn btn-sm <?= $status_filter === 'rejected' ? 'btn-danger' : 'btn-outline-secondary' ?>">Rejected</a>
     </div>
 
     <!-- Requests Table -->
@@ -144,7 +144,7 @@
                                     <td><?= htmlspecialchars($item['requested_by_name'] ?? 'Admin #' . $item['requested_by']) ?></td>
                                     <td><small><?= date('d M Y H:i', strtotime($item['created_at'])) ?></small></td>
                                     <td>
-                                        <a href="/admin/commission/recalculations/<?= $item['id'] ?>" class="btn btn-sm btn-outline-info">
+                                        <a href="<?= BASE_URL ?>/admin/commission/recalculations/<?= $item['id'] ?>" class="btn btn-sm btn-outline-info">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
@@ -160,7 +160,7 @@
                         <small style="color:#888;">Page <?= $page ?> of <?= $total_pages ?> (<?= number_format($total) ?> total)</small>
                         <div>
                             <?php for ($i = max(1, $page - 2); $i <= min($total_pages, $page + 2); $i++): ?>
-                                <a href="/admin/commission/recalculations?status=<?= $status_filter ?>&page=<?= $i ?>"
+                                <a href="<?= BASE_URL ?>/admin/commission/recalculations?status=<?= $status_filter ?>&page=<?= $i ?>"
                                    class="btn btn-sm <?= $i === $page ? 'btn-warning' : 'btn-outline-secondary' ?>"><?= $i ?></a>
                             <?php endfor; ?>
                         </div>

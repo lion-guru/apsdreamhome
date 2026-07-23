@@ -1,4 +1,4 @@
-<?php $_conn = $_conn ?? false; $_ch = $_ch ?? []; $_st = $stats ?? []; $_rc = $recent_calls ?? []; ?>
+﻿<?php $_conn = $_conn ?? false; $_ch = $_ch ?? []; $_st = $stats ?? []; $_rc = $recent_calls ?? []; ?>
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -8,7 +8,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin">Home</a></li>
                         <li class="breadcrumb-item active">SIM Calling</li>
                     </ol>
                 </div>
@@ -26,7 +26,7 @@
                             <i class="fas <?= $_conn ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' ?> fa-3x mb-2"></i>
                             <h4><?= $_conn ? 'Connected' : 'Disconnected' ?></h4>
                             <p class="text-muted">Asterisk AMI — <?= $_conn ? 'Online' : 'Offline' ?></p>
-                            <a href="/admin/sim-calling/settings" class="btn btn-sm btn-outline-secondary">
+                            <a href="<?= BASE_URL ?>/admin/sim-calling/settings" class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-cog"></i> Settings
                             </a>
                         </div>
@@ -240,14 +240,14 @@
                         <div class="col-md-4">
                             <h5><i class="fas fa-mobile-alt text-teal"></i> 2. GSM Gateway</h5>
                             <p class="small text-muted">Connect GoIP-1/4 or any SIP-GSM gateway. Insert SIM card. Register with Asterisk.</p>
-                            <a href="/admin/sim-calling/generate-dialplan" class="btn btn-sm btn-outline-teal">
+                            <a href="<?= BASE_URL ?>/admin/sim-calling/generate-dialplan" class="btn btn-sm btn-outline-teal">
                                 <i class="fas fa-download"></i> Download Dialplan
                             </a>
                         </div>
                         <div class="col-md-4">
                             <h5><i class="fas fa-cog text-teal"></i> 3. Configure</h5>
                             <p class="small text-muted">Enter AMI credentials in Settings. Test connection. Start calling!</p>
-                            <a href="/admin/sim-calling/settings" class="btn btn-sm btn-outline-teal">
+                            <a href="<?= BASE_URL ?>/admin/sim-calling/settings" class="btn btn-sm btn-outline-teal">
                                 <i class="fas fa-cog"></i> Open Settings
                             </a>
                         </div>
@@ -279,7 +279,7 @@ async function makeCall() {
     statusDiv.innerHTML = '<div class="alert alert-info">Initiating call...</div>';
 
     try {
-        const res = await fetch('/admin/sim-calling/api/make-call', {
+        const res = await fetch('<?= BASE_URL ?>/admin/sim-calling/api/make-call', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -309,7 +309,7 @@ function redial(phone) {
 
 async function refreshStatus() {
     try {
-        const res = await fetch('/admin/sim-calling/api/status');
+        const res = await fetch('<?= BASE_URL ?>/admin/sim-calling/api/status');
         const data = await res.json();
         if (data.connected) {
             location.reload();
@@ -322,7 +322,7 @@ async function refreshStatus() {
 async function hangup(channel) {
     if (!confirm('Hangup this call?')) return;
     try {
-        await fetch('/admin/sim-calling/api/hangup', {
+        await fetch('<?= BASE_URL ?>/admin/sim-calling/api/hangup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ channel })

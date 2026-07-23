@@ -83,7 +83,7 @@ class CampaignController extends AdminController
                 $this->data['error'] = 'Failed to create campaign';
                 return $this->create();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error creating campaign: " . $e->getMessage());
             $this->data['error'] = 'An error occurred while creating the campaign';
             return $this->create();
@@ -152,7 +152,7 @@ class CampaignController extends AdminController
                 $this->data['error'] = 'Failed to update campaign';
                 return $this->edit($campaignId);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error updating campaign: " . $e->getMessage());
             $this->data['error'] = 'An error occurred while updating the campaign';
             return $this->edit($campaignId);
@@ -174,7 +174,7 @@ class CampaignController extends AdminController
             } else {
                 $this->data['error'] = 'Failed to delete campaign';
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error deleting campaign: " . $e->getMessage());
             $this->data['error'] = 'An error occurred while deleting the campaign';
         }
@@ -210,7 +210,7 @@ class CampaignController extends AdminController
         try {
             $query = "SELECT * FROM campaigns WHERE campaign_id = ?";
             return $this->db->fetch($query, [$campaignId]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error getting campaign: " . $e->getMessage());
             return null;
         }
@@ -238,7 +238,7 @@ class CampaignController extends AdminController
 
             $this->db->execute($query, $params);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error updating campaign: " . $e->getMessage());
             return false;
         }
@@ -261,7 +261,7 @@ class CampaignController extends AdminController
             $this->db->execute("DELETE FROM campaigns WHERE campaign_id = ?", [$campaignId]);
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error deleting campaign: " . $e->getMessage());
             return false;
         }
@@ -288,7 +288,7 @@ class CampaignController extends AdminController
             } else {
                 $this->data['error'] = 'Failed to launch campaign';
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error launching campaign: " . $e->getMessage());
             $this->data['error'] = 'An error occurred while launching the campaign';
         }
@@ -314,7 +314,7 @@ class CampaignController extends AdminController
                     $campaign['campaign_id']
                 );
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error creating campaign notifications: " . $e->getMessage());
         }
     }
@@ -348,7 +348,7 @@ class CampaignController extends AdminController
             }
 
             return $this->db->fetchAll($query, $params);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error getting target users: " . $e->getMessage());
             return [];
         }
@@ -360,7 +360,13 @@ class CampaignController extends AdminController
     public function emailTemplates()
     {
         $this->data['page_title'] = 'Email Templates';
-        $this->data['templates'] = [];
+        try {
+            $this->data['templates'] = $this->db->fetchAll(
+                "SELECT * FROM email_templates ORDER BY created_at DESC"
+            ) ?: [];
+        } catch (\Throwable $e) {
+            $this->data['templates'] = [];
+        }
         $this->render('admin/campaigns/email-templates');
     }
 
@@ -482,7 +488,19 @@ class CampaignController extends AdminController
     public function smsCampaigns()
     {
         $this->data['page_title'] = 'SMS Campaigns';
-        $this->data['campaigns'] = [];
+        try {
+            $this->data['campaigns'] = $this->db->fetchAll(
+                "SELECT * FROM campaigns WHERE channel = 'sms' OR channel IS NULL ORDER BY created_at DESC"
+            ) ?: [];
+            $this->data['stats'] = [
+                'total' => count($this->data['campaigns']),
+                'sent' => count(array_filter($this->data['campaigns'], fn($c) => ($c['status'] ?? '') === 'sent')),
+                'draft' => count(array_filter($this->data['campaigns'], fn($c) => ($c['status'] ?? '') === 'draft')),
+            ];
+        } catch (\Throwable $e) {
+            $this->data['campaigns'] = [];
+            $this->data['stats'] = ['total' => 0, 'sent' => 0, 'draft' => 0];
+        }
         $this->render('admin/campaigns/sms-campaigns');
     }
 
@@ -528,7 +546,7 @@ class CampaignController extends AdminController
                 $sent = 0; $failed = 0;
                 foreach ($phones as $phone) {
                     try {
-                        $wa = new \App\Services\Communication\WhatsAppService();
+                        $wa = new \App\Services\Communication\WhatsAppSenderService();
                         if (!empty($templateName)) {
                             $wa->sendTemplate($phone, $templateName, ['message' => $message]);
                         } else {

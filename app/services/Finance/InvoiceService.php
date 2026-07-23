@@ -6,7 +6,7 @@
 namespace App\Services\Finance;
 
 use App\Core\Database;
-use App\Models\Payment;
+use App\Models\Payment\Payment;
 
 /**
  * Invoice Generation Service

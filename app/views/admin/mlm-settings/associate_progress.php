@@ -21,6 +21,15 @@ $progress_data = $progress_data ?? [];
                 </tr>
             </thead>
             <tbody>
+                <?php if (empty($users)): ?>
+                <tr>
+                    <td colspan="9" class="text-center py-5">
+                        <i class="fas fa-chart-line fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                        <h5 class="text-muted">No associates to display</h5>
+                        <p class="text-muted mb-3">Rank progress will appear here once associates join the network.</p>
+                    </td>
+                </tr>
+                <?php else: ?>
                 <?php foreach ($users as $i => $a):
                     $p = $progress_data[$i] ?? [];
                 ?>
@@ -51,6 +60,7 @@ $progress_data = $progress_data ?? [];
                     </td>
                 </tr>
                 <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

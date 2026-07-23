@@ -72,7 +72,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("ReportService::generatePropertySalesReport - Error: " . $e->getMessage());
             return [];
         }
@@ -126,7 +126,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("ReportService::generateUserActivityReport - Error: " . $e->getMessage());
             return [];
         }
@@ -172,7 +172,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("ReportService::generateFinancialSummaryReport - Error: " . $e->getMessage());
             return [];
         }
@@ -226,7 +226,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("ReportService::generateAssociatePerformanceReport - Error: " . $e->getMessage());
             return [];
         }
@@ -272,7 +272,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("ReportService::generateLeadConversionReport - Error: " . $e->getMessage());
             return [];
         }
@@ -324,7 +324,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("ReportService::generatePropertyInventoryReport - Error: " . $e->getMessage());
             return [];
         }
@@ -360,7 +360,7 @@ class ReportService
             fclose($output);
             exit;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("ReportService::exportToCSV - Error: " . $e->getMessage());
             return false;
         }
@@ -437,7 +437,7 @@ class ReportService
                 'enquiries' => $enquiryStats
             ];
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("ReportService::getDashboardStatistics - Error: " . $e->getMessage());
             return [];
         }
@@ -462,7 +462,7 @@ class ReportService
             
             $this->db->execute($sql, $params);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("ReportService::logActivity - Error: " . $e->getMessage());
         }
     }

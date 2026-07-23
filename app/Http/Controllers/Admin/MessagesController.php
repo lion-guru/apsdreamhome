@@ -1,17 +1,11 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-class MessagesController extends \App\Http\Controllers\AdminController
+class MessagesController extends \App\Http\Controllers\Admin\AdminController
 {
     public function __construct()
     {
         parent::__construct();
-        $this->checkAccess();
-
-        if (!isset($_SESSION['admin_id']) && !isset($_SESSION['user_id'])) {
-            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/login');
-            exit;
-        }
     }
 
     public function inbox()
@@ -64,7 +58,7 @@ class MessagesController extends \App\Http\Controllers\AdminController
         $otherUser = $this->db->fetchOne("SELECT id, name, email, role, phone FROM users WHERE id = ?", [$otherUserId]);
 
         if (!$otherUser) {
-            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/messages');
+            header('Location: ' . (BASE_URL) . '/admin/messages');
             exit;
         }
 
@@ -86,7 +80,7 @@ class MessagesController extends \App\Http\Controllers\AdminController
 
         if (!$receiverId || !$message) {
             $_SESSION['error_message'] = 'Receiver and message are required.';
-            header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/messages'));
+            header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? (BASE_URL) . '/admin/messages'));
             exit;
         }
 
@@ -96,7 +90,7 @@ class MessagesController extends \App\Http\Controllers\AdminController
         );
 
         $_SESSION['success_message'] = 'Message sent successfully.';
-        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/apsdreamhome') . '/admin/messages/conversation/' . $receiverId);
+        header('Location: ' . (BASE_URL) . '/admin/messages/conversation/' . $receiverId);
         exit;
     }
 

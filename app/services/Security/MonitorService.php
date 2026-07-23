@@ -208,7 +208,7 @@ class SecurityMonitor {
             $db->execute($sql, [$identifier, $ip]);
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Rate limit check error: " . $e->getMessage());
             return true; // Fail open for rate limiting
         }
@@ -264,7 +264,7 @@ class SecurityMonitor {
                 json_encode($data),
                 $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Security threat logging error: " . $e->getMessage());
         }
     }

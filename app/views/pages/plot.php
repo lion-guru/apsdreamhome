@@ -21,7 +21,7 @@ try {
 
     // Retrieve plots
     $plots = $db->fetchAll("SELECT * FROM plots ORDER BY plot_id ASC");
-} catch (Exception $e) {
+} catch (\Exception $e) {
     error_log('Plot availability database error: ' . $e->getMessage());
 }
 

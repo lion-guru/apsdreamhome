@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * show - APS Dream Home Component
  * 
@@ -423,7 +423,7 @@
 <div class="modal fade" id="activityModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="/leads/<?= $lead['id'] ?>/activity">
+            <form method="POST" action="<?= BASE_URL ?>/leads/<?= $lead['id'] ?>/activity">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Activity</h5>
@@ -460,7 +460,7 @@
 <div class="modal fade" id="noteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="/leads/<?= $lead['id'] ?>/note">
+            <form method="POST" action="<?= BASE_URL ?>/leads/<?= $lead['id'] ?>/note">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Note</h5>

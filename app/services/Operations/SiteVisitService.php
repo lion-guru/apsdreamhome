@@ -3,7 +3,6 @@
 namespace App\Services\Operations;
 
 use App\Core\Database\Database;
-use App\Services\CommunicationService;
 
 /**
  * Site Visit Scheduler Service
@@ -12,12 +11,10 @@ use App\Services\CommunicationService;
 class SiteVisitService
 {
     private $database;
-    private $communicationService;
     
     public function __construct()
     {
         $this->database = Database::getInstance();
-        $this->communicationService = new CommunicationService();
         $this->ensureTablesExist();
     }
     

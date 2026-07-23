@@ -171,7 +171,7 @@ class TestFramework
 
         foreach ($apiEndpoints as $endpoint) {
             try {
-                $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+                $baseUrl = rtrim(BASE_URL, '/');
                 $url = $baseUrl . "/" . $endpoint;
 
                 $ch = curl_init();

@@ -8,6 +8,15 @@
             <div class="table-responsive"><table class="table table-hover mb-0">
                 <thead class="table-light"><tr><th>ID</th><th>Name</th><th>Price</th><th>Direct Reward</th><th>Level Reward</th><th>Daily Cap</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody>
+                    <?php if (empty($packages ?? [])): ?>
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <i class="fas fa-box fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                            <h5 class="text-muted">No packages found</h5>
+                            <p class="text-muted mb-3">Create networker packages to define rewards and commission structures.</p>
+                        </td>
+                    </tr>
+                    <?php else: ?>
                     <?php foreach ($packages as $p): ?>
                     <tr>
                         <td><?= $p['id'] ?></td>
@@ -20,6 +29,7 @@
                         <td><button class="btn btn-sm btn-outline-primary" onclick="editPackage(<?= htmlspecialchars(json_encode($p)) ?>)"><i class="fas fa-edit"></i></button></td>
                     </tr>
                     <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table></div>
         </div>

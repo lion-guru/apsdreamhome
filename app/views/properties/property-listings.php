@@ -34,7 +34,7 @@ $properties = [];
 try {
     $db = \App\Core\App::database();
     $properties = $db->fetchAll("SELECT * FROM properties WHERE status = 'available' ORDER BY featured DESC, created_at DESC");
-} catch (Exception $e) {
+} catch (\Exception $e) {
     error_log("Property fetch error: " . $e->getMessage());
     // Fallback to sample data if database fails
     $properties = [

@@ -92,7 +92,7 @@ class TelecallingController extends AdminController
                 'follow_ups' => $followUps
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleError($e->getMessage());
         }
     }
@@ -335,7 +335,7 @@ class TelecallingController extends AdminController
                 'lead_name' => $lead['name']
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -427,7 +427,7 @@ class TelecallingController extends AdminController
                 'call_history' => $callHistory
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -499,7 +499,7 @@ class TelecallingController extends AdminController
                 'category' => $category
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -564,7 +564,7 @@ class TelecallingController extends AdminController
                 'message' => 'Follow-up completed successfully'
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -582,7 +582,7 @@ class TelecallingController extends AdminController
         try {
             $leads = $this->db->fetchAll("SELECT id, name, phone, source, status, created_at FROM leads ORDER BY created_at DESC LIMIT 50");
             $telecallers = $this->db->fetchAll("SELECT u.id, u.name FROM users u WHERE u.role = 'employee' ORDER BY u.name");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Telecalling assign error: " . $e->getMessage());
         }
         $this->render('employee/telecalling_assign', [
@@ -618,7 +618,7 @@ class TelecallingController extends AdminController
             $pendingApprovals = $this->db->fetchAll("SELECT l.id, l.name, l.phone, l.status, l.created_at, 
                 (SELECT COUNT(*) FROM leads WHERE id = l.id AND status = 'converted') as deals 
                 FROM leads l WHERE l.status = 'pending_approval' ORDER BY l.created_at DESC LIMIT 20");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Telecalling approvals error: " . $e->getMessage());
         }
         $this->render('employee/telecalling_approvals', [

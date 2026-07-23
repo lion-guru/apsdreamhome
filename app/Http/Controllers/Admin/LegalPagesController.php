@@ -83,7 +83,7 @@ class LegalPagesController extends AdminController
             } else {
                 $this->jsonResponse(['success' => false, 'message' => 'Failed to update content']);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->jsonResponse(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
     }
@@ -125,7 +125,7 @@ class LegalPagesController extends AdminController
             } else {
                 $this->jsonResponse(['success' => false, 'message' => 'Failed to update content']);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->jsonResponse(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
     }
@@ -154,7 +154,7 @@ class LegalPagesController extends AdminController
                 'title' => 'Terms and Conditions',
                 'updated_at' => date('Y-m-d H:i:s')
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'content' => $this->getDefaultTermsContent(),
                 'title' => 'Terms and Conditions',
@@ -187,7 +187,7 @@ class LegalPagesController extends AdminController
                 'title' => 'Privacy Policy',
                 'updated_at' => date('Y-m-d H:i:s')
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'content' => $this->getDefaultPrivacyContent(),
                 'title' => 'Privacy Policy',
@@ -217,7 +217,7 @@ class LegalPagesController extends AdminController
             }
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error saving terms content: " . $e->getMessage());
             return false;
         }
@@ -244,7 +244,7 @@ class LegalPagesController extends AdminController
             }
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error saving privacy content: " . $e->getMessage());
             return false;
         }

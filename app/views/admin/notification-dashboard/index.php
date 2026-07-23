@@ -5,7 +5,7 @@ $channel_stats = $channel_stats ?? [];
 $type_stats = $type_stats ?? [];
 $daily_stats = $daily_stats ?? [];
 $template_stats = $template_stats ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <!DOCTYPE html>
 <html lang="en">

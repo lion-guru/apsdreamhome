@@ -66,7 +66,7 @@ $satisfaction = $satisfaction ?? 98;
                 <div class="card shadow border-0">
                     <div class="card-body p-5">
                         <h3 class="text-center mb-4"><?= __('reviews_share_experience') ?></h3>
-                        <form method="POST" action="/apsdreamhome/contact">
+                        <form method="POST" action="<?= BASE_URL ?>/contact">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row">
                                 <div class="col-md-6 mb-3">

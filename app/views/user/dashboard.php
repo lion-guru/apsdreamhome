@@ -8,7 +8,7 @@ $statistics = $statistics ?? [];
 $total_users = $total_users ?? 0;
 $active_count = $active_count ?? 0;
 $page_title = $page_title ?? 'User Dashboard - APS Dream Home';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 
     <div class="container-fluid py-4">

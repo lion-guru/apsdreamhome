@@ -243,7 +243,7 @@ class CampaignDeliveryService
      */
     private function generateEmailContent($campaign, $user)
     {
-        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $baseUrl = rtrim(BASE_URL, '/');
         $template = "
         <html>
         <body style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;'>

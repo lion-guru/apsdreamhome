@@ -4,8 +4,6 @@
 
 namespace App\Helpers;
 
-use App\Services\Legacy\SessionHelpers;
-
 class AuthHelper
 {
     /**

@@ -180,6 +180,17 @@ abstract class Model implements ArrayAccess, JsonSerializable
     }
 
     /**
+     * Get an attribute's value (used by __get magic).
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function getAttributeValue($key)
+    {
+        return $this->getAttribute($key);
+    }
+
+    /**
      * Begin querying the model.
      *
      * @return \App\Core\Database\Builder
@@ -291,6 +302,20 @@ abstract class Model implements ArrayAccess, JsonSerializable
     public function exists()
     {
         return isset($this->attributes[$this->getKeyName()]);
+    }
+
+    /**
+     * Delete the model from the database (scoped to its primary key).
+     *
+     * @return bool
+     */
+    public function delete()
+    {
+        if (!$this->exists()) {
+            return false;
+        }
+        $query = $this->newQuery();
+        return $query->where($this->getKeyName(), '=', $this->getKey())->delete();
     }
 
     /**
@@ -408,6 +433,29 @@ abstract class Model implements ArrayAccess, JsonSerializable
     public function __call($method, $parameters)
     {
         return $this->newQuery()->$method(...$parameters);
+    }
+
+    /**
+     * Dynamically set an attribute on the model.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        $this->setAttribute($key, $value);
+    }
+
+    /**
+     * Determine if an attribute exists on the model.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        return isset($this->attributes[$key]);
     }
 
     /**

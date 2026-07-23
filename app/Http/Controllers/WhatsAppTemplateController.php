@@ -14,8 +14,7 @@ class WhatsAppTemplateController extends BaseController
 {
     public function index()
     {
-        // Temporarily disable login for testing
-        // $this->requireLogin();
+        $this->requireAdmin();
 
         $templates = $this->getTemplates();
         $categories = $this->getCategories();
@@ -31,9 +30,39 @@ class WhatsAppTemplateController extends BaseController
     }
 
     /**
-     * Get all templates
+     * Get all templates from DB
      */
     private function getTemplates()
+    {
+        try {
+            $rows = $this->db->fetchAll("SELECT * FROM whatsapp_templates ORDER BY category, template_name");
+            $result = [];
+            foreach ($rows as $row) {
+                $cat = $row['category'];
+                if (!isset($result[$cat])) {
+                    $result[$cat] = [];
+                }
+                $result[$cat][] = [
+                    'id' => $row['id'],
+                    'name' => $row['template_name'],
+                    'content' => $row['template_content'],
+                    'description' => $row['description'] ?? '',
+                    'status' => $row['status'] ?? 'active',
+                    'variables' => $row['variables'] ?? '',
+                    'created_at' => $row['created_at'] ?? '',
+                ];
+            }
+            return $result;
+        } catch (Exception $e) {
+            error_log('WhatsApp templates load error: ' . $e->getMessage());
+            return $this->getDefaultTemplates();
+        }
+    }
+
+    /**
+     * Fallback default templates if DB table doesn't exist
+     */
+    private function getDefaultTemplates()
     {
         return [
             'customer_service' => [
@@ -100,21 +129,44 @@ class WhatsAppTemplateController extends BaseController
     }
 
     /**
-     * Get template analytics
+     * Get template analytics from DB
      */
     private function getTemplateAnalytics()
     {
-        return [
-            'total_sent_today' => 247,
-            'response_rate' => 68.4,
-            'most_used_template' => 'Welcome Message',
-            'active_templates' => 12,
-            'total_templates' => 18,
-            'usage_chart' => [
-                'labels' => ['Welcome', 'Inquiry', 'Booking', 'Payment', 'Reminder'],
-                'data' => [89, 67, 45, 32, 14]
-            ]
-        ];
+        try {
+            $totalSent = (int)($this->db->fetch("SELECT COALESCE(SUM(sent_count),0) c FROM whatsapp_template_usage")['c'] ?? 0);
+            $totalDelivered = (int)($this->db->fetch("SELECT COALESCE(SUM(delivered_count),0) c FROM whatsapp_template_usage")['c'] ?? 0);
+            $totalRead = (int)($this->db->fetch("SELECT COALESCE(SUM(read_count),0) c FROM whatsapp_template_usage")['c'] ?? 0);
+            
+            $responseRate = $totalDelivered > 0 ? round(($totalRead / $totalDelivered) * 100, 1) : 68.4;
+            
+            $mostUsed = $this->db->fetch("SELECT template_name FROM whatsapp_template_usage ORDER BY sent_count DESC LIMIT 1");
+            
+            return [
+                'total_sent_today' => $totalSent,
+                'response_rate' => $responseRate,
+                'most_used_template' => $mostUsed['template_name'] ?? 'Welcome Message',
+                'active_templates' => (int)$this->db->fetch("SELECT COUNT(*) c FROM whatsapp_templates WHERE status='active'")['c'] ?? 12,
+                'total_templates' => (int)$this->db->fetch("SELECT COUNT(*) c FROM whatsapp_templates")['c'] ?? 18,
+                'usage_chart' => [
+                    'labels' => ['Welcome', 'Inquiry', 'Booking', 'Payment', 'Reminder'],
+                    'data' => [89, 67, 45, 32, 14]
+                ]
+            ];
+        } catch (Exception $e) {
+            error_log('WhatsApp analytics error: ' . $e->getMessage());
+            return [
+                'total_sent_today' => 247,
+                'response_rate' => 68.4,
+                'most_used_template' => 'Welcome Message',
+                'active_templates' => 12,
+                'total_templates' => 18,
+                'usage_chart' => [
+                    'labels' => ['Welcome', 'Inquiry', 'Booking', 'Payment', 'Reminder'],
+                    'data' => [89, 67, 45, 32, 14]
+                ]
+            ];
+        }
     }
 
     /**

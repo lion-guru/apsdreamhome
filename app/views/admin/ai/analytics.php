@@ -2,7 +2,7 @@
 $analytics_data = $analytics_data ?? [];
 $predictions = $predictions ?? [];
 $page_title = $page_title ?? 'AI Analytics';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <!-- Header -->

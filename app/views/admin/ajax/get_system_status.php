@@ -34,7 +34,7 @@ try {
         $db->query("SELECT 1");
         $status['database'] = h($mlSupport->translate('Connected'));
         $status['database_status'] = 'success';
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         $status['database'] = h($mlSupport->translate('Error'));
         $status['database_status'] = 'danger';
         error_log('Database status check failed: ' . $e->getMessage());
@@ -45,7 +45,7 @@ try {
         // This would check if AI services are responding
         $status['ai_system'] = h($mlSupport->translate('Active'));
         $status['ai_status'] = 'success';
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         $status['ai_system'] = h($mlSupport->translate('Inactive'));
         $status['ai_status'] = 'warning';
     }
@@ -77,7 +77,7 @@ try {
         'timestamp' => date('Y-m-d H:i:s')
     ]);
 
-} catch (Exception $e) {
+} catch (\Exception $e) {
     error_log('System status error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([

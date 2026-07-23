@@ -56,7 +56,12 @@
                                 <?php endforeach; ?>
                                 <?php if (empty($blogs ?? [])): ?>
                                 <tr>
-                                    <td colspan="7" class="text-center">No blog posts found.</td>
+                                    <td colspan="7" class="text-center py-5">
+                                        <i class="fas fa-newspaper fa-3x text-muted mb-3 d-block"></i>
+                                        <h5 class="text-muted">No blog posts yet</h5>
+                                        <p class="text-muted mb-3">Publish your first blog post to engage customers and boost SEO.</p>
+                                        <a href="<?= BASE_URL ?>/admin/blog/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Create Post</a>
+                                    </td>
                                 </tr>
                                 <?php endif; ?>
                             </tbody>

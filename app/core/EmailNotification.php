@@ -41,7 +41,7 @@ class EmailNotification {
 
             return true;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Email notification error: ' . $e->getMessage());
             return false;
         }
@@ -67,7 +67,7 @@ class EmailNotification {
 
             return true;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Registration email error: ' . $e->getMessage());
             return false;
         }
@@ -94,7 +94,7 @@ class EmailNotification {
 
             return true;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Inquiry response email error: ' . $e->getMessage());
             return false;
         }
@@ -119,7 +119,7 @@ class EmailNotification {
 
             return true;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Send email error: ' . $e->getMessage());
             throw $e;
         }
@@ -159,7 +159,7 @@ class EmailNotification {
 
             return $this->sendEmail($test_email, $subject, $body);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Email test error: ' . $e->getMessage());
             return false;
         }
@@ -194,7 +194,7 @@ class EmailNotification {
             $stmt->execute([$inquiry_id]);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get inquiry details error: ' . $e->getMessage());
             return null;
         }
@@ -600,7 +600,7 @@ class EmailNotification {
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $result['count'] ?? 0;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }

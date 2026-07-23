@@ -36,7 +36,7 @@ class CommissionController extends AdminController
             ];
 
             return $this->render('admin/commission/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Commission Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load commission data');
             return $this->redirect('admin/dashboard');
@@ -57,7 +57,7 @@ class CommissionController extends AdminController
             ];
 
             return $this->render('admin/commission/calculate', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Commission Calculate error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load commission calculation');
             return $this->redirect('admin/commission');
@@ -93,7 +93,7 @@ class CommissionController extends AdminController
                 'message' => 'Commission calculation completed',
                 'results' => $results
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Process Commission Calculation error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => 'Calculation failed'], 500);
         }
@@ -112,7 +112,7 @@ class CommissionController extends AdminController
             ];
 
             return $this->render('admin/commission/approve', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Commission Approve error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load commission approvals');
             return $this->redirect('admin/commission');
@@ -149,7 +149,7 @@ class CommissionController extends AdminController
                 'message' => "Commission {$action}al completed",
                 'results' => $results
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Process Commission Approval error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => 'Approval failed'], 500);
         }
@@ -169,7 +169,7 @@ class CommissionController extends AdminController
             ];
 
             return $this->render('admin/commission/payout', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Commission Payout error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load payout data');
             return $this->redirect('admin/commission');
@@ -205,7 +205,7 @@ class CommissionController extends AdminController
                 'message' => 'Payout processed successfully',
                 'results' => $results
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Process Payout error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => 'Payout failed'], 500);
         }
@@ -224,7 +224,7 @@ class CommissionController extends AdminController
             ];
 
             return $this->render('admin/commission/reports', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Commission Reports error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load commission reports');
             return $this->redirect('admin/commission');
@@ -262,7 +262,7 @@ class CommissionController extends AdminController
             $stats['this_month_amount'] = (float)($result['this_month_amount'] ?? 0);
 
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Commission Stats error: " . $e->getMessage());
             return [];
         }
@@ -284,7 +284,7 @@ class CommissionController extends AdminController
                     ORDER BY mcl.created_at DESC
                     LIMIT 20";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Pending Commissions error: " . $e->getMessage());
             return [];
         }
@@ -304,7 +304,7 @@ class CommissionController extends AdminController
                     ORDER BY mcl.payout_date DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Recent Payouts error: " . $e->getMessage());
             return [];
         }
@@ -329,7 +329,7 @@ class CommissionController extends AdminController
                     ORDER BY b.created_at DESC
                     LIMIT 50";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Bookings For Commission error: " . $e->getMessage());
             return [];
         }
@@ -347,7 +347,7 @@ class CommissionController extends AdminController
                 // Gracefully handle dropped table ref
             }
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Calculation Rules error: " . $e->getMessage());
             return [];
         }
@@ -406,7 +406,7 @@ class CommissionController extends AdminController
             }
 
             return ['success' => false, 'message' => 'Failed to save commission'];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Calculate Commission For Booking error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Calculation failed'];
         }
@@ -430,7 +430,7 @@ class CommissionController extends AdminController
             $result = $stmt->fetch();
 
             return (float)($result['rate_percentage'] ?? 5.0); // Default 5%
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Commission Rate error: " . $e->getMessage());
             return 5.0;
         }
@@ -451,7 +451,7 @@ class CommissionController extends AdminController
                     WHERE mcl.status = 'pending'
                     ORDER BY mcl.created_at ASC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Pending Approvals error: " . $e->getMessage());
             return [];
         }
@@ -486,7 +486,7 @@ class CommissionController extends AdminController
             }
 
             return ['success' => false, 'message' => 'Failed to update commission'];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Process Commission Approval error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Approval failed'];
         }
@@ -505,7 +505,7 @@ class CommissionController extends AdminController
                     WHERE mcl.status = 'approved' AND (mcl.payout_date IS NULL OR mcl.payout_date = '')
                     ORDER BY mcl.approved_at ASC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Approved Commissions error: " . $e->getMessage());
             return [];
         }
@@ -524,7 +524,7 @@ class CommissionController extends AdminController
                     ORDER BY mcl.payout_date DESC
                     LIMIT 20";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Payout History error: " . $e->getMessage());
             return [];
         }
@@ -588,7 +588,7 @@ class CommissionController extends AdminController
 
             $this->db->rollBack();
             return ['success' => false, 'message' => 'Failed to process payout'];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->db->rollBack();
             $this->loggingService->error("Process Commission Payout error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Payout failed'];
@@ -635,7 +635,7 @@ class CommissionController extends AdminController
             $data['by_type'] = $this->db->fetchAll($sql) ?: [];
 
             return $data;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Commission Report Data error: " . $e->getMessage());
             return [];
         }

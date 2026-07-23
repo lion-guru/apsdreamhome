@@ -1,12 +1,12 @@
-<?php $pageTitle = 'Payout Analytics'; ?>
+﻿<?php $pageTitle = 'Payout Analytics'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-chart-bar me-2"></i>Payout Analytics</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/payouts">Payouts</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/payouts">Payouts</a></li>
                     <li class="breadcrumb-item active">Analytics</li>
                 </ul>
             </div>

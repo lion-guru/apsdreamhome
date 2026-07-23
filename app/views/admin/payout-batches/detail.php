@@ -1,34 +1,34 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-8">
-            <a href="/admin/payout-batches" class="btn btn-sm btn-outline-secondary mb-2"><i class="fas fa-arrow-left me-1"></i> Back</a>
+            <a href="<?= BASE_URL ?>/admin/payout-batches" class="btn btn-sm btn-outline-secondary mb-2"><i class="fas fa-arrow-left me-1"></i> Back</a>
             <h2 style="color:#e0e0e0;"><i class="fas fa-money-check-alt me-2" style="color:#28a745;"></i> <?= htmlspecialchars($batch['batch_name']) ?></h2>
             <small style="color:#888;">Created <?= date('d M Y H:i', strtotime($batch['created_at'])) ?> by <?= htmlspecialchars($batch['created_by_name'] ?? 'Admin') ?></small>
         </div>
         <div class="col-4 text-end">
             <!-- Action Buttons Based on Status -->
             <?php if ($batch['status'] === 'draft'): ?>
-                <form method="POST" action="/admin/payout-batches/submit/<?= $batch['id'] ?>" style="display:inline;">
+                <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/submit/<?= $batch['id'] ?>" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <button type="submit" class="btn btn-warning"><i class="fas fa-paper-plane me-1"></i> Submit for Approval</button>
                 </form>
             <?php elseif ($batch['status'] === 'pending_approval'): ?>
-                <form method="POST" action="/admin/payout-batches/approve/<?= $batch['id'] ?>" style="display:inline;">
+                <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/approve/<?= $batch['id'] ?>" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <button type="submit" class="btn btn-success" onclick="return confirm('Approve this payout batch?')"><i class="fas fa-check me-1"></i> Approve</button>
                 </form>
                 <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal"><i class="fas fa-times me-1"></i> Reject</button>
             <?php elseif ($batch['status'] === 'approved'): ?>
-                <form method="POST" action="/admin/payout-batches/process/<?= $batch['id'] ?>" style="display:inline;">
+                <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/process/<?= $batch['id'] ?>" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <button type="submit" class="btn btn-info" onclick="return confirm('Start processing this batch?')"><i class="fas fa-play me-1"></i> Start Processing</button>
                 </form>
-                <form method="POST" action="/admin/payout-batches/export/<?= $batch['id'] ?>" style="display:inline;">
+                <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/export/<?= $batch['id'] ?>" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <button type="submit" class="btn btn-outline-success"><i class="fas fa-download me-1"></i> Bank Export</button>
                 </form>
             <?php elseif ($batch['status'] === 'processing'): ?>
-                <form method="POST" action="/admin/payout-batches/export/<?= $batch['id'] ?>" style="display:inline;">
+                <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/export/<?= $batch['id'] ?>" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <button type="submit" class="btn btn-outline-success"><i class="fas fa-download me-1"></i> Bank Export</button>
                 </form>
@@ -100,7 +100,7 @@
                 <h5 style="color:#28a745;margin:0;"><i class="fas fa-magic me-2"></i> Auto-populate with Pending Entries</h5>
             </div>
             <div class="card-body">
-                <form method="POST" action="/admin/payout-batches/populate/<?= $batch['id'] ?>">
+                <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/populate/<?= $batch['id'] ?>">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="row">
                         <div class="col-md-3">
@@ -224,7 +224,7 @@
                 <h5 class="modal-title" style="color:#dc3545;">Reject Batch</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="/admin/payout-batches/reject/<?= $batch['id'] ?>">
+            <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/reject/<?= $batch['id'] ?>">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="modal-body">
                     <label style="color:#ccc;">Reason for rejection</label>
@@ -247,7 +247,7 @@
                 <h5 class="modal-title" style="color:#28a745;">Mark Payment Complete</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="/admin/payout-batches/complete-entry">
+            <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/complete-entry">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="batch_id" value="<?= $batch['id'] ?>">
                 <input type="hidden" name="entry_id" id="completeEntryId">

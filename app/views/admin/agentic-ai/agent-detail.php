@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $_agent = $agent ?? ['name' => 'Agent', 'color' => '#666', 'icon' => 'fa-robot', 'description' => ''];
 $_type = $agent_type ?? '';
 $_tasks = $tasks ?? [];
@@ -14,7 +14,7 @@ $_escalations = $escalations ?? [];
                     <small class="text-muted"><?= htmlspecialchars($_agent['description']) ?></small>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="/admin/agentic-ai" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+                    <a href="<?= BASE_URL ?>/admin/agentic-ai" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
                 </div>
             </div>
         </div>

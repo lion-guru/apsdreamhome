@@ -15,6 +15,9 @@ $tabs = [
     'footer'   => ['icon' => 'fa-shoe-prints','label' => 'Footer'],
     'hero'     => ['icon' => 'fa-image',   'label' => 'Homepage'],
     'widget'   => ['icon' => 'fa-comments', 'label' => 'Widgets'],
+    'email'    => ['icon' => 'fa-envelope', 'label' => 'Email/SMTP'],
+    'payment'  => ['icon' => 'fa-credit-card','label' => 'Payments'],
+    'sms'      => ['icon' => 'fa-sms',     'label' => 'SMS & WhatsApp'],
 ];
 ?>
 
@@ -425,6 +428,236 @@ $tabs = [
             </div>
         </div>
 
+        <?php elseif ($active_tab === 'email'): ?>
+        <!-- ═══ EMAIL/SMTP TAB ═══ -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="settings-group">
+                    <h6><i class="fas fa-server me-2"></i>SMTP Server</h6>
+                    <div class="mb-3">
+                        <label class="form-label">SMTP Host</label>
+                        <input type="text" name="settings[smtp_host]" class="form-control" value="<?= sc($settings, 'smtp_host', 'smtp.gmail.com') ?>" placeholder="smtp.gmail.com">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">SMTP Port</label>
+                            <input type="number" name="settings[smtp_port]" class="form-control" value="<?= sc($settings, 'smtp_port', '587') ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Encryption</label>
+                            <select name="settings[smtp_encryption]" class="form-select">
+                                <option value="tls" <?= ($settings['smtp_encryption'] ?? '') === 'tls' ? 'selected' : '' ?>>TLS</option>
+                                <option value="ssl" <?= ($settings['smtp_encryption'] ?? '') === 'ssl' ? 'selected' : '' ?>>SSL</option>
+                                <option value="none" <?= ($settings['smtp_encryption'] ?? '') === 'none' ? 'selected' : '' ?>>None</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h6><i class="fas fa-key me-2"></i>SMTP Credentials</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Username / Email</label>
+                        <input type="text" name="settings[smtp_username]" class="form-control" value="<?= sc($settings, 'smtp_username') ?>" placeholder="your@email.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" name="settings[smtp_password]" class="form-control" value="<?= sc($settings, 'smtp_password') ?>" id="smtpPassword">
+                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('smtpPassword');p.type=p.type==='password'?'text':'password'">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">For Gmail, use App Password (not regular password)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="settings-group">
+                    <h6><i class="fas fa-paper-plane me-2"></i>Email Defaults</h6>
+                    <div class="mb-3">
+                        <label class="form-label">From Name</label>
+                        <input type="text" name="settings[smtp_from_name]" class="form-control" value="<?= sc($settings, 'smtp_from_name', 'APS Dream Home') ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">From Email</label>
+                        <input type="email" name="settings[smtp_from_email]" class="form-control" value="<?= sc($settings, 'smtp_from_email') ?>" placeholder="noreply@apsdreamhome.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reply-To Email</label>
+                        <input type="email" name="settings[smtp_reply_to]" class="form-control" value="<?= sc($settings, 'smtp_reply_to') ?>" placeholder="support@apsdreamhome.com">
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h6><i class="fas fa-flask me-2"></i>Test Connection</h6>
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Test Email Recipient</label>
+                            <input type="email" class="form-control" id="testEmail" placeholder="test@example.com">
+                        </div>
+                        <div class="col-md-4 mb-3 d-flex align-items-end">
+                            <button type="button" class="btn btn-outline-primary w-100" onclick="testSmtpConnection()">
+                                <i class="fas fa-paper-plane me-1"></i> Send Test
+                            </button>
+                        </div>
+                    </div>
+                    <div id="smtpTestResult" class="small"></div>
+                </div>
+                <div class="alert alert-warning small mb-0">
+                    <i class="fas fa-exclamation-triangle me-1"></i>
+                    <strong>Gmail Users:</strong> Enable 2-Factor Auth → Generate App Password at <a href="https://myaccount.google.com/apppasswords" target="_blank">myaccount.google.com/apppasswords</a>
+                </div>
+            </div>
+        </div>
+
+        <?php elseif ($active_tab === 'payment'): ?>
+        <!-- ═══ PAYMENT GATEWAY TAB ═══ -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="settings-group">
+                    <h6><i class="fas fa-credit-card me-2"></i>Razorpay Gateway</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Enable Razorpay</label>
+                        <select name="settings[razorpay_enabled]" class="form-select">
+                            <option value="1" <?= ($settings['razorpay_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
+                            <option value="0" <?= ($settings['razorpay_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Key ID</label>
+                        <input type="text" name="settings[razorpay_key_id]" class="form-control" value="<?= sc($settings, 'razorpay_key_id') ?>" placeholder="rzp_test_...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Key Secret</label>
+                        <div class="input-group">
+                            <input type="password" name="settings[razorpay_key_secret]" class="form-control" value="<?= sc($settings, 'razorpay_key_secret') ?>" id="razorpaySecret">
+                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('razorpaySecret');p.type=p.type==='password'?'text':'password'">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Webhook Secret</label>
+                        <input type="text" name="settings[razorpay_webhook_secret]" class="form-control" value="<?= sc($settings, 'razorpay_webhook_secret') ?>" placeholder="whsec_...">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="settings-group">
+                    <h6><i class="fas fa-mobile-alt me-2"></i>UPI Configuration</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Enable UPI</label>
+                        <select name="settings[upi_enabled]" class="form-select">
+                            <option value="1" <?= ($settings['upi_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
+                            <option value="0" <?= ($settings['upi_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">UPI VPA / ID</label>
+                        <input type="text" name="settings[upi_vpa]" class="form-control" value="<?= sc($settings, 'upi_vpa') ?>" placeholder="apsdreamhome@upi">
+                        <div class="form-text">This will be shown on QR code for payments</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Collectee Name</label>
+                        <input type="text" name="settings[upi_name]" class="form-control" value="<?= sc($settings, 'upi_name', 'APS Dream Home') ?>">
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h6><i class="fas fa-info-circle me-2"></i>Payment Notes</h6>
+                    <div class="alert alert-info small mb-2">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Razorpay is used for online card/netbanking/wallet payments. UPI is for direct bank transfers.
+                    </div>
+                    <div class="alert alert-warning small mb-0">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        <strong>Production:</strong> Replace test keys with live keys from <a href="https://dashboard.razorpay.com/app/keys" target="_blank">Razorpay Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <?php elseif ($active_tab === 'sms'): ?>
+        <!-- ═══ SMS & WHATSAPP TAB ═══ -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="settings-group">
+                    <h6><i class="fas fa-sms me-2"></i>SMS Gateway (MSG91)</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Enable SMS</label>
+                        <select name="settings[sms_enabled]" class="form-select">
+                            <option value="1" <?= ($settings['sms_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
+                            <option value="0" <?= ($settings['sms_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">MSG91 Auth Key</label>
+                        <div class="input-group">
+                            <input type="password" name="settings[sms_api_key]" class="form-control" value="<?= sc($settings, 'sms_api_key') ?>" id="smsApiKey">
+                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('smsApiKey');p.type=p.type==='password'?'text':'password'">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">Get from <a href="https://msg91.com" target="_blank">msg91.com</a> → API section</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Sender ID</label>
+                        <input type="text" name="settings[sms_sender_id]" class="form-control" value="<?= sc($settings, 'sms_sender_id') ?>" placeholder="APSDRM">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Default Route</label>
+                        <select name="settings[sms_route]" class="form-select">
+                            <option value="transactional" <?= ($settings['sms_route'] ?? '') === 'transactional' ? 'selected' : '' ?>>Transactional</option>
+                            <option value="promotional" <?= ($settings['sms_route'] ?? '') === 'promotional' ? 'selected' : '' ?>>Promotional</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="settings-group">
+                    <h6><i class="fab fa-whatsapp me-2 text-success"></i>WhatsApp Business API</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Enable WhatsApp</label>
+                        <select name="settings[whatsapp_api_enabled]" class="form-select">
+                            <option value="1" <?= ($settings['whatsapp_api_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
+                            <option value="0" <?= ($settings['whatsapp_api_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">WhatsApp Business Phone</label>
+                        <input type="text" name="settings[whatsapp_business_phone]" class="form-control" value="<?= sc($settings, 'whatsapp_business_phone') ?>" placeholder="+91XXXXXXXXXX">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">API Token</label>
+                        <div class="input-group">
+                            <input type="password" name="settings[whatsapp_api_token]" class="form-control" value="<?= sc($settings, 'whatsapp_api_token') ?>" id="whatsappToken">
+                            <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('whatsappToken');p.type=p.type==='password'?'text':'password'">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Webhook URL</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="<?= BASE_URL ?>/api/whatsapp/webhook" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(this.previousElementSibling.value);this.innerHTML='<i class=\'fas fa-check\'></i> Copied'">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h6><i class="fas fa-bell me-2"></i>Notification Channels Summary</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr><td class="text-muted">Email (SMTP)</td><td><span class="badge bg-<?= ($settings['smtp_host'] ?? '') ? 'success' : 'secondary' ?>"><?= ($settings['smtp_host'] ?? '') ? 'Configured' : 'Not Set' ?></span></td></tr>
+                            <tr><td class="text-muted">SMS (MSG91)</td><td><span class="badge bg-<?= ($settings['sms_api_key'] ?? '') ? 'success' : 'secondary' ?>"><?= ($settings['sms_enabled'] ?? '0') === '1' ? 'Active' : 'Inactive' ?></span></td></tr>
+                            <tr><td class="text-muted">WhatsApp</td><td><span class="badge bg-<?= ($settings['whatsapp_api_enabled'] ?? '0') === '1' ? 'success' : 'secondary' ?>"><?= ($settings['whatsapp_api_enabled'] ?? '0') === '1' ? 'Active' : 'Inactive' ?></span></td></tr>
+                            <tr><td class="text-muted">Push (FCM)</td><td><span class="badge bg-success">Active</span></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <?php endif; ?>
 
         <!-- Save Bar -->
@@ -459,5 +692,25 @@ document.addEventListener('DOMContentLoaded', function() {
         previewDesc.textContent = this.value || 'Page description...';
     });
 });
+</script>
+<?php endif; ?>
+<?php if ($active_tab === 'email'): ?>
+<script>
+function testSmtpConnection() {
+    var email = document.getElementById('testEmail').value;
+    var resultDiv = document.getElementById('smtpTestResult');
+    if (!email) { resultDiv.innerHTML = '<span class="text-danger">Enter an email address first</span>'; return; }
+    resultDiv.innerHTML = '<span class="text-info"><i class="fas fa-spinner fa-spin me-1"></i> Sending test email...</span>';
+    var fd = new FormData();
+    fd.append('csrf_token', '<?= $_SESSION["csrf_token"] ?? "" ?>');
+    fd.append('test_email', email);
+    fetch('<?= BASE_URL ?>/admin/settings/email-config/test', { method: 'POST', body: fd })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.success) { resultDiv.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i> ' + (d.message || 'Test email sent!') + '</span>'; }
+            else { resultDiv.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> ' + (d.message || 'Failed to send') + '</span>'; }
+        })
+        .catch(function() { resultDiv.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> Network error</span>'; });
+}
 </script>
 <?php endif; ?>

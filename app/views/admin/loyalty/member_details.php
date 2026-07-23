@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Member Details';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $member = $member ?? ['id' => 0, 'name' => '', 'email' => '', 'phone' => '', 'points' => 0, 'tier' => '', 'status' => 'active', 'join_date' => '', 'total_redeemed' => 0];
 $points_history = $points_history ?? [];
 ?>

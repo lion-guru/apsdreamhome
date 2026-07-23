@@ -39,7 +39,7 @@ class MLMController extends BaseController
      */
     public function dashboard()
     {
-        // $this->requireLogin(); // Commented out for testing
+        $this->requireLogin();
 
         $userId = $_SESSION['user_id'] ?? 0;
 
@@ -83,170 +83,188 @@ class MLMController extends BaseController
     private function getMLMDashboardData($userId)
     {
         try {
-            // Get user's MLM profile
-            // fetchOne() method exists in Database class at line 102-105
-            $profile = $this->db->fetchOne(
-                "SELECT level, sponsor_id, left_count, right_count, total_commission FROM mlm_profiles WHERE user_id = ?",
-                [$userId]
-            );
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+
+            // Get user's associate profile from real table
+            $stmt = $db->prepare("SELECT * FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1");
+            $stmt->execute([$userId]);
+            $profile = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$profile) {
-                return $this->getMockDashboardData();
+                // User is not an associate — return zeroed data
+                return [
+                    'current_level' => 'none', 'plan_name' => 'Not an Associate',
+                    'total_downline' => 0, 'monthly_commission' => 0, 'business_volume' => 0,
+                    'active_members' => 0, 'binary_commission' => 0, 'unilevel_commission' => 0,
+                    'matrix_commission' => 0, 'binary_amount' => '0', 'unilevel_amount' => '0',
+                    'matrix_amount' => '0', 'next_rank' => 'Associate', 'rank_progress' => 0,
+                    'required_downline' => 0, 'required_bv' => 0, 'time_remaining' => 'N/A',
+                    'associate_name' => $_SESSION['user_name'] ?? 'User',
+                    'left_leg_name' => 'Left Team', 'left_leg_count' => 0,
+                    'right_leg_name' => 'Direct Team', 'right_leg_count' => 0,
+                    'last_bonus' => 0
+                ];
             }
 
-            // Get downline members
-            $downline = $this->db->fetchAll(
-                "SELECT u.name, u.email, m.level, m.position, m.created_at 
-                 FROM users u 
-                 JOIN mlm_profiles m ON u.id = m.user_id 
-                 WHERE m.sponsor_id = ? 
-                 ORDER BY m.created_at DESC 
-                 LIMIT 10",
-                [$profile['sponsor_id']]
-            );
+            // Get downline count from mlm_network_tree
+            $stmt = $db->prepare("SELECT COUNT(*) as cnt FROM mlm_network_tree WHERE parent_id = ?");
+            $stmt->execute([$userId]);
+            $downlineCount = (int)($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
 
-            // Get monthly commission
-            // fetchOne() method exists in Database class at line 102-105
-            $monthlyCommission = $this->db->fetchOne(
-                "SELECT COALESCE(SUM(amount), 0) as total FROM commissions 
-                 WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)",
-                [$userId]
-            );
+            // Get total team size (recursive count)
+            $stmt = $db->prepare("SELECT COUNT(*) as cnt FROM mlm_network_tree WHERE sponsor_id = ?");
+            $stmt->execute([$userId]);
+            $totalDownline = (int)($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
 
-            // Calculate team size and business volume
-            // fetchOne() method exists in Database class at line 102-105
-            // fetchOne() method exists in Database class at line 102-105
-            $activeMembers = $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM mlm_profiles WHERE sponsor_id = ? OR user_id = ?",
-                [$profile['sponsor_id'], $userId]
-            );
+            // Get monthly commission from mlm_commission_ledger
+            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) AND status = 'approved'");
+            $stmt->execute([$userId]);
+            $monthlyCommission = (float)($stmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
 
-            // fetchOne() method exists in Database class at line 102-105
-            $businessVolume = $this->db->fetchOne(
-                "SELECT COALESCE(SUM(amount), 0) as total FROM commissions 
-                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)",
-                [$userId]
-            );
+            // Get total commission
+            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE user_id = ? AND status = 'approved'");
+            $stmt->execute([$userId]);
+            $totalCommission = (float)($stmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
 
-            // Get current rank info
-            $currentRank = $this->getCurrentRank($userId);
+            // Get rank from profile
+            $rank = $profile['rank'] ?? 'associate';
+            $rankMap = ['associate' => 1, 'sr_associate' => 2, 'bdm' => 3, 'sr_bdm' => 4, 'vice_president' => 5, 'president' => 6, 'site_manager' => 7];
 
             return [
-                'current_level' => $this->getLevelName($profile['level']),
-                'plan_name' => $currentRank['plan_name'],
-                'total_downline' => $activeMembers['count'],
-                'monthly_commission' => $monthlyCommission['total'] ?? 0,
-                'business_volume' => $businessVolume['total'] ?? 0,
-                'active_members' => count($downline),
+                'current_level' => $rank,
+                'plan_name' => ucfirst(str_replace('_', ' ', $rank)),
+                'total_downline' => $totalDownline,
+                'monthly_commission' => $monthlyCommission,
+                'business_volume' => $totalCommission,
+                'active_members' => $downlineCount,
                 'binary_commission' => 0,
-                'unilevel_commission' => 0,
+                'unilevel_commission' => $monthlyCommission,
                 'matrix_commission' => 0,
-                'binary_amount' => '0.00',
-                'unilevel_amount' => '0.00',
-                'matrix_amount' => '0.00',
-                'next_rank' => $currentRank['next_rank'],
-                'rank_progress' => $currentRank['progress'] ?? 0,
-                'required_downline' => $currentRank['required_members'] ?? 0,
-                'required_bv' => $currentRank['required_bv'] ?? 0,
-                'time_remaining' => $currentRank['time_remaining'] ?? 'N/A',
-                'associate_name' => $downline[0]['name'] ?? 'Unknown',
+                'binary_amount' => '0',
+                'unilevel_amount' => number_format($monthlyCommission),
+                'matrix_amount' => '0',
+                'next_rank' => $this->getNextRank($rank),
+                'rank_progress' => min(100, (int)(($totalCommission / max(1, $this->getRankThreshold($this->getNextRank($rank)))) * 100)),
+                'required_downline' => 0,
+                'required_bv' => $this->getRankThreshold($this->getNextRank($rank)),
+                'time_remaining' => 'N/A',
+                'associate_name' => $profile['name'] ?? $_SESSION['user_name'] ?? 'User',
                 'left_leg_name' => 'Left Team',
-                // fetchOne() method exists in Database class at line 102-105
-                'left_leg_count' => $this->db->fetchOne(
-                    "SELECT COUNT(*) as count FROM mlm_profiles WHERE sponsor_id = ? AND position = 'left'",
-                    [$userId]
-                )['count'],
-                'right_leg_name' => 'Right Team',
-                // fetchOne() method exists in Database class at line 102-105
-                'right_leg_count' => $this->db->fetchOne(
-                    "SELECT COUNT(*) as count FROM mlm_profiles WHERE sponsor_id = ? AND position = 'right'",
-                    [$userId]
-                )['count'],
-                'next_payout_date' => date('Y-m-d', strtotime('next month')),
-                'last_payout_date' => date('Y-m-d', strtotime('last month')),
-                'last_bonus' => 0
+                'left_leg_count' => $downlineCount,
+                'right_leg_name' => 'Direct Team',
+                'right_leg_count' => $totalDownline,
+                'last_bonus' => $monthlyCommission
             ];
-        } catch (Exception $e) {
-            error_log("MLM Dashboard Error: " . $e->getMessage());
+        } catch (\Throwable $e) {
+            error_log("MLM Dashboard error: " . $e->getMessage());
             return $this->getMockDashboardData();
         }
+    }
+
+    private function getNextRank($current)
+    {
+        $ranks = ['associate', 'sr_associate', 'bdm', 'sr_bdm', 'vice_president', 'president', 'site_manager'];
+        $idx = array_search($current, $ranks);
+        return $ranks[($idx !== false ? $idx + 1 : 1)] ?? 'site_manager';
+    }
+
+    private function getRankThreshold($rank)
+    {
+        $thresholds = [
+            'associate' => 0, 'sr_associate' => 1000000, 'bdm' => 3500000,
+            'sr_bdm' => 7000000, 'vice_president' => 15000000, 'president' => 30000000,
+            'site_manager' => 50000000
+        ];
+        return $thresholds[$rank] ?? 0;
     }
 
     /**
      * Get current rank information
      */
-    private function getCurrentRank($userId)
+    /**
+     * Get current rank info from real MLM tables (mlm_rank_benefits + mlm_network_tree + mlm_commission_ledger)
+     */
+    public function getCurrentRank($userId)
     {
         try {
-            // Get user's current rank based on downline and performance
-            $rankData = $this->db->fetchOne(
-                "SELECT 
-                    (SELECT COUNT(*) FROM mlm_profiles WHERE sponsor_id = ? OR user_id = ?) as team_size,
-                    (SELECT COALESCE(SUM(amount), 0) FROM commissions WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)) as monthly_volume
-                ) as rank_data",
-                [$userId, $userId]
-            );
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
 
-            $teamSize = $rankData['team_size'] ?? 0;
-            $monthlyVolume = $rankData['monthly_volume'] ?? 0;
+            // Current rank from the associate profile (real table)
+            $stmt = $db->prepare("SELECT level FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1");
+            $stmt->execute([$userId]);
+            $assoc = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $currentRankName = $assoc['level'] ?? 'associate';
 
-            // Determine rank based on performance
-            $rank = 'Associate';
-            $nextRank = 'Silver';
-            $requiredMembers = 0;
-            $requiredBV = 0;
-            $progress = 0;
-            $timeRemaining = 'N/A';
+            // Team size from mlm_network_tree (real unilevel tree)
+            $stmt = $db->prepare("SELECT COUNT(*) as cnt FROM mlm_network_tree WHERE sponsor_id = ? OR parent_id = ?");
+            $stmt->execute([$userId, $userId]);
+            $teamSize = (int)($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
 
-            if ($teamSize >= 50 && $monthlyVolume >= 10000) {
-                $rank = 'Diamond';
-                $nextRank = 'Diamond';
-                $requiredMembers = 100;
-                $requiredBV = 10000;
-                $progress = 100;
-                $timeRemaining = 'Achieved';
-            } elseif ($teamSize >= 25 && $monthlyVolume >= 5000) {
-                $rank = 'Platinum';
-                $nextRank = 'Diamond';
-                $requiredMembers = 50;
-                $requiredBV = 5000;
-                $progress = 50;
-                $timeRemaining = 'Half way';
-            } elseif ($teamSize >= 10 && $monthlyVolume >= 1000) {
-                $rank = 'Gold';
-                $nextRank = 'Platinum';
-                $requiredMembers = 25;
-                $requiredBV = 1000;
-                $progress = 25;
-                $timeRemaining = 'Quarter way';
-            } elseif ($teamSize >= 5 && $monthlyVolume >= 500) {
-                $rank = 'Silver';
-                $nextRank = 'Gold';
-                $requiredMembers = 10;
-                $requiredBV = 500;
-                $progress = 10;
-                $timeRemaining = '3 months';
+            // Monthly commission volume from mlm_commission_ledger (source of truth)
+            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH) AND status IN ('approved','paid')");
+            $stmt->execute([$userId]);
+            $monthlyVolume = (float)($stmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
+
+            // Rank ladder from mlm_rank_benefits (real config)
+            $ranks = $db->query("SELECT rank_name, min_qualifying_volume FROM mlm_rank_benefits WHERE is_active = 1 ORDER BY rank_order ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            $currentIdx = 0;
+            foreach ($ranks as $i => $r) {
+                if ($r['rank_name'] === $currentRankName) { $currentIdx = $i; break; }
             }
 
+            $current = $ranks[$currentIdx] ?? ['rank_name' => $currentRankName, 'min_qualifying_volume' => 0];
+            $next = $ranks[$currentIdx + 1] ?? null;
+
+            $nextRank = $next['rank_name'] ?? $current['rank_name'];
+            $requiredBV = $next['min_qualifying_volume'] ?? 0;
+            $requiredMembers = 0;
+            if ($next) {
+                $stmt = $db->prepare("SELECT min_leg_count FROM mlm_rank_benefits WHERE rank_name = ? LIMIT 1");
+                $stmt->execute([$next['rank_name']]);
+                $requiredMembers = (int)($stmt->fetch(\PDO::FETCH_ASSOC)['min_leg_count'] ?? 0);
+            }
+
+            $progress = $requiredBV > 0 ? min(100, (int)(($monthlyVolume / $requiredBV) * 100)) : 100;
+            $timeRemaining = $next ? 'Keep building your volume' : 'Achieved';
+
             return [
-                'plan_name' => $rank,
-                'next_rank' => $nextRank,
+                'plan_name' => ucfirst(str_replace('_', ' ', $current['rank_name'])),
+                'current_rank' => $current['rank_name'],
+                'next_rank' => ucfirst(str_replace('_', ' ', $nextRank)),
+                'next_rank_key' => $nextRank,
                 'required_members' => $requiredMembers,
-                'required_bv' => $requiredBV,
+                'required_bv' => (float)$requiredBV,
+                'monthly_volume' => $monthlyVolume,
+                'team_size' => $teamSize,
                 'progress' => $progress,
                 'time_remaining' => $timeRemaining
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Rank Calculation Error: " . $e->getMessage());
             return [
                 'plan_name' => 'Associate',
-                'next_rank' => 'Silver',
+                'current_rank' => 'associate',
+                'next_rank' => 'Senior Associate',
+                'next_rank_key' => 'senior_associate',
                 'required_members' => 0,
                 'required_bv' => 0,
+                'monthly_volume' => 0,
+                'team_size' => 0,
                 'progress' => 0,
                 'time_remaining' => 'N/A'
             ];
         }
+    }
+
+    /**
+     * Public JSON endpoint for the user's current rank (used by MLM dashboard widget)
+     */
+    public function myRank()
+    {
+        $this->requireLogin();
+        $userId = (int)($_SESSION['user_id'] ?? 0);
+        return $this->jsonResponse(['success' => true, 'rank' => $this->getCurrentRank($userId)]);
     }
 
     /**
@@ -306,31 +324,29 @@ class MLMController extends BaseController
     {
         $this->requireLogin();
 
-        $userId = $_SESSION['user_id'] ?? 0;
+        $userId = (int)($_SESSION['user_id'] ?? 0);
 
         try {
-            // Get network tree data
+            // Real network tree: walk upline + direct downline from mlm_network_tree
             $network = $this->db->fetchAll(
                 "SELECT 
+                    u.id,
                     u.name,
                     u.email,
-                    m.current_level,
-                    m.sponsor_user_id,
-                    m.referral_code,
-                    m.total_team_size,
-                    m.direct_referrals,
-                    sp.name as sponsor_name
-                 FROM users u 
-                 JOIN mlm_profiles m ON u.id = m.user_id 
-                 LEFT JOIN users sp ON sp.id = m.sponsor_user_id 
-                 WHERE m.sponsor_user_id = ? OR u.id = ?
-                 ORDER BY m.created_at ASC",
-                [$userId, $userId]
+                    t.associate_id,
+                    t.sponsor_id,
+                    t.parent_id,
+                    t.level
+                 FROM mlm_network_tree t
+                 JOIN users u ON u.id = t.associate_id
+                 WHERE t.sponsor_id = ? OR t.parent_id = ? OR t.associate_id = ?
+                 ORDER BY t.level ASC, u.name ASC",
+                [$userId, $userId, $userId]
             );
 
             return $this->jsonResponse([
                 'success' => true,
-                'network' => $network
+                'network' => $network ?: []
             ]);
         } catch (Exception $e) {
             return $this->jsonResponse([
@@ -347,28 +363,27 @@ class MLMController extends BaseController
     {
         $this->requireLogin();
 
-        $userId = $_SESSION['user_id'] ?? 0;
+        $userId = (int)($_SESSION['user_id'] ?? 0);
 
         try {
-            // Get commission details
+            // Real commission ledger (per AGENTS.md: mlm_commission_ledger is the source of truth)
             $commissions = $this->db->fetchAll(
                 "SELECT 
-                    c.amount,
-                    c.type,
-                    c.description,
-                    c.created_at,
-                    u.name as user_name
-                 FROM commissions c 
-                 JOIN users u ON c.user_id = u.id 
-                 WHERE c.user_id = ? 
-                 ORDER BY c.created_at DESC 
+                    amount,
+                    commission_type as type,
+                    notes as description,
+                    created_at,
+                    status
+                 FROM mlm_commission_ledger
+                 WHERE beneficiary_user_id = ? 
+                 ORDER BY created_at DESC 
                  LIMIT 50",
                 [$userId]
             );
 
             return $this->jsonResponse([
                 'success' => true,
-                'commissions' => $commissions
+                'commissions' => $commissions ?: []
             ]);
         } catch (Exception $e) {
             return $this->jsonResponse([
@@ -379,7 +394,7 @@ class MLMController extends BaseController
     }
 
     /**
-     * Add commission
+     * Add commission (manual adjustment into the real ledger)
      */
     public function addCommission()
     {
@@ -387,30 +402,25 @@ class MLMController extends BaseController
 
         try {
             $data = $this->getRequestData();
+            $userId = (int)($_SESSION['user_id'] ?? 0);
+            $amount = (float)($data['amount'] ?? 0);
+            $type = Security::sanitize($data['type'] ?? 'referral');
+            $description = Security::sanitize($data['description'] ?? 'Manual commission entry');
 
-            $commission = [
-                'user_id' => $_SESSION['user_id'],
-                'amount' => Security::sanitize($data['amount'] ?? 0),
-                'type' => Security::sanitize($data['type'] ?? 'binary'),
-                'description' => Security::sanitize($data['description'] ?? ''),
-                'created_at' => date('Y-m-d H:i:s')
-            ];
+            if ($amount <= 0) {
+                return $this->jsonResponse(['success' => false, 'message' => 'Invalid amount'], 400);
+            }
 
-            $result = $this->db->execute(
-                "INSERT INTO commissions (user_id, amount, type, description, created_at) VALUES (?, ?, ?, ?)",
-                [
-                    $commission['user_id'],
-                    $commission['amount'],
-                    $commission['type'],
-                    $commission['description'],
-                    $commission['created_at']
-                ]
+            $this->db->execute(
+                "INSERT INTO mlm_commission_ledger 
+                 (beneficiary_user_id, source_user_id, source_user_name, commission_type, amount, payment_amount, status, created_at) 
+                 VALUES (?, ?, ?, ?, ?, ?, 'approved', NOW())",
+                [$userId, $userId, $_SESSION['user_name'] ?? 'Self', $type, $amount, $amount]
             );
 
             return $this->jsonResponse([
                 'success' => true,
-                'message' => 'Commission added successfully',
-                'commission' => $commission
+                'message' => 'Commission added successfully'
             ]);
         } catch (Exception $e) {
             return $this->jsonResponse([
@@ -451,8 +461,12 @@ class MLMController extends BaseController
         header('Content-Type: application/json');
         try {
             $db = \App\Core\Database::getInstance();
-            $totalMembers = $db->fetch("SELECT COUNT(*) as c FROM `mlm_profiles`")['c'] ?? 0;
-            echo json_encode(['success' => true, 'data' => ['total_members' => (int)$totalMembers]]);
+            $totalMembers = $db->fetch("SELECT COUNT(*) as c FROM `mlm_network_tree`")['c'] ?? 0;
+            $totalAssociates = $db->fetch("SELECT COUNT(*) as c FROM `associates` WHERE status = 'active'")['c'] ?? 0;
+            echo json_encode(['success' => true, 'data' => [
+                'total_members' => (int)$totalMembers,
+                'total_associates' => (int)$totalAssociates
+            ]]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }

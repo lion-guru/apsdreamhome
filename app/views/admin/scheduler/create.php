@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Create Task';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 ?>
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">

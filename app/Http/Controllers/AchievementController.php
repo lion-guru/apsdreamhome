@@ -299,11 +299,15 @@ class AchievementController extends BaseController
     {
         header('Content-Type: application/json');
         try {
-            $userId = $_GET['user_id'] ?? $_SESSION['user_id'] ?? 0;
+            $userId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            if (!$userId) {
+                echo json_encode(['success' => false, 'points' => 0]);
+                exit;
+            }
             $stmt = $this->pdo->prepare("SELECT SUM(points) as total FROM user_points WHERE user_id = ?");
             $stmt->execute([$userId]);
             echo json_encode(['success' => true, 'points' => (int)$stmt->fetchColumn()]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => false, 'points' => 0]);
         }
         exit;
@@ -313,11 +317,15 @@ class AchievementController extends BaseController
     {
         header('Content-Type: application/json');
         try {
-            $userId = $_GET['user_id'] ?? $_SESSION['user_id'] ?? 0;
+            $userId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            if (!$userId) {
+                echo json_encode(['success' => false, 'badges' => []]);
+                exit;
+            }
             $stmt = $this->pdo->prepare("SELECT b.* FROM badges b JOIN user_badges ub ON b.id = ub.badge_id WHERE ub.user_id = ?");
             $stmt->execute([$userId]);
             echo json_encode(['success' => true, 'badges' => $stmt->fetchAll()]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => false, 'badges' => []]);
         }
         exit;

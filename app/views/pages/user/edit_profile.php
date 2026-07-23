@@ -39,7 +39,7 @@ if (isset($_POST['update_basic'])) {
                 } else {
                     $error = __('user_edit_profile_failed', null, 'Failed to update profile.');
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $error = __('user_edit_profile_error', null, 'An error occurred while updating profile: ') . $e->getMessage();
             }
         } else {
@@ -73,7 +73,7 @@ if (isset($_POST['update_password'])) {
             } else {
                 $error = __('user_edit_old_password_incorrect', null, 'Incorrect old password.');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $error = __('user_edit_password_error', null, 'An error occurred while updating password: ') . $e->getMessage();
         }
     } else {

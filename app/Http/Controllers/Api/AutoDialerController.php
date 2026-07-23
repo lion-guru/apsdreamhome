@@ -69,6 +69,13 @@ class AutoDialerController extends BaseController
                 return $this->jsonResponse(['success' => false, 'error' => 'lead_id or phone required'], 400);
             }
 
+            if (!empty($leadId)) {
+                $lead = $this->db->fetch("SELECT id FROM leads WHERE id = ?", [$leadId]);
+                if (!$lead) {
+                    return $this->jsonResponse(['success' => false, 'error' => 'Lead not found'], 404);
+                }
+            }
+
             $result = $this->voiceService->scheduleCall(
                 $leadId, $phone, null, $scheduledDate, $scheduledTime,
                 $scriptTemplate, $priority, $leadName
@@ -107,16 +114,30 @@ class AutoDialerController extends BaseController
                 $phone = $lead['phone'] ?? '';
                 $leadName = $lead['name'] ?? $lead['lead_name'] ?? '';
 
-                $result = $this->voiceService->scheduleCall(
-                    $leadId, $phone, null, $scheduledDate, $scheduledTime,
-                    $scriptTemplate, $priority, $leadName
-                );
+                try {
+                    if (!empty($leadId)) {
+                        $existingLead = $this->db->fetch("SELECT id FROM leads WHERE id = ?", [$leadId]);
+                        if (!$existingLead) {
+                            $failed++;
+                            $errors[] = "Lead #$leadId not found";
+                            continue;
+                        }
+                    }
 
-                if ($result['success']) {
-                    $scheduled++;
-                } else {
+                    $result = $this->voiceService->scheduleCall(
+                        $leadId, $phone, null, $scheduledDate, $scheduledTime,
+                        $scriptTemplate, $priority, $leadName
+                    );
+
+                    if ($result['success']) {
+                        $scheduled++;
+                    } else {
+                        $failed++;
+                        $errors[] = $result['message'] ?? 'Unknown error';
+                    }
+                } catch (\Throwable $e) {
                     $failed++;
-                    $errors[] = $result['message'] ?? 'Unknown error';
+                    $errors[] = $e->getMessage();
                 }
             }
 

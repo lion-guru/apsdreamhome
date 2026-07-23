@@ -42,7 +42,7 @@ try {
     );
 
     echo $wrappedContent;
-} catch (Exception $e) {
+} catch (\Exception $e) {
     http_response_code(500);
     echo json_encode(['error' => h($mlSupport->translate('Failed to load component'))]);
 }

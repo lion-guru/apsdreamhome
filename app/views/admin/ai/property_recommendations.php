@@ -2,7 +2,7 @@
 $recommendations = $recommendations ?? [];
 $customer_segments = $customer_segments ?? [];
 $page_title = $page_title ?? 'AI Property Recommendations';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 ?>
 <div class="container-fluid py-4">
         <!-- Header -->

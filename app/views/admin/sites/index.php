@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = 'Site Management';
 $active_page = 'sites';
 ?>
@@ -7,7 +7,7 @@ $active_page = 'sites';
     <h1 class="h2">Site Management</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-            <a href="/admin/sites/create" class="btn btn-primary">
+            <a href="<?= BASE_URL ?>/admin/sites/create" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add New Site
             </a>
         </div>
@@ -120,10 +120,10 @@ $active_page = 'sites';
                                 <td><?= date('M j, Y', strtotime($site['created_at'])) ?></td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="/admin/sites/<?= $site['id'] ?>" class="btn btn-outline-primary" title="View">
+                                        <a href="<?= BASE_URL ?>/admin/sites/<?= $site['id'] ?>" class="btn btn-outline-primary" title="View">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="/admin/sites/<?= $site['id'] ?>/edit" class="btn btn-outline-warning" title="Edit">
+                                        <a href="<?= BASE_URL ?>/admin/sites/<?= $site['id'] ?>/edit" class="btn btn-outline-warning" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <button type="button" class="btn btn-outline-danger" onclick="confirmDelete(<?= $site['id'] ?>)" title="Delete">

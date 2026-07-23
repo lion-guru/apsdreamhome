@@ -9,6 +9,15 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light"><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Package</th><th>Wallet</th><th>Downline</th><th>RERA</th><th>Registered</th></tr></thead>
                     <tbody>
+                        <?php if (empty($networkers ?? [])): ?>
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="fas fa-user-tie fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No networkers found</h5>
+                                <p class="text-muted mb-3">Register your first networker to start building your team.</p>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($networkers as $n): ?>
                         <tr>
                             <td><?= $n['id'] ?></td>
@@ -22,6 +31,7 @@
                             <td><?= htmlspecialchars($n['created_at'] ?? '') ?></td>
                         </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

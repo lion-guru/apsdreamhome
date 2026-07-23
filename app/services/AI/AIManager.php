@@ -409,7 +409,7 @@ class AIManager
         foreach ($tables as $key => $t) {
             try {
                 $stats[$key] = (int)$this->db->query("SELECT COUNT(*) FROM $t")->fetchColumn();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $stats[$key] = 0;
             }
         }

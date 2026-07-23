@@ -164,7 +164,7 @@ try {
             'error' => 'Database error: ' . $e->getMessage()
         ]);
     }
-} catch (Exception $e) {
+} catch (\Exception $e) {
     echo json_encode([
         'success' => false,
         'error' => 'General error: ' . $e->getMessage()

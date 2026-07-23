@@ -3,7 +3,7 @@ $user = $user ?? [];
 $directReferrals = $directReferrals ?? [];
 $team = $team ?? [];
 $mlmProfile = $mlmProfile ?? null;
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">

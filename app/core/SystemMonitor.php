@@ -52,7 +52,7 @@ class SystemMonitor
         foreach ($this->healthChecks as $checkName => $checkFunction) {
             try {
                 $results[$checkName] = call_user_func($checkFunction);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $results[$checkName] = [
                     'status' => 'error',
                     'message' => $e->getMessage(),
@@ -90,7 +90,7 @@ class SystemMonitor
                 'execution_time' => round($executionTime * 1000, 2) . 'ms',
                 'timestamp' => date('Y-m-d H:i:s')
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'status' => 'error',
                 'message' => 'Database error: ' . $e->getMessage(),
@@ -136,28 +136,27 @@ class SystemMonitor
     private function checkCache()
     {
         try {
-            $cache = Cache::getInstance();
             $testKey = 'health_check_test';
             $testValue = 'test_value_' . time();
 
             // Test cache write
-            $cache->set($testKey, $testValue, 60);
+            Cache::set($testKey, $testValue, 60);
 
             // Test cache read
-            $retrievedValue = $cache->get($testKey);
+            $retrievedValue = Cache::get($testKey);
 
             // Clean up
-            $cache->delete($testKey);
+            Cache::delete($testKey);
 
             $cacheWorking = ($retrievedValue === $testValue);
 
             return [
                 'status' => $cacheWorking ? 'healthy' : 'warning',
                 'message' => $cacheWorking ? 'Cache system operational' : 'Cache system issues detected',
-                'driver' => config('cache.driver', 'file'),
+                'driver' => \function_exists('config') ? \config('cache.driver', 'file') : 'file',
                 'timestamp' => date('Y-m-d H:i:s')
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'status' => 'error',
                 'message' => 'Cache error: ' . $e->getMessage(),

@@ -67,7 +67,7 @@ class WorkDistributionController extends BaseController
                 'message' => 'Task assigned successfully'
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -360,7 +360,7 @@ class WorkDistributionController extends BaseController
             
             return $this->db->fetchAll($query, $params);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return ['error' => $e->getMessage()];
         }
     }
@@ -447,7 +447,7 @@ class WorkDistributionController extends BaseController
                 'actions' => $rebalancingActions
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()

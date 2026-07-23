@@ -1,7 +1,7 @@
 <?php $scripts = $scripts ?? []; ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Call Scripts</h4>
-    <button class="btn btn-primary btn-sm" onclick="alert('Create new script')"><i class="fas fa-plus"></i> New Script</button>
+    <a href="<?= BASE_URL ?>admin/ai-calling/training" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Script</a>
 </div>
 <div class="card aps-cp-card">
     <div class="card-body p-0">
@@ -31,11 +31,16 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-info" onclick="alert('View script')" title="View"><i class="fas fa-eye"></i></button>
-                                    <button class="btn btn-sm btn-outline-<?= $active ? 'warning' : 'success' ?>" onclick="alert('Toggle status')" title="<?= $active ? 'Deactivate' : 'Activate' ?>">
-                                        <i class="fas fa-<?= $active ? 'pause' : 'play' ?>"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="alert('Edit script')" title="Edit"><i class="fas fa-edit"></i></button>
+                                    <a href="<?= BASE_URL ?>admin/ai-calling/training" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
+                                    <form method="post" action="<?= BASE_URL ?>admin/ai-calling/training/save-script" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                        <input type="hidden" name="script_id" value="<?= (int)($s['id'] ?? 0) ?>">
+                                        <input type="hidden" name="is_active" value="<?= $active ? 0 : 1 ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-<?= $active ? 'warning' : 'success' ?>" title="<?= $active ? 'Deactivate' : 'Activate' ?>">
+                                            <i class="fas fa-<?= $active ? 'pause' : 'play' ?>"></i>
+                                        </button>
+                                    </form>
+                                    <a href="<?= BASE_URL ?>admin/ai-calling/training" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

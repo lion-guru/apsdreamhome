@@ -1,4 +1,4 @@
-<!-- Payroll Batch History -->
+﻿<!-- Payroll Batch History -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -8,8 +8,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="/admin/salary">Salary</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/salary">Salary</a></li>
                         <li class="breadcrumb-item active">Batch History</li>
                     </ol>
                 </div>
@@ -20,8 +20,8 @@
     <section class="content">
         <div class="container-fluid">
             <div class="mb-3">
-                <a href="/admin/salary/batch/preview" class="btn btn-primary"><i class="fas fa-calculator mr-1"></i> New Payroll Batch</a>
-                <a href="/admin/salary" class="btn btn-outline-secondary ml-2"><i class="fas fa-arrow-left mr-1"></i> Back to Salary</a>
+                <a href="<?= BASE_URL ?>/admin/salary/batch/preview" class="btn btn-primary"><i class="fas fa-calculator mr-1"></i> New Payroll Batch</a>
+                <a href="<?= BASE_URL ?>/admin/salary" class="btn btn-outline-secondary ml-2"><i class="fas fa-arrow-left mr-1"></i> Back to Salary</a>
             </div>
 
             <div class="card">

@@ -65,7 +65,7 @@ class PropertyChatbotService
      */
     private function getBase(): string
     {
-        return defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        return BASE_URL;
     }
 
     /**

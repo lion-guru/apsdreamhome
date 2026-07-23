@@ -94,7 +94,7 @@ class AgreementController extends AdminController
                 'page_title' => 'Agreements - APS Dream Home',
                 'active_page' => 'agreements',
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->render('admin/agreements/index', [
                 'agreements' => [], 'total' => 0, 'stats' => [],
                 'filters' => ['type' => '', 'status' => '', 'search' => '', 'date_from' => '', 'date_to' => ''],
@@ -192,7 +192,7 @@ class AgreementController extends AdminController
             $agreementId = $this->db->lastInsertId();
 
             $this->json(['success' => true, 'id' => $agreementId, 'agreement_number' => $agreementNumber, 'redirect' => BASE_URL . '/admin/agreements/' . $agreementId]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->json(['success' => false, 'error' => 'Failed to create agreement: ' . $e->getMessage()], 500);
         }
     }
@@ -238,7 +238,7 @@ class AgreementController extends AdminController
                 'page_title' => 'Agreement #' . htmlspecialchars($agreement['agreement_number']),
                 'active_page' => 'agreements',
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading agreement: ' . $e->getMessage());
             $this->redirect('/admin/agreements');
         }
@@ -304,7 +304,7 @@ class AgreementController extends AdminController
             }
 
             $this->json(['success' => true, 'message' => 'Agreement updated to ' . ucfirst(str_replace('_', ' ', $newStatus))]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->json(['success' => false, 'error' => 'Failed to update: ' . $e->getMessage()], 500);
         }
     }
@@ -349,7 +349,7 @@ class AgreementController extends AdminController
                 $this->setFlash('error', 'Failed to generate agreement');
                 $this->redirect('/admin/agreements');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error generating agreement: ' . $e->getMessage());
             $this->redirect('/admin/agreements');
         }
@@ -382,7 +382,7 @@ class AgreementController extends AdminController
             header('Cache-Control: private, max-age=0');
             readfile($fullPath);
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error downloading document: ' . $e->getMessage());
             $this->redirect('/admin/agreements');
         }
@@ -407,7 +407,7 @@ class AgreementController extends AdminController
                 'preview_html' => $html,
                 'page_title' => 'Preview ' . ucwords(str_replace('_', ' ', $type)),
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error previewing agreement: ' . $e->getMessage());
             $this->redirect('/admin/agreements');
         }
@@ -446,7 +446,7 @@ class AgreementController extends AdminController
                     $message .= "Please find your agreement document attached.\n\n";
                     $message .= "Document: " . $doc['title'] . "\n";
                     $message .= "Document No: " . $doc['document_code'] . "\n\n";
-                    $message .= "You can download it from: " . (defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome') . "/admin/agreements/download/" . $id . "\n\n";
+                    $message .= "You can download it from: " . (BASE_URL) . "/admin/agreements/download/" . $id . "\n\n";
                     $message .= "Thank you,\n" . ($this->company['company_name'] ?? 'APS Dream Home');
                     try {
                         $stmt2 = $this->db->prepare("INSERT INTO email_queue (recipient_email, subject, body, status, created_at) VALUES (?, ?, ?, 'pending', NOW())");
@@ -476,7 +476,7 @@ class AgreementController extends AdminController
             $this->agreementService->markAsSent($id);
 
             $this->setFlash('success', 'Agreement sent to customer successfully');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error sending agreement: ' . $e->getMessage());
         }
         $this->redirect('/admin/agreements');

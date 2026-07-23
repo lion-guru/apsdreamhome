@@ -193,7 +193,7 @@ class RecommendationEngine
                     $row['__source'] = $t;
                     $candidates[] = $row;
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // table may not exist
             }
         }

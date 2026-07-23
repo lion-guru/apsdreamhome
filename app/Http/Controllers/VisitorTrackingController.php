@@ -87,6 +87,7 @@ class VisitorTrackingController extends AdminController
      */
     public function getVisitorStats()
     {
+        $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance();
 
         try {

@@ -1,16 +1,16 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
+﻿<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1">Create New Resell Property</h1>
         <p class="text-muted mb-0">Add a new property for resale</p>
     </div>
-    <a href="/admin/resell-properties" class="btn btn-secondary">
+    <a href="<?= BASE_URL ?>/admin/resell-properties" class="btn btn-secondary">
         <i class="fas fa-arrow-left me-2"></i>Back to List
     </a>
 </div>
 
 <div class="card aps-cp-card">
     <div class="card-body aps-cp-card-body">
-        <form method="POST" action="/admin/resell-properties/create" enctype="multipart/form-data">
+        <form method="POST" action="<?= BASE_URL ?>/admin/resell-properties/create" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row">
                 <div class="col-md-6">
@@ -128,7 +128,7 @@
                 <input type="file" class="form-control" id="images" name="images[]" multiple accept="image/*">
             </div>
             <div class="d-flex justify-content-between">
-                <a href="/admin/resell-properties" class="btn btn-secondary">
+                <a href="<?= BASE_URL ?>/admin/resell-properties" class="btn btn-secondary">
                     <i class="fas fa-times me-2"></i>Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">

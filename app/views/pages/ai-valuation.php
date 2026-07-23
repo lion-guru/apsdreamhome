@@ -216,7 +216,7 @@ $content = $content ?? '';
         };
 
         try {
-            const response = await fetch('/api/ai/valuation', {
+            const response = await fetch('<?= BASE_URL ?>/api/ai/valuation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

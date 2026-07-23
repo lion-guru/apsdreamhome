@@ -781,7 +781,7 @@ class AIVoicePipeline
         $piperPath = getenv('PIPER_PATH') ?: '/usr/local/bin/piper';
         if (file_exists($piperPath)) {
             $model = getenv('PIPER_MODEL') ?: '/opt/piper/voices/hi_IN-libritts_r-medium.onnx';
-            $cmd = "echo " . escapeshellarg($text) . " | {$piperPath} --model {$model} --output_file {$audioFile} 2>/dev/null";
+            $cmd = "echo " . escapeshellarg($text) . " | " . escapeshellarg($piperPath) . " --model " . escapeshellarg($model) . " --output_file " . escapeshellarg($audioFile) . " 2>/dev/null";
             exec($cmd, $output, $returnCode);
             if ($returnCode === 0 && file_exists($audioFile)) {
                 return $audioFile;
@@ -803,7 +803,7 @@ class AIVoicePipeline
         $audioFile = $audioDir . '/tts_' . md5($text) . '.wav';
         $lang = $language === 'hi' ? 'hi' : 'en';
         
-        exec("espeak -v {$lang} -w {$audioFile} " . escapeshellarg($text), $output, $returnCode);
+        exec("espeak -v " . escapeshellarg($lang) . " -w " . escapeshellarg($audioFile) . " " . escapeshellarg($text), $output, $returnCode);
         
         return ($returnCode === 0 && file_exists($audioFile)) ? $audioFile : null;
     }

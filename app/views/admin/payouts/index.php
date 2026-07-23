@@ -5,7 +5,7 @@ $page = $page ?? 1;
 $per_page = $per_page ?? 20;
 $total_pages = $total_pages ?? 1;
 $page_title = $page_title ?? 'Payouts';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -69,9 +69,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Payout Requests</h5>
-                <button class="btn btn-sm btn-success" onclick="showToast('Process payouts coming soon', 'info')">
+                <a href="<?php echo $base; ?>/admin/payouts/list/all" class="btn btn-sm btn-success">
                     <i class="fas fa-sync me-2"></i>Process Batch
-                </button>
+                </a>
             </div>
             <div class="card-body aps-cp-card-body">
                 <?php if (!empty($payouts)): ?>
@@ -100,7 +100,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                         </td>
                                         <td><?php echo isset($payout['created_at']) ? date('M d, Y', strtotime($payout['created_at'])) : '-'; ?></td>
                                         <td>
-                                            <button class="btn btn-sm btn-primary" onclick="alert('View details')">View</button>
+                                            <a href="<?php echo $base; ?>/admin/payouts/show/<?php echo (int)($payout['id'] ?? 0); ?>" class="btn btn-sm btn-primary">View</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

@@ -36,7 +36,7 @@ class ComplianceService
 
     public function __construct($pdo = null)
     {
-        $this->db = $pdo ?? Database::getInstance()->getConnection();
+        $this->db = $pdo ?? Database::getInstance();
     }
 
     public function calculateComplianceScore(): array
@@ -290,7 +290,7 @@ class ComplianceService
         $protectedRoutes = 0;
 
         try {
-            $routesFile = ROOT_PATH . '/routes/web.php';
+            $routesFile = (defined('APS_ROOT') ? APS_ROOT : dirname(__DIR__, 3)) . '/routes/web.php';
             if (file_exists($routesFile)) {
                 $content = file_get_contents($routesFile);
                 preg_match_all('/\$router->(get|post|put|delete)\s*\(\s*[\'\"]/', $content, $matches);
@@ -373,7 +373,7 @@ class ComplianceService
 
         $archiveFound = false;
         foreach (['_archive', 'audit_log', 'system_backups'] as $t) {
-            if ($this->tableExists($t) || is_dir(ROOT_PATH . '/' . $t)) {
+            if ($this->tableExists($t) || is_dir((defined('APS_ROOT') ? APS_ROOT : dirname(__DIR__, 3)) . '/' . $t)) {
                 $archiveFound = true;
                 break;
             }

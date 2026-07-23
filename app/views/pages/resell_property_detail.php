@@ -95,7 +95,7 @@ $content = $content ?? '';
             <?php endif; ?>
             <hr>
             <a href="<?= BASE_URL ?>/contact?property_id=<?= (int)$property['id'] ?>" class="btn btn-primary w-100 mb-2"><i class="fas fa-envelope me-1"></i> <?= __('user_resell_detail_send_inquiry', 'Send Inquiry') ?></a>
-            <a href="<?= BASE_URL ?>/schedule-visit?property_id=<?= (int)$property['id'] ?>" class="btn btn-outline-primary w-100"><i class="fas fa-calendar me-1"></i> <?= __('user_resell_detail_schedule_visit', 'Schedule Visit') ?></a>
+            <a href="<?= BASE_URL ?>/properties-workflow/<?= (int)$property['id'] ?>/schedule-visit" class="btn btn-outline-primary w-100"><i class="fas fa-calendar me-1"></i> <?= __('user_resell_detail_schedule_visit', 'Schedule Visit') ?></a>
           </div>
         </div>
 

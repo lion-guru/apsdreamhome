@@ -92,9 +92,12 @@ class CRMSegmentController extends AdminController
     public function leads($id)
     {
         $this->requireAdmin();
+        $id = (int)$id;
         try {
             $db = Database::getInstance()->getConnection();
-            $seg = $db->query("SELECT * FROM crm_segments WHERE id = $id")->fetch(\PDO::FETCH_ASSOC);
+            $stmt = $db->prepare("SELECT * FROM crm_segments WHERE id = ?");
+            $stmt->execute([$id]);
+            $seg = $stmt->fetch(\PDO::FETCH_ASSOC);
             $criteria = json_decode($seg['filter_criteria'] ?? '{}', true) ?? [];
 
             $where = ["deleted_at IS NULL"];

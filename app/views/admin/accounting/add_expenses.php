@@ -1,11 +1,11 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
                 <h3 class="page-title"><?= h($mlSupport->translate('Add New Expense')) ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?= h($mlSupport->translate('Dashboard')) ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/accounting"><?= h($mlSupport->translate('Accounting')) ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><?= h($mlSupport->translate('Dashboard')) ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/accounting"><?= h($mlSupport->translate('Accounting')) ?></a></li>
                     <li class="breadcrumb-item active"><?= h($mlSupport->translate('Add Expense')) ?></li>
                 </ul>
             </div>
@@ -16,7 +16,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
                 <div class="card-body aps-cp-card-body">
-                    <form action="/admin/accounting/store-expense" method="POST" class="needs-validation" novalidate>
+                    <form action="<?= BASE_URL ?>/admin/accounting/store-expense" method="POST" class="needs-validation" novalidate>
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
 
                         <div class="row mb-3">
@@ -56,7 +56,7 @@
                         </div>
 
                         <div class="text-end">
-                            <a href="/admin/accounting" class="btn btn-secondary me-2"><?= h($mlSupport->translate('Cancel')) ?></a>
+                            <a href="<?= BASE_URL ?>/admin/accounting" class="btn btn-secondary me-2"><?= h($mlSupport->translate('Cancel')) ?></a>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i><?= h($mlSupport->translate('Save Expense')) ?>
                             </button>

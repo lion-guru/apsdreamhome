@@ -179,12 +179,20 @@ if (defined('APP_ROOT')) {
     $autoloader->addClassMap('ConsolidatedProperty', \APP_ROOT . '/app/Models/ConsolidatedProperty.php');
     $autoloader->addClassMap('UnifiedModel', \APP_ROOT . '/app/Core/UnifiedModel.php');
 
+    // PropertyFavorite class lives in Property/Favorite.php but is declared
+    // in the App\Models namespace — PSR-4 can't resolve it, so map explicitly.
+    $autoloader->addClassMap('App\Models\PropertyFavorite', \APP_ROOT . '/app/Models/Property/Favorite.php');
+
+    // Customer class lives in User/Customer.php but is declared in the
+    // App\Models namespace — PSR-4 can't resolve it, so map explicitly.
+    $autoloader->addClassMap('App\Models\Customer', \APP_ROOT . '/app/Models/User/Customer.php');
+
     // Register root-namespace controllers
     $autoloader->addClassMap('AIAssistantController', \APP_ROOT . '/app/Http/Controllers/AI/AssistantController.php');
     $autoloader->addClassMap('App\Http\Controllers\AIAssistantController', \APP_ROOT . '/app/Http/Controllers/AI/AssistantController.php');
 
     // Register misnamed-file controllers
-    $autoloader->addClassMap('App\Http\Controllers\Api\MonitorController', \APP_ROOT . '/app/Http/Controllers/Api/MonitorApiController.php');
+    $autoloader->addClassMap('App\Http\Controllers\Api\MonitorController', \APP_ROOT . '/app/Http/Controllers/Api/MonitorController.php');
 
     // Fix broken Api\* route references — routes/api.php references controllers
     // in the Api\ namespace that live at different file locations.

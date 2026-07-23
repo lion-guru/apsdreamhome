@@ -1,14 +1,7 @@
 <?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <style>
 :root { --primary: #0d9488; --secondary: #ff6f00; --accent: #00c853; }
-.construction-hero {
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d9488 100%);
-    color: #fff; padding: 100px 0 80px; position: relative; overflow: hidden;
-}
-.construction-hero::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="rgba(255,255,255,0.03)" d="M0 0h100v100H0z"/><rect fill="rgba(255,255,255,0.05)" x="10" y="10" width="80" height="80" rx="5"/></svg>') repeat; opacity: 0.5;
-}
+
 .service-card { border: none; border-radius: 16px; transition: all 0.3s ease; background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.08); height: 100%; }
 .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
 .service-card .card-icon { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 1rem; }
@@ -30,26 +23,26 @@
     <?php unset($_SESSION['flash_error']); ?>
 <?php endif; ?>
 
-<section class="construction-hero">
-    <div class="container position-relative">
+<section class="hero-premium pt-5 pb-5">
+    <div class="container position-relative premium-reveal fade-up z-2">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <span class="badge bg-warning text-dark mb-3 px-3 py-2"><i class="fas fa-hard-hat me-1"></i> <?= __('const_iso_badge') ?></span>
-                <h1 class="display-4 fw-bold mb-4"><?= __('const_hero_title') ?><br><span class="text-warning"><?= __('const_hero_subtitle') ?></span></h1>
-                <p class="lead mb-4 fs-5 opacity-90"><?= __('const_hero_desc') ?></p>
+                <span class="capsule-badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 mb-3 px-3 py-2"><i class="fas fa-hard-hat me-1"></i> <?= __('const_iso_badge') ?></span>
+                <h1 class="display-4 fw-bold text-white mb-4"><?= __('const_hero_title') ?><br><span class="text-warning"><?= __('const_hero_subtitle') ?></span></h1>
+                <p class="lead text-white-50 mb-4 fs-5"><?= __('const_hero_desc') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
-                    <a href="#contact-form" class="btn btn-warning btn-lg px-4"><i class="fas fa-building me-2"></i><?= __('const_get_quote') ?></a>
+                    <a href="#contact-form" class="btn btn-premium px-4 py-2"><i class="fas fa-building me-2"></i><?= __('const_get_quote') ?></a>
                     <a href="#services" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-list me-2"></i><?= __('const_our_services') ?></a>
                 </div>
                 <div class="row mt-5 g-3">
-                    <div class="col-4"><h3 class="text-warning mb-0">50+</h3><small><?= __('const_projects_completed') ?></small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">15+</h3><small><?= __('const_years_exp') ?></small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">1000+</h3><small><?= __('const_happy_clients') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">50+</h3><small class="text-white-50"><?= __('const_projects_completed') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">15+</h3><small class="text-white-50"><?= __('const_years_exp') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">1000+</h3><small class="text-white-50"><?= __('const_happy_clients') ?></small></div>
                 </div>
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="position-relative">
-                    <img loading="lazy" src="https://img.freepik.com/free-photo/architectural-blueprints-construction-site_23-2148901413.jpg" alt="Construction" class="img-fluid rounded-4 shadow-lg">
+                    <img loading="lazy" src="https://img.freepik.com/free-photo/architectural-blueprints-construction-site_23-2148901413.jpg" alt="Construction" class="img-fluid rounded-4 shadow-lg glass-panel p-2">
                     <div class="position-absolute bottom-0 start-0 bg-white text-dark p-3 rounded-3 m-3 shadow">
                         <i class="fas fa-check-circle text-success me-1"></i> ISO 9001:2015 Certified
                     </div>

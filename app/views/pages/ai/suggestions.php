@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         try {
-            const response = await fetch('<?= BASE_URL ?>api/ai/suggestions', {
+            const response = await fetch('<?= BASE_URL ?>/ai/suggestions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

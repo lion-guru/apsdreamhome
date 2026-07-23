@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $plot = $plot ?? [];
 $customers = $customers ?? [];
 $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer', 'Resale', 'Company Transfer', 'Nominee Transfer', 'Legal Heir', 'Other'];
@@ -9,10 +9,10 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-exchange-alt me-2"></i>Plot Transfer</h2>
                 <div>
-                    <a href="/admin/plots/<?= $plot['id'] ?? 0 ?>" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>/admin/plots/<?= $plot['id'] ?? 0 ?>" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Plot
                     </a>
-                    <a href="/admin/plots" class="btn btn-outline-secondary">
+                    <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-outline-secondary">
                         <i class="fas fa-th"></i> All Plots
                     </a>
                 </div>
@@ -75,7 +75,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                     <div class="card mb-4">
                         <div class="card-header bg-warning"><h5 class="mb-0"><i class="fas fa-file-signature"></i> Transfer Details</h5></div>
                         <div class="card-body aps-cp-card-body">
-                            <form method="POST" action="/admin/plots/<?= $plot['id'] ?? 0 ?>/transfer">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/plots/<?= $plot['id'] ?? 0 ?>/transfer">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
@@ -142,7 +142,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                                 </div>
 
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <a href="/admin/plots/<?= $plot['id'] ?? 0 ?>" class="btn btn-secondary me-md-2">Cancel</a>
+                                    <a href="<?= BASE_URL ?>/admin/plots/<?= $plot['id'] ?? 0 ?>" class="btn btn-secondary me-md-2">Cancel</a>
                                     <button type="submit" class="btn btn-warning px-4">
                                         <i class="fas fa-exchange-alt"></i> Process Transfer
                                     </button>

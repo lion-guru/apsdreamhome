@@ -1,11 +1,11 @@
-<?php $page_title = $page_title ?? 'Custom Field'; $field = $field ?? null; ?>
+﻿<?php $page_title = $page_title ?? 'Custom Field'; $field = $field ?? null; ?>
 <div class="container-fluid px-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div><h4 class="fw-bold mb-1"><i class="fas fa-sliders-h me-2 text-primary"></i><?= $field ? 'Edit' : 'Add' ?> Custom Field</h4></div>
-        <a href="/admin/crm/custom-fields" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+        <a href="<?= BASE_URL ?>/admin/crm/custom-fields" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="cf-card" style="background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:32px;max-width:700px">
-        <form method="POST" action="/admin/crm/custom-fields/<?= $field ? $field['id'] . '/update' : 'store' ?>">
+        <form method="POST" action="<?= BASE_URL ?>/admin/crm/custom-fields/<?= $field ? $field['id'] . '/update' : 'store' ?>">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="mb-3"><label class="form-label fw-bold">Field Name (DB column)</label><input type="text" name="field_name" class="form-control" value="<?= htmlspecialchars($field['field_name'] ?? '') ?>" required pattern="[a-z_]+" title="Lowercase letters and underscores only"></div>
             <div class="mb-3"><label class="form-label fw-bold">Field Label (Display)</label><input type="text" name="field_label" class="form-control" value="<?= htmlspecialchars($field['field_label'] ?? '') ?>" required></div>

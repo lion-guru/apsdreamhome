@@ -1,4 +1,4 @@
-<div class="content-wrapper">
+﻿<div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -7,8 +7,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
-                        <li class="breadcrumb-item"><a href="/admin/agentic-ai">Agentic AI</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/agentic-ai">Agentic AI</a></li>
                         <li class="breadcrumb-item active">Auto-Reply</li>
                     </ol>
                 </div>
@@ -87,7 +87,7 @@
                             </div>
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-teal"><i class="fas fa-save"></i> Save Settings</button>
-                                <a href="/admin/agentic-ai" class="btn btn-secondary">Cancel</a>
+                                <a href="<?= BASE_URL ?>/admin/agentic-ai" class="btn btn-secondary">Cancel</a>
                             </div>
                         </div>
                     </form>

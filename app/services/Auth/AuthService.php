@@ -388,7 +388,7 @@ class AuthService
             $this->db->execute($sql, [$user['id'], $token, $expires, $token, $expires]);
 
             // Log reset link (email sending placeholder - integrate with EmailService when SMTP configured)
-            $resetLink = (defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome') . '/reset-password?token=' . $token;
+            $resetLink = (rtrim(BASE_URL, '/')) . '/reset-password?token=' . $token;
             error_log("PASSWORD RESET LINK for {$email}: {$resetLink}");
 
             try {

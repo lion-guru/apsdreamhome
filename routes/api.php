@@ -91,7 +91,7 @@ $router->get('/api/v2/mobile/properties/browse', 'Api\MobileApiController@proper
 $router->get('/api/v2/mobile/plots/all', 'Api\MobileApiController@getAllPlots');
 
 // Property detail + search under /api/v2/mobile/ prefix
-$router->get('/api/v2/mobile/properties/{id}', 'Api\MobileApiController@propertyDetail');
+$router->get('/api/v2/mobile/properties/{id}', 'Api\MobileApiController@propertyDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/properties/search', 'Api\MobileApiController@searchProperties');
 
 $router->get('/api/health', 'Api\SystemController@health');
@@ -173,7 +173,7 @@ $router->post('/api/mobile/notifications/register', 'Api\MobileApiController@reg
 // ============================================================
 $router->get('/api/mobile/v2/properties', 'Api\MobileApiController@browseProperties');
 $router->get('/api/mobile/v2/properties/search', 'Api\MobileApiController@searchProperties');
-$router->get('/api/mobile/v2/properties/{id}', 'Api\MobileApiController@propertyDetail');
+$router->get('/api/mobile/v2/properties/{id}', 'Api\MobileApiController@propertyDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/mobile/v2/bookings', 'Api\MobileApiController@listBookings');
 $router->get('/api/mobile/v2/bookings/{id}', 'Api\MobileApiController@bookingDetail');
 $router->post('/api/mobile/v2/bookings/{id}/pay', 'Api\MobileApiController@recordBookingPayment');
@@ -223,6 +223,7 @@ $router->get('/api/mlm/analytics', 'App\\Http\\Controllers\\MLMController@getAna
 $router->post('/api/mlm/commission', 'App\\Http\\Controllers\\MLMController@calculateCommission');
 $router->get('/api/mlm/network-tree', 'App\\Http\\Controllers\\MLMController@getNetworkTree');
 $router->get('/api/mlm/commission-history', 'App\\Http\\Controllers\\MLMController@getCommissionHistory');
+$router->get('/api/mlm/my-rank', 'App\\Http\\Controllers\\MLMController@myRank');
 
 // AI Valuation API Routes
 $router->post('/api/ai-valuation/calculator', 'App\\Http\\Controllers\\AIValuationController@calculateValuation');
@@ -231,7 +232,7 @@ $router->post('/api/ai-valuation/investment-analysis', 'App\\Http\\Controllers\\
 
 // Legacy Mobile API Routes (Backward Compatibility)
 $router->get('/api/v1/mobile/properties', 'Api\MobileApiController@properties');
-$router->get('/api/v1/mobile/properties/{id}', 'Api\MobileApiController@property');
+$router->get('/api/v1/mobile/properties/{id}', 'Api\MobileApiController@property')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v1/mobile/leads', 'Api\MobileApiController@leads');
 $router->post('/api/v1/mobile/leads', 'Api\MobileApiController@submitLead');
 $router->get('/api/v1/mobile/user/profile', 'Api\MobileApiController@userProfile');
@@ -656,3 +657,60 @@ $router->get('/api/v2/mobile/messages/{otherUserId}', 'Api\MobileApiController@g
 $router->post('/api/v2/mobile/messages/send', 'Api\MobileApiController@sendMessage')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/messages/read/{otherUserId}', 'Api\MobileApiController@markMessagesRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/messages/unread/count', 'Api\MobileApiController@getUnreadCount')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// --- Stamp Duty Calculator API (mobile) ---
+$router->post('/api/v2/mobile/stamp-duty/calculate', 'Api\StampDutyController@calculate');
+$router->get('/api/v2/mobile/stamp-duty/rates', 'Api\StampDutyController@getRates');
+$router->get('/api/v2/mobile/stamp-duty/states', 'Api\StampDutyController@getStates');
+$router->get('/api/v2/mobile/stamp-duty/circle-rate', 'Api\StampDutyController@getCircleRate');
+$router->get('/api/v2/mobile/stamp-duty/circle-rates', 'Api\StampDutyController@searchCircleRates');
+
+// --- Property Tax Calculator API (mobile) ---
+$router->post('/api/v2/mobile/property-tax/calculate', 'Api\PropertyTaxController@calculate');
+$router->get('/api/v2/mobile/property-tax/rates', 'Api\PropertyTaxController@getRates');
+$router->get('/api/v2/mobile/property-tax/search', 'Api\PropertyTaxController@search');
+$router->get('/api/v2/mobile/property-tax/states', 'Api\PropertyTaxController@getStates');
+
+// --- Landmarks & Neighborhood API (mobile) ---
+$router->get('/api/v2/mobile/landmarks/nearby', 'Api\LandmarksApiController@nearby');
+$router->get('/api/v2/mobile/landmarks/list', 'Api\LandmarksApiController@list');
+$router->get('/api/v2/mobile/landmarks/types', 'Api\LandmarksApiController@types');
+$router->get('/api/v2/mobile/landmarks/colony/{colonyId}', 'Api\LandmarksApiController@byColony');
+
+// --- RERA Verification API (mobile) ---
+$router->get('/api/v2/mobile/rera/verify/{reraNumber}', 'Api\MobileApiController@reraVerify');
+$router->get('/api/v2/mobile/rera/search', 'Api\MobileApiController@reraSearch');
+$router->get('/api/v2/mobile/rera/projects', 'Api\MobileApiController@reraProjects');
+
+// --- Directory API (mobile) ---
+$router->get('/api/v2/mobile/directory/categories', 'Api\MobileApiController@directoryCategories');
+$router->get('/api/v2/mobile/directory/featured', 'Api\MobileApiController@directoryFeatured');
+$router->get('/api/v2/mobile/directory/jobs', 'Api\MobileApiController@directoryJobs');
+
+// --- Property Valuation API (mobile) ---
+$router->post('/api/v2/mobile/property-valuation/calculate', 'Api\MobileApiController@propertyValuation');
+$router->get('/api/v2/mobile/property-valuation/cities', 'Api\MobileApiController@valuationCities');
+
+// --- DigiLocker API (KYC / document fetch) ---
+$router->get('/api/digilocker/auth-url', 'Api\DigiLockerController@getAuthUrl');
+$router->get('/api/digilocker/callback', 'Api\DigiLockerController@callback');
+$router->get('/api/digilocker/user-data', 'Api\DigiLockerController@getUserData');
+$router->post('/api/digilocker/kyc/initiate', 'Api\DigiLockerController@initiateKyc');
+
+// --- Document AI API (extraction jobs) ---
+$router->post('/api/document-ai/extract', 'Api\DocumentAIController@createJob');
+$router->post('/api/document-ai/process/{jobId}', 'Api\DocumentAIController@processJob');
+$router->get('/api/document-ai/job/{jobId}', 'Api\DocumentAIController@getJob');
+$router->get('/api/document-ai/jobs', 'Api\DocumentAIController@listJobs');
+$router->post('/api/document-ai/review/{jobId}', 'Api\DocumentAIController@reviewJob');
+$router->get('/api/document-ai/template/{documentType}', 'Api\DocumentAIController@getTemplate');
+$router->get('/api/document-ai/engines', 'Api\DocumentAIController@getEngines');
+$router->get('/api/document-ai/document-types', 'Api\DocumentAIController@getDocumentTypes');
+
+// --- eSign API ---
+$router->post('/api/esign/initiate', 'Api\ESignController@initiate');
+$router->post('/api/esign/verify-otp', 'Api\ESignController@verifyOtp');
+$router->get('/api/esign/status/{transactionId}', 'Api\ESignController@getStatus');
+$router->get('/api/esign/document/{transactionId}', 'Api\ESignController@getDocument');
+$router->get('/api/esign/booking/{bookingId}', 'Api\ESignController@getByBooking');
+$router->post('/api/esign/callback', 'Api\ESignController@callback');

@@ -1,14 +1,14 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-1">Property Allocation Management</h1>
             <p class="text-muted mb-0">Manage plot allocations and bookings</p>
         </div>
         <div>
-            <a href="/admin/property-allocations/create" class="btn btn-primary">
+            <a href="<?= BASE_URL ?>/admin/property-allocations/create" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>New Allocation
             </a>
-            <a href="/admin/property-allocations/calendar" class="btn btn-info ms-2">
+            <a href="<?= BASE_URL ?>/admin/property-allocations/calendar" class="btn btn-info ms-2">
                 <i class="fas fa-calendar me-2"></i>Availability Calendar
             </a>
         </div>
@@ -64,10 +64,10 @@
                         Filter by Status
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/admin/property-allocations">All</a>
-                        <a class="dropdown-item" href="/admin/property-allocations?status=pending">Pending</a>
-                        <a class="dropdown-item" href="/admin/property-allocations?status=confirmed">Confirmed</a>
-                        <a class="dropdown-item" href="/admin/property-allocations?status=cancelled">Cancelled</a>
+                        <a class="dropdown-item" href="<?= BASE_URL ?>/admin/property-allocations">All</a>
+                        <a class="dropdown-item" href="<?= BASE_URL ?>/admin/property-allocations?status=pending">Pending</a>
+                        <a class="dropdown-item" href="<?= BASE_URL ?>/admin/property-allocations?status=confirmed">Confirmed</a>
+                        <a class="dropdown-item" href="<?= BASE_URL ?>/admin/property-allocations?status=cancelled">Cancelled</a>
                     </div>
                 </div>
             </div>
@@ -117,14 +117,14 @@
                                     <td><?= date('d M Y', strtotime($allocation['created_at'] ?? 'now')) ?></td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="/admin/property-allocations/<?= $allocation['id'] ?>" class="btn btn-outline-primary" title="View">
+                                            <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>" class="btn btn-outline-primary" title="View">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <?php if ($allocation['status'] == 'pending'): ?>
-                                                <a href="/admin/property-allocations/<?= $allocation['id'] ?>/confirm" class="btn btn-outline-success" title="Confirm" onclick="return confirm('Confirm this property allocation?')">
+                                                <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/confirm" class="btn btn-outline-success" title="Confirm" onclick="return confirm('Confirm this property allocation?')">
                                                     <i class="fas fa-check"></i>
                                                 </a>
-                                                <a href="/admin/property-allocations/<?= $allocation['id'] ?>/cancel" class="btn btn-outline-danger" title="Cancel" onclick="return confirm('Cancel this property allocation?')">
+                                                <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/cancel" class="btn btn-outline-danger" title="Cancel" onclick="return confirm('Cancel this property allocation?')">
                                                     <i class="fas fa-times"></i>
                                                 </a>
                                             <?php endif; ?>
@@ -138,7 +138,7 @@
                                     <div class="text-muted">
                                         <i class="fas fa-home fa-3x mb-3"></i>
                                         <p class="mb-0">No property allocations found. Create your first allocation.</p>
-                                        <a href="/admin/property-allocations/create" class="btn btn-primary mt-2">Create Allocation</a>
+                                        <a href="<?= BASE_URL ?>/admin/property-allocations/create" class="btn btn-primary mt-2">Create Allocation</a>
                                     </div>
                                 </td>
                             </tr>

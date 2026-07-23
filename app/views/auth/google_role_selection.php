@@ -315,7 +315,7 @@
             formData.append('phone', phone);
             formData.append('referral_code', referralCode);
 
-            fetch('/auth/google/complete-registration', {
+            fetch('<?= BASE_URL ?>/auth/google/complete-registration', {
                 method: 'POST',
                 body: formData
             })

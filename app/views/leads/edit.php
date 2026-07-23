@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -35,7 +35,7 @@ require_once __DIR__ . '/../layouts/header.php'; ?>
                     </div>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <form method="POST" action="/leads/<?= $lead['id'] ?>/update" id="editLeadForm">
+                    <form method="POST" action="<?= BASE_URL ?>/leads/<?= $lead['id'] ?>/update" id="editLeadForm">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <!-- Basic Information -->

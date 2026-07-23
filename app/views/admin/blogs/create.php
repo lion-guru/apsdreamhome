@@ -6,7 +6,7 @@
                     <h5 class="card-title mb-0">Create New Blog Post</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <form action="<?php echo BASE_URL; ?>/admin/blogs/store" method="POST" enctype="multipart/form-data">
+                    <form action="<?php echo BASE_URL; ?>/admin/blog/store" method="POST" enctype="multipart/form-data">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <div class="col-md-8">

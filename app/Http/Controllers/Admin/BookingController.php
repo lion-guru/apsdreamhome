@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Models\Booking;
-use App\Models\Customer;
 use App\Models\Property;
 use App\Core\Database;
 use App\Services\LoggingService;
@@ -107,7 +106,7 @@ class BookingController extends AdminController
                 'total_pages' => $totalPages,
                 'current_page' => $page
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->render('admin/bookings/index', [
                 'bookings' => [], 'total' => 0, 'filters' => [],
                 'users' => [], 'associates' => [],
@@ -123,7 +122,7 @@ class BookingController extends AdminController
             $users = $this->db->query("SELECT id, name, email, phone FROM users WHERE role IN ('customer','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
             $properties = $this->db->query("SELECT id, title, location FROM properties WHERE status = 'active' ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
             return $this->render('admin/bookings/create', ['users' => $users, 'properties' => $properties]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->render('admin/bookings/create', ['users' => [], 'properties' => [], 'error' => $e->getMessage()]);
         }
     }
@@ -139,7 +138,7 @@ class BookingController extends AdminController
             $stmt->execute([$data['customer_id'], $data['property_id'], $data['visit_date'] ?? date('Y-m-d'), $data['notes'] ?? '']);
             $_SESSION['success'] = 'Booking created successfully.';
             $this->redirect('/admin/bookings');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/bookings/create');
         }
@@ -188,7 +187,7 @@ class BookingController extends AdminController
                 'commissions' => $commissions,
                 'total_commission' => $total_commission
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->render('admin/bookings/show', [
                 'booking' => null,
                 'payments' => [],
@@ -209,7 +208,7 @@ class BookingController extends AdminController
             $users = $this->db->query("SELECT id, name, email, phone FROM users WHERE role IN ('customer','agent') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
             $properties = $this->db->query("SELECT id, title, location FROM properties WHERE status = 'active' ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
             return $this->render('admin/bookings/edit', ['booking' => $booking, 'users' => $users, 'properties' => $properties]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->render('admin/bookings/edit', ['booking' => null, 'users' => [], 'properties' => [], 'error' => $e->getMessage()]);
         }
     }
@@ -226,7 +225,7 @@ class BookingController extends AdminController
             // Hot-path: booking status/amount changes affect the admin dashboard KPI bundle.
             \App\Services\Cache\HotPathCacheService::invalidateAdminDashboard();
             $this->redirect('/admin/bookings');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/bookings/' . $id . '/edit');
         }
@@ -238,7 +237,7 @@ class BookingController extends AdminController
             $stmt = $this->db->prepare("DELETE FROM bookings WHERE id = ?");
             $stmt->execute([$id]);
             $_SESSION['success'] = 'Booking deleted successfully.';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/bookings');
@@ -254,7 +253,7 @@ class BookingController extends AdminController
             );
             $stmt->execute([$id, $data['amount'] ?? 0, $data['payment_method'] ?? 'cash', $data['transaction_id'] ?? '', $data['notes'] ?? '']);
             $_SESSION['success'] = 'Payment processed successfully.';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/bookings/' . $id);
@@ -275,7 +274,7 @@ class BookingController extends AdminController
             $availableDates = \array_column($result, 'visit_date');
 
             return $this->jsonSuccess($availableDates);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->jsonErrorLocal($e->getMessage(), 500);
         }
     }
@@ -300,7 +299,7 @@ class BookingController extends AdminController
             $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonSuccess($bookings);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->jsonErrorLocal($e->getMessage(), 500);
         }
     }

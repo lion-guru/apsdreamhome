@@ -35,7 +35,7 @@ class VirtualTourService
             
             return $this->database->lastInsertId();
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new Exception("Failed to create virtual tour: " . $e->getMessage());
         }
     }
@@ -56,7 +56,7 @@ class VirtualTourService
             $stmt->execute([$propertyId]);
             return $stmt->fetch();
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -124,7 +124,7 @@ class VirtualTourService
             
             return true;
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new Exception("Failed to create hotspots: " . $e->getMessage());
         }
     }

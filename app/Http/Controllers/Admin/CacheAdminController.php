@@ -62,7 +62,7 @@ class CacheAdminController extends AdminController
             HotPathCacheService::invalidateHomeFeatured();
             HotPathCacheService::invalidateAdminDashboard();
             $this->setFlash('success', 'All cache layers flushed successfully.');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Flush failed: ' . $e->getMessage());
         }
         header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/cache');
@@ -82,7 +82,7 @@ class CacheAdminController extends AdminController
             } else {
                 $this->setFlash('warning', 'Redis was not available — nothing to flush.');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Redis flush failed: ' . $e->getMessage());
         }
         header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/cache');
@@ -101,7 +101,7 @@ class CacheAdminController extends AdminController
                 ? 'Redis connection OK (' . $result['latency_ms'] . 'ms).'
                 : 'Redis unavailable — using file cache fallback.';
             $this->setFlash($result['available'] ? 'success' : 'warning', $msg);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Test failed: ' . $e->getMessage());
         }
         header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/cache');
@@ -135,7 +135,7 @@ class CacheAdminController extends AdminController
             // saved-searches counts are per-user, so we pattern-drop them.
             $dropped += \App\Services\CacheService::invalidatePattern('saved_searches_count_');
             $this->setFlash('success', "Hot-path cache flushed ({$dropped} keys dropped).");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Hot-path flush failed: ' . $e->getMessage());
         }
         header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/cache');

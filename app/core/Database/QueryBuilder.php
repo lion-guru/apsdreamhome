@@ -215,8 +215,10 @@ class QueryBuilder
 
     /**
      * Execute the query as a "select" statement.
+     * If $columns is provided and non-empty, it overrides any prior select().
+     * If empty (default), uses whatever columns were set via select().
      */
-    public function get($columns = ['*']): array
+    public function get($columns = []): array
     {
         if (!empty($columns)) {
             $this->select($columns);
@@ -230,8 +232,9 @@ class QueryBuilder
 
     /**
      * Execute the query and get the first result.
+     * Does NOT override user's select() — preserves aggregate queries like COUNT/SUM.
      */
-    public function first($columns = ['*'])
+    public function first($columns = [])
     {
         $results = $this->limit(1)->get($columns);
         return $results[0] ?? null;
@@ -345,6 +348,28 @@ class QueryBuilder
         $sql = "INSERT INTO {$this->table} ({$columns}) VALUES ({$placeholders})";
 
         return $this->db->query($sql, array_values($values)) !== false;
+    }
+
+    /**
+     * Insert a record and return the auto-increment ID.
+     */
+    public function insertGetId(array $values)
+    {
+        if (empty($values)) {
+            return false;
+        }
+
+        $columns = implode(', ', array_keys($values));
+        $placeholders = implode(', ', array_fill(0, count($values), '?'));
+
+        $sql = "INSERT INTO {$this->table} ({$columns}) VALUES ({$placeholders})";
+
+        $result = $this->db->query($sql, array_values($values));
+        if ($result === false) {
+            return false;
+        }
+
+        return $this->db->lastInsertId();
     }
 
     /**

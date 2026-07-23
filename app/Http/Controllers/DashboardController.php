@@ -157,13 +157,27 @@ class DashboardController extends BaseController
     {
         $userId = $_SESSION['user_id'];
 
-        $user = [
-            'name' => $_SESSION['user_name'] ?? 'User',
-            'email' => $_SESSION['user_email'] ?? 'user@example.com',
-            'phone' => '9876543210',
-            'address' => 'Gorakhpur, Uttar Pradesh',
-            'join_date' => '2024-01-15'
-        ];
+        // Fetch real user data from DB
+        try {
+            $db = \App\Core\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT name, email, phone, address, created_at FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$user) {
+                $this->setFlash('error', 'User not found');
+                $this->redirect('/login');
+                return;
+            }
+        } catch (\Throwable $e) {
+            // Fallback to session data
+            $user = [
+                'name' => $_SESSION['user_name'] ?? 'User',
+                'email' => $_SESSION['user_email'] ?? '',
+                'phone' => '',
+                'address' => '',
+                'created_at' => date('Y-m-d')
+            ];
+        }
 
         $this->render('user/profile', [
             'page_title' => 'My Profile - APS Dream Home',
@@ -405,11 +419,11 @@ class DashboardController extends BaseController
 
             $perfData = $perfCalculator->calculateRank($userId);
 
-            // Get recent activities (sales and commissions)
+            // Get recent activities (commissions from mlm_commission_ledger)
             $stmt = $this->db->prepare("
-                SELECT 'commission' as type, amount, created_at as date, type as subtype 
-                FROM commissions 
-                WHERE user_id = ? 
+                SELECT 'commission' as type, amount, created_at as date, commission_type as subtype 
+                FROM mlm_commission_ledger 
+                WHERE beneficiary_user_id = ? 
                 ORDER BY created_at DESC LIMIT 5
             ");
             $stmt->execute([$userId]);
@@ -452,26 +466,34 @@ class DashboardController extends BaseController
 
     private function getTotalCommission($userId)
     {
-        $stmt = $this->db->prepare("SELECT SUM(amount) FROM commissions WHERE user_id = ? AND status = 'paid'");
-        $stmt->execute([$userId]);
-        return (float)$stmt->fetchColumn() ?: 0;
+        try {
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status IN ('paid', 'approved')");
+            $stmt->execute([$userId]);
+            return (float)$stmt->fetchColumn() ?: 0;
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 
     private function getPersonalSalesCount($userId)
     {
         try {
-            $stmt = $this->db->prepare("SELECT COUNT(*) FROM property_sales WHERE agent_id = ?");
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM plot_bookings WHERE associate_id = ? AND status IN ('confirmed','completed','allotted')");
+            $stmt->execute([$userId]);
+            return (int)$stmt->fetchColumn() ?: 0;
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            return 0;
         }
-        $stmt->execute([$userId]);
-        return (int)$stmt->fetchColumn() ?: 0;
     }
 
     private function getClientCount($userId)
     {
-        $stmt = $this->db->prepare("SELECT COUNT(DISTINCT buyer_id) FROM property_sales WHERE agent_id = ?");
-        $stmt->execute([$userId]);
-        return (int)$stmt->fetchColumn() ?: 0;
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(DISTINCT customer_id) FROM plot_bookings WHERE associate_id = ?");
+            $stmt->execute([$userId]);
+            return (int)$stmt->fetchColumn() ?: 0;
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 }

@@ -73,19 +73,35 @@
 
                         <div class="mb-3">
                             <label for="address" class="form-label fw-semibold">Address</label>
-                            <textarea class="form-control" id="address" name="address" rows="2"><?= htmlspecialchars($vendor['address'] ?? '') ?></textarea>
+                            <div class="input-group">
+                                <textarea class="form-control" id="address" name="address" rows="2"><?= htmlspecialchars($vendor['address'] ?? '') ?></textarea>
+                                <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="address" title="Pick on Map">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="city" class="form-label fw-semibold">City</label>
-                                <input type="text" class="form-control" id="city" name="city" value="<?= htmlspecialchars($vendor['city'] ?? '') ?>">
+                                <input type="text" class="form-control" id="city" name="city" value="<?= htmlspecialchars($vendor['city'] ?? '') ?>" data-autofill="city">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="state" class="form-label fw-semibold">State</label>
-                                <input type="text" class="form-control" id="state" name="state" value="<?= htmlspecialchars($vendor['state'] ?? '') ?>">
+                                <input type="text" class="form-control" id="state" name="state" value="<?= htmlspecialchars($vendor['state'] ?? '') ?>" data-autofill="state">
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="pincode" class="form-label fw-semibold">Pincode</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="pincode" name="pincode" value="<?= htmlspecialchars($vendor['pincode'] ?? '') ?>" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
+                                    <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use My Location">
+                                        <i class="fas fa-location-crosshairs"></i>
+                                    </button>
+                                </div>
+                            </div>
 
                         <hr class="my-4">
                         <h5 class="mb-3"><i class="fas fa-id-card me-2 text-primary"></i>KYC & Tax Classification</h5>
@@ -152,7 +168,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="bank_name" class="form-label fw-semibold">Bank Name</label>
-                                <input type="text" class="form-control" id="bank_name" name="bank_name" value="<?= htmlspecialchars($vendor['bank_name'] ?? '') ?>">
+                                <input type="text" class="form-control" id="bank_name" name="bank_name" value="<?= htmlspecialchars($vendor['bank_name'] ?? '') ?>" data-autofill="bank_name">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="bank_account" class="form-label fw-semibold">Account Number</label>
@@ -163,7 +179,12 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="ifsc_code" class="form-label fw-semibold">IFSC Code</label>
-                                <input type="text" class="form-control" id="ifsc_code" name="ifsc_code" value="<?= htmlspecialchars($vendor['ifsc_code'] ?? '') ?>">
+                                <div class="input-group">
+                                    <input type="text" class="form-control text-uppercase" id="ifsc_code" name="ifsc_code" value="<?= htmlspecialchars($vendor['ifsc_code'] ?? '') ?>" data-autofill="ifsc" maxlength="11" placeholder="SBIN0001234">
+                                    <button type="button" class="btn btn-outline-secondary" data-action="ifsc-lookup" title="Auto-fill from IFSC">
+                                        <i class="fas fa-magic"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="payment_terms" class="form-label fw-semibold">Payment Terms</label>

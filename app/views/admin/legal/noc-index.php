@@ -23,7 +23,14 @@
         <div class="tab-content">
             <div class="tab-pane fade show active" id="registries" role="tabpanel">
                 <?php if (empty($registries)): ?>
-                <div class="text-muted text-center py-4">No registry records found.</div>
+                <div class="text-center py-5">
+                    <i class="fas fa-file-contract fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                    <h5 class="text-muted">No registry records found</h5>
+                    <p class="text-muted mb-3">Registry records are created when property bookings reach the registration stage. Check eligibility to get started.</p>
+                    <a href="<?= BASE_URL ?>/admin/legal/noc-eligibility" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i> Check Eligibility
+                    </a>
+                </div>
                 <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover table-sm">
@@ -72,7 +79,14 @@
 
             <div class="tab-pane fade" id="nocs" role="tabpanel">
                 <?php if (empty($nocs)): ?>
-                <div class="text-muted text-center py-4">No NOC records found.</div>
+                <div class="text-center py-5">
+                    <i class="fas fa-file-signature fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                    <h5 class="text-muted">No NOC records found</h5>
+                    <p class="text-muted mb-3">No Objection Certificates are required during property transfer processes. Check eligibility to request an NOC.</p>
+                    <a href="<?= BASE_URL ?>/admin/legal/noc-eligibility" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i> Check Eligibility
+                    </a>
+                </div>
                 <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover table-sm">

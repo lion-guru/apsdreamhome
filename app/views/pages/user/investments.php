@@ -41,7 +41,7 @@ $investments = $investments ?? [];
                         <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
                         <h5><?= __('user_inv2_empty_title', null, 'No active investments found') ?></h5>
                         <p class="text-muted"><?= __('user_inv2_empty_desc', null, "You haven't purchased any plots yet.") ?></p>
-                        <a href="<?= BASE_URL ?>properties" class="btn btn-primary px-4"><?= __('user_inv2_browse', null, 'Browse Properties') ?></a>
+                        <a href="<?= BASE_URL ?>/properties" class="btn btn-primary px-4"><?= __('user_inv2_browse', null, 'Browse Properties') ?></a>
                     </div>
                 </div>
             </div>
@@ -81,7 +81,7 @@ $investments = $investments ?? [];
                                 </div>
                             </div>
                             <div class="d-grid mt-4">
-                                <a href="<?= BASE_URL ?>properties/<?= $inv['id'] ?? '' ?>" class="btn btn-outline-primary"><?= __('user_inv2_view_details', null, 'View Details') ?></a>
+                                <a href="<?= BASE_URL ?>/properties/<?= $inv['id'] ?? '' ?>" class="btn btn-outline-primary"><?= __('user_inv2_view_details', null, 'View Details') ?></a>
                             </div>
                         </div>
                     </div>

@@ -4,7 +4,7 @@
  * HR/Admin can view and manage all job postings
  */
 
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 $page_title = $page_title ?? 'Job Management';
 $jobs = $jobs ?? [];
 $error = $error ?? null;
@@ -103,7 +103,7 @@ $error = $error ?? null;
 <script>
 function deleteJob(id) {
     if (confirm('Are you sure you want to delete this job posting? All applications will also be deleted.')) {
-        fetch('<?php echo $base; ?>/admin/jobs/delete/' + id, {
+        fetch('<?php echo $base; ?>/admin/jobs/manage/' + id + '/delete', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'

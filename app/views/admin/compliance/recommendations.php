@@ -4,7 +4,7 @@ $recommendations = $recommendations ?? [];
 $grouped = $grouped ?? [];
 $area_labels = $area_labels ?? [];
 $area_icons = $area_icons ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 function recColor($priority) {
     switch ($priority) {

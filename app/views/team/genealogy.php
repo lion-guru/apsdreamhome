@@ -106,7 +106,7 @@ include __DIR__ . '/../layouts/base.php';
     const height = 700;
 
     document.addEventListener('DOMContentLoaded', () => {
-        fetch('/api/mlm/tree')
+        fetch('<?= BASE_URL ?>/api/mlm/tree')
             .then(response => response.json())
             .then(data => {
                 document.getElementById('tree-loading').style.display = 'none';

@@ -1,5 +1,11 @@
 <?php header('Content-Type: text/html; charset=UTF-8'); error_reporting(E_ALL);
-ini_set('display_errors', 1);
+
+if ((defined('APS_ENV') && APS_ENV === 'development') || getenv('APS_ENV') === 'development') {
+    ini_set('display_errors', 1);
+} else {
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+}
 
 // Define constants only if not already defined
 if (!defined('APP_NAME')) define('APP_NAME', 'APSDreamHome');
@@ -35,18 +41,30 @@ ini_set('session.use_strict_mode', 1);
 ini_set('session.cookie_samesite', 'Lax');
 
 if (!defined('BASE_URL')) {
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $script = dirname($_SERVER['SCRIPT_NAME']);
-    $script = str_replace('\\', '/', $script);
-    // Remove /public if it exists in the path
-    if (substr($script, -7) === '/public') {
-        $script = substr($script, 0, -7);
-    }
-    // Remove /index.php if it exists
-    $script = str_replace('/index.php', '', $script);
+    $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
+               (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+    $protocol = $isHttps ? 'https' : 'http';
 
-    define('BASE_URL', rtrim("$protocol://$host$script", '/'));
+    if (php_sapi_name() === 'cli') {
+        // CLI mode (cron scripts, artisan): detect from project structure
+        $appDir = dirname(__DIR__); // config/ -> project root
+        // Check if we're in XAMPP htdocs or similar web root
+        $webRoot = dirname($appDir); // project root -> htdocs
+        $base = '/' . basename($appDir);
+        define('BASE_URL', $protocol . '://localhost' . $base);
+    } else {
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $script = dirname($_SERVER['SCRIPT_NAME']);
+        $script = str_replace('\\', '/', $script);
+        // Remove /public if it exists in the path
+        if (substr($script, -7) === '/public') {
+            $script = substr($script, 0, -7);
+        }
+        // Remove /index.php if it exists
+        $script = str_replace('/index.php', '', $script);
+
+        define('BASE_URL', rtrim("$protocol://$host$script", '/'));
+    }
 }
 
 if (!defined('WHATSAPP_SERVICE_URL')) {

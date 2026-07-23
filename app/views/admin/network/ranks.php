@@ -3,7 +3,7 @@ $ranks = $ranks ?? [];
 $rank_distribution = $rank_distribution ?? [];
 $rank_progression = $rank_progression ?? [];
 $page_title = $page_title ?? 'Rank Management';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <!-- Header -->

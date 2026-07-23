@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Filing Submissions';
 ob_start();
 ?>
@@ -6,7 +6,7 @@ ob_start();
     <div>
         <h4 class="mb-1"><i class="fas fa-paper-plane me-2"></i><?= htmlspecialchars($page_title) ?></h4>
     </div>
-    <a href="/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
+    <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
 
 <!-- Filters -->
@@ -73,7 +73,7 @@ ob_start();
                             <td><span class="badge bg-<?= $s['status'] === 'accepted' ? 'success' : ($s['status'] === 'rejected' ? 'danger' : ($s['status'] === 'submitted' ? 'primary' : ($s['status'] === 'prepared' ? 'info' : 'secondary'))) ?>"><?= ucfirst($s['status']) ?></span></td>
                             <td class="small"><?= htmlspecialchars($s['portal_reference'] ?? '-') ?></td>
                             <td class="small"><?= date('d M Y', strtotime($s['created_at'])) ?></td>
-                            <td><a href="/admin/efiling/submissions/<?= $s['id'] ?>" class="btn btn-sm btn-outline-primary">Detail</a></td>
+                            <td><a href="<?= BASE_URL ?>/admin/efiling/submissions/<?= $s['id'] ?>" class="btn btn-sm btn-outline-primary">Detail</a></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

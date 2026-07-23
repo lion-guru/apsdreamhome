@@ -83,7 +83,7 @@ try {
         echo json_encode(['success' => false, 'error' => h($mlSupport->translate('AI failed to generate message'))]);
     }
 
-} catch (Exception $e) {
+} catch (\Exception $e) {
     echo json_encode(['success' => false, 'error' => h($e->getMessage())]);
 }
 ?>

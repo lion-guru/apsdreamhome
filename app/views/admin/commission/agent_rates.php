@@ -1,7 +1,7 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4><i class="fas fa-dollar-sign"></i> Agent Commission Rates</h4>
-        <a href="/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+        <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 
     <div class="row">
@@ -9,7 +9,7 @@
             <div class="card aps-cp-card">
                 <div class="card-header bg-primary text-white"><i class="fas fa-plus"></i> Add Rate</div>
                 <div class="card-body aps-cp-card-body">
-                    <form method="post" action="/admin/commission/agent-rates/store">
+                    <form method="post" action="<?= BASE_URL ?>/admin/commission/agent-rates/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Min Sqft</label><input type="number" name="min_sqft" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Max Sqft</label><input type="number" name="max_sqft" class="form-control" required></div>
@@ -30,16 +30,26 @@
                     <div class="table-responsive"><table class="table table-striped mb-0">
                         <thead><tr><th>#</th><th>Sqft Range</th><th>Per Sqft</th><th>%</th><th>Status</th><th>Action</th></tr></thead>
                         <tbody>
-                            <?php foreach ($rates ?? [] as $r): ?>
+                            <?php if (empty($rates ?? [])): ?>
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <i class="fas fa-ruler fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <h5 class="text-muted">No agent rates configured</h5>
+                                    <p class="text-muted mb-3">Define rate cards based on plot size to automate agent commission calculations.</p>
+                                </td>
+                            </tr>
+                            <?php else: ?>
+                            <?php foreach ($rates as $r): ?>
                             <tr>
                                 <td><?= $r['id'] ?></td>
                                 <td><?= (int)$r['min_sqft'] ?> - <?= (int)$r['max_sqft'] ?></td>
                                 <td>&#8377;<?= number_format((float)$r['commission_per_sqft'],2) ?></td>
                                 <td><?= (float)$r['commission_percentage'] ?>%</td>
                                 <td><span class="badge bg-<?= $r['status']=='active'?'success':'secondary' ?>"><?= $r['status'] ?></span></td>
-                                <td><a href="/admin/commission/agent-rates/delete/<?= $r['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete?')"><i class="fas fa-trash"></i></a></td>
+                                <td><form method="POST" action="<?= BASE_URL ?>/admin/commission/agent-rates/delete/<?= $r['id'] ?>" style="display:inline" onsubmit="return confirm('Delete?')"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"><button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></form></td>
                             </tr>
                             <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table></div>
                 </div>

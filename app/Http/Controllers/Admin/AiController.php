@@ -42,15 +42,20 @@ class AiController extends AdminController
     public function hub()
     {
         try {
+            $db = \App\Core\Database\Database::getInstance();
+            $campaigns = [];
+            try { $campaigns = $db->fetchAll("SELECT * FROM marketing_campaigns ORDER BY created_at DESC LIMIT 15") ?: []; } catch (\Exception $e) {}
+
             $data = [
                 'page_title' => 'AI Hub - APS Dream Home',
                 'active_page' => 'ai_hub',
                 'ai_stats' => $this->getAIStats(),
-                'recent_activities' => $this->getRecentAIActivities()
+                'recent_activities' => $this->getRecentAIActivities(),
+                'campaigns_list' => $campaigns,
             ];
 
             return $this->render('admin/ai/hub', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("AI Hub error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load AI Hub');
             return $this->redirect('admin/dashboard');
@@ -71,7 +76,7 @@ class AiController extends AdminController
             ];
 
             return $this->render('admin/ai/analytics', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("AI Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load AI Analytics');
             return $this->redirect('admin/ai/hub');
@@ -92,7 +97,7 @@ class AiController extends AdminController
             ];
 
             return $this->render('admin/ai/lead_scoring', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("AI Lead Scoring error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load AI Lead Scoring');
             return $this->redirect('admin/ai/hub');
@@ -113,7 +118,7 @@ class AiController extends AdminController
             ];
 
             return $this->render('admin/ai/property_recommendations', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("AI Property Recommendations error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load AI Property Recommendations');
             return $this->redirect('admin/ai/hub');
@@ -134,7 +139,7 @@ class AiController extends AdminController
             ];
 
             return $this->render('admin/ai/chatbot', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("AI Chatbot error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load AI Chatbot');
             return $this->redirect('admin/ai/hub');
@@ -154,7 +159,7 @@ class AiController extends AdminController
             ];
 
             return $this->render('admin/ai/settings', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("AI Settings error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load AI Settings');
             return $this->redirect('admin/ai/hub');
@@ -191,7 +196,7 @@ class AiController extends AdminController
             }
 
             return $this->jsonResponse($result);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("AI Process Request error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => 'Processing failed'], 500);
         }
@@ -238,7 +243,7 @@ class AiController extends AdminController
             }
 
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get AI Stats error: " . $e->getMessage());
             return $empty;
         }
@@ -256,7 +261,7 @@ class AiController extends AdminController
                     LIMIT 10";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Recent AI Activities error: " . $e->getMessage());
             return [];
         }
@@ -289,7 +294,7 @@ class AiController extends AdminController
             }
 
             return $data;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Analytics Data error: " . $e->getMessage());
             return [];
         }
@@ -308,7 +313,7 @@ class AiController extends AdminController
                     LIMIT 20";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Predictions error: " . $e->getMessage());
             return [];
         }
@@ -327,7 +332,7 @@ class AiController extends AdminController
                     LIMIT 50";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Leads For Scoring error: " . $e->getMessage());
             return [];
         }
@@ -343,7 +348,7 @@ class AiController extends AdminController
             $sql = "SELECT * FROM ai_scoring_models WHERE is_active = 1";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Scoring Models error: " . $e->getMessage());
             return [];
         }
@@ -364,7 +369,7 @@ class AiController extends AdminController
                     LIMIT 30";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Property Recommendations error: " . $e->getMessage());
             return [];
         }
@@ -380,7 +385,7 @@ class AiController extends AdminController
             $sql = "SELECT * FROM ai_customer_segments WHERE is_active = 1";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Customer Segments error: " . $e->getMessage());
             return [];
         }
@@ -406,7 +411,7 @@ class AiController extends AdminController
                 $stats['avg_satisfaction'] = round((float)($result['avg_satisfaction'] ?? 0), 2);
             }
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Chatbot Stats error: " . $e->getMessage());
             return $stats;
         }
@@ -426,7 +431,7 @@ class AiController extends AdminController
                     LIMIT 20";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Recent Conversations error: " . $e->getMessage());
             return [];
         }
@@ -441,7 +446,7 @@ class AiController extends AdminController
         try {
             $sql = "SELECT * FROM ai_config WHERE is_active = 1";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get AI Config error: " . $e->getMessage());
             return [];
         }
@@ -481,7 +486,7 @@ class AiController extends AdminController
                 'confidence' => $confidence,
                 'recommendation' => $score > 80 ? 'High Priority' : ($score > 60 ? 'Medium Priority' : 'Low Priority')
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Analyze Lead error: " . $e->getMessage());
             return ['error' => 'Analysis failed'];
         }
@@ -543,7 +548,7 @@ class AiController extends AdminController
             }
 
             return ['recommendations' => $recommendations];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Recommend Property error: " . $e->getMessage());
             return ['error' => 'Recommendation failed'];
         }
@@ -578,7 +583,7 @@ class AiController extends AdminController
                 'confidence' => rand(75, 90),
                 'historical_avg' => round($avgDailySales, 2)
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Predict Sales error: " . $e->getMessage());
             return ['error' => 'Prediction failed'];
         }

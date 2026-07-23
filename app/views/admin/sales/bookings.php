@@ -70,7 +70,16 @@ $statusBadge = function ($s) {
                 </thead>
                 <tbody>
                     <?php if (empty($bookings)): ?>
-                        <tr><td colspan="9" class="text-center py-4 text-muted"><?= __('sale_no_bookings') ?></td></tr>
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="fas fa-bookmark fa-3x text-muted mb-3"></i>
+                                <p class="text-muted mb-2"><?= __('sale_no_bookings') ?></p>
+                                <p class="text-muted small mb-3">Bookings appear here once customers reserve plots.</p>
+                                <a href="<?= htmlspecialchars($base) ?>/admin/sales/bookings/new" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus me-1"></i>Create First Booking
+                                </a>
+                            </td>
+                        </tr>
                     <?php else: foreach ($bookings as $b): ?>
                         <tr>
                             <td>

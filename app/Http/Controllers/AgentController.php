@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\BaseController;
-use App\Models\Agent;
 use App\Models\Property;
 use Exception;
 

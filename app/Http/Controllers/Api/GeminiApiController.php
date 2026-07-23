@@ -349,11 +349,11 @@ class GeminiApiController extends BaseController
         }
 
         if (strpos($msg, 'buy') !== false || strpos($msg, 'purchase') !== false || strpos($msg, 'kharidna') !== false || strpos($msg, 'book') !== false) {
-            return "ðŸ  **Buy Property:**\n\nGreat choice! We have:\n• Ready-to-move houses\n• Investment plots\n• Commercial shops\n• Apartments & flats\n\nWhat's your budget and preferred location?\n\nYou can also browse at:\nðŸŒ localhost/apsdreamhome/properties";
+            return "ðŸ\u20AC\u00A0 **Buy Property:**\n\nGreat choice! We have:\n• Ready-to-move houses\n• Investment plots\n• Commercial shops\n• Apartments & flats\n\nWhat's your budget and preferred location?\n\nYou can also browse at:\n" . rtrim(BASE_URL, '/') . "/properties";
         }
 
         if (strpos($msg, 'sell') !== false || strpos($msg, 'sale') !== false || strpos($msg, 'bechna') !== false) {
-            return "ðŸ’° **Sell Your Property:**\n\nList your property with us - **100% FREE!**\n\nâœ… Zero listing charges\nâœ… No commission\nâœ… Direct buyer contact\nâœ… Quick verification\n\nVisit:\nðŸŒ localhost/apsdreamhome/list-property\n\nOr call us at +91 92771 21112";
+            return "ðŸ’° **Sell Your Property:**\n\nList your property with us - **100% FREE!**\n\nâœ… Zero listing charges\nâœ… No commission\nâœ… Direct buyer contact\nâœ… Quick verification\n\nVisit:\nðŸŒ " . rtrim(BASE_URL, '/') . "/list-property\n\nOr call us at +91 92771 21112";
         }
 
         if (strpos($msg, 'rent') !== false || strpos($msg, 'kiraya') !== false || strpos($msg, 'lease') !== false) {

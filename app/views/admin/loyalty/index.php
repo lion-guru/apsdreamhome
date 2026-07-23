@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Initialize default values if not set
 $tiers = $tiers ?? [
     'bronze' => ['min_points' => 0, 'discount' => 5, 'multiplier' => 1, 'benefits' => []],
@@ -19,13 +19,13 @@ $stats = $stats ?? [
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">🏆 Loyalty Program Dashboard</h1>
         <div>
-            <a href="/admin/loyalty/members" class="btn btn-primary me-2">
+            <a href="<?= BASE_URL ?>/admin/loyalty/members" class="btn btn-primary me-2">
                 <i class="fas fa-users"></i> Members
             </a>
-            <a href="/admin/loyalty/rewards" class="btn btn-success me-2">
+            <a href="<?= BASE_URL ?>/admin/loyalty/rewards" class="btn btn-success me-2">
                 <i class="fas fa-gift"></i> Rewards
             </a>
-            <a href="/admin/loyalty/redemptions" class="btn btn-info">
+            <a href="<?= BASE_URL ?>/admin/loyalty/redemptions" class="btn btn-info">
                 <i class="fas fa-ticket-alt"></i> Redemptions
             </a>
         </div>
@@ -155,16 +155,16 @@ $stats = $stats ?? [
                     <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <a href="/admin/loyalty/members" class="btn btn-outline-primary btn-block mb-3">
+                    <a href="<?= BASE_URL ?>/admin/loyalty/members" class="btn btn-outline-primary btn-block mb-3">
                         <i class="fas fa-users"></i> View All Members
                     </a>
-                    <a href="/admin/loyalty/rewards" class="btn btn-outline-success btn-block mb-3">
+                    <a href="<?= BASE_URL ?>/admin/loyalty/rewards" class="btn btn-outline-success btn-block mb-3">
                         <i class="fas fa-gift"></i> Manage Rewards
                     </a>
-                    <a href="/admin/loyalty/rules" class="btn btn-outline-info btn-block mb-3">
+                    <a href="<?= BASE_URL ?>/admin/loyalty/rules" class="btn btn-outline-info btn-block mb-3">
                         <i class="fas fa-cog"></i> Points Rules
                     </a>
-                    <a href="/admin/loyalty/tier-benefits" class="btn btn-outline-warning btn-block">
+                    <a href="<?= BASE_URL ?>/admin/loyalty/tier-benefits" class="btn btn-outline-warning btn-block">
                         <i class="fas fa-crown"></i> Tier Benefits
                     </a>
                 </div>

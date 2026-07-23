@@ -1,4 +1,4 @@
-<div class="container-fluid px-4">
+﻿<div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <a href="<?= BASE_URL ?>/admin/messages" class="btn btn-outline-secondary btn-sm me-2">
@@ -210,3 +210,4 @@ function escapeHtml(str) {
     background-color: #f8f9fa;
 }
 </style>
+

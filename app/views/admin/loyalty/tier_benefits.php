@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Tier Benefits';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $tiers = $tiers ?? [];
 ?>
 <div class="container-fluid">

@@ -157,7 +157,7 @@ $statusColors = [
                         <div class="flex-grow-1">
                             <h6 class="mb-1"><?= __('user_booking_confirm_step_pay_token', 'Pay Token Amount') ?></h6>
                             <p class="text-muted small mb-2"><?= __('user_booking_confirm_step_pay_token_desc', 'Complete your token payment of &#8377;25,000 to confirm the booking.') ?></p>
-                            <button class="btn btn-primary btn-sm" onclick="showToast('<?= __('user_booking_confirm_payment_gateway_soon', 'Payment gateway coming soon') ?>', 'info')">
+                            <button class="btn btn-primary btn-sm" onclick="window.location.href='<?= BASE_URL ?>/payments'">
                                 <i class="fas fa-rupee-sign me-1"></i><?= __('user_booking_confirm_pay_now', 'Pay Now') ?> (Razorpay)
                             </button>
                         </div>
@@ -170,7 +170,7 @@ $statusColors = [
                         <div class="flex-grow-1">
                             <h6 class="mb-1"><?= __('user_booking_confirm_step_download_receipt', 'Download Booking Receipt') ?></h6>
                             <p class="text-muted small mb-2"><?= __('user_booking_confirm_step_download_receipt_desc', 'Save a copy of your booking confirmation for your records.') ?></p>
-                            <button class="btn btn-outline-success btn-sm" onclick="showToast('<?= __('user_booking_confirm_receipt_soon', 'Receipt download coming soon') ?>', 'info')">
+                            <button class="btn btn-outline-success btn-sm" onclick="window.print()">
                                 <i class="fas fa-download me-1"></i><?= __('user_booking_confirm_download_receipt', 'Download Receipt') ?>
                             </button>
                         </div>

@@ -50,7 +50,7 @@ class Project extends Model
         try {
             $db = \App\Core\Database::getInstance();
 
-            $sql = "SELECT * FROM projects WHERE is_active = 1 ORDER BY is_featured DESC, created_at DESC";
+            $sql = "SELECT * FROM projects WHERE status != 'cancelled' ORDER BY is_featured DESC, created_at DESC";
             $params = [];
 
             if ($limit) {
@@ -83,7 +83,7 @@ class Project extends Model
             $db = \App\Core\Database::getInstance();
             $stmt = $db->prepare(
                 "SELECT * FROM projects
-                 WHERE is_featured = 1 AND is_active = 1
+                 WHERE is_featured = 1 AND status != 'cancelled'
                  ORDER BY created_at DESC LIMIT :limit"
             );
             $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
@@ -102,7 +102,7 @@ class Project extends Model
     {
         try {
             $db = \App\Core\Database::getInstance();
-            $stmt = $db->prepare("SELECT * FROM projects WHERE project_id = :id AND is_active = 1");
+            $stmt = $db->prepare("SELECT * FROM projects WHERE id = :id AND status != 'cancelled'");
             $stmt->execute(['id' => $id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
@@ -118,7 +118,7 @@ class Project extends Model
     {
         try {
             $db = \App\Core\Database::getInstance();
-            $stmt = $db->prepare("SELECT * FROM projects WHERE project_code = :code AND is_active = 1");
+            $stmt = $db->prepare("SELECT * FROM projects WHERE name = :code AND status != 'cancelled'");
             $stmt->execute(['code' => $code]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
@@ -136,7 +136,7 @@ class Project extends Model
             $db = \App\Core\Database::getInstance();
             $stmt = $db->prepare(
                 "SELECT * FROM projects
-                 WHERE (location LIKE :location OR city LIKE :city) AND is_active = 1
+                 WHERE (name LIKE :location OR address LIKE :city) AND status != 'cancelled'
                  ORDER BY is_featured DESC, created_at DESC"
             );
             $stmt->execute([
@@ -228,7 +228,7 @@ class Project extends Model
                 return false;
             }
 
-            $sql = "UPDATE projects SET " . implode(', ', $setParts) . " WHERE project_id = :id";
+            $sql = "UPDATE projects SET " . implode(', ', $setParts) . " WHERE id = :id";
             $stmt = $db->prepare($sql);
             return $stmt->execute($params);
         } catch (\Exception $e) {
@@ -244,7 +244,7 @@ class Project extends Model
     {
         try {
             $db = \App\Core\Database::getInstance();
-            $stmt = $db->prepare("UPDATE projects SET is_active = 0, updated_at = NOW() WHERE project_id = :id");
+            $stmt = $db->prepare("UPDATE projects SET is_active = 0, updated_at = NOW() WHERE id = :id");
             return $stmt->execute(['id' => $id]);
         } catch (\Exception $e) {
             error_log("Error in deleteProject: " . $e->getMessage());
@@ -260,8 +260,8 @@ class Project extends Model
         try {
             $db = \App\Core\Database::getInstance();
 
-            $sql = "SELECT * FROM projects WHERE is_active = 1 AND (";
-            $sql .= "project_name LIKE :search OR ";
+            $sql = "SELECT * FROM projects WHERE status != 'cancelled' AND (";
+            $sql .= "name LIKE :search OR ";
             $sql .= "project_code LIKE :search OR ";
             $sql .= "location LIKE :search OR ";
             $sql .= "city LIKE :search OR ";
@@ -282,12 +282,12 @@ class Project extends Model
             }
 
             if (!empty($filters['min_price'])) {
-                $sql .= " AND base_price >= :min_price";
+                $sql .= " AND price_range_min >= :min_price";
                 $params['min_price'] = $filters['min_price'];
             }
 
             if (!empty($filters['max_price'])) {
-                $sql .= " AND base_price <= :max_price";
+                $sql .= " AND price_range_max <= :max_price";
                 $params['max_price'] = $filters['max_price'];
             }
 
@@ -313,8 +313,8 @@ class Project extends Model
             $sql = "SELECT
                 COUNT(*) as total_projects,
                 SUM(CASE WHEN is_featured = 1 THEN 1 ELSE 0 END) as featured_projects,
-                SUM(CASE WHEN project_status = 'completed' THEN 1 ELSE 0 END) as completed_projects,
-                SUM(CASE WHEN project_status = 'ongoing' THEN 1 ELSE 0 END) as ongoing_projects,
+                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_projects,
+                SUM(CASE WHEN status = 'under_construction' THEN 1 ELSE 0 END) as ongoing_projects,
                 SUM(total_plots) as total_plots,
                 SUM(available_plots) as available_plots
                 FROM projects WHERE is_active = 1";
@@ -335,7 +335,7 @@ class Project extends Model
         try {
             $db = \App\Core\Database::getInstance();
             $sql = "SELECT * FROM projects
-                 WHERE city = :city AND is_active = 1
+                 WHERE status != 'cancelled'
                  ORDER BY is_featured DESC, created_at DESC";
 
             $stmt = $db->prepare($sql);
@@ -354,7 +354,7 @@ class Project extends Model
     {
         try {
             $db = \App\Core\Database::getInstance();
-            $stmt = $db->query("SELECT DISTINCT city FROM projects WHERE is_active = 1 ORDER BY city");
+            $stmt = $db->query("SELECT DISTINCT name FROM projects WHERE status != 'cancelled' ORDER BY name");
             return $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (\Exception $e) {
             error_log("Error in getUniqueCities: " . $e->getMessage());
@@ -369,7 +369,7 @@ class Project extends Model
     {
         try {
             $db = \App\Core\Database::getInstance();
-            $stmt = $db->query("SELECT DISTINCT project_type FROM projects WHERE is_active = 1 ORDER BY project_type");
+            $stmt = $db->query("SELECT DISTINCT project_type FROM projects WHERE status != 'cancelled' ORDER BY project_type");
             return $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (\Exception $e) {
             error_log("Error in getUniqueProjectTypes: " . $e->getMessage());

@@ -6,8 +6,11 @@
 (function () {
   'use strict';
 
-  // Get BASE_URL from PHP variable or construct it
-  const BASE_URL = typeof window.BASE_URL !== 'undefined' ? window.BASE_URL : '/apsdreamhome';
+  // Get BASE_URL from PHP variable or auto-detect from page path
+  const BASE_URL =
+    typeof window.BASE_URL !== 'undefined'
+      ? window.BASE_URL
+      : window.location.pathname.replace(/\/public\/.*$/, '').replace(/\/[^\/]*\.php$/, '') || '';
 
   // Track page view
   function trackPageView() {

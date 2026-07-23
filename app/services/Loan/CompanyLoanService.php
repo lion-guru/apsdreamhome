@@ -90,7 +90,7 @@ class CompanyLoanService
     {
         try {
             $stmt = $this->db->prepare("SELECT l.*, u.name as customer_name, u.phone as customer_phone, u.email as customer_email,
-                p.plot_no, c.name as colony_name, o.name as offer_name, o.offer_type
+                p.plot_number as plot_no, c.name as colony_name, o.name as offer_name, o.offer_type
                 FROM company_loans l
                 LEFT JOIN users u ON l.customer_id = u.id
                 LEFT JOIN plots p ON l.property_id = p.id
@@ -133,7 +133,7 @@ class CompanyLoanService
             $offset = (int)($filters['offset'] ?? 0);
 
             $sql = "SELECT l.*, u.name as customer_name, u.phone as customer_phone,
-                p.plot_no, c.name as colony_name, o.name as offer_name
+                p.plot_number as plot_no, c.name as colony_name, o.name as offer_name
                 FROM company_loans l
                 LEFT JOIN users u ON l.customer_id = u.id
                 LEFT JOIN plots p ON l.property_id = p.id

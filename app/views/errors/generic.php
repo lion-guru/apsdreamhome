@@ -24,7 +24,7 @@
         <div class="error-code"><?php echo htmlspecialchars($error_code ?? 500); ?></div>
         <div class="error-title"><?php echo htmlspecialchars($error_title ?? 'Error'); ?></div>
         <div class="error-desc"><?php echo htmlspecialchars($error_message ?? 'Something went wrong. Please try again.'); ?></div>
-        <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>" class="error-btn">
+        <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'); ?>" class="error-btn">
             <i class="fas fa-home"></i> Back to Home
         </a>
     </div>

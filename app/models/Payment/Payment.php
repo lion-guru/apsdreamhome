@@ -83,23 +83,25 @@ class Payment extends Model
             $sql = "INSERT INTO payments (
                         transaction_id, 
                         customer_id, 
-                        amount, 
+                        amount,
+                        total_amount,
                         payment_type,
-                        payment_method,
+                        gateway,
                         notes,
                         status,
                         payment_date,
                         created_by
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, CURDATE(), ?)";
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), ?)";
 
             $stmt = $conn->prepare($sql);
             $stmt->execute([
                 $transactionId,
-                $data['customer_id'],
+                $data['customer_id'] ?? $data['user_id'] ?? null,
                 $data['amount'],
+                $data['amount'], // total_amount = amount (no tax/discount at this level)
                 $data['payment_type'],
-                $data['payment_method'],
-                $data['description'] ?? '', // Map description to notes
+                $data['payment_method'] ?? $data['gateway'] ?? 'other',
+                $data['description'] ?? $data['notes'] ?? '',
                 $data['status'] ?? 'completed',
                 $_SESSION['admin_id'] ?? 1
             ]);

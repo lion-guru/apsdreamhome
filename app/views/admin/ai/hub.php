@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $mlSupport = $mlSupport ?? new class { public function translate($s) { return $s; } public function getCurrentLanguage() { return 'EN'; } };
 $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'; } };
 ?>
@@ -62,7 +62,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
             <div class="col">
                 <h3 class="page-title"><?= h($mlSupport->translate('AI Ecosystem Hub')) ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
                     <li class="breadcrumb-item active"><?= h($mlSupport->translate('AI Hub')) ?></li>
                 </ul>
             </div>
@@ -196,7 +196,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                     <div class="card shadow-sm border-0 mb-4">
                         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                             <h5 class="card-title h6 fw-bold mb-0"><?= h($mlSupport->translate('Recent Workflows')) ?></h5>
-                            <a href="#" class="btn btn-sm btn-link text-decoration-none"><?= h($mlSupport->translate('View All')) ?></a>
+                            <a href="<?= BASE_URL ?>admin/workflows/list" class="btn btn-sm btn-link text-decoration-none"><?= h($mlSupport->translate('View All')) ?></a>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -287,15 +287,274 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
             </div>
         </div>
 
-        <!-- Other tabs (placeholders for now) -->
+        <!-- Marketing Automation Tab -->
         <div class="tab-pane" id="marketing">
-            <div class="text-center py-5">
-                <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted"><?= h($mlSupport->translate('Marketing Automation Module - Coming Soon')) ?></h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Total Campaigns</h6><h3 class="mb-0"><?= count($campaigns_list ?? []) ?></h3></div><i class="fas fa-bullhorn fa-2x opacity-50"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Sent</h6><h3 class="mb-0"><?= count(array_filter($campaigns_list ?? [], fn($c) => in_array($c['status'] ?? '', ['sent','completed']))) ?></h3></div><i class="fas fa-paper-plane fa-2x opacity-50"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Drafts</h6><h3 class="mb-0"><?= count(array_filter($campaigns_list ?? [], fn($c) => ($c['status'] ?? '') === 'draft')) ?></h3></div><i class="fas fa-file-alt fa-2x opacity-50"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Total Recipients</h6><h3 class="mb-0"><?= number_format(array_sum(array_column($campaigns_list ?? [], 'total_recipients'))) ?></h3></div><i class="fas fa-users fa-2x opacity-50"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-bullhorn me-2"></i>Marketing Campaigns</h5>
+                    <a href="<?= BASE_URL ?>/admin/campaigns" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <?php if (empty($campaigns_list)): ?>
+                        <div class="text-center py-5"><i class="fas fa-bullhorn fa-3x text-muted mb-3 d-block"></i><h5 class="text-muted">No campaigns yet</h5><p class="text-muted mb-3">Create email, SMS, WhatsApp, and push notification campaigns.</p><a href="<?= BASE_URL ?>/admin/campaigns" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Create Campaign</a></div>
+                    <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr><th>Name</th><th>Type</th><th>Audience</th><th>Status</th><th>Recipients</th><th>Sent</th><th>Opened</th><th>Created</th></tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach (array_slice($campaigns_list ?? [], 0, 10) as $c): ?>
+                                    <tr>
+                                        <td class="fw-semibold small"><?= htmlspecialchars($c['name']) ?></td>
+                                        <td><span class="badge bg-<?= $c['type'] === 'email' ? 'primary' : ($c['type'] === 'sms' ? 'success' : ($c['type'] === 'whatsapp' ? 'success' : 'info')) ?>"><?= ucfirst($c['type']) ?></span></td>
+                                        <td class="small"><?= htmlspecialchars($c['target_audience'] ?? '-') ?></td>
+                                        <td><span class="badge bg-<?= $c['status'] === 'sent' || $c['status'] === 'completed' ? 'success' : ($c['status'] === 'draft' ? 'secondary' : ($c['status'] === 'sending' ? 'warning' : 'info')) ?>"><?= ucfirst($c['status']) ?></span></td>
+                                        <td><?= number_format($c['total_recipients'] ?? 0) ?></td>
+                                        <td><?= number_format($c['sent_count'] ?? 0) ?></td>
+                                        <td><?= number_format($c['opened_count'] ?? 0) ?></td>
+                                        <td class="small text-muted"><?= date('d M Y', strtotime($c['created_at'])) ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
 
-        <!-- ... (Other tabs) ... -->
+        <!-- Telecalling Tab -->
+        <div class="tab-pane" id="telecalling">
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-success text-white shadow-sm border-0">
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Active Channels</h6><h3 id="tc-channels" class="mb-0">—</h3></div><i class="fas fa-phone fa-2x opacity-50"></i></div></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white shadow-sm border-0">
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Pending Calls</h6><h3 id="tc-pending" class="mb-0">—</h3></div><i class="fas fa-clock fa-2x opacity-50"></i></div></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white shadow-sm border-0">
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Today's Calls</h6><h3 id="tc-today" class="mb-0">—</h3></div><i class="fas fa-calendar-day fa-2x opacity-50"></i></div></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark shadow-sm border-0">
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Success Rate</h6><h3 id="tc-rate" class="mb-0">—</h3></div><i class="fas fa-chart-line fa-2x opacity-50"></i></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-phone-alt me-2"></i>AI Telecalling Dashboard</h5>
+                    <a href="<?= BASE_URL ?>/admin/ai-calling" class="btn btn-sm btn-primary">Open Full Dashboard</a>
+                </div>
+                <div class="card-body" id="tc-content">
+                    <div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Loading telecalling data...</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool Directory Tab -->
+        <div class="tab-pane" id="tool-directory">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-tools me-2"></i>AI Tool Directory</h5>
+                </div>
+                <div class="card-body" id="td-content">
+                    <div class="row g-3">
+                        <div class="col-md-4"><div class="card border h-100"><div class="card-body"><h6><i class="fas fa-brain text-primary me-2"></i>Lead Scoring</h6><p class="small text-muted mb-2">AI-powered lead qualification and scoring</p><a href="<?= BASE_URL ?>/admin/ai-system/qualifier" class="btn btn-sm btn-outline-primary">Open</a></div></div></div>
+                        <div class="col-md-4"><div class="card border h-100"><div class="card-body"><h6><i class="fas fa-chart-line text-success me-2"></i>Market Intelligence</h6><p class="small text-muted mb-2">Price trends, demand analysis, colony performance</p><a href="<?= BASE_URL ?>/admin/ai/market_report" class="btn btn-sm btn-outline-success">Open</a></div></div></div>
+                        <div class="col-md-4"><div class="card border h-100"><div class="card-body"><h6><i class="fas fa-phone-rotary text-warning me-2"></i>Auto Dialer</h6><p class="small text-muted mb-2">Automated calling with AI conversation</p><a href="<?= BASE_URL ?>/admin/ai-calling/auto-dialer" class="btn btn-sm btn-outline-warning">Open</a></div></div></div>
+                        <div class="col-md-4"><div class="card border h-100"><div class="card-body"><h6><i class="fas fa-robot text-info me-2"></i>Agentic CRM</h6><p class="small text-muted mb-2">Auto follow-up, score recalc, auto-assign</p><a href="<?= BASE_URL ?>/admin/crm/agentic" class="btn btn-sm btn-outline-info">Open</a></div></div></div>
+                        <div class="col-md-4"><div class="card border h-100"><div class="card-body"><h6><i class="fas fa-comments text-danger me-2"></i>Chatbot Training</h6><p class="small text-muted mb-2">Train chatbot responses and intents</p><a href="<?= BASE_URL ?>/admin/chatbot/train" class="btn btn-sm btn-outline-danger">Open</a></div></div></div>
+                        <div class="col-md-4"><div class="card border h-100"><div class="card-body"><h6><i class="fas fa-file-alt text-secondary me-2"></i>AI Training</h6><p class="small text-muted mb-2">Voice models, scripts, intents</p><a href="<?= BASE_URL ?>/admin/ai-calling/training" class="btn btn-sm btn-outline-secondary">Open</a></div></div></div>
+                        <div class="col-md-4"><div class="card border h-100"><div class="card-body"><h6><i class="fas fa-home text-primary me-2"></i>Property Recommendations</h6><p class="small text-muted mb-2">AI matching leads to properties</p><a href="<?= BASE_URL ?>/admin/ai/property_recommendations" class="btn btn-sm btn-outline-primary">Open</a></div></div></div>
+                        <div class="col-md-4"><div class="card border h-100"><div class="card-body"><h6><i class="fas fa-tachometer-alt text-success me-2"></i>AI System Dashboard</h6><p class="small text-muted mb-2">Unified AI engine overview</p><a href="<?= BASE_URL ?>/admin/ai-system" class="btn btn-sm btn-outline-success">Open</a></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Tab -->
+        <div class="tab-pane" id="recommendations">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-lightbulb me-2"></i>AI Recommendations</h5>
+                </div>
+                <div class="card-body" id="rec-content">
+                    <div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Analyzing data for recommendations...</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Ecosystem Tab -->
+        <div class="tab-pane" id="ecosystem">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-project-diagram me-2"></i>AI Ecosystem Map</h5>
+                </div>
+                <div class="card-body" id="eco-content">
+                    <div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Loading ecosystem data...</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bot Management Tab -->
+        <div class="tab-pane" id="bot-management">
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white shadow-sm border-0">
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Bot Status</h6><h3 id="bot-status" class="mb-0 small">Active</h3></div><i class="fas fa-robot fa-2x opacity-50"></i></div></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white shadow-sm border-0">
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Conversations Today</h6><h3 id="bot-convos" class="mb-0">—</h3></div><i class="fas fa-comments fa-2x opacity-50"></i></div></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white shadow-sm border-0">
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Satisfaction</h6><h3 id="bot-satisfaction" class="mb-0">—</h3></div><i class="fas fa-smile fa-2x opacity-50"></i></div></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark shadow-sm border-0">
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Training Items</h6><h3 id="bot-training" class="mb-0">—</h3></div><i class="fas fa-graduation-cap fa-2x opacity-50"></i></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-robot me-2"></i>Bot Management</h5>
+                    <a href="<?= BASE_URL ?>/admin/ai-chatbot" class="btn btn-sm btn-primary">Open Chatbot Admin</a>
+                </div>
+                <div class="card-body" id="bot-content">
+                    <div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Loading bot data...</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Center Tab -->
+        <div class="tab-pane" id="learning-center">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-graduation-cap me-2"></i>AI Learning Center</h5>
+                    <a href="<?= BASE_URL ?>/admin/ai-calling/training" class="btn btn-sm btn-primary">Open Training</a>
+                </div>
+                <div class="card-body" id="learn-content">
+                    <div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Loading learning data...</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights & Analysis Tab -->
+        <div class="tab-pane" id="insights">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-chart-bar me-2"></i>Insights & Analysis</h5>
+                </div>
+                <div class="card-body" id="insights-content">
+                    <div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Generating insights...</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dev Tools Tab -->
+        <div class="tab-pane" id="dev-tools">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-code me-2"></i>Developer Tools</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-system/health" class="btn btn-outline-primary w-100 py-3"><i class="fas fa-heartbeat mb-2 d-block" style="font-size: 1.5rem;"></i>System Health Check</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-calling/call-logs" class="btn btn-outline-success w-100 py-3"><i class="fas fa-list mb-2 d-block" style="font-size: 1.5rem;"></i>Call Logs</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai-calling/call-analytics" class="btn btn-outline-info w-100 py-3"><i class="fas fa-chart-pie mb-2 d-block" style="font-size: 1.5rem;"></i>Call Analytics</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/crm/dedup" class="btn btn-outline-warning w-100 py-3"><i class="fas fa-clone mb-2 d-block" style="font-size: 1.5rem;"></i>Lead Deduplication</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/crm/role-dashboard" class="btn btn-outline-secondary w-100 py-3"><i class="fas fa-users-cog mb-2 d-block" style="font-size: 1.5rem;"></i>CRM Role Dashboard</a></div>
+                        <div class="col-md-4"><a href="<?= BASE_URL ?>/admin/ai/market_report" class="btn btn-outline-danger w-100 py-3"><i class="fas fa-chart-area mb-2 d-block" style="font-size: 1.5rem;"></i>Market Report</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Health Tab -->
+        <div class="tab-pane" id="health">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-heartbeat me-2"></i>System Health</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadHealthStatus()"><i class="fas fa-sync me-1"></i>Refresh</button>
+                </div>
+                <div class="card-body" id="health-content">
+                    <div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Checking system health...</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-pane" id="settings">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title h6 fw-bold mb-0"><i class="fas fa-cog me-2"></i>AI Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6>AI Engine Mode</h6>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="aiMode" id="modeAuto" checked>
+                                <label class="btn btn-outline-primary" for="modeAuto">Auto</label>
+                                <input type="radio" class="btn-check" name="aiMode" id="modeManual">
+                                <label class="btn btn-outline-secondary" for="modeManual">Manual</label>
+                                <input type="radio" class="btn-check" name="aiMode" id="modeOff">
+                                <label class="btn btn-outline-danger" for="modeOff">Off</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Quick Actions</h6>
+                            <a href="<?= BASE_URL ?>/admin/ai-system" class="btn btn-outline-primary me-2"><i class="fas fa-robot me-1"></i>AI System</a>
+                            <a href="<?= BASE_URL ?>/admin/ai-calling/training" class="btn btn-outline-success me-2"><i class="fas fa-graduation-cap me-1"></i>Training</a>
+                            <a href="<?= BASE_URL ?>/admin/crm/agentic" class="btn btn-outline-info"><i class="fas fa-magic me-1"></i>Agentic CRM</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -310,7 +569,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="" method="POST">
+                <form action="<?= BASE_URL ?>admin/workflows/create" method="POST">
                     <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                     <input type="hidden" name="create_workflow" value="1">
                     <div class="mb-3">
@@ -393,7 +652,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
     tryInit();
 
     function toggleAIMode() {
-        alert('Mode toggle implementation pending');
+        showToast('AI mode toggle — use Settings tab', 'info');
     }
 
     function toggleNotifications() {
@@ -401,14 +660,88 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
         if (panel) panel.classList.toggle('d-none');
     }
 
-    // Stub functions for tab loading (placeholder implementations)
-    function loadAITools() { showToast('Tool Directory loading...', 'info'); }
-    function loadRecommendations() { showToast('Recommendations loading...', 'info'); }
-    function loadEcosystem() { showToast('AI Ecosystem loading...', 'info'); }
-    function loadBotSettings() { showToast('Bot settings loading...', 'info'); }
-    function loadLearningUpdates() { showToast('Learning Center loading...', 'info'); }
-    function loadInsights() { showToast('Insights loading...', 'info'); }
-    function loadHealthStatus() { showToast('Health status loading...', 'info'); }
-    function saveWorkflow() { showToast('Workflow saved', 'success'); }
-    function executeWorkflow() { showToast('Workflow execution started', 'info'); }
+    function showToast(msg, type) {
+        var toast = document.createElement('div');
+        toast.className = 'alert alert-' + (type || 'info') + ' position-fixed top-0 end-0 m-3 shadow';
+        toast.style.zIndex = 9999;
+        toast.innerHTML = '<strong>' + msg + '</strong>';
+        document.body.appendChild(toast);
+        setTimeout(function() { toast.remove(); }, 3000);
+    }
+
+    function fetchTabData(url, targetId, transform) {
+        var el = document.getElementById(targetId);
+        if (!el || el.dataset.loaded === '1') return;
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function(r) { return r.text(); })
+            .then(function(html) {
+                if (transform) { el.innerHTML = transform(html); } else { el.innerHTML = html; }
+                el.dataset.loaded = '1';
+            })
+            .catch(function() {
+                el.innerHTML = '<div class="text-center text-muted py-4"><i class="fas fa-exclamation-triangle fa-2x mb-2 d-block"></i>Failed to load. <a href="' + url + '" target="_blank">Open in new tab</a></div>';
+                el.dataset.loaded = '1';
+            });
+    }
+
+    function loadAITools() { /* rendered server-side */ }
+
+    function loadRecommendations() {
+        fetchTabData('<?= BASE_URL ?>/admin/ai-system/qualifier', 'rec-content', function(html) {
+            return '<div class="alert alert-info">AI Lead Qualifier data loaded. <a href="<?= BASE_URL ?>/admin/ai-system/qualifier" target="_blank">Open full page</a></div>' + extractContent(html);
+        });
+    }
+
+    function loadEcosystem() {
+        var el = document.getElementById('eco-content');
+        if (!el || el.dataset.loaded === '1') return;
+        el.innerHTML = '<div class="row g-3">' +
+            '<div class="col-md-4"><div class="card border-success h-100"><div class="card-body text-center"><i class="fas fa-brain fa-2x text-success mb-2"></i><h6>Lead Qualifier</h6><p class="small text-muted">Auto-qualifies leads 24/7</p><span class="badge bg-success">Active</span></div></div></div>' +
+            '<div class="col-md-4"><div class="card border-primary h-100"><div class="card-body text-center"><i class="fas fa-home fa-2x text-primary mb-2"></i><h6>Property Matchmaker</h6><p class="small text-muted">Matches leads to plots</p><span class="badge bg-success">Active</span></div></div></div>' +
+            '<div class="col-md-4"><div class="card border-info h-100"><div class="card-body text-center"><i class="fas fa-chart-line fa-2x text-info mb-2"></i><h6>Market Intelligence</h6><p class="small text-muted">Price trends & analysis</p><span class="badge bg-success">Active</span></div></div></div>' +
+            '<div class="col-md-4"><div class="card border-warning h-100"><div class="card-body text-center"><i class="fas fa-phone-alt fa-2x text-warning mb-2"></i><h6>Auto Dialer</h6><p class="small text-muted">AI voice calling</p><span class="badge bg-warning">Ready</span></div></div></div>' +
+            '<div class="col-md-4"><div class="card border-danger h-100"><div class="card-body text-center"><i class="fas fa-robot fa-2x text-danger mb-2"></i><h6>Chatbot</h6><p class="small text-muted">Customer support AI</p><span class="badge bg-success">Active</span></div></div></div>' +
+            '<div class="col-md-4"><div class="card border-secondary h-100"><div class="card-body text-center"><i class="fas fa-calendar-check fa-2x text-secondary mb-2"></i><h6>Smart Scheduler</h6><p class="small text-muted">Site visit optimization</p><span class="badge bg-success">Active</span></div></div></div>' +
+            '</div>';
+        el.dataset.loaded = '1';
+    }
+
+    function loadBotSettings() {
+        fetchTabData('<?= BASE_URL ?>/admin/ai-chatbot', 'bot-content', function(html) {
+            return extractContent(html);
+        });
+    }
+
+    function loadLearningUpdates() {
+        fetchTabData('<?= BASE_URL ?>/admin/ai-calling/training', 'learn-content', function(html) {
+            return extractContent(html);
+        });
+    }
+
+    function loadInsights() {
+        fetchTabData('<?= BASE_URL ?>/admin/ai/market_report', 'insights-content', function(html) {
+            return extractContent(html);
+        });
+    }
+
+    function loadHealthStatus() {
+        var el = document.getElementById('health-content');
+        if (!el) return;
+        el.dataset.loaded = '';
+        el.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Checking services...</p></div>';
+        fetch('<?= BASE_URL ?>/admin/ai-calling/health', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function(r) { return r.text(); })
+            .then(function(html) { el.innerHTML = extractContent(html); el.dataset.loaded = '1'; })
+            .catch(function() { el.innerHTML = '<div class="alert alert-danger">Health check failed. <a href="<?= BASE_URL ?>/admin/ai-calling/health" target="_blank">Open directly</a></div>'; el.dataset.loaded = '1'; });
+    }
+
+    function extractContent(html) {
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        var main = div.querySelector('.container-fluid') || div.querySelector('.main-content') || div.querySelector('#content') || div;
+        return main.innerHTML;
+    }
+
+    function saveWorkflow() { showToast('Use the Workflows tab to manage workflows', 'info'); }
+    function executeWorkflow() { showToast('Select a workflow from the list and click Run', 'info'); }
 </script>

@@ -107,6 +107,7 @@ class Router
             $excludedPaths = [
                 '/subscribe',
                 '/api/',
+                '/apsdreamhome/api/',
                 '/ad-click/',
                 '/register',
                 '/login',

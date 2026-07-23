@@ -1,0 +1,27 @@
+{
+    "gstin": "09AAACN1234F1Z5",
+    "fp": "072026",
+    "gt": 0,
+    "ctin": "",
+    "b2b": [],
+    "b2c": {
+        "details": []
+    },
+    "hsn": {
+        "data": []
+    },
+    "docdata": {
+        "inv": {
+            "total": 0,
+            "issued": 0
+        }
+    },
+    "summary": {
+        "total_taxable": 0,
+        "total_cgst": 0,
+        "total_sgst": 0,
+        "total_igst": 0,
+        "total_cess": 0,
+        "total_tax": 0
+    }
+}

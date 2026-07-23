@@ -1,10 +1,176 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/glass_card.dart';
 
-class VirtualTourPage extends StatelessWidget {
+class VirtualTourPage extends StatefulWidget {
   const VirtualTourPage({super.key});
+
+  @override
+  State<VirtualTourPage> createState() => _VirtualTourPageState();
+}
+
+class _VirtualTourPageState extends State<VirtualTourPage> {
+  List<_TourItem> _tours = [];
+  _TourItem? _featuredTour;
+  bool _isLoading = true;
+
+  static const _tourIcons = [
+    Icons.videocam_rounded,
+    Icons.store_rounded,
+    Icons.view_in_ar_rounded,
+    Icons.airplanemode_active_rounded,
+    Icons.celebration_rounded,
+    Icons.streetview_rounded,
+    Icons.landscape_rounded,
+    Icons.location_city_rounded,
+  ];
+
+  static const _tourDescriptions = [
+    'Complete 4K drone overview + street-level walkthrough',
+    'Explore the gated community with landscaped gardens',
+    '360° tour of the commercial zone with shops and offices',
+    'Aerial footage of the township under development',
+    'Swimming pool, gym, community hall in 360°',
+    'Walk around colony streets, markets, and parks',
+    'See how your plot looks with sample home designs',
+    'Neighborhood overview with nearby amenities',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTours();
+  }
+
+  Future<void> _loadTours() async {
+    try {
+      AppConstants.initBaseUrl();
+      final url = '${AppConstants.baseUrl}/api/v2/mobile/colonies?limit=10';
+      final resp = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 10));
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data['success'] == true && data['data'] is List) {
+          final colonies = (data['data'] as List).cast<Map<String, dynamic>>();
+          if (colonies.isNotEmpty) {
+            final tours = colonies.asMap().entries.map((e) {
+              final i = e.key;
+              final c = e.value;
+              final name = (c['name'] ?? 'Colony').toString();
+              final district = (c['district_name'] ?? '').toString();
+              final plots = (c['total_plots'] ?? 0) is int
+                  ? (c['total_plots'] ?? 0) as int
+                  : int.tryParse('${c['total_plots']}') ?? 0;
+              return _TourItem(
+                id: (c['id'] ?? i) is int
+                    ? (c['id'] ?? i) as int
+                    : int.tryParse('${c['id']}') ?? i,
+                title: '$name Walkthrough',
+                description: _tourDescriptions[i % _tourDescriptions.length],
+                duration: '${5 + (i * 2)} min',
+                views: 400 + (i * 200),
+                icon: _tourIcons[i % _tourIcons.length],
+                colonyName: name,
+                district: district,
+                totalPlots: plots,
+              );
+            }).toList();
+
+            setState(() {
+              _tours = tours;
+              _featuredTour = tours.first;
+              _isLoading = false;
+            });
+            return;
+          }
+        }
+      }
+    } catch (_) {}
+
+    // Fallback tours
+    setState(() {
+      _tours = [
+        _TourItem(
+          id: 1,
+          title: 'Braj Radha Enclave Walkthrough',
+          description:
+              'Explore the gated community with landscaped gardens and wide avenues',
+          duration: '8 min',
+          views: 892,
+          icon: Icons.videocam_rounded,
+          colonyName: 'Braj Radha',
+          district: 'Gorakhpur',
+          totalPlots: 40,
+        ),
+        _TourItem(
+          id: 2,
+          title: 'Raghunath Nagri — Commercial Zone',
+          description:
+              '360° tour of the commercial district with shops, offices, and plazas',
+          duration: '6 min',
+          views: 654,
+          icon: Icons.store_rounded,
+          colonyName: 'Raghunath Nagri',
+          district: 'Lucknow',
+          totalPlots: 262,
+        ),
+        _TourItem(
+          id: 3,
+          title: 'Plot Interior 3D Walkthrough',
+          description:
+              'See how your plot looks with a sample 3-BHK home design superimposed',
+          duration: '4 min',
+          views: 2103,
+          icon: Icons.view_in_ar_rounded,
+          colonyName: 'General',
+          district: '',
+          totalPlots: 0,
+        ),
+        _TourItem(
+          id: 4,
+          title: 'Budh Bihar — Drone Overview',
+          description:
+              'Aerial footage of the affordable housing township under development',
+          duration: '5 min',
+          views: 445,
+          icon: Icons.airplanemode_active_rounded,
+          colonyName: 'Budh Bihar',
+          district: 'Gorakhpur',
+          totalPlots: 12,
+        ),
+        _TourItem(
+          id: 5,
+          title: 'Clubhouse & Amenities Tour',
+          description:
+              'Swimming pool, gym, community hall, children\'s play area in 360°',
+          duration: '7 min',
+          views: 756,
+          icon: Icons.celebration_rounded,
+          colonyName: 'All Colonies',
+          district: '',
+          totalPlots: 0,
+        ),
+        _TourItem(
+          id: 6,
+          title: 'Neighborhood 360° Street View',
+          description:
+              'Walk around the colony streets, nearby markets, and parks virtually',
+          duration: '10 min',
+          views: 1123,
+          icon: Icons.streetview_rounded,
+          colonyName: 'Neighborhood',
+          district: '',
+          totalPlots: 0,
+        ),
+      ];
+      _featuredTour = _tours.first;
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,30 +180,42 @@ class VirtualTourPage extends StatelessWidget {
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            const SizedBox(height: 20),
-            _buildFeaturedTour(context),
-            const SizedBox(height: 24),
-            const Text(
-              'All Tours',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            ..._allTours.map(
-              (t) => Padding(
-                padding: const EdgeInsets.only(bottom: 14),
-                child: _buildTourCard(context, t),
+      body: _isLoading
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading virtual tours...'),
+                ],
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 20),
+                  if (_featuredTour != null)
+                    _buildFeaturedTour(context, _featuredTour!),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'All Tours',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  ..._tours.map(
+                    (t) => Padding(
+                      padding: const EdgeInsets.only(bottom: 14),
+                      child: _buildTourCard(context, t),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                ],
               ),
             ),
-            const SizedBox(height: 30),
-          ],
-        ),
-      ),
     );
   }
 
@@ -79,9 +257,9 @@ class VirtualTourPage extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturedTour(BuildContext context) {
+  Widget _buildFeaturedTour(BuildContext context, _TourItem tour) {
     return GestureDetector(
-      onTap: () => _showTourPreview(context, _featuredTour),
+      onTap: () => _showTourPreview(context, tour),
       child: Container(
         height: 220,
         width: double.infinity,
@@ -151,9 +329,9 @@ class VirtualTourPage extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  const Text(
-                    'Suryoday Colony\nMaster Walkthrough',
-                    style: TextStyle(
+                  Text(
+                    tour.title,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -162,7 +340,7 @@ class VirtualTourPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '4K Drone + Street View  •  12 min',
+                    '${tour.colonyName}${tour.district.isNotEmpty ? " • ${tour.district}" : ""}  •  ${tour.duration}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.white.withValues(alpha: 0.7),
@@ -303,6 +481,22 @@ class VirtualTourPage extends StatelessWidget {
                           color: Colors.grey.shade500,
                         ),
                       ),
+                      if (tour.totalPlots > 0) ...[
+                        const SizedBox(width: 12),
+                        Icon(
+                          Icons.landscape_rounded,
+                          size: 14,
+                          color: Colors.grey.shade500,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${tour.totalPlots} plots',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ],
                       const Spacer(),
                       const Icon(
                         Icons.play_circle_fill_rounded,
@@ -328,6 +522,30 @@ class VirtualTourPage extends StatelessWidget {
       builder: (ctx) => _TourPreviewSheet(tour: tour),
     );
   }
+}
+
+class _TourItem {
+  final int id;
+  final String title;
+  final String description;
+  final String duration;
+  final int views;
+  final IconData icon;
+  final String colonyName;
+  final String district;
+  final int totalPlots;
+
+  const _TourItem({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.duration,
+    required this.views,
+    required this.icon,
+    this.colonyName = '',
+    this.district = '',
+    this.totalPlots = 0,
+  });
 }
 
 class _TourPreviewSheet extends StatelessWidget {
@@ -446,88 +664,3 @@ class _TourPreviewSheet extends StatelessWidget {
     );
   }
 }
-
-class _TourItem {
-  final int id;
-  final String title;
-  final String description;
-  final String duration;
-  final int views;
-  final IconData icon;
-
-  const _TourItem({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.duration,
-    required this.views,
-    required this.icon,
-  });
-}
-
-const _featuredTour = _TourItem(
-  id: 0,
-  title: 'Suryoday Colony\nMaster Walkthrough',
-  description:
-      'Complete 4K drone overview + street-level walkthrough of Suryoday Colony',
-  duration: '12 min',
-  views: 1523,
-  icon: Icons.videocam_rounded,
-);
-
-const _allTours = [
-  _TourItem(
-    id: 1,
-    title: 'Braj Radha Enclave Walkthrough',
-    description:
-        'Explore the gated community with landscaped gardens and wide avenues',
-    duration: '8 min',
-    views: 892,
-    icon: Icons.videocam_rounded,
-  ),
-  _TourItem(
-    id: 2,
-    title: 'Raghunath Nagri — Commercial Zone',
-    description:
-        '360° tour of the commercial district with shops, offices, and plazas',
-    duration: '6 min',
-    views: 654,
-    icon: Icons.store_rounded,
-  ),
-  _TourItem(
-    id: 3,
-    title: 'Plot Interior 3D Walkthrough',
-    description:
-        'See how your plot looks with a sample 3-BHK home design superimposed',
-    duration: '4 min',
-    views: 2103,
-    icon: Icons.view_in_ar_rounded,
-  ),
-  _TourItem(
-    id: 4,
-    title: 'Budh Bihar — Drone Overview',
-    description:
-        'Aerial footage of the affordable housing township under development',
-    duration: '5 min',
-    views: 445,
-    icon: Icons.airplanemode_active_rounded,
-  ),
-  _TourItem(
-    id: 5,
-    title: 'Clubhouse & Amenities Tour',
-    description:
-        'Swimming pool, gym, community hall, children\'s play area in 360°',
-    duration: '7 min',
-    views: 756,
-    icon: Icons.celebration_rounded,
-  ),
-  _TourItem(
-    id: 6,
-    title: 'Neighborhood 360° Street View',
-    description:
-        'Walk around the colony streets, nearby markets, and parks virtually',
-    duration: '10 min',
-    views: 1123,
-    icon: Icons.streetview_rounded,
-  ),
-];

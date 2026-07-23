@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * AI Lead Scoring - Powered by Gemini
  */
@@ -10,7 +10,7 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('AI Lead Scoring')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Lead Scoring')); ?></li>
                 </ul>
             </div>
@@ -90,7 +90,7 @@
                                                 <small class="text-muted"><?= h(substr($lead['ai_summary'] ?? '', 0, 100)) ?>...</small>
                                             </td>
                                             <td>
-                                                <a href="/admin/leads/view/<?= $lead['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                                <a href="<?= BASE_URL ?>/admin/leads/view/<?= $lead['id'] ?>" class="btn btn-sm btn-outline-primary">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>

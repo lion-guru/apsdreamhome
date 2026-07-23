@@ -27,6 +27,7 @@ class AgentDashboardController extends BaseController
     {
         parent::__construct();
         $this->db = Database::getInstance();
+        $this->layout = 'layouts/agent';
     }
 
     /**
@@ -627,5 +628,168 @@ class AgentDashboardController extends BaseController
             error_log('Gamification error: ' . $e->getMessage());
             return [];
         }
+    }
+
+    /**
+     * Agent leads list
+     */
+    public function leads()
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+        $leads = [];
+        try {
+            $leads = $this->db->fetchAll(
+                "SELECT l.*, u.name as assigned_by_name FROM leads l 
+                 LEFT JOIN users u ON u.id = l.assigned_by 
+                 WHERE l.assigned_to = ? ORDER BY l.created_at DESC LIMIT 50",
+                [$userId]
+            ) ?: [];
+        } catch (\Throwable $e) { error_log('Agent leads error: ' . $e->getMessage()); }
+
+        return $this->render('agent/leads', [
+            'page_title' => 'My Leads',
+            'leads' => $leads,
+        ]);
+    }
+
+    /**
+     * Agent properties list
+     */
+    public function properties()
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+        $properties = [];
+        try {
+            $properties = $this->db->fetchAll(
+                "SELECT * FROM user_properties WHERE posted_by = ? ORDER BY created_at DESC LIMIT 50",
+                [$userId]
+            ) ?: [];
+        } catch (\Throwable $e) { error_log('Agent properties error: ' . $e->getMessage()); }
+
+        return $this->render('agent/properties', [
+            'page_title' => 'My Properties',
+            'properties' => $properties,
+        ]);
+    }
+
+    /**
+     * Agent commissions
+     */
+    public function commissions()
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+        $commissions = [];
+        $total = 0;
+        try {
+            $commissions = $this->db->fetchAll(
+                "SELECT * FROM mlm_commission_ledger WHERE user_id = ? ORDER BY created_at DESC LIMIT 50",
+                [$userId]
+            ) ?: [];
+            $total = (int)$this->db->fetchColumn(
+                "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE user_id = ?",
+                [$userId]
+            );
+        } catch (\Throwable $e) { error_log('Agent commissions error: ' . $e->getMessage()); }
+
+        return $this->render('agent/commissions', [
+            'page_title' => 'Commissions',
+            'commissions' => $commissions,
+            'total_earned' => $total,
+        ]);
+    }
+
+    /**
+     * Agent profile
+     */
+    public function profile()
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+        $user = null;
+        try {
+            $user = $this->db->fetch("SELECT * FROM users WHERE id = ?", [$userId]);
+        } catch (\Throwable $e) { error_log('Agent profile error: ' . $e->getMessage()); }
+
+        return $this->render('agent/profile', [
+            'page_title' => 'My Profile',
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Update agent profile
+     */
+    public function updateProfile()
+    {
+        $this->requireAgentRole();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/agent/profile');
+            return;
+        }
+        $userId = $this->userId;
+        $name = trim($_POST['name'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        try {
+            $this->db->query("UPDATE users SET name = ?, phone = ? WHERE id = ?", [$name, $phone, $userId]);
+            $_SESSION['user_name'] = $name;
+            $this->setFlash('success', 'Profile updated');
+        } catch (\Throwable $e) {
+            $this->setFlash('error', 'Update failed');
+        }
+        $this->redirect('/agent/profile');
+    }
+
+    /**
+     * Agent wallet - balance, transactions, withdrawal
+     */
+    public function wallet()
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+        $balance = 0;
+        $transactions = [];
+        try {
+            $wallet = $this->db->fetch("SELECT * FROM wallet_points WHERE user_id = ? ORDER BY created_at DESC LIMIT 1", [$userId]);
+            $balance = $wallet['points'] ?? $wallet['balance'] ?? 0;
+            $transactions = $this->db->fetchAll(
+                "SELECT * FROM wallet_transactions WHERE user_id = ? ORDER BY created_at DESC LIMIT 50",
+                [$userId]
+            ) ?: [];
+        } catch (\Throwable $e) { error_log('Agent wallet error: ' . $e->getMessage()); }
+
+        return $this->render('agent/wallet', [
+            'page_title' => 'My Wallet',
+            'balance' => $balance,
+            'transactions' => $transactions,
+        ]);
+    }
+
+    /**
+     * Agent deals - bookings and transactions
+     */
+    public function deals()
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+        $deals = [];
+        try {
+            $deals = $this->db->fetchAll(
+                "SELECT pb.*, p.title as property_title, u.name as customer_name
+                 FROM plot_bookings pb
+                 LEFT JOIN plots p ON pb.plot_id = p.id
+                 LEFT JOIN users u ON pb.user_id = u.id
+                 WHERE pb.associate_id = (SELECT id FROM associates WHERE user_id = ? LIMIT 1)
+                 ORDER BY pb.created_at DESC LIMIT 50",
+                [$userId]
+            ) ?: [];
+        } catch (\Throwable $e) { error_log('Agent deals error: ' . $e->getMessage()); }
+
+        return $this->render('agent/deals', [
+            'page_title' => 'My Deals',
+            'deals' => $deals,
+        ]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'File Details';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $file = $file ?? ['id' => 0, 'original_name' => '', 'file_type' => '', 'size_bytes' => 0, 'file_category' => '', 'description' => '', 'created_at' => '', 'download_count' => 0, 'uuid' => '', 'uploaded_by' => '', 'mime_type' => ''];
 ?>
 <div class="container-fluid">

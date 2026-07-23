@@ -14,7 +14,7 @@ use DateTime;
  */
 class EmployeeAttendance extends Model
 {
-    protected $table = 'employee_attendance';
+    protected static $table = 'employee_attendance';
     protected $fillable = [
         'employee_id',
         'check_in_time',

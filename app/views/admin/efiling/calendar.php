@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Filing Calendar';
 ob_start();
 ?>
@@ -7,7 +7,7 @@ ob_start();
         <h4 class="mb-1"><i class="fas fa-calendar-check me-2 text-success"></i><?= htmlspecialchars($page_title) ?></h4>
         <span class="text-muted">FY <?= htmlspecialchars($fy) ?><?= $type ? ' | ' . strtoupper($type) : '' ?></span>
     </div>
-    <a href="/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
+    <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
 
 <!-- Filters -->

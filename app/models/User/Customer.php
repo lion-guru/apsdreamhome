@@ -18,7 +18,10 @@ class Customer extends Model
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
+        $parent = get_parent_class($this);
+        if ($parent && method_exists($parent, '__construct')) {
+            parent::__construct($attributes);
+        }
         $this->db = Database::getInstance()->getConnection();
     }
 
@@ -111,7 +114,7 @@ class Customer extends Model
                        COUNT(DISTINCT pr.id) as total_reviews_given,
                        (SELECT COUNT(*) FROM customer_favorites cf WHERE cf.customer_id = u.id) as total_favorites,
                        (SELECT COUNT(*) FROM customer_alerts ca WHERE ca.customer_id = u.id AND ca.status = 'active') as active_alerts
-                FROM {static::$table} u
+                FROM {$this->table} u
                 LEFT JOIN users c ON u.id = c.user_id
                 LEFT JOIN property_views pv ON u.id = pv.customer_id
                 LEFT JOIN properties p ON pv.property_id = p.id
@@ -230,7 +233,7 @@ class Customer extends Model
     {
         $sql = "
             SELECT u.*, c.phone, c.address, c.city, c.state, c.pincode
-            FROM {static::$table} u
+            FROM {$this->table} u
             LEFT JOIN users c ON u.id = c.user_id
             WHERE u.email = :email AND u.role = 'customer' AND u.status = 'active'
         ";
@@ -277,6 +280,7 @@ class Customer extends Model
             $stmt->execute([
                 'name' => $data['name'],
                 'email' => $data['email'],
+                'password' => password_hash($data['password'] ?? 'default123', PASSWORD_DEFAULT),
                 'phone' => $data['phone']
             ]);
 
@@ -351,7 +355,7 @@ class Customer extends Model
             }
 
             if (!empty($userData)) {
-                $userSql = "UPDATE {static::$table} SET " . implode(', ', $userData) . ", updated_at = NOW() WHERE id = :id";
+                $userSql = "UPDATE {$this->table} SET " . implode(', ', $userData) . ", updated_at = NOW() WHERE id = :id";
                 $userStmt = $this->db->prepare($userSql);
                 $userStmt->execute($userParams);
             }
@@ -1240,7 +1244,7 @@ class Customer extends Model
                    COALESCE(SUM(CASE WHEN pay.status = 'completed' THEN pay.amount ELSE 0 END), 0) as total_spent,
                    COUNT(DISTINCT pr.id) as total_reviews,
                    u.created_at as registration_date
-            FROM {static::$table} u
+            FROM {$this->table} u
             LEFT JOIN users c ON u.id = c.user_id
             LEFT JOIN property_views pv ON u.id = pv.customer_id
             LEFT JOIN customer_favorites cf ON u.id = cf.customer_id
@@ -1310,7 +1314,7 @@ class Customer extends Model
             $stmt->execute($associateData);
 
             // Update customer role to associate
-            $updateSql = "UPDATE {static::$table} SET role = 'associate' WHERE id = :customer_id";
+            $updateSql = "UPDATE {$this->table} SET role = 'associate' WHERE id = :customer_id";
             $updateStmt = $this->db->prepare($updateSql);
             $updateStmt->execute(['customer_id' => $customerId]);
 
@@ -1462,7 +1466,7 @@ class Customer extends Model
                    COALESCE((SELECT COUNT(*) FROM customer_favorites WHERE customer_id = u.id), 0) as total_favorites,
                    COALESCE((SELECT COUNT(*) FROM property_views WHERE customer_id = u.id), 0) as total_views,
                    u.created_at as registration_date
-            FROM {static::$table} u
+            FROM {$this->table} u
             LEFT JOIN users c ON u.id = c.user_id
             {$whereClause}
             ORDER BY total_spent DESC, total_bookings DESC
@@ -1676,7 +1680,7 @@ class Customer extends Model
                     ]
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[Customer] getEmiSchedule exception: " . $e->getMessage());
             return [
                 'success' => false,
@@ -1707,11 +1711,11 @@ class Customer extends Model
     public function recordEmiPayment($emiId, $amount, $method = 'Online')
     {
         try {
-            // Get EMI details
+            // Get EMI details (real schema: emi_installments -> emi_plans)
             $emiSql = "
-                SELECT ei.*, b.customer_id, b.property_id
+                SELECT ei.*, ep.customer_id, ep.property_id
                 FROM emi_installments ei
-                JOIN bookings b ON ei.booking_id = b.id
+                JOIN emi_plans ep ON ei.emi_plan_id = ep.id
                 WHERE ei.id = :emi_id
             ";
             $emiStmt = $this->db->prepare($emiSql);
@@ -1725,71 +1729,82 @@ class Customer extends Model
                 ];
             }
 
-            if ($emi['status'] === 'paid') {
+            if (($emi['payment_status'] ?? '') === 'paid') {
                 return [
                     'success' => false,
                     'message' => 'This EMI is already paid'
                 ];
             }
 
-            // Validate amount
+            // Validate amount against installment due amount
             $dueAmount = (float)($emi['amount'] ?? 0);
-            $paidAmount = (float)($emi['paid_amount'] ?? 0);
-            $remainingAmount = $dueAmount - $paidAmount;
 
-            if ((float)$amount > $remainingAmount + 0.01) { // Small tolerance for rounding
+            if ((float)$amount > $dueAmount + 0.01) { // Small tolerance for rounding
                 return [
                     'success' => false,
-                    'message' => 'Payment amount exceeds remaining balance of ₹' . number_format($remainingAmount, 2)
+                    'message' => 'Payment amount exceeds installment amount of ₹' . number_format($dueAmount, 2)
                 ];
+            }
+
+            // Guard against dangling property FK (payments.property_id -> properties.id)
+            $propertyId = $emi['property_id'] ?? null;
+            if ($propertyId) {
+                $chk = $this->db->prepare("SELECT id FROM properties WHERE id = :pid LIMIT 1");
+                $chk->execute(['pid' => $propertyId]);
+                if (!$chk->fetchColumn()) {
+                    $propertyId = null; // FK is ON DELETE SET NULL — store NULL rather than dangling id
+                }
             }
 
             // Begin transaction
             $this->db->beginTransaction();
 
             try {
-                // Update EMI installment
-                $newPaidAmount = $paidAmount + (float)$amount;
-                $newStatus = $newPaidAmount >= $dueAmount ? 'paid' : 'partial';
+                $referenceNo = 'PAY-' . date('Ymd') . '-' . strtoupper(substr(md5(uniqid()), 0, 8));
 
+                // Record payment in payments table (real schema)
+                $paymentSql = "
+                    INSERT INTO payments (customer_id, user_id, property_id, emi_plan_id, emi_month,
+                                          payment_type, amount, total_amount, gateway, status,
+                                          transaction_id, reference_id, payment_date, payment_time, created_at)
+                    VALUES (:customer_id, :user_id, :property_id, :emi_plan_id, :emi_month,
+                           'emi', :amount, :total_amount, :gateway, 'completed',
+                           :txn_id, :reference_no, CURDATE(), CURTIME(), NOW())
+                ";
+                $gatewayMap = ['Simulated' => 'cash', 'Online' => 'razorpay', 'UPI' => 'upi', 'Cash' => 'cash'];
+                $gateway = $gatewayMap[$method] ?? 'cash';
+                $paymentStmt = $this->db->prepare($paymentSql);
+                $paymentStmt->execute([
+                    'customer_id' => $emi['customer_id'],
+                    'user_id' => $emi['customer_id'],
+                    'property_id' => $propertyId,
+                    'emi_plan_id' => $emi['emi_plan_id'],
+                    'emi_month' => $emi['installment_number'] ?? null,
+                    'amount' => $amount,
+                    'total_amount' => $amount,
+                    'gateway' => $gateway,
+                    'txn_id' => $referenceNo,
+                    'reference_no' => $referenceNo
+                ]);
+                $paymentId = (int)$this->db->lastInsertId();
+
+                // Update EMI installment as paid (real columns)
                 $updateEmiSql = "
                     UPDATE emi_installments 
-                    SET paid_amount = :paid_amount, 
-                        status = :status,
-                        payment_method = :method,
-                        payment_date = NOW(),
+                    SET payment_status = 'paid',
+                        payment_date = CURDATE(),
+                        payment_id = :payment_id,
                         updated_at = NOW()
                     WHERE id = :emi_id
                 ";
                 $updateStmt = $this->db->prepare($updateEmiSql);
                 $updateStmt->execute([
-                    'paid_amount' => $newPaidAmount,
-                    'status' => $newStatus,
-                    'method' => $method,
+                    'payment_id' => $paymentId,
                     'emi_id' => $emiId
                 ]);
 
-                // Record payment in payments table
-                $paymentSql = "
-                    INSERT INTO payments (user_id, property_id, amount, payment_method, status, 
-                                         booking_id, emi_installment_id, reference_no, created_at)
-                    VALUES (:user_id, :property_id, :amount, :method, 'completed',
-                           :booking_id, :emi_id, :reference_no, NOW())
-                ";
-                $referenceNo = 'PAY-' . date('Ymd') . '-' . strtoupper(substr(md5(uniqid()), 0, 8));
-                $paymentStmt = $this->db->prepare($paymentSql);
-                $paymentStmt->execute([
-                    'user_id' => $emi['customer_id'],
-                    'property_id' => $emi['property_id'],
-                    'amount' => $amount,
-                    'method' => $method,
-                    'booking_id' => $emi['booking_id'],
-                    'emi_id' => $emiId,
-                    'reference_no' => $referenceNo
-                ]);
-
-                // Update booking payment status if all EMIs paid
-                $this->updateBookingPaymentStatus($emi['booking_id']);
+                // Update EMI plan status if all installments paid
+                $this->updateEmiPlanStatus($emi['emi_plan_id']);
 
                 $this->db->commit();
 
@@ -1799,17 +1814,16 @@ class Customer extends Model
                     'data' => [
                         'emi_id' => $emiId,
                         'amount_paid' => $amount,
-                        'new_paid_amount' => $newPaidAmount,
-                        'new_status' => $newStatus,
+                        'new_status' => 'paid',
                         'reference_no' => $referenceNo,
-                        'remaining_balance' => $dueAmount - $newPaidAmount
+                        'remaining_balance' => 0
                     ]
                 ];
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[Customer] recordEmiPayment exception: " . $e->getMessage());
             return [
                 'success' => false,
@@ -1819,25 +1833,25 @@ class Customer extends Model
     }
 
     /**
-     * Update booking payment status based on EMI completion
+     * Update EMI plan status based on installment completion
      */
-    private function updateBookingPaymentStatus($bookingId)
+    private function updateEmiPlanStatus($emiPlanId)
     {
         $sql = "
             SELECT COUNT(*) as total, 
-                   SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid_count
+                   SUM(CASE WHEN payment_status = 'paid' THEN 1 ELSE 0 END) as paid_count
             FROM emi_installments
-            WHERE booking_id = :booking_id
+            WHERE emi_plan_id = :emi_plan_id
         ";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['booking_id' => $bookingId]);
+        $stmt->execute(['emi_plan_id' => $emiPlanId]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($result && (int)$result['total'] > 0 && (int)$result['total'] === (int)$result['paid_count']) {
-            // All EMIs paid - update booking status
-            $updateSql = "UPDATE bookings SET status = 'completed', updated_at = NOW() WHERE id = :booking_id";
+            // All installments paid - mark EMI plan completed
+            $updateSql = "UPDATE emi_plans SET status = 'completed', updated_at = NOW() WHERE id = :emi_plan_id";
             $updateStmt = $this->db->prepare($updateSql);
-            $updateStmt->execute(['booking_id' => $bookingId]);
+            $updateStmt->execute(['emi_plan_id' => $emiPlanId]);
         }
     }
 }

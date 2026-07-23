@@ -1,7 +1,7 @@
 <?php
 $reports = $reports ?? [];
 $page_title = $page_title ?? 'Reports & Analytics';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <!-- Header -->
@@ -87,13 +87,24 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             if (isset($reports['user_registrations']) && isset($reports['user_registrations']['data'])) {
                                                 $user_reg_data = $reports['user_registrations']['data'];
                                             }
-                                            foreach ($user_reg_labels as $i => $label):
+                                            if (empty($user_reg_labels)):
+                                            ?>
+                                                <tr>
+                                                    <td colspan="2" class="text-center py-5">
+                                                        <i class="fas fa-users fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                                        <h5 class="text-muted">No user registration data</h5>
+                                                        <p class="text-muted mb-3">Registration trends will appear here once users start signing up.</p>
+                                                    </td>
+                                                </tr>
+                                            <?php else: ?>
+                                            <?php foreach ($user_reg_labels as $i => $label):
                                             ?>
                                                 <tr>
                                                     <td><?php echo $label; ?></td>
                                                     <td><?php echo $user_reg_data[$i] ?? 0; ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
+                                            <?php endif; ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -112,13 +123,24 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             <?php
                                             $labels = $reports['property_views']['labels'] ?? [];
                                             $data = $reports['property_views']['data'] ?? [];
-                                            foreach ($labels as $i => $label):
+                                            if (empty($labels)):
+                                            ?>
+                                                <tr>
+                                                    <td colspan="2" class="text-center py-5">
+                                                        <i class="fas fa-eye fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                                        <h5 class="text-muted">No property view data</h5>
+                                                        <p class="text-muted mb-3">View statistics will appear once properties start receiving traffic.</p>
+                                                    </td>
+                                                </tr>
+                                            <?php else: ?>
+                                            <?php foreach ($labels as $i => $label):
                                             ?>
                                                 <tr>
                                                     <td><?php echo $label; ?></td>
                                                     <td><?php echo $data[$i] ?? 0; ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
+                                            <?php endif; ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -134,25 +156,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php
-                                            // Revenue data - commented out due to undefined array access
-                                            /*
-                                            $revenue_labels = [];
-                                            $revenue_data = [];
-                                            if (isset($reports['revenue']) && isset($reports['revenue']['labels'])) {
-                                                $revenue_labels = $reports['revenue']['labels'];
-                                            }
-                                            if (isset($reports['revenue']) && isset($reports['revenue']['data'])) {
-                                                $revenue_data = $reports['revenue']['data'];
-                                            }
-                                            foreach ($revenue_labels as $i => $label):
-                                            ?>
-                                                <tr>
-                                                    <td><?php echo $label; ?></td>
-                                                    <td>₹<?php echo number_format(floatval($revenue_data[$i] ?? 0) ?? 0); ?></td>
-                                                </tr>
-                                            <?php endforeach; */
-                                            ?>
+                                            <tr>
+                                                <td colspan="2" class="text-center py-5">
+                                                    <i class="fas fa-rupee-sign fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                                    <h5 class="text-muted">No revenue data</h5>
+                                                    <p class="text-muted mb-3">Revenue analytics will appear once transactions are recorded.</p>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

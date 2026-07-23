@@ -6,7 +6,7 @@
                     <h5 class="card-title mb-0">Add New Testimonial</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <form action="<?php echo BASE_URL; ?>/admin/testimonials/store" method="POST">
+                    <form action="<?php echo BASE_URL; ?>/admin/testimonials-new/store" method="POST">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <div class="col-md-6">

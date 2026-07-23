@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $_conv = $conversation ?? null;
 $_msgs = $messages ?? [];
 $_ag = $agents ?? [];
@@ -16,7 +16,7 @@ $_ag = $agents ?? [];
                 <div class="col-sm-6 text-right">
                     <button onclick="claimConv()" class="btn btn-sm btn-outline-warning"><i class="fas fa-hand-paper"></i> Claim</button>
                     <button onclick="resolveConv()" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i> Resolve</button>
-                    <a href="/admin/agentic-ai/conversations" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+                    <a href="<?= BASE_URL ?>/admin/agentic-ai/conversations" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back</a>
                 </div>
             </div>
         </div>
@@ -79,7 +79,7 @@ function sendMsg(){
     var input=document.getElementById('msgInput');
     var msg=input.value.trim();
     if(!msg)return;
-    fetch('/admin/agentic-ai/api/send',{
+    fetch('<?= BASE_URL ?>/admin/agentic-ai/api/send',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({conversation_id:<?= $_conv['id'] ?? 0 ?>,message:msg})
     }).then(function(r){return r.json()}).then(function(d){
@@ -88,13 +88,13 @@ function sendMsg(){
     });
 }
 function claimConv(){
-    fetch('/admin/agentic-ai/api/claim',{
+    fetch('<?= BASE_URL ?>/admin/agentic-ai/api/claim',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({conversation_id:<?= $_conv['id'] ?? 0 ?>})
     }).then(function(r){return r.json()}).then(function(d){if(d.success){location.reload();}});
 }
 function resolveConv(){
-    fetch('/admin/agentic-ai/api/resolve',{
+    fetch('<?= BASE_URL ?>/admin/agentic-ai/api/resolve',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({conversation_id:<?= $_conv['id'] ?? 0 ?>})
     }).then(function(r){return r.json()}).then(function(d){if(d.success){location.reload();}});

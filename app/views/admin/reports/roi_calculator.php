@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $calculations = $calculations ?? [];
 $properties = $properties ?? [];
 ?>
@@ -14,55 +14,55 @@ $properties = $properties ?? [];
                     <h6 class="m-0 font-weight-bold text-primary">Investment Details</h6>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <form method="POST" action="/admin/reports/roi-calculator">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/reports/roi-calculator">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Property Price (₹)</label>
                             <input type="number" name="property_price" class="form-control" 
-                                   value="<?= $_POST['property_price'] ?? '5000000' ?>" required>
+                                   value="<?= htmlspecialchars($_POST['property_price'] ?? '5000000', ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Down Payment (₹)</label>
                             <input type="number" name="down_payment" class="form-control" 
-                                   value="<?= $_POST['down_payment'] ?? '1000000' ?>" required>
+                                   value="<?= htmlspecialchars($_POST['down_payment'] ?? '1000000', ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Loan Amount (₹)</label>
                             <input type="number" name="loan_amount" class="form-control" 
-                                   value="<?= $_POST['loan_amount'] ?? '4000000' ?>" required>
+                                   value="<?= htmlspecialchars($_POST['loan_amount'] ?? '4000000', ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Interest Rate (%)</label>
                                 <input type="number" step="0.1" name="interest_rate" class="form-control" 
-                                       value="<?= $_POST['interest_rate'] ?? '7.5' ?>" required>
+                                       value="<?= htmlspecialchars($_POST['interest_rate'] ?? '7.5', ENT_QUOTES, 'UTF-8') ?>" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Loan Tenure (Years)</label>
                                 <input type="number" name="loan_tenure" class="form-control" 
-                                       value="<?= $_POST['loan_tenure'] ?? '20' ?>" required>
+                                       value="<?= htmlspecialchars($_POST['loan_tenure'] ?? '20', ENT_QUOTES, 'UTF-8') ?>" required>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Expected Monthly Rent (₹)</label>
                             <input type="number" name="expected_rent" class="form-control" 
-                                   value="<?= $_POST['expected_rent'] ?? '25000' ?>" required>
+                                   value="<?= htmlspecialchars($_POST['expected_rent'] ?? '25000', ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Annual Appreciation (%)</label>
                                 <input type="number" step="0.1" name="annual_appreciation" class="form-control" 
-                                       value="<?= $_POST['annual_appreciation'] ?? '5' ?>" required>
+                                       value="<?= htmlspecialchars($_POST['annual_appreciation'] ?? '5', ENT_QUOTES, 'UTF-8') ?>" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Annual Expenses (₹)</label>
                                 <input type="number" name="annual_expenses" class="form-control" 
-                                       value="<?= $_POST['annual_expenses'] ?? '50000' ?>" required>
+                                       value="<?= htmlspecialchars($_POST['annual_expenses'] ?? '50000', ENT_QUOTES, 'UTF-8') ?>" required>
                             </div>
                         </div>
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * AI Chatbot Training Interface
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     'time' => date('Y-m-d H:i:s'),
                     'link' => '/admin/ai-training'
                 ];
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $error = 'Error adding Q&A: ' . $e->getMessage();
             }
         } else {
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 [$category, $questionPattern, $answer, $keywords, $id]
             );
             $success = 'Q&A updated successfully!';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $error = 'Error updating Q&A: ' . $e->getMessage();
         }
     }
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         try {
             $db->execute("DELETE FROM ai_knowledge_base WHERE id = ?", [$id]);
             $success = 'Q&A deleted successfully!';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $error = 'Error deleting Q&A: ' . $e->getMessage();
         }
     }
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         [$category, $question, $answer, $keywords]
                     );
                     $added++;
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     // Skip duplicates or errors
                 }
             }
@@ -339,7 +339,7 @@ $categories = [
             <a href="#bulk-import"><i class="fas fa-file-import me-2"></i>Bulk Import</a>
             <a href="#test-bot"><i class="fas fa-comments me-2"></i>Test Bot</a>
             <a href="#analytics"><i class="fas fa-chart-bar me-2"></i>Analytics</a>
-            <a href="/admin/dashboard"><i class="fas fa-arrow-left me-2"></i>Back to Admin</a>
+            <a href="<?= BASE_URL ?>/admin/dashboard"><i class="fas fa-arrow-left me-2"></i>Back to Admin</a>
         </div>
     </div>
 
@@ -684,7 +684,7 @@ $categories = [
 
             // Call API
             try {
-                const response = await fetch('/apsdreamhome/api/gemini/chat', {
+                const response = await fetch((window.BASE_URL || '') + '/api/gemini/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

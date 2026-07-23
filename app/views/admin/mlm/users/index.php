@@ -22,7 +22,16 @@
                 </thead>
                 <tbody>
                     <?php if (empty($associates)): ?>
-                        <tr><td colspan="9" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No associates found.</td></tr>
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="fas fa-user-plus fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No associates found</h5>
+                                <p class="text-muted mb-3">Register your first MLM associate to start building your network and tracking commissions.</p>
+                                <a href="<?= BASE_URL ?>/admin/mlm/users/create" class="btn btn-primary">
+                                    <i class="fas fa-plus me-1"></i> Register Associate
+                                </a>
+                            </td>
+                        </tr>
                     <?php else: ?>
                         <?php foreach ($associates as $a): ?>
                             <tr>

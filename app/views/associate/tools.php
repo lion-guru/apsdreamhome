@@ -6,7 +6,7 @@
 $page_title = $page_title ?? 'Smart Tools - APS Dream Home';
 $current_page = $current_page ?? 'tools';
 $tools = $tools ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 
 <div class="container-fluid px-4 py-3">

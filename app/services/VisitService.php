@@ -141,7 +141,7 @@ class VisitService
 
     public function getById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT v.*, p.title as property_title, p.address as property_address
+        $stmt = $this->pdo->prepare("SELECT v.*, p.name as property_title, p.address as property_address
             FROM property_visits v
             LEFT JOIN user_properties p ON p.id = v.property_id
             WHERE v.id = ?");
@@ -152,7 +152,7 @@ class VisitService
 
     public function getByUser(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT v.*, p.title as property_title
+        $stmt = $this->pdo->prepare("SELECT v.*, p.name as property_title
             FROM property_visits v
             LEFT JOIN user_properties p ON p.id = v.property_id
             WHERE v.customer_id = ?
@@ -167,7 +167,7 @@ class VisitService
 
     public function getAll(string $status = '', string $date = '', int $limit = 100): array
     {
-        $sql = "SELECT v.*, p.title as property_title, p.address as property_address,
+        $sql = "SELECT v.*, p.name as property_title, p.address as property_address,
                 COALESCE(u.name, v.customer_name) as display_name
                 FROM property_visits v
                 LEFT JOIN user_properties p ON p.id = v.property_id

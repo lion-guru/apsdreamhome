@@ -759,8 +759,24 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
   }
 
   void _openMap(Map<String, dynamic> due) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Map navigation coming soon')));
+    final lat = due['latitude'] ?? due['lat'];
+    final lng = due['longitude'] ?? due['lng'] ?? due['lon'];
+    final address =
+        due['address']?.toString() ?? due['customer_address']?.toString() ?? '';
+    if (lat != null && lng != null) {
+      final url = Uri.parse('https://www.google.com/maps?q=$lat,$lng');
+      launchUrl(url, mode: LaunchMode.externalApplication);
+    } else if (address.isNotEmpty) {
+      final url = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}',
+      );
+      launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No location data available for this customer'),
+        ),
+      );
+    }
   }
 }

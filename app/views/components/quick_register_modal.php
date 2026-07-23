@@ -153,7 +153,7 @@ function submitQuickRegister() {
     formData.append('phone', phone);
     formData.append('referral_code', referralCode);
     
-    fetch('/auth/quick-register', {
+    fetch('<?= BASE_URL ?>/auth/quick-register', {
         method: 'POST',
         body: formData
     })
@@ -208,7 +208,7 @@ function submitReferralRequest() {
     formData.append('email', email);
     formData.append('phone', phone);
     
-    fetch('/auth/request-referral-code', {
+    fetch('<?= BASE_URL ?>/auth/request-referral-code', {
         method: 'POST',
         body: formData
     })

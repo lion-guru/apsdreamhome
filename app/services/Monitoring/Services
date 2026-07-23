@@ -139,7 +139,7 @@ class AuthenticationService
                 'redirect' => $this->getRedirectUrl($user['role'])
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error('Login error', [
                 'email' => $email,
                 'error' => $e->getMessage(),
@@ -186,7 +186,7 @@ class AuthenticationService
                 'message' => 'Logout successful'
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error('Logout error', [
                 'error' => $e->getMessage()
             ]);
@@ -356,7 +356,7 @@ class AuthenticationService
                 'user' => $this->sanitizeUserData($user)
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error('Registration error', [
                 'email' => $userData['email'] ?? 'unknown',
                 'error' => $e->getMessage(),
@@ -436,7 +436,7 @@ class AuthenticationService
                 'message' => 'Password changed successfully'
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error('Password change error', [
                 'user_id' => $userId,
                 'error' => $e->getMessage()
@@ -504,7 +504,7 @@ class AuthenticationService
                 'message' => 'Password reset link sent to your email'
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error('Password reset error', [
                 'email' => $email,
                 'error' => $e->getMessage()

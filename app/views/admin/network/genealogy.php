@@ -3,7 +3,7 @@ $genealogy_data = $genealogy_data ?? [];
 $associate_id = $associate_id ?? 0;
 $levels = $levels ?? 5;
 $page_title = $page_title ?? 'Genealogy Report';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <!-- Header -->

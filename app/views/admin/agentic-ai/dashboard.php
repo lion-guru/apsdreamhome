@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $_ss = $sys_stats ?? [];
 $_aa = $recent_activity ?? [];
 $_as = $agent_stats ?? [];
@@ -15,9 +15,9 @@ $_ag = $agents ?? [];
                 </div>
                 <div class="col-sm-6 text-right">
                     <button onclick="runAllAgents(this)" class="btn btn-sm" style="background:#8b5cf6;color:#fff"><i class="fas fa-play me-1"></i> Run All Agents</button>
-                    <a href="/admin/agentic-ai/conversations" class="btn btn-sm btn-outline-primary"><i class="fas fa-comments"></i> Conversations</a>
-                    <a href="/admin/agentic-ai/logs" class="btn btn-sm btn-outline-secondary"><i class="fas fa-list"></i> Logs</a>
-                    <a href="/admin/agentic-ai/auto-reply" class="btn btn-sm btn-outline-success"><i class="fas fa-cog"></i> Auto-Reply</a>
+                    <a href="<?= BASE_URL ?>/admin/agentic-ai/conversations" class="btn btn-sm btn-outline-primary"><i class="fas fa-comments"></i> Conversations</a>
+                    <a href="<?= BASE_URL ?>/admin/agentic-ai/logs" class="btn btn-sm btn-outline-secondary"><i class="fas fa-list"></i> Logs</a>
+                    <a href="<?= BASE_URL ?>/admin/agentic-ai/auto-reply" class="btn btn-sm btn-outline-success"><i class="fas fa-cog"></i> Auto-Reply</a>
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@ $_ag = $agents ?? [];
                 <?php foreach ($_ag as $key => $agent): ?>
                 <?php $stat = $_as[$key] ?? []; ?>
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                    <a href="/admin/agentic-ai/agent/<?= $key ?>" class="text-decoration-none">
+                    <a href="<?= BASE_URL ?>/admin/agentic-ai/agent/<?= $key ?>" class="text-decoration-none">
                         <div class="card card-outline h-100" style="border-left:4px solid <?= $agent['color'] ?>;transition:all 0.2s">
                             <div class="card-body p-3">
                                 <div class="d-flex align-items-center mb-2">
@@ -131,7 +131,7 @@ $_ag = $agents ?? [];
                         <div class="card-header">
                             <h3 class="card-title"><i class="fas fa-history"></i> Recent Agent Activity</h3>
                             <div class="card-tools">
-                                <a href="/admin/agentic-ai/logs" class="btn btn-sm btn-outline-secondary">View All</a>
+                                <a href="<?= BASE_URL ?>/admin/agentic-ai/logs" class="btn btn-sm btn-outline-secondary">View All</a>
                             </div>
                         </div>
                         <div class="card-body p-0">
@@ -189,11 +189,11 @@ $_ag = $agents ?? [];
                         <div class="card-header"><h3 class="card-title"><i class="fas fa-play-circle"></i> Quick Start</h3></div>
                         <div class="card-body p-0">
                             <div class="list-group list-group-flush">
-                                <a href="/admin/leads" class="list-group-item list-group-item-action"><i class="fas fa-magnet text-primary"></i> View Leads Pipeline</a>
-                                <a href="/admin/bookings" class="list-group-item list-group-item-action"><i class="fas fa-handshake text-success"></i> View Bookings</a>
-                                <a href="/admin/agentic-ai/conversations" class="list-group-item list-group-item-action"><i class="fas fa-comments text-info"></i> Live Conversations</a>
-                                <a href="/admin/agentic-ai/logs" class="list-group-item list-group-item-action"><i class="fas fa-list text-secondary"></i> Agent Logs</a>
-                                <a href="/admin/agentic-ai/auto-reply" class="list-group-item list-group-item-action"><i class="fas fa-robot text-purple"></i> Auto-Reply Config</a>
+                                <a href="<?= BASE_URL ?>/admin/leads" class="list-group-item list-group-item-action"><i class="fas fa-magnet text-primary"></i> View Leads Pipeline</a>
+                                <a href="<?= BASE_URL ?>/admin/bookings" class="list-group-item list-group-item-action"><i class="fas fa-handshake text-success"></i> View Bookings</a>
+                                <a href="<?= BASE_URL ?>/admin/agentic-ai/conversations" class="list-group-item list-group-item-action"><i class="fas fa-comments text-info"></i> Live Conversations</a>
+                                <a href="<?= BASE_URL ?>/admin/agentic-ai/logs" class="list-group-item list-group-item-action"><i class="fas fa-list text-secondary"></i> Agent Logs</a>
+                                <a href="<?= BASE_URL ?>/admin/agentic-ai/auto-reply" class="list-group-item list-group-item-action"><i class="fas fa-robot text-purple"></i> Auto-Reply Config</a>
                             </div>
                         </div>
                     </div>
@@ -220,7 +220,7 @@ function runAllAgents(btn) {
     notif.innerHTML = '<i class="fas fa-sync fa-spin me-2"></i> Running all 8 AI agents...';
     btn.closest('.content-header').after(notif);
 
-    fetch('/admin/agentic-ai/run-all', { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    fetch('<?= BASE_URL ?>/admin/agentic-ai/run-all', { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         .then(function(r) { return r.json(); })
         .then(function(data) {
             notif.className = data.success ? 'alert alert-success alert-dismissible fade show mt-2' : 'alert alert-warning alert-dismissible fade show mt-2';

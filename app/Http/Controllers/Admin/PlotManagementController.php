@@ -101,7 +101,7 @@ class PlotManagementController extends AdminController
 
             $this->setFlash('error', 'Failed to create plot');
             return $this->redirect('/admin/plots/create');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Plot Store error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to create plot: ' . $e->getMessage());
             return $this->redirect('/admin/plots/create');
@@ -187,7 +187,7 @@ class PlotManagementController extends AdminController
             ];
 
             return $this->render('admin/plots/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Plot Management Index error: " . $e->getMessage());
             $data = [
                 'page_title' => 'Plot Management - APS Dream Home',
@@ -220,7 +220,7 @@ class PlotManagementController extends AdminController
             ];
 
             return $this->render('admin/plots/dashboard', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Plot Management Dashboard error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load dashboard');
             return $this->redirect('admin/plot_management');
@@ -298,7 +298,7 @@ class PlotManagementController extends AdminController
             ];
 
             return $this->render('admin/plots/allocation', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Plot Allocation error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load allocation data');
             return $this->redirect('admin/plot_management');
@@ -378,11 +378,11 @@ class PlotManagementController extends AdminController
                     'success' => true,
                     'message' => "Allocation {$action}d successfully"
                 ]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Process Allocation error: " . $e->getMessage());
             return $this->jsonError('Failed to process allocation', 500);
         }
@@ -459,7 +459,7 @@ class PlotManagementController extends AdminController
             ];
 
             return $this->render('admin/plots/development', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Plot Development error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load development data');
             return $this->redirect('admin/plot_management');
@@ -510,7 +510,7 @@ class PlotManagementController extends AdminController
                     } else {
                         $failed++;
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $failed++;
                 }
             }
@@ -521,7 +521,7 @@ class PlotManagementController extends AdminController
                 'updated' => $updated,
                 'failed' => $failed
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Bulk Update error: " . $e->getMessage());
             return $this->jsonError('Failed to perform bulk update', 500);
         }
@@ -562,7 +562,7 @@ class PlotManagementController extends AdminController
             $stats['pending_allocations'] = (int)($result['total'] ?? 0);
 
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Dashboard Stats error: " . $e->getMessage());
             return [];
         }
@@ -584,7 +584,7 @@ class PlotManagementController extends AdminController
                     ORDER BY plot_count DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Site Summary error: " . $e->getMessage());
             return [];
         }
@@ -622,7 +622,7 @@ class PlotManagementController extends AdminController
             });
 
             return array_slice($activities, 0, 10);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Recent Activity error: " . $e->getMessage());
             return [];
         }
@@ -661,7 +661,7 @@ class PlotManagementController extends AdminController
 
             $this->setFlash('error', 'Invalid export format');
             return $this->redirect('admin/plot_management');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Plot Management Export error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to export data');
             return $this->redirect('admin/plot_management');
@@ -682,7 +682,7 @@ class PlotManagementController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Plots Export error: " . $e->getMessage());
             return [];
         }
@@ -704,7 +704,7 @@ class PlotManagementController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Allocations Export error: " . $e->getMessage());
             return [];
         }
@@ -726,7 +726,7 @@ class PlotManagementController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Development Export error: " . $e->getMessage());
             return [];
         }

@@ -24,9 +24,30 @@ class SiteVisitService
 
     private function ensureTableExists()
     {
-        $sql = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
-        
-        $this->db->query($sql);
+        $sql = "CREATE TABLE IF NOT EXISTS mlm_site_visits (
+            id INT(11) NOT NULL AUTO_INCREMENT,
+            agent_id BIGINT(20) UNSIGNED NULL,
+            lead_id INT(11) NULL,
+            property_id BIGINT(20) UNSIGNED NULL,
+            status ENUM('in_progress','completed','cancelled') NOT NULL DEFAULT 'in_progress',
+            current_lat DECIMAL(10,8) NULL,
+            current_lng DECIMAL(11,8) NULL,
+            destination_lat DECIMAL(10,8) NULL,
+            destination_lng DECIMAL(11,8) NULL,
+            start_time DATETIME NULL,
+            end_time DATETIME NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY idx_agent (agent_id),
+            KEY idx_status (status)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+
+        try {
+            $this->db->getConnection()->exec($sql);
+        } catch (\Exception $e) {
+            error_log('SiteVisitService::ensureTableExists error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -82,8 +103,10 @@ class SiteVisitService
      */
     public function getVisitStatus($visitId)
     {
-        $sql = "SELECT id, agent_id, status, current_lat, current_lng, destination_lat, destination_lng 
-                FROM mlm_site_visits WHERE id = ?";
+        $sql = "SELECT id, assigned_to AS agent_id, status, visit_date, visit_time,
+                       visit_type, customer_name, customer_phone,
+                       latitude, longitude, location_address, notes
+                FROM property_visits WHERE id = ?";
         return $this->db->selectOne($sql, [$visitId]);
     }
 }

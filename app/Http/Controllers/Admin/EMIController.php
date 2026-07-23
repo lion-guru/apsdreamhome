@@ -99,7 +99,7 @@ class EMIController extends AdminController
             ];
 
             return $this->render('admin/emi/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("EMI Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load EMI plans');
             return $this->redirect('admin/dashboard');
@@ -131,7 +131,7 @@ class EMIController extends AdminController
             ];
 
             return $this->render('admin/emi/create', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("EMI Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load EMI form');
             return $this->redirect('admin/emi');
@@ -239,7 +239,7 @@ class EMIController extends AdminController
             }
 
             return $this->jsonError('Failed to create EMI plan', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("EMI Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create EMI plan', 500);
         }
@@ -304,7 +304,7 @@ class EMIController extends AdminController
             ];
 
             return $this->render('admin/emi/show', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("EMI Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load EMI plan details');
             return $this->redirect('admin/emi');
@@ -393,11 +393,11 @@ class EMIController extends AdminController
                     'message' => 'EMI payment processed successfully',
                     'payment_id' => $paymentId
                 ]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("EMI Process Payment error: " . $e->getMessage());
             return $this->jsonError('Failed to process EMI payment', 500);
         }
@@ -417,7 +417,7 @@ class EMIController extends AdminController
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$emiPlanId, $i, $emiAmount, $dueDate]);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Create EMI Schedule error: " . $e->getMessage());
             throw $e;
         }
@@ -431,7 +431,7 @@ class EMIController extends AdminController
                 'active_page' => 'emi-calculator',
             ];
             return $this->render('admin/emi/calculator', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("EMI Calculator error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load EMI calculator');
             return $this->redirect('admin/dashboard');
@@ -479,7 +479,7 @@ class EMIController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get EMI Stats error: " . $e->getMessage());
             echo json_encode(['success' => false, 'message' => 'Stats unavailable']);
         }

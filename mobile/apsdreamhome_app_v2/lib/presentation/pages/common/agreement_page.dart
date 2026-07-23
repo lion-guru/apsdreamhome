@@ -108,7 +108,9 @@ class _AgreementPageState extends ConsumerState<AgreementPage> {
 
   @override
   Widget build(BuildContext context) {
-    final total = _documents.isNotEmpty ? _documents.length : 5;
+    final total = _documents.isNotEmpty
+        ? _documents.length
+        : _agreements.length;
     final signed = _documents.isNotEmpty ? _signedCount : 2;
     final pending = total - signed;
 

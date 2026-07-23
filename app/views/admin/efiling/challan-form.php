@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'New TDS Challan (Form 281)';
 ob_start();
 ?>
@@ -6,7 +6,7 @@ ob_start();
     <div>
         <h4 class="mb-1"><i class="fas fa-money-check me-2 text-warning"></i><?= htmlspecialchars($page_title) ?></h4>
     </div>
-    <a href="/admin/efiling/tds/challans" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Challans</a>
+    <a href="<?= BASE_URL ?>/admin/efiling/tds/challans" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Challans</a>
 </div>
 
 <?php if (!empty($_SESSION['flash_error'])): ?>
@@ -15,7 +15,7 @@ ob_start();
 
 <div class="card border-0 shadow-sm">
     <div class="card-body aps-cp-card-body">
-        <form method="POST" action="/admin/efiling/tds/challans/create">
+        <form method="POST" action="<?= BASE_URL ?>/admin/efiling/tds/challans/create">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
             <div class="row g-3">
@@ -85,7 +85,7 @@ ob_start();
 
             <div class="mt-3">
                 <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-save me-1"></i>Save Challan</button>
-                <a href="/admin/efiling/tds/challans" class="btn btn-outline-secondary btn-sm ms-2">Cancel</a>
+                <a href="<?= BASE_URL ?>/admin/efiling/tds/challans" class="btn btn-outline-secondary btn-sm ms-2">Cancel</a>
             </div>
         </form>
     </div>

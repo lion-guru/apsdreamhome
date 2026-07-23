@@ -28,7 +28,7 @@ class CoreHelperService
     {
         try {
             return bin2hex(random_bytes($length / 2));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error generating random string: " . $e->getMessage());
             return substr(md5(uniqid(mt_rand(), true)), 0, $length);
         }
@@ -72,7 +72,7 @@ class CoreHelperService
                 default:
                     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error sanitizing input: " . $e->getMessage());
             return '';
         }
@@ -114,7 +114,7 @@ class CoreHelperService
                 default:
                     return number_format($amount, 2);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error formatting currency: " . $e->getMessage());
             return $amount;
         }
@@ -128,7 +128,7 @@ class CoreHelperService
         try {
             $timestamp = is_numeric($date) ? $date : strtotime($date);
             return date($format, $timestamp);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error formatting date: " . $e->getMessage());
             return $date;
         }
@@ -144,7 +144,7 @@ class CoreHelperService
             $today = new DateTime();
             $age = $today->diff($dob)->y;
             return $age;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error calculating age: " . $e->getMessage());
             return 0;
         }
@@ -167,7 +167,7 @@ class CoreHelperService
             
             // Remove leading and trailing hyphens
             return trim($slug, '-');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error generating slug: " . $e->getMessage());
             return '';
         }
@@ -184,7 +184,7 @@ class CoreHelperService
             }
             
             return substr($text, 0, $length) . $suffix;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error truncating text: " . $e->getMessage());
             return $text;
         }
@@ -210,7 +210,7 @@ class CoreHelperService
                 'next_page' => $currentPage < $totalPages ? $currentPage + 1 : null,
                 'previous_page' => $currentPage > 1 ? $currentPage - 1 : null
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error creating pagination: " . $e->getMessage());
             return [];
         }
@@ -236,7 +236,7 @@ class CoreHelperService
             }
             
             return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error getting client IP: " . $e->getMessage());
             return '0.0.0.0';
         }
@@ -267,7 +267,7 @@ class CoreHelperService
             }
             
             return false;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error logging activity: " . $e->getMessage());
             return false;
         }
@@ -296,7 +296,7 @@ class CoreHelperService
                 $this->logger->error("Failed to send email to: {$to}");
                 return false;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error sending email: " . $e->getMessage());
             return false;
         }
@@ -339,7 +339,7 @@ class CoreHelperService
             }
 
             return false;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error creating backup: " . $e->getMessage());
             return false;
         }
@@ -373,7 +373,7 @@ class CoreHelperService
                 'database_connection' => $this->database ? 'Connected' : 'Not Connected',
                 'timestamp' => date('Y-m-d H:i:s')
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error getting system info: " . $e->getMessage());
             return [];
         }
@@ -408,7 +408,7 @@ class CoreHelperService
             }
             
             return 0;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error cleaning old logs: " . $e->getMessage());
             return 0;
         }
@@ -427,7 +427,7 @@ class CoreHelperService
                 mt_rand(0, 0x3fff) | 0x8000,
                 mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error("Error generating UUID: " . $e->getMessage());
             return uniqid();
         }

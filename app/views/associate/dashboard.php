@@ -4,7 +4,7 @@ $network = $network ?? [];
 $commissions = $commissions ?? [];
 $stats = $stats ?? [];
 $page_title = $page_title ?? __('assoc_dashboard');
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 $totalEarnings = $stats['total_earnings'] ?? 0;
 $monthEarnings = $stats['month_earnings'] ?? 0;

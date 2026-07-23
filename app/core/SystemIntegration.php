@@ -343,8 +343,8 @@ class SystemIntegration {
                            class_exists('App\Models\Associate');
 
         // Check controllers
-        $status['controllers'] = file_exists(__DIR__ . '/../controllers/HomeControllerSimple.php') &&
-                                file_exists(__DIR__ . '/../controllers/PropertyController.php');
+        $status['controllers'] = is_dir(__DIR__ . '/../Http/Controllers') &&
+                                file_exists(__DIR__ . '/../Http/Controllers/Admin/AdminController.php');
 
         // Check views
         $status['views'] = is_dir(__DIR__ . '/../views/pages') &&

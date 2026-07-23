@@ -82,7 +82,7 @@ class CustomerController extends BaseController
         if (file_exists($profileView)) {
             include $profileView;
         } else {
-            echo '<div class="alert alert-warning">Profile page under construction</div>';
+            $this->redirect('user/profile');
         }
     }
     

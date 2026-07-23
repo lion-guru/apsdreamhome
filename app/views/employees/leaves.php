@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -155,7 +155,7 @@
                 <h5 class="modal-title">Apply for Leave</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/employee/apply-leave" method="POST">
+            <form action="<?= BASE_URL ?>/employee/apply-leave" method="POST">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-body">
                     <div class="row">

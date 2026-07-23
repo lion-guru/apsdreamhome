@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'ROI Comparison';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $report = $report ?? ['total_investment' => 0, 'total_returns' => 0, 'avg_roi' => 0, 'period' => '1 year'];
 $properties = $properties ?? [];
 ?>

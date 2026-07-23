@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\AdminController;
+// AdminController resolved via namespace
 use App\Services\LeadFollowUpService;
 
 /**

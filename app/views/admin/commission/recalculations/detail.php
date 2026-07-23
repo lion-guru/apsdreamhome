@@ -1,7 +1,7 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <a href="/admin/commission/recalculations" class="btn btn-sm btn-outline-secondary mb-2">
+            <a href="<?= BASE_URL ?>/admin/commission/recalculations" class="btn btn-sm btn-outline-secondary mb-2">
                 <i class="fas fa-arrow-left me-1"></i> Back to List
             </a>
             <h2 style="color:#e0e0e0;"><i class="fas fa-calculator me-2" style="color:#ffc107;"></i> Recalculation #<?= $item['id'] ?></h2>
@@ -132,7 +132,7 @@
                         </p>
 
                         <!-- Approve -->
-                        <form method="POST" action="/admin/commission/recalculations/approve" class="mb-3">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/commission/recalculations/approve" class="mb-3">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <input type="hidden" name="recalc_id" value="<?= $item['id'] ?>">
                             <div class="mb-2">
@@ -145,7 +145,7 @@
                         </form>
 
                         <!-- Reject -->
-                        <form method="POST" action="/admin/commission/recalculations/reject">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/commission/recalculations/reject">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <input type="hidden" name="recalc_id" value="<?= $item['id'] ?>">
                             <div class="mb-2">

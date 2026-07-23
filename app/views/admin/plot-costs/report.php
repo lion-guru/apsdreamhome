@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Plot Cost Calculator - Cost Report
  * Detailed cost analysis report for a colony
@@ -13,8 +13,8 @@ $page_title = 'Cost Report - APS Dream Home';
         <div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/plot-costs">Plot Costs</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/plot-costs/colony/<?= $report['colony']['id'] ?>"><?= htmlspecialchars($report['colony']['name']) ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/plot-costs">Plot Costs</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/plot-costs/colony/<?= $report['colony']['id'] ?>"><?= htmlspecialchars($report['colony']['name']) ?></a></li>
                     <li class="breadcrumb-item active">Report</li>
                 </ol>
             </nav>
@@ -24,7 +24,7 @@ $page_title = 'Cost Report - APS Dream Home';
             <p class="text-muted">Generated on <?= date('d M Y, h:i A') ?></p>
         </div>
         <div>
-            <a href="/admin/plot-costs/colony/<?= $report['colony']['id'] ?>" class="btn btn-secondary">
+            <a href="<?= BASE_URL ?>/admin/plot-costs/colony/<?= $report['colony']['id'] ?>" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Back
             </a>
             <button onclick="window.print()" class="btn btn-primary">

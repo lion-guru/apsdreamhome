@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\BaseController;
 use App\Services\AdvancedSearchService;
 
 class SearchController extends BaseController {
@@ -46,7 +47,7 @@ class SearchController extends BaseController {
                 'params' => $validatedParams
             ]);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->json([
                 'success' => false,
                 'error' => $e->getMessage()
@@ -78,7 +79,7 @@ class SearchController extends BaseController {
                 'suggestions' => $suggestions
             ]);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->json([
                 'success' => false,
                 'error' => $e->getMessage()
@@ -99,7 +100,7 @@ class SearchController extends BaseController {
                 'facets' => $facets
             ]);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->json([
                 'success' => false,
                 'error' => $e->getMessage()
@@ -129,7 +130,7 @@ class SearchController extends BaseController {
                 'recent_searches' => $recentSearches
             ]);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->json([
                 'success' => false,
                 'error' => $e->getMessage()
@@ -151,7 +152,7 @@ class SearchController extends BaseController {
                 'popular_searches' => $popularSearches
             ]);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->json([
                 'success' => false,
                 'error' => $e->getMessage()
@@ -181,7 +182,7 @@ class SearchController extends BaseController {
                 'message' => 'Search cache cleared successfully'
             ]);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->json([
                 'success' => false,
                 'error' => $e->getMessage()

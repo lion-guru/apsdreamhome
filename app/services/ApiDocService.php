@@ -95,7 +95,7 @@ class ApiDocService
                 ],
             ],
             'servers' => [
-                ['url' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome', 'description' => 'Current host'],
+                ['url' => BASE_URL, 'description' => 'Current host'],
                 ['url' => 'http://localhost/apsdreamhome', 'description' => 'Local XAMPP'],
             ],
             'tags'     => $this->collectTags($endpoints),

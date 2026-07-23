@@ -39,7 +39,7 @@ class PayoutController extends AdminController
             ];
 
             return $this->render('admin/payouts/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Payout Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load payout data');
             return $this->redirect('admin/dashboard');
@@ -124,7 +124,7 @@ class PayoutController extends AdminController
             ];
 
             return $this->render('admin/payouts/list', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Payout List error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load payout list');
             return $this->redirect('admin/payouts');
@@ -184,7 +184,7 @@ class PayoutController extends AdminController
             ];
 
             return $this->render('admin/payouts/show', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Payout Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load payout details');
             return $this->redirect('admin/payouts');
@@ -289,11 +289,11 @@ class PayoutController extends AdminController
                     'success' => true,
                     'message' => 'Payout processed successfully'
                 ]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Process Payout error: " . $e->getMessage());
             return $this->jsonError('Failed to process payout', 500);
         }
@@ -330,7 +330,7 @@ class PayoutController extends AdminController
                         $failed++;
                     }
                     $results[] = $result;
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $failed++;
                     $results[] = ['payout_id' => $payoutId, 'success' => false, 'message' => $e->getMessage()];
                 }
@@ -348,7 +348,7 @@ class PayoutController extends AdminController
                 'message' => "Batch processing completed: {$processed} processed, {$failed} failed",
                 'results' => $results
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Batch Process Payout error: " . $e->getMessage());
             return $this->jsonError('Failed to process batch payout', 500);
         }
@@ -384,7 +384,7 @@ class PayoutController extends AdminController
                         $failed++;
                     }
                     $results[] = $result;
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $failed++;
                     $results[] = ['associate_id' => $associateId, 'success' => false, 'message' => $e->getMessage()];
                 }
@@ -401,7 +401,7 @@ class PayoutController extends AdminController
                 'message' => "Payout creation completed: {$created} created, {$failed} failed",
                 'results' => $results
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Create Payout error: " . $e->getMessage());
             return $this->jsonError('Failed to create payouts', 500);
         }
@@ -420,7 +420,7 @@ class PayoutController extends AdminController
             ];
 
             return $this->render('admin/payouts/analytics', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Payout Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load payout analytics');
             return $this->redirect('admin/payouts');
@@ -467,7 +467,7 @@ class PayoutController extends AdminController
             $stats['monthly_amount'] = (float)($result['total_amount'] ?? 0);
 
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Payout Stats error: " . $e->getMessage());
             return [];
         }
@@ -486,7 +486,7 @@ class PayoutController extends AdminController
                     ORDER BY p.created_at ASC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Pending Payouts error: " . $e->getMessage());
             return [];
         }
@@ -505,7 +505,7 @@ class PayoutController extends AdminController
                     ORDER BY p.processed_date DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Recent Payouts error: " . $e->getMessage());
             return [];
         }
@@ -537,7 +537,7 @@ class PayoutController extends AdminController
             }
 
             return ['payout_id' => $payoutId, 'success' => false, 'message' => 'Failed to process payout'];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return ['payout_id' => $payoutId, 'success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -593,11 +593,11 @@ class PayoutController extends AdminController
                 $this->db->commit();
 
                 return ['associate_id' => $associateId, 'success' => true, 'payout_id' => $payoutId, 'amount' => $totalAmount];
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return ['associate_id' => $associateId, 'success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -637,7 +637,7 @@ class PayoutController extends AdminController
             $analytics['top_associates'] = $this->db->fetchAll($sql) ?: [];
 
             return $analytics;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Payout Analytics error: " . $e->getMessage());
             return [];
         }

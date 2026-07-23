@@ -179,7 +179,7 @@ class AdvancedCRMService
             $stmt->execute();
             return $stmt->fetchAll();
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [];
         }
     }
@@ -233,7 +233,7 @@ class AdvancedCRMService
             
             return $recommendations;
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [];
         }
     }
@@ -264,7 +264,7 @@ class AdvancedCRMService
             
             return true;
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }

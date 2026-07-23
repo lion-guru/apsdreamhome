@@ -47,6 +47,18 @@ $success_rows = $total_rows - $error_rows;
                         </tr>
                     </thead>
                     <tbody>
+                        <?php if (empty($rows)): ?>
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="fas fa-file-import fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No rows to preview</h5>
+                                <p class="text-muted mb-3">The CSV file appears to be empty or has no valid data rows. Check your file format and try again.</p>
+                                <a href="<?= BASE_URL ?>/admin/leads/import" class="btn btn-primary">
+                                    <i class="fas fa-upload me-1"></i> Re-import
+                                </a>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($rows as $row): ?>
                             <tr class="<?= !empty($row['_errors']) ? 'table-danger' : '' ?>">
                                 <td class="small"><?= (int)$row['_row'] ?></td>
@@ -74,6 +86,7 @@ $success_rows = $total_rows - $error_rows;
                                 </td>
                             </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

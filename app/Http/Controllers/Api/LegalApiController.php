@@ -6,12 +6,13 @@ use App\Core\Database;
 use App\Services\Legal\LegalDocumentService;
 use PDO;
 
-class LegalApiController
+class LegalApiController extends BaseApiController
 {
     protected $docService;
 
     public function __construct()
     {
+        parent::__construct();
         try {
             $db = Database::getInstance();
             $pdo = method_exists($db, 'getConnection') ? $db->getConnection() : $db;
@@ -48,11 +49,28 @@ class LegalApiController
             $this->jsonResponse(['success' => false, 'error' => 'No file uploaded'], 400);
             return;
         }
+        $id = (int)$id;
+        if ($id <= 0) {
+            $this->jsonResponse(['success' => false, 'error' => 'Invalid document ID'], 400);
+            return;
+        }
         $file = $_FILES['file'];
+        $allowedExtensions = ['pdf','jpg','jpeg','png','gif','doc','docx','xls','xlsx','txt','csv'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowedExtensions, true)) {
+            $this->jsonResponse(['success' => false, 'error' => 'File type not allowed. Allowed: ' . implode(', ', $allowedExtensions)], 400);
+            return;
+        }
         $uploadDir = 'uploads/legal/' . $id . '/';
-        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-        $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file['name']);
+        $realUploadDir = realpath($uploadDir) ?: $uploadDir;
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+        $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', basename($file['name']));
         $dest = $uploadDir . $fileName;
+        $realDest = realpath(dirname($dest)) . '/' . $fileName;
+        if (strpos($realDest, realpath('uploads/legal') ?: 'uploads/legal') !== 0) {
+            $this->jsonResponse(['success' => false, 'error' => 'Invalid upload path'], 400);
+            return;
+        }
         if (!move_uploaded_file($file['tmp_name'], $dest)) {
             $this->jsonResponse(['success' => false, 'error' => 'Upload failed'], 500);
             return;
@@ -92,12 +110,5 @@ class LegalApiController
         }
         $this->jsonResponse(['success' => true, 'content' => $doc['content'], 'title' => $doc['title'], 'document_number' => $doc['document_number']]);
     }
-
-    protected function jsonResponse(array $data, int $code = 200): void
-    {
-        http_response_code($code);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
 }
+

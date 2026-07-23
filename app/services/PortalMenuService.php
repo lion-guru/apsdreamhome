@@ -278,7 +278,7 @@ class PortalMenuService
             ");
             $stmt->execute([$this->userId]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-            return $row ? $row['sub_role'] : null;
+            return $row ? $row['sub_role'] : 'employee';
         } catch (\Throwable $e) {
             return null;
         }

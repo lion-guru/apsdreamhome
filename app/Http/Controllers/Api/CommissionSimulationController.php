@@ -17,13 +17,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Services\MLM\CommissionManager;
 use App\Services\MLM\TdsConfigService;
 use App\Services\HybridCommissionEngine;
 use App\Services\MLM\MLMCommissionEngine;
 
-class CommissionSimulationController extends BaseController
+class CommissionSimulationController extends BaseApiController
 {
     /**
      * POST /api/commission/simulate
@@ -300,12 +300,6 @@ class CommissionSimulationController extends BaseController
     }
 
     /**
-     * Get JSON input from request body.
+     * Get JSON input from request body (provided by BaseApiController::getJsonInput()).
      */
-    private function getJsonInput(): array
-    {
-        $raw = file_get_contents('php://input');
-        $data = json_decode($raw, true);
-        return is_array($data) ? $data : [];
-    }
 }

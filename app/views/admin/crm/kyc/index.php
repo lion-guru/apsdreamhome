@@ -1,4 +1,4 @@
-<?php $page_title = $page_title ?? 'KYC Verification'; $requests = $requests ?? []; $stats = $stats ?? []; ?>
+﻿<?php $page_title = $page_title ?? 'KYC Verification'; $requests = $requests ?? []; $stats = $stats ?? []; ?>
 <div class="container-fluid px-4 py-4">
     <h4 class="fw-bold mb-4"><i class="fas fa-id-card me-2 text-primary"></i>KYC Verification</h4>
     <div class="row g-3 mb-4">
@@ -18,10 +18,10 @@
         <td><?= date('d M Y', strtotime($r['created_at'])) ?></td>
         <td>
             <?php if (($r['status']??'')==='pending'): ?>
-            <form method="POST" action="/admin/kyc/<?= $r['id'] ?>/approve" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-success"><i class="fas fa-check"></i></button></form>
-            <form method="POST" action="/admin/kyc/<?= $r['id'] ?>/reject" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><input type="hidden" name="rejection_reason" value="Rejected by admin"><button class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button></form>
+            <form method="POST" action="<?= BASE_URL ?>/admin/kyc/<?= $r['id'] ?>/approve" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-success"><i class="fas fa-check"></i></button></form>
+            <form method="POST" action="<?= BASE_URL ?>/admin/kyc/<?= $r['id'] ?>/reject" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><input type="hidden" name="rejection_reason" value="Rejected by admin"><button class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button></form>
             <?php endif; ?>
-            <a href="/admin/kyc/<?= $r['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+            <a href="<?= BASE_URL ?>/admin/kyc/<?= $r['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
         </td>
     </tr><?php endforeach; endif; ?>
     </tbody></table></div></div></div>

@@ -19,7 +19,7 @@ class PropertyFavorite extends Model {
                 return false; // Already favorited
             }
 
-            $sql = "INSERT INTO {static::$table} (user_id, property_id, created_at) VALUES (?, ?, NOW())";
+            $sql = "INSERT INTO property_favorites (user_id, property_id, created_at) VALUES (?, ?, NOW())";
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute([$user_id, $property_id]);
 
@@ -34,7 +34,7 @@ class PropertyFavorite extends Model {
      */
     public function removeFavorite($user_id, $property_id) {
         try {
-            $sql = "DELETE FROM {static::$table} WHERE user_id = ? AND property_id = ?";
+            $sql = "DELETE FROM property_favorites WHERE user_id = ? AND property_id = ?";
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute([$user_id, $property_id]);
 
@@ -49,7 +49,7 @@ class PropertyFavorite extends Model {
      */
     public function isFavorited($user_id, $property_id) {
         try {
-            $sql = "SELECT id FROM {static::$table} WHERE user_id = ? AND property_id = ?";
+            $sql = "SELECT id FROM property_favorites WHERE user_id = ? AND property_id = ?";
             $stmt = static::getDb()->prepare($sql);
             $stmt->execute([$user_id, $property_id]);
 
@@ -68,10 +68,10 @@ class PropertyFavorite extends Model {
         try {
             $sql = "SELECT f.*, p.title, p.price, p.city, p.state, p.area_sqft,
                            p.bedrooms, p.bathrooms, p.featured, p.status,
-                           (SELECT image_url FROM property_images WHERE property_id = p.id LIMIT 1) as main_image
-                    FROM {static::$table} f
+                           (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as main_image
+                    FROM property_favorites f
                     INNER JOIN properties p ON f.property_id = p.id
-                    WHERE f.user_id = ? AND p.status = 'available'
+                    WHERE f.user_id = ? AND p.status IN ('available','active')
                     ORDER BY f.created_at DESC LIMIT ?";
 
             $stmt = static::getDb()->prepare($sql);
@@ -90,7 +90,7 @@ class PropertyFavorite extends Model {
      */
     public function getFavoriteCount($property_id) {
         try {
-            $sql = "SELECT COUNT(*) as count FROM {static::$table} WHERE property_id = ?";
+            $sql = "SELECT COUNT(*) as count FROM property_favorites WHERE property_id = ?";
             $stmt = static::getDb()->prepare($sql);
             $stmt->execute([$property_id]);
 
@@ -119,10 +119,10 @@ class PropertyFavorite extends Model {
     public function getPopularProperties($limit = 10) {
         try {
             $sql = "SELECT p.*, COUNT(f.id) as favorite_count,
-                           (SELECT image_url FROM property_images WHERE property_id = p.id LIMIT 1) as main_image
+                           (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as main_image
                     FROM properties p
-                    LEFT JOIN {static::$table} f ON p.id = f.property_id
-                    WHERE p.status = 'available'
+                    LEFT JOIN property_favorites f ON p.id = f.property_id
+                    WHERE p.status IN ('available','active')
                     GROUP BY p.id
                     ORDER BY favorite_count DESC, p.created_at DESC
                     LIMIT ?";
@@ -146,21 +146,21 @@ class PropertyFavorite extends Model {
             $stats = [];
 
             // Total favorites
-            $stmt = static::getDb()->query("SELECT COUNT(*) as total FROM {static::$table}");
+            $stmt = static::getDb()->query("SELECT COUNT(*) as total FROM property_favorites");
             $stats['total_favorites'] = (int)$stmt->fetch()['total'];
 
             // New favorites (last 30 days)
-            $stmt = static::getDb()->query("SELECT COUNT(*) as new FROM {static::$table}
+            $stmt = static::getDb()->query("SELECT COUNT(*) as new FROM property_favorites
                                      WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             $stats['new_favorites'] = (int)$stmt->fetch()['new'];
 
             // Users with favorites
-            $stmt = static::getDb()->query("SELECT COUNT(DISTINCT user_id) as users FROM {static::$table}");
+            $stmt = static::getDb()->query("SELECT COUNT(DISTINCT user_id) as users FROM property_favorites");
             $stats['users_with_favorites'] = (int)$stmt->fetch()['users'];
 
             // Most favorited properties
             $stmt = static::getDb()->query("SELECT property_id, COUNT(*) as count
-                                     FROM {static::$table}
+                                     FROM property_favorites
                                      GROUP BY property_id
                                      ORDER BY count DESC
                                      LIMIT 5");
@@ -180,7 +180,7 @@ class PropertyFavorite extends Model {
     public function getTrends($days = 30) {
         try {
             $sql = "SELECT DATE(created_at) as date, COUNT(*) as count
-                    FROM {static::$table}
+                    FROM property_favorites
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
                     GROUP BY DATE(created_at)
                     ORDER BY date";
@@ -201,7 +201,7 @@ class PropertyFavorite extends Model {
      */
     public function removeByProperty($property_id) {
         try {
-            $sql = "DELETE FROM {static::$table} WHERE property_id = ?";
+            $sql = "DELETE FROM property_favorites WHERE property_id = ?";
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute([$property_id]);
 
@@ -216,7 +216,7 @@ class PropertyFavorite extends Model {
      */
     public function removeByUser($user_id) {
         try {
-            $sql = "DELETE FROM {static::$table} WHERE user_id = ?";
+            $sql = "DELETE FROM property_favorites WHERE user_id = ?";
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute([$user_id]);
 
@@ -233,10 +233,10 @@ class PropertyFavorite extends Model {
         try {
             $sql = "SELECT p.id, p.title, p.price, p.city, p.state, p.area_sqft,
                            p.bedrooms, p.bathrooms, p.featured,
-                           (SELECT image_url FROM property_images WHERE property_id = p.id LIMIT 1) as image
-                    FROM {static::$table} f
+                           (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as image
+                    FROM property_favorites f
                     INNER JOIN properties p ON f.property_id = p.id
-                    WHERE f.user_id = ? AND p.status = 'available'
+                    WHERE f.user_id = ? AND p.status IN ('available','active')
                     ORDER BY f.created_at DESC";
 
             $stmt = static::getDb()->prepare($sql);
@@ -260,7 +260,7 @@ class PropertyFavorite extends Model {
             }
 
             $placeholders = str_repeat('?,', count($property_ids) - 1) . '?';
-            $sql = "INSERT IGNORE INTO {static::$table} (user_id, property_id, created_at)
+            $sql = "INSERT IGNORE INTO property_favorites (user_id, property_id, created_at)
                     VALUES (?, ?, NOW())";
 
             $success_count = 0;
@@ -286,7 +286,7 @@ class PropertyFavorite extends Model {
             }
 
             $placeholders = str_repeat('?,', count($property_ids) - 1) . '?';
-            $sql = "DELETE FROM {static::$table}
+            $sql = "DELETE FROM property_favorites
                     WHERE user_id = ? AND property_id IN ({$placeholders})";
 
             $params = array_merge([$user_id], $property_ids);
@@ -310,7 +310,7 @@ class PropertyFavorite extends Model {
                         COUNT(CASE WHEN p.status != 'available' THEN 1 END) as inactive_favorites,
                         MIN(f.created_at) as first_favorite_date,
                         MAX(f.created_at) as last_favorite_date
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     LEFT JOIN properties p ON f.property_id = p.id
                     WHERE f.user_id = ?";
 
@@ -335,7 +335,7 @@ class PropertyFavorite extends Model {
                         COUNT(CASE WHEN u.status = 'active' THEN 1 END) as active_user_favorites,
                         MIN(f.created_at) as first_favorite_date,
                         MAX(f.created_at) as last_favorite_date
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     LEFT JOIN users u ON f.user_id = u.id
                     WHERE f.property_id = ?";
 
@@ -357,7 +357,7 @@ class PropertyFavorite extends Model {
         try {
             $sql = "SELECT f.*, p.title as property_title, p.city, p.state, p.price,
                            u.name as user_name, u.email as user_email
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     LEFT JOIN properties p ON f.property_id = p.id
                     LEFT JOIN users u ON f.user_id = u.id";
 
@@ -392,7 +392,7 @@ class PropertyFavorite extends Model {
         try {
             $sql = "SELECT f.*, p.title as property_title, p.city, p.state,
                            u.name as user_name, u.email as user_email
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     LEFT JOIN properties p ON f.property_id = p.id
                     LEFT JOIN users u ON f.user_id = u.id
                     ORDER BY f.created_at DESC LIMIT ?";
@@ -415,7 +415,7 @@ class PropertyFavorite extends Model {
         try {
             $sql = "SELECT f.*, p.title as property_title, p.city, p.state,
                            u.name as user_name, u.email as user_email
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     LEFT JOIN properties p ON f.property_id = p.id
                     LEFT JOIN users u ON f.user_id = u.id
                     WHERE p.title LIKE ?
@@ -444,7 +444,7 @@ class PropertyFavorite extends Model {
         try {
             $sql = "SELECT f.*, p.title as property_title, p.city, p.state,
                            u.name as user_name, u.email as user_email
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     LEFT JOIN properties p ON f.property_id = p.id
                     LEFT JOIN users u ON f.user_id = u.id
                     WHERE f.created_at BETWEEN ? AND ?";
@@ -479,7 +479,7 @@ class PropertyFavorite extends Model {
                         COUNT(*) as favorites_added,
                         COUNT(DISTINCT f.user_id) as unique_users,
                         COUNT(DISTINCT f.property_id) as unique_properties
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     WHERE f.created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
                     GROUP BY DATE(f.created_at)
                     ORDER BY date";
@@ -502,7 +502,7 @@ class PropertyFavorite extends Model {
         try {
             $sql = "SELECT p.city, p.state, COUNT(f.id) as favorite_count,
                            AVG(p.price) as avg_price
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     INNER JOIN properties p ON f.property_id = p.id
                     WHERE p.status = 'available'";
 
@@ -539,7 +539,7 @@ class PropertyFavorite extends Model {
                         COUNT(DISTINCT f.id) as total_favorites,
                         COUNT(DISTINCT i.id) as inquiries_from_favorites,
                         ROUND((COUNT(DISTINCT i.id) / COUNT(DISTINCT f.id)) * 100, 2) as conversion_rate
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     LEFT JOIN property_inquiries i ON f.property_id = i.property_id
                         AND i.created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
                         AND i.created_at >= f.created_at
@@ -561,7 +561,7 @@ class PropertyFavorite extends Model {
      */
     public function cleanupOrphaned() {
         try {
-            $sql = "DELETE f FROM {static::$table} f
+            $sql = "DELETE f FROM property_favorites f
                     LEFT JOIN properties p ON f.property_id = p.id
                     WHERE p.id IS NULL";
 
@@ -583,11 +583,11 @@ class PropertyFavorite extends Model {
         try {
             $sql = "SELECT p.id, p.title, p.price, p.city, p.state, p.area_sqft,
                            p.bedrooms, p.bathrooms, p.featured,
-                           (SELECT image_url FROM property_images WHERE property_id = p.id LIMIT 1) as image,
+                           (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as image,
                            f.created_at as favorited_at
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     INNER JOIN properties p ON f.property_id = p.id
-                    WHERE f.user_id = ? AND p.status = 'available'
+                    WHERE f.user_id = ? AND p.status IN ('available','active')
                     ORDER BY f.created_at DESC";
 
             $stmt = static::getDb()->prepare($sql);
@@ -608,7 +608,7 @@ class PropertyFavorite extends Model {
         try {
             // Get user's favorite property types and locations
             $sql = "SELECT p.property_type, p.city, p.state, COUNT(*) as count
-                    FROM {static::$table} f
+                    FROM property_favorites f
                     INNER JOIN properties p ON f.property_id = p.id
                     WHERE f.user_id = ?
                     GROUP BY p.property_type, p.city, p.state
@@ -638,16 +638,16 @@ class PropertyFavorite extends Model {
             $where_clause = implode(' OR ', $conditions);
 
             $sql = "SELECT p.*, pf.count as preference_score,
-                           (SELECT image_url FROM property_images WHERE property_id = p.id LIMIT 1) as main_image
+                           (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as main_image
                     FROM properties p
                     LEFT JOIN (
                         SELECT property_id, COUNT(*) as count
-                        FROM {static::$table}
+                        FROM property_favorites
                         WHERE user_id = ?
                         GROUP BY property_id
                     ) pf ON p.id = pf.property_id
                     WHERE p.status = 'available'
-                      AND p.id NOT IN (SELECT property_id FROM {static::$table} WHERE user_id = ?)
+                      AND p.id NOT IN (SELECT property_id FROM property_favorites WHERE user_id = ?)
                       AND ({$where_clause})
                     ORDER BY pf.count DESC, p.created_at DESC
                     LIMIT ?";

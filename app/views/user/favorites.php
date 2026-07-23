@@ -1,6 +1,8 @@
 <?php
 if (!defined('BASE_URL')) {
-    define('BASE_URL', 'http://localhost/apsdreamhome/');
+    $basePath = preg_replace('#/public$#', '', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    define('BASE_URL', $protocol . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $basePath);
 }
 ?>
 <?php

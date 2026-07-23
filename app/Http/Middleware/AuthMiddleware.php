@@ -93,7 +93,7 @@ class AuthMiddleware
             // Successful login
             self::createSecureSession($user['username'] ?? $username);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             AdminLogger::logError('DATABASE_AUTH_ERROR', [
                 'message' => $e->getMessage(),
                 'username' => $username

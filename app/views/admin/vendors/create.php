@@ -64,17 +64,38 @@
 
                         <div class="mb-3">
                             <label for="address" class="form-label fw-semibold">Address</label>
-                            <textarea class="form-control" id="address" name="address" rows="2"></textarea>
+                            <div class="input-group">
+                                <textarea class="form-control" id="address" name="address" rows="2" data-map-picker="true"></textarea>
+                                <button type="button" class="btn btn-outline-secondary" data-action="map-picker" title="Pick on Map">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="city" class="form-label fw-semibold">City</label>
-                                <input type="text" class="form-control" id="city" name="city">
+                                <input type="text" class="form-control" id="city" name="city" data-autofill="city">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="state" class="form-label fw-semibold">State</label>
-                                <input type="text" class="form-control" id="state" name="state">
+                                <input type="text" class="form-control" id="state" name="state" data-autofill="state">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="district" class="form-label fw-semibold">District</label>
+                                <input type="text" class="form-control" id="district" name="district" data-autofill="district">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="pincode" class="form-label fw-semibold">Pincode</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="pincode" name="pincode" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
+                                    <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use My Location">
+                                        <i class="fas fa-location-crosshairs"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -139,7 +160,12 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="ifsc_code" class="form-label fw-semibold">IFSC Code</label>
-                                <input type="text" class="form-control" id="ifsc_code" name="ifsc_code" placeholder="SBIN0001234">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="ifsc_code" name="ifsc_code" placeholder="SBIN0001234" data-autofill="ifsc" maxlength="11" style="text-transform:uppercase">
+                                    <button type="button" class="btn btn-outline-secondary" data-action="ifsc-lookup" title="Lookup IFSC">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="payment_terms" class="form-label fw-semibold">Payment Terms</label>

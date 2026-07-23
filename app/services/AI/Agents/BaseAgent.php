@@ -3,8 +3,6 @@
 namespace App\Services\AI\Agents;
 
 use App\Core\App;
-use App\Services\Legacy\PermissionManager;
-use function App\Services\Legacy\audit_log;
 use Exception;
 
 /**

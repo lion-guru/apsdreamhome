@@ -94,7 +94,16 @@ $registryLabels = [
                 </thead>
                 <tbody>
                     <?php if (empty($bookings)): ?>
-                        <tr><td colspan="7" class="text-center">No registry records found</td></tr>
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="fas fa-file-signature fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No registry records found</h5>
+                                <p class="text-muted mb-3">Registry records are created automatically from confirmed bookings. Start by creating a property booking.</p>
+                                <a href="<?= BASE_URL ?>/admin/bookings" class="btn btn-primary">
+                                    <i class="fas fa-calendar-check me-1"></i> View Bookings
+                                </a>
+                            </td>
+                        </tr>
                     <?php else: ?>
                         <?php foreach ($bookings as $b): ?>
                             <tr>

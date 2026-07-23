@@ -11,7 +11,7 @@ use App\Core\Middleware;
 class ErrorMiddleware extends Middleware
 {
     private array $errorConfig = [
-        'display_errors' => true,
+        'display_errors' => false,
         'log_errors' => true,
         'error_log_file' => __DIR__ . '/../../../logs/errors.log',
         'error_levels' => [

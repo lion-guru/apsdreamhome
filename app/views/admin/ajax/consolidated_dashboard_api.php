@@ -89,7 +89,7 @@ try {
         default:
             echo json_encode(['success' => false, 'message' => h($mlSupport->translate('Invalid action'))]);
     }
-} catch (Exception $e) {
+} catch (\Exception $e) {
     error_log('Dashboard API error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([
@@ -392,7 +392,7 @@ function globalSearch($db, $currentRole)
     foreach ($rows as $row) {
         $results[] = [
             'title' => h($row['title']),
-            'description' => h($row['location']) . ' - ₹' . number_format(floatval(row['price'] ?? 0)) . ' - ' . h(ucfirst($row['status'])),
+            'description' => h($row['location']) . ' - ₹' . number_format(floatval($row['price'] ?? 0)) . ' - ' . h(ucfirst($row['status'])),
             'url' => BASE_URL . 'admin/consolidated_dashboard.php#properties',
             'type' => 'Property',
             'icon' => 'fas fa-building'
@@ -405,7 +405,7 @@ function globalSearch($db, $currentRole)
     foreach ($rows as $row) {
         $results[] = [
             'title' => 'Booking #' . intval($row['id']),
-            'description' => h($row['customer_name'] ?? '') . ' - ' . h($row['property_title'] ?? '') . ' - ₹' . number_format(floatval(row['total_amount'] ?? 0)),
+            'description' => h($row['customer_name'] ?? '') . ' - ' . h($row['property_title'] ?? '') . ' - ₹' . number_format(floatval($row['total_amount'] ?? 0)),
             'url' => BASE_URL . 'admin/consolidated_dashboard.php#bookings',
             'type' => 'Booking',
             'icon' => 'fas fa-calendar-check'

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Submission Detail';
 ob_start();
 ?>
@@ -7,7 +7,7 @@ ob_start();
         <h4 class="mb-1"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($page_title) ?></h4>
         <span class="text-muted">Submission #<?= $submission['id'] ?></span>
     </div>
-    <a href="/admin/efiling/submissions" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Submissions</a>
+    <a href="<?= BASE_URL ?>/admin/efiling/submissions" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Submissions</a>
 </div>
 
 <?php if (!empty($_SESSION['flash_success'])): ?>
@@ -113,12 +113,12 @@ ob_start();
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-cogs me-2"></i>Actions</h6></div>
     <div class="card-body d-flex gap-2">
-        <form method="POST" action="/admin/efiling/submissions/<?= $submission['id'] ?>/update-status" class="d-inline">
+        <form method="POST" action="<?= BASE_URL ?>/admin/efiling/submissions/<?= $submission['id'] ?>/update-status" class="d-inline">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <input type="hidden" name="status" value="submitted">
             <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Mark as submitted to the portal?')"><i class="fas fa-paper-plane me-1"></i>Mark Submitted</button>
         </form>
-        <form method="POST" action="/admin/efiling/submissions/<?= $submission['id'] ?>/update-status" class="d-inline">
+        <form method="POST" action="<?= BASE_URL ?>/admin/efiling/submissions/<?= $submission['id'] ?>/update-status" class="d-inline">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <input type="hidden" name="status" value="rejected">
             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Mark as rejected?')"><i class="fas fa-times me-1"></i>Mark Rejected</button>

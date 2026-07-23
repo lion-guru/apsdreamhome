@@ -14,7 +14,7 @@
 try {
     $db = \App\Core\Database::getInstance();
     $conn = $db->getConnection();
-} catch (Exception $e) {
+} catch (\Exception $e) {
     die("Database connection failed: " . $e->getMessage());
 }
 
@@ -105,7 +105,7 @@ function addProperty($data)
         }
 
         return ['success' => false, 'message' => 'Error adding property'];
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
     }
 }
@@ -141,7 +141,7 @@ function updateProperty($data)
         }
 
         return ['success' => false, 'message' => 'Error updating property'];
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
     }
 }
@@ -167,7 +167,7 @@ function recordPropertySale($data)
         }
 
         return ['success' => false, 'message' => 'Error calculating commission'];
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
     }
 }

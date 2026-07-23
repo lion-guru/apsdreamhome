@@ -40,7 +40,7 @@ class MaintenanceModeMiddleware
         $eta = $svc->getEta();
         $logo = defined('BASE_URL') ? BASE_URL . '/assets/images/logo.png' : '/assets/images/logo.png';
         $contact = 'info@apsdreamhome.com';
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
         ?>
 <!DOCTYPE html>
 <html lang="en">

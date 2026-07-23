@@ -1,17 +1,17 @@
-<?php $pageTitle = 'Plots Dashboard'; ?>
+﻿<?php $pageTitle = 'Plots Dashboard'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-th me-2"></i>Plots Dashboard</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item active">Plots</li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/plots/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Plot</a>
-                <a href="/admin/plots" class="btn btn-info btn-sm"><i class="fas fa-list me-1"></i>All Plots</a>
+                <a href="<?= BASE_URL ?>/admin/plots/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Plot</a>
+                <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-info btn-sm"><i class="fas fa-list me-1"></i>All Plots</a>
             </div>
         </div>
     </div>

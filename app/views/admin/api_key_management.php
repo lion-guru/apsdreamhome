@@ -265,7 +265,7 @@
     <script>
         // Load system data
         function loadStats() {
-            fetch("unified_keys_api.php?action=stats")
+            fetch("<?= BASE_URL ?>/admin/api-key-mgmt/stats")
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -286,7 +286,7 @@
         }
         
         function loadMcpKeys() {
-            fetch("unified_keys_api.php?action=mcp_keys")
+            fetch("<?= BASE_URL ?>/admin/api-key-mgmt/mcp-keys")
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -297,7 +297,7 @@
         }
         
         function loadUserKeys() {
-            fetch("unified_keys_api.php?action=user_keys")
+            fetch("<?= BASE_URL ?>/admin/api-key-mgmt/user-keys")
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -308,7 +308,7 @@
         }
         
         function loadIntegrationStatus() {
-            fetch("unified_keys_api.php?action=integration")
+            fetch("<?= BASE_URL ?>/admin/api-key-mgmt/integration")
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -406,7 +406,7 @@
             const form = document.getElementById("addMcpKeyForm");
             const formData = new FormData(form);
             
-            fetch("unified_keys_api.php?action=add_mcp_key", {
+            fetch("<?= BASE_URL ?>/admin/api-key-mgmt/add-mcp-key", {
                 method: "POST",
                 body: formData
             })
@@ -434,7 +434,7 @@
             });
             formData.append("permissions", JSON.stringify(permissions));
             
-            fetch("unified_keys_api.php?action=create_user_key", {
+            fetch("<?= BASE_URL ?>/admin/api-key-mgmt/create-user-key", {
                 method: "POST",
                 body: formData
             })

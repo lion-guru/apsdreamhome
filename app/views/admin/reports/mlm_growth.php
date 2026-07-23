@@ -167,6 +167,15 @@ $report = $report ?? [
                         </tr>
                     </thead>
                     <tbody>
+                        <?php if (empty($report['top_performers'] ?? [])): ?>
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="fas fa-trophy fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No top performers found</h5>
+                                <p class="text-muted mb-3">Performance data will appear once associates start earning commissions.</p>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach (array_slice($report['top_performers'], 0, 20) as $index => $performer): ?>
                         <tr>
                             <td><?= $index + 1 ?></td>
@@ -178,6 +187,7 @@ $report = $report ?? [
                             <td><?= date('M Y', strtotime($performer['created_at'])) ?></td>
                         </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -201,6 +211,15 @@ $report = $report ?? [
                         </tr>
                     </thead>
                     <tbody>
+                        <?php if (empty($report['monthly_comparison'] ?? [])): ?>
+                        <tr>
+                            <td colspan="4" class="text-center py-5">
+                                <i class="fas fa-chart-bar fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No monthly comparison data</h5>
+                                <p class="text-muted mb-3">Month-over-month metrics will appear after at least two periods of data are collected.</p>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($report['monthly_comparison'] as $comparison): ?>
                         <tr>
                             <td><strong><?= $comparison['period'] ?></strong></td>
@@ -209,6 +228,7 @@ $report = $report ?? [
                             <td>₹<?= number_format($comparison['total_commissions'], 2) ?></td>
                         </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -303,7 +323,7 @@ new Chart(commissionCtx, {
 });
 
 function exportToPDF() {
-    window.open('/admin/reports/mlm-growth/export', '_blank');
+    window.open('<?= BASE_URL ?>/admin/reports/mlm-growth/export', '_blank');
 }
 
 function refreshData() {

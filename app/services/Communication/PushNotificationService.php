@@ -636,4 +636,76 @@ class PushNotificationService
             ]
         ]);
     }
+
+    /**
+     * Get push notification statistics
+     */
+    public function getStats(int $days = 30): array
+    {
+        try {
+            $totalSent = $this->db->fetchColumn(
+                "SELECT COUNT(*) FROM push_notification_logs WHERE status = 'sent' AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)",
+                [$days]
+            );
+            $totalFailed = $this->db->fetchColumn(
+                "SELECT COUNT(*) FROM push_notification_logs WHERE status = 'failed' AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)",
+                [$days]
+            );
+            $totalTokens = $this->db->fetchColumn("SELECT COUNT(*) FROM push_tokens WHERE is_active = 1");
+            $todaySent = $this->db->fetchColumn(
+                "SELECT COUNT(*) FROM push_notification_logs WHERE status = 'sent' AND DATE(created_at) = CURDATE()"
+            );
+            return [
+                'total_sent' => (int)$totalSent,
+                'total_failed' => (int)$totalFailed,
+                'total_tokens' => (int)$totalTokens,
+                'today_sent' => (int)$todaySent,
+                'success_rate' => ($totalSent + $totalFailed) > 0 ? round(($totalSent / ($totalSent + $totalFailed)) * 100, 1) : 0,
+            ];
+        } catch (\Exception $e) {
+            return ['total_sent' => 0, 'total_failed' => 0, 'total_tokens' => 0, 'today_sent' => 0, 'success_rate' => 0];
+        }
+    }
+
+    /**
+     * Get recent push notification log
+     */
+    public function getLog(int $limit = 50): array
+    {
+        try {
+            return $this->db->fetchAll(
+                "SELECT pl.*, u.name as user_name 
+                 FROM push_notification_logs pl
+                 LEFT JOIN users u ON pl.user_id = u.id
+                 ORDER BY pl.created_at DESC LIMIT ?",
+                [$limit]
+            );
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Broadcast notification to all active device tokens
+     */
+    public function broadcast(string $title, string $body, string $url = '/'): array
+    {
+        return $this->sendBroadcast([
+            'title' => $title,
+            'body' => $body,
+            'click_action' => $url,
+        ]);
+    }
+
+    /**
+     * Send to a single user by ID (alias for sendToUser with title/body/url)
+     */
+    public function send(int $userId, string $title, string $body, string $url = '/'): array
+    {
+        return $this->sendToUser($userId, [
+            'title' => $title,
+            'body' => $body,
+            'click_action' => $url,
+        ]);
+    }
 }

@@ -7,7 +7,7 @@ $recommendations = $recommendations ?? [];
 $area_labels = $area_labels ?? [];
 $area_icons = $area_icons ?? [];
 $weights = $weights ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 function complianceColor($score) {
     if ($score >= 80) return '#28a745';

@@ -59,7 +59,7 @@ try {
         exportAsPDF($data);
     }
 
-} catch (Exception $e) {
+} catch (\Exception $e) {
     error_log('Export data error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([

@@ -37,7 +37,7 @@ class BuilderDashboardController extends AdminController
                         COUNT(CASE WHEN status = 'planned' THEN 1 END) as planned_projects
                     FROM construction_projects"
                 );
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $construction_stats = ['total_projects' => 0, 'completed_projects' => 0, 'ongoing_projects' => 0, 'planned_projects' => 0];
             }
 
@@ -50,7 +50,7 @@ class BuilderDashboardController extends AdminController
                         COUNT(CASE WHEN stock_quantity <= reorder_level THEN 1 END) as low_stock_materials
                     FROM materials"
                 );
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $material_stats = ['total_materials' => 0, 'total_material_cost' => 0, 'low_stock_materials' => 0];
             }
 
@@ -65,7 +65,7 @@ class BuilderDashboardController extends AdminController
                         COUNT(CASE WHEN specialization = 'electrician' THEN 1 END) as electricians
                     FROM workforce"
                 );
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $workforce_stats = ['total_workers' => 0, 'active_workers' => 0, 'masons' => 0, 'carpenters' => 0, 'electricians' => 0];
             }
 
@@ -77,7 +77,7 @@ class BuilderDashboardController extends AdminController
                      ORDER BY created_at DESC 
                      LIMIT 10"
                 );
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $activities = [];
             }
 
@@ -90,7 +90,7 @@ class BuilderDashboardController extends AdminController
             ];
 
             return $this->render('admin/dashboards/builder');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Builder Dashboard Error: " . $e->getMessage());
             $this->setFlash('error', 'Dashboard loading failed');
             return $this->redirect('admin/dashboard');
@@ -115,7 +115,7 @@ class BuilderDashboardController extends AdminController
             )->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $analytics]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Construction Analytics error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'data' => []]);
         }
@@ -141,7 +141,7 @@ class BuilderDashboardController extends AdminController
                 LIMIT 20"
             );
             $materials = $result->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Material Status error: " . $e->getMessage());
             $materials = [];
         }

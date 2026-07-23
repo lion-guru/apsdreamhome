@@ -28,12 +28,22 @@
                                             <label class="form-label">Colony *</label>
                                             <select class="form-select" name="colony_id" required>
                                                 <option value="">Select Colony</option>
+                                                <?php if (empty($colonies)): ?>
+                                                    <option value="" disabled>No colonies found</option>
+                                                <?php endif; ?>
                                                 <?php foreach ($colonies as $colony): ?>
                                                     <option value="<?= $colony['id'] ?? '' ?>">
                                                         <?= htmlspecialchars(($colony['state_name'] ?? '') . ' > ' . ($colony['district_name'] ?? '') . ' > ' . ($colony['colony_name'] ?? $colony['name'] ?? '')) ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
+                                            <?php if (empty($colonies)): ?>
+                                                <small class="text-warning d-block mt-1">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    No colonies exist yet.
+                                                    <a href="<?= BASE_URL ?>/admin/colonies/create" class="fw-bold">Create Colony First</a>
+                                                </small>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                     <div class="col-md-3">

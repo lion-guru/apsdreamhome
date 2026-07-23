@@ -32,7 +32,7 @@ class LegalAdvisorController extends BaseController
             @session_start();
         }
 
-        $this->employeeId = $_SESSION['employee_id'] ?? null;
+        $this->employeeId = $_SESSION['employee_id'] ?? $_SESSION['user_id'] ?? null;
 
         if (!$this->employeeId) {
             header('Location: ' . BASE_URL . '/employee/login');
@@ -73,8 +73,18 @@ class LegalAdvisorController extends BaseController
                 'recent_activities' => $recentActivities,
                 'contract_status' => $contractStatus
             ]);
-        } catch (Exception $e) {
-            $this->handleError($e->getMessage());
+        } catch (\Exception $e) {
+            error_log("Legal Advisor Controller Error: " . $e->getMessage());
+            $this->render('employees/department', [
+                'page_title' => 'Legal Dashboard',
+                'dept_title' => 'Legal Dashboard',
+                'dept_icon'  => 'fas fa-gavel',
+                'dept_desc'  => 'Legal operations: document management, compliance tracking, and case management.',
+                'dept_color' => '#8b5cf6',
+                'dept_slug'  => 'legal-dashboard',
+                'employee_id' => $this->employeeId,
+                'employee_name' => $_SESSION['employee_name'] ?? $_SESSION['user_name'] ?? 'Employee',
+            ]);
         }
     }
 
@@ -271,7 +281,7 @@ class LegalAdvisorController extends BaseController
                 'success' => true,
                 'message' => "Document reviewed successfully"
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -322,7 +332,7 @@ class LegalAdvisorController extends BaseController
                 'success' => true,
                 'message' => "Compliance task updated successfully"
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -379,7 +389,7 @@ class LegalAdvisorController extends BaseController
                 'success' => true,
                 'message' => "Dispute updated successfully"
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -420,7 +430,7 @@ class LegalAdvisorController extends BaseController
                 'template_id' => $templateId,
                 'message' => "Document template created successfully"
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -446,7 +456,7 @@ class LegalAdvisorController extends BaseController
                 default:
                     throw new Exception("Invalid report type");
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()

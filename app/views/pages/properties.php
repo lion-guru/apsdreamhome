@@ -63,14 +63,6 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 ?>
 
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-.props-hero{position:relative;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#0d9488 100%);padding:60px 0 50px;overflow:hidden;margin-bottom:-30px}
-.props-hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
-.props-hero .hero-content{position:relative;z-index:2}
-.props-hero h1{font-size:2.5rem;font-weight:800;color:#fff;margin-bottom:10px;letter-spacing:-0.5px}
-.props-hero p{color:rgba(255,255,255,0.8);font-size:1.1rem;margin:0}
-.props-hero .stat-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);border-radius:50px;padding:8px 18px;color:#fff;font-size:0.85rem;margin-top:16px}
-.props-hero .stat-pill i{color:#10b981}
-
 .props-filter-glass{background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.6);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.08);margin-top:-25px;position:relative;z-index:10;padding:0;overflow:hidden}
 .props-filter-glass .filter-header{background:linear-gradient(135deg,#f8fafc,#f1f5f9);padding:16px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background 0.2s}
 .props-filter-glass .filter-header:hover{background:#f1f5f9}
@@ -123,8 +115,6 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 .props-empty p{color:#64748b}
 
 @media(max-width:768px){
-.props-hero{padding:40px 0 35px}
-.props-hero h1{font-size:1.7rem}
 .props-grid-card .card-img-wrap{height:180px}
 .props-grid-card .card-body{padding:16px}
 .props-grid-card .prop-price{font-size:1.1rem}
@@ -132,20 +122,22 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 }
 </style>
 
-<div class="props-hero">
-    <div class="container hero-content">
-        <h1><i class="fas fa-building me-2"></i><?= __('properties') ?></h1>
-        <p>Discover premium properties across India — plots, flats, villas, farmhouses & more</p>
-        <div class="stat-pill">
-            <i class="fas fa-check-circle"></i>
-            <span><strong id="resultsCount"><?= number_format($total ?? 0) ?></strong> verified properties</span>
-        </div>
-        <?php if ($hasActiveFilters): ?>
-            <div class="stat-pill ms-2" style="background:rgba(16,185,129,0.2);border-color:rgba(16,185,129,0.3)">
-                <i class="fas fa-filter"></i>
-                <span>Filtered results</span>
+<div class="hero-premium pt-5 pb-5 mb-0" style="margin-bottom: -30px !important;">
+    <div class="container hero-content premium-reveal fade-up position-relative z-2">
+        <h1 class="display-4 fw-bold text-white mb-2"><i class="fas fa-building me-3"></i><?= __('properties') ?></h1>
+        <p class="lead text-white-50 mb-4">Discover premium properties across India — plots, flats, villas, farmhouses & more</p>
+        <div class="d-flex flex-wrap gap-2">
+            <div class="capsule-badge bg-white bg-opacity-10 text-white border border-white border-opacity-25 shadow-sm px-3 py-2">
+                <i class="fas fa-check-circle text-success me-1"></i>
+                <span><strong id="resultsCount"><?= number_format($total ?? 0) ?></strong> verified properties</span>
             </div>
-        <?php endif; ?>
+            <?php if ($hasActiveFilters): ?>
+                <div class="capsule-badge bg-success bg-opacity-25 text-white border border-success border-opacity-25 shadow-sm px-3 py-2">
+                    <i class="fas fa-filter text-success me-1"></i>
+                    <span>Filtered results</span>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
 

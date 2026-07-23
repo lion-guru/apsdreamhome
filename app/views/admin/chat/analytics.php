@@ -1,9 +1,9 @@
-<?php
+﻿<?php
 /** @var array $data ChatAnalytics dashboard data */
 /** @var array $conversations Conversation stats */
 /** @var array $actionLabels Action label map */
 /** @var int $days Period */
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 $totals = $data['totals'] ?? [];
 $usage = $data['usage'] ?? [];
 $trend = $data['trend'] ?? [];
@@ -22,7 +22,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
             <p class="text-muted mb-0">Track chatbot action usage, completion rates, and drop-offs</p>
         </div>
         <div class="d-flex gap-2">
-            <select class="form-select form-select-sm" style="width:auto" id="periodSelect" onchange="window.location='<?=$base?>/admin/chat-analytics?days='+this.value">
+            <select class="form-select form-select-sm" style="width:auto" id="periodSelect" onchange="window.location='<?= BASE_URL ?>/admin/chat-analytics?days='+this.value">
                 <option value="7" <?=$days==7?'selected':''?>>Last 7 days</option>
                 <option value="30" <?=$days==30?'selected':''?>>Last 30 days</option>
                 <option value="90" <?=$days==90?'selected':''?>>Last 90 days</option>
@@ -71,7 +71,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
     <div class="row g-3 mb-4">
         <div class="col-md-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h5 class="mb-0">📊 Conversation States</h5></div>
+                <div class="card-header bg-white"><h5 class="mb-0">ðŸ“Š Conversation States</h5></div>
                 <div class="card-body">
                     <div class="d-flex gap-4 flex-wrap">
                         <div class="text-center">
@@ -104,7 +104,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
     <div class="row g-4 mb-4">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h5 class="mb-0">🎯 Action Breakdown</h5></div>
+                <div class="card-header bg-white"><h5 class="mb-0">ðŸŽ¯ Action Breakdown</h5></div>
                 <div class="card-body">
                     <?php if (empty($usage)): ?>
                     <p class="text-muted text-center py-4">No data yet. Start using the chatbot to see analytics.</p>
@@ -148,7 +148,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
         <!-- Drop-off Analysis -->
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h5 class="mb-0">🚨 Drop-off Points</h5></div>
+                <div class="card-header bg-white"><h5 class="mb-0">ðŸš¨ Drop-off Points</h5></div>
                 <div class="card-body">
                     <?php if (empty($dropoffs)): ?>
                     <p class="text-muted text-center py-4">No drop-offs recorded yet.</p>
@@ -170,7 +170,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
 
     <!-- Daily Trend -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white"><h5 class="mb-0">📈 Daily Trend (Last <?=$days?> Days)</h5></div>
+        <div class="card-header bg-white"><h5 class="mb-0">ðŸ“ˆ Daily Trend (Last <?=$days?> Days)</h5></div>
         <div class="card-body">
             <?php if (empty($trend)): ?>
             <p class="text-muted text-center py-4">No daily data yet.</p>
@@ -202,3 +202,4 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
         </div>
     </div>
 </div>
+

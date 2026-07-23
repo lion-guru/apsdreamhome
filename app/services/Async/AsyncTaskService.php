@@ -46,11 +46,15 @@ class AsyncTaskService
         try {
             // Tasks table
             $sql = "";
-            $this->database->query($sql);
+            if (!empty(trim($sql))) {
+                $this->database->query($sql);
+            }
 
             // Task queue table
             $sql = "";
-            $this->database->query($sql);
+            if (!empty(trim($sql))) {
+                $this->database->query($sql);
+            }
             
         } catch (\Exception $e) {
             $this->logger->error('Error creating task tables', [

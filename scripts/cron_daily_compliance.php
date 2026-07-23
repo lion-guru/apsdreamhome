@@ -6,9 +6,7 @@
  */
 
 $basePath = dirname(__DIR__);
-require_once $basePath . '/app/Core/Database.php';
-require_once $basePath . '/app/Core/Cache.php';
-require_once $basePath . '/app/Services/Booking/BookingComplianceService.php';
+require_once $basePath . '/vendor/autoload.php';
 
 use App\Services\Booking\BookingComplianceService;
 

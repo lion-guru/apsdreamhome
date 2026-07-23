@@ -18,17 +18,36 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php if (!(isset($seo) && is_array($seo))): ?>
     <title><?php echo $page_title ?? $sc('seo_title', 'APS Dream Home - Premium Real Estate in Uttar Pradesh'); ?></title>
-
-    <!-- SEO Meta (from Site Settings) -->
-    <meta name="description" content="<?= htmlspecialchars($sc('seo_description', 'APS Dream Home offers premium residential plots, houses, and commercial properties in Gorakhpur, Lucknow, Kushinagar and across Uttar Pradesh.')) ?>">
-    <meta name="keywords" content="<?= htmlspecialchars($sc('seo_keywords', 'real estate, plots, houses, flats, Gorakhpur, Lucknow, UP, property, APS Dream Home')) ?>">
+    <meta name="description" content="<?= htmlspecialchars($page_description ?? $sc('seo_description', 'APS Dream Home offers premium residential plots, houses, and commercial properties in Gorakhpur, Lucknow, Kushinagar and across Uttar Pradesh.')) ?>">
+    <?php endif; ?>
+    <meta name="keywords" content="<?= htmlspecialchars($sc('seo_keywords', 'real estate, plots, homes, Gorakhpur, Lucknow, Kushinagar, Varanasi, Uttar Pradesh, property, residential, commercial')) ?>">
+    <meta name="author" content="APS Dream Home">
+    <meta name="robots" content="index, follow">
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN-UP">
+    <meta name="geo.placename" content="Gorakhpur">
+    <meta name="geo.position" content="26.7606;83.3732">
+    <meta name="ICBM" content="26.7606, 83.3732">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_IN">
+    <meta property="og:title" content="<?= htmlspecialchars($page_title ?? $sc('seo_title', 'APS Dream Home - Premium Real Estate')) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($page_description ?? $sc('seo_description', 'Premium Real Estate in Uttar Pradesh')) ?>">
     <?php if ($sc('seo_og_image')): ?>
     <meta property="og:image" content="<?= htmlspecialchars($sc('seo_og_image')) ?>">
+    <?php else: ?>
+    <meta property="og:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
     <?php endif; ?>
-    <meta property="og:title" content="<?= htmlspecialchars($page_title ?? $sc('seo_title', 'APS Dream Home')) ?>">
-    <meta property="og:description" content="<?= htmlspecialchars($sc('seo_description', 'Premium Real Estate in Uttar Pradesh')) ?>">
-    <meta property="og:type" content="website">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="APS Dream Home">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= htmlspecialchars($page_title ?? $sc('seo_title', 'APS Dream Home')) ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($page_description ?? $sc('seo_description', 'Premium Real Estate in Uttar Pradesh')) ?>">
+    <meta name="twitter:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
 
     <!-- Bootstrap JS (early load for modals) -->
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -76,33 +95,6 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <?php if (isset($_SESSION['user_id']) || isset($_SESSION['admin_id'])): ?>
     <meta name="user-id" content="<?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : $_SESSION['admin_id']; ?>">
     <?php endif; ?>
-
-    <meta name="description" content="<?php echo $page_description ?? 'Discover premium residential and commercial properties in Gorakhpur, Lucknow, Kushinagar, and across Uttar Pradesh with APS Dream Home. Premium plots, modern amenities, and trusted service.'; ?>">
-    <meta name="keywords" content="real estate, plots, homes, Gorakhpur, Lucknow, Kushinagar, Varanasi, Uttar Pradesh, property, residential, commercial">
-    <meta name="author" content="APS Dream Home">
-    <meta name="robots" content="index, follow">
-
-    <!-- Geo Tags -->
-    <meta name="geo.region" content="IN-UP">
-    <meta name="geo.placename" content="Gorakhpur">
-    <meta name="geo.position" content="26.7606;83.3732">
-    <meta name="ICBM" content="26.7606, 83.3732">
-
-    <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="en_IN">
-    <meta property="og:title" content="<?php echo $page_title ?? 'APS Dream Home - Premium Real Estate'; ?>">
-    <meta property="og:description" content="<?php echo $page_description ?? 'Discover premium residential and commercial properties in Gorakhpur and across Uttar Pradesh.'; ?>">
-    <meta property="og:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="APS Dream Home">
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<?php echo $page_title ?? 'APS Dream Home'; ?>">
-    <meta name="twitter:description" content="<?php echo $page_description ?? 'Premium Real Estate in Uttar Pradesh'; ?>">
-    <meta name="twitter:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
 
     <?php if (isset($seo) && is_array($seo)): ?>
     <!-- SEO Auto-Injected Meta Tags (BaseController::generateSEO) -->
@@ -156,22 +148,28 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
+<!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-
+    <!-- Leaflet CSS for map picker -->
+    <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+    
     <?php
     $isAdminPage = isset($admin_layout) && $admin_layout === true;
     $isPremiumPage = isset($premium_layout) && $premium_layout === true;
     ?>
-    <!-- Consolidated APS CSS Bundles -->
-    <?php if ($isPremiumPage): ?>
-    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=3" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=3" rel="stylesheet">
+    <?php if (!$isAdminPage): ?>
+    <!-- CSS: base → components → header → premium theme (ALL public pages) → homepage extras -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=6" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=6" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=6" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=6" rel="stylesheet">
     <?php endif; ?>
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=3" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
+    <?php if ($isPremiumPage): ?>
+    <!-- Homepage-only extras (hero carousel, animations) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=6" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=1" rel="stylesheet">
+    <?php endif; ?>
+    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=6" rel="stylesheet">
 
     <!-- Scroll fix (Cleaned) -->
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -260,7 +258,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     }
     ?>
 
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     // Lazy load images that are below the fold
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('img:not([loading])').forEach(function(img) {
@@ -281,7 +279,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <?php endif; ?>
 
     <!-- Real-time WebSocket Notifications -->
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         window.NOTIFY_USER = {
             id: <?php echo isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : (isset($_SESSION['admin_id']) ? (int)$_SESSION['admin_id'] : 'null'); ?>,
             role: '<?php echo isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? htmlspecialchars($_SESSION['role'] ?? '', ENT_QUOTES) : (isset($_SESSION['user_id']) ? 'customer' : 'guest')); ?>'
@@ -289,21 +287,18 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     </script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-system.js"></script>
 
-    <!-- Modern Effects Engine -->
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/modern-effects.js"></script>
-
     <!-- Custom JS -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/modern-effects.js?v=1"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/toast-notifications.js"></script>
-    <!-- Frontend enhancements: a11y, forms, toasts, loading -->
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
-    <!-- Image gallery lightbox -->
-    <script defer src="<?php echo BASE_URL; ?>/assets/js/image-gallery.js"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/aps-location-autofill.js"></script>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/aps-map-picker.js"></script>
+    <!-- Leaflet JS for map picker -->
+    <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- premium-header.js removed - functionality merged into header.php inline -->
 
     <!-- Utility JS -->
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
             if (anchor.hasAttribute('data-bs-toggle')) return;
             if (anchor.getAttribute('role') === 'tab') return;
@@ -342,7 +337,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
             });
         }
     </script>
-    <script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     // Polyfill or fallback mapping if needed, toast is handled by toast-notifications.js
     function showToast(message, type) {
         if (typeof window.APS !== 'undefined' && window.APS.toast) {

@@ -26,8 +26,20 @@ if (!defined('APS_STORAGE')) define('APS_STORAGE', APS_ROOT . '/storage');
 if (!defined('APS_VENDOR')) define('APS_VENDOR', APS_ROOT . '/vendor');
 if (!defined('APS_ASSETS')) define('APS_ASSETS', APS_PUBLIC . '/assets');
 
-// URL configuration
-$baseUrl = $_ENV['BASE_URL'] ?? 'http://localhost/apsdreamhome/public';
+// URL configuration — auto-detect from request for ngrok/remote access
+// Auto-detect base path from script location (e.g., /public/index.php → /apsdreamhome)
+$scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+$basePath = preg_replace('#/public$#', '', $scriptDir);
+
+if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https' : 'http';
+    $baseUrl = $scheme . '://' . $_SERVER['HTTP_X_FORWARDED_HOST'] . $basePath;
+} elseif (isset($_SERVER['HTTP_HOST'])) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $baseUrl = $scheme . '://' . $_SERVER['HTTP_HOST'] . $basePath;
+} else {
+    $baseUrl = $_ENV['BASE_URL'] ?? 'http://localhost' . $basePath;
+}
 if (!defined('BASE_URL')) define('BASE_URL', $baseUrl);
 if (!defined('APS_URL')) define('APS_URL', $baseUrl);
 

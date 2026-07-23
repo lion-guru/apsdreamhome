@@ -14,7 +14,9 @@ class ApiDocumentation
 
     public function __construct()
     {
-        $this->baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/apsdreamhome/';
+        $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+        $basePath = preg_replace('#/public$#', '', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
+        $this->baseUrl = ($isHttps ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $basePath . '/';
         $this->loadApiEndpoints();
     }
 

@@ -44,7 +44,75 @@ class CRMController extends AdminController
     public function createCustomer()
     {
         $this->requireAdmin();
-        return $this->render('admin/crm/create', []);
+        return $this->render('admin/crm/customers/create', []);
+    }
+
+    /**
+     * Store a new CRM customer (users row with role='customer')
+     */
+    public function storeCustomer()
+    {
+        $this->requireAdmin();
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $password = trim($_POST['password'] ?? '');
+        $city = trim($_POST['city'] ?? '');
+        $budget = trim($_POST['budget'] ?? '');
+        $address = trim($_POST['address'] ?? '');
+
+        if (!$name || !$email || !$phone) {
+            $this->setFlash('error', 'Name, Email and Phone are required');
+            header('Location: ' . BASE_URL . '/admin/crm/users/create');
+            exit;
+        }
+
+        try {
+            $exists = $this->db->fetch("SELECT id FROM users WHERE email=?", [$email]);
+            if ($exists) {
+                $this->setFlash('error', 'A user with this email already exists');
+                header('Location: ' . BASE_URL . '/admin/crm/users/create');
+                exit;
+            }
+
+            $regService = new \App\Services\UserRegistrationService();
+            $user = null;
+            $result = $regService->createUser('customer', [
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'password' => $password ?: ('cust@' . rand(100000, 999999)),
+                'registration_method' => 'admin',
+            ], $user);
+
+            if (!$result['success']) {
+                $this->setFlash('error', 'Error: ' . ($result['message'] ?? 'could not create customer'));
+                header('Location: ' . BASE_URL . '/admin/crm/users/create');
+                exit;
+            }
+
+            $userId = $result['user_id'];
+
+            // Persist optional profile fields if columns exist
+            $cols = $this->db->fetchAll("SHOW COLUMNS FROM users WHERE Field IN ('city','budget','address')");
+            $extra = array_column($cols, 'Field');
+            $updates = [];
+            $params = [];
+            if (in_array('city', $extra, true)) { $updates[] = 'city=?'; $params[] = $city; }
+            if (in_array('budget', $extra, true)) { $updates[] = 'budget=?'; $params[] = $budget; }
+            if (in_array('address', $extra, true)) { $updates[] = 'address=?'; $params[] = $address; }
+            if ($updates) {
+                $params[] = $userId;
+                $this->db->execute("UPDATE users SET " . implode(',', $updates) . " WHERE id=?", $params);
+            }
+
+            $this->setFlash('success', 'Customer created successfully. ID: ' . $userId);
+        } catch (\Exception $e) {
+            error_log('[CRMController::storeCustomer] ' . $e->getMessage());
+            $this->setFlash('error', 'Error: ' . $e->getMessage());
+        }
+        header('Location: ' . BASE_URL . '/admin/crm/users');
+        exit;
     }
 
     public function groups()

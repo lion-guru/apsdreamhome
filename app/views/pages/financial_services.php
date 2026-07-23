@@ -8,7 +8,7 @@ try {
     $services = $services ?? [];
     $advisors = $advisors ?? [];
     $faqs = $faqs ?? [];
-} catch (Exception $e) {
+} catch (\Exception $e) {
     error_log('Financial services page database error: ' . $e->getMessage());
     $services = [];
     $advisors = [];
@@ -17,19 +17,20 @@ try {
 ?>
 
 <!-- Hero Section -->
-<section class="financial-hero">
-    <div class="container">
-        <div class="row justify-content-center">
+<section class="hero-premium pt-5 pb-5">
+    <div class="container premium-reveal fade-up position-relative z-2">
+        <div class="row justify-content-center text-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-4" data-aos="fade-up"><?= __('fs_hero_title') ?></h1>
-                <p class="lead mb-4" data-aos="fade-up" data-aos-delay="100">
+                <span class="capsule-badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 mb-3 px-3 py-2"><i class="fas fa-coins me-1"></i> Financial Services</span>
+                <h1 class="display-4 fw-bold text-white mb-4"><?= __('fs_hero_title') ?></h1>
+                <p class="lead text-white-50 mb-4">
                     <?= __('fs_hero_desc') ?>
                 </p>
-                <div class="d-flex gap-3 justify-content-center flex-wrap" data-aos="fade-up" data-aos-delay="200">
-                    <a href="#contact-form" class="btn btn-light btn-lg">
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="#contact-form" class="btn btn-premium px-4 py-2">
                         <i class="fas fa-coins me-2"></i><?= __('fs_get_advice') ?>
                     </a>
-                    <a href="#services" class="btn btn-outline-light btn-lg">
+                    <a href="#services" class="btn btn-outline-light btn-lg px-4 py-2">
                         <i class="fas fa-list me-2"></i><?= __('fs_our_services') ?>
                     </a>
                 </div>
@@ -65,9 +66,11 @@ try {
             <div class="row g-4">
                 <?php foreach ($services as $index => $service): ?>
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
-                        <div class="service-card h-100">
-                            <div class="service-icon">
-                                <i class="<?php echo htmlspecialchars($service['icon'] ?? 'fas fa-coins'); ?>"></i>
+                        <div class="service-card h-100 bg-white rounded-4 shadow-sm hover-lift p-4 border border-light">
+                            <div class="service-icon mb-4">
+                                <div class="icon-wrap bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 60px; height: 60px; font-size: 24px;">
+                                    <i class="<?php echo htmlspecialchars($service['icon'] ?? 'fas fa-coins'); ?>"></i>
+                                </div>
                             </div>
                             <h3 class="h4 fw-bold mb-3"><?php echo htmlspecialchars($service['title'] ?? 'Financial Service'); ?></h3>
                             <p class="text-muted mb-4"><?php echo htmlspecialchars($service['description'] ?? 'Professional financial assistance for your real estate needs.'); ?></p>
@@ -88,12 +91,12 @@ try {
                             
                             <div class="mt-3">
                                 <?php if (!empty($service['interest_rate'])): ?>
-                                    <span class="badge bg-primary me-2">
+                                    <span class="capsule-badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10 me-2 mb-2">
                                         <i class="fas fa-percentage me-1"></i>From <?= number_format($service['interest_rate'], 2) ?>% p.a.
                                     </span>
                                 <?php endif; ?>
                                 <?php if (!empty($service['max_amount']) && $service['max_amount'] > 0): ?>
-                                    <span class="badge bg-success me-2">
+                                    <span class="capsule-badge bg-success bg-opacity-10 text-success border border-success border-opacity-10 me-2 mb-2">
                                         <i class="fas fa-rupee-sign me-1"></i>Up to ₹<?= number_format($service['max_amount'] / 10000000, 1) ?> Cr
                                     </span>
                                 <?php endif; ?>

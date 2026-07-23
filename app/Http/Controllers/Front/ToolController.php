@@ -14,7 +14,7 @@ class ToolController extends PageController
             'page_title' => 'Stamp Duty Calculator - APS Dream Home',
             'page_description' => 'Calculate stamp duty for property purchase',
         ];
-        $this->render('pages/stamp_duty_calculator', $data);
+        $this->render('pages/tools/stamp_duty_calculator', $data);
     }
 
     public function plotSizeConverter()
@@ -23,7 +23,7 @@ class ToolController extends PageController
             'page_title' => 'Plot Size Converter - APS Dream Home',
             'page_description' => 'Convert plot size between units',
         ];
-        $this->render('pages/plot_size_converter', $data);
+        $this->render('pages/tools/plot_converter', $data);
     }
 
     public function plotConverter()
@@ -37,7 +37,7 @@ class ToolController extends PageController
             'page_title' => 'Property Valuation Calculator - APS Dream Home',
             'page_description' => 'Estimate property value',
         ];
-        $this->render('pages/valuation_calculator', $data);
+        $this->render('pages/tools/valuation_calculator', $data);
     }
 
     public function homeLoanEligibility()
@@ -46,7 +46,7 @@ class ToolController extends PageController
             'page_title' => 'Home Loan Eligibility Calculator - APS Dream Home',
             'page_description' => 'Calculate your home loan eligibility',
         ];
-        $this->render('pages/home_loan_eligibility', $data);
+        $this->render('pages/tools/loan_eligibility', $data);
     }
 
     public function propertyValuation()
@@ -55,7 +55,7 @@ class ToolController extends PageController
             'page_title' => 'Property Valuation - APS Dream Home',
             'page_description' => 'Get property valuation',
         ];
-        $this->render('pages/property_valuation', $data);
+        $this->render('pages/tools/property_valuation', $data);
     }
 
     public function rentVsBuy()
@@ -64,7 +64,7 @@ class ToolController extends PageController
             'page_title' => 'Rent vs Buy Calculator - APS Dream Home',
             'page_description' => 'Compare renting vs buying',
         ];
-        $this->render('pages/rent_vs_buy', $data);
+        $this->render('pages/tools/rent_vs_buy', $data);
     }
 
     public function sipVsRealestate()
@@ -73,7 +73,7 @@ class ToolController extends PageController
             'page_title' => 'SIP vs Real Estate Calculator - APS Dream Home',
             'page_description' => 'Compare SIP returns vs real estate investment',
         ];
-        $this->render('pages/sip_vs_realestate', $data);
+        $this->render('pages/tools/sip_vs_realestate', $data);
     }
 
     public function capitalGains()
@@ -82,7 +82,7 @@ class ToolController extends PageController
             'page_title' => 'Capital Gains Tax Calculator - APS Dream Home',
             'page_description' => 'Calculate capital gains tax on property sale',
         ];
-        $this->render('pages/capital_gains', $data);
+        $this->render('pages/tools/capital_gains', $data);
     }
 
     public function gstCalculator()
@@ -91,7 +91,7 @@ class ToolController extends PageController
             'page_title' => 'GST Calculator - APS Dream Home',
             'page_description' => 'Calculate GST on property purchase',
         ];
-        $this->render('pages/gst_calculator', $data);
+        $this->render('pages/tools/gst_calculator', $data);
     }
 
     public function constructionCostEstimator()
@@ -100,7 +100,7 @@ class ToolController extends PageController
             'page_title' => 'Construction Cost Estimator - APS Dream Home',
             'page_description' => 'Estimate construction costs',
         ];
-        $this->render('pages/construction_cost_estimator', $data);
+        $this->render('pages/tools/construction_cost', $data);
     }
 
     public function rentalYieldCalculator()
@@ -109,7 +109,7 @@ class ToolController extends PageController
             'page_title' => 'Rental Yield Calculator - APS Dream Home',
             'page_description' => 'Calculate rental yield on property',
         ];
-        $this->render('pages/rental_yield_calculator', $data);
+        $this->render('pages/tools/rental_yield', $data);
     }
 
     public function propertyTaxCalculator()
@@ -118,7 +118,7 @@ class ToolController extends PageController
             'page_title' => 'Property Tax Calculator - APS Dream Home',
             'page_description' => 'Calculate property tax',
         ];
-        $this->render('pages/property_tax_calculator', $data);
+        $this->render('pages/tools/property_tax', $data);
     }
 
     public function calc()
@@ -127,7 +127,7 @@ class ToolController extends PageController
             'page_title' => 'Calculators - APS Dream Home',
             'page_description' => 'All financial calculators',
         ];
-        $this->render('pages/calculators', $data);
+        $this->render('pages/calc', $data);
     }
 
     public function toolsHub()
@@ -136,7 +136,7 @@ class ToolController extends PageController
             'page_title' => 'Tools Hub - APS Dream Home',
             'page_description' => 'All free tools and calculators',
         ];
-        $this->render('pages/tools_hub', $data);
+        $this->render('pages/tools/hub', $data);
     }
 
     public function partnerTools()
@@ -145,7 +145,7 @@ class ToolController extends PageController
             'page_title' => 'Partner Tools - APS Dream Home',
             'page_description' => 'Tools for property partners',
         ];
-        $this->render('pages/partner_tools', $data);
+        $this->render('pages/tools/partner_tools', $data);
     }
 
     public function reraLookup()

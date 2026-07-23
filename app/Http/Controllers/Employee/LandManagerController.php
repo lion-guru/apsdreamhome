@@ -32,7 +32,7 @@ class LandManagerController extends BaseController
             @session_start();
         }
 
-        $this->employeeId = $_SESSION['employee_id'] ?? null;
+        $this->employeeId = $_SESSION['employee_id'] ?? $_SESSION['user_id'] ?? null;
 
         if (!$this->employeeId) {
             header('Location: ' . BASE_URL . '/employee/login');
@@ -73,8 +73,18 @@ class LandManagerController extends BaseController
                 'recent_activities' => $recentActivities,
                 'documentation_status' => $documentationStatus
             ]);
-        } catch (Exception $e) {
-            $this->handleError($e->getMessage());
+        } catch (\Exception $e) {
+            error_log("Land Manager Controller Error: " . $e->getMessage());
+            $this->render('employees/department', [
+                'page_title' => 'Land Dashboard',
+                'dept_title' => 'Land Dashboard',
+                'dept_icon'  => 'fas fa-map',
+                'dept_desc'  => 'Land acquisition: parcel tracking, survey status, and land bank overview.',
+                'dept_color' => '#10b981',
+                'dept_slug'  => 'land-dashboard',
+                'employee_id' => $this->employeeId,
+                'employee_name' => $_SESSION['employee_name'] ?? $_SESSION['user_name'] ?? 'Employee',
+            ]);
         }
     }
 
@@ -302,7 +312,7 @@ class LandManagerController extends BaseController
                 'visit_id' => $visitId,
                 'message' => "Site visit scheduled successfully"
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -394,7 +404,7 @@ class LandManagerController extends BaseController
                 'success' => true,
                 'message' => "Land acquisition updated successfully"
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -450,7 +460,7 @@ class LandManagerController extends BaseController
                 'success' => true,
                 'message' => "Site visit completed successfully"
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -517,7 +527,7 @@ class LandManagerController extends BaseController
                 'success' => true,
                 'message' => "Property documentation updated successfully"
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -543,7 +553,7 @@ class LandManagerController extends BaseController
                 default:
                     throw new Exception("Invalid report type");
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()

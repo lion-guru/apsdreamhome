@@ -1,7 +1,7 @@
 <?php
 $engagement_data = $engagement_data ?? [];
 $page_title = $page_title ?? 'Engagement';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">

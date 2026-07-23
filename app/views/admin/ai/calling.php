@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'AI Calling System - APS Dream Home';
 $page_heading = $page_heading ?? 'AI Calling System';
 
@@ -21,8 +21,8 @@ $ai_agents = $ai_agents ?? [];
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
-                        <li class="breadcrumb-item"><a href="/admin/ai">AI</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/ai">AI</a></li>
                         <li class="breadcrumb-item active">Calling System</li>
                     </ol>
                 </div>
@@ -228,7 +228,7 @@ $ai_agents = $ai_agents ?? [];
                     <div class="card card-outline card-secondary">
                         <div class="card-header">
                             <h3 class="card-title"><i class="fas fa-history"></i> Recent Calls</h3>
-                            <a href="/admin/sim-calling" class="btn btn-sm btn-outline-teal float-right">Full Dashboard</a>
+                            <a href="<?= BASE_URL ?>/admin/sim-calling" class="btn btn-sm btn-outline-teal float-right">Full Dashboard</a>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -291,22 +291,22 @@ $ai_agents = $ai_agents ?? [];
             <!-- Navigation Links -->
             <div class="row">
                 <div class="col-md-3">
-                    <a href="/admin/sim-calling" class="btn btn-outline-teal btn-block mb-3">
+                    <a href="<?= BASE_URL ?>/admin/sim-calling" class="btn btn-outline-teal btn-block mb-3">
                         <i class="fas fa-phone-volume"></i> SIM Calling Dashboard
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="/admin/voice-users/dashboard" class="btn btn-outline-primary btn-block mb-3">
+                    <a href="<?= BASE_URL ?>/admin/voice-users/dashboard" class="btn btn-outline-primary btn-block mb-3">
                         <i class="fas fa-headset"></i> Voice Agent Dashboard
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="/admin/voice-users/schedule" class="btn btn-outline-success btn-block mb-3">
+                    <a href="<?= BASE_URL ?>/admin/voice-users/schedule" class="btn btn-outline-success btn-block mb-3">
                         <i class="fas fa-calendar"></i> Call Schedule
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="/admin/voice-users/scripts" class="btn btn-outline-info btn-block mb-3">
+                    <a href="<?= BASE_URL ?>/admin/voice-users/scripts" class="btn btn-outline-info btn-block mb-3">
                         <i class="fas fa-scroll"></i> Call Scripts
                     </a>
                 </div>
@@ -334,7 +334,7 @@ async function quickCall() {
     statusDiv.innerHTML = '<div class="alert alert-info mb-0">Initiating call...</div>';
 
     try {
-        const res = await fetch('/admin/sim-calling/api/make-call', {
+        const res = await fetch('<?= BASE_URL ?>/admin/sim-calling/api/make-call', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -360,7 +360,7 @@ async function quickCall() {
 async function hangupCall(channel) {
     if (!confirm('Hangup this call?')) return;
     try {
-        await fetch('/admin/sim-calling/api/hangup', {
+        await fetch('<?= BASE_URL ?>/admin/sim-calling/api/hangup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ channel })

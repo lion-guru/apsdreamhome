@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'E-Filing Dashboard';
 ob_start();
 ?>
@@ -8,9 +8,9 @@ ob_start();
         <span class="text-muted">FY <?= htmlspecialchars($fy) ?> | Quarter <?= htmlspecialchars($quarter) ?></span>
     </div>
     <div class="d-flex gap-2">
-        <a href="/admin/efiling/tds" class="btn btn-outline-danger btn-sm"><i class="fas fa-file-invoice-dollar me-1"></i>TDS Filing</a>
-        <a href="/admin/efiling/gst" class="btn btn-outline-primary btn-sm"><i class="fas fa-file-alt me-1"></i>GST Filing</a>
-        <a href="/admin/efiling/calendar" class="btn btn-outline-success btn-sm"><i class="fas fa-calendar me-1"></i>Calendar</a>
+        <a href="<?= BASE_URL ?>/admin/efiling/tds" class="btn btn-outline-danger btn-sm"><i class="fas fa-file-invoice-dollar me-1"></i>TDS Filing</a>
+        <a href="<?= BASE_URL ?>/admin/efiling/gst" class="btn btn-outline-primary btn-sm"><i class="fas fa-file-alt me-1"></i>GST Filing</a>
+        <a href="<?= BASE_URL ?>/admin/efiling/calendar" class="btn btn-outline-success btn-sm"><i class="fas fa-calendar me-1"></i>Calendar</a>
     </div>
 </div>
 
@@ -147,7 +147,7 @@ ob_start();
 <div class="card border-0 shadow-sm mt-4">
     <div class="card-header bg-white border-bottom d-flex justify-content-between">
         <h6 class="mb-0"><i class="fas fa-history me-2"></i>Recent Submissions</h6>
-        <a href="/admin/efiling/submissions" class="btn btn-sm btn-outline-primary">View All</a>
+        <a href="<?= BASE_URL ?>/admin/efiling/submissions" class="btn btn-sm btn-outline-primary">View All</a>
     </div>
     <div class="card-body p-0">
         <?php if (empty($recent_submissions)): ?>

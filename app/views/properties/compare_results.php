@@ -356,7 +356,7 @@ function confirmSave() {
     const sessionName = document.getElementById('session-name').value;
     const propertyIds = <?= json_encode(array_column($properties, 'id')) ?>;
     
-    fetch('/compare/save', {
+    fetch('<?= BASE_URL ?>/compare/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

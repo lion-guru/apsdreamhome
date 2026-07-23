@@ -2674,10 +2674,38 @@ class AssociateController extends BaseController
                 if ($existing) {
                     $customerId = $existing['id'];
                 } else {
-                    // Create new customer
+                    // Create new customer with secure random password
+                    // Customer will receive a "Complete Registration" email to set their own password
+                    $tempPassword = bin2hex(random_bytes(12)); // 24-char secure random
                     $pdo->prepare("INSERT INTO users (name, phone, email, role, password, created_at) VALUES (?, ?, ?, 'customer', ?, NOW())")
-                        ->execute([$customerName, $customerPhone, $customerEmail, password_hash('customer123', PASSWORD_DEFAULT)]);
+                        ->execute([$customerName, $customerPhone, $customerEmail, password_hash($tempPassword, PASSWORD_DEFAULT)]);
                     $customerId = $pdo->lastInsertId();
+
+                    // Generate password reset token so customer can set their own password
+                    try {
+                        $resetToken = bin2hex(random_bytes(32));
+                        $expiresAt = date('Y-m-d H:i:s', strtotime('+24 hours'));
+                        $pdo->prepare("INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at) VALUES (?, ?, ?, NOW())")
+                            ->execute([$customerId, $resetToken, $expiresAt]);
+                        $resetLink = BASE_URL . '/reset-password?token=' . $resetToken;
+
+                        // Send "Complete Your Registration" email
+                        if (class_exists('App\Services\EmailService')) {
+                            $emailService = new \App\Services\EmailService();
+                            $emailService->send([
+                                'to' => $customerEmail,
+                                'subject' => 'Welcome to APS Dream Home - Complete Your Registration',
+                                'template' => 'welcome_enhanced',
+                                'data' => [
+                                    'name' => $customerName,
+                                    'reset_link' => $resetLink,
+                                    'temp_password' => $tempPassword,
+                                ]
+                            ]);
+                        }
+                    } catch (\Throwable $e) {
+                        error_log("Failed to send welcome email to $customerEmail: " . $e->getMessage());
+                    }
                 }
 
                 // Generate booking number
@@ -2747,7 +2775,7 @@ $this->render('associate/book_plot', [
     {
         $this->requireAuth();
         $this->layout = 'layouts/associate';
-        $base = BASE_URL ?? '/apsdreamhome';
+        $base = BASE_URL;
         
         $this->render('associate/tools', [
             'page_title' => 'Smart Tools - APS Dream Home Associate',

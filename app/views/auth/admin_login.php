@@ -2,7 +2,8 @@
 if (!defined('BASE_URL')) {
     $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    define('BASE_URL', $protocol . '://' . $host . '/apsdreamhome');
+    $basePath = preg_replace('#/public$#', '', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
+    define('BASE_URL', $protocol . '://' . $host . $basePath);
 }
 $captcha_question = $captcha_question ?? '5 + 3 = ?';
 $csrf_token = $csrf_token ?? '';

@@ -59,14 +59,14 @@ class AdminWorkflowController extends AdminController
         $this->checkAdminAuth();
         
         $stats = [
-            'workflows' => $this->workflowService->getAllWorkflows(),
-            'pending_approvals' => $this->workflowService->getPendingForUser(
+            'workflows' => $this->workflowService ? $this->workflowService->getAllWorkflows() : [],
+            'pending_approvals' => $this->workflowService ? $this->workflowService->getPendingForUser(
                 $_SESSION['admin_id'] ?? 0, 
                 $_SESSION['admin_role'] ?? 'admin'
-            ),
-            'audit_stats' => $this->auditService->getStats('today'),
-            'email_stats' => $this->emailQueueService->getStats(),
-            'backups' => $this->backupService->listBackups()
+            ) : [],
+            'audit_stats' => $this->auditService ? $this->auditService->getStats('today') : [],
+            'email_stats' => $this->emailQueueService ? $this->emailQueueService->getStats() : [],
+            'backups' => $this->backupService ? $this->backupService->listBackups() : []
         ];
         
         $this->render('admin/workflows/dashboard', [
@@ -199,7 +199,14 @@ class AdminWorkflowController extends AdminController
     {
         $this->checkAdminAuth();
         
-        $savedReports = $this->reportService->getSavedReports($_SESSION['admin_id'] ?? 0);
+        $savedReports = [];
+        try {
+            if ($this->reportService) {
+                $savedReports = $this->reportService->getSavedReports($_SESSION['admin_id'] ?? 0);
+            }
+        } catch (\Exception $e) {
+            error_log("reports() getSavedReports error: " . $e->getMessage());
+        }
         
         $this->render('admin/reports/dashboard', [
             'title' => 'Report Builder',
@@ -220,16 +227,27 @@ class AdminWorkflowController extends AdminController
             'group_by' => $_GET['group_by'] ?? 'daily'
         ];
         
-        $data = $this->reportService->generateSalesReport($filters);
+        $data = [];
+        try {
+            if ($this->reportService) {
+                $data = $this->reportService->generateSalesReport($filters);
+            }
+        } catch (\Exception $e) {
+            error_log("salesReport error: " . $e->getMessage());
+        }
         
         if ($_GET['export'] ?? false) {
-            $export = $this->reportService->exportReport('sales', $filters, $_GET['format'] ?? 'csv');
-            
-            if ($export['success']) {
-                header('Content-Type: application/octet-stream');
-                header('Content-Disposition: attachment; filename="' . $export['filename'] . '"');
-                readfile($export['filepath']);
-                exit;
+            try {
+                $export = $this->reportService->exportReport('sales', $filters, $_GET['format'] ?? 'csv');
+                
+                if ($export['success']) {
+                    header('Content-Type: application/octet-stream');
+                    header('Content-Disposition: attachment; filename="' . $export['filename'] . '"');
+                    readfile($export['filepath']);
+                    exit;
+                }
+            } catch (\Exception $e) {
+                error_log("salesReport export error: " . $e->getMessage());
             }
         }
         
@@ -252,7 +270,14 @@ class AdminWorkflowController extends AdminController
             'date_to' => $_GET['date_to'] ?? date('Y-m-d')
         ];
         
-        $data = $this->reportService->generateLeadsReport($filters);
+        $data = [];
+        try {
+            if ($this->reportService) {
+                $data = $this->reportService->generateLeadsReport($filters);
+            }
+        } catch (\Exception $e) {
+            error_log("leadsReport error: " . $e->getMessage());
+        }
         
         $this->render('admin/reports/leads', [
             'title' => 'Leads Report',
@@ -274,7 +299,14 @@ class AdminWorkflowController extends AdminController
             'associate_id' => $_GET['associate_id'] ?? null
         ];
         
-        $data = $this->reportService->generateCommissionReport($filters);
+        $data = [];
+        try {
+            if ($this->reportService) {
+                $data = $this->reportService->generateCommissionReport($filters);
+            }
+        } catch (\Exception $e) {
+            error_log("commissionReport error: " . $e->getMessage());
+        }
         
         $this->render('admin/reports/commission', [
             'title' => 'Commission Report',
@@ -561,6 +593,78 @@ class AdminWorkflowController extends AdminController
         echo json_encode(['success' => true, 'retried' => $count]);
         exit;
     }
+
+    public function deleteBackup()
+    {
+        $this->checkAdminAuth();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $id = $input['id'] ?? null;
+        if (!$id) {
+            echo json_encode(['success' => false, 'error' => 'Missing backup ID']);
+            exit;
+        }
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("DELETE FROM backups WHERE id = ?");
+            $stmt->execute([$id]);
+            echo json_encode(['success' => true]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function restoreBackup()
+    {
+        $this->checkAdminAuth();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $id = $input['id'] ?? null;
+        if (!$id) {
+            echo json_encode(['success' => false, 'error' => 'Missing backup ID']);
+            exit;
+        }
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("SELECT * FROM backups WHERE id = ?");
+            $stmt->execute([$id]);
+            $backup = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$backup) {
+                echo json_encode(['success' => false, 'error' => 'Backup not found']);
+                exit;
+            }
+            $filePath = $backup['file_path'] ?? null;
+            if ($filePath && file_exists($filePath)) {
+                $sql = file_get_contents($filePath);
+                $db->exec($sql);
+                echo json_encode(['success' => true, 'message' => 'Backup restored successfully']);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Backup file not found on disk']);
+            }
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function cancelEmail()
+    {
+        $this->checkAdminAuth();
+        $input = json_decode(file_get_contents('php://input'), true);
+        $id = $input['id'] ?? null;
+        if (!$id) {
+            echo json_encode(['success' => false, 'error' => 'Missing email ID']);
+            exit;
+        }
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("UPDATE email_queue SET status = 'cancelled', updated_at = NOW() WHERE id = ? AND status IN ('pending', 'queued')");
+            $stmt->execute([$id]);
+            echo json_encode(['success' => true]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
     
     // ==================== API DOCUMENTATION ====================
     
@@ -622,12 +726,5 @@ class AdminWorkflowController extends AdminController
             exit;
         }
     }
-    
-    /**
-     * Set flash message
-     */
-    private function flashMessage(string $message, string $type = 'info'): void
-    {
-        $_SESSION['flash'] = ['message' => $message, 'type' => $type];
-    }
 }
+

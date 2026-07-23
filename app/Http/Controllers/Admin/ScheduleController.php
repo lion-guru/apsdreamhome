@@ -107,7 +107,7 @@ class ScheduleController extends AdminController
                 'today' => $today,
                 'day_of_week' => $dayOfWeek,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading schedule dashboard: ' . $e->getMessage());
             return $this->render('admin/schedule/index', [
                 'page_title' => 'Work Schedule Management',
@@ -132,7 +132,7 @@ class ScheduleController extends AdminController
                 'page_title' => 'Shift Types',
                 'shift_types' => $shiftTypes,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading shift types: ' . $e->getMessage());
             return $this->redirect('/admin/schedule');
         }
@@ -165,7 +165,7 @@ class ScheduleController extends AdminController
             );
 
             $this->setFlash('success', 'Shift type created successfully.');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error creating shift type: ' . $e->getMessage());
         }
 
@@ -201,7 +201,7 @@ class ScheduleController extends AdminController
             );
 
             $this->setFlash('success', 'Shift type updated successfully.');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error updating shift type: ' . $e->getMessage());
         }
 
@@ -235,7 +235,7 @@ class ScheduleController extends AdminController
                 $this->db->execute("DELETE FROM shift_types WHERE id = ?", [$id]);
                 $this->setFlash('success', 'Shift type deleted successfully.');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error deleting shift type: ' . $e->getMessage());
         }
 
@@ -312,7 +312,7 @@ class ScheduleController extends AdminController
                     'date_to' => $dateTo,
                 ],
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading employee shifts: ' . $e->getMessage());
             return $this->redirect('/admin/schedule');
         }
@@ -367,7 +367,7 @@ class ScheduleController extends AdminController
             );
 
             $this->setFlash('success', 'Shift assigned successfully.');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error assigning shift: ' . $e->getMessage());
         }
 
@@ -443,7 +443,7 @@ class ScheduleController extends AdminController
             );
 
             $this->setFlash('success', 'Assignment updated successfully.');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error updating assignment: ' . $e->getMessage());
         }
 
@@ -457,7 +457,7 @@ class ScheduleController extends AdminController
         try {
             $this->db->execute("DELETE FROM employee_shifts WHERE id = ?", [(int)$id]);
             $this->setFlash('success', 'Assignment removed successfully.');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error removing assignment: ' . $e->getMessage());
         }
 
@@ -532,7 +532,7 @@ class ScheduleController extends AdminController
                 'shift_types' => $shiftTypes,
                 'department_id' => $departmentId,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading schedule: ' . $e->getMessage());
             return $this->redirect('/admin/schedule');
         }
@@ -577,7 +577,7 @@ class ScheduleController extends AdminController
             );
 
             $this->setFlash('success', 'Schedule entry created successfully.');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error creating schedule entry: ' . $e->getMessage());
         }
 
@@ -658,7 +658,7 @@ class ScheduleController extends AdminController
             }
 
             $this->setFlash('success', "Bulk schedule complete: {$created} shifts created, {$skipped} skipped (already scheduled).");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error in bulk scheduling: ' . $e->getMessage());
         }
 
@@ -703,7 +703,7 @@ class ScheduleController extends AdminController
                 'department' => $department,
                 'day_names' => $dayNames,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading work schedules: ' . $e->getMessage());
             return $this->redirect('/admin/schedule');
         }
@@ -766,7 +766,7 @@ class ScheduleController extends AdminController
             }
 
             $this->setFlash('success', 'Work schedule saved successfully.');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error saving work schedule: ' . $e->getMessage());
         }
 
@@ -856,7 +856,7 @@ class ScheduleController extends AdminController
                 'departments' => $departments,
                 'department' => $department,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading weekly view: ' . $e->getMessage());
             return $this->redirect('/admin/schedule');
         }
@@ -890,7 +890,7 @@ class ScheduleController extends AdminController
                 'shift_types' => $shiftTypes,
                 'departments' => $departments,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading rotation data: ' . $e->getMessage());
             return $this->redirect('/admin/schedule');
         }

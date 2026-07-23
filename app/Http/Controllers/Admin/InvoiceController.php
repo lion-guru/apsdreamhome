@@ -18,12 +18,12 @@ class InvoiceController extends AdminController
             if (method_exists($this->db, 'getPdo')) {
                 $this->db = $this->db->getPdo();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->db = null;
         }
         try {
             $this->service = new InvoiceService($this->db instanceof \PDO ? $this->db : null);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->service = new InvoiceService();
         }
     }
@@ -32,7 +32,7 @@ class InvoiceController extends AdminController
     {
         try {
             return $fn();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $fallback;
         }
     }
@@ -141,7 +141,7 @@ class InvoiceController extends AdminController
             $invoiceId = $this->service->createInvoice($data);
             redirect(BASE_URL . '/admin/invoices/manage/' . $invoiceId . '?success=Invoice created successfully');
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             redirect(BASE_URL . '/admin/invoices/manage/create?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -258,7 +258,7 @@ class InvoiceController extends AdminController
 
             redirect(BASE_URL . '/admin/invoices/manage/' . $id . '?success=Invoice updated');
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             redirect(BASE_URL . '/admin/invoices/manage/' . $id . '/edit?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -271,7 +271,7 @@ class InvoiceController extends AdminController
             $this->service->deleteInvoice((int)$id);
             redirect(BASE_URL . '/admin/invoices/manage?success=Invoice deleted');
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             redirect(BASE_URL . '/admin/invoices/manage?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -285,7 +285,7 @@ class InvoiceController extends AdminController
             $success = isset($_GET['redirect']) ? '' : '?success=Invoice marked as paid';
             redirect(BASE_URL . '/admin/invoices/manage/' . $id . $success);
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             redirect(BASE_URL . '/admin/invoices/manage?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -298,7 +298,7 @@ class InvoiceController extends AdminController
             $this->service->markAsSent((int)$id);
             redirect(BASE_URL . '/admin/invoices/manage/' . $id . '?success=Invoice marked as sent');
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             redirect(BASE_URL . '/admin/invoices/manage?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -338,7 +338,7 @@ class InvoiceController extends AdminController
             $invoiceId = $this->service->createFromBooking((int)$bookingId);
             redirect(BASE_URL . '/admin/invoices/manage/' . $invoiceId . '?success=Invoice generated from booking');
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             redirect(BASE_URL . '/admin/invoices/manage?error=' . urlencode($e->getMessage()));
             exit;
         }

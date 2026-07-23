@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'TIN Portal';
 ob_start();
 ?>
@@ -8,8 +8,8 @@ ob_start();
         <span class="text-muted">TIN-NSDL API Integration | FY <?= htmlspecialchars($fy) ?> | Q<?= htmlspecialchars($quarter) ?></span>
     </div>
     <div class="d-flex gap-2">
-        <a href="/admin/efiling/tds" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>TDS Filing</a>
-        <a href="/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-home me-1"></i>Dashboard</a>
+        <a href="<?= BASE_URL ?>/admin/efiling/tds" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>TDS Filing</a>
+        <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-home me-1"></i>Dashboard</a>
     </div>
 </div>
 
@@ -209,7 +209,7 @@ document.querySelectorAll('#tin26qForm, #tin27qForm').forEach(function(form) {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Submitting...';
         resultDiv.style.display = 'none';
 
-        fetch('/admin/efiling/tin/submit', {
+        fetch('<?= BASE_URL ?>/admin/efiling/tin/submit', {
             method: 'POST',
             body: new FormData(form)
         }).then(function(r) { return r.json(); }).then(function(data) {
@@ -241,7 +241,7 @@ document.getElementById('form16aDownload').addEventListener('submit', function(e
     var resultDiv = document.getElementById('form16aResult');
     if (!token) { resultDiv.style.display = 'block'; resultDiv.innerHTML = '<div class="alert alert-warning py-2 mb-0">Enter a token number</div>'; return; }
 
-    fetch('/admin/efiling/tin/status/' + encodeURIComponent(token))
+    fetch('<?= BASE_URL ?>/admin/efiling/tin/status/' + encodeURIComponent(token))
         .then(function(r) { return r.json(); }).then(function(data) {
             resultDiv.style.display = 'block';
             if (data.success) {

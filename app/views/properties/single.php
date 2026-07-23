@@ -74,7 +74,7 @@ try {
     $related_stmt->execute([$property_id, $property['property_type_id']]);
     $related_properties = $related_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-} catch (Exception $e) {
+} catch (\Exception $e) {
     error_log('Error fetching property details: ' . $e->getMessage());
     $error_message = 'Unable to load property details. Please try again later.';
 }

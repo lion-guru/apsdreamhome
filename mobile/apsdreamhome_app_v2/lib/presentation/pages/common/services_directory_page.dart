@@ -1,151 +1,129 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/glass_card.dart';
 
-class ServicesDirectoryPage extends StatelessWidget {
+class ServicesDirectoryPage extends StatefulWidget {
   const ServicesDirectoryPage({super.key});
 
-  static const _categories = [
-    _CategoryData(
-      'Real Estate Agents',
-      Icons.people_alt_rounded,
-      Color(0xFF1A237E),
-      1250,
-    ),
-    _CategoryData(
-      'Home Loans',
-      Icons.account_balance_rounded,
-      Color(0xFF4CAF50),
-      890,
-    ),
-    _CategoryData(
-      'Legal Services',
-      Icons.gavel_rounded,
-      Color(0xFFFF6F00),
-      456,
-    ),
-    _CategoryData(
-      'Interior Design',
-      Icons.design_services_rounded,
-      Color(0xFFE91E63),
-      678,
-    ),
-    _CategoryData(
-      'Construction',
-      Icons.construction_rounded,
-      Color(0xFF00897B),
-      1102,
-    ),
-    _CategoryData(
-      'Property Valuation',
-      Icons.assessment_rounded,
-      Color(0xFF6A1B9A),
-      334,
-    ),
-    _CategoryData(
-      'Insurance',
-      Icons.health_and_safety_rounded,
-      Color(0xFF1565C0),
-      567,
-    ),
-    _CategoryData(
-      'Moving & Packing',
-      Icons.local_shipping_rounded,
-      Color(0xFF43A047),
-      789,
-    ),
-    _CategoryData(
-      'Architects',
-      Icons.architecture_rounded,
-      Color(0xFF9C27B0),
-      445,
-    ),
-    _CategoryData(
-      'Surveyors',
-      Icons.straighten_rounded,
-      Color(0xFFD32F2F),
-      234,
-    ),
-    _CategoryData('Brokers', Icons.handshake_rounded, Color(0xFFD32F2F), 1876),
-    _CategoryData(
-      'Maintenance',
-      Icons.handyman_rounded,
-      Color(0xFF006064),
-      892,
-    ),
-  ];
+  @override
+  State<ServicesDirectoryPage> createState() => _ServicesDirectoryPageState();
+}
 
-  static const _featuredListings = [
-    _ListingData(
-      'ABC Realty',
-      'Real Estate Agents',
-      '⭐ 4.8',
-      '124 reviews',
-      'Sector 15, Gurgaon',
-      Icons.verified,
-      Color(0xFF1A237E),
-    ),
-    _ListingData(
-      'HomeLoan India',
-      'Home Loans',
-      '⭐ 4.6',
-      '89 reviews',
-      'Online Service',
-      Icons.verified,
-      Color(0xFF4CAF50),
-    ),
-    _ListingData(
-      'LegalEase Property',
-      'Legal Services',
-      '⭐ 4.9',
-      '203 reviews',
-      'Connaught Place, Delhi',
-      Icons.verified,
-      Color(0xFFFF6F00),
-    ),
-    _ListingData(
-      'Design Studio Pro',
-      'Interior Design',
-      '⭐ 4.7',
-      '156 reviews',
-      'Bandra West, Mumbai',
-      Icons.verified,
-      Color(0xFFE91E63),
-    ),
-  ];
+class _ServicesDirectoryPageState extends State<ServicesDirectoryPage> {
+  List<Map<String, dynamic>> _categories = [];
+  List<Map<String, dynamic>> _featuredListings = [];
+  List<Map<String, dynamic>> _jobs = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      AppConstants.initBaseUrl();
+      final baseUrl = AppConstants.baseUrl;
+
+      // Fetch all 3 endpoints in parallel
+      final results = await Future.wait([
+        http
+            .get(Uri.parse('$baseUrl/api/v2/mobile/directory/categories'))
+            .timeout(const Duration(seconds: 10)),
+        http
+            .get(Uri.parse('$baseUrl/api/v2/mobile/directory/featured'))
+            .timeout(const Duration(seconds: 10)),
+        http
+            .get(Uri.parse('$baseUrl/api/v2/mobile/directory/jobs'))
+            .timeout(const Duration(seconds: 10)),
+      ]);
+
+      List<Map<String, dynamic>> cats = [];
+      List<Map<String, dynamic>> listings = [];
+      List<Map<String, dynamic>> jobs = [];
+
+      // Parse categories
+      if (results[0].statusCode == 200) {
+        final data = jsonDecode(results[0].body);
+        if (data['success'] == true && data['data'] is List) {
+          cats = List<Map<String, dynamic>>.from(data['data'] as List);
+        }
+      }
+
+      // Parse featured listings
+      if (results[1].statusCode == 200) {
+        final data = jsonDecode(results[1].body);
+        if (data['success'] == true && data['data'] is List) {
+          listings = List<Map<String, dynamic>>.from(data['data'] as List);
+        }
+      }
+
+      // Parse jobs
+      if (results[2].statusCode == 200) {
+        final data = jsonDecode(results[2].body);
+        if (data['success'] == true && data['data'] is List) {
+          jobs = List<Map<String, dynamic>>.from(data['data'] as List);
+        }
+      }
+
+      setState(() {
+        _categories = cats;
+        _featuredListings = listings;
+        _jobs = jobs;
+        _loading = false;
+      });
+      return;
+    } catch (_) {}
+
+    // Fallback to mock data
+    setState(() {
+      _categories = _mockCategories;
+      _featuredListings = _mockListings;
+      _jobs = _mockJobs;
+      _loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: MeshGradientBackground(
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(context),
-                const SizedBox(height: 24),
-                _buildSearchBar(),
-                const SizedBox(height: 24),
-                _buildSectionTitle('Categories'),
-                const SizedBox(height: 16),
-                _buildCategoriesGrid(),
-                const SizedBox(height: 24),
-                _buildSectionTitle('Featured Providers'),
-                const SizedBox(height: 16),
-                _buildFeaturedListings(),
-                const SizedBox(height: 24),
-                _buildSectionTitle('Jobs in Real Estate'),
-                const SizedBox(height: 12),
-                _buildJobsSection(context),
-                const SizedBox(height: 24),
-                _buildCTASection(context),
-                const SizedBox(height: 40),
-              ],
-            ),
-          ),
+          child: _loading
+              ? const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                )
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildHeader(context),
+                      const SizedBox(height: 24),
+                      _buildSearchBar(),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle('Categories (${_categories.length})'),
+                      const SizedBox(height: 16),
+                      _buildCategoriesGrid(),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle('Featured Providers'),
+                      const SizedBox(height: 16),
+                      _buildFeaturedListings(),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle('Jobs in Real Estate'),
+                      const SizedBox(height: 12),
+                      _buildJobsSection(context),
+                      const SizedBox(height: 24),
+                      _buildCTASection(context),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
         ),
       ),
     );
@@ -242,18 +220,6 @@ class ServicesDirectoryPage extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.tune_rounded,
-              color: Colors.white.withValues(alpha: 0.7),
-              size: 18,
-            ),
-          ),
         ],
       ),
     );
@@ -270,6 +236,15 @@ class ServicesDirectoryPage extends StatelessWidget {
   }
 
   Widget _buildCategoriesGrid() {
+    if (_categories.isEmpty) {
+      return Center(
+        child: Text(
+          'No categories available',
+          style: TextStyle(color: Colors.white70),
+        ),
+      );
+    }
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -282,6 +257,9 @@ class ServicesDirectoryPage extends StatelessWidget {
       itemCount: _categories.length,
       itemBuilder: (context, index) {
         final cat = _categories[index];
+        final color = _catColor(index);
+        final iconData = _catIcon(cat['icon']?.toString() ?? '');
+
         return GlassCard(
           padding: const EdgeInsets.all(12),
           opacity: 0.08,
@@ -293,14 +271,14 @@ class ServicesDirectoryPage extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: cat.color.withValues(alpha: 0.2),
+                  color: color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(cat.icon, color: cat.color, size: 24),
+                child: Icon(iconData, color: color, size: 24),
               ),
               const SizedBox(height: 10),
               Text(
-                cat.name,
+                '${cat['name'] ?? ''}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -312,7 +290,7 @@ class ServicesDirectoryPage extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '${cat.count} providers',
+                '${cat['listing_count'] ?? 0} providers',
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.5),
                   fontSize: 10,
@@ -326,6 +304,18 @@ class ServicesDirectoryPage extends StatelessWidget {
   }
 
   Widget _buildFeaturedListings() {
+    if (_featuredListings.isEmpty) {
+      return SizedBox(
+        height: 120,
+        child: Center(
+          child: Text(
+            'No featured providers yet',
+            style: TextStyle(color: Colors.white70),
+          ),
+        ),
+      );
+    }
+
     return SizedBox(
       height: 160,
       child: ListView.separated(
@@ -334,110 +324,92 @@ class ServicesDirectoryPage extends StatelessWidget {
         separatorBuilder: (_, _) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final listing = _featuredListings[index];
-          return GestureDetector(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${listing.name} — Contact for more details'),
-                  backgroundColor: AppTheme.primaryColor,
-                ),
-              );
-            },
-            child: GlassCard(
-              width: 260,
-              padding: const EdgeInsets.all(16),
-              opacity: 0.1,
-              blur: 8,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: listing.color.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.store_rounded,
-                          color: listing.color,
-                          size: 22,
-                        ),
+          final color = _catColor(index);
+
+          return GlassCard(
+            width: 260,
+            padding: const EdgeInsets.all(16),
+            opacity: 0.1,
+            blur: 8,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              listing.name,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                      child: Icon(Icons.store_rounded, color: color, size: 22),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${listing['business_name'] ?? ''}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
                             ),
-                            Text(
-                              listing.category,
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.5),
-                                fontSize: 11,
-                              ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            '${listing['category_name'] ?? ''}',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.5),
+                              fontSize: 11,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
+                    if (listing['is_verified'] == true)
                       Icon(
-                        listing.verifiedIcon,
+                        Icons.verified,
                         color: AppTheme.accentColor,
                         size: 18,
                       ),
-                    ],
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '⭐ ${(listing['rating'] ?? 0).toString()} (${listing['review_count'] ?? 0} reviews)',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    listing.rating,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(
-                    listing.reviews,
-                    style: TextStyle(
+                ),
+                const Spacer(),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on_rounded,
                       color: Colors.white.withValues(alpha: 0.5),
-                      fontSize: 11,
+                      size: 14,
                     ),
-                  ),
-                  const Spacer(),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_rounded,
-                        color: Colors.white.withValues(alpha: 0.5),
-                        size: 14,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          listing.location,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.7),
-                            fontSize: 12,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        '${listing['city'] ?? ''}',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 12,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           );
         },
@@ -446,38 +418,40 @@ class ServicesDirectoryPage extends StatelessWidget {
   }
 
   Widget _buildJobsSection(BuildContext context) {
+    if (_jobs.isEmpty) {
+      return GlassCard(
+        padding: const EdgeInsets.all(16),
+        opacity: 0.1,
+        blur: 8,
+        child: Center(
+          child: Text(
+            'No jobs available yet',
+            style: TextStyle(color: Colors.white70),
+          ),
+        ),
+      );
+    }
+
     return GlassCard(
       padding: const EdgeInsets.all(16),
       opacity: 0.1,
       blur: 8,
       child: Column(
         children: [
-          _buildJobRow(
-            'Sales Executive',
-            'ABC Realty',
-            'Gurgaon',
-            '₹25K-40K/month',
-            Icons.sell_rounded,
-            const Color(0xFF1A237E),
-          ),
-          const Divider(color: Colors.white12, height: 24),
-          _buildJobRow(
-            'Property Manager',
-            'HomeFirst',
-            'Delhi NCR',
-            '₹30K-50K/month',
-            Icons.apartment_rounded,
-            const Color(0xFF4CAF50),
-          ),
-          const Divider(color: Colors.white12, height: 24),
-          _buildJobRow(
-            'Legal Advisor',
-            'LegalEase',
-            'Mumbai',
-            '₹50K-80K/month',
-            Icons.gavel_rounded,
-            const Color(0xFFFF6F00),
-          ),
+          for (int i = 0; i < _jobs.length && i < 5; i++) ...[
+            if (i > 0) const Divider(color: Colors.white12, height: 24),
+            _buildJobRow(
+              '${_jobs[i]['title'] ?? ''}',
+              '${_jobs[i]['company'] ?? ''}',
+              '${_jobs[i]['location'] ?? ''}',
+              _formatSalary(
+                _jobs[i]['salary_min'] ?? 0,
+                _jobs[i]['salary_max'] ?? 0,
+              ),
+              Icons.work_rounded,
+              _catColor(i),
+            ),
+          ],
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
@@ -605,7 +579,7 @@ class ServicesDirectoryPage extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text(
-                      'List your business by contacting our team at 7007444842',
+                      'List your business by contacting 7007444842',
                     ),
                     backgroundColor: AppTheme.successColor,
                   ),
@@ -628,31 +602,144 @@ class ServicesDirectoryPage extends StatelessWidget {
       ),
     );
   }
-}
 
-class _CategoryData {
-  final String name;
-  final IconData icon;
-  final Color color;
-  final int count;
-  const _CategoryData(this.name, this.icon, this.color, this.count);
-}
+  Color _catColor(int index) {
+    const colors = [
+      Color(0xFF1A237E),
+      Color(0xFF4CAF50),
+      Color(0xFFFF6F00),
+      Color(0xFFE91E63),
+      Color(0xFF00897B),
+      Color(0xFF6A1B9A),
+      Color(0xFF1565C0),
+      Color(0xFF43A047),
+      Color(0xFF9C27B0),
+      Color(0xFFD32F2F),
+      Color(0xFF006064),
+      Color(0xFFD32F2F),
+    ];
+    return colors[index % colors.length];
+  }
 
-class _ListingData {
-  final String name;
-  final String category;
-  final String rating;
-  final String reviews;
-  final String location;
-  final IconData verifiedIcon;
-  final Color color;
-  const _ListingData(
-    this.name,
-    this.category,
-    this.rating,
-    this.reviews,
-    this.location,
-    this.verifiedIcon,
-    this.color,
-  );
+  IconData _catIcon(String iconName) {
+    if (iconName.contains('people')) return Icons.people_alt_rounded;
+    if (iconName.contains('account')) return Icons.account_balance_rounded;
+    if (iconName.contains('gavel') || iconName.contains('legal'))
+      return Icons.gavel_rounded;
+    if (iconName.contains('design')) return Icons.design_services_rounded;
+    if (iconName.contains('construct')) return Icons.construction_rounded;
+    if (iconName.contains('assess') || iconName.contains('valuation'))
+      return Icons.assessment_rounded;
+    if (iconName.contains('health') || iconName.contains('safety'))
+      return Icons.health_and_safety_rounded;
+    if (iconName.contains('truck') || iconName.contains('shipping'))
+      return Icons.local_shipping_rounded;
+    if (iconName.contains('arch')) return Icons.architecture_rounded;
+    if (iconName.contains('strai') || iconName.contains('survey'))
+      return Icons.straighten_rounded;
+    if (iconName.contains('hand')) return Icons.handshake_rounded;
+    if (iconName.contains('hammer') || iconName.contains('handyman'))
+      return Icons.handyman_rounded;
+    return Icons.store_rounded;
+  }
+
+  String _formatSalary(dynamic min, dynamic max) {
+    final minVal = min is int ? min : int.tryParse('${min ?? 0}') ?? 0;
+    final maxVal = max is int ? max : int.tryParse('${max ?? 0}') ?? 0;
+    if (minVal == 0 && maxVal == 0) return 'Negotiable';
+    if (minVal > 0 && maxVal > 0)
+      return '₹${(minVal / 1000).toStringAsFixed(0)}K-${(maxVal / 1000).toStringAsFixed(0)}K/mo';
+    if (maxVal > 0) return 'Up to ₹${(maxVal / 1000).toStringAsFixed(0)}K/mo';
+    return '₹${(minVal / 1000).toStringAsFixed(0)}K+/mo';
+  }
+
+  static const _mockCategories = [
+    {
+      'name': 'Real Estate Agents',
+      'icon': 'fas fa-users',
+      'listing_count': 1250,
+    },
+    {'name': 'Home Loans', 'icon': 'fas fa-university', 'listing_count': 890},
+    {'name': 'Legal Services', 'icon': 'fas fa-gavel', 'listing_count': 456},
+    {
+      'name': 'Interior Design',
+      'icon': 'fas fa-paint-brush',
+      'listing_count': 678,
+    },
+    {'name': 'Construction', 'icon': 'fas fa-hard-hat', 'listing_count': 1102},
+    {
+      'name': 'Property Valuation',
+      'icon': 'fas fa-chart-line',
+      'listing_count': 334,
+    },
+    {'name': 'Insurance', 'icon': 'fas fa-shield-alt', 'listing_count': 567},
+    {'name': 'Moving & Packing', 'icon': 'fas fa-truck', 'listing_count': 789},
+    {
+      'name': 'Architects',
+      'icon': 'fas fa-drafting-compass',
+      'listing_count': 445,
+    },
+    {'name': 'Surveyors', 'icon': 'fas fa-ruler', 'listing_count': 234},
+    {'name': 'Brokers', 'icon': 'fas fa-handshake', 'listing_count': 1876},
+    {'name': 'Maintenance', 'icon': 'fas fa-tools', 'listing_count': 892},
+  ];
+
+  static const _mockListings = [
+    {
+      'business_name': 'ABC Realty',
+      'category_name': 'Real Estate Agents',
+      'rating': 4.8,
+      'review_count': 124,
+      'city': 'Gorakhpur',
+      'is_verified': true,
+    },
+    {
+      'business_name': 'HomeLoan India',
+      'category_name': 'Home Loans',
+      'rating': 4.6,
+      'review_count': 89,
+      'city': 'Online',
+      'is_verified': true,
+    },
+    {
+      'business_name': 'LegalEase Property',
+      'category_name': 'Legal Services',
+      'rating': 4.9,
+      'review_count': 203,
+      'city': 'Lucknow',
+      'is_verified': true,
+    },
+    {
+      'business_name': 'Design Studio Pro',
+      'category_name': 'Interior Design',
+      'rating': 4.7,
+      'review_count': 156,
+      'city': 'Gorakhpur',
+      'is_verified': true,
+    },
+  ];
+
+  static const _mockJobs = [
+    {
+      'title': 'Sales Executive',
+      'company': 'ABC Realty',
+      'location': 'Gorakhpur',
+      'salary_min': 25000,
+      'salary_max': 40000,
+    },
+    {
+      'title': 'Property Manager',
+      'company': 'HomeFirst',
+      'location': 'Lucknow',
+      'salary_min': 30000,
+      'salary_max': 50000,
+    },
+    {
+      'title': 'Legal Advisor',
+      'company': 'LegalEase',
+      'location': 'Varanasi',
+      'salary_min': 50000,
+      'salary_max': 80000,
+    },
+  ];
 }

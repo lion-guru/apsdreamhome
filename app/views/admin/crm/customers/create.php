@@ -1,218 +1,63 @@
-<?php
-$page_title = $page_title ?? 'Create Customer - APS Dream Home';
-$page_heading = $page_heading ?? 'Create Customer';
-
-?>
+<?php $page_title = 'Add Customer'; ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'Create Customer') ?></h2>
+        <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Add Customer</h4>
+        <a href="<?= BASE_URL ?>/admin/crm/users" class="btn btn-secondary"><i class="fas fa-arrow-left me-1"></i>Back to Customers</a>
     </div>
+
+    <?php if (!empty($_SESSION['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($_SESSION['error']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+    <?php if (!empty($_SESSION['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($_SESSION['success']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
+
     <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">Create Customer</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
+        <div class="card-body">
+            <form method="POST" action="<?= BASE_URL ?>/admin/crm/users/store">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email *</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone *</label>
+                        <input type="tel" name="phone" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Password</label>
+                        <input type="text" name="password" class="form-control" placeholder="Auto-generated if blank">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Budget Range</label>
+                        <input type="text" name="budget" class="form-control" placeholder="e.g. 25-50 Lakh">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Create Customer</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-?>
-<?php
-$page_title = $page_title ?? 'CRM users - APS Dream Home';
-$page_heading = $page_heading ?? 'CRM users';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'CRM users') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">CRM users</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-?>
-<?php
-$page_title = $page_title ?? 'SMS Campaigns - APS Dream Home';
-$page_heading = $page_heading ?? 'SMS Campaigns';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'SMS Campaigns') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">SMS Campaigns</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-?>
-<?php
-$page_title = $page_title ?? 'Email Templates - APS Dream Home';
-$page_heading = $page_heading ?? 'Email Templates';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'Email Templates') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">Email Templates</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-?>
-<?php
-$page_title = $page_title ?? 'Builder Management - APS Dream Home';
-$page_heading = $page_heading ?? 'Builder Management';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'Builder Management') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">Builder Management</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-?>
-<?php
-$page_title = $page_title ?? 'AI Reports - APS Dream Home';
-$page_heading = $page_heading ?? 'AI Reports';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'AI Reports') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">AI Reports</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-?>
-<?php
-$page_title = $page_title ?? 'AI Insights - APS Dream Home';
-$page_heading = $page_heading ?? 'AI Insights';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'AI Insights') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">AI Insights</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-?>
-<?php
-$page_title = $page_title ?? 'AI Calling Analytics - APS Dream Home';
-$page_heading = $page_heading ?? 'AI Calling Analytics';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'AI Calling Analytics') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">AI Calling Analytics</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-?>
-<?php
-$page_title = $page_title ?? 'AI Call History - APS Dream Home';
-$page_heading = $page_heading ?? 'AI Call History';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'AI Call History') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">AI Call History</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-?>
-<?php
-$page_title = $page_title ?? 'AI Calling Campaign - APS Dream Home';
-$page_heading = $page_heading ?? 'AI Calling Campaign';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'AI Calling Campaign') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">AI Calling Campaign</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-?>
-<?php
-$page_title = $page_title ?? 'AI Calling - APS Dream Home';
-$page_heading = $page_heading ?? 'AI Calling';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'AI Calling') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">AI Calling</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-?>
-<?php
-$page_title = $page_title ?? 'Agent Management - APS Dream Home';
-$page_heading = $page_heading ?? 'Agent Management';
-
-?>
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0"><i class="fas fa-cog me-2"></i><?= htmlspecialchars($page_heading ?? 'Agent Management') ?></h2>
-    </div>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-construction fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">Agent Management</h4>
-            <p class="text-muted">This module is under development. Check back soon.</p>
-        </div>
-    </div>
-</div>
-<?php
-
-?>

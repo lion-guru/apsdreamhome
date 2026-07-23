@@ -78,6 +78,39 @@ class BookingLifecycleService
         $this->db = $pdo;
     }
 
+    /**
+     * Get the database connection
+     */
+    public function getDb(): ?PDO
+    {
+        return $this->db;
+    }
+
+    /**
+     * Update booking status
+     */
+    public function updateBookingStatus(int $bookingId, string $status, ?string $notes = null): bool
+    {
+        if (!in_array($status, self::STATUSES, true)) {
+            return false;
+        }
+        
+        try {
+            $sql = "UPDATE plot_bookings SET status = ? WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([$status, $bookingId]);
+            
+            if ($result && $notes) {
+                $this->logStatusHistory($bookingId, null, $status, null, $notes);
+            }
+            
+            return $result;
+        } catch (Exception $e) {
+            error_log('[BookingLifecycleService::updateBookingStatus] ' . $e->getMessage());
+            return false;
+        }
+    }
+
     /* ====================================================================
      *  1. createBooking
      * ================================================================== */
@@ -252,7 +285,7 @@ class BookingLifecycleService
             // Bump booking to emi_active (if not already beyond)
             $cur = (string)$booking['status'];
             if (in_array($cur, ['token_paid','agreement_signed'], true)) {
-                $this->updateBookingStatus($bookingId, $cur, 'emi_active', null, 'EMI schedule generated');
+                $this->setBookingStatus($bookingId, $cur, 'emi_active', null, 'EMI schedule generated');
             }
 
             return [
@@ -1090,21 +1123,21 @@ class BookingLifecycleService
                 $new = 'emi_active';
             }
             if ($new !== $cur) {
-                $this->updateBookingStatus($bookingId, $cur, $new, null, 'Auto-advance on payment');
+                $this->setBookingStatus($bookingId, $cur, $new, null, 'Auto-advance on payment');
             }
         } catch (Exception $e) {
             error_log('[BookingLifecycleService::maybeAdvanceBookingStatus] ' . $e->getMessage());
         }
     }
 
-    private function updateBookingStatus(int $bookingId, ?string $from, string $to, ?int $changedBy, ?string $reason): void
+    private function setBookingStatus(int $bookingId, ?string $from, string $to, ?int $changedBy, ?string $reason): void
     {
         try {
             $this->db->prepare("UPDATE plot_bookings SET status = ? WHERE id = ?")
                      ->execute([$to, $bookingId]);
             $this->logStatusHistory($bookingId, $from, $to, $changedBy, $reason);
         } catch (Exception $e) {
-            error_log('[BookingLifecycleService::updateBookingStatus] ' . $e->getMessage());
+            error_log('[BookingLifecycleService::setBookingStatus] ' . $e->getMessage());
         }
     }
 

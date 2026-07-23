@@ -26,7 +26,7 @@ try {
     $db = \App\Core\Database\Database::getInstance();
     $pendingResult = $db->fetchOne("SELECT COUNT(*) as cnt FROM users WHERE registration_status = 'pending'");
     $pendingCount = (int)($pendingResult['cnt'] ?? 0);
-} catch (Exception $e) {
+} catch (\Exception $e) {
     // Silently fail - badge just won't show
 }
 ?>

@@ -52,7 +52,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="card shadow-lg border-0 glass-card-premium" style="background: rgba(255, 255, 255, 0.9) !important; color: #333;">
+                <div class="card shadow-lg border-0 glass-card-premium" style="background: rgba(255, 255, 255, 0.9); color: #333;">
                     <div class="card-header bg-primary text-white text-center py-3" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important; border-bottom: none;">
                         <h4 class="mb-0 fw-bold text-white"><i class="fas fa-envelope me-2 text-white"></i><?php echo __('send_us_message'); ?></h4>
                     </div>

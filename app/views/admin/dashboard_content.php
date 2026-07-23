@@ -283,10 +283,10 @@ $team_stats = $team_stats ?? [];
                 <h5 class="card-title">System Overview</h5>
             </div>
             <div class="card-body aps-cp-card-body">
-                <div class="mb-4">
+<div class="mb-4">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Database Tables</span>
-                        <span class="fw-semibold"><?php echo $stats['database_tables'] ?? '633'; ?></span>
+                        <span class="fw-semibold"><?php echo $stats['database_tables'] ?? '—'; ?></span>
                     </div>
                     <div class="progress" style="height: 8px;">
                         <div class="progress-bar bg-primary" style="width: 100%;"></div>
@@ -299,17 +299,41 @@ $team_stats = $team_stats ?? [];
                         <span class="fw-semibold"><?php echo number_format($stats['active_users'] ?? 0); ?></span>
                     </div>
                     <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-success" style="width: 75%;"></div>
+                        <div class="progress-bar bg-success" style="width: <?php echo $stats['active_users_pct'] ?? 0; ?>%;"></div>
                     </div>
                 </div>
                 
                 <div class="mb-4">
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">System Health</span>
-                        <span class="fw-semibold text-success">99.9%</span>
+                        <span class="fw-semibold text-success"><?php echo number_format($stats['system_health_pct'] ?? 99.9, 1); ?>%</span>
                     </div>
                     <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-info" style="width: 99.9%;"></div>
+                        <div class="progress-bar bg-info" style="width: <?php echo $stats['system_health_pct'] ?? 99.9; ?>%;"></div>
+                    </div>
+                </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-primary" style="width: 100%;"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Active Users</span>
+                        <span class="fw-semibold"><?php echo number_format($stats['active_users'] ?? 0); ?></span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: <?php echo $stats['total_users'] > 0 ? round(($stats['active_users'] ?? 0) / $stats['total_users'] * 100) : 0; ?>%;"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">System Health</span>
+                        <span class="fw-semibold text-success"><?php echo number_format($stats['system_health_pct'] ?? 99.9, 1); ?>%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-info" style="width: <?php echo number_format($stats['system_health_pct'] ?? 99.9, 1); ?>%;"></div>
                     </div>
                 </div>
                 

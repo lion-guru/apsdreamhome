@@ -111,7 +111,7 @@ class TaskController extends AdminController
             ];
 
             return $this->render('admin/tasks/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Task Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load tasks');
             return $this->redirect('admin/dashboard');
@@ -134,7 +134,7 @@ class TaskController extends AdminController
             ];
 
             return $this->render('admin/tasks/create', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Task Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load task form');
             return $this->redirect('admin/tasks');
@@ -212,7 +212,7 @@ class TaskController extends AdminController
             }
 
             return $this->jsonError('Failed to create task', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Task Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create task', 500);
         }
@@ -253,7 +253,7 @@ class TaskController extends AdminController
             ];
 
             return $this->render('admin/tasks/show', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Task Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load task details');
             return $this->redirect('admin/tasks');
@@ -294,7 +294,7 @@ class TaskController extends AdminController
             ];
 
             return $this->render('admin/tasks/edit', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Task Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load task form');
             return $this->redirect('admin/tasks');
@@ -395,7 +395,7 @@ class TaskController extends AdminController
             }
 
             return $this->jsonError('Failed to update task', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Task Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update task', 500);
         }
@@ -445,7 +445,7 @@ class TaskController extends AdminController
             }
 
             return $this->jsonError('Failed to delete task', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Task Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete task', 500);
         }
@@ -489,7 +489,7 @@ class TaskController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Task Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,

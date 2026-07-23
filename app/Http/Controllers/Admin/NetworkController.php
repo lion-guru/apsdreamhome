@@ -36,7 +36,7 @@ class NetworkController extends AdminController
             ];
 
             return $this->render('admin/network/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Network Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load network data');
             return $this->redirect('admin/dashboard');
@@ -71,7 +71,7 @@ class NetworkController extends AdminController
             ];
 
             return $this->render('admin/network/tree', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Network Tree error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load network tree');
             return $this->redirect('admin/network');
@@ -93,7 +93,7 @@ class NetworkController extends AdminController
             ];
 
             return $this->render('admin/network/commission', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Network Commission error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load commission data');
             return $this->redirect('admin/network');
@@ -115,7 +115,7 @@ class NetworkController extends AdminController
             ];
 
             return $this->render('admin/network/ranks', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Network Ranks error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load rank data');
             return $this->redirect('admin/network');
@@ -147,7 +147,7 @@ class NetworkController extends AdminController
             ];
 
             return $this->render('admin/network/genealogy', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Network Genealogy error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load genealogy data');
             return $this->redirect('admin/network');
@@ -197,7 +197,7 @@ class NetworkController extends AdminController
             $stats['avg_team_size'] = round((float)($result['avg_size'] ?? 0), 2);
 
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Network Stats error: " . $e->getMessage());
             return [];
         }
@@ -221,7 +221,7 @@ class NetworkController extends AdminController
                     ORDER BY total_commissions DESC, direct_referrals DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Top Performers error: " . $e->getMessage());
             return [];
         }
@@ -240,7 +240,7 @@ class NetworkController extends AdminController
                     ORDER BY u.created_at DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Recent Joins error: " . $e->getMessage());
             return [];
         }
@@ -269,7 +269,7 @@ class NetworkController extends AdminController
                 'associate' => $associate,
                 'downline' => $downline
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Network Tree error: " . $e->getMessage());
             return [];
         }
@@ -304,7 +304,7 @@ class NetworkController extends AdminController
             }
 
             return $referrals;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Downline error: " . $e->getMessage());
             return [];
         }
@@ -318,7 +318,7 @@ class NetworkController extends AdminController
         try {
             $sql = "SELECT * FROM commission_levels ORDER BY level ASC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Commission Levels error: " . $e->getMessage());
             return [];
         }
@@ -332,7 +332,7 @@ class NetworkController extends AdminController
         try {
             $sql = "SELECT * FROM rank_requirements ORDER BY rank_order ASC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Rank Requirements error: " . $e->getMessage());
             return [];
         }
@@ -351,7 +351,7 @@ class NetworkController extends AdminController
                     ORDER BY mcl.payout_date DESC
                     LIMIT 20";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Payout History error: " . $e->getMessage());
             return [];
         }
@@ -365,7 +365,7 @@ class NetworkController extends AdminController
         try {
             $sql = "SELECT * FROM mlm_ranks ORDER BY rank_order ASC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Ranks error: " . $e->getMessage());
             return [];
         }
@@ -383,7 +383,7 @@ class NetworkController extends AdminController
                     GROUP BY u.mlm_rank
                     ORDER BY count DESC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Rank Distribution error: " . $e->getMessage());
             return [];
         }
@@ -406,7 +406,7 @@ class NetworkController extends AdminController
                     ORDER BY total_earnings DESC
                     LIMIT 20";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Rank Progression error: " . $e->getMessage());
             return [];
         }
@@ -444,7 +444,7 @@ class NetworkController extends AdminController
                     'levels' => $levels
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Genealogy Data error: " . $e->getMessage());
             return [];
         }
@@ -514,7 +514,7 @@ class NetworkController extends AdminController
 
             $this->setFlash('error', 'Invalid export format');
             return $this->redirect('admin/network');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Network Export error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to export data');
             return $this->redirect('admin/network');
@@ -540,7 +540,7 @@ class NetworkController extends AdminController
                     GROUP BY u.id
                     ORDER BY u.created_at DESC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Network Overview Export error: " . $e->getMessage());
             return [];
         }
@@ -554,7 +554,7 @@ class NetworkController extends AdminController
         try {
             $treeData = $this->getNetworkTree($associateId);
             return $this->flattenTreeForExport($treeData['downline'] ?? []);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Network Tree Export error: " . $e->getMessage());
             return [];
         }
@@ -599,7 +599,7 @@ class NetworkController extends AdminController
                     GROUP BY u.mlm_rank
                     ORDER BY count DESC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Rank Export error: " . $e->getMessage());
             return [];
         }

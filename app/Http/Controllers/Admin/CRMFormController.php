@@ -68,9 +68,12 @@ class CRMFormController extends AdminController
     public function edit($id)
     {
         $this->requireAdmin();
+        $id = (int)$id;
         try {
             $db = Database::getInstance()->getConnection();
-            $form = $db->query("SELECT * FROM crm_lead_forms WHERE id = $id")->fetch(\PDO::FETCH_ASSOC);
+            $stmt = $db->prepare("SELECT * FROM crm_lead_forms WHERE id = ?");
+            $stmt->execute([$id]);
+            $form = $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             $form = null;
         }
@@ -125,9 +128,12 @@ class CRMFormController extends AdminController
     public function preview($id)
     {
         $this->requireAdmin();
+        $id = (int)$id;
         try {
             $db = Database::getInstance()->getConnection();
-            $form = $db->query("SELECT * FROM crm_lead_forms WHERE id = $id")->fetch(\PDO::FETCH_ASSOC);
+            $stmt = $db->prepare("SELECT * FROM crm_lead_forms WHERE id = ?");
+            $stmt->execute([$id]);
+            $form = $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             $form = null;
         }
@@ -140,9 +146,12 @@ class CRMFormController extends AdminController
     public function embedCode($id)
     {
         $this->requireAdmin();
+        $id = (int)$id;
         try {
             $db = Database::getInstance()->getConnection();
-            $form = $db->query("SELECT * FROM crm_lead_forms WHERE id = $id")->fetch(\PDO::FETCH_ASSOC);
+            $stmt = $db->prepare("SELECT * FROM crm_lead_forms WHERE id = ?");
+            $stmt->execute([$id]);
+            $form = $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             $form = null;
         }

@@ -2,17 +2,15 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\Legacy\RateLimiter;
+use App\Middleware\RateLimiter;
 
 class RateLimitMiddleware
 {
-    protected $limiter;
-
-    public function __construct()
-    {
-        $this->limiter = new RateLimiter();
-    }
-
+    /**
+     * Enforce a per-IP rate limit for the given bucket type.
+     * RateLimiter::check() returns true when allowed and terminates
+     * the request with HTTP 429 when the limit is exceeded.
+     */
     public function handle($request, $next, $type = 'api')
     {
         // Bypass rate limiting during local development testing/auditing
@@ -20,30 +18,10 @@ class RateLimitMiddleware
             return $next($request);
         }
 
-        // Get IP address for rate limiting key
         $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         $key = $type . '_' . $ip;
 
-        $status = $this->limiter->checkLimit($key, $type);
-
-        if ($status['limited']) {
-            http_response_code(429);
-            header('Retry-After: ' . $status['retry_after']);
-            header('Content-Type: application/json');
-            echo json_encode([
-                'error' => 'Too Many Requests',
-                'message' => 'Rate limit exceeded. Please try again later.',
-                'retry_after' => $status['retry_after']
-            ]);
-            exit;
-        }
-
-        // Add rate limit headers
-        if (function_exists('header')) {
-            header('X-RateLimit-Limit: ' . ($status['remaining'] + 1)); // This logic might be slightly off depending on checkLimit implementation, but close enough
-            header('X-RateLimit-Remaining: ' . $status['remaining']);
-            header('X-RateLimit-Reset: ' . $status['reset']);
-        }
+        RateLimiter::check($key, 60, 60);
 
         return $next($request);
     }

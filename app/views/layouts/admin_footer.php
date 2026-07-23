@@ -19,10 +19,10 @@ if (!isset($sc)) {
                         Version 2.0.0 | Build 2026.03.20
                     </p>
                     <div class="admin-footer-links">
-                        <a href="<?= BASE_URL ?>admin/dashboard" class="text-white-50 text-decoration-none">
+                        <a href="<?= BASE_URL ?>/admin/dashboard" class="text-white-50 text-decoration-none">
                             <i class="fas fa-tachometer-alt"></i> Dashboard
                         </a>
-                        <a href="<?= BASE_URL ?>admin/settings" class="text-white-50 text-decoration-none">
+                        <a href="<?= BASE_URL ?>/admin/settings" class="text-white-50 text-decoration-none">
                             <i class="fas fa-cog"></i> Settings
                         </a>
                     </div>
@@ -193,7 +193,7 @@ if (!isset($sc)) {
 
         // System functions
         function showSystemLogs() {
-            showToast('System logs coming soon', 'info');
+            window.location.href = '<?= defined('BASE_URL') ? BASE_URL : '/apsdreamhome' ?>/admin/activity-log';
         }
 
         function showSupport() {

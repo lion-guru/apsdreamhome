@@ -19,8 +19,8 @@ class SharingController extends BaseApiController
     public function generate()
     {
         try {
-            $type = $this->request()->input('type');
-            $id = $this->request()->input('id');
+            $type = $this->inputWithJson('type');
+            $id = $this->inputWithJson('id');
 
             if (empty($type) || empty($id)) {
                 return $this->jsonError('Type and ID are required', 400);
@@ -47,7 +47,7 @@ class SharingController extends BaseApiController
 
             return $this->jsonSuccess($shareData);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -62,18 +62,18 @@ class SharingController extends BaseApiController
         }
 
         try {
-            $source = $this->request()->input('source');
-            $medium = $this->request()->input('medium');
+            $source = $this->inputWithJson('source');
+            $medium = $this->inputWithJson('medium');
 
             if (empty($source) || empty($medium)) {
                 return $this->jsonError('Source and medium are required', 400);
             }
 
-            $campaign = $this->request()->input('campaign', 'social_share');
-            $landingPage = $this->request()->input('landing_page', '/');
-            $ip = $this->request()->server->get('REMOTE_ADDR', 'unknown');
+            $campaign = $this->inputWithJson('campaign', 'social_share');
+            $landingPage = $this->inputWithJson('landing_page', '/');
+            $ip = $this->request()->getClientIp();
             $isMobile = $this->isMobileDevice() ? 1 : 0;
-            $sessionId = $this->request()->session()->getId();
+            $sessionId = session_id();
 
             $trafficStatModel = $this->model('TrafficStat');
             $tracked = $trafficStatModel->trackVisit([
@@ -92,7 +92,7 @@ class SharingController extends BaseApiController
 
             return $this->jsonError('Failed to track click', 500);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -102,7 +102,7 @@ class SharingController extends BaseApiController
      */
     private function isMobileDevice()
     {
-        $ua = $this->request()->headers->get('User-Agent', '');
+        $ua = $this->request()->getHeader('User-Agent', '');
         return \preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $ua);
     }
 }

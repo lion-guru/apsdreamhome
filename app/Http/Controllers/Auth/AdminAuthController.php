@@ -18,6 +18,14 @@ class AdminAuthController extends BaseController
     {
         @session_start();
 
+        // Block test_login bypass in production
+        if (isset($_GET['test_login'])) {
+            if ((defined('APP_ENV') && APP_ENV === 'production') || (getenv('APP_ENV') === 'production')) {
+                http_response_code(403);
+                exit('Forbidden in production');
+            }
+        }
+
         // DEBUG
         error_log("adminLogin called, test_login=" . ($_GET['test_login'] ?? 'NOT SET') . ", APP_ENV=" . APP_ENV . ", admin_id=" . ($_SESSION['admin_id'] ?? 'NOT SET') . ", session_id=" . session_id() . ", cookie_params=" . json_encode(session_get_cookie_params()));
 
@@ -79,9 +87,10 @@ class AdminAuthController extends BaseController
                     $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?", [$admin['id']]);
                     if ($emp) {
                         $_SESSION['employee_id'] = $emp['id'];
+                    } else {
+                        $_SESSION['employee_id'] = $admin['id'];
                     }
                 } catch (\Exception $e) {
-                    // employees table may not exist; set user_id as fallback
                     $_SESSION['employee_id'] = $admin['id'];
                 }
             }

@@ -1,8 +1,8 @@
-<?php $page_title = 'Edit News Article'; $active_page = 'news'; ?>
+﻿<?php $page_title = 'Edit News Article'; $active_page = 'news'; ?>
 
 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Edit News Article</h1>
-    <a href="/admin/news" class="btn btn-outline-secondary">
+    <a href="<?= BASE_URL ?>/admin/news" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left"></i> Back
     </a>
 </div>
@@ -62,7 +62,7 @@
                                 <h6>Featured Image</h6>
                                 <?php if (!empty($news['image'])): ?>
                                     <div class="mb-2 text-center">
-                                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid rounded" style="max-height: 150px;" />
+                                        <img src="<?= (strpos($news['image'], 'http') === 0 ? htmlspecialchars($news['image']) : BASE_URL . '/' . htmlspecialchars($news['image'])) ?>" alt="Current image" class="img-fluid rounded" style="max-height: 150px;" />
                                     </div>
                                 <?php endif; ?>
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
@@ -105,14 +105,14 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
 
-        fetch('/admin/news/<?= $news['id'] ?>/update', {
+        fetch('<?= BASE_URL ?>/admin/news/<?= $news['id'] ?>/update', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = '/admin/news';
+                    window.location.href = '<?= BASE_URL ?>/admin/news';
                 } else {
                     alert(data.error || 'Failed to update article');
                     submitBtn.disabled = false;

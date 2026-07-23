@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $pageTitle = 'Edit Property';
 
 // Initialize variables with defaults if not passed from controller
@@ -23,9 +23,9 @@ $property = $property ?? [
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-edit me-2"></i>Edit Property</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/properties">Properties</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/properties/show/<?= $property['id'] ?? 0 ?>"><?= htmlspecialchars($property['title'] ?? 'Property') ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/properties">Properties</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/properties/<?= $property['id'] ?? 0 ?>"><?= htmlspecialchars($property['title'] ?? 'Property') ?></a></li>
                     <li class="breadcrumb-item active">Edit</li>
                 </ul>
             </div>
@@ -33,7 +33,7 @@ $property = $property ?? [
     </div>
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
-            <form method="POST" action="/admin/properties/<?= $property['id'] ?? 0 ?>/update" enctype="multipart/form-data">
+            <form method="POST" action="<?= BASE_URL ?>/admin/properties/<?= $property['id'] ?? 0 ?>/update" enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
                     <div class="col-md-8"><label class="form-label">Title <span class="text-danger">*</span></label><input type="text" name="title" class="form-control" value="<?= htmlspecialchars($property['title'] ?? '') ?>" required></div>
@@ -58,7 +58,7 @@ $property = $property ?? [
                     <div class="col-md-3"><label class="form-label">Owner Phone</label><input type="text" name="owner_phone" class="form-control" value="<?= htmlspecialchars($property['owner_phone'] ?? '') ?>"></div>
                     <div class="col-md-3"><label class="form-label">Owner Email</label><input type="email" name="owner_email" class="form-control" value="<?= htmlspecialchars($property['owner_email'] ?? '') ?>"></div>
                     <div class="col-12"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($property['description'] ?? '') ?></textarea></div>
-                    <div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update Property</button> <a href="/admin/properties" class="btn btn-secondary">Cancel</a></div>
+                    <div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update Property</button> <a href="<?= BASE_URL ?>/admin/properties" class="btn btn-secondary">Cancel</a></div>
                 </div>
             </form>
         </div>

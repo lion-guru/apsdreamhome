@@ -1,8 +1,8 @@
-<?php $page_title = 'News Management'; $active_page = 'news'; ?>
+﻿<?php $page_title = 'News Management'; $active_page = 'news'; ?>
 
 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2"><i class="fas fa-newspaper me-2"></i>News & Blog Management</h1>
-    <a href="/admin/news/create" class="btn btn-primary">
+    <a href="<?= BASE_URL ?>/admin/news/create" class="btn btn-primary">
         <i class="fas fa-plus me-1"></i> Add New Article
     </a>
 </div>
@@ -45,7 +45,7 @@
                         <tr>
                             <td colspan="3" class="text-center py-4">
                                 <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
-                                <p>No news articles found. <a href="/admin/news/create">Create one</a></p>
+                                <p>No news articles found. <a href="<?= BASE_URL ?>/admin/news/create">Create one</a></p>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -57,7 +57,7 @@
                                 </td>
                                 <td><?php echo date('M d, Y', strtotime($article['created_at'] ?? $article['date'])); ?></td>
                                 <td>
-                                    <a href="/admin/news/<?php echo $article['id']; ?>/edit" class="btn btn-sm btn-primary">
+                                    <a href="<?= BASE_URL ?>/admin/news/<?php echo $article['id']; ?>/edit" class="btn btn-sm btn-primary">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
                                 </td>

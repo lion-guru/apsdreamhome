@@ -61,17 +61,21 @@ class GalleryController extends AdminController
         try {
             $imagePath = '';
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                if (in_array($_FILES['image']['type'], $allowed) && $_FILES['image']['size'] <= 10 * 1024 * 1024) {
+                $validation = \UploadValidator::validate($_FILES['image'], ['types' => 'images', 'max_size' => 10]);
+                if ($validation['valid']) {
                     $uploadDir = dirname(__DIR__, 3) . '/assets/images/gallery/';
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
                     }
-                    $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                    $filename = 'gallery_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                    $safeName = \UploadValidator::safeFilename($_FILES['image']['name']);
+                    $filename = 'gallery_' . $safeName;
                     if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $filename)) {
                         $imagePath = 'assets/images/gallery/' . $filename;
                     }
+                } else {
+                    $_SESSION['error'] = 'Image upload failed: ' . $validation['error'];
+                    header('Location: ' . BASE_URL . '/admin/gallery/create');
+                    return;
                 }
             }
 

@@ -3,7 +3,7 @@ $commission_levels = $commission_levels ?? [];
 $rank_requirements = $rank_requirements ?? [];
 $payout_history = $payout_history ?? [];
 $page_title = $page_title ?? 'Commission Structure';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <!-- Header -->

@@ -2,7 +2,7 @@
 $user = $user ?? [];
 $roles = $roles ?? ['admin', 'manager', 'associate', 'agent', 'customer', 'user'];
 $page_title = $page_title ?? 'Edit User';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <!-- Header -->

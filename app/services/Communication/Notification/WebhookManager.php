@@ -51,7 +51,7 @@ class WebhookManager
                 $this->logger->warning('Redis class not found, using database fallback');
                 $this->cache = null;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->warning('Redis connection failed, using database fallback: ' . $e->getMessage());
             $this->cache = null;
         }

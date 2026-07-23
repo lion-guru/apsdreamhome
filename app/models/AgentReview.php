@@ -28,9 +28,9 @@ class AgentReview extends Model {
      */
     public function getAgentReviews($agentId, $limit = 10, $offset = 0) {
         return static::query()
-            ->select(['r.*', 'u.uname as user_name'])
+            ->select(['r.*', 'u.name as user_name'])
             ->from(static::$table . ' as r')
-            ->join('user as u', 'r.user_id', '=', 'u.uid')
+            ->join('users as u', 'r.user_id', '=', 'u.id')
             ->where('r.agent_id', $agentId)
             ->orderBy('r.created_at', 'DESC')
             ->limit($limit)
@@ -42,24 +42,25 @@ class AgentReview extends Model {
      * Get review summary for an agent
      */
     public function getAgentReviewSummary($agentId) {
-        return static::query()
-            ->select([
-                'COUNT(*) as total_reviews',
-                'AVG(rating) as average_rating'
-            ])
-            ->where('agent_id', $agentId)
-            ->first();
+        $sql = "SELECT COUNT(*) as total_reviews, AVG(rating) as average_rating
+                FROM " . static::$table . "
+                WHERE agent_id = ?";
+        $row = static::getDb()->fetch($sql, [$agentId]);
+        return [
+            'total_reviews' => (int)($row['total_reviews'] ?? 0),
+            'average_rating' => (float)($row['average_rating'] ?? 0)
+        ];
     }
 
     /**
      * Get rating distribution for an agent
      */
     public function getAgentRatingDistribution($agentId) {
-        return static::query()
-            ->select(['rating', 'COUNT(*) as count'])
-            ->where('agent_id', $agentId)
-            ->groupBy('rating')
-            ->get();
+        $sql = "SELECT rating, COUNT(*) as count
+                FROM " . static::$table . "
+                WHERE agent_id = ?
+                GROUP BY rating";
+        return static::getDb()->fetchAll($sql, [$agentId]);
     }
 
     /**

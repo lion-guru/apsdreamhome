@@ -37,11 +37,17 @@ class KYCController extends BaseApiController
         }
 
         try {
-            $authError = $this->requireLogin();
-            if ($authError) return $authError;
+            // Accept JWT auth from ApiAuthMiddleware ($GLOBALS) or session auth
+            $userId = $GLOBALS['api_user_id'] ?? null;
+            if (!$userId) {
+                $authError = $this->requireLogin();
+                if ($authError) return $authError;
+                $userId = $this->getCurrentUserId();
+            }
 
-            $pan = $this->request()->input('pan');
-            $name = $this->request()->input('name', '');
+            $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $pan = $body['pan'] ?? $this->request()->input('pan');
+            $name = $body['name'] ?? $this->request()->input('name', '');
 
             if (empty($pan)) {
                 return $this->jsonError('PAN number is required', 400);
@@ -87,10 +93,16 @@ class KYCController extends BaseApiController
         }
 
         try {
-            $authError = $this->requireLogin();
-            if ($authError) return $authError;
+            // Accept JWT auth from ApiAuthMiddleware ($GLOBALS) or session auth
+            $userId = $GLOBALS['api_user_id'] ?? null;
+            if (!$userId) {
+                $authError = $this->requireLogin();
+                if ($authError) return $authError;
+                $userId = $this->getCurrentUserId();
+            }
 
-            $aadhaar = $this->request()->input('aadhaar');
+            $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $aadhaar = $body['aadhaar'] ?? $this->request()->input('aadhaar');
 
             if (empty($aadhaar)) {
                 return $this->jsonError('Aadhaar number is required', 400);
@@ -224,10 +236,16 @@ class KYCController extends BaseApiController
         header('Content-Type: application/json');
 
         try {
-            $authError = $this->requireLogin();
-            if ($authError) return $authError;
+            // Accept JWT auth from ApiAuthMiddleware ($GLOBALS) or session auth
+            $userId = $GLOBALS['api_user_id'] ?? null;
+            if (!$userId) {
+                $authError = $this->requireLogin();
+                if ($authError) return $authError;
+                $userId = $this->getCurrentUserId();
+            }
 
-            $aadhaar = $this->request()->input('aadhaar');
+            $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $aadhaar = $body['aadhaar'] ?? $this->request()->input('aadhaar');
             if (empty($aadhaar)) {
                 return $this->jsonError('Aadhaar number is required', 400);
             }
@@ -257,12 +275,18 @@ class KYCController extends BaseApiController
         header('Content-Type: application/json');
 
         try {
-            $authError = $this->requireLogin();
-            if ($authError) return $authError;
+            // Accept JWT auth from ApiAuthMiddleware ($GLOBALS) or session auth
+            $userId = $GLOBALS['api_user_id'] ?? null;
+            if (!$userId) {
+                $authError = $this->requireLogin();
+                if ($authError) return $authError;
+                $userId = $this->getCurrentUserId();
+            }
 
-            $aadhaar = $this->request()->input('aadhaar');
-            $otp = $this->request()->input('otp');
-            $txnId = $this->request()->input('transaction_id');
+            $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $aadhaar = $body['aadhaar'] ?? $this->request()->input('aadhaar');
+            $otp = $body['otp'] ?? $this->request()->input('otp');
+            $txnId = $body['transaction_id'] ?? $this->request()->input('transaction_id');
 
             if (empty($aadhaar) || empty($otp) || empty($txnId)) {
                 return $this->jsonError('Aadhaar, OTP, and transaction_id are required', 400);

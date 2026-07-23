@@ -32,6 +32,15 @@
                 </tr>
             </thead>
             <tbody>
+                <?php if (empty($levels)): ?>
+                <tr>
+                    <td colspan="11" class="text-center py-5">
+                        <i class="fas fa-layer-group fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                        <h5 class="text-muted">No MLM levels found</h5>
+                        <p class="text-muted mb-3">Configure MLM levels to define the commission and ranking structure.</p>
+                    </td>
+                </tr>
+                <?php else: ?>
                 <?php foreach ($levels as $l): ?>
                 <tr>
                     <td><?php echo $l['level_number']; ?></td>
@@ -47,6 +56,7 @@
                     <td><a href="<?php echo BASE_URL; ?>/admin/mlm-settings/levels/edit/<?php echo $l['id']; ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a></td>
                 </tr>
                 <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

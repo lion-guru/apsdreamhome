@@ -159,7 +159,7 @@ class IntentDetector
                             VALUES (?, ?, 'keyword', ?, 1.0)
                         ");
                         $ins->execute([$intent, $p, $lang]);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         // ignore dupes
                     }
                 }

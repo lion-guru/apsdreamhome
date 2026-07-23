@@ -18,7 +18,7 @@ class GoogleAuthController extends BaseController
 
     public function googleRedirect()
     {
-        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $baseUrl = rtrim(BASE_URL, '/');
         $redirectUri = $baseUrl . '/google_callback.php';
         header('Location: ' . $this->googleService->getAuthUrl($redirectUri));
         exit;
@@ -35,7 +35,7 @@ class GoogleAuthController extends BaseController
             exit;
         }
 
-        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $baseUrl = rtrim(BASE_URL, '/');
         $redirectUri = $baseUrl . '/google_callback.php';
 
         $result = $this->googleService->handleCallback($code, $redirectUri);

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Plot Cost Calculator - Colony Detail
  * Shows cost breakdown and plot pricing
@@ -13,7 +13,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
         <div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/plot-costs">Plot Costs</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/plot-costs">Plot Costs</a></li>
                     <li class="breadcrumb-item active"><?= htmlspecialchars($colony['name'] ?? 'Colony') ?></li>
                 </ol>
             </nav>
@@ -22,7 +22,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
             </h1>
             <p class="text-muted"><?= htmlspecialchars($colony['location'] ?? '') ?></p>
         </div>
-        <a href="/admin/plot-costs" class="btn btn-secondary">
+        <a href="<?= BASE_URL ?>/admin/plot-costs" class="btn btn-secondary">
             <i class="fas fa-arrow-left me-2"></i>Back to List
         </a>
     </div>
@@ -71,7 +71,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
             <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add Cost Entry</h5>
         </div>
         <div class="card-body aps-cp-card-body">
-            <form action="/admin/plot-costs/add-cost" method="POST" class="row g-3">
+            <form action="<?= BASE_URL ?>/admin/plot-costs/add-cost" method="POST" class="row g-3">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="colony_id" value="<?= $colony['id'] ?>">
                 
@@ -165,7 +165,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
             <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Calculate Plot Prices</h5>
         </div>
         <div class="card-body aps-cp-card-body">
-            <form action="/admin/plot-costs/calculate" method="POST" class="row g-3 align-items-end">
+            <form action="<?= BASE_URL ?>/admin/plot-costs/calculate" method="POST" class="row g-3 align-items-end">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="hidden" name="colony_id" value="<?= $colony['id'] ?>">
                 
@@ -182,7 +182,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
                 </div>
                 
                 <div class="col-md-4">
-                    <a href="/admin/plot-costs/report/<?= $colony['id'] ?>" class="btn btn-info w-100">
+                    <a href="<?= BASE_URL ?>/admin/plot-costs/report/<?= $colony['id'] ?>" class="btn btn-info w-100">
                         <i class="fas fa-file-alt me-2"></i>View Cost Report
                     </a>
                 </div>

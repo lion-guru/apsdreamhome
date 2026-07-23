@@ -229,7 +229,7 @@ $groupCount = count($groups);
 <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
 
 <script>
-    const BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '/apsdreamhome' ?>';
+    const BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/') ?>';
     let currentVersion = '<?= $activeVersion ?>';
     let swaggerUiInstance = null;
 

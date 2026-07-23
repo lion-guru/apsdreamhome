@@ -245,7 +245,7 @@ function processTransfer() {
         formData.append('emi_id', emiId);
         formData.append('amount', amount);
         
-        fetch('/wallet/transfer-emi/process', {
+        fetch('<?= BASE_URL ?>/wallet/transfer-emi/process', {
             method: 'POST',
             body: formData
         })

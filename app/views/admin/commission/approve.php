@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Approve Commissions';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $commissions = $commissions ?? [];
 ?>
 <div class="container-fluid">

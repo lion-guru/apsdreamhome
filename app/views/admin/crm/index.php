@@ -3,7 +3,7 @@ $page_title = $page_title ?? 'CRM Dashboard';
 $stats = $stats ?? [];
 $recent_tickets = $recent_tickets ?? [];
 $recent_leads = $recent_leads ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 $totalCustomers = (int)($stats['total_customers'] ?? 0);
 $activeLeads = (int)($stats['active_leads'] ?? 0);

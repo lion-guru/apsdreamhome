@@ -149,11 +149,11 @@
                 <i class="fas fa-home"></i>
                 <?php echo __('thank_you_back_home', [], 'Back to Home'); ?>
             </a>
-            <a href="<?= BASE_URL ?>properties" class="btn-custom btn-secondary-custom">
+            <a href="<?= BASE_URL ?>/properties" class="btn-custom btn-secondary-custom">
                 <i class="fas fa-building"></i>
                 <?php echo __('thank_you_browse_properties', [], 'Browse Properties'); ?>
             </a>
-            <a href="<?= BASE_URL ?>contact" class="btn-custom btn-secondary-custom">
+            <a href="<?= BASE_URL ?>/contact" class="btn-custom btn-secondary-custom">
                 <i class="fas fa-phone"></i>
                 <?php echo __('thank_you_contact_us', [], 'Contact Us'); ?>
             </a>

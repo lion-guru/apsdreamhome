@@ -16,7 +16,14 @@
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Available Plots (<?php echo count($plots); ?>)</h6></div>
             <div class="card-body p-0">
                 <?php if (empty($plots)): ?>
-                <div class="text-center py-4 text-muted">No plots assigned to this colony yet.</div>
+                <div class="text-center py-5">
+                    <i class="fas fa-th-large fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-2">No plots assigned to this colony yet.</p>
+                    <p class="text-muted small mb-3">Add plots to start bookings and track sales.</p>
+                    <a href="<?= BASE_URL ?>/admin/plots/create" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Add First Plot
+                    </a>
+                </div>
                 <?php else: ?>
                 <div class="table-responsive"><table class="table table-hover mb-0">
                     <thead class="bg-light"><tr><th>Plot #</th><th>Block</th><th>Area (sqft)</th><th>Price</th><th>Status</th></tr></thead>

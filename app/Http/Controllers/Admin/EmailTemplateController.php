@@ -110,7 +110,7 @@ class EmailTemplateController extends AdminController
         try {
             $emailService = new EmailService();
             $sent = $emailService->send($toEmail, $subject, $body);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('EmailTemplateController::test send failed: ' . $e->getMessage());
             $sent = false;
         }
@@ -145,7 +145,7 @@ class EmailTemplateController extends AdminController
             if (!empty($row['setting_value'])) {
                 return $row['setting_value'];
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // ignore - fall through to empty string
         }
         return '';

@@ -25,7 +25,15 @@ class ApiLeadController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->db = \App\Core\Database::getInstance();
+        $this->db = \App\Core\Database\Database::getInstance();
+    }
+
+    /**
+     * API endpoints are token-authenticated, so skip CSRF protection.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     /**
@@ -89,28 +97,37 @@ class ApiLeadController extends BaseController
             $data = json_decode(file_get_contents('php://input'), true);
 
             // Validate required fields
-            $requiredFields = ['first_name'];
-            foreach ($requiredFields as $field) {
-                if (empty($data[$field])) {
-                    $this->jsonError("Field '{$field}' is required", 422);
-                }
+            if (empty($data['first_name']) && empty($data['name']) && empty($data['email']) && empty($data['phone'])) {
+                $this->jsonError("At least one of name, first_name, email or phone is required", 422);
             }
 
             // Get current user
             $currentUser = $this->getCurrentUser();
+            $createdBy = $currentUser && isset($currentUser->id) ? $currentUser->id : ($currentUser['id'] ?? null);
 
-            // Create lead data
+            // Build name from first/last name (leads table has a single `name` column)
+            $firstName = $data['first_name'] ?? '';
+            $lastName = $data['last_name'] ?? '';
+            $name = $data['name'] ?? trim($firstName . ' ' . $lastName);
+            if ($name === '' && !empty($data['email'])) {
+                $name = $data['email'];
+            }
+
+            // Create lead data using real `leads` columns
             $leadData = [
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'] ?? '',
+                'name' => $name,
                 'email' => $data['email'] ?? '',
                 'phone' => $data['phone'] ?? '',
                 'company' => $data['company'] ?? '',
                 'source' => $data['source'] ?? 'website',
                 'status' => $data['status'] ?? 'new',
                 'assigned_to' => $data['assigned_to'] ?? null,
-                'created_by' => $currentUser->id,
-                'custom_fields' => isset($data['custom_fields']) ? json_encode($data['custom_fields']) : null,
+                'created_by' => $createdBy,
+                'property_interest' => $data['property_interest'] ?? null,
+                'budget' => $data['budget'] ?? null,
+                'location_preference' => $data['location_preference'] ?? null,
+                'notes' => $data['notes'] ?? null,
+                'message' => $data['message'] ?? null,
             ];
 
             // Create lead using custom Model
@@ -183,16 +200,14 @@ class ApiLeadController extends BaseController
 
             $data = json_decode(file_get_contents('php://input'), true);
 
-            // Update lead fields
-            $allowedFields = ['first_name', 'last_name', 'email', 'phone', 'company', 'source', 'status', 'assigned_to', 'custom_fields'];
+            // Update lead fields using real `leads` columns
+            $allowedFields = ['name', 'email', 'phone', 'company', 'source', 'status', 'assigned_to', 'property_interest', 'budget', 'location_preference', 'notes', 'message'];
             foreach ($allowedFields as $field) {
                 if (isset($data[$field])) {
                     $lead->$field = $data[$field];
                 }
             }
 
-            $currentUser = $this->getCurrentUser();
-            $lead->updated_by = $currentUser->id;
             $lead->save();
 
             // Handle tags if provided
@@ -271,7 +286,7 @@ class ApiLeadController extends BaseController
                 'lead_id' => $lead->id,
                 'content' => $data['content'],
                 'is_private' => $data['is_private'] ?? false,
-                'created_by' => $currentUser->id,
+                'created_by' => ($currentUser && isset($currentUser->id) ? $currentUser->id : ($currentUser['id'] ?? null)),
             ];
 
             $note = new LeadNote($noteData);
@@ -317,9 +332,9 @@ class ApiLeadController extends BaseController
 
             $file = $_FILES['file'];
 
-            $v = UploadValidator::validate($file, 'documents');
-            if ($v !== true) {
-                $this->jsonError($v, 422);
+            $v = UploadValidator::validate($file, ['types' => 'documents']);
+            if (empty($v['valid'])) {
+                $this->jsonError($v['error'] ?? 'Invalid file', 422);
             }
 
             $currentUser = $this->getCurrentUser();
@@ -350,7 +365,7 @@ class ApiLeadController extends BaseController
                 'file_size' => $file['size'],
                 'description' => isset($_POST['description']) ? Security::sanitize($_POST['description']) : '',
                 'is_private' => isset($_POST['is_private']) ? Security::sanitize($_POST['is_private']) === 'true' : false,
-                'uploaded_by' => $currentUser->id,
+                'uploaded_by' => ($currentUser && isset($currentUser->id) ? $currentUser->id : ($currentUser['id'] ?? null)),
             ];
 
             $leadFile = new LeadFile($fileData);
@@ -410,7 +425,7 @@ class ApiLeadController extends BaseController
                         'lead_id' => $lead->id,
                         'content' => "Status changed from {$oldStatus} to {$newStatus}. " . $data['notes'],
                         'is_private' => false,
-                        'created_by' => $currentUser->id,
+                        'created_by' => ($currentUser && isset($currentUser->id) ? $currentUser->id : ($currentUser['id'] ?? null)),
                     ];
 
                     $note = new LeadNote($noteData);
@@ -468,7 +483,7 @@ class ApiLeadController extends BaseController
                         'lead_id' => $lead->id,
                         'content' => 'Assignment notes: ' . $data['notes'],
                         'is_private' => false,
-                        'created_by' => $currentUser->id,
+                        'created_by' => ($currentUser && isset($currentUser->id) ? $currentUser->id : ($currentUser['id'] ?? null)),
                     ];
 
                     $note = new LeadNote($noteData);
@@ -541,7 +556,7 @@ class ApiLeadController extends BaseController
                                 'lead_id' => $lead->id,
                                 'content' => 'Bulk assignment: ' . $notes,
                                 'is_private' => false,
-                                'created_by' => $currentUser->id,
+                                'created_by' => ($currentUser && isset($currentUser->id) ? $currentUser->id : ($currentUser['id'] ?? null)),
                             ];
 
                             $note = new LeadNote($noteData);
@@ -631,7 +646,7 @@ class ApiLeadController extends BaseController
             $db = \App\Core\Database\Database::getInstance();
             $conn = $db->getConnection();
 
-            $statuses = $conn->query("SELECT * FROM lead_statuses ORDER BY sort_order ASC")->fetchAll(\PDO::FETCH_OBJ);
+            $statuses = $conn->query("SELECT * FROM lead_statuses ORDER BY status_name ASC")->fetchAll(\PDO::FETCH_OBJ);
             $sources = $conn->query("SELECT * FROM lead_sources ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
             $tags = $conn->query("SELECT * FROM lead_tags ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);
             $users = $conn->query("SELECT id, name, email, role FROM users ORDER BY name ASC")->fetchAll(\PDO::FETCH_OBJ);

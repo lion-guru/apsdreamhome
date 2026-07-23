@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'API Documentation';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $endpoints = $endpoints ?? [
     ['method' => 'GET', 'path' => '/api/properties', 'description' => 'List all properties', 'params' => 'page, limit, type, location', 'response' => '{"data": [...], "total": 100, "page": 1}'],
     ['method' => 'GET', 'path' => '/api/properties/{id}', 'description' => 'Get property details', 'params' => 'id (int)', 'response' => '{"id": 1, "title": "..."}'],

@@ -4,7 +4,7 @@
 $page_title = $page_title ?? 'AI Settings';
 $stats = $stats ?? ['requests_today' => 0, 'requests_this_month' => 0, 'error_count' => 0];
 $recentLogs = $recentLogs ?? [];
-$baseUrl = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$baseUrl = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">

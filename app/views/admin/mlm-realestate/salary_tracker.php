@@ -12,6 +12,15 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light"><tr><th>ID</th><th>User</th><th>Target Volume</th><th>Achieved In</th><th>Monthly Payout</th><th>Duration</th><th>Start</th><th>End</th><th>Status</th></tr></thead>
                     <tbody>
+                        <?php if (empty($trackers ?? [])): ?>
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="fas fa-money-bill-wave fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No salary trackers found</h5>
+                                <p class="text-muted mb-3">Leadership salary tracking records will appear here once targets are set.</p>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($trackers as $t): ?>
                         <tr>
                             <td>#<?= $t['id'] ?></td>
@@ -25,6 +34,7 @@
                             <td><span class="badge bg-<?= $t['status'] === 'active' ? 'success' : ($t['status'] === 'completed' ? 'primary' : 'secondary') ?>"><?= htmlspecialchars($t['status']) ?></span></td>
                         </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

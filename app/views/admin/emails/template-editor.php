@@ -1,4 +1,4 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Email Template Editor</h4>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#templateModal" onclick="resetForm()">
@@ -55,7 +55,7 @@
 <div class="modal fade" id="templateModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form method="POST" action="/admin/email-templates/save">
+            <form method="POST" action="<?= BASE_URL ?>/admin/email-templates/save">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-pen me-2"></i>Edit Template</h5>

@@ -2,7 +2,7 @@
 
 namespace App\Services\AI\VoiceAgents;
 
-use App\Services\AI\users\BaseAgent;
+use App\Services\AI\Agents\BaseAgent;
 use App\Services\Voice\VoiceCallService;
 use App\Services\Voice\TwilioVoiceService;
 use Exception;

@@ -178,7 +178,12 @@ $active_page = 'bookings';
                 <tbody>
                     <?php if (empty($bookings)): ?>
                         <tr>
-                            <td colspan="8" class="text-center"><?= __('admin_no_bookings') ?></td>
+                            <td colspan="8" class="text-center py-5">
+                                <i class="fas fa-file-contract fa-3x text-muted mb-3 d-block"></i>
+                                <h5 class="text-muted">No bookings yet</h5>
+                                <p class="text-muted mb-3">Start by creating your first booking to track payments, EMI schedules, and commissions.</p>
+                                <a href="<?= BASE_URL ?>/admin/sales/bookings/new" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Create Booking</a>
+                            </td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($bookings as $booking): ?>

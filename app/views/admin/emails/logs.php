@@ -1,7 +1,7 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-history me-2"></i>Email Logs</h4>
-        <a href="/admin/email-logs" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= BASE_URL ?>/admin/email-logs" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-sync me-1"></i>Refresh
         </a>
     </div>

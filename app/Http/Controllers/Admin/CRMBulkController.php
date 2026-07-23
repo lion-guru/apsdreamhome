@@ -36,13 +36,15 @@ class CRMBulkController extends AdminController
         try {
             $db = Database::getInstance()->getConnection();
             $channel = $_POST['channel'] ?? 'email';
-            $segmentId = $_POST['segment_id'] ?? null;
-            $templateId = $_POST['template_id'] ?? null;
+            $segmentId = (int)($_POST['segment_id'] ?? 0);
+            $templateId = (int)($_POST['template_id'] ?? 0);
 
             $where = ["l.deleted_at IS NULL", "l.status NOT IN ('converted','closed','dead')"];
             $params = [];
             if ($segmentId) {
-                $seg = $db->query("SELECT filter_criteria FROM crm_segments WHERE id = $segmentId")->fetch(\PDO::FETCH_ASSOC);
+                $stmt = $db->prepare("SELECT filter_criteria FROM crm_segments WHERE id = ?");
+                $stmt->execute([$segmentId]);
+                $seg = $stmt->fetch(\PDO::FETCH_ASSOC);
                 if ($seg && !empty($seg['filter_criteria'])) {
                     $criteria = json_decode($seg['filter_criteria'], true) ?? [];
                     if (!empty($criteria['status'])) { $where[] = "l.status = ?"; $params[] = $criteria['status']; }
@@ -74,7 +76,7 @@ class CRMBulkController extends AdminController
             $db = Database::getInstance()->getConnection();
             $channel = $_POST['channel'] ?? 'email';
             $templateId = (int)($_POST['template_id'] ?? 0);
-            $segmentId = $_POST['segment_id'] ?? null;
+            $segmentId = (int)($_POST['segment_id'] ?? 0);
             $subject = trim($_POST['subject'] ?? '');
             $body = trim($_POST['body'] ?? '');
 
@@ -82,7 +84,9 @@ class CRMBulkController extends AdminController
             $where = ["l.deleted_at IS NULL", "l.status NOT IN ('converted','closed','dead')"];
             $params = [];
             if ($segmentId) {
-                $seg = $db->query("SELECT filter_criteria FROM crm_segments WHERE id = $segmentId")->fetch(\PDO::FETCH_ASSOC);
+                $stmt = $db->prepare("SELECT filter_criteria FROM crm_segments WHERE id = ?");
+                $stmt->execute([$segmentId]);
+                $seg = $stmt->fetch(\PDO::FETCH_ASSOC);
                 if ($seg && !empty($seg['filter_criteria'])) {
                     $criteria = json_decode($seg['filter_criteria'], true) ?? [];
                     if (!empty($criteria['status'])) { $where[] = "l.status = ?"; $params[] = $criteria['status']; }

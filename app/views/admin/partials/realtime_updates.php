@@ -95,7 +95,7 @@ class RealtimeDashboard {
         this.showLoadingState();
         
         try {
-            const response = await fetch('/api/dashboard/updates', {
+            const response = await fetch('<?= BASE_URL ?>/api/dashboard/updates', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

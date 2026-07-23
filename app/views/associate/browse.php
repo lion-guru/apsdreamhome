@@ -5,7 +5,7 @@ $total = $total ?? 0;
 $page = $page ?? 1;
 $total_pages = $total_pages ?? 1;
 $current_filters = $current_filters ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

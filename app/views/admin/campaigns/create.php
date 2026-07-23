@@ -85,14 +85,14 @@ $error = $error ?? null;
                             <i class="fas fa-calendar"></i> Start Date
                         </label>
                         <input type="date" class="form-control" id="start_date" name="start_date"
-                            value="<?= $_POST['start_date'] ?? date('Y-m-d') ?>">
+                            value="<?= htmlspecialchars($_POST['start_date'] ?? date('Y-m-d'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
                     <div class="col-md-3">
                         <label for="end_date" class="form-label fw-bold">
                             <i class="fas fa-calendar-check"></i> End Date
                         </label>
                         <input type="date" class="form-control" id="end_date" name="end_date"
-                            value="<?= $_POST['end_date'] ?? '' ?>">
+                            value="<?= htmlspecialchars($_POST['end_date'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                     </div>
                 </div>
 

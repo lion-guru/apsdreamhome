@@ -1,18 +1,18 @@
-<?php $pageTitle = 'Workflow Steps'; ?>
+﻿<?php $pageTitle = 'Workflow Steps'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-list-check me-2"></i>Workflow Steps</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/workflows">Workflows</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/workflows/list">All Workflows</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/workflows">Workflows</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/workflows/list">All Workflows</a></li>
                     <li class="breadcrumb-item active">Steps: <?= $workflow['name'] ?? 'Workflow' ?></li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/workflows/list" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+                <a href="<?= BASE_URL ?>/admin/workflows/list" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
             </div>
         </div>
     </div>

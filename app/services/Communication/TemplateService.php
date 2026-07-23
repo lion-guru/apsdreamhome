@@ -51,7 +51,7 @@ class EmailTemplateManager {
             $this->template_cache[$template_name] = $template;
 
             return $template;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->log(
                 "Email template retrieval error: " . $e->getMessage(),
                 'error',
@@ -109,7 +109,7 @@ class EmailTemplateManager {
             );
 
             return $result;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->log(
                 "Email template creation error: " . $e->getMessage(),
                 'error',
@@ -181,7 +181,7 @@ class EmailTemplateManager {
             );
 
             return $result;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->log(
                 "Email template status change error: " . $e->getMessage(),
                 'error',
@@ -205,7 +205,7 @@ class EmailTemplateManager {
             }
 
             return $this->db->fetchAll($query, $params);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->log(
                 "Email template listing error: " . $e->getMessage(),
                 'error',

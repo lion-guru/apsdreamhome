@@ -1,4 +1,16 @@
 <div class="container-fluid py-4">
+    <?php
+    $plotList = $plots ?? [];
+    $availableCount = 0;
+    $bookedCount = 0;
+    $soldCount = 0;
+    foreach ($plotList as $pl) {
+        $st = strtolower($pl['status'] ?? 'available');
+        if ($st === 'available' || $st === 'hold' || $st === 'reserved') $availableCount++;
+        elseif ($st === 'booked') $bookedCount++;
+        elseif ($st === 'sold') $soldCount++;
+    }
+    ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-th"></i> Plot Management</h2>
         <div>
@@ -16,7 +28,7 @@
             <div class="card bg-primary text-white">
                 <div class="card-body aps-cp-card-body">
                     <h5>Total Plots</h5>
-                    <h3><?= count($plots ?? []) ?></h3>
+                    <h3><?= count($plotList) ?></h3>
                 </div>
             </div>
         </div>
@@ -24,7 +36,7 @@
             <div class="card bg-success text-white">
                 <div class="card-body aps-cp-card-body">
                     <h5>Available</h5>
-                    <h3>0</h3>
+                    <h3><?= $availableCount ?></h3>
                 </div>
             </div>
         </div>
@@ -32,7 +44,7 @@
             <div class="card bg-warning text-white">
                 <div class="card-body aps-cp-card-body">
                     <h5>Booked</h5>
-                    <h3>0</h3>
+                    <h3><?= $bookedCount ?></h3>
                 </div>
             </div>
         </div>
@@ -40,7 +52,7 @@
             <div class="card bg-info text-white">
                 <div class="card-body aps-cp-card-body">
                     <h5>Sold</h5>
-                    <h3>0</h3>
+                    <h3><?= $soldCount ?></h3>
                 </div>
             </div>
         </div>

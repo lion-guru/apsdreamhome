@@ -12,19 +12,115 @@ class AICallingController extends AdminController
 
     public function campaign()
     {
-        $this->data['page_title'] = 'Calling Campaign';
+        $this->data['page_title'] = 'Calling Campaigns';
+        try {
+            $db = $this->db;
+            $this->data['campaigns'] = $db->fetchAll(
+                "SELECT c.*, 
+                    (SELECT COUNT(*) FROM ai_calling_schedule cs WHERE cs.campaign_id = c.id) as total_scheduled,
+                    (SELECT COUNT(*) FROM ai_calling_schedule cs WHERE cs.campaign_id = c.id AND cs.status='completed') as completed,
+                    (SELECT COUNT(*) FROM ai_call_sessions acs WHERE acs.campaign_id = c.id) as calls_made,
+                    (SELECT COUNT(*) FROM ai_call_sessions acs WHERE acs.campaign_id = c.id AND acs.customer_response='interested') as interested
+                 FROM ai_calling_campaigns c ORDER BY c.created_at DESC"
+            ) ?: [];
+            $this->data['totalCampaigns'] = count($this->data['campaigns']);
+            $this->data['activeCampaigns'] = count(array_filter($this->data['campaigns'], fn($c) => $c['status'] === 'active'));
+            $this->data['totalScheduled'] = (int)($db->query("SELECT COUNT(*) FROM ai_calling_schedule")->fetchColumn());
+            $this->data['totalCompleted'] = (int)($db->query("SELECT COUNT(*) FROM ai_calling_schedule WHERE status='completed'")->fetchColumn());
+        } catch (\Exception $e) {
+            $this->data['campaigns'] = [];
+            $this->data['totalCampaigns'] = $this->data['activeCampaigns'] = $this->data['totalScheduled'] = $this->data['totalCompleted'] = 0;
+        }
         $this->render('admin/ai/calling-campaign');
     }
 
     public function history()
     {
         $this->data['page_title'] = 'Call History';
+        try {
+            $db = $this->db;
+            $page = max(1, intval($_GET['page'] ?? 1));
+            $perPage = 25;
+            $offset = ($page - 1) * $perPage;
+            $where = '1=1';
+            $params = [];
+
+            $filterStatus = $_GET['status'] ?? '';
+            $filterFrom = $_GET['from'] ?? '';
+            $filterTo = $_GET['to'] ?? '';
+            $filterSearch = $_GET['q'] ?? '';
+
+            if ($filterStatus) { $where .= " AND acs.status = ?"; $params[] = $filterStatus; }
+            if ($filterFrom) { $where .= " AND DATE(acs.created_at) >= ?"; $params[] = $filterFrom; }
+            if ($filterTo) { $where .= " AND DATE(acs.created_at) <= ?"; $params[] = $filterTo; }
+            if ($filterSearch) {
+                $where .= " AND (acs.phone LIKE ? OR l.name LIKE ?)";
+                $params[] = "%$filterSearch%";
+                $params[] = "%$filterSearch%";
+            }
+
+            $countStmt = $db->prepare("SELECT COUNT(*) FROM ai_call_sessions acs LEFT JOIN leads l ON acs.lead_id = l.id WHERE $where");
+            $countStmt->execute($params);
+            $totalRows = (int)$countStmt->fetchColumn();
+            $totalPages = ceil($totalRows / $perPage);
+
+            $sql = "SELECT acs.*, l.name as lead_name FROM ai_call_sessions acs LEFT JOIN leads l ON acs.lead_id = l.id WHERE $where ORDER BY acs.created_at DESC LIMIT $perPage OFFSET $offset";
+            $stmt = $db->prepare($sql);
+            $stmt->execute($params);
+            $this->data['calls'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $this->data['totalCalls'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions")->fetchColumn());
+            $this->data['completedCalls'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE status='completed'")->fetchColumn());
+            $this->data['failedCalls'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE status='failed'")->fetchColumn());
+            $this->data['interestedCount'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE customer_response='interested'")->fetchColumn());
+            $this->data['pagination'] = ['page' => $page, 'total_pages' => $totalPages, 'total' => $totalRows, 'per_page' => $perPage];
+            $this->data['filters'] = ['status' => $filterStatus, 'from' => $filterFrom, 'to' => $filterTo, 'q' => $filterSearch];
+        } catch (\Exception $e) {
+            $this->data['calls'] = [];
+            $this->data['pagination'] = ['page' => 1, 'total_pages' => 1, 'total' => 0, 'per_page' => 25];
+            $this->data['filters'] = [];
+            $this->data['totalCalls'] = $this->data['completedCalls'] = $this->data['failedCalls'] = $this->data['interestedCount'] = 0;
+        }
         $this->render('admin/ai/call-history');
     }
 
     public function analytics()
     {
         $this->data['page_title'] = 'Calling Analytics';
+        $days = intval($_GET['days'] ?? 30);
+        $since = date('Y-m-d', strtotime("-$days days"));
+        try {
+            $db = $this->db;
+            $this->data['totals'] = $db->fetch(
+                "SELECT COUNT(*) total,
+                    SUM(CASE WHEN status='completed' THEN 1 ELSE 0 END) completed,
+                    SUM(CASE WHEN status='failed' THEN 1 ELSE 0 END) failed,
+                    SUM(CASE WHEN customer_response='interested' THEN 1 ELSE 0 END) interested,
+                    SUM(CASE WHEN customer_response='not_interested' THEN 1 ELSE 0 END) not_interested,
+                    COALESCE(AVG(duration_seconds),0) avg_duration
+                 FROM ai_call_sessions WHERE created_at >= ?", [$since]
+            ) ?: ['total'=>0,'completed'=>0,'failed'=>0,'interested'=>0,'not_interested'=>0,'avg_duration'=>0];
+            $daily = $db->fetchAll(
+                "SELECT DATE(created_at) day, COUNT(*) total,
+                    SUM(CASE WHEN status='completed' THEN 1 ELSE 0 END) completed,
+                    SUM(CASE WHEN customer_response='interested' THEN 1 ELSE 0 END) interested
+                 FROM ai_call_sessions WHERE created_at >= ? GROUP BY day ORDER BY day", [$since]
+            ) ?: [];
+            $this->data['daily'] = $daily;
+            $this->data['day_labels'] = array_map(fn($d) => date('d M', strtotime($d['day'])), $daily);
+            $this->data['day_totals'] = array_column($daily, 'total');
+            $this->data['day_completed'] = array_column($daily, 'completed');
+            $this->data['day_interested'] = array_column($daily, 'interested');
+            $this->data['days'] = $days;
+            $this->data['byAgent'] = $db->fetchAll(
+                "SELECT ai_agent_id, COUNT(*) total, SUM(CASE WHEN status='completed' THEN 1 ELSE 0 END) completed, SUM(CASE WHEN customer_response='interested' THEN 1 ELSE 0 END) interested FROM ai_call_sessions WHERE created_at >= ? AND ai_agent_id IS NOT NULL GROUP BY ai_agent_id ORDER BY total DESC", [$since]
+            ) ?: [];
+        } catch (\Exception $e) {
+            $this->data['totals'] = ['total'=>0,'completed'=>0,'failed'=>0,'interested'=>0,'not_interested'=>0,'avg_duration'=>0];
+            $this->data['daily'] = $this->data['byAgent'] = [];
+            $this->data['day_labels'] = $this->data['day_totals'] = $this->data['day_completed'] = $this->data['day_interested'] = [];
+            $this->data['days'] = $days;
+        }
         $this->render('admin/ai/calling-analytics');
     }
 
@@ -129,7 +225,128 @@ class AICallingController extends AdminController
     public function training()
     {
         $this->data['page_title'] = 'AI Calling Training';
+        try {
+            $db = $this->db;
+            // Voice Models
+            $this->data['voiceModels'] = $db->fetchAll("SELECT * FROM ai_voice_models ORDER BY created_at DESC") ?: [];
+            $this->data['totalVoiceModels'] = count($this->data['voiceModels']);
+            $this->data['activeVoiceModels'] = count(array_filter($this->data['voiceModels'], fn($m) => $m['status'] === 'active'));
+            // Scripts
+            $this->data['scripts'] = $db->fetchAll("SELECT * FROM ai_calling_scripts ORDER BY created_at DESC") ?: [];
+            $this->data['totalScripts'] = count($this->data['scripts']);
+            $this->data['activeScripts'] = count(array_filter($this->data['scripts'], fn($s) => $s['is_active'] == 1));
+            // Intents
+            $this->data['intents'] = $db->fetchAll("SELECT * FROM ai_calling_intents ORDER BY priority DESC, total_triggers DESC") ?: [];
+            $this->data['totalIntents'] = count($this->data['intents']);
+            $this->data['activeIntents'] = count(array_filter($this->data['intents'], fn($i) => $i['is_active'] == 1));
+            // Performance from existing call data
+            $this->data['perfTotalCalls'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions")->fetchColumn());
+            $this->data['perfCompletedCalls'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE status='completed'")->fetchColumn());
+            $this->data['perfAvgDuration'] = round((float)($db->query("SELECT COALESCE(AVG(duration_seconds),0) FROM ai_call_sessions WHERE duration_seconds > 0")->fetchColumn()));
+            $this->data['perfInterested'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE customer_response='interested'")->fetchColumn());
+            // Per-script performance
+            $scriptPerf = $db->fetchAll("SELECT s.id, s.script_name, s.total_calls_made, s.total_calls_connected, s.total_interested, s.conversion_rate FROM ai_calling_scripts s ORDER BY s.conversion_rate DESC") ?: [];
+            $this->data['scriptPerformance'] = $scriptPerf;
+        } catch (\Exception $e) {
+            $this->data['voiceModels'] = $this->data['scripts'] = $this->data['intents'] = $this->data['scriptPerformance'] = [];
+            $this->data['totalVoiceModels'] = $this->data['activeVoiceModels'] = $this->data['totalScripts'] = $this->data['activeScripts'] = 0;
+            $this->data['totalIntents'] = $this->data['activeIntents'] = $this->data['perfTotalCalls'] = $this->data['perfCompletedCalls'] = 0;
+            $this->data['perfAvgDuration'] = $this->data['perfInterested'] = 0;
+        }
         $this->render('admin/ai/calling-training');
+    }
+
+    public function saveVoiceModel()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
+        $this->validateCsrfOrFail();
+        $db = $this->db;
+        $id = (int)($_POST['id'] ?? 0);
+        $data = [
+            'model_name' => trim($_POST['model_name'] ?? ''),
+            'language' => $_POST['language'] ?? 'hi-IN',
+            'voice_gender' => $_POST['voice_gender'] ?? 'female',
+            'model_provider' => $_POST['model_provider'] ?? 'google',
+            'status' => $_POST['status'] ?? 'inactive',
+            'notes' => trim($_POST['notes'] ?? ''),
+        ];
+        if (empty($data['model_name'])) { $this->data['error'] = 'Model name is required'; return $this->training(); }
+        if ($id) {
+            $db->prepare("UPDATE ai_voice_models SET model_name=?, language=?, voice_gender=?, model_provider=?, status=?, notes=? WHERE id=?")
+               ->execute([$data['model_name'], $data['language'], $data['voice_gender'], $data['model_provider'], $data['status'], $data['notes'], $id]);
+            $_SESSION['success'] = 'Voice model updated';
+        } else {
+            $db->prepare("INSERT INTO ai_voice_models (model_name, language, voice_gender, model_provider, status, notes, created_by) VALUES (?,?,?,?,?,?,?)")
+               ->execute([$data['model_name'], $data['language'], $data['voice_gender'], $data['model_provider'], $data['status'], $data['notes'], $_SESSION['admin_id'] ?? null]);
+            $_SESSION['success'] = 'Voice model created';
+        }
+        redirect(BASE_URL . '/admin/ai-calling/training');
+        exit;
+    }
+
+    public function saveScript()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
+        $this->validateCsrfOrFail();
+        $db = $this->db;
+        $id = (int)($_POST['id'] ?? 0);
+        $data = [
+            'script_name' => trim($_POST['script_name'] ?? ''),
+            'script_code' => strtoupper(trim($_POST['script_code'] ?? '')),
+            'category' => $_POST['category'] ?? 'sales',
+            'language' => $_POST['language'] ?? 'hi-IN',
+            'greeting_text' => trim($_POST['greeting_text'] ?? ''),
+            'main_body' => trim($_POST['main_body'] ?? ''),
+            'closing_text' => trim($_POST['closing_text'] ?? ''),
+            'estimated_duration_seconds' => (int)($_POST['estimated_duration_seconds'] ?? 120),
+            'is_active' => isset($_POST['is_active']) ? 1 : 0,
+        ];
+        if (empty($data['script_name']) || empty($data['greeting_text'])) {
+            $_SESSION['error'] = 'Script name and greeting are required';
+            return $this->training();
+        }
+        if ($id) {
+            $db->prepare("UPDATE ai_calling_scripts SET script_name=?, script_code=?, category=?, language=?, greeting_text=?, main_body=?, closing_text=?, estimated_duration_seconds=?, is_active=? WHERE id=?")
+               ->execute([$data['script_name'], $data['script_code'], $data['category'], $data['language'], $data['greeting_text'], $data['main_body'], $data['closing_text'], $data['estimated_duration_seconds'], $data['is_active'], $id]);
+            $_SESSION['success'] = 'Script updated';
+        } else {
+            $db->prepare("INSERT INTO ai_calling_scripts (script_name, script_code, category, language, greeting_text, main_body, closing_text, estimated_duration_seconds, is_active, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)")
+               ->execute([$data['script_name'], $data['script_code'], $data['category'], $data['language'], $data['greeting_text'], $data['main_body'], $data['closing_text'], $data['estimated_duration_seconds'], $data['is_active'], $_SESSION['admin_id'] ?? null]);
+            $_SESSION['success'] = 'Script created';
+        }
+        redirect(BASE_URL . '/admin/ai-calling/training');
+        exit;
+    }
+
+    public function saveIntent()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
+        $this->validateCsrfOrFail();
+        $db = $this->db;
+        $id = (int)($_POST['id'] ?? 0);
+        $data = [
+            'intent_name' => trim($_POST['intent_name'] ?? ''),
+            'intent_code' => strtoupper(trim($_POST['intent_code'] ?? '')),
+            'category' => $_POST['category'] ?? 'interest',
+            'description' => trim($_POST['description'] ?? ''),
+            'priority' => (int)($_POST['priority'] ?? 5),
+            'is_active' => isset($_POST['is_active']) ? 1 : 0,
+        ];
+        if (empty($data['intent_name'])) {
+            $_SESSION['error'] = 'Intent name is required';
+            return $this->training();
+        }
+        if ($id) {
+            $db->prepare("UPDATE ai_calling_intents SET intent_name=?, intent_code=?, category=?, description=?, priority=?, is_active=? WHERE id=?")
+               ->execute([$data['intent_name'], $data['intent_code'], $data['category'], $data['description'], $data['priority'], $data['is_active'], $id]);
+            $_SESSION['success'] = 'Intent updated';
+        } else {
+            $db->prepare("INSERT INTO ai_calling_intents (intent_name, intent_code, category, description, priority, is_active) VALUES (?,?,?,?,?,?)")
+               ->execute([$data['intent_name'], $data['intent_code'], $data['category'], $data['description'], $data['priority'], $data['is_active']]);
+            $_SESSION['success'] = 'Intent created';
+        }
+        redirect(BASE_URL . '/admin/ai-calling/training');
+        exit;
     }
 
     public function autoDialer()

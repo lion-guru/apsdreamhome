@@ -3,7 +3,7 @@ $ticket = $ticket ?? [];
 $replies = $replies ?? [];
 $staffMembers = $staffMembers ?? [];
 $page_title = $page_title ?? 'Ticket Details';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 $statusBadge = match($ticket['status'] ?? 'open') {
     'open' => 'success',

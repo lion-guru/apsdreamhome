@@ -12,9 +12,6 @@ $GLOBALS['_html_doc_started'] = true;
     <meta name="description" content="<?php echo $page_description ?? 'Admin Panel'; ?>">
     <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
-    <!-- Skip to content link (a11y) -->
-    <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -26,32 +23,16 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/responsive-fixes.css" rel="stylesheet">
     <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo $extra_css; ?><?php endif; ?>
-        <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-            /* Only overrides that admin.css does not cover */
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+</head>
 
-            body {
-                font-family: var(--font);
-                background: var(--body-bg);
-                overflow-x: hidden;
-            }
+<body>
+    <!-- Skip to content link (a11y) -->
+    <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
 
-            /* Responsive grid for inline grid-template-columns:repeat(4,1fr) */
-            @media (max-width: 992px) {
-                [style*="grid-template-columns:repeat(4"] {
-                    grid-template-columns: repeat(2, 1fr) !important;
-                }
-            }
-            @media (max-width: 576px) {
-                [style*="grid-template-columns:repeat(4"] {
-                    grid-template-columns: 1fr !important;
-                }
-            }
-        </style>
+    <!-- Sidebar Toggle Button (Mobile) -->
+    <button class="sidebar-toggle" onclick="APS.toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
         <!-- CRITICAL: Sidebar functions in HEAD - load before body -->
         <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -162,7 +143,7 @@ $GLOBALS['_html_doc_started'] = true;
     $currentUrl = $_SERVER['REQUEST_URI'] ?? '';
     $adminName = $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'Admin';
     $adminRole = $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin';
-    $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+    $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
     $isActive = function ($path) use ($currentUrl, $base) {
         $full = $base . $path;
         return $currentUrl === $full || strpos($currentUrl, $full . '/') === 0 || strpos($currentUrl, $full . '?') === 0;
@@ -278,6 +259,8 @@ $GLOBALS['_html_doc_started'] = true;
         </div>
     </main>
 
+    <!-- jQuery (for DataTables, modals, and admin plugins) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Admin JS -->
@@ -293,8 +276,6 @@ $GLOBALS['_html_doc_started'] = true;
     </script>
     <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo $extra_js; ?><?php endif; ?>
         <!-- Frontend enhancements: a11y, forms, toasts, loading -->
-        <script defer src="<?php echo BASE_URL; ?>/assets/js/toast-notifications.js"></script>
-        <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
 
         <!-- Real-time WebSocket Notifications -->
         <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -367,7 +348,8 @@ $GLOBALS['_html_doc_started'] = true;
                         }
                     });
 
-                    // Intercept sidebar links
+                    // Intercept sidebar links (DISABLED - fallback to normal navigation)
+                    /*
                     document.querySelectorAll('.sidebar-link').forEach(function(link) {
                         link.addEventListener('click', function(e) {
                             var href = this.getAttribute('href');
@@ -377,6 +359,7 @@ $GLOBALS['_html_doc_started'] = true;
                             }
                         });
                     });
+                    */
                 })();
             }
         </script>

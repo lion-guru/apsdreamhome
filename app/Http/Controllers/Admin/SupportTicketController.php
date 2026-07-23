@@ -102,7 +102,7 @@ class SupportTicketController extends AdminController
             ];
 
             return $this->render('admin/support_tickets/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Support Tickets Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load support tickets');
             return $this->redirect('admin/dashboard');
@@ -127,7 +127,7 @@ class SupportTicketController extends AdminController
             ];
 
             return $this->render('admin/support_tickets/create', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Support Ticket Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load ticket form');
             return $this->redirect('admin/support_tickets');
@@ -213,7 +213,7 @@ class SupportTicketController extends AdminController
             }
 
             return $this->jsonError('Failed to create support ticket', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Support Ticket Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create support ticket', 500);
         }
@@ -252,7 +252,7 @@ class SupportTicketController extends AdminController
             ];
 
             return $this->render('admin/support_tickets/show', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Support Ticket Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load ticket details');
             return $this->redirect('admin/support_tickets');
@@ -295,7 +295,7 @@ class SupportTicketController extends AdminController
             ];
 
             return $this->render('admin/support_tickets/edit', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Support Ticket Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load ticket form');
             return $this->redirect('admin/support_tickets');
@@ -399,7 +399,7 @@ class SupportTicketController extends AdminController
             }
 
             return $this->jsonError('Failed to update support ticket', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Support Ticket Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update support ticket', 500);
         }
@@ -456,11 +456,11 @@ class SupportTicketController extends AdminController
                     'success' => true,
                     'message' => 'Support ticket deleted successfully'
                 ]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Support Ticket Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete support ticket', 500);
         }
@@ -498,7 +498,7 @@ class SupportTicketController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Support Ticket Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
@@ -562,7 +562,7 @@ class SupportTicketController extends AdminController
             $_SESSION['flash_success'] = 'Reply sent successfully!';
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $ticketId);
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Support Ticket Reply error: " . $e->getMessage());
             $_SESSION['flash_error'] = 'Failed to send reply.';
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $id);
@@ -598,7 +598,7 @@ class SupportTicketController extends AdminController
             $_SESSION['flash_success'] = 'Ticket assigned successfully!';
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $ticketId);
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Support Ticket Assign error: " . $e->getMessage());
             $_SESSION['flash_error'] = 'Failed to assign ticket.';
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $id);
@@ -639,7 +639,7 @@ class SupportTicketController extends AdminController
             $_SESSION['flash_success'] = 'Ticket status updated to ' . str_replace('_', ' ', $status) . '!';
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $ticketId);
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Support Ticket UpdateStatus error: " . $e->getMessage());
             $_SESSION['flash_error'] = 'Failed to update status.';
             header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/support-tickets/' . $id);

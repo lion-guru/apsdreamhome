@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -48,7 +48,7 @@ include __DIR__ . '/../layouts/header.php'; ?>
                         </div>
                     </div>
 
-                    <form action="/payment/process" method="POST" id="payment-form">
+                    <form action="<?= BASE_URL ?>/payment/process" method="POST" id="payment-form">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
 

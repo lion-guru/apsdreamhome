@@ -30,8 +30,7 @@ $upcomingCount = count($upcomingMeetings);
 $missedCount = count($missedMeetings);
 $completedCount = count($completedMeetings);
 ?>
-<?php require_once 'app/views/admin/layouts/header.php'; ?>
-<?php require_once 'app/views/admin/layouts/navbar.php'; ?>
+
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -54,7 +53,7 @@ $completedCount = count($completedMeetings);
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="text-muted">Total Meetings</h6>
-                            <h3 class="mb-0 fw-bold">$totalMeetings</h3>
+                            <h3 class="mb-0 fw-bold"><?= $totalMeetings ?></h3>
                         </div>
                         <div class="bg-primary bg-opacity-10 p-3 rounded">
                             <i class="fas fa-calendar fa-2x text-primary"></i>
@@ -69,7 +68,7 @@ $completedCount = count($completedMeetings);
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="text-muted">Today's Meetings</h6>
-                            <h3 class="mb-0 fw-bold">$todayMeetings</h3>
+                            <h3 class="mb-0 fw-bold"><?= $todayMeetings ?></h3>
                         </div>
                         <div class="bg-success bg-opacity-10 p-3 rounded">
                             <i class="fas fa-calendar-day fa-2x text-success"></i>
@@ -84,7 +83,7 @@ $completedCount = count($completedMeetings);
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="text-muted">Completed</h6>
-                            <h3 class="mb-0 fw-bold text-success">$completedCount</h3>
+                            <h3 class="mb-0 fw-bold text-success"><?= $completedCount ?></h3>
                         </div>
                         <div class="bg-success bg-opacity-10 p-3 rounded">
                             <i class="fas fa-check-circle fa-2x text-success"></i>
@@ -99,7 +98,7 @@ $completedCount = count($completedMeetings);
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="text-muted">Completion Rate</h6>
-                            <h3 class="mb-0 fw-bold">$completionRate%</h3>
+                            <h3 class="mb-0 fw-bold"><?= $completionRate ?>%</h3>
                         </div>
                         <div class="bg-info bg-opacity-10 p-3 rounded">
                             <i class="fas fa-chart-line fa-2x text-info"></i>
@@ -118,23 +117,23 @@ $completedCount = count($completedMeetings);
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select">
                         <option value="">All Status</option>
-                        <option value="scheduled" <?= $_GET['status'] ?? '' === 'scheduled' ? 'selected' : '' ?>>Scheduled</option>
-                        <option value="completed" <?= $_GET['status'] ?? '' === 'completed' ? 'selected' : '' ?>>Completed</option>
-                        <option value="cancelled" <?= $_GET['status'] ?? '' === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                        <option value="no_show" <?= $_GET['status'] ?? '' === 'no_show' ? 'selected' : '' ?>>No Show</option>
+                        <option value="scheduled" <?= ($_GET['status'] ?? '') === 'scheduled' ? 'selected' : '' ?>>Scheduled</option>
+                        <option value="completed" <?= ($_GET['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>
+                        <option value="cancelled" <?= ($_GET['status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                        <option value="no_show" <?= ($_GET['status'] ?? '') === 'no_show' ? 'selected' : '' ?>>No Show</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Date From</label>
-                    <input type="date" name="date_from" class="form-control" value="<?= $_GET['date_from'] ?? '' ?>">
+                    <input type="date" name="date_from" class="form-control" value="<?= htmlspecialchars($_GET['date_from'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Date To</label>
-                    <input type="date" name="date_to" class="form-control" value="<?= $_GET['date_to'] ?? '' ?>">
+                    <input type="date" name="date_to" class="form-control" value="<?= htmlspecialchars($_GET['date_to'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Agent ID</label>
-                    <input type="number" name="user_id" class="form-control" value="<?= $_GET['user_id'] ?? '' ?>">
+                    <input type="number" name="user_id" class="form-control" value="<?= htmlspecialchars($_GET['user_id'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 </div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary me-2">
@@ -274,7 +273,6 @@ function confirmAction(url, message) {
     }
 }
 </script>
-<?php require_once 'app/views/admin/layouts/footer.php'; ?>
 
 <script>
 $(document).ready(function() {

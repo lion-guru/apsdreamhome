@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'TDS Challans (Form 281)';
 ob_start();
 ?>
@@ -8,8 +8,8 @@ ob_start();
         <span class="text-muted">FY <?= htmlspecialchars($fy) ?> | Quarter <?= htmlspecialchars($quarter) ?></span>
     </div>
     <div>
-        <a href="/admin/efiling/tds" class="btn btn-outline-secondary btn-sm me-1"><i class="fas fa-arrow-left me-1"></i>TDS Filing</a>
-        <a href="/admin/efiling/tds/challans/create" class="btn btn-danger btn-sm"><i class="fas fa-plus me-1"></i>New Challan</a>
+        <a href="<?= BASE_URL ?>/admin/efiling/tds" class="btn btn-outline-secondary btn-sm me-1"><i class="fas fa-arrow-left me-1"></i>TDS Filing</a>
+        <a href="<?= BASE_URL ?>/admin/efiling/tds/challans/create" class="btn btn-danger btn-sm"><i class="fas fa-plus me-1"></i>New Challan</a>
     </div>
 </div>
 
@@ -75,7 +75,7 @@ ob_start();
     <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Challans</h6></div>
     <div class="card-body p-0">
         <?php if (empty($challans)): ?>
-            <div class="p-4 text-center text-muted">No challans found. <a href="/admin/efiling/tds/challans/create">Create one</a>.</div>
+            <div class="p-4 text-center text-muted">No challans found. <a href="<?= BASE_URL ?>/admin/efiling/tds/challans/create">Create one</a>.</div>
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">
@@ -94,7 +94,7 @@ ob_start();
                             <td class="small"><?= date('d M Y', strtotime($c['deposit_date'])) ?></td>
                             <td><span class="badge bg-<?= $c['deposited_via'] === 'online' ? 'primary' : 'info' ?>"><?= ucfirst($c['deposited_via']) ?></span></td>
                             <td><span class="badge bg-<?= $c['status'] === 'deposited' ? 'success' : ($c['status'] === 'failed' ? 'danger' : 'secondary') ?>"><?= ucfirst($c['status']) ?></span></td>
-                            <td><a href="/admin/efiling/tds/challans/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a></td>
+                            <td><a href="<?= BASE_URL ?>/admin/efiling/tds/challans/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

@@ -39,7 +39,7 @@ class AutonomousTriggerSystem
 
                 // 5. Wait for next cycle (30 seconds)
                 $this->waitForNextCycle();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->log("❌ Error in autonomous loop: " . $e->getMessage());
                 sleep(5); // Wait 5 seconds before retry
             }
@@ -217,7 +217,7 @@ class AutonomousTriggerSystem
             // Simple database test
             $pdo = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -355,7 +355,7 @@ class AutonomousTriggerSystem
             }
 
             $this->log("✅ Database optimized");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->log("⚠️ Database optimization failed: " . $e->getMessage());
         }
     }
@@ -504,12 +504,7 @@ class AutonomousTriggerSystem
      */
     private function restoreRoutesFile()
     {
-        $this->log("🔧 Restoring routes file...");
-
-        $defaultRoutes = "<?php\n// Basic routes\n\$router->get('/', 'HomeController@index');\n\$router->get('/properties', 'PropertyController@index');\n\$router->get('/about', 'PageController@about');\n\$router->get('/contact', 'PageController@contact');\n";
-
-        file_put_contents($this->projectRoot . 'routes/web.php', $defaultRoutes);
-        $this->log("✅ Routes file restored");
+        $this->log("⚠️ restoreRoutesFile() is DISABLED — would destroy all routes. Skipping.");
     }
 }
 

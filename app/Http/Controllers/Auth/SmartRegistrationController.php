@@ -29,7 +29,7 @@ class SmartRegistrationController extends BaseController
     {
         parent::__construct();
         $this->otpService = new OTPService();
-        $this->progressiveService = new ProgressiveRegistrationService();
+        $this->progressiveService = new ProgressiveRegistrationService($this->db ?? \App\Core\Database::getInstance()->getConnection());
     }
 
     public function skipCsrfProtection(): bool

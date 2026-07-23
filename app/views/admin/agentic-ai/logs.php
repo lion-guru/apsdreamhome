@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $_logs = $logs ?? [];
 $_ag = $agents ?? [];
 $_filter = $filter ?? '';
@@ -12,7 +12,7 @@ $_date = $date ?? date('Y-m-d');
                     <h1 class="m-0"><i class="fas fa-list" style="color:#666"></i> Agent Logs</h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="/admin/agentic-ai" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+                    <a href="<?= BASE_URL ?>/admin/agentic-ai" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
                 </div>
             </div>
         </div>

@@ -16,6 +16,15 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
     }
 
     /**
+     * Mobile admin API uses Bearer token auth (ApiAuthMiddleware) — stateless,
+     * no session-based CSRF. Skip CSRF for all POST endpoints.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
+    /**
      * GET /api/v2/mobile/admin/bookings
      * Returns all plot bookings for the admin approvals page.
      */
@@ -50,12 +59,31 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
     {
         try {
             $status = $_POST['status'] ?? '';
-            $validStatuses = ['token_paid', 'agreement_signed', 'emi_active', 'partially_paid', 'fully_paid', 'cancelled', 'registration_done'];
-            if (!in_array($status, $validStatuses)) {
+
+            // Map mobile/approval status values to the real `bookings` enum
+            // (pending, confirmed, cancelled, completed).
+            $statusMap = [
+                'rejected'          => 'cancelled',
+                'cancelled'         => 'cancelled',
+                'approve'           => 'confirmed',
+                'approved'          => 'confirmed',
+                'confirmed'         => 'confirmed',
+                'emi_active'        => 'confirmed',
+                'token_paid'        => 'confirmed',
+                'agreement_signed'  => 'confirmed',
+                'partially_paid'    => 'confirmed',
+                'fully_paid'        => 'completed',
+                'registration_done' => 'completed',
+                'completed'         => 'completed',
+                'pending'           => 'pending',
+            ];
+
+            if (!isset($statusMap[$status])) {
                 return $this->jsonResponse(['success' => false, 'error' => 'Invalid status'], 400);
             }
 
-            $this->db->execute("UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ?", [$status, $id]);
+            $dbStatus = $statusMap[$status];
+            $this->db->execute("UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ?", [$dbStatus, $id]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'Booking status updated']);
         } catch (\Exception $e) {
@@ -214,10 +242,10 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
             try {
                 $collections = $this->db->fetchOne(
                     "SELECT COALESCE(SUM(amount), 0) as collected
-                     FROM payment_transactions WHERE status = 'completed'"
+                     FROM payment_transactions WHERE payment_status = 'completed'"
                 );
                 $totalDue = $this->db->fetchOne(
-                    "SELECT COALESCE(SUM(installment_amount), 0) as total_due
+                    "SELECT COALESCE(SUM(amount), 0) as total_due
                      FROM booking_payment_schedules WHERE status IN ('pending', 'overdue')"
                 );
                 $collectionRate = ($totalDue['total_due'] ?? 0) > 0
@@ -369,7 +397,10 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
     public function emiCollection()
     {
         try {
-            $userId = $_GET['user_id'] ?? $_SESSION['user_id'] ?? 0;
+            $userId = $GLOBALS['api_user_id'] ?? $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+            if (!$userId) {
+                return $this->jsonResponse(['success' => false, 'error' => 'Unauthorized'], 401);
+            }
             $today = date('Y-m-d');
 
             // Today's dues (individual items with customer info)
@@ -503,9 +534,9 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
     public function telecallerDashboard()
     {
         try {
-            $userId = $_GET['user_id'] ?? $_SESSION['user_id'] ?? 0;
+            $userId = $GLOBALS['api_user_id'] ?? $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
             if (!$userId) {
-                return $this->jsonResponse(['success' => false, 'error' => 'User ID required'], 400);
+                return $this->jsonResponse(['success' => false, 'error' => 'Unauthorized'], 401);
             }
 
             $data = [];
@@ -540,13 +571,13 @@ class AdminMobileController extends \App\Http\Controllers\BaseController
                 $leads = $this->db->fetchAll(
                     "SELECT l.id, l.name, l.phone, l.source, l.status, l.priority,
                             l.notes, l.created_at as lastCall,
-                            COALESCE(l.call_count, 0) as callCount
+                            0 as callCount
                      FROM leads l
-                     WHERE (l.assigned_to = ? OR l.assigned_agent_id = ?)
+                     WHERE l.assigned_to = ?
                        AND l.status NOT IN ('closed_won', 'closed_lost')
                      ORDER BY l.priority DESC, l.created_at DESC
                      LIMIT 20",
-                    [$userId, $userId]
+                    [$userId]
                 );
                 $data['leads'] = $leads;
             } catch (\Exception $e) {

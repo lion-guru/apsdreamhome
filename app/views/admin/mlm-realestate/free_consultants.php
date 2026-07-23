@@ -9,6 +9,15 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light"><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Wallet</th><th>Cumulative Sales</th><th>Payout Slab</th><th>RERA</th><th>Registered</th></tr></thead>
                     <tbody>
+                        <?php if (empty($consultants ?? [])): ?>
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="fas fa-user-friends fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No free consultants found</h5>
+                                <p class="text-muted mb-3">Register consultants who operate outside the standard associate hierarchy.</p>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($consultants as $c): ?>
                         <tr>
                             <td><?= $c['id'] ?></td>
@@ -22,6 +31,7 @@
                             <td><?= htmlspecialchars($c['created_at'] ?? '') ?></td>
                         </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

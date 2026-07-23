@@ -1,17 +1,17 @@
-<?php $pageTitle = 'Properties Dashboard'; ?>
+﻿<?php $pageTitle = 'Properties Dashboard'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-building me-2"></i>Properties Dashboard</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item active">Properties</li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/properties/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Property</a>
-                <a href="/admin/properties" class="btn btn-info btn-sm"><i class="fas fa-list me-1"></i>All Properties</a>
+                <a href="<?= BASE_URL ?>/admin/properties/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add Property</a>
+                <a href="<?= BASE_URL ?>/admin/properties" class="btn btn-info btn-sm"><i class="fas fa-list me-1"></i>All Properties</a>
             </div>
         </div>
     </div>

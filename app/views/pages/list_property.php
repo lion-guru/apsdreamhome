@@ -1,4 +1,4 @@
-<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
+<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '+91 92771 21112'); ?>
 <?php
 /**
  * List Property Page - 3-Step Wizard with Modern UI
@@ -10,9 +10,9 @@ if (!function_exists('__')) {
 
 $page_title = $page_title ?? 'List Your Property - Free Property Posting';
 
-$success = $_SESSION['flash_success'] ?? null;
-$error = $_SESSION['flash_error'] ?? null;
-unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+$success = $_SESSION['success'] ?? $_SESSION['flash_success'] ?? null;
+$error = $_SESSION['error'] ?? $_SESSION['flash_error'] ?? null;
+unset($_SESSION['success'], $_SESSION['error'], $_SESSION['flash_success'], $_SESSION['flash_error']);
 
 $isCustomer = !empty($_SESSION['user_id']);
 $isAssociate = !empty($_SESSION['associate_id']);
@@ -163,11 +163,16 @@ try {
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="city" class="form-label fw-bold"><?= __('list_property_label_city') ?></label>
-                                <input type="text" name="city" id="city" class="form-control" placeholder="<?= __('list_property_ph_city') ?>" aria-label="<?= __('list_property_label_city') ?>">
+                                <input type="text" name="city" id="city" class="form-control" placeholder="<?= __('list_property_ph_city') ?>" aria-label="<?= __('list_property_label_city') ?>" data-autofill="city">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="pincode" class="form-label fw-bold"><?= __('list_property_label_pincode') ?></label>
-                                <input type="text" name="pincode" id="pincode" class="form-control" placeholder="<?= __('list_property_ph_pincode') ?>" maxlength="6" inputmode="numeric" pattern="\d{6}" aria-label="<?= __('list_property_label_pincode') ?>">
+                                <div class="input-group">
+                                    <input type="text" name="pincode" id="pincode" class="form-control" placeholder="<?= __('list_property_ph_pincode') ?>" maxlength="6" inputmode="numeric" pattern="\d{6}" aria-label="<?= __('list_property_label_pincode') ?>" data-autofill="pincode">
+                                    <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use My Location">
+                                        <i class="fas fa-location-crosshairs"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 

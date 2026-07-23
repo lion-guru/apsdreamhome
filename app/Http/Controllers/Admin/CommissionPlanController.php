@@ -222,6 +222,17 @@ class CommissionPlanController extends AdminController
         $this->render('admin/commission/plans/simulator', compact('plans', 'activePlan', 'result'));
     }
 
+    /* ── CALCULATOR ── */
+    public function calculator()
+    {
+        $this->requireAdmin();
+        $plans = $this->planService->getAllPlans();
+        $activePlan = $this->planService->getActivePlan();
+        $levels = $activePlan ? $this->planService->getLevelsForPlan($activePlan['id']) : [];
+        $csrf_token = $_SESSION['csrf_token'] ?? '';
+        $this->render('admin/commission/plans/calculator', compact('plans', 'activePlan', 'levels', 'csrf_token'));
+    }
+
     /* ── AJAX: Load Levels ── */
     public function getLevels()
     {

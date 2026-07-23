@@ -8,7 +8,7 @@ $result = $result ?? ['score' => 0, 'status' => 'non_compliant', 'details' => ''
 $overall = $overall ?? 0;
 $area_labels = $area_labels ?? [];
 $all_areas = $all_areas ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 function areaColor($score) {
     if ($score >= 80) return '#28a745';

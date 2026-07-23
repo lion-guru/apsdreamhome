@@ -67,10 +67,20 @@ class AutoPayoutService
         $totalAmount = array_sum(array_column($pending, 'total_pending'));
         $totalAgents = count($pending);
 
-        // Create a batch record
-        $batchSql = "INSERT INTO mlm_payout_batches (initiated_by, total_agents, total_amount, status)
-                     VALUES (?, ?, ?, 'processing')";
-        $this->db->query($batchSql, [$initiatedBy, $totalAgents, $totalAmount]);
+        // Create a batch record (real mlm_payout_batches schema)
+        $batchNumber = 'APS-MPB-' . date('Ym') . '-' . strtoupper(substr(md5(uniqid()), 0, 4));
+        $periodYear = (int) date('Y');
+        $periodMonth = (int) date('n');
+        $periodStart = date('Y-m-01');
+        $periodEnd = date('Y-m-t');
+        $batchSql = "INSERT INTO mlm_payout_batches
+                        (batch_number, period_year, period_month, period_start, period_end,
+                         total_associates, total_gross_amount, total_net_amount, status, prepared_by, created_at)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'processing', ?, NOW())";
+        $this->db->query($batchSql, [
+            $batchNumber, $periodYear, $periodMonth, $periodStart, $periodEnd,
+            $totalAgents, $totalAmount, $totalAmount, $initiatedBy
+        ]);
         $batchId = $this->db->lastInsertId();
 
         // Mark all pending commissions as paid
@@ -82,8 +92,8 @@ class AutoPayoutService
 
         // Update batch as completed
         $this->db->query(
-            "UPDATE mlm_payout_batches SET status = 'completed', completed_at = NOW() WHERE id = ?",
-            [$batchId]
+            "UPDATE mlm_payout_batches SET status = 'completed', processed_by = ?, payment_date = CURDATE(), updated_at = NOW() WHERE id = ?",
+            [$initiatedBy, $batchId]
         );
 
         $this->logger->info("Auto payout processed: Batch #$batchId — $totalAgents users, ₹$totalAmount");
@@ -104,7 +114,7 @@ class AutoPayoutService
     {
         $sql = "SELECT b.*, u.name as initiated_by_name
                 FROM mlm_payout_batches b
-                JOIN users u ON b.initiated_by = u.id
+                LEFT JOIN users u ON b.prepared_by = u.id
                 ORDER BY b.created_at DESC
                 LIMIT 20";
         return $this->db->fetchAll($sql) ?? [];

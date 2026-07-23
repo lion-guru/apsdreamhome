@@ -70,32 +70,30 @@ if (!function_exists('url')) {
         if (defined('BASE_URL')) {
             return rtrim(BASE_URL, '/') . '/' . ltrim($path ?? '', '/');
         }
+        // Auto-detect from SCRIPT_NAME
         $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        // Auto-detect if we are in DocumentRoot or subdirectory
-        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-        $base = $protocol . '://' . $host;
-        if (strpos($scriptName, '/apsdreamhome/') !== false) {
-            $base .= '/apsdreamhome';
-        }
-        return rtrim($base, '/') . '/' . ltrim($path ?? '', '/');
+        $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+        $base = preg_replace('#/public$#', '', str_replace('\\', '/', $scriptDir));
+        return rtrim($protocol . '://' . $host . $base, '/') . '/' . ltrim($path ?? '', '/');
     }
 }
 
 if (!function_exists('get_asset_url')) {
     function get_asset_url($path = '')
     {
+        if (strpos($path, 'http://') === 0 || strpos($path, 'https://') === 0) {
+            return $path;
+        }
         if (defined('BASE_URL')) {
             return rtrim(BASE_URL, '/') . '/' . ltrim($path, '/');
         }
+        // Auto-detect from SCRIPT_NAME
         $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-        $base = $protocol . '://' . $host;
-        if (strpos($scriptName, '/apsdreamhome/') !== false) {
-            $base .= '/apsdreamhome';
-        }
-        return rtrim($base, '/') . '/' . ltrim($path, '/');
+        $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+        $base = preg_replace('#/public$#', '', str_replace('\\', '/', $scriptDir));
+        return rtrim($protocol . '://' . $host . $base, '/') . '/' . ltrim($path, '/');
     }
 }
 
@@ -251,8 +249,7 @@ if (!function_exists('logger')) {
      */
     function logger($message, $context = [])
     {
-        $logger = \App\Core\Log\Logger::getInstance();
-        $logger->info($message, $context);
+        \App\Core\Log\Logger::info($message, $context);
     }
 }
 

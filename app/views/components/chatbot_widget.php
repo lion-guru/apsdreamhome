@@ -417,7 +417,7 @@ async function sendMessage() {
     
     try {
         // Call API
-        const response = await fetch('/api/chatbot/message', {
+        const response = await fetch('<?= BASE_URL ?>/api/chatbot/message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

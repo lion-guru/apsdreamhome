@@ -1,4 +1,4 @@
-<?php $page_title = $page_title ?? 'SLA Dashboard'; $stats = $stats ?? []; $pending = $pending ?? []; $breached = $breached ?? []; $rules = $rules ?? []; ?>
+﻿<?php $page_title = $page_title ?? 'SLA Dashboard'; $stats = $stats ?? []; $pending = $pending ?? []; $breached = $breached ?? []; $rules = $rules ?? []; ?>
 <style>.sla-stat{background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:20px;text-align:center;transition:.3s}.sla-stat:hover{box-shadow:0 8px 24px rgba(0,0,0,.08)}.sla-stat .stat-val{font-size:32px;font-weight:800}.sla-stat .stat-label{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px}</style>
 
 <div class="container-fluid px-4 py-4">
@@ -40,7 +40,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm" style="border-radius:14px"><div class="card-header" style="border-radius:14px 14px 0 0"><h6 class="mb-0"><i class="fas fa-plus me-1"></i>Add Rule</h6></div>
                 <div class="card-body">
-                    <form method="POST" action="/admin/crm/sla/rules/store"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/crm/sla/rules/store"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-2"><input type="text" name="name" class="form-control form-control-sm" placeholder="Rule name" required></div>
                         <div class="mb-2"><select name="rule_type" class="form-select form-select-sm"><option value="first_response">First Response</option><option value="resolution">Resolution</option><option value="follow_up">Follow-up</option></select></div>
                         <div class="mb-2"><input type="number" name="target_minutes" class="form-control form-control-sm" placeholder="Target minutes" value="60" required></div>

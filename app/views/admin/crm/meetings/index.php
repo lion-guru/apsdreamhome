@@ -1,4 +1,4 @@
-<?php $page_title = $page_title ?? 'Meetings'; $meetings = $meetings ?? []; $stats = $stats ?? []; ?>
+﻿<?php $page_title = $page_title ?? 'Meetings'; $meetings = $meetings ?? []; $stats = $stats ?? []; ?>
 <style>.mtg-stat{background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:16px;text-align:center}.mtg-stat .val{font-size:24px;font-weight:800}.mtg-stat .lbl{font-size:11px;color:#888;text-transform:uppercase}</style>
 
 <div class="container-fluid px-4 py-4">
@@ -26,8 +26,8 @@
         <td><span class="badge bg-<?= $m['status']==='completed'?'success':($m['status']==='cancelled'?'danger':($m['status']==='no_show'?'warning':'info')) ?>"><?= ucfirst(str_replace('_',' ',$m['status'])) ?></span></td>
         <td>
             <?php if ($m['status']==='scheduled'): ?>
-            <form method="POST" action="/admin/meetings/<?= $m['id'] ?>/complete" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><input type="hidden" name="outcome" value="completed"><button class="btn btn-sm btn-success"><i class="fas fa-check"></i></button></form>
-            <form method="POST" action="/admin/meetings/<?= $m['id'] ?>/cancel" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button></form>
+            <form method="POST" action="<?= BASE_URL ?>/admin/meetings/<?= $m['id'] ?>/complete" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><input type="hidden" name="outcome" value="completed"><button class="btn btn-sm btn-success"><i class="fas fa-check"></i></button></form>
+            <form method="POST" action="<?= BASE_URL ?>/admin/meetings/<?= $m['id'] ?>/cancel" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button></form>
             <?php endif; ?>
         </td>
     </tr><?php endforeach; endif; ?>
@@ -36,7 +36,7 @@
 
 <div class="modal fade" id="createMeeting" tabindex="-1"><div class="modal-dialog"><div class="modal-content" style="border-radius:14px">
     <div class="modal-header"><h5 class="modal-title fw-bold"><i class="fas fa-calendar-plus me-2"></i>Schedule Meeting</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form method="POST" action="/admin/meetings/store"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+    <form method="POST" action="<?= BASE_URL ?>/admin/meetings/store"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <div class="modal-body">
         <div class="mb-3"><label class="form-label fw-bold">Title</label><input type="text" name="title" class="form-control" required></div>
         <div class="row mb-3"><div class="col-6"><label class="form-label fw-bold">Lead ID</label><input type="number" name="lead_id" class="form-control" required></div><div class="col-6"><label class="form-label fw-bold">Agent ID</label><input type="number" name="user_id" class="form-control" required></div></div>

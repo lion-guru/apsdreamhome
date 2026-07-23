@@ -7,7 +7,7 @@
 // Get current user info from session
 $associate_name = $associate_name ?? ($_SESSION['user_name'] ?? 'Associate');
 $associate_email = $associate_email ?? ($_SESSION['user_email'] ?? '');
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 // Get current page for active state
 $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');

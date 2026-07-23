@@ -4,7 +4,7 @@ $page_heading = $page_heading ?? 'Campaign Stats';
 $stats = $stats ?? [];
 $recipients = $recipients ?? [];
 $campaign_id = $campaign_id ?? ($stats['campaign']['id'] ?? 0);
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 $byStatus = $stats['by_status'] ?? [];
 ?>
 <div class="container-fluid py-4">

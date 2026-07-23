@@ -307,7 +307,7 @@ class AdvancedAnalyticsController extends AdminController
             // Current active users (last 5 minutes)
             $sql = "SELECT COUNT(DISTINCT user_id) as active_users
                     FROM user_activity
-                    WHERE last_activity >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
+                    WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
 
             $stmt = $this->db->query($sql);
             $data['active_users'] = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['active_users'];
@@ -334,7 +334,7 @@ class AdvancedAnalyticsController extends AdminController
 
             return $data;
         } catch (\Throwable $e) {
-            logger()->error('Realtime analytics error: ' . $e->getMessage());
+            logger('Realtime analytics error: ' . $e->getMessage());
             return [];
         }
     }

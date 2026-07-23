@@ -28,17 +28,16 @@ class MoneyWorkflowController extends AdminController
         parent::__construct();
         try {
             $this->db = \App\Core\Database\Database::getInstance();
-            if (method_exists($this->db, 'getPdo')) {
-                $this->db = $this->db->getPdo();
-            }
-        } catch (Exception $e) {
+            $pdo = method_exists($this->db, 'getPdo') ? $this->db->getPdo() : $this->db;
+        } catch (\Exception $e) {
             $this->db = null;
+            $pdo = null;
         }
         try {
             $this->service = new MoneyWorkflowService(
-                $this->db instanceof \PDO ? $this->db : null
+                $pdo instanceof \PDO ? $pdo : null
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             try {
                 $this->service = new MoneyWorkflowService();
             } catch (Exception $e2) {
@@ -123,7 +122,7 @@ class MoneyWorkflowController extends AdminController
                 $this->service->createBankAccount($_POST);
                 $this->setFlash('success', 'Bank account created');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/bank-accounts');
@@ -171,7 +170,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $this->service->recordCashTransaction($_POST);
             $this->setFlash('success', 'Transaction recorded');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/cash-book');
@@ -209,7 +208,7 @@ class MoneyWorkflowController extends AdminController
                 ]
             );
             $this->setFlash('success', 'Petty cash topped up');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/petty-cash');
@@ -222,7 +221,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $this->service->recordPettyExpense($_POST);
             $this->setFlash('success', 'Petty expense recorded');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/petty-cash');
@@ -293,7 +292,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $this->service->issueCheque($_POST);
             $this->setFlash('success', 'Cheque issued');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/cheques');
@@ -309,7 +308,7 @@ class MoneyWorkflowController extends AdminController
             $reason = $_POST['reason'] ?? '';
             $this->service->markChequeStatus($id, $status, $reason);
             $this->setFlash('success', 'Cheque status updated');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/cheques');
@@ -376,7 +375,7 @@ class MoneyWorkflowController extends AdminController
             $bankId = (int)($_POST['bank_account_id'] ?? 0);
             $this->service->createReconciliation($bankId, $_POST);
             $this->setFlash('success', 'Reconciliation started');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/reconciliation');
@@ -392,7 +391,7 @@ class MoneyWorkflowController extends AdminController
             $cbId = !empty($_POST['cashbook_id']) ? (int)$_POST['cashbook_id'] : null;
             $this->service->matchTransaction($itemId, $status, $cbId);
             $this->setFlash('success', 'Item matched');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/reconciliation/match?id=' . (int)($_POST['recon_id'] ?? 0));
@@ -405,7 +404,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $this->service->completeReconciliation((int)($_POST['id'] ?? 0));
             $this->setFlash('success', 'Reconciliation completed');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/reconciliation');
@@ -455,7 +454,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $this->service->recordTdsProxy($_POST);
             $this->setFlash('success', 'TDS recorded');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/tds');
@@ -485,7 +484,7 @@ class MoneyWorkflowController extends AdminController
                 $_POST['quarter'] ?? null
             );
             $this->setFlash('success', 'TDS certificate generated');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/tds-certificates');
@@ -529,7 +528,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $this->service->recordGstProxy($_POST);
             $this->setFlash('success', 'GST transaction recorded');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/gst');
@@ -576,7 +575,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $this->service->submitExpense($_POST);
             $this->setFlash('success', 'Expense submitted for approval');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/expenses');
@@ -590,7 +589,7 @@ class MoneyWorkflowController extends AdminController
             $id = (int)($_POST['id'] ?? 0);
             $this->service->approveExpenseById($id, $_POST['remarks'] ?? '');
             $this->setFlash('success', 'Expense approved');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/expenses');
@@ -604,7 +603,7 @@ class MoneyWorkflowController extends AdminController
             $id = (int)($_POST['id'] ?? 0);
             $this->service->rejectExpenseById($id, $_POST['remarks'] ?? '');
             $this->setFlash('success', 'Expense rejected');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/expenses');
@@ -651,7 +650,7 @@ class MoneyWorkflowController extends AdminController
                         : 1.0,
                 ];
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Fallback to hardcoded rates
             $currencies['USD'] = ['symbol' => '$',  'name' => 'US Dollar',       'rate' => 83.50];
             $currencies['EUR'] = ['symbol' => '€',  'name' => 'Euro',            'rate' => 90.25];
@@ -674,7 +673,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $this->service->recordVendorPayment($_POST);
             $this->setFlash('success', 'Vendor payment recorded');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/vendors');
@@ -740,7 +739,7 @@ class MoneyWorkflowController extends AdminController
                 $this->service->createDemandLetterTemplate($_POST);
                 $this->setFlash('success', 'Template created');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/templates');
@@ -753,7 +752,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $this->service->deleteDemandLetterTemplate((int)($_POST['id'] ?? 0));
             $this->setFlash('success', 'Template deleted');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/templates');
@@ -880,7 +879,7 @@ class MoneyWorkflowController extends AdminController
             } else {
                 $this->setFlash('error', $result['error'] ?? 'Failed to record collection');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/collections');
@@ -896,7 +895,7 @@ class MoneyWorkflowController extends AdminController
             $adminId = (int)($_SESSION['admin_id'] ?? 0);
             $this->service->verifyCollection($id, $adminId);
             $this->setFlash('success', 'Collection #' . $id . ' verified');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/collections');
@@ -917,7 +916,7 @@ class MoneyWorkflowController extends AdminController
             }
             $this->service->rejectCollection($id, $adminId, $reason);
             $this->setFlash('success', 'Collection #' . $id . ' rejected');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/collections');
@@ -959,7 +958,7 @@ class MoneyWorkflowController extends AdminController
             } else {
                 $this->setFlash('error', $result['error'] ?? 'Failed to start reconciliation');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/reconciliation-collections');
@@ -975,7 +974,7 @@ class MoneyWorkflowController extends AdminController
             $adminId = (int)($_SESSION['admin_id'] ?? 0);
             $this->service->closeReconciliation($sessionId, $adminId);
             $this->setFlash('success', 'Reconciliation session closed');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/reconciliation-collections');
@@ -987,7 +986,40 @@ class MoneyWorkflowController extends AdminController
     public function adminAccounts()
     {
         $this->requireAdmin();
-        return $this->redirect('/admin/finance/bank-accounts');
+        try {
+            $totalBalance = (float)($this->db->query("SELECT COALESCE(SUM(current_balance),0) FROM bank_accounts_master WHERE active=1")->fetchColumn() ?: 0);
+            $totalIncome = (float)($this->db->query("SELECT COALESCE(SUM(amount),0) FROM income_records WHERE status='received'")->fetchColumn() ?: 0);
+            $totalExpenses = (float)($this->db->query("SELECT COALESCE(SUM(amount),0) FROM expenses")->fetchColumn() ?: 0);
+            $netProfit = $totalIncome - $totalExpenses;
+            $margin = $totalIncome > 0 ? round(($netProfit / $totalIncome) * 100) : 0;
+            $recentIncome = $this->db->query("SELECT * FROM income_records ORDER BY created_at DESC LIMIT 5")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $recentExpenses = $this->db->query("SELECT * FROM expenses ORDER BY created_at DESC LIMIT 5")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $expenseByCategory = $this->db->query("SELECT category, COUNT(*) as cnt, SUM(amount) as total FROM expenses GROUP BY category ORDER BY total DESC LIMIT 5")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $incomeByCategory = $this->db->query("SELECT income_category, COUNT(*) as cnt, SUM(amount) as total FROM income_records WHERE status='received' GROUP BY income_category ORDER BY total DESC LIMIT 5")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {
+            $totalBalance = 0;
+            $totalIncome = 0;
+            $totalExpenses = 0;
+            $netProfit = 0;
+            $margin = 0;
+            $recentIncome = [];
+            $recentExpenses = [];
+            $expenseByCategory = [];
+            $incomeByCategory = [];
+        }
+        return $this->render('admin/accounts/index', [
+            'page_title' => 'Accounts & Finance',
+            'page_description' => 'Financial management and accounting overview',
+            'total_balance' => $totalBalance,
+            'total_income' => $totalIncome,
+            'total_expenses' => $totalExpenses,
+            'net_profit' => $netProfit,
+            'margin' => $margin,
+            'recent_income' => $recentIncome,
+            'recent_expenses' => $recentExpenses,
+            'expense_by_category' => $expenseByCategory,
+            'income_by_category' => $incomeByCategory,
+        ]);
     }
 
     public function invoices()
@@ -1011,7 +1043,7 @@ class MoneyWorkflowController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $invoices = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $invoices = [];
         }
         return $this->render('admin/finance/invoices', [
@@ -1037,7 +1069,7 @@ class MoneyWorkflowController extends AdminController
                     $payStmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM invoice_payments WHERE invoice_id = ?");
                     $payStmt->execute([$id]);
                     $invoice['paid_amount'] = $payStmt->fetchColumn() ?: 0;
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     // invoice_payments table may not exist
                 }
 
@@ -1049,11 +1081,11 @@ class MoneyWorkflowController extends AdminController
                     $paymentsStmt = $this->db->prepare("SELECT * FROM invoice_payments WHERE invoice_id = ? ORDER BY payment_date DESC");
                     $paymentsStmt->execute([$id]);
                     $invoice['payments'] = $paymentsStmt->fetchAll(\PDO::FETCH_ASSOC);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $invoice['payments'] = [];
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $invoice = null;
         }
 
@@ -1092,7 +1124,7 @@ class MoneyWorkflowController extends AdminController
             header('Content-Disposition: attachment; filename="invoice_' . htmlspecialchars($invoice['invoice_number']) . '.html"');
             echo $html;
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Download failed: ' . $e->getMessage());
             return $this->redirect('/admin/finance/invoices');
         }
@@ -1106,7 +1138,7 @@ class MoneyWorkflowController extends AdminController
             $stmt = $this->db->prepare("UPDATE invoices SET status = 'cancelled' WHERE id = ?");
             $stmt->execute([$id]);
             $this->setFlash('success', 'Invoice cancelled');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/finance/invoices');
@@ -1157,7 +1189,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $fxService = new \App\Services\ExchangeRateService();
             $result = $fxService->getRate($from, $to);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $result = ['success' => false, 'error' => $e->getMessage()];
         }
 
@@ -1174,7 +1206,7 @@ class MoneyWorkflowController extends AdminController
         try {
             $fxService = new \App\Services\ExchangeRateService();
             $result = $fxService->getAllRates($base);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $result = ['success' => false, 'error' => $e->getMessage()];
         }
 
@@ -1309,7 +1341,7 @@ class MoneyWorkflowController extends AdminController
             $stats = $autoPayService->getDashboardStats();
             $mandates = $autoPayService->listMandates();
             $failedPayments = $autoPayService->getFailedPayments(50);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $stats = [];
             $mandates = [];
             $failedPayments = [];
@@ -1336,7 +1368,7 @@ class MoneyWorkflowController extends AdminController
             $autoPayService = new \App\Services\Payment\EMIAutoPaymentService($this->db);
             $result = $autoPayService->processDueEmiPayments();
             $this->json($result);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
@@ -1356,7 +1388,7 @@ class MoneyWorkflowController extends AdminController
 
     private function safe(callable $fn, $fallback = null)
     {
-        try { return $fn(); } catch (Exception $e) { return $fallback; }
+        try { return $fn(); } catch (\Exception $e) { return $fallback; }
     }
 
     private function getReceiptUploadDir(): string

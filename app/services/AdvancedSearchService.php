@@ -4,6 +4,9 @@
  * Provides powerful search functionality with filtering, suggestions, and history
  */
 
+use App\Core\Database\Database;
+use App\Core\Cache;
+
 class AdvancedSearchService {
     private $db;
     private $cachePrefix = 'search_';
@@ -31,8 +34,13 @@ class AdvancedSearchService {
             
             // Text search
             if (!empty($params['search'])) {
-                $query .= " AND (p.title LIKE :search OR p.description LIKE :search OR p.address LIKE :search)";
-                $bindings['search'] = '%' . $params['search'] . '%';
+                $query .= " AND (p.name LIKE :search1 OR p.description LIKE :search2 OR p.address LIKE :search3 OR p.location LIKE :search4 OR p.city_name LIKE :search5)";
+                $searchTerm = '%' . $params['search'] . '%';
+                $bindings['search1'] = $searchTerm;
+                $bindings['search2'] = $searchTerm;
+                $bindings['search3'] = $searchTerm;
+                $bindings['search4'] = $searchTerm;
+                $bindings['search5'] = $searchTerm;
             }
             
             // Property type filter
@@ -91,8 +99,11 @@ class AdvancedSearchService {
             
             // Location text search
             if (!empty($params['location'])) {
-                $query .= " AND (p.address LIKE :location OR d.name LIKE :location OR s.name LIKE :location)";
-                $bindings['location'] = '%' . $params['location'] . '%';
+                $query .= " AND (p.address LIKE :location1 OR d.name LIKE :location2 OR s.name LIKE :location3)";
+                $locationTerm = '%' . $params['location'] . '%';
+                $bindings['location1'] = $locationTerm;
+                $bindings['location2'] = $locationTerm;
+                $bindings['location3'] = $locationTerm;
             }
             
             // BHK/Bedrooms filter
@@ -101,11 +112,11 @@ class AdvancedSearchService {
                 $bindings['bedrooms'] = $params['bedrooms'];
             }
             
-            // Amenities filter (if amenities column exists)
+            // Amenities filter (user_properties stores extra attributes in metadata JSON)
             if (!empty($params['amenities'])) {
-                foreach ($params['amenities'] as $amenity) {
-                    $query .= " AND p.amenities LIKE :amenity_$amenity";
-                    $bindings["amenity_$amenity"] = "%$amenity%";
+                foreach ($params['amenities'] as $i => $amenity) {
+                    $query .= " AND p.metadata LIKE :amenity_$i";
+                    $bindings["amenity_$i"] = "%$amenity%";
                 }
             }
             
@@ -201,15 +212,15 @@ class AdvancedSearchService {
             // Suggest locations
             $locationQuery = "SELECT DISTINCT name as suggestion, 'location' as type 
                               FROM districts 
-                              WHERE name LIKE :query 
+                              WHERE name LIKE :query1 
                               UNION 
                               SELECT DISTINCT name as suggestion, 'location' as type 
                               FROM states 
-                              WHERE name LIKE :query
+                              WHERE name LIKE :query2
                               LIMIT $limit";
             
             $stmt = $this->db->prepare($locationQuery);
-            $stmt->execute(['query' => '%' . $query . '%']);
+            $stmt->execute(['query1' => '%' . $query . '%', 'query2' => '%' . $query . '%']);
             $suggestions = array_merge($suggestions, $stmt->fetchAll(PDO::FETCH_ASSOC));
             
             // Suggest property types
@@ -233,7 +244,7 @@ class AdvancedSearchService {
                 $stmt = $this->db->prepare($recentQuery);
                 $stmt->execute(['query' => '%' . $query . '%']);
                 $suggestions = array_merge($suggestions, $stmt->fetchAll(PDO::FETCH_ASSOC));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // Table might not exist yet
                         error_log("AdvancedSearchService.php: " . $e->getMessage());
             }
@@ -254,7 +265,7 @@ class AdvancedSearchService {
             $stmt->execute([$userId, $searchTerm, json_encode($filters)]);
             
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Failed to save search history: " . $e->getMessage());
             return false;
         }
@@ -275,7 +286,7 @@ class AdvancedSearchService {
             }
             
             return $results;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [];
         }
     }
@@ -294,7 +305,7 @@ class AdvancedSearchService {
             
             $results = $this->db->query($query)->fetchAll(PDO::FETCH_ASSOC);
             return $results;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [];
         }
     }
@@ -359,4 +370,11 @@ class AdvancedSearchService {
             }
         }
     }
+}
+
+// This class is declared in the global namespace but is referenced as
+// App\Services\AdvancedSearchService (e.g. by Api\SearchController). The
+// autoloader loads this file for that namespaced name, so alias it here.
+if (!class_exists('App\\Services\\AdvancedSearchService', false)) {
+    class_alias('AdvancedSearchService', 'App\\Services\\AdvancedSearchService');
 }

@@ -5,18 +5,16 @@
  * Display individual project/site details
  */
 $project = $project ?? null;
-$baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+$baseUrl = rtrim(BASE_URL, '/');
 
 if ($project) {
     $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project->site_name));
     $district = strtolower($project->district ?? 'gorakhpur');
-    $heroImg = '/assets/images/projects/' . $district . '/' . $slug . '.jpg';
-    if (stripos($project->site_name, 'Suryoday') !== false) {
-        $heroImg = '/assets/images/projects/gorakhpur/suryoday.jpg';
-    } elseif (stripos($project->site_name, 'Raghunath') !== false) {
-        $heroImg = '/assets/images/projects/gorakhpur/raghunath-nagri.jpg';
-    } elseif (stripos($project->site_name, 'Braj') !== false || stripos($project->site_name, 'Radha') !== false) {
-        $heroImg = '/assets/images/projects/lucknow/braj-radha-nagri.jpg';
+    
+    // Dynamic image priority
+    $heroImg = '/assets/images/projects/placeholder/property.svg';
+    if (!empty($project->image)) {
+        $heroImg = '/' . ltrim($project->image, '/');
     }
 }
 ?>
@@ -89,45 +87,52 @@ if ($project) {
                 </p>
                 
                 <!-- Key Highlights -->
+                <?php
+                $highlights = [];
+                if (!empty($project->key_highlights)) {
+                    $decoded = json_decode($project->key_highlights, true);
+                    if (is_array($decoded)) {
+                        $highlights = $decoded;
+                    }
+                }
+                ?>
+                <?php if (!empty($highlights)): ?>
                 <h3 class="mt-5 mb-4"><i class="fas fa-star text-warning me-2"></i><?= __('project_highlights') ?></h3>
                 <div class="row g-3 mb-4">
+                    <?php
+                    $highlightIcons = [
+                        'road' => ['icon' => 'fa-road', 'color' => 'primary'],
+                        'gated' => ['icon' => 'fa-shield-alt', 'color' => 'success'],
+                        'electric' => ['icon' => 'fa-bolt', 'color' => 'warning'],
+                        'park' => ['icon' => 'fa-tree', 'color' => 'info'],
+                        'water' => ['icon' => 'fa-tint', 'color' => 'info'],
+                        'security' => ['icon' => 'fa-video', 'color' => 'danger'],
+                        'drainage' => ['icon' => 'fa-water', 'color' => 'primary'],
+                        'light' => ['icon' => 'fa-lightbulb', 'color' => 'warning'],
+                    ];
+                    foreach ($highlights as $highlight):
+                        $hlKey = strtolower(preg_replace('/[^a-z]+/', '', $highlight));
+                        $hlIcon = 'fa-star';
+                        $hlColor = 'primary';
+                        foreach ($highlightIcons as $key => $cfg) {
+                            if (strpos($hlKey, $key) !== false) {
+                                $hlIcon = $cfg['icon'];
+                                $hlColor = $cfg['color'];
+                                break;
+                            }
+                        }
+                    ?>
                     <div class="col-md-6">
                         <div class="d-flex align-items-center p-3 bg-light rounded">
-                            <i class="fas fa-road fa-2x text-primary me-3"></i>
+                            <i class="fas <?= $hlIcon ?> fa-2x text-<?= $hlColor ?> me-3"></i>
                             <div>
-                                <h6 class="mb-0"><?= __('project_wide_roads') ?></h6>
-                                <small class="text-muted"><?= __('project_wide_roads_desc') ?></small>
+                                <h6 class="mb-0"><?php echo htmlspecialchars($highlight); ?></h6>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center p-3 bg-light rounded">
-                            <i class="fas fa-shield-alt fa-2x text-success me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?= __('project_gated_community') ?></h6>
-                                <small class="text-muted"><?= __('project_gated_community_desc') ?></small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center p-3 bg-light rounded">
-                            <i class="fas fa-bolt fa-2x text-warning me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?= __('project_underground_electricity') ?></h6>
-                                <small class="text-muted"><?= __('project_underground_electricity_desc') ?></small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center p-3 bg-light rounded">
-                            <i class="fas fa-tree fa-2x text-info me-3"></i>
-                            <div>
-                                <h6 class="mb-0"><?= __('project_green_parks') ?></h6>
-                                <small class="text-muted"><?= __('project_green_parks_desc') ?></small>
-                            </div>
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
                 
                 <!-- Amenities -->
                 <?php 
@@ -151,16 +156,30 @@ if ($project) {
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Wide Roads (30-40 ft)</div>
-                        <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>24/7 Water Supply</div>
-                        <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Underground Electricity</div>
-                        <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Green Parks & Gardens</div>
-                        <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Gated Community</div>
-                        <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>CCTV Security</div>
-                        <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Rain Water Drainage</div>
-                        <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Street Lights</div>
-                        <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Park & Playground</div>
-                        <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Near Main Road</div>
+                        <?php 
+                        $amenitiesList = [];
+                        if (!empty($project->amenities)) {
+                            $amenitiesList = preg_split('/[\n,]+/', $project->amenities);
+                            $amenitiesList = array_map('trim', $amenitiesList);
+                            $amenitiesList = array_filter($amenitiesList);
+                        }
+                        ?>
+                        <?php if (!empty($amenitiesList)): ?>
+                            <?php foreach ($amenitiesList as $amenity): ?>
+                                <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i><?= htmlspecialchars($amenity) ?></div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Wide Roads (30-40 ft)</div>
+                            <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>24/7 Water Supply</div>
+                            <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Underground Electricity</div>
+                            <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Green Parks & Gardens</div>
+                            <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Gated Community</div>
+                            <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>CCTV Security</div>
+                            <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Rain Water Drainage</div>
+                            <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Street Lights</div>
+                            <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Park & Playground</div>
+                            <div class="col-md-6 mb-3"><i class="fas fa-check-circle text-success me-3"></i>Near Main Road</div>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>
@@ -197,7 +216,7 @@ if ($project) {
                         <h5 class="mb-0"><i class="fas fa-building me-2"></i><?= __('project_details') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
-                        <div class="table-responsive"><table class="table table-borderless table-sm table-responsive">
+                        <div class="table-responsive"><table class="table table-borderless table-sm">
                             <tr>
                                 <td><strong>Project Name:</strong></td>
                                 <td><?php echo htmlspecialchars($project->site_name); ?></td>
@@ -255,11 +274,13 @@ if ($project) {
                     <div class="card-body aps-cp-card-body">
                         <p class="mb-1"><strong><?php echo htmlspecialchars($project->site_name); ?></strong></p>
                         <p class="mb-1"><?php echo htmlspecialchars($project->location ?? ''); ?></p>
-                        <p class="mb-0">
+                        <p class="mb-1">
                             <?php echo htmlspecialchars(($project->city ?? '') . ', ' . ($project->district ?? '')); ?>
-                            <?php if (!empty($project->pincode)): ?> - <?php echo htmlspecialchars($project->pincode); endif; ?><br>
-                            <?php echo htmlspecialchars($project->state ?? 'Uttar Pradesh'); ?>
                         </p>
+                        <?php if (!empty($project->pincode)): ?>
+                        <p class="mb-0"><?php echo htmlspecialchars($project->pincode); ?></p>
+                        <?php endif; ?>
+                        <p class="mb-0"><?php echo htmlspecialchars($project->state ?? 'Uttar Pradesh'); ?></p>
                     </div>
                 </div>
             </div>
@@ -269,31 +290,83 @@ if ($project) {
                         <h5 class="mb-0"><i class="fas fa-directions me-2"></i><?= __('project_nearby') ?></h5>
                     </div>
                     <div class="card-body aps-cp-card-body">
+                        <?php
+                        $nearbyPlaces = [];
+                        if (!empty($project->nearby_places)) {
+                            $decoded = json_decode($project->nearby_places, true);
+                            if (is_array($decoded)) {
+                                $nearbyPlaces = $decoded;
+                            }
+                        }
+                        $nearbyIcons = [
+                            'railway' => ['icon' => 'fa-train', 'color' => '#3b82f6'],
+                            'bus' => ['icon' => 'fa-bus', 'color' => '#8b5cf6'],
+                            'school' => ['icon' => 'fa-school', 'color' => '#f59e0b'],
+                            'hospital' => ['icon' => 'fa-hospital', 'color' => '#ef4444'],
+                            'market' => ['icon' => 'fa-shopping-cart', 'color' => '#10b981'],
+                            'temple' => ['icon' => 'fa-place-of-worship', 'color' => '#6366f1'],
+                            'park' => ['icon' => 'fa-tree', 'color' => '#22c55e'],
+                            'bank' => ['icon' => 'fa-university', 'color' => '#0ea5e9'],
+                            'airport' => ['icon' => 'fa-plane', 'color' => '#f97316'],
+                            'mall' => ['icon' => 'fa-store', 'color' => '#ec4899'],
+                            'college' => ['icon' => 'fa-graduation-cap', 'color' => '#8b5cf6'],
+                            'gas' => ['icon' => 'fa-gas-pump', 'color' => '#64748b'],
+                        ];
+                        ?>
                         <div class="row">
-                            <div class="col-6 mb-3">
-                                <i class="fas fa-train text-muted me-2"></i>
-                                <small><?= __('contact_railway') ?></small>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <i class="fas fa-bus text-muted me-2"></i>
-                                <small><?= __('contact_bus') ?></small>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <i class="fas fa-school text-muted me-2"></i>
-                                <small><?= __('contact_school') ?></small>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <i class="fas fa-hospital text-muted me-2"></i>
-                                <small><?= __('contact_hospital') ?></small>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <i class="fas fa-shopping-cart text-muted me-2"></i>
-                                <small><?= __('contact_market') ?></small>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <i class="fas fa-place-of-worship text-muted me-2"></i>
-                                <small><?= __('contact_temple') ?></small>
-                            </div>
+                            <?php if (!empty($nearbyPlaces)): ?>
+                                <?php foreach ($nearbyPlaces as $place):
+                                    if (is_string($place)) {
+                                        $place = ['name' => $place, 'distance' => '', 'type' => ''];
+                                    }
+                                    $placeName = $place['name'] ?? $place['label'] ?? '';
+                                    $placeDistance = $place['distance'] ?? '';
+                                    $placeType = strtolower($place['type'] ?? $placeName);
+                                    $placeIcon = 'fa-map-marker-alt';
+                                    $placeColor = '#64748b';
+                                    foreach ($nearbyIcons as $key => $cfg) {
+                                        if (strpos($placeType, $key) !== false || strpos(strtolower($placeName), $key) !== false) {
+                                            $placeIcon = $cfg['icon'];
+                                            $placeColor = $cfg['color'];
+                                            break;
+                                        }
+                                    }
+                                ?>
+                                <div class="col-6 mb-2">
+                                    <div class="nearby-item">
+                                        <i class="fas <?= $placeIcon ?>" style="background:<?= $placeColor ?>15;color:<?= $placeColor ?>"></i>
+                                        <div>
+                                            <div class="nearby-name"><?php echo htmlspecialchars($placeName); ?></div>
+                                            <?php if ($placeDistance): ?>
+                                            <div class="nearby-distance"><?php echo htmlspecialchars($placeDistance); ?></div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <?php
+                                $fallbackNearby = [
+                                    ['icon' => 'fa-train', 'label' => __('contact_railway'), 'distance' => '3-5 km', 'color' => '#3b82f6'],
+                                    ['icon' => 'fa-bus', 'label' => __('contact_bus'), 'distance' => '1-2 km', 'color' => '#8b5cf6'],
+                                    ['icon' => 'fa-school', 'label' => __('contact_school'), 'distance' => '0.5-2 km', 'color' => '#f59e0b'],
+                                    ['icon' => 'fa-hospital', 'label' => __('contact_hospital'), 'distance' => '2-4 km', 'color' => '#ef4444'],
+                                    ['icon' => 'fa-shopping-cart', 'label' => __('contact_market'), 'distance' => '0.5-1 km', 'color' => '#10b981'],
+                                    ['icon' => 'fa-place-of-worship', 'label' => __('contact_temple'), 'distance' => '0.3-1 km', 'color' => '#6366f1'],
+                                ];
+                                ?>
+                                <?php foreach ($fallbackNearby as $item): ?>
+                                <div class="col-6 mb-2">
+                                    <div class="nearby-item">
+                                        <i class="fas <?= $item['icon'] ?>" style="background:<?= $item['color'] ?>15;color:<?= $item['color'] ?>"></i>
+                                        <div>
+                                            <div class="nearby-name"><?= $item['label'] ?></div>
+                                            <div class="nearby-distance"><?= $item['distance'] ?></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -308,8 +381,26 @@ if ($project) {
                         <h5 class="mb-0"><i class="fas fa-map-marked me-2"></i><?= __('project_map') ?></h5>
                     </div>
                     <div class="card-body p-0">
+                        <?php
+                        $mapLat = $project->latitude ?? '26.76';
+                        $mapLng = $project->longitude ?? '83.37';
+                        if (empty($project->latitude) && !empty($project->district)) {
+                            $coords = [
+                                'gorakhpur' => ['lat' => '26.7605', 'lng' => '83.3732'],
+                                'lucknow' => ['lat' => '26.8467', 'lng' => '80.9462'],
+                                'kushinagar' => ['lat' => '26.7399', 'lng' => '83.8890'],
+                                'prayagraj' => ['lat' => '25.4358', 'lng' => '81.8463'],
+                                'varanasi' => ['lat' => '25.3176', 'lng' => '82.9739'],
+                            ];
+                            $d = strtolower($project->district);
+                            if (isset($coords[$d])) {
+                                $mapLat = $coords[$d]['lat'];
+                                $mapLng = $coords[$d]['lng'];
+                            }
+                        }
+                        ?>
                         <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3571.7828543256!2d83.37!3d26.76!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDQ1JzM2LjAiTiA4M8KwMjInMTIuMCJF!5e0!3m2!1sen!2sin!4v1234567890"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14417.5!2d<?= $mapLng ?>!3d<?= $mapLat ?>!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z<?= $mapLat ?>N+<?= $mapLng ?>E!5e0!3m2!1sen!2sin"
                             width="100%" 
                             height="350" 
                             style="border:0;" 
@@ -337,16 +428,14 @@ if ($project) {
             <?php if (!empty($related_projects)): ?>
                 <?php foreach (array_slice($related_projects, 0, 3) as $related): 
                     $relSlug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $related->site_name));
-                    $relImg = '/assets/images/placeholder/property.svg';
-                    if (stripos($related->site_name, 'Suryoday') !== false) {
-                        $relImg = '/assets/images/projects/gorakhpur/suryoday.jpg';
-                    } elseif (stripos($related->site_name, 'Raghunath') !== false) {
-                        $relImg = '/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG';
+                    $relImg = '/assets/images/projects/placeholder/property.svg';
+                    if (!empty($related->image)) {
+                        $relImg = '/' . ltrim($related->image, '/');
                     }
                 ?>
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?php echo $baseUrl; ?>/assets/images/placeholder/property.svg'">
+                    <div class="card h-100 shadow-sm project-card">
+                        <img src="<?= BASE_URL . $relImg ?>" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?= $baseUrl ?>/assets/images/projects/placeholder/property.svg'">
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title"><?php echo htmlspecialchars($related->site_name); ?></h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($related->district ?? ''); ?></p>
@@ -357,7 +446,7 @@ if ($project) {
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm project-card">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suryoday Colony" style="height: 150px; object-fit: cover;" />
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Suryoday Colony</h6>
@@ -367,8 +456,8 @@ if ($project) {
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunath Nagri" style="height: 150px; object-fit: cover;" loading="lazy">
+                    <div class="card h-100 shadow-sm project-card">
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Raghunath Nagri" style="height: 150px; object-fit: cover;" loading="lazy">
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Raghunath Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
@@ -377,8 +466,8 @@ if ($project) {
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/braj-radha-nagri.jpg" class="card-img-top" alt="Braj Radha Nagri" style="height: 150px; object-fit: cover;" />
+                    <div class="card h-100 shadow-sm project-card">
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Braj Radha Nagri" style="height: 150px; object-fit: cover;" />
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title">Braj Radha Nagri</h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>

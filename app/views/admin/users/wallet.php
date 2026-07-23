@@ -3,7 +3,7 @@ $user = $user ?? [];
 $wallet = $wallet ?? ['balance' => 0, 'total_credited' => 0];
 $transactions = $transactions ?? [];
 $commissions = $commissions ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 $csrf = $_SESSION['csrf_token'] ?? '';
 ?>
 

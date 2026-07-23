@@ -11,34 +11,29 @@ use Exception;
  */
 class Employee extends Model
 {
-    protected static $table = 'users';
-    // protected static $primaryKey = 'id'; // Inherited from Model
+    protected static $table = 'employees';
 
+    /**
+     * Get PDO connection for raw queries
+     */
+    protected static function getPdo()
+    {
+        return static::getDb()->getConnection();
+    }
 
     /**
      * Get employee by ID with complete details
      */
     public function getEmployeeById($id)
     {
-        try {
-            $sql = "
-                SELECT e.*, 
-                       r.name as role_name,
-                       d.name as department_name,
-                       e.created_at as joining_date, e.updated_at as last_updated,
-                       (SELECT COUNT(*) FROM employee_activities ea WHERE ea.employee_id = e.id) as total_activities,
-                       (SELECT COUNT(*) FROM employee_tasks et WHERE et.employee_id = e.id AND et.status != 'completed') as pending_tasks,
-                       (SELECT COUNT(*) FROM employee_attendance ea2 WHERE ea2.employee_id = e.id AND ea2.attendance_date = CURDATE()) as today_attendance
-                FROM " . static::$table . " e
-                LEFT JOIN roles r ON e.role_id = r.id
-                LEFT JOIN departments d ON e.department_id = d.id
-                WHERE e.id = :id
-            ";
-        } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-        }
+        $table = static::$table;
+        $sql = "
+            SELECT e.*
+            FROM {$table} e
+            WHERE e.id = :id
+        ";
 
-        $stmt = static::getDb()->prepare($sql);
+        $stmt = static::getPdo()->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -48,17 +43,14 @@ class Employee extends Model
      */
     public function getEmployeeByUserId($userId)
     {
+        $table = static::$table;
         $sql = "
-            SELECT e.*,
-                   r.name as role_name,
-                   d.name as department_name
-            FROM " . static::$table . " e
-            LEFT JOIN roles r ON e.role_id = r.id
-            LEFT JOIN departments d ON e.department_id = d.id
+            SELECT e.*
+            FROM {$table} e
             WHERE e.user_id = :user_id
         ";
 
-        $stmt = static::getDb()->prepare($sql);
+        $stmt = static::getPdo()->prepare($sql);
         $stmt->execute(['user_id' => $userId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -68,30 +60,27 @@ class Employee extends Model
      */
     public function getEmployeeByEmail($email)
     {
+        $table = static::$table;
         $sql = "
-            SELECT e.*,
-                   r.name as role_name
-            FROM " . static::$table . " e
-            LEFT JOIN roles r ON e.role_id = r.id
+            SELECT e.*
+            FROM {$table} e
             WHERE e.email = :email
         ";
 
-        $stmt = static::getDb()->prepare($sql);
+        $stmt = static::getPdo()->prepare($sql);
         $stmt->execute(['email' => $email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
-     * Get all users with filters
+     * Get all employees with filters
      */
     public function getAllEmployees($filters = [])
     {
+        $table = static::$table;
         $sql = "
-            SELECT e.*,
-                   r.name as role_name, d.name as department_name
-            FROM " . static::$table . " e
-            LEFT JOIN roles r ON e.role_id = r.id
-            LEFT JOIN departments d ON e.department_id = d.id
+            SELECT e.*
+            FROM {$table} e
             WHERE 1=1
         ";
 
@@ -103,13 +92,23 @@ class Employee extends Model
         }
 
         if (!empty($filters['department'])) {
-            $sql .= " AND e.department_id = :department";
+            $sql .= " AND e.department = :department";
             $params['department'] = $filters['department'];
+        }
+
+        if (!empty($filters['role'])) {
+            $sql .= " AND e.role = :role";
+            $params['role'] = $filters['role'];
+        }
+
+        if (!empty($filters['status'])) {
+            $sql .= " AND e.status = :status";
+            $params['status'] = $filters['status'];
         }
 
         $sql .= " ORDER BY e.created_at DESC";
 
-        $stmt = static::getDb()->prepare($sql);
+        $stmt = static::getPdo()->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -119,8 +118,8 @@ class Employee extends Model
      */
     public function createEmployee($data)
     {
-        // Start transaction
-        static::getDb()->beginTransaction();
+        $pdo = static::getPdo();
+        $pdo->beginTransaction();
 
         try {
             // Create user account first
@@ -129,77 +128,50 @@ class Employee extends Model
                 VALUES (:name, :email, :phone, :password, 'employee', 'active', NOW(), NOW())
             ";
 
-            $userStmt = static::getDb()->prepare($userSql);
+            $userStmt = $pdo->prepare($userSql);
             $userStmt->execute([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'phone' => $data['phone'] ?? null,
-                'password' => password_hash($data['password'], PASSWORD_DEFAULT)
+                'password' => password_hash($data['password'] ?? 'default123', PASSWORD_DEFAULT)
             ]);
 
-            $userId = static::getDb()->lastInsertId();
+            $userId = $pdo->lastInsertId();
 
             // Insert employee record
+            $table = static::$table;
             $employeeSql = "
-                INSERT INTO " . static::$table . " (
-                    user_id, role_id, department_id, designation, salary,
-                    join_date, reporting_manager_id, status, address, notes,
-                    name, email, phone, password, role, created_at, updated_at
+                INSERT INTO {$table} (
+                    user_id, role, department, designation, salary,
+                    joining_date, status, address,
+                    name, email, phone, created_at, updated_at
                 ) VALUES (
-                    :user_id, :role_id, :department_id, :designation, :salary,
-                    :join_date, :reporting_manager_id, 'active', :address, :notes,
-                    :name, :email, :phone, :password, 'employee', NOW(), NOW()
+                    :user_id, :role, :department, :designation, :salary,
+                    :joining_date, 'active', :address,
+                    :name, :email, :phone, NOW(), NOW()
                 )
             ";
 
-            $employeeStmt = static::getDb()->prepare($employeeSql);
+            $employeeStmt = $pdo->prepare($employeeSql);
             $employeeStmt->execute([
                 'user_id' => $userId,
-                'role_id' => $data['role_id'],
-                'department_id' => $data['department_id'],
-                'designation' => $data['designation'],
-                'salary' => $data['salary'],
-                'join_date' => $data['joining_date'] ?? date('Y-m-d'),
-                'reporting_manager_id' => $data['reporting_manager_id'] ?? null,
+                'role' => $data['role'] ?? $data['designation'] ?? 'employee',
+                'department' => $data['department'] ?? 'General',
+                'designation' => $data['designation'] ?? 'Employee',
+                'salary' => $data['salary'] ?? null,
+                'joining_date' => $data['joining_date'] ?? date('Y-m-d'),
                 'address' => $data['address'] ?? null,
-                'notes' => $data['notes'] ?? null,
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'phone' => $data['phone']
+                'phone' => $data['phone'] ?? null
             ]);
 
-            $employeeId = static::getDb()->lastInsertId();
+            $employeeId = $pdo->lastInsertId();
 
-            // Log activity
-            try {
-                $activitySql = "
-                INSERT INTO employee_activities (employee_id, activity_type, description, created_at)
-                VALUES (:employee_id, 'joined_company', 'Employee joined the company', NOW())
-                ";
-                $activityStmt = static::getDb()->prepare($activitySql);
-                $activityStmt->execute(['employee_id' => $employeeId]);
-            } catch (Exception $e) {
-                // Ignore activity log error if table missing
-            }
-
-            // Assign role to user_roles
-            if (!empty($data['role_id'])) {
-                // Manually insert into user_roles to avoid redundant update in assignRole
-                try {
-                    $stmtRole = static::getDb()->prepare("INSERT INTO user_roles (user_id, role_id) VALUES (:user_id, :role_id)");
-                    $stmtRole->execute(['user_id' => $userId, 'role_id' => $data['role_id']]);
-                } catch (Exception $e) {
-                    // Ignore if user_roles table issue
-                }
-            }
-
-            // Commit transaction
-            static::getDb()->commit();
-
+            $pdo->commit();
             return $employeeId;
         } catch (Exception $e) {
-            // Rollback transaction
-            static::getDb()->rollBack();
+            $pdo->rollBack();
             throw $e;
         }
     }
@@ -209,7 +181,8 @@ class Employee extends Model
      */
     public function getRoles()
     {
-        $stmt = static::getDb()->query("SELECT * FROM roles ORDER BY name");
+        $pdo = static::getPdo();
+        $stmt = $pdo->query("SELECT DISTINCT role as id, role as name FROM employees WHERE role IS NOT NULL ORDER BY role");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -218,7 +191,8 @@ class Employee extends Model
      */
     public function getDepartments()
     {
-        $stmt = static::getDb()->query("SELECT * FROM departments ORDER BY name");
+        $pdo = static::getPdo();
+        $stmt = $pdo->query("SELECT DISTINCT department as id, department as name FROM employees WHERE department IS NOT NULL ORDER BY department");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -227,53 +201,49 @@ class Employee extends Model
      */
     public function updateEmployee($id, $data)
     {
-        // Start transaction
-        static::getDb()->beginTransaction();
+        $pdo = static::getPdo();
+        $pdo->beginTransaction();
 
         try {
-            // 1. Update users table (Primary for phone, role_id, department_id, etc.)
-            // Also update name, email, phone, role in users table to keep sync
+            $table = static::$table;
             $employeeUpdates = [];
             $employeeParams = ['id' => $id];
 
             $allowedFields = [
-                'role_id',
-                'department_id',
+                'role',
+                'department',
                 'designation',
                 'salary',
-                'join_date',
+                'joining_date',
                 'status',
-                'reporting_manager_id',
                 'address',
-                'notes',
+                'emergency_contact',
                 'name',
                 'email',
-                'phone',
-                'role'
+                'phone'
             ];
 
             foreach ($allowedFields as $field) {
-                if (isset($data[$field])) {
+                if (array_key_exists($field, $data)) {
                     $employeeUpdates[] = "{$field} = :{$field}";
                     $employeeParams[$field] = $data[$field];
                 }
             }
 
             if (!empty($employeeUpdates)) {
-                $sql = "UPDATE " . static::$table . " SET " . implode(', ', $employeeUpdates) . ", updated_at = NOW() WHERE id = :id";
-                $stmt = static::getDb()->prepare($sql);
+                $sql = "UPDATE {$table} SET " . implode(', ', $employeeUpdates) . ", updated_at = NOW() WHERE id = :id";
+                $stmt = $pdo->prepare($sql);
                 $stmt->execute($employeeParams);
             }
 
-            // 2. Update users table (Primary for authentication: name, email, password, role)
-            // Get user_id associated with employee
-            $stmtUser = static::getDb()->prepare("SELECT user_id FROM " . static::$table . " WHERE id = :id");
+            // Also update users table (name, email, phone, password)
+            $stmtUser = $pdo->prepare("SELECT user_id FROM {$table} WHERE id = :id");
             $stmtUser->execute(['id' => $id]);
             $employee = $stmtUser->fetch(PDO::FETCH_ASSOC);
 
-            if ($employee && $employee['user_id']) {
+            if ($employee && !empty($employee['user_id'])) {
                 $userUpdates = [];
-                $userParams = ['id' => $employee['user_id']];
+                $userParams = ['uid' => $employee['user_id']];
 
                 if (isset($data['name'])) {
                     $userUpdates[] = "name = :name";
@@ -283,71 +253,40 @@ class Employee extends Model
                     $userUpdates[] = "email = :email";
                     $userParams['email'] = $data['email'];
                 }
-
                 if (isset($data['phone'])) {
                     $userUpdates[] = "phone = :phone";
                     $userParams['phone'] = $data['phone'];
                 }
-
-                // Update password in users table too if changed
                 if (!empty($data['password'])) {
                     $userUpdates[] = "password = :password";
                     $userParams['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
                 }
 
                 if (!empty($userUpdates)) {
-                    $userSql = "UPDATE users SET " . implode(', ', $userUpdates) . ", updated_at = NOW() WHERE id = :id";
-                    $userStmt = static::getDb()->prepare($userSql);
+                    $userSql = "UPDATE users SET " . implode(', ', $userUpdates) . ", updated_at = NOW() WHERE id = :uid";
+                    $userStmt = $pdo->prepare($userSql);
                     $userStmt->execute($userParams);
-                }
-
-                // Update user_roles if role_id changed
-                if (isset($data['role_id'])) {
-                    // Check if exists, update or insert
-                    $stmtCheck = static::getDb()->prepare("SELECT * FROM user_roles WHERE user_id = :user_id");
-                    $stmtCheck->execute(['user_id' => $employee['user_id']]);
-                    if ($stmtCheck->fetch()) {
-                        $stmtRole = static::getDb()->prepare("UPDATE user_roles SET role_id = :role_id WHERE user_id = :user_id");
-                        $stmtRole->execute(['user_id' => $employee['user_id'], 'role_id' => $data['role_id']]);
-                    } else {
-                        $stmtRole = static::getDb()->prepare("INSERT INTO user_roles (user_id, role_id) VALUES (:user_id, :role_id)");
-                        $stmtRole->execute(['user_id' => $employee['user_id'], 'role_id' => $data['role_id']]);
-                    }
                 }
             }
 
-            static::getDb()->commit();
+            $pdo->commit();
             return true;
         } catch (Exception $e) {
-            static::getDb()->rollBack();
-            // Log error or rethrow
+            $pdo->rollBack();
             return false;
         }
     }
 
     /**
-     * Assign role to employee (updates users table and user_roles)
+     * Assign role to employee
      */
-    public function assignRole($employeeId, $roleId)
+    public function assignRole($employeeId, $role)
     {
-        // Update users table
-        $stmt = static::getDb()->prepare("UPDATE " . static::$table . " SET role_id = :role_id WHERE id = :id");
-        $stmt->execute(['role_id' => $roleId, 'id' => $employeeId]);
-
-        // Get user_id
-        $stmtUser = static::getDb()->prepare("SELECT user_id FROM " . static::$table . " WHERE id = :id");
-        $stmtUser->execute(['id' => $employeeId]);
-        $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
-
-        if ($user && $user['user_id']) {
-            // Delete existing roles
-            $stmtDel = static::getDb()->prepare("DELETE FROM user_roles WHERE user_id = :user_id");
-            $stmtDel->execute(['user_id' => $user['user_id']]);
-
-            // Insert new role
-            $stmtIns = static::getDb()->prepare("INSERT INTO user_roles (user_id, role_id) VALUES (:user_id, :role_id)");
-            $stmtIns->execute(['user_id' => $user['user_id'], 'role_id' => $roleId]);
-        }
+        $table = static::$table;
+        $pdo = static::getPdo();
+        $stmt = $pdo->prepare("UPDATE {$table} SET role = :role WHERE id = :id");
+        $stmt->execute(['role' => $role, 'id' => $employeeId]);
+        return $stmt->rowCount() > 0;
     }
 
     /**
@@ -355,8 +294,10 @@ class Employee extends Model
      */
     public function deleteEmployee($id)
     {
-        $sql = "UPDATE " . static::$table . " SET status = 'deleted', updated_at = NOW() WHERE id = :id";
-        $stmt = static::getDb()->prepare($sql);
+        $table = static::$table;
+        $pdo = static::getPdo();
+        $sql = "UPDATE {$table} SET status = 'inactive', updated_at = NOW() WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute(['id' => $id]);
     }
 
@@ -365,43 +306,39 @@ class Employee extends Model
      */
     public function offboardEmployee($id)
     {
-        static::getDb()->beginTransaction();
+        $pdo = static::getPdo();
+        $pdo->beginTransaction();
         try {
-            // Deactivate employee
-            $stmt = static::getDb()->prepare("UPDATE " . static::$table . " SET status = 'inactive', updated_at = NOW() WHERE id = :id");
+            $table = static::$table;
+            $stmt = $pdo->prepare("UPDATE {$table} SET status = 'inactive', updated_at = NOW() WHERE id = :id");
             $stmt->execute(['id' => $id]);
 
-            // Get user_id
-            $stmtUser = static::getDb()->prepare("SELECT user_id FROM " . static::$table . " WHERE id = :id");
+            $stmtUser = $pdo->prepare("SELECT user_id FROM {$table} WHERE id = :id");
             $stmtUser->execute(['id' => $id]);
             $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
 
-            if ($user && $user['user_id']) {
-                // Deactivate user
-                $stmtUserUpd = static::getDb()->prepare("UPDATE users SET status = 'inactive', updated_at = NOW() WHERE id = :id");
-                $stmtUserUpd->execute(['id' => $user['user_id']]);
-
-                // Remove roles
-                $stmtRoles = static::getDb()->prepare("DELETE FROM user_roles WHERE user_id = :user_id");
-                $stmtRoles->execute(['user_id' => $user['user_id']]);
+            if ($user && !empty($user['user_id'])) {
+                $stmtUserUpd = $pdo->prepare("UPDATE users SET status = 'inactive', updated_at = NOW() WHERE id = :uid");
+                $stmtUserUpd->execute(['uid' => $user['user_id']]);
             }
 
-            static::getDb()->commit();
+            $pdo->commit();
             return true;
         } catch (Exception $e) {
-            static::getDb()->rollBack();
+            $pdo->rollBack();
             throw $e;
         }
     }
 
     /**
-     * Get users for admin with filters and pagination
+     * Get employees for admin with filters and pagination
      */
     public static function getAdminEmployees($filters)
     {
         try {
             $db = \App\Core\Database::getInstance();
             $pdo = $db->getConnection();
+            $table = static::$table;
             $where = [];
             $params = [];
 
@@ -418,16 +355,26 @@ class Employee extends Model
                 $params['status'] = $filters['status'];
             }
 
+            if (!empty($filters['department'])) {
+                $where[] = "department = :department";
+                $params['department'] = $filters['department'];
+            }
+
+            if (!empty($filters['role'])) {
+                $where[] = "role = :role";
+                $params['role'] = $filters['role'];
+            }
+
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
-            $allowed_sorts = ['id', 'name', 'email', 'created_at', 'status'];
+            $allowed_sorts = ['id', 'name', 'email', 'created_at', 'status', 'role', 'department'];
             $sort = in_array($filters['sort'] ?? '', $allowed_sorts) ? $filters['sort'] : 'created_at';
             $order = strtoupper($filters['order'] ?? '') === 'ASC' ? 'ASC' : 'DESC';
 
             $limit = (int)($filters['per_page'] ?? 10);
             $offset = (int)((($filters['page'] ?? 1) - 1) * $limit);
 
-            $sql = "SELECT * FROM users {$where_clause} ORDER BY {$sort} {$order} LIMIT :limit OFFSET :offset";
+            $sql = "SELECT * FROM {$table} {$where_clause} ORDER BY {$sort} {$order} LIMIT :limit OFFSET :offset";
 
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
@@ -439,19 +386,20 @@ class Employee extends Model
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log('Admin users query error: ' . $e->getMessage());
+            error_log('Employee::getAdminEmployees error: ' . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Get total users count for pagination
+     * Get total employees count for pagination
      */
     public static function getAdminTotalEmployees($filters)
     {
         try {
             $db = \App\Core\Database::getInstance();
             $pdo = $db->getConnection();
+            $table = static::$table;
             $where = [];
             $params = [];
 
@@ -468,9 +416,14 @@ class Employee extends Model
                 $params['status'] = $filters['status'];
             }
 
+            if (!empty($filters['department'])) {
+                $where[] = "department = :department";
+                $params['department'] = $filters['department'];
+            }
+
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
-            $sql = "SELECT COUNT(*) FROM users {$where_clause}";
+            $sql = "SELECT COUNT(*) FROM {$table} {$where_clause}";
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
@@ -479,7 +432,7 @@ class Employee extends Model
 
             return (int)$stmt->fetchColumn();
         } catch (Exception $e) {
-            error_log('Admin total users query error: ' . $e->getMessage());
+            error_log('Employee::getAdminTotalEmployees error: ' . $e->getMessage());
             return 0;
         }
     }

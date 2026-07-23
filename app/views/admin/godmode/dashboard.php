@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * God Mode Dashboard - Admin Super Powers
  * User Impersonation, Role Switching, System Control
@@ -319,7 +319,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                         <?php echo ucfirst($current_admin['role'] ?? 'Admin'); ?>
                     </span>
                     <span class="text-light"><?php echo $current_admin['name'] ?? 'Unknown'; ?></span>
-                    <a href="/admin/dashboard" class="btn btn-outline-light btn-sm">
+                    <a href="<?= BASE_URL ?>/admin/dashboard" class="btn btn-outline-light btn-sm">
                         <i class="fas fa-arrow-left me-1"></i>Back to Admin
                     </a>
                 </div>

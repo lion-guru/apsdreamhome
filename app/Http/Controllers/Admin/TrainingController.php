@@ -169,6 +169,49 @@ class TrainingController extends AdminController
         ]);
     }
 
+    public function downloadCertificate($id)
+    {
+        $this->requireAdmin();
+        try {
+            $cert = $this->db->fetch("SELECT * FROM training_certificates WHERE id = ?", [(int)$id]);
+            if (!$cert) {
+                $this->setFlash('error', 'Certificate not found');
+                $this->redirect('/admin/training/certificates');
+                return;
+            }
+            // Generate HTML certificate for download
+            $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Certificate - ' . htmlspecialchars($cert['certificate_number']) . '</title>';
+            $html .= '<style>body{font-family:Georgia,serif;text-align:center;padding:60px;background:#fff;}';
+            $html .= '.border{border:8px double #c9a84c;padding:40px;margin:20px;position:relative;}';
+            $html .= 'h1{color:#1e3a5f;font-size:36px;margin-bottom:5px;}h2{color:#333;font-size:20px;font-weight:normal;margin-top:10px;}';
+            $html .= '.name{font-size:28px;color:#0d9488;font-weight:bold;margin:20px 0;}';
+            $html .= '.detail{font-size:14px;color:#555;margin:5px 0;}';
+            $html .= '.seal{margin-top:30px;font-size:12px;color:#888;}';
+            $html .= '.watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:100px;color:rgba(201,168,76,0.08);pointer-events:none;white-space:nowrap;}</style></head><body>';
+            $html .= '<div class="border"><div class="watermark">APS DREAM HOME</div>';
+            $html .= '<h1>CERTIFICATE</h1><h2>' . htmlspecialchars($cert['certificate_type']) . '</h2>';
+            $html .= '<p class="detail">This is to certify that</p>';
+            $html .= '<div class="name">' . htmlspecialchars($cert['associate_name']) . '</div>';
+            $html .= '<p class="detail">has successfully completed the course</p>';
+            $html .= '<h2>"' . htmlspecialchars($cert['certificate_title']) . '"</h2>';
+            if (!empty($cert['score_percentage'])) {
+                $html .= '<p class="detail">with a score of <strong>' . number_format($cert['score_percentage'], 1) . '%</strong></p>';
+            }
+            $html .= '<p class="detail">Certificate No: <strong>' . htmlspecialchars($cert['certificate_number']) . '</strong></p>';
+            $html .= '<p class="detail">Date of Issue: <strong>' . htmlspecialchars($cert['issued_date']) . '</strong></p>';
+            $html .= '<div class="seal"><p>APS Dream Home | Gorakhpur, UP | apsdreamhome.com</p>';
+            $html .= '<p>Authorized Signature</p></div></div></body></html>';
+
+            header('Content-Type: text/html');
+            header('Content-Disposition: attachment; filename="certificate-' . $cert['certificate_number'] . '.html"');
+            echo $html;
+            exit;
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Failed to download: ' . $e->getMessage());
+            $this->redirect('/admin/training/certificates');
+        }
+    }
+
     public function modules()
     {
         $this->requireAdmin();

@@ -467,7 +467,11 @@ class Request implements Countable
     public function getSession()
     {
         if (null === $this->session) {
-            $this->session = App::getInstance()->session();
+            if (class_exists('App') && method_exists('App', 'getInstance')) {
+                $this->session = \App::getInstance()->session();
+            } elseif (isset($_SESSION)) {
+                $this->session = $_SESSION;
+            }
         }
 
         return $this->session;

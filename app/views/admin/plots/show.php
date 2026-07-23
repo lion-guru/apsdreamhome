@@ -1,16 +1,16 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-th"></i> Plot Details: <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h2>
                 <div>
-                    <a href="/admin/plots" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Plots
                     </a>
-                    <a href="/admin/plots/edit/<?= $plot['id'] ?>" class="btn btn-primary">
+                    <a href="<?= BASE_URL ?>/admin/plots/<?= $plot['id'] ?>/edit" class="btn btn-primary">
                         <i class="fas fa-edit"></i> Edit Plot
                     </a>
-                    <a href="/admin/mlm-realestate/bookings?plot_id=<?= $plot['id'] ?>" class="btn btn-info text-white">
+                    <a href="<?= BASE_URL ?>/admin/mlm-realestate/bookings?plot_id=<?= $plot['id'] ?>" class="btn btn-info text-white">
                         <i class="fas fa-book"></i> Bookings
                     </a>
                 </div>
@@ -157,7 +157,7 @@
                         <tbody>
                             <?php foreach ($bookings as $bk): ?>
                             <tr>
-                                <td><a href="/admin/mlm-realestate/bookings/<?= $bk['id'] ?>">#<?= $bk['id'] ?></a></td>
+                                <td><a href="<?= BASE_URL ?>/admin/mlm-realestate/bookings/<?= $bk['id'] ?>">#<?= $bk['id'] ?></a></td>
                                 <td><?= htmlspecialchars($bk['customer_name'] ?? 'N/A') ?></td>
                                 <td>₹<?= number_format(intval($bk['amount'] ?? $bk['total_amount'] ?? 0)) ?></td>
                                 <td><span class="badge bg-<?= $bk['status'] === 'confirmed' ? 'success' : ($bk['status'] === 'pending' ? 'warning' : 'secondary') ?>"><?= htmlspecialchars($bk['status'] ?? '') ?></span></td>

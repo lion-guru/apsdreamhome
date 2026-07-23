@@ -7,7 +7,7 @@
 $page_title = $page_title ?? 'Review Testimonial';
 $t = $testimonial ?? [];
 $statuses = $statuses ?? ['pending', 'approved', 'rejected'];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 
 <div class="container-fluid py-4">
@@ -189,7 +189,7 @@ document.getElementById('testimonialActionForm').addEventListener('submit', func
 
 function deleteTestimonial(id) {
     if (confirm('Are you sure you want to delete this testimonial?')) {
-        fetch('<?php echo BASE_URL; ?>/admin/testimonials/delete/' + id, {
+        fetch('<?php echo BASE_URL; ?>/admin/testimonials/' + id + '/delete', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'

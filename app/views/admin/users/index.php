@@ -134,7 +134,12 @@ if (!empty($filters['status'])) $filterQs .= '&status=' . urlencode($filters['st
                     <?php endforeach; ?>
                     <?php else: ?>
                     <tr>
-                        <td colspan="8" class="text-center py-4 text-muted">No users found</td>
+                        <td colspan="8" class="text-center py-5">
+                            <i class="fas fa-users fa-3x text-muted mb-3 d-block"></i>
+                            <h5 class="text-muted">No users found</h5>
+                            <p class="text-muted mb-3">Add your first user to get started with role-based access and CRM.</p>
+                            <a href="<?= BASE_URL ?>/admin/users/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add User</a>
+                        </td>
                     </tr>
                     <?php endif; ?>
                 </tbody>

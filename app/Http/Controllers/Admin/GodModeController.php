@@ -604,7 +604,7 @@ class GodModeController extends AdminController
         $checks = [
             'ssl' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
             'debug_mode' => defined('APP_DEBUG') && APP_DEBUG,
-            'failed_logins' => $this->db->fetch("SELECT COUNT(*) as count FROM activity_logs_unified WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR) AND status = 'failed'")['count'] ?? 0
+            'failed_logins' => $this->getFailedLoginCount()
         ];
 
         $status = ($checks['failed_logins'] > 10) ? 'warning' : 'healthy';
@@ -614,6 +614,21 @@ class GodModeController extends AdminController
             'checks' => $checks,
             'message' => $status === 'warning' ? 'High number of failed logins' : 'Security status OK'
         ];
+    }
+
+    /**
+     * Count failed logins in the last hour (resilient to schema differences)
+     */
+    private function getFailedLoginCount()
+    {
+        try {
+            $row = $this->db->fetch(
+                "SELECT COUNT(*) as count FROM user_activity_logs_unified WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR) AND action LIKE '%fail%'"
+            );
+            return (int)($row['count'] ?? 0);
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 
     /**

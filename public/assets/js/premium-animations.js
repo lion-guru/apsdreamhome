@@ -103,43 +103,10 @@
   }
 
   // ============================================================
-  // PAGE TRANSITION FADE-IN
+  // PAGE TRANSITION FADE-IN (Disabled to prevent link interception bugs)
   // ============================================================
   function initPageTransitions() {
-      // Create overlay if it doesn't exist
-      if (!document.getElementById('page-transition-overlay')) {
-          const overlay = document.createElement('div');
-          overlay.id = 'page-transition-overlay';
-          overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:var(--premium-light,#F8FAFC);z-index:999999;transition:opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);pointer-events:none;';
-          document.body.appendChild(overlay);
-          
-          // Fade out the overlay immediately (page load)
-          requestAnimationFrame(() => {
-              overlay.style.opacity = '0';
-          });
-      }
-
-      // Add fade out on link click (excluding anchors and target="_blank")
-      document.querySelectorAll('a[href]:not([href^="#"]):not([target="_blank"]):not(.no-transition)').forEach(link => {
-          link.addEventListener('click', function(e) {
-              // Ignore modifier keys
-              if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
-              
-              const href = this.getAttribute('href');
-              if (href && !href.startsWith('javascript:')) {
-                  e.preventDefault();
-                  const overlay = document.getElementById('page-transition-overlay');
-                  if (overlay) {
-                      overlay.style.opacity = '1';
-                      setTimeout(() => {
-                          window.location.href = href;
-                      }, 400); // wait for fade to almost finish
-                  } else {
-                      window.location.href = href;
-                  }
-              }
-          });
-      });
+      // Disabled.
   }
 
   // ============================================================

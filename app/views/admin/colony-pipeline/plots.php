@@ -184,7 +184,7 @@ $colonyId = (int)($colony['id'] ?? 0);
 <div class="modal fade" id="filterModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="GET" action="">
+      <form method="GET">
         <div class="modal-header">
           <h5 class="modal-title"><?= __('cp_filter_plots') ?></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

@@ -13,7 +13,7 @@ class SocialLoginService
     public function __construct()
     {
         $this->db = Database::getInstance();
-        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $baseUrl = rtrim(BASE_URL, '/');
         $this->providers = [
             'google' => [
                 'client_id' => getenv('GOOGLE_CLIENT_ID') ?: ($_ENV['GOOGLE_CLIENT_ID'] ?? 'your-google-client-id'),

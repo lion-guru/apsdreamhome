@@ -1,4 +1,4 @@
-
+﻿
 
 <div class="container-fluid">
     <div class="row">
@@ -6,13 +6,13 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-home"></i> Colonies Management</h2>
                 <div>
-                    <a href="/admin/locations/colonies/create" class="btn btn-primary">
+                    <a href="<?= BASE_URL ?>/admin/locations/colonies/create" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Add Colony
                     </a>
-                    <a href="/admin/locations/states" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>/admin/locations/states" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> States
                     </a>
-                    <a href="/admin/locations/districts" class="btn btn-info">
+                    <a href="<?= BASE_URL ?>/admin/locations/districts" class="btn btn-info">
                         <i class="fas fa-city"></i> Districts
                     </a>
                 </div>
@@ -21,7 +21,7 @@
             <!-- Filter Section -->
             <div class="card mb-4">
                 <div class="card-body aps-cp-card-body">
-                    <form method="GET" action="/admin/locations/colonies">
+                    <form method="GET" action="<?= BASE_URL ?>/admin/locations/colonies">
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="state_id" class="form-label">Filter by State</label>
@@ -51,7 +51,7 @@
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-filter"></i> Apply Filter
                                     </button>
-                                    <a href="/admin/locations/colonies" class="btn btn-secondary">
+                                    <a href="<?= BASE_URL ?>/admin/locations/colonies" class="btn btn-secondary">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -83,6 +83,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php if (empty($colonies ?? [])): ?>
+                                <tr>
+                                    <td colspan="9" class="text-center py-5">
+                                        <i class="fas fa-home fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                        <h5 class="text-muted">No colonies found</h5>
+                                        <p class="text-muted mb-3">Add your first colony to start managing properties and plots.</p>
+                                    </td>
+                                </tr>
+                                <?php else: ?>
                                 <?php foreach ($colonies as $colony): ?>
                                 <tr>
                                     <td><?php echo $colony['id']; ?></td>
@@ -121,16 +130,17 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="/admin/locations/colonies/edit/<?php echo $colony['id']; ?>" class="btn btn-outline-primary" title="Edit">
+                                            <a href="<?= BASE_URL ?>/admin/locations/colonies/edit/<?php echo $colony['id']; ?>" class="btn btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="/admin/locations/colonies/delete/<?php echo $colony['id']; ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                                            <a href="<?= BASE_URL ?>/admin/locations/colonies/delete/<?php echo $colony['id']; ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>

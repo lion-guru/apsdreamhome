@@ -6,7 +6,7 @@ $user = $user ?? [];
 $action = $action ?? '/users/update/' . ($user['id'] ?? 0);
 $roles = $roles ?? ['admin', 'user', 'agent', 'associate'];
 $page_title = $page_title ?? 'Edit User - APS Dream Home';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 
     <div class="container py-4">

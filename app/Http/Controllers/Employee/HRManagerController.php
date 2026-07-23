@@ -32,7 +32,7 @@ class HRManagerController extends BaseController
             @session_start();
         }
 
-        $this->employeeId = $_SESSION['employee_id'] ?? null;
+        $this->employeeId = $_SESSION['employee_id'] ?? $_SESSION['user_id'] ?? null;
 
         if (!$this->employeeId) {
             header('Location: ' . BASE_URL . '/employee/login');
@@ -74,8 +74,18 @@ class HRManagerController extends BaseController
                 'recent_activities' => $recentActivities
             ]);
 
-        } catch (Exception $e) {
-            $this->handleError($e->getMessage());
+        } catch (\Exception $e) {
+            error_log("HR Manager Controller Error: " . $e->getMessage());
+            $this->render('employees/department', [
+                'page_title' => 'HR Dashboard',
+                'dept_title' => 'HR Dashboard',
+                'dept_icon'  => 'fas fa-users-cog',
+                'dept_desc'  => 'Human resources overview: attendance, leaves, payroll, and employee management.',
+                'dept_color' => '#f59e0b',
+                'dept_slug'  => 'hr-dashboard',
+                'employee_id' => $this->employeeId,
+                'employee_name' => $_SESSION['employee_name'] ?? $_SESSION['user_name'] ?? 'Employee',
+            ]);
         }
     }
 
@@ -333,7 +343,7 @@ class HRManagerController extends BaseController
                 'message' => "Payroll processed successfully for {$processedCount} users"
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -434,7 +444,7 @@ class HRManagerController extends BaseController
                 'message' => "Performance review scheduled successfully for {$employee['name']}"
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -480,7 +490,7 @@ class HRManagerController extends BaseController
                 'message' => "Application status updated to {$action}"
             ];
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()

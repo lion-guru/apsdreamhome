@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
 use App\Services\Payment\RazorpayGateway;
 use App\Services\Communication\NotificationService;
 use Exception;
@@ -60,7 +61,7 @@ class PaymentGatewayController extends BaseController
             payment_type ENUM('booking', 'installment', 'full_payment', 'registration') NOT NULL,
             amount DECIMAL(15,2) NOT NULL,
             currency VARCHAR(3) DEFAULT 'INR',
-            payment_method ENUM('razorpay', 'payu', 'phonepe', 'bank_transfer', 'cash') NOT NULL,
+            payment_method ENUM('razorpay', 'payu', 'phonepe', 'upi', 'bank_transfer', 'cash') NOT NULL,
             payment_status ENUM('pending', 'processing', 'completed', 'failed', 'cancelled', 'refunded') DEFAULT 'pending',
             gateway_response JSON,
             bank_reference VARCHAR(100),
@@ -69,16 +70,8 @@ class PaymentGatewayController extends BaseController
             refund_amount DECIMAL(15,2) DEFAULT 0,
             refund_date DATETIME,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (associate_id) REFERENCES users(id) ON DELETE SET NULL,
-            FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE SET NULL,
-            FOREIGN KEY (plot_id) REFERENCES plots(id) ON DELETE SET NULL
-        )";
-
-        $this->db->query($sql);
-
-        // Payment gateway logs
-        $sql = "";
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 
         $this->db->query($sql);
 
@@ -94,11 +87,8 @@ class PaymentGatewayController extends BaseController
             payout_date DATE,
             remarks TEXT,
             created_by INT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (associate_id) REFERENCES users(id) ON DELETE CASCADE,
-            FOREIGN KEY (transaction_id) REFERENCES payment_transactions(transaction_id) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-        )";
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 
         $this->db->query($sql);
     }

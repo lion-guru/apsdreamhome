@@ -1,7 +1,7 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4><i class="fas fa-gavel"></i> Telecaller Commission Rules</h4>
-        <a href="/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+        <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-sm btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 
     <div class="row">
@@ -9,7 +9,7 @@
             <div class="card aps-cp-card">
                 <div class="card-header aps-cp-card-header" style="background:#6f42c1;color:white;"><i class="fas fa-plus"></i> Add Rule</div>
                 <div class="card-body aps-cp-card-body">
-                    <form method="post" action="/admin/commission/telecaller/rules/store">
+                    <form method="post" action="<?= BASE_URL ?>/admin/commission/telecaller/rules/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Rule Name</label><input type="text" name="rule_name" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Commission Type</label>
@@ -41,7 +41,16 @@
                     <div class="table-responsive"><table class="table table-striped mb-0">
                         <thead><tr><th>Rule</th><th>Type</th><th>Amount</th><th>%</th><th>Min Calls</th><th>Target</th><th>Active</th><th>Action</th></tr></thead>
                         <tbody>
-                            <?php foreach ($rules ?? [] as $r): ?>
+                            <?php if (empty($rules ?? [])): ?>
+                            <tr>
+                                <td colspan="8" class="text-center py-5">
+                                    <i class="fas fa-gavel fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <h5 class="text-muted">No telecaller rules defined</h5>
+                                    <p class="text-muted mb-3">Create commission rules for telecallers based on calls, leads, or conversions.</p>
+                                </td>
+                            </tr>
+                            <?php else: ?>
+                            <?php foreach ($rules as $r): ?>
                             <tr>
                                 <td><?= htmlspecialchars($r['rule_name']) ?></td>
                                 <td><span class="badge bg-info"><?= $r['commission_type'] ?></span></td>
@@ -51,11 +60,18 @@
                                 <td><?= $r['target_type'] ?></td>
                                 <td><span class="badge bg-<?= $r['is_active']?'success':'secondary' ?>"><?= $r['is_active']?'Yes':'No' ?></span></td>
                                 <td>
-                                    <a href="/admin/commission/telecaller/rules/toggle/<?= $r['id'] ?>" class="btn btn-sm btn-warning"><i class="fas fa-toggle-<?= $r['is_active']?'on':'off' ?>"></i></a>
-                                    <a href="/admin/commission/telecaller/rules/delete/<?= $r['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete rule #<?= $r['id'] ?>?')"><i class="fas fa-trash"></i></a>
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/rules/toggle/<?= $r['id'] ?>" style="display:inline">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                        <button type="submit" class="btn btn-sm btn-warning"><i class="fas fa-toggle-<?= $r['is_active']?'on':'off' ?>"></i></button>
+                                    </form>
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/commission/telecaller/rules/delete/<?= $r['id'] ?>" style="display:inline" onsubmit="return confirm('Delete rule #<?= $r['id'] ?>?')">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table></div>
                 </div>

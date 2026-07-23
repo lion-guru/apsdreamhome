@@ -2,7 +2,7 @@
 $chatbot_stats = $chatbot_stats ?? [];
 $conversations = $conversations ?? [];
 $page_title = $page_title ?? 'AI Chatbot Management';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 ?>
 <div class="container-fluid py-4">
         <!-- Header -->

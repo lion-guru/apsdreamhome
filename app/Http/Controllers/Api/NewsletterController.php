@@ -21,8 +21,8 @@ class NewsletterController extends BaseApiController
     public function subscribe() 
     {
         header("Content-Type: application/json");
-        
-        $email = $_POST['email'] ?? '';
+
+        $email = $this->inputWithJson('email') ?? ($_POST['email'] ?? '');
         
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             echo json_encode([

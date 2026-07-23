@@ -64,7 +64,7 @@ class MLMNetworkService
     {
         $sql = "SELECT 
                     cl.*, 
-                    p.title as property_name, 
+                    p.plot_number as property_name,
                     u.name as buyer_name,
                     cl.amount as commission_earned,
                     cl.status as payout_status

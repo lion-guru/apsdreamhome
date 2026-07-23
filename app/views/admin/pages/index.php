@@ -7,7 +7,14 @@
             </div>
             <div class="card-body aps-cp-card-body">
                 <?php if (empty($pages)): ?>
-                    <div class="alert alert-info"><i class="fas fa-info-circle me-1"></i>No pages found.</div>
+                    <div class="text-center py-5">
+                        <i class="fas fa-file-alt fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                        <h5 class="text-muted">No pages found</h5>
+                        <p class="text-muted mb-3">Create CMS pages for your website content like About Us, Terms of Service, and Privacy Policy.</p>
+                        <a href="<?= BASE_URL ?>/admin/pages/create" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i> Create Page
+                        </a>
+                    </div>
                 <?php else: ?>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">

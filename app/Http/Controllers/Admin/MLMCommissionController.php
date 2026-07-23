@@ -43,21 +43,21 @@ class MLMCommissionController extends AdminController
             if (method_exists($this->db, 'getPdo')) {
                 $this->db = $this->db->getPdo();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->db = null;
         }
         try {
             $this->engine = new MLMCommissionEngine(
                 $this->db instanceof \PDO ? $this->db : null
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->engine = new MLMCommissionEngine();
         }
         try {
             $this->hybridEngine = new HybridCommissionEngine(
                 $this->db instanceof \PDO ? $this->db : null
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->hybridEngine = null;
         }
     }
@@ -122,7 +122,7 @@ class MLMCommissionController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $commissions = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $commissions = [];
         }
 
@@ -155,7 +155,7 @@ class MLMCommissionController extends AdminController
             ");
             $stmt->execute([(int)$id]);
             $commission = $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $commission = null;
         }
 
@@ -182,7 +182,7 @@ class MLMCommissionController extends AdminController
         $batches = [];
         try {
             $batches = $this->db->query("SELECT * FROM mlm_payout_batches ORDER BY period_year DESC, period_month DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $batches = [];
         }
 
@@ -302,7 +302,7 @@ class MLMCommissionController extends AdminController
             $stmt = $this->db->prepare("SELECT batch_id FROM mlm_payouts WHERE id = ?");
             $stmt->execute([(int)$payoutId]);
             $batchId = (int)($stmt->fetchColumn() ?: 0);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $batchId = 0;
         }
         $url = $batchId > 0 ? "/admin/mlm/payouts/batches/{$batchId}" : '/admin/mlm/payouts/batches';
@@ -325,7 +325,7 @@ class MLMCommissionController extends AdminController
                 ORDER BY a.id ASC
                 LIMIT 200
             ")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $rows = [];
         }
 
@@ -370,7 +370,7 @@ class MLMCommissionController extends AdminController
             ");
             $stmt->execute([$aid]);
             $associateRow = $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $associateRow = null;
         }
 
@@ -409,7 +409,7 @@ class MLMCommissionController extends AdminController
             } else {
                 $this->setFlash('info', 'No associates currently qualify for rank promotion.');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Rank promotion failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/mlm/associate-ranks');
@@ -447,7 +447,7 @@ class MLMCommissionController extends AdminController
                 ORDER BY c.created_at DESC
                 LIMIT 200
             ")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $rows = [];
         }
 
@@ -474,7 +474,7 @@ class MLMCommissionController extends AdminController
             ");
             $stmt->execute([(int)$id]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $row = null;
         }
 
@@ -506,7 +506,7 @@ class MLMCommissionController extends AdminController
             $finalStatus = $via === 'write_off' ? 'written_off' : 'recovered';
             $stmt->execute([$finalStatus, $via, $amt, (int)$id]);
             $this->setFlash('success', "Clawback marked as {$finalStatus}");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to mark clawback as recovered: ' . $e->getMessage());
         }
         return $this->redirect('/admin/mlm/clawbacks/' . (int)$id);
@@ -525,7 +525,7 @@ class MLMCommissionController extends AdminController
             } else {
                 $this->setFlash('info', 'No new clawbacks to process (no installments overdue 30+ days with paid commissions).');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Clawback processing failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/mlm/clawbacks');

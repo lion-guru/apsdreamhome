@@ -2,7 +2,7 @@
 $users = $users ?? [];
 $users = $users ?? [];
 $page_title = $page_title ?? 'Create Support Ticket';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -10,12 +10,12 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 <h2 class="mb-1">Create Support Ticket</h2>
                 <p class="text-muted mb-0">Create a new customer support ticket</p>
             </div>
-            <a href="<?php echo $base; ?>/admin/support_tickets" class="btn btn-outline-secondary">Back to Tickets</a>
+            <a href="<?php echo $base; ?>/admin/support-tickets" class="btn btn-outline-secondary">Back to Tickets</a>
         </div>
         
         <div class="card border-0 shadow-sm">
             <div class="card-body aps-cp-card-body">
-                <form id="ticketForm" action="<?php echo $base; ?>/admin/support_tickets/store" method="POST">
+                <form id="ticketForm" action="<?php echo $base; ?>/admin/support-tickets/store" method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                     
                     <div class="row">
@@ -33,7 +33,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                             <select name="assigned_agent_id" class="form-select">
                                 <option value="">Unassigned</option>
                                 <?php foreach ($users as $agent): ?>
-                                    <option value="<?php echo $agent['id']; ?>"><?php echo htmlspecialchars(agent['name'] ?? ''); ?></option>
+                                    <option value="<?php echo $agent['id']; ?>"><?php echo htmlspecialchars($agent['name'] ?? ''); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

@@ -2,576 +2,427 @@
 
 namespace App\Services\Backup;
 
-use App\Core\Database;
-use Psr\Log\LoggerInterface;
+use App\Core\Database\Database;
+use Exception;
 
 /**
- * Modern Backup Integrity Service
- * Verifies the integrity of database backups and ensures they can be restored
+ * Backup Integrity Service
+ * Automated backup verification, checksum validation, test restore, scheduling
  */
 class BackupIntegrityService
 {
-    private Database $db;
-    private LoggerInterface $logger;
-    private array $config;
-
-    // Default configuration
-    private const DEFAULT_CONFIG = [
-        'backup_path' => 'storage/backups',
-        'checksum_file' => 'storage/data/backup/checksums.json',
-        'verification_history' => 'storage/data/backup/verification_history.json',
-        'test_db_prefix' => 'backup_test_',
-        'max_test_duration' => 300, // 5 minutes
-        'min_backup_size' => 1024, // 1KB
+    private $db;
+    private $config;
+    
+    const DEFAULT_CONFIG = [
+        'backup_paths' => ['/var/backups/apsdreamhome', '/backup'],
+        'checksum_file' => 'backup_checksums.json',
+        'test_db_prefix' => 'test_restore_',
         'critical_tables' => [
-            'users',
-            'properties',
-            'bookings',
-            'leads',
-            'payments',
-            'system_logs'
+            'users', 'leads', 'plot_bookings', 'payment_transactions',
+            'mlm_commission_ledger', 'associates', 'properties',
+            'booking_payment_schedules', 'penalty_audit', 'wallet_points'
         ]
     ];
-
-    public function __construct(Database $db, LoggerInterface $logger, array $config = [])
+    
+    public function __construct(array $config = [])
     {
-        $this->db = $db;
-        $this->logger = $logger;
+        $this->db = Database::getInstance();
         $this->config = array_merge(self::DEFAULT_CONFIG, $config);
         $this->initializeBackupSystem();
     }
-
-    /**
-     * Initialize backup system
-     */
+    
     private function initializeBackupSystem(): void
     {
-        try {
-            $this->createBackupTables();
-            $this->createBackupDirectories();
-            $this->logger->info('Backup integrity system initialized');
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to initialize backup system', ['error' => $e->getMessage()]);
-            throw new \RuntimeException('Backup system initialization failed: ' . $e->getMessage());
-        }
+        $this->createBackupTables();
+        $this->createBackupDirectories();
     }
-
-    /**
-     * Create backup-related tables
-     */
+    
     private function createBackupTables(): void
     {
-        $tables = [
-            'backup_integrity_checks' => "
-                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-            ",
-            'backup_verification_history' => "
-                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-            ",
-            'backup_schedule' => "
-                ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-            "
-        ];
-
-        foreach ($tables as $tableName => $sql) {
-            try {
-                $this->db->execute($sql);
-                $this->logger->info("Backup table created or verified", ['table' => $tableName]);
-            } catch (\Exception $e) {
-                $this->logger->error("Failed to create backup table", [
-                    'table' => $tableName,
-                    'error' => $e->getMessage()
-                ]);
-            }
+        try {
+            $this->db->query("
+                CREATE TABLE IF NOT EXISTS backup_verifications (
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    backup_file VARCHAR(500) NOT NULL,
+                    checksum VARCHAR(64) NOT NULL,
+                    file_size BIGINT UNSIGNED DEFAULT 0,
+                    status ENUM('pending','verified','failed','test_restored') DEFAULT 'pending',
+                    checks JSON,
+                    verified_at TIMESTAMP NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_backup_file (backup_file),
+                    INDEX idx_status (status)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ");
+            
+            $this->db->query("
+                CREATE TABLE IF NOT EXISTS backup_schedules (
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    backup_file VARCHAR(500) NOT NULL,
+                    schedule_time DATETIME NOT NULL,
+                    status ENUM('pending','completed','failed') DEFAULT 'pending',
+                    result JSON,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_schedule_time (schedule_time)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ");
+            
+            $this->db->query("
+                CREATE TABLE IF NOT EXISTS backup_integrity_log (
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    backup_file VARCHAR(500) NOT NULL,
+                    check_type VARCHAR(50) NOT NULL,
+                    status ENUM('passed','failed','warning') NOT NULL,
+                    details JSON,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_backup_file (backup_file)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ");
+        } catch (Exception $e) {
+            error_log('Backup tables creation error: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Create backup directories
-     */
+    
     private function createBackupDirectories(): void
     {
-        $directories = [
-            $this->config['backup_path'],
-            dirname($this->config['checksum_file']),
-            dirname($this->config['verification_history'])
-        ];
-
-        foreach ($directories as $dir) {
-            if (!is_dir($dir)) {
-                if (!mkdir($dir, 0755, true)) {
-                    throw new \RuntimeException("Failed to create backup directory: {$dir}");
-                }
-                $this->logger->info("Backup directory created", ['directory' => $dir]);
+        foreach ($this->config['backup_paths'] as $path) {
+            if (!is_dir($path)) {
+                @mkdir($path, 0755, true);
             }
         }
     }
-
+    
     /**
-     * Verify backup integrity
+     * Verify backup file integrity
      */
     public function verifyBackupIntegrity(string $backupFile): array
     {
+        $results = [
+            'file' => $backupFile,
+            'checksum' => null,
+            'structure' => null,
+            'critical_tables' => null,
+            'restore_test' => null,
+            'overall_status' => 'failed'
+        ];
+        
         try {
-            $this->logger->info("Starting backup integrity verification", ['backup_file' => $backupFile]);
-
-            // Check if backup file exists
-            if (!file_exists($backupFile)) {
-                throw new \InvalidArgumentException("Backup file does not exist: {$backupFile}");
+            // 1. Checksum verification
+            $checksumResult = $this->verifyChecksum($backupFile);
+            $results['checksum'] = $checksumResult;
+            
+            // 2. Structure verification
+            $structureResult = $this->verifyBackupStructure($backupFile);
+            $results['structure'] = $structureResult;
+            
+            // 3. Critical tables verification
+            $tablesResult = $this->verifyCriticalTables($backupFile);
+            $results['critical_tables'] = $tablesResult;
+            
+            // 4. Restore test (optional, can be skipped for large backups)
+            if ($checksumResult['passed'] && $structureResult['passed']) {
+                $restoreResult = $this->performRestoreTest($backupFile);
+                $results['restore_test'] = $restoreResult;
             }
-
-            // Check file size
-            $fileSize = filesize($backupFile);
-            if ($fileSize < $this->config['min_backup_size']) {
-                throw new \RuntimeException("Backup file is too small: {$fileSize} bytes");
-            }
-
-            // Calculate checksum
-            $checksum = $this->calculateChecksum($backupFile);
-
-            // Store verification record
-            $verificationId = $this->createVerificationRecord($backupFile, $checksum, $fileSize);
-
-            // Perform various integrity checks
-            $checks = [
-                'checksum' => $this->verifyChecksum($backupFile, $checksum),
-                'structure' => $this->verifyBackupStructure($backupFile),
-                'critical_tables' => $this->verifyCriticalTables($backupFile),
-                'restore_test' => $this->performRestoreTest($backupFile)
-            ];
-
+            
             // Determine overall status
-            $allPassed = array_reduce($checks, fn($carry, $check) => $carry && ($check['status'] === 'passed'), true);
-            $status = $allPassed ? 'passed' : 'failed';
-
-            // Update verification record
-            $this->updateVerificationRecord($verificationId, $status, $checks);
-
-            $result = [
-                'backup_file' => $backupFile,
-                'checksum' => $checksum,
-                'file_size' => $fileSize,
-                'verification_status' => $status,
-                'checks' => $checks,
-                'verification_time' => date('Y-m-d H:i:s')
-            ];
-
-            $this->logger->info("Backup integrity verification completed", [
-                'backup_file' => $backupFile,
-                'status' => $status
-            ]);
-
-            return $result;
-
-        } catch (\Exception $e) {
-            $this->logger->error("Backup integrity verification failed", [
-                'backup_file' => $backupFile,
-                'error' => $e->getMessage()
-            ]);
-            throw $e;
+            $allPassed = $checksumResult['passed'] 
+                && $structureResult['passed'] 
+                && $tablesResult['passed']
+                && ($results['restore_test']['passed'] ?? true);
+            
+            $results['overall_status'] = $allPassed ? 'verified' : 'failed';
+            
+            // Save verification record
+            $this->createVerificationRecord($backupFile, $results['checksum']['details']['checksum'] ?? '', $results['checksum']['details']['file_size'] ?? 0);
+            
+        } catch (Exception $e) {
+            $results['error'] = $e->getMessage();
+            $this->logIntegrityCheck($backupFile, 'overall', 'failed', ['error' => $e->getMessage()]);
         }
+        
+        return $results;
     }
-
-    /**
-     * Calculate file checksum
-     */
+    
     private function calculateChecksum(string $filePath): string
     {
+        if (!file_exists($filePath)) {
+            throw new Exception("Backup file not found: $filePath");
+        }
         return hash_file('sha256', $filePath);
     }
-
-    /**
-     * Create verification record
-     */
+    
+    private function verifyChecksum(string $backupFile, string $expectedChecksum = null): array
+    {
+        $actualChecksum = $this->calculateChecksum($backupFile);
+        $fileSize = filesize($backupFile);
+        
+        $passed = true;
+        $details = ['algorithm' => 'sha256', 'checksum' => $actualChecksum, 'file_size' => $fileSize];
+        
+        if ($expectedChecksum) {
+            $passed = $actualChecksum === $expectedChecksum;
+            $details['expected'] = $expectedChecksum;
+            $details['match'] = $passed;
+        }
+        
+        // Store checksum
+        $this->createVerificationRecord($backupFile, $actualChecksum, $fileSize);
+        
+        $this->logIntegrityCheck($backupFile, 'checksum', $passed ? 'passed' : 'failed', $details);
+        
+        return ['passed' => $passed, 'details' => $details];
+    }
+    
     private function createVerificationRecord(string $backupFile, string $checksum, int $fileSize): int
     {
-        $this->db->execute(
-            "INSERT INTO backup_integrity_checks (backup_file, checksum, file_size, verification_status) VALUES (?, ?, ?, 'pending')",
-            [$backupFile, $checksum, $fileSize]
-        );
-
-        return (int)$this->db->getLastInsertId();
+        $this->db->query("
+            INSERT INTO backup_verifications (backup_file, checksum, file_size, status)
+            VALUES (?, ?, ?, 'verified')
+        ", [$backupFile, $checksum, $fileSize]);
+        
+        return $this->db->lastInsertId();
     }
-
-    /**
-     * Update verification record
-     */
+    
     private function updateVerificationRecord(int $verificationId, string $status, array $checks): void
     {
-        $details = json_encode($checks);
-        $this->db->execute(
-            "UPDATE backup_integrity_checks SET verification_status = ?, verification_details = ? WHERE id = ?",
-            [$status, $details, $verificationId]
-        );
+        $this->db->query("
+            UPDATE backup_verifications 
+            SET status = ?, checks = ?, verified_at = NOW()
+            WHERE id = ?
+        ", [$status, json_encode($checks), $verificationId]);
     }
-
-    /**
-     * Verify checksum
-     */
-    private function verifyChecksum(string $backupFile, string $expectedChecksum): array
-    {
-        try {
-            $actualChecksum = $this->calculateChecksum($backupFile);
-            $isValid = $actualChecksum === $expectedChecksum;
-
-            return [
-                'status' => $isValid ? 'passed' : 'failed',
-                'expected' => $expectedChecksum,
-                'actual' => $actualChecksum,
-                'message' => $isValid ? 'Checksum verification passed' : 'Checksum verification failed'
-            ];
-        } catch (\Exception $e) {
-            return [
-                'status' => 'failed',
-                'error' => $e->getMessage(),
-                'message' => 'Checksum verification failed due to error'
-            ];
-        }
-    }
-
-    /**
-     * Verify backup structure
-     */
+    
     private function verifyBackupStructure(string $backupFile): array
     {
+        $details = ['tables_found' => 0, 'tables_expected' => count($this->config['critical_tables']), 'missing_tables' => []];
+        
         try {
-            // For SQL backup files, check if they contain expected structure
-            $content = file_get_contents($backupFile);
+            // Use mysqldump to list tables in backup
+            $cmd = "gunzip -c " . escapeshellarg($backupFile) . " | head -5000 | grep 'CREATE TABLE' | sed 's/.*CREATE TABLE \`\\([^`]*\\)\\`.*/\\1/'";
+            $output = shell_exec($cmd);
             
-            $requiredElements = [
-                'CREATE TABLE',
-                'INSERT INTO',
-                'DROP TABLE'
-            ];
-
-            $foundElements = 0;
-            foreach ($requiredElements as $element) {
-                if (stripos($content, $element) !== false) {
-                    $foundElements++;
+            if ($output) {
+                $tables = array_filter(array_map('trim', explode("\n", $output)));
+                $details['tables_found'] = count($tables);
+                
+                foreach ($this->config['critical_tables'] as $criticalTable) {
+                    if (!in_array($criticalTable, $tables)) {
+                        $details['missing_tables'][] = $criticalTable;
+                    }
                 }
             }
-
-            $isValid = $foundElements >= 2; // At least CREATE and INSERT
-
-            return [
-                'status' => $isValid ? 'passed' : 'failed',
-                'elements_found' => $foundElements,
-                'elements_required' => count($requiredElements),
-                'message' => $isValid ? 'Backup structure verification passed' : 'Backup structure verification failed'
-            ];
-        } catch (\Exception $e) {
-            return [
-                'status' => 'failed',
-                'error' => $e->getMessage(),
-                'message' => 'Structure verification failed due to error'
-            ];
+            
+            $passed = empty($details['missing_tables']);
+            $details['missing_count'] = count($details['missing_tables']);
+            
+        } catch (Exception $e) {
+            $passed = false;
+            $details['error'] = $e->getMessage();
         }
+        
+        $this->logIntegrityCheck($backupFile, 'structure', $passed ? 'passed' : 'failed', $details);
+        
+        return ['passed' => $passed, 'details' => $details];
     }
-
-    /**
-     * Verify critical tables exist in backup
-     */
+    
     private function verifyCriticalTables(string $backupFile): array
     {
+        $details = ['verified_tables' => [], 'failed_tables' => []];
+        
         try {
-            $content = file_get_contents($backupFile);
-            $foundTables = [];
-
+            // Create test database and restore backup
+            $testDbName = $this->config['test_db_prefix'] . 'verify_' . time();
+            $this->db->query("CREATE DATABASE `$testDbName`");
+            
+            // Restore to test database
+            $cmd = "gunzip -c " . escapeshellarg($backupFile) . " | mysql -u root " . escapeshellarg($testDbName);
+            $output = shell_exec($cmd . " 2>&1");
+            
+            // Check critical tables
             foreach ($this->config['critical_tables'] as $table) {
-                if (stripos($content, "CREATE TABLE `{$table}`") !== false || 
-                    stripos($content, "CREATE TABLE {$table}") !== false ||
-                    stripos($content, "INSERT INTO `{$table}`") !== false ||
-                    stripos($content, "INSERT INTO {$table}") !== false) {
-                    $foundTables[] = $table;
+                $count = $this->db->fetch("SELECT COUNT(*) as cnt FROM `$testDbName`.`$table`")['cnt'] ?? 0;
+                if ($count > 0) {
+                    $details['verified_tables'][] = ['table' => $table, 'row_count' => $count];
+                } else {
+                    $details['failed_tables'][] = ['table' => $table, 'reason' => 'Empty or missing'];
                 }
             }
-
-            $isValid = count($foundTables) >= count($this->config['critical_tables']) * 0.8; // 80% of critical tables
-
-            return [
-                'status' => $isValid ? 'passed' : 'failed',
-                'found_tables' => $foundTables,
-                'expected_tables' => $this->config['critical_tables'],
-                'message' => $isValid ? 'Critical tables verification passed' : 'Critical tables verification failed'
-            ];
-        } catch (\Exception $e) {
-            return [
-                'status' => 'failed',
-                'error' => $e->getMessage(),
-                'message' => 'Critical tables verification failed due to error'
-            ];
+            
+            // Cleanup test database
+            $this->db->query("DROP DATABASE `$testDbName`");
+            
+            $passed = empty($details['failed_tables']);
+            
+        } catch (Exception $e) {
+            $passed = false;
+            $details['error'] = $e->getMessage();
         }
+        
+        $this->logIntegrityCheck($backupFile, 'critical_tables', $passed ? 'passed' : 'failed', $details);
+        
+        return ['passed' => $passed, 'details' => $details];
     }
-
-    /**
-     * Perform restore test
-     */
+    
     private function performRestoreTest(string $backupFile): array
     {
-        try {
-            $startTime = time();
-            
-            // Create test database name
-            $testDbName = $this->config['test_db_prefix'] . uniqid();
-            
-            // For demonstration, we'll simulate a restore test
-            // In a real implementation, this would create a test database and restore the backup
-            $restoreSuccess = $this->simulateRestoreTest($backupFile, $testDbName);
-            
-            $duration = time() - $startTime;
-            
-            // Clean up test database
-            $this->cleanupTestDatabase($testDbName);
-
-            return [
-                'status' => $restoreSuccess ? 'passed' : 'failed',
-                'test_database' => $testDbName,
-                'duration' => $duration,
-                'message' => $restoreSuccess ? 'Restore test passed' : 'Restore test failed'
-            ];
-        } catch (\Exception $e) {
-            return [
-                'status' => 'failed',
-                'error' => $e->getMessage(),
-                'message' => 'Restore test failed due to error'
-            ];
-        }
-    }
-
-    /**
-     * Simulate restore test (simplified for demonstration)
-     */
-    private function simulateRestoreTest(string $backupFile, string $testDbName): bool
-    {
-        // In a real implementation, this would:
-        // 1. Create a test database
-        // 2. Restore the backup to the test database
-        // 3. Verify the restored data
-        // 4. Drop the test database
+        $testDbName = $this->config['test_db_prefix'] . 'restore_' . time();
+        $details = ['test_db' => $testDbName];
         
-        // For now, we'll just check if the file is readable and has content
-        $content = file_get_contents($backupFile);
-        return !empty($content) && strlen($content) > 1000;
-    }
-
-    /**
-     * Clean up test database
-     */
-    private function cleanupTestDatabase(string $testDbName): void
-    {
         try {
-            // In a real implementation, this would drop the test database
-            $this->logger->info("Test database cleaned up", ['database' => $testDbName]);
-        } catch (\Exception $e) {
-            $this->logger->warning("Failed to clean up test database", [
-                'database' => $testDbName,
-                'error' => $e->getMessage()
-            ]);
+            $this->db->query("CREATE DATABASE `$testDbName`");
+            
+            $cmd = "gunzip -c " . escapeshellarg($backupFile) . " | mysql -u root " . escapeshellarg($testDbName);
+            $output = shell_exec($cmd . " 2>&1");
+            
+            // Verify basic structure
+            $tableCount = $this->db->fetch("SELECT COUNT(*) as cnt FROM information_schema.tables WHERE table_schema = ?", [$testDbName])['cnt'] ?? 0;
+            
+            $details['tables_restored'] = $tableCount;
+            $details['success'] = $tableCount > 0;
+            
+            // Cleanup
+            $this->db->query("DROP DATABASE `$testDbName`");
+            
+            $passed = $details['success'];
+            
+        } catch (Exception $e) {
+            $passed = false;
+            $details['error'] = $e->getMessage();
         }
+        
+        $this->logIntegrityCheck($backupFile, 'restore_test', $passed ? 'passed' : 'failed', $details);
+        
+        return ['passed' => $passed, 'details' => $details];
     }
-
-    /**
-     * Get verification history
-     */
+    
+    private function logIntegrityCheck(string $backupFile, string $checkType, string $status, array $details): void
+    {
+        $this->db->query("
+            INSERT INTO backup_integrity_log (backup_file, check_type, status, details)
+            VALUES (?, ?, ?, ?)
+        ", [$backupFile, $checkType, $status, json_encode($details)]);
+    }
+    
     public function getVerificationHistory(int $limit = 50): array
     {
         try {
-            $records = $this->db->fetchAll(
-                "SELECT * FROM backup_integrity_checks ORDER BY verification_time DESC LIMIT ?",
-                [$limit]
-            );
-
-            return array_map(function($record) {
-                return [
-                    'id' => $record['id'],
-                    'backup_file' => $record['backup_file'],
-                    'checksum' => $record['checksum'],
-                    'file_size' => $record['file_size'],
-                    'verification_status' => $record['verification_status'],
-                    'verification_details' => json_decode($record['verification_details'], true) ?: [],
-                    'verification_time' => $record['verification_time']
-                ];
-            }, $records);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get verification history", ['error' => $e->getMessage()]);
+            return $this->db->fetchAll("
+                SELECT * FROM backup_verifications 
+                ORDER BY created_at DESC 
+                LIMIT ?
+            ", [$limit]) ?? [];
+        } catch (Exception $e) {
             return [];
         }
     }
-
-    /**
-     * Get backup statistics
-     */
+    
     public function getBackupStatistics(): array
     {
         try {
-            $stats = [];
-
-            // Total verifications
-            $result = $this->db->fetchOne("SELECT COUNT(*) as total FROM backup_integrity_checks");
-            $stats['total_verifications'] = (int)($result['total'] ?? 0);
-
-            // Passed verifications
-            $result = $this->db->fetchOne("SELECT COUNT(*) as passed FROM backup_integrity_checks WHERE verification_status = 'passed'");
-            $stats['passed_verifications'] = (int)($result['passed'] ?? 0);
-
-            // Failed verifications
-            $result = $this->db->fetchOne("SELECT COUNT(*) as failed FROM backup_integrity_checks WHERE verification_status = 'failed'");
-            $stats['failed_verifications'] = (int)($result['failed'] ?? 0);
-
-            // Success rate
-            $total = $stats['total_verifications'];
-            $stats['success_rate'] = $total > 0 ? round(($stats['passed_verifications'] / $total) * 100, 2) : 0;
-
-            // Recent activity
-            $result = $this->db->fetchOne("SELECT COUNT(*) as recent FROM backup_integrity_checks WHERE verification_time >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
-            $stats['recent_verifications'] = (int)($result['recent'] ?? 0);
-
-            // Average file size
-            $result = $this->db->fetchOne("SELECT AVG(file_size) as avg_size FROM backup_integrity_checks");
-            $stats['average_file_size'] = (float)($result['avg_size'] ?? 0);
-
-            return $stats;
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get backup statistics", ['error' => $e->getMessage()]);
+            $stats = $this->db->fetch("
+                SELECT 
+                    COUNT(*) as total_backups,
+                    SUM(CASE WHEN status = 'verified' THEN 1 ELSE 0 END) as verified,
+                    SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed,
+                    SUM(CASE WHEN status = 'test_restored' THEN 1 ELSE 0 END) as test_restored,
+                    AVG(file_size) as avg_file_size
+                FROM backup_verifications
+            ");
+            
+            $recent = $this->db->fetchAll("
+                SELECT backup_file, status, file_size, created_at
+                FROM backup_verifications
+                ORDER BY created_at DESC LIMIT 10
+            ");
+            
+            return array_merge($stats ?? [], ['recent' => $recent ?? []]);
+        } catch (Exception $e) {
             return [];
         }
     }
-
-    /**
-     * Schedule backup verification
-     */
+    
     public function scheduleVerification(string $backupFile, string $scheduleTime): bool
     {
         try {
-            $this->db->execute(
-                "INSERT INTO backup_schedule (backup_name, backup_type, schedule_type, schedule_time, next_run) VALUES (?, 'full', 'daily', ?, ?)",
-                [$backupFile, $scheduleTime, $scheduleTime]
-            );
-
-            $this->logger->info("Backup verification scheduled", [
-                'backup_file' => $backupFile,
-                'schedule_time' => $scheduleTime
-            ]);
-
+            $this->db->query("
+                INSERT INTO backup_schedules (backup_file, schedule_time)
+                VALUES (?, ?)
+            ", [$backupFile, $scheduleTime]);
             return true;
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to schedule backup verification", [
-                'backup_file' => $backupFile,
-                'error' => $e->getMessage()
-            ]);
+        } catch (Exception $e) {
             return false;
         }
     }
-
-    /**
-     * Get scheduled verifications
-     */
+    
     public function getScheduledVerifications(): array
     {
         try {
-            $schedules = $this->db->fetchAll(
-                "SELECT * FROM backup_schedule WHERE is_active = TRUE ORDER BY next_run ASC"
-            );
-
-            return array_map(function($schedule) {
-                return [
-                    'id' => $schedule['id'],
-                    'backup_name' => $schedule['backup_name'],
-                    'backup_type' => $schedule['backup_type'],
-                    'schedule_type' => $schedule['schedule_type'],
-                    'schedule_time' => $schedule['schedule_time'],
-                    'last_run' => $schedule['last_run'],
-                    'next_run' => $schedule['next_run'],
-                    'is_active' => (bool)$schedule['is_active']
-                ];
-            }, $schedules);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get scheduled verifications", ['error' => $e->getMessage()]);
+            return $this->db->fetchAll("
+                SELECT * FROM backup_schedules 
+                WHERE status = 'pending' AND schedule_time <= NOW()
+                ORDER BY schedule_time ASC
+            ") ?? [];
+        } catch (Exception $e) {
             return [];
         }
     }
-
-    /**
-     * Export verification report
-     */
+    
     public function exportVerificationReport(array $filters = []): string
     {
-        try {
-            $sql = "SELECT * FROM backup_integrity_checks WHERE 1=1";
-            $params = [];
-
-            if (!empty($filters['status'])) {
-                $sql .= " AND verification_status = ?";
-                $params[] = $filters['status'];
-            }
-
-            if (!empty($filters['date_from'])) {
-                $sql .= " AND DATE(verification_time) >= ?";
-                $params[] = $filters['date_from'];
-            }
-
-            if (!empty($filters['date_to'])) {
-                $sql .= " AND DATE(verification_time) <= ?";
-                $params[] = $filters['date_to'];
-            }
-
-            $sql .= " ORDER BY verification_time DESC";
-
-            $records = $this->db->fetchAll($sql, $params);
-
-            $csvData = [];
-            $csvData[] = ['ID', 'Backup File', 'Checksum', 'File Size', 'Status', 'Verification Time'];
-
-            foreach ($records as $record) {
-                $csvData[] = [
-                    $record['id'],
-                    $record['backup_file'],
-                    $record['checksum'],
-                    $record['file_size'],
-                    $record['verification_status'],
-                    $record['verification_time']
-                ];
-            }
-
-            $filename = 'backup_verification_report_' . date('Y-m-d') . '.csv';
-            
-            header('Content-Type: text/csv');
-            header('Content-Disposition: attachment; filename="' . $filename . '"');
-            
-            $output = fopen('php://output', 'w');
-            foreach ($csvData as $row) {
-                fputcsv($output, $row);
-            }
-            fclose($output);
-
-            return $filename;
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to export verification report", ['error' => $e->getMessage()]);
-            throw $e;
+        $where = '1=1';
+        $params = [];
+        
+        if (!empty($filters['status'])) {
+            $where .= ' AND status = ?';
+            $params[] = $filters['status'];
         }
+        if (!empty($filters['from_date'])) {
+            $where .= ' AND created_at >= ?';
+            $params[] = $filters['from_date'];
+        }
+        if (!empty($filters['to_date'])) {
+            $where .= ' AND created_at <= ?';
+            $params[] = $filters['to_date'];
+        }
+        
+        $results = $this->db->fetchAll("
+            SELECT * FROM backup_verifications 
+            WHERE $where 
+            ORDER BY created_at DESC
+        ", $params);
+        
+        $csv = "Backup File,Status,File Size (MB),Created At,Verified At\n";
+        foreach ($results as $row) {
+            $csv .= sprintf(
+                "\"%s\",\"%s\",%.2f,\"%s\",\"%s\"\n",
+                $row['backup_file'],
+                $row['status'],
+                ($row['file_size'] ?? 0) / 1024 / 1024,
+                $row['created_at'],
+                $row['verified_at'] ?? 'N/A'
+            );
+        }
+        
+        return $csv;
     }
-
-    /**
-     * Clean old verification records
-     */
+    
     public function cleanupOldRecords(int $daysToKeep = 30): int
     {
         try {
-            $deleted = $this->db->execute(
-                "DELETE FROM backup_integrity_checks WHERE verification_time < DATE_SUB(NOW(), INTERVAL ? DAY)",
-                [$daysToKeep]
-            );
-
-            $this->logger->info("Old verification records cleaned up", ['days_to_keep' => $daysToKeep]);
-
-            return $deleted;
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to cleanup old records", ['error' => $e->getMessage()]);
+            $this->db->query("
+                DELETE FROM backup_verifications 
+                WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)
+            ", [$daysToKeep]);
+            
+            $this->db->query("
+                DELETE FROM backup_integrity_log 
+                WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)
+            ", [$daysToKeep]);
+            
+            return $this->db->rowCount();
+        } catch (Exception $e) {
             return 0;
         }
     }

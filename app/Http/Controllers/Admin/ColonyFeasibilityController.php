@@ -43,7 +43,7 @@ class ColonyFeasibilityController extends AdminController
                 'page_title' => 'Colony Feasibility — Pricing Overview',
                 'colonies'   => $colonies,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to load feasibility data: ' . $e->getMessage());
             $this->redirect('/admin/colony-pipeline');
         }
@@ -76,7 +76,7 @@ class ColonyFeasibilityController extends AdminController
                 'pricing'     => $pricing,
                 'history'     => $history,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to load calculator: ' . $e->getMessage());
             $this->redirect('/admin/colony-feasibility');
         }
@@ -120,7 +120,7 @@ class ColonyFeasibilityController extends AdminController
             }
 
             $this->redirect('/admin/colony-feasibility/' . $id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Calculation error: ' . $e->getMessage());
             $this->redirect('/admin/colony-feasibility/' . $id);
         }
@@ -142,7 +142,7 @@ class ColonyFeasibilityController extends AdminController
                 'colony'     => $colony,
                 'history'    => $history,
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to load history: ' . $e->getMessage());
             $this->redirect('/admin/colony-feasibility');
         }
@@ -169,7 +169,7 @@ class ColonyFeasibilityController extends AdminController
 
             $result = $this->feasibilityService->previewFeasibility((int) $id, $overrides);
             echo json_encode($result);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;

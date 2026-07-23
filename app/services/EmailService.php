@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class EmailService
 {
@@ -11,12 +12,36 @@ class EmailService
     public function __construct()
     {
         $this->config = [
-            'host' => getenv('MAIL_HOST') ?: 'localhost',
-            'username' => getenv('MAIL_USERNAME') ?: '',
-            'password' => getenv('MAIL_PASSWORD') ?: '',
-            'from_address' => getenv('MAIL_FROM_ADDRESS') ?: 'no-reply@apsdreamhome.com',
-            'from_name' => getenv('MAIL_FROM_NAME') ?: 'APS Dream Home'
+            'host' => getenv('MAIL_HOST') ?: ($_ENV['MAIL_HOST'] ?? 'smtp.gmail.com'),
+            'port' => getenv('MAIL_PORT') ?: ($_ENV['MAIL_PORT'] ?? 587),
+            'username' => getenv('MAIL_USERNAME') ?: ($_ENV['MAIL_USERNAME'] ?? ''),
+            'password' => getenv('MAIL_PASSWORD') ?: ($_ENV['MAIL_PASSWORD'] ?? ''),
+            'encryption' => getenv('MAIL_ENCRYPTION') ?: ($_ENV['MAIL_ENCRYPTION'] ?? 'tls'),
+            'from_address' => getenv('MAIL_FROM_ADDRESS') ?: ($_ENV['MAIL_FROM_ADDRESS'] ?? 'no-reply@apsdreamhome.com'),
+            'from_name' => getenv('MAIL_FROM_NAME') ?: ($_ENV['MAIL_FROM_NAME'] ?? 'APS Dream Home')
         ];
+    }
+
+    /**
+     * Create and configure a PHPMailer instance
+     */
+    private function createMailer(): PHPMailer
+    {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host = $this->config['host'];
+            $mail->SMTPAuth = true;
+            $mail->Username = $this->config['username'];
+            $mail->Password = $this->config['password'];
+            $mail->SMTPSecure = $this->config['encryption'];
+            $mail->Port = $this->config['port'];
+            $mail->CharSet = 'UTF-8';
+            $mail->setFrom($this->config['from_address'], $this->config['from_name']);
+        } catch (Exception $e) {
+            error_log("PHPMailer init failed: " . $e->getMessage());
+        }
+        return $mail;
     }
 
     /**
@@ -25,13 +50,16 @@ class EmailService
     public function send($to, $subject, $body, $fromName = null)
     {
         try {
-            $headers = [
-                'From: ' . ($fromName ? "$fromName <{$this->config['from_address']}>" : "{$this->config['from_name']} <{$this->config['from_address']}>"),
-                'MIME-Version: 1.0',
-                'Content-Type: text/html; charset=UTF-8'
-            ];
-
-            return mail($to, $subject, $body, implode("\r\n", $headers));
+            $mail = $this->createMailer();
+            if ($fromName) {
+                $mail->setFrom($this->config['from_address'], $fromName);
+            }
+            $mail->addAddress($to);
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body = $body;
+            $mail->AltBody = strip_tags($body);
+            return $mail->send();
         } catch (Exception $e) {
             error_log("Email sending failed: " . $e->getMessage());
             return false;
@@ -45,25 +73,15 @@ class EmailService
     {
         try {
             $subject = 'Verify Your Email Address';
-
-            // Email body
-            $appUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+            $appUrl = rtrim(BASE_URL, '/');
             $verificationUrl = $appUrl . "/verify-email?token=" . $token;
             $message = file_get_contents(__DIR__ . '/../../resources/emails/verification.html');
-            $message = str_replace(
-                ['{{name}}', '{{verification_url}}'],
-                [$name, $verificationUrl],
-                $message
-            );
-
-            $headers = [
-                'From: ' . "{$this->config['from_name']} <{$this->config['from_address']}>",
-                'MIME-Version: 1.0',
-                'Content-Type: text/html; charset=UTF-8'
-            ];
-
-            $result = mail($to, $subject, $message, implode("\r\n", $headers));
-            return $result;
+            if ($message) {
+                $message = str_replace(['{{name}}', '{{verification_url}}'], [$name, $verificationUrl], $message);
+            } else {
+                $message = "<h2>Hello {$name}!</h2><p>Please verify your email: <a href='{$verificationUrl}'>Verify</a></p>";
+            }
+            return $this->send($to, $subject, $message);
         } catch (Exception $e) {
             error_log("Email sending failed: " . $e->getMessage());
             return false;
@@ -78,14 +96,7 @@ class EmailService
         try {
             $subject = 'Welcome to APS Dream Home - Your Account is Ready!';
             $message = $this->getWelcomeEmailTemplate($name);
-
-            $headers = [
-                'From: ' . "{$this->config['from_name']} <{$this->config['from_address']}>",
-                'MIME-Version: 1.0',
-                'Content-Type: text/html; charset=UTF-8'
-            ];
-
-            $result = mail($to, $subject, $message, implode("\r\n", $headers));
+            $result = $this->send($to, $subject, $message);
             return ['success' => $result, 'message' => $result ? 'Welcome email sent successfully' : 'Email sending failed'];
         } catch (Exception $e) {
             error_log("Welcome email failed: " . $e->getMessage());
@@ -101,16 +112,8 @@ class EmailService
         try {
             $adminEmail = getenv('ADMIN_EMAIL') ?: 'admin@apsdreamhome.com';
             $subject = 'New Property Inquiry - ' . $inquiryData['property_title'];
-
             $message = $this->getInquiryNotificationTemplate($inquiryData);
-
-            $headers = [
-                'From: ' . "{$this->config['from_name']} <{$this->config['from_address']}>",
-                'MIME-Version: 1.0',
-                'Content-Type: text/html; charset=UTF-8'
-            ];
-
-            $result = mail($adminEmail, $subject, $message, implode("\r\n", $headers));
+            $result = $this->send($adminEmail, $subject, $message);
             return ['success' => $result, 'message' => $result ? 'Inquiry notification sent to admin' : 'Email sending failed'];
         } catch (Exception $e) {
             error_log("Inquiry notification failed: " . $e->getMessage());
@@ -125,16 +128,8 @@ class EmailService
     {
         try {
             $subject = 'Response to Your Property Inquiry - ' . $propertyTitle;
-
             $message = $this->getInquiryResponseTemplate($userName, $propertyTitle, $response);
-
-            $headers = [
-                'From: ' . "{$this->config['from_name']} <{$this->config['from_address']}>",
-                'MIME-Version: 1.0',
-                'Content-Type: text/html; charset=UTF-8'
-            ];
-
-            $result = mail($userEmail, $subject, $message, implode("\r\n", $headers));
+            $result = $this->send($userEmail, $subject, $message);
             return ['success' => $result, 'message' => $result ? 'Inquiry response sent to user' : 'Email sending failed'];
         } catch (Exception $e) {
             error_log("Inquiry response failed: " . $e->getMessage());
@@ -149,16 +144,8 @@ class EmailService
     {
         try {
             $subject = 'Welcome to APS Dream Home Newsletter';
-
             $message = $this->getNewsletterConfirmationTemplate($userName);
-
-            $headers = [
-                'From: ' . "{$this->config['from_name']} <{$this->config['from_address']}>",
-                'MIME-Version: 1.0',
-                'Content-Type: text/html; charset=UTF-8'
-            ];
-
-            $result = mail($userEmail, $subject, $message, implode("\r\n", $headers));
+            $result = $this->send($userEmail, $subject, $message);
             return ['success' => $result, 'message' => $result ? 'Newsletter confirmation sent' : 'Email sending failed'];
         } catch (Exception $e) {
             error_log("Newsletter confirmation failed: " . $e->getMessage());
@@ -171,7 +158,7 @@ class EmailService
      */
     private function getWelcomeEmailTemplate($userName)
     {
-        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $baseUrl = rtrim(BASE_URL, '/');
         return "
         <!DOCTYPE html>
         <html>
@@ -227,7 +214,7 @@ class EmailService
      */
     private function getInquiryNotificationTemplate($inquiryData)
     {
-        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $baseUrl = rtrim(BASE_URL, '/');
         return "
         <!DOCTYPE html>
         <html>
@@ -291,7 +278,7 @@ class EmailService
      */
     private function getInquiryResponseTemplate($userName, $propertyTitle, $response)
     {
-        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $baseUrl = rtrim(BASE_URL, '/');
         return "
         <!DOCTYPE html>
         <html>
@@ -341,7 +328,7 @@ class EmailService
      */
     private function getNewsletterConfirmationTemplate($userName)
     {
-        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $baseUrl = rtrim(BASE_URL, '/');
         return "
         <!DOCTYPE html>
         <html>

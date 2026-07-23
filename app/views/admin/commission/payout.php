@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Batch Payout';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $pending_count = $pending_count ?? 0;
 $total_amount = $total_amount ?? 0;
 ?>

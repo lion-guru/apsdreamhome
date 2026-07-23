@@ -24,6 +24,15 @@ ob_start();
                         </tr>
                     </thead>
                     <tbody>
+                        <?php if (empty($replies)): ?>
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="fas fa-comment-dots fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No quick replies found</h5>
+                                <p class="text-muted mb-3">Create quick reply templates to speed up live chat responses.</p>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($replies as $r): ?>
                             <tr>
                                 <td><strong><?= htmlspecialchars($r['title']) ?></strong></td>
@@ -33,6 +42,7 @@ ob_start();
                                 <td><?= $r['sort_order'] ?></td>
                             </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

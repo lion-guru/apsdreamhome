@@ -417,7 +417,7 @@ async function sendAIMessage() {
     addAITypingIndicator();
     
     try {
-        const response = await fetch('/api/ai-chat', {
+        const response = await fetch('<?= BASE_URL ?>/api/ai-chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

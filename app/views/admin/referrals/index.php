@@ -14,8 +14,12 @@
         <div class="card-body p-0">
             <?php if (empty($referrals)): ?>
                 <div class="text-center py-5">
-                    <i class="fas fa-share-alt fa-4x text-muted mb-3"></i>
+                    <i class="fas fa-share-alt fa-4x text-muted mb-3" style="opacity:0.2"></i>
                     <h5 class="text-muted"><?= __('admin_no_referrals') ?></h5>
+                    <p class="text-muted mb-3">Referrals are tracked automatically when customers share referral codes. Create a referral campaign to get started.</p>
+                    <a href="<?= BASE_URL ?>/admin/referrals/create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Create Referral
+                    </a>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">

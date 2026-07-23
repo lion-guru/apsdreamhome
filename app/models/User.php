@@ -180,7 +180,7 @@ class User extends UnifiedModel
             $whereClause = 'WHERE ' . implode(' AND ', $where);
             $sql = "SELECT {$columnList} FROM users {$whereClause} ORDER BY name ASC";
 
-            $db = \App\Core\Database\getInstance();
+            $db = \App\Core\Database::getInstance();
             $stmt = $db->prepare($sql);
             $paramIndex = 1;
             foreach ($roleArray as $role) {
@@ -226,7 +226,7 @@ class User extends UnifiedModel
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
             $sql = "SELECT {$columnList} FROM users {$whereClause} ORDER BY name ASC";
 
-            $db = \App\Core\Database\getInstance();
+            $db = \App\Core\Database::getInstance();
             $stmt = $db->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $plot = $plot ?? [];
 $customers = $customers ?? [];
 $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Installment (12 months)', 'Installment (24 months)', 'Construction Linked'];
@@ -9,10 +9,10 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-book me-2"></i>Book Plot</h2>
                 <div>
-                    <a href="/admin/plots/<?= $plot['id'] ?? 0 ?>" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>/admin/plots/<?= $plot['id'] ?? 0 ?>" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Plot
                     </a>
-                    <a href="/admin/plots" class="btn btn-outline-secondary">
+                    <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-outline-secondary">
                         <i class="fas fa-th"></i> All Plots
                     </a>
                 </div>
@@ -50,7 +50,7 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                     <div class="card mb-4">
                         <div class="card-header bg-success text-white"><h5 class="mb-0"><i class="fas fa-file-contract"></i> New Booking</h5></div>
                         <div class="card-body aps-cp-card-body">
-                            <form method="POST" action="/admin/plots/<?= $plot['id'] ?? 0 ?>/book">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/plots/<?= $plot['id'] ?? 0 ?>/book">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
@@ -61,7 +61,7 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] . ' (' . $c['email'] . ' - ' . $c['phone'] . ')') ?></option>
                                             <?php endforeach; ?>
                                         </select>
-                                        <div class="form-text">Search by name, email or phone. <a href="/admin/users/create" target="_blank">+ Add New Customer</a></div>
+                                        <div class="form-text">Search by name, email or phone. <a href="<?= BASE_URL ?>/admin/users/create" target="_blank">+ Add New Customer</a></div>
                                     </div>
                                 </div>
 
@@ -108,7 +108,7 @@ $paymentPlans = $paymentPlans ?? ['Full Payment', 'Installment (6 months)', 'Ins
                                 </div>
 
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <a href="/admin/plots/<?= $plot['id'] ?? 0 ?>" class="btn btn-secondary me-md-2">Cancel</a>
+                                    <a href="<?= BASE_URL ?>/admin/plots/<?= $plot['id'] ?? 0 ?>" class="btn btn-secondary me-md-2">Cancel</a>
                                     <button type="submit" class="btn btn-success px-4">
                                         <i class="fas fa-check-circle"></i> Create Booking
                                     </button>

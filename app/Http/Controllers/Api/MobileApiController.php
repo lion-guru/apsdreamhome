@@ -152,8 +152,8 @@ class MobileApiController extends BaseController
     {
         $this->setCorsHeaders();
         
-        $userId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($_GET['user_id']) ?? null;
-        $lastSync = \App\Core\Security::sanitize($_GET['last_sync']) ?? '2000-01-01 00:00:00';
+        $userId = $GLOBALS['api_user_id'] ?? null;
+        $lastSync = \App\Core\Security::sanitize($_GET['last_sync'] ?? null) ?? '2000-01-01 00:00:00';
 
         try {
             $syncPackage = $this->syncService->getSyncPackage($lastSync, $userId);
@@ -175,34 +175,34 @@ class MobileApiController extends BaseController
         $this->setCorsHeaders();
 
         try {
-            $page = (int)(\App\Core\Security::sanitize($_GET['page']) ?? 1);
-            $limit = min((int)(\App\Core\Security::sanitize($_GET['limit']) ?? 10), 50); // Max 50 per page
+            $page = (int)(\App\Core\Security::sanitize($_GET['page'] ?? 1) ?? 1);
+            $limit = min((int)(\App\Core\Security::sanitize($_GET['limit'] ?? 10) ?? 10), 50); // Max 50 per page
             $offset = ($page - 1) * $limit;
-            
+
             // V2 Sync Logic - Handle sync parameters
-            $sync_mode = \App\Core\Security::sanitize($_GET['sync_mode']) ?? 'normal';
-            $last_sync = \App\Core\Security::sanitize($_GET['last_sync']) ?? null;
-            $user_id = \App\Core\Security::sanitize($_GET['user_id']) ?? null;
+            $sync_mode = \App\Core\Security::sanitize($_GET['sync_mode'] ?? 'normal') ?? 'normal';
+            $last_sync = \App\Core\Security::sanitize($_GET['last_sync'] ?? null) ?? null;
+            $user_id = $GLOBALS['api_user_id'] ?? null;
 
             // Build filters
             $filters = [];
-            $property_type = \App\Core\Security::sanitize($_GET['property_type']);
+            $property_type = \App\Core\Security::sanitize($_GET['property_type'] ?? null);
             if ($property_type !== null && $property_type !== '') {
                 $filters['property_type'] = $property_type;
             }
-            $city = \App\Core\Security::sanitize($_GET['city']);
+            $city = \App\Core\Security::sanitize($_GET['city'] ?? null);
             if ($city !== null && $city !== '') {
                 $filters['city'] = $city;
             }
-            $min_price = \App\Core\Security::sanitize($_GET['min_price']);
+            $min_price = \App\Core\Security::sanitize($_GET['min_price'] ?? null);
             if ($min_price !== null && $min_price !== '') {
                 $filters['min_price'] = $min_price;
             }
-            $max_price = \App\Core\Security::sanitize($_GET['max_price']);
+            $max_price = \App\Core\Security::sanitize($_GET['max_price'] ?? null);
             if ($max_price !== null && $max_price !== '') {
                 $filters['max_price'] = $max_price;
             }
-            $featured = \App\Core\Security::sanitize($_GET['featured']);
+            $featured = \App\Core\Security::sanitize($_GET['featured'] ?? null);
             if ($featured !== null && $featured === 'true') {
                 $filters['featured'] = true;
             }
@@ -429,7 +429,7 @@ class MobileApiController extends BaseController
                 'message' => $message,
                 'is_favorited' => $is_favorited
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleApiError($e, 'Toggle Favorite API error');
         }
     }
@@ -442,7 +442,7 @@ class MobileApiController extends BaseController
         $this->setCorsHeaders();
 
         try {
-            $user_id = (int)(\App\Core\Security::sanitize($_GET['user_id']) ?? 0);
+            $user_id = (int)($GLOBALS['api_user_id'] ?? 0);
 
             if (!$user_id) {
                 http_response_code(400);
@@ -459,7 +459,7 @@ class MobileApiController extends BaseController
                 'success' => true,
                 'data' => $favorites
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleApiError($e, 'User Favorites API error');
         }
     }
@@ -478,7 +478,7 @@ class MobileApiController extends BaseController
                 'success' => true,
                 'data' => $property_types
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleApiError($e, 'Property Types API error');
         }
     }
@@ -497,7 +497,7 @@ class MobileApiController extends BaseController
                 'success' => true,
                 'data' => $cities
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleApiError($e, 'Cities API error');
         }
     }
@@ -578,7 +578,7 @@ class MobileApiController extends BaseController
             $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get properties with filters error: ' . $e->getMessage());
             return [];
         }
@@ -608,7 +608,7 @@ class MobileApiController extends BaseController
             $stmt->execute(['id' => $id]);
 
             return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get property by ID error: ' . $e->getMessage());
             return null;
         }
@@ -628,7 +628,7 @@ class MobileApiController extends BaseController
             $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get property images error: ' . $e->getMessage());
             return [];
         }
@@ -648,7 +648,7 @@ class MobileApiController extends BaseController
             $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get property features error: ' . $e->getMessage());
             return [];
         }
@@ -715,7 +715,7 @@ class MobileApiController extends BaseController
 
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get properties updated since error: ' . $e->getMessage());
             return [];
         }
@@ -763,7 +763,7 @@ class MobileApiController extends BaseController
             $stmt->execute();
 
             return (int)$stmt->fetchColumn();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get updated properties count error: ' . $e->getMessage());
             return 0;
         }
@@ -787,7 +787,7 @@ class MobileApiController extends BaseController
             $stmt->execute(['user_id' => $user_id]);
 
             return (int)$stmt->fetchColumn();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get sync queue size error: ' . $e->getMessage());
             return 0;
         }
@@ -843,7 +843,7 @@ class MobileApiController extends BaseController
                 'timestamp' => date('Y-m-d H:i:s')
             ]);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleApiError($e, 'Sync API error');
         }
     }
@@ -931,7 +931,7 @@ class MobileApiController extends BaseController
                     default:
                         $errors[] = "Unknown entity type: $entity_type";
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 error_log("[MobileApiController] uploadSyncData() exception: " . $e->getMessage());
                 $errors[] = "Error processing {$change['entity_type']} {$change['entity_id']}: " . $e->getMessage();
             }
@@ -1044,7 +1044,7 @@ class MobileApiController extends BaseController
             }
 
             return false;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Create inquiry error: ' . $e->getMessage());
             return false;
         }
@@ -1063,7 +1063,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("SELECT id FROM property_favorites WHERE user_id = :userId AND property_id = :propertyId");
             $stmt->execute(['userId' => $user_id, 'propertyId' => $property_id]);
             return $stmt->rowCount() > 0;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Check favorite error: ' . $e->getMessage());
             return false;
         }
@@ -1081,7 +1081,7 @@ class MobileApiController extends BaseController
 
             $stmt = $this->db->prepare("INSERT INTO property_favorites (user_id, property_id) VALUES (:userId, :propertyId)");
             $stmt->execute(['userId' => $user_id, 'propertyId' => $property_id]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Add favorite error: ' . $e->getMessage());
             throw $e;
         }
@@ -1099,7 +1099,7 @@ class MobileApiController extends BaseController
 
             $stmt = $this->db->prepare("DELETE FROM property_favorites WHERE user_id = :userId AND property_id = :propertyId");
             $stmt->execute(['userId' => $user_id, 'propertyId' => $property_id]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Remove favorite error: ' . $e->getMessage());
             throw $e;
         }
@@ -1118,7 +1118,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("SELECT id FROM properties WHERE id = :propertyId AND status IN ('active', '')");
             $stmt->execute(['propertyId' => $property_id]);
             return $stmt->rowCount() > 0;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Property exists check error: ' . $e->getMessage());
             return false;
         }
@@ -1158,7 +1158,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare($sql);
             $stmt->execute(['userId' => $user_id]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get user favorites error: ' . $e->getMessage());
             return [];
         }
@@ -1176,7 +1176,7 @@ class MobileApiController extends BaseController
 
             $stmt = $this->db->query("SELECT id, name, icon FROM property_types WHERE status = 'active' ORDER BY name");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get property types error: ' . $e->getMessage());
             return [];
         }
@@ -1194,7 +1194,7 @@ class MobileApiController extends BaseController
 
             $stmt = $this->db->query("SELECT DISTINCT city FROM properties WHERE status IN ('active', '') AND city IS NOT NULL ORDER BY city");
             return $stmt->fetchAll(PDO::FETCH_COLUMN);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get available cities error: ' . $e->getMessage());
             return [];
         }
@@ -1243,7 +1243,7 @@ class MobileApiController extends BaseController
 
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return (int)($result['count'] ?? 0);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Get properties count error: ' . $e->getMessage());
             return 0;
         }
@@ -1272,7 +1272,7 @@ class MobileApiController extends BaseController
             $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $this->successResponse($properties, 'Properties fetched for sync');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch properties: ' . $e->getMessage());
@@ -1300,8 +1300,8 @@ class MobileApiController extends BaseController
         try {
             $this->db->beginTransaction();
             $stmt = $this->db->prepare("
-                INSERT INTO leads (name, email, phone, source_user_id, status, created_at) 
-                VALUES (?, ?, ?, ?, 'new', NOW())
+                INSERT INTO leads (name, email, phone, source, assigned_to, created_by, status, created_at) 
+                VALUES (?, ?, ?, ?, ?, ?, 'new', NOW())
             ");
 
             foreach ($leads as $lead) {
@@ -1309,6 +1309,8 @@ class MobileApiController extends BaseController
                     $lead['name'] ?? '',
                     $lead['email'] ?? '',
                     $lead['phone'] ?? '',
+                    $lead['source'] ?? 'mobile_app',
+                    $userId,
                     $userId
                 ]);
             }
@@ -1326,7 +1328,7 @@ class MobileApiController extends BaseController
             ], 'admin');
 
             return $this->successResponse(['synced_count' => count($leads)], 'Leads batch synced successfully');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             $this->db->rollBack();
@@ -1360,7 +1362,7 @@ class MobileApiController extends BaseController
             ]);
 
             return $this->successResponse(['id' => $this->db->lastInsertId()], 'Lead synced successfully');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Lead sync failed: ' . $e->getMessage());
@@ -1373,7 +1375,7 @@ class MobileApiController extends BaseController
     public function getMlmSummary()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($_GET['user_id']) ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
 
         if (!$userId) {
             return $this->errorResponse('User ID required', 401);
@@ -1384,7 +1386,7 @@ class MobileApiController extends BaseController
             $summary = $perfCalculator->calculateRank($userId);
             
             return $this->successResponse($summary, 'MLM performance summary fetched');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch MLM summary: ' . $e->getMessage());
@@ -1397,7 +1399,7 @@ class MobileApiController extends BaseController
     public function getMlmPayouts()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($_GET['user_id']) ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
 
         if (!$userId) {
             return $this->errorResponse('User ID required', 401);
@@ -1415,7 +1417,7 @@ class MobileApiController extends BaseController
             $history = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $this->successResponse($history, 'Payout history fetched');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch payout history: ' . $e->getMessage());
@@ -1452,7 +1454,7 @@ class MobileApiController extends BaseController
             $user['avatar'] = $user['profile_image'] ?? null;
 
             return $this->successResponse($user, 'User profile fetched');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch profile: ' . $e->getMessage());
@@ -1485,7 +1487,7 @@ class MobileApiController extends BaseController
     public function getMlmIncentives()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($_GET['user_id']) ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
 
         if (!$userId) {
             return $this->errorResponse('User ID required', 401);
@@ -1496,7 +1498,7 @@ class MobileApiController extends BaseController
             $summary = $incentiveService->getIncentiveSummary($userId);
 
             return $this->successResponse($summary, 'Monthly incentives fetched');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch incentives: ' . $e->getMessage());
@@ -1509,7 +1511,7 @@ class MobileApiController extends BaseController
     public function getDocuments()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($_GET['user_id']) ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
 
         if (!$userId) {
             return $this->errorResponse('User ID required', 401);
@@ -1520,7 +1522,7 @@ class MobileApiController extends BaseController
             $documents = $lockerService->getUserDocuments($userId);
 
             return $this->successResponse($documents, 'Documents fetched from locker');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             return $this->errorResponse('Failed to fetch documents: ' . $e->getMessage());
@@ -1576,7 +1578,7 @@ class MobileApiController extends BaseController
                 $lockerService = new \App\Services\DocumentLockerService();
                 $title = \App\Core\Security::sanitize($_POST['title']) ?? (ucfirst($documentType) . ' Document');
                 $lockerService->addDocument($userId, $title, $documentType, $fileUrl);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // Log error but continue since file is moved
                 error_log("Failed to record document in locker: " . $e->getMessage());
             }
@@ -1599,7 +1601,7 @@ class MobileApiController extends BaseController
     public function getCustomerDocuments()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? \App\Core\Security::sanitize($_GET['user_id']) ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
 
         if (!$userId) {
             http_response_code(401);
@@ -1608,84 +1610,103 @@ class MobileApiController extends BaseController
         }
 
         try {
-            // Fetch documents from multiple sources
+            // Fetch documents from multiple sources (each resilient to missing tables)
             $documents = [];
 
-            // 1. KYC Documents from document_locker
-            $kycSql = "
-                SELECT dl.id, dl.title, dl.document_type as type, dl.category, 
-                       dl.file_url as url, dl.created_at as uploaded_at, dl.status,
-                       'kyc' as source
-                FROM document_locker dl
-                WHERE dl.user_id = ? AND dl.status = 'verified'
-                ORDER BY dl.created_at DESC
-            ";
-            $kycStmt = $this->db->prepare($kycSql);
-            $kycStmt->execute([$userId]);
-            $kycDocs = $kycStmt->fetchAll(PDO::FETCH_ASSOC);
-            $documents = array_merge($documents, $kycDocs);
+            // 1. KYC Documents from kyc_requests
+            try {
+                $kycSql = "
+                    SELECT id,
+                           CASE
+                               WHEN pan_document IS NOT NULL THEN 'PAN Document'
+                               WHEN aadhaar_front_document IS NOT NULL THEN 'Aadhaar Document'
+                               ELSE 'KYC Document'
+                           END as name,
+                           'kyc' as type, 'kyc' as category,
+                           COALESCE(pan_document, aadhaar_front_document, aadhaar_back_document) as url,
+                           created_at as uploaded_at, status,
+                           'kyc' as source
+                    FROM kyc_requests
+                    WHERE user_id = ?
+                    ORDER BY created_at DESC
+                ";
+                $kycStmt = $this->db->prepare($kycSql);
+                $kycStmt->execute([$userId]);
+                $documents = array_merge($documents, $kycStmt->fetchAll(PDO::FETCH_ASSOC));
+            } catch (\Throwable $e) {
+                error_log("[getCustomerDocuments] kyc skipped: " . $e->getMessage());
+            }
 
             // 2. Booking Agreements from bookings
-            $bookingSql = "
-                SELECT b.id, CONCAT('Booking Agreement - ', p.title) as name, 
-                       'agreement' as type, 'booking' as category,
-                       ba.agreement_file as url, ba.created_at as uploaded_at, 'verified' as status,
-                       'booking' as source
-                FROM bookings b
-                JOIN properties p ON b.property_id = p.id
-                LEFT JOIN booking_agreements ba ON b.id = ba.booking_id
-                WHERE b.customer_id = ? AND ba.agreement_file IS NOT NULL
-                ORDER BY ba.created_at DESC
-            ";
-            $bookingStmt = $this->db->prepare($bookingSql);
-            $bookingStmt->execute([$userId]);
-            $bookingDocs = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
-            $documents = array_merge($documents, $bookingDocs);
+            try {
+                $bookingSql = "
+                    SELECT b.id, CONCAT('Booking Agreement - ', p.title) as name,
+                           'agreement' as type, 'booking' as category,
+                           ba.agreement_file as url, ba.created_at as uploaded_at, 'verified' as status,
+                           'booking' as source
+                    FROM bookings b
+                    JOIN properties p ON b.property_id = p.id
+                    LEFT JOIN booking_agreements ba ON b.id = ba.booking_id
+                    WHERE b.customer_id = ? AND ba.agreement_file IS NOT NULL
+                    ORDER BY ba.created_at DESC
+                ";
+                $bookingStmt = $this->db->prepare($bookingSql);
+                $bookingStmt->execute([$userId]);
+                $documents = array_merge($documents, $bookingStmt->fetchAll(PDO::FETCH_ASSOC));
+            } catch (\Throwable $e) {
+                error_log("[getCustomerDocuments] booking agreements skipped: " . $e->getMessage());
+            }
 
             // 3. Payment Receipts from payments
-            $paymentSql = "
-                SELECT pay.id, CONCAT('Payment Receipt - ', p.title) as name,
-                       'receipt' as type, 'payment' as category,
-                       pay.receipt_file as url, pay.created_at as uploaded_at, 'verified' as status,
-                       'payment' as source
-                FROM payments pay
-                JOIN bookings b ON pay.booking_id = b.id
-                JOIN properties p ON b.property_id = p.id
-                WHERE b.customer_id = ? AND pay.receipt_file IS NOT NULL
-                ORDER BY pay.created_at DESC
-            ";
-            $paymentStmt = $this->db->prepare($paymentSql);
-            $paymentStmt->execute([$userId]);
-            $paymentDocs = $paymentStmt->fetchAll(PDO::FETCH_ASSOC);
-            $documents = array_merge($documents, $paymentDocs);
+            try {
+                $paymentSql = "
+                    SELECT pay.id, CONCAT('Payment Receipt - ', p.title) as name,
+                           'receipt' as type, 'payment' as category,
+                           pay.receipt_file as url, pay.created_at as uploaded_at, 'verified' as status,
+                           'payment' as source
+                    FROM payments pay
+                    JOIN bookings b ON pay.booking_id = b.id
+                    JOIN properties p ON b.property_id = p.id
+                    WHERE b.customer_id = ? AND pay.receipt_file IS NOT NULL
+                    ORDER BY pay.created_at DESC
+                ";
+                $paymentStmt = $this->db->prepare($paymentSql);
+                $paymentStmt->execute([$userId]);
+                $documents = array_merge($documents, $paymentStmt->fetchAll(PDO::FETCH_ASSOC));
+            } catch (\Throwable $e) {
+                error_log("[getCustomerDocuments] payments skipped: " . $e->getMessage());
+            }
 
             // 4. Plot Allotment Letters
-            $allotmentSql = "
-                SELECT pa.id, CONCAT('Allotment Letter - ', p.title) as name,
-                       'allotment' as type, 'booking' as category,
-                       pa.letter_file as url, pa.created_at as uploaded_at, pa.status,
-                       'allotment' as source
-                FROM plot_allotments pa
-                JOIN bookings b ON pa.booking_id = b.id
-                JOIN properties p ON b.property_id = p.id
-                WHERE b.customer_id = ? AND pa.letter_file IS NOT NULL
-                ORDER BY pa.created_at DESC
-            ";
-            $allotmentStmt = $this->db->prepare($allotmentSql);
-            $allotmentStmt->execute([$userId]);
-            $allotmentDocs = $allotmentStmt->fetchAll(PDO::FETCH_ASSOC);
-            $documents = array_merge($documents, $allotmentDocs);
+            try {
+                $allotmentSql = "
+                    SELECT pa.id, CONCAT('Allotment Letter - ', p.title) as name,
+                           'allotment' as type, 'booking' as category,
+                           pa.letter_file as url, pa.created_at as uploaded_at, pa.status,
+                           'allotment' as source
+                    FROM plot_allotments pa
+                    JOIN bookings b ON pa.booking_id = b.id
+                    JOIN properties p ON b.property_id = p.id
+                    WHERE b.customer_id = ? AND pa.letter_file IS NOT NULL
+                    ORDER BY pa.created_at DESC
+                ";
+                $allotmentStmt = $this->db->prepare($allotmentSql);
+                $allotmentStmt->execute([$userId]);
+                $documents = array_merge($documents, $allotmentStmt->fetchAll(PDO::FETCH_ASSOC));
+            } catch (\Throwable $e) {
+                error_log("[getCustomerDocuments] allotments skipped: " . $e->getMessage());
+            }
 
             // Sort by uploaded_at descending
             usort($documents, function($a, $b) {
-                return strtotime($b['uploaded_at']) - strtotime($a['uploaded_at']);
+                return strtotime($b['uploaded_at'] ?? 0) - strtotime($a['uploaded_at'] ?? 0);
             });
 
             echo json_encode([
                 'success' => true,
                 'data' => $documents
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to fetch documents: ' . $e->getMessage()]);
@@ -1729,7 +1750,7 @@ class MobileApiController extends BaseController
             ], 'admin');
 
             echo json_encode($result);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] startSiteVisit() exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -1759,7 +1780,7 @@ class MobileApiController extends BaseController
             $visitService = new \App\Services\SiteVisitService();
             $visitService->updateLocation($visitId, $lat, $lng);
             echo json_encode(['success' => true, 'message' => 'Location updated']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] updateSiteVisitLocation() exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -1797,7 +1818,7 @@ class MobileApiController extends BaseController
             ], 'admin');
 
             echo json_encode(['success' => true, 'message' => 'Site visit completed']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] completeSiteVisit() exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -1811,7 +1832,7 @@ class MobileApiController extends BaseController
     public function getSiteVisitStatus()
     {
         $this->setCorsHeaders();
-        $visitId = \App\Core\Security::sanitize($_GET['visit_id']) ?? null;
+        $visitId = \App\Core\Security::sanitize($_GET['visit_id'] ?? null) ?? null;
 
         if (!$visitId) {
             http_response_code(400);
@@ -1823,7 +1844,7 @@ class MobileApiController extends BaseController
             $visitService = new \App\Services\SiteVisitService();
             $status = $visitService->getVisitStatus($visitId);
             echo json_encode(['success' => true, 'data' => $status]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -1877,7 +1898,7 @@ class MobileApiController extends BaseController
                     'slots' => $slots,
                 ]
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] getAvailableSlots() exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to fetch slots']);
@@ -1995,7 +2016,7 @@ class MobileApiController extends BaseController
                     'status' => 'scheduled',
                 ]
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] bookSiteVisitApi() exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Booking failed: ' . $e->getMessage()]);
@@ -2055,7 +2076,7 @@ class MobileApiController extends BaseController
                 'data' => $visits,
                 'count' => count($visits)
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] getMySiteVisits() exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to fetch visits']);
@@ -2106,7 +2127,7 @@ class MobileApiController extends BaseController
             $pdo->prepare("UPDATE visit_time_slots SET current_bookings = GREATEST(0, current_bookings - 1) WHERE date = DATE(?) AND time_slot = ?")->execute([$visit['visit_date'], $visit['visit_time']]);
 
             echo json_encode(['success' => true, 'message' => 'Visit cancelled successfully']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] cancelSiteVisitApi() exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Cancel failed']);
@@ -2151,6 +2172,9 @@ class MobileApiController extends BaseController
                 return;
             }
 
+            // Ensure slots exist for the target date (mirror booking flow)
+            $this->generateDefaultSlots($pdo, $newDate);
+
             $pdo->beginTransaction();
 
             // Check new slot availability
@@ -2177,7 +2201,7 @@ class MobileApiController extends BaseController
             $pdo->commit();
 
             echo json_encode(['success' => true, 'message' => 'Visit rescheduled successfully']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             if ($pdo->inTransaction()) $pdo->rollBack();
             error_log("[MobileApiController] rescheduleSiteVisitApi() exception: " . $e->getMessage());
             http_response_code(500);
@@ -2195,7 +2219,7 @@ class MobileApiController extends BaseController
             $payoutService = new \App\Services\AutoPayoutService();
             $pending = $payoutService->getPendingPayouts();
             echo json_encode(['success' => true, 'data' => $pending]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2220,7 +2244,7 @@ class MobileApiController extends BaseController
             $payoutService = new \App\Services\AutoPayoutService();
             $result = $payoutService->processPayouts($adminId);
             echo json_encode($result);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2238,7 +2262,7 @@ class MobileApiController extends BaseController
             $payoutService = new \App\Services\AutoPayoutService();
             $history = $payoutService->getPayoutHistory();
             echo json_encode(['success' => true, 'data' => $history]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2252,13 +2276,19 @@ class MobileApiController extends BaseController
     public function getGenealogy()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? Security::sanitize($_GET['user_id']) ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
+
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'User ID required']);
+            return;
+        }
 
         try {
             $mlmService = new \App\Services\MLMNetworkService(); // Assuming this service exists or will be created
             $tree = $mlmService->getDownline($userId);
             echo json_encode(['success' => true, 'data' => $tree]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2272,10 +2302,10 @@ class MobileApiController extends BaseController
     public function getBusinessBreakdown()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? Security::sanitize($_GET['user_id']) ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
 
         if (!$userId) {
-            http_response_code(400);
+            http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'User ID required']);
             return;
         }
@@ -2284,7 +2314,7 @@ class MobileApiController extends BaseController
             $mlmService = new \App\Services\MLMNetworkService();
             $data = $mlmService->getBusinessBreakdown($userId);
             echo json_encode(['success' => true, 'data' => $data]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2298,7 +2328,7 @@ class MobileApiController extends BaseController
     public function getMyTeam()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? Security::sanitize($_GET['user_id']) ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
 
         if (!$userId) {
             http_response_code(400);
@@ -2378,7 +2408,7 @@ class MobileApiController extends BaseController
     public function getRankProgress()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? Security::sanitize($_GET['user_id'] ?? '') ?: null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
 
         if (!$userId) {
             http_response_code(400);
@@ -2456,7 +2486,7 @@ class MobileApiController extends BaseController
             }
 
             echo json_encode(['success' => true, 'data' => $progress]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -2495,7 +2525,7 @@ class MobileApiController extends BaseController
             $this->db->query($sql, [$userId, $amount, $remarks]);
 
             echo json_encode(['success' => true, 'message' => 'Payout request submitted successfully']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2521,7 +2551,7 @@ class MobileApiController extends BaseController
             $customerService = new \App\Services\CustomerService();
             $data = $customerService->getCustomerBookings($customerId);
             echo json_encode(['success' => true, 'data' => $data]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2535,7 +2565,7 @@ class MobileApiController extends BaseController
     public function getEmiSchedule()
     {
         $this->setCorsHeaders();
-        $bookingId = Security::sanitize($_GET['booking_id']) ?? null;
+        $bookingId = Security::sanitize($_GET['booking_id'] ?? null) ?? null;
 
         if (!$bookingId) {
             http_response_code(400);
@@ -2544,10 +2574,10 @@ class MobileApiController extends BaseController
         }
 
         try {
-            $customer = new \App\Models\User\Customer();
+            $customer = new \App\Models\Customer();
             $data = $customer->getEmiSchedule($bookingId);
             echo json_encode($data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2572,10 +2602,10 @@ class MobileApiController extends BaseController
         }
 
         try {
-            $customer = new \App\Models\User\Customer();
+            $customer = new \App\Models\Customer();
             $result = $customer->recordEmiPayment($emiId, $amount, $method);
             echo json_encode($result);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2601,26 +2631,26 @@ class MobileApiController extends BaseController
 
         try {
             // Determine submitter type based on user rank
-            $stmt = $this->db->prepare("SELECT rank FROM users WHERE id = :id");
+            $stmt = $this->db->prepare("SELECT role FROM users WHERE id = :id");
             $stmt->execute(['id' => $userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            $type = ($user && $user['rank'] != 'Customer' && $user['rank'] != '') ? 'agent' : 'customer';
+            $type = ($user && $user['role'] != 'customer' && $user['role'] != '') ? 'agent' : 'customer';
 
             $submissionService = new \App\Services\PropertySubmissionService();
             $data = [
                 'submitter_id' => $userId,
                 'submitter_type' => $type,
-                'title' => Security::sanitize($input['title']),
-                'description' => Security::sanitize($input['description']),
-                'price' => Security::sanitize($input['price']),
-                'property_type' => Security::sanitize($input['property_type']),
-                'location' => Security::sanitize($input['location']),
+                'title' => Security::sanitize($input['title'] ?? ''),
+                'description' => Security::sanitize($input['description'] ?? ''),
+                'price' => Security::sanitize($input['price'] ?? ''),
+                'property_type' => Security::sanitize($input['property_type'] ?? 'Plot'),
+                'location' => Security::sanitize($input['location'] ?? ''),
                 'images' => $input['images'] ?? []
             ];
 
             $result = $submissionService->submitProperty($data);
             echo json_encode($result);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2634,13 +2664,13 @@ class MobileApiController extends BaseController
     public function getSubmissions()
     {
         $this->setCorsHeaders();
-        $userId = $GLOBALS['api_user_id'] ?? Security::sanitize($_GET['user_id']) ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
 
         try {
             $submissionService = new \App\Services\PropertySubmissionService();
             $data = $submissionService->getUserSubmissions($userId);
             echo json_encode(['success' => true, 'data' => $data]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -2660,9 +2690,9 @@ class MobileApiController extends BaseController
     public function userProfile()
     {
         header('Content-Type: application/json');
-        $userId = $_GET['user_id'] ?? ($_POST['user_id'] ?? 0);
+        $userId = $_SESSION['user_id'] ?? 0;
         if (!$userId) {
-            echo json_encode(['success' => false, 'message' => 'User ID required']);
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
             exit;
         }
         $db = \App\Core\Database::getInstance();
@@ -3260,7 +3290,7 @@ class MobileApiController extends BaseController
             $params = [];
 
             if ($type) { $where[] = 'up.property_type = ?'; $params[] = $type; }
-            if ($city) { $where[] = '(up.city LIKE ? OR up.address LIKE ?)'; $params[] = "%$city%"; $params[] = "%$city%"; }
+            if ($city) { $where[] = '(up.city_name LIKE ? OR up.address LIKE ?)'; $params[] = "%$city%"; $params[] = "%$city%"; }
             if ($minPrice > 0) { $where[] = 'up.price >= ?'; $params[] = $minPrice; }
             if ($maxPrice > 0) { $where[] = 'up.price <= ?'; $params[] = $maxPrice; }
 
@@ -3280,13 +3310,13 @@ class MobileApiController extends BaseController
 
             // Premium/featured first, then by sort order
             $sql = "
-                SELECT up.id, up.user_id, up.property_type, up.listing_type, up.title,
-                       up.description, up.price, up.address, up.city, up.state,
+                SELECT up.id, up.user_id, up.property_type, up.listing_type, up.name as title,
+                       up.description, up.price, up.address, up.city_name as city, up.location,
                        up.area_sqft, up.bedrooms, up.bathrooms, up.status,
                        up.is_featured, up.is_urgent, up.is_premium, up.expires_at,
                        up.created_at, up.updated_at,
                        u.name as owner_name, u.phone as owner_phone,
-                       up.main_image,
+                       up.image as main_image,
                        CASE WHEN up.is_premium = 1 THEN 3
                             WHEN up.is_featured = 1 THEN 2
                             WHEN up.is_urgent = 1 THEN 1
@@ -3333,7 +3363,7 @@ class MobileApiController extends BaseController
                     ],
                 ]
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] getMarketplace() exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to fetch marketplace']);
@@ -3352,12 +3382,12 @@ class MobileApiController extends BaseController
             $limit = min(20, max(1, (int)($_GET['limit'] ?? 10)));
 
             $stmt = $pdo->prepare("
-                SELECT up.id, up.user_id, up.property_type, up.listing_type, up.title,
-                       up.description, up.price, up.address, up.city,
+                SELECT up.id, up.user_id, up.property_type, up.listing_type, up.name as title,
+                       up.description, up.price, up.address, up.city_name as city, up.location,
                        up.area_sqft, up.bedrooms, up.bathrooms,
                        up.is_featured, up.is_urgent, up.is_premium,
                        u.name as owner_name,
-                       up.main_image
+                       up.image as main_image
                 FROM user_properties up
                 LEFT JOIN users u ON u.id = up.user_id
                 WHERE up.status = 'approved' AND (up.is_premium = 1 OR up.is_featured = 1 OR up.is_urgent = 1)
@@ -3380,7 +3410,7 @@ class MobileApiController extends BaseController
                 'data' => $properties,
                 'count' => count($properties)
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[MobileApiController] getPremiumProperties() exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to fetch premium listings']);
@@ -3425,15 +3455,21 @@ class MobileApiController extends BaseController
             $imgStmt->execute([$id]);
             $property['images'] = $imgStmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            // Get features
-            $featStmt = $pdo->prepare("
-                SELECT feature_name, feature_value, feature_category
-                FROM property_features
-                WHERE property_id = ?
-                ORDER BY feature_category, feature_name
-            ");
-            $featStmt->execute([$id]);
-            $property['features'] = $featStmt->fetchAll(\PDO::FETCH_ASSOC);
+            // Get features (table may not exist in all deployments)
+            $property['features'] = [];
+            try {
+                $featStmt = $pdo->prepare("
+                    SELECT feature_name, feature_value, feature_category
+                    FROM property_features
+                    WHERE property_id = ?
+                    ORDER BY feature_category, feature_name
+                ");
+                $featStmt->execute([$id]);
+                $property['features'] = $featStmt->fetchAll(\PDO::FETCH_ASSOC);
+            } catch (\Throwable $fe) {
+                // property_features table not present — skip gracefully
+                error_log('propertyDetail features skipped: ' . $fe->getMessage());
+            }
 
             // Get similar properties (same type, excluding self)
             $similarStmt = $pdo->prepare("
@@ -3505,15 +3541,13 @@ class MobileApiController extends BaseController
 
             echo json_encode([
                 'success' => true,
-                'data' => [
-                    'query' => $query,
-                    'properties' => $properties,
-                    'pagination' => [
-                        'current_page' => $page,
-                        'per_page' => $perPage,
-                        'total' => $total,
-                        'total_pages' => (int) ceil($total / $perPage),
-                    ],
+                'data' => $properties,
+                'query' => $query,
+                'pagination' => [
+                    'current_page' => $page,
+                    'per_page' => $perPage,
+                    'total' => $total,
+                    'total_pages' => (int) ceil($total / $perPage),
                 ],
             ]);
         } catch (\Throwable $e) {
@@ -4451,7 +4485,7 @@ class MobileApiController extends BaseController
         try {
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 
-            $where = "lp.assigned_to = ?";
+            $where = "lp.assigned_to = ? AND lp.deleted_at IS NULL";
             $params = [$userId];
 
             if ($status && $status !== 'all') {
@@ -4460,13 +4494,13 @@ class MobileApiController extends BaseController
             }
 
             $stmt = $pdo->prepare(
-                "SELECT lp.id, lp.lead_number, lp.lead_name, lp.status, lp.priority,
-                        lp.follow_up_date as next_followup_date, lp.score as lead_score, lp.lead_source as source, lp.created_at
-                 FROM lead_pipeline lp
+                "SELECT lp.id, lp.lead_number, lp.name as lead_name, lp.status, lp.priority,
+                        lp.next_activity_date as next_followup_date, lp.lead_score, lp.source, lp.created_at
+                 FROM leads lp
                  WHERE {$where}
                  ORDER BY
-                    CASE lp.priority WHEN 'hot' THEN 0 WHEN 'warm' THEN 1 WHEN 'cold' THEN 2 ELSE 3 END,
-                    COALESCE(lp.follow_up_date, '9999-12-31') ASC
+                    CASE lp.priority WHEN 'high' THEN 0 WHEN 'medium' THEN 1 WHEN 'low' THEN 2 ELSE 3 END,
+                    COALESCE(lp.next_activity_date, '9999-12-31') ASC
                  LIMIT {$limit}"
             );
             $stmt->execute($params);
@@ -4640,7 +4674,7 @@ class MobileApiController extends BaseController
             $userId = (int) $GLOBALS['api_user_id'];
             $limit = (int) ($_GET['limit'] ?? 50);
 
-            $favoriteModel = new \App\Models\Property\Favorite();
+            $favoriteModel = new \App\Models\PropertyFavorite();
             $favorites = $favoriteModel->getUserFavorites($userId, $limit);
 
             // Transform to match Flutter expectations
@@ -4674,14 +4708,14 @@ class MobileApiController extends BaseController
      * DELETE /api/v2/mobile/user/favorites/{id}
      * Remove property from favorites
      */
-    public function removeFavorite()
+    public function removeFavorite($id = null)
     {
         $this->setCorsHeaders();
         $this->authenticateAndRateLimit();
 
         try {
             $userId = (int) $GLOBALS['api_user_id'];
-            $propertyId = (int) ($_GET['id'] ?? 0);
+            $propertyId = (int) ($id ?? $_GET['id'] ?? $_GET['property_id'] ?? 0);
 
             if ($propertyId <= 0) {
                 http_response_code(400);
@@ -4689,7 +4723,7 @@ class MobileApiController extends BaseController
                 return;
             }
 
-            $favoriteModel = new \App\Models\Property\Favorite();
+            $favoriteModel = new \App\Models\PropertyFavorite();
             $result = $favoriteModel->removeFavorite($userId, $propertyId);
 
             echo json_encode([
@@ -4715,6 +4749,10 @@ class MobileApiController extends BaseController
         try {
             $userId = (int) $GLOBALS['api_user_id'];
             $propertyId = (int) ($_POST['property_id'] ?? 0);
+            if ($propertyId <= 0) {
+                $body = json_decode(file_get_contents('php://input'), true);
+                $propertyId = (int) ($body['property_id'] ?? 0);
+            }
 
             if ($propertyId <= 0) {
                 http_response_code(400);
@@ -4722,7 +4760,7 @@ class MobileApiController extends BaseController
                 return;
             }
 
-            $favoriteModel = new \App\Models\Property\Favorite();
+            $favoriteModel = new \App\Models\PropertyFavorite();
             $result = $favoriteModel->addFavorite($userId, $propertyId);
 
             echo json_encode([
@@ -4755,7 +4793,7 @@ class MobileApiController extends BaseController
                 return;
             }
 
-            $favoriteModel = new \App\Models\Property\Favorite();
+            $favoriteModel = new \App\Models\PropertyFavorite();
             $isFavorited = $favoriteModel->isFavorited($userId, $propertyId);
 
             echo json_encode([
@@ -4780,7 +4818,7 @@ class MobileApiController extends BaseController
 
         try {
             $userId = (int) $GLOBALS['api_user_id'];
-            $favoriteModel = new \App\Models\Property\Favorite();
+            $favoriteModel = new \App\Models\PropertyFavorite();
             $stats = $favoriteModel->getStats();
 
             // Also get user-specific stats
@@ -5015,9 +5053,10 @@ class MobileApiController extends BaseController
         $this->setCorsHeaders();
         try {
             $stmt = $this->db->prepare("
-                SELECT p.*, c.name as colony_name, c.id as colony_id, c.district_name
+                SELECT p.*, c.name as colony_name, c.id as colony_id, d.name as district_name
                 FROM plots p 
                 LEFT JOIN colonies c ON p.colony_id = c.id 
+                LEFT JOIN districts d ON d.id = c.district_id
                 WHERE p.id = ?
             ");
             $stmt->execute([$id]);
@@ -5028,7 +5067,7 @@ class MobileApiController extends BaseController
                 return;
             }
             echo json_encode(['success' => true, 'data' => $plot]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
@@ -5040,11 +5079,11 @@ class MobileApiController extends BaseController
     public function getAllPlots() {
         $this->setCorsHeaders();
         try {
-            $page = (int)(\App\Core\Security::sanitize($_GET['page']) ?? 1);
-            $limit = min((int)(\App\Core\Security::sanitize($_GET['limit']) ?? 20), 100);
+            $page = (int)(\App\Core\Security::sanitize($_GET['page'] ?? 1) ?? 1);
+            $limit = min((int)(\App\Core\Security::sanitize($_GET['limit'] ?? 20) ?? 20), 100);
             $offset = ($page - 1) * $limit;
-            $status = \App\Core\Security::sanitize($_GET['status']) ?? null;
-            $colonyId = \App\Core\Security::sanitize($_GET['colony_id']) ?? null;
+            $status = \App\Core\Security::sanitize($_GET['status'] ?? null) ?? null;
+            $colonyId = \App\Core\Security::sanitize($_GET['colony_id'] ?? null) ?? null;
 
             $where = ['c.is_active = 1'];
             $params = [];
@@ -5068,9 +5107,10 @@ class MobileApiController extends BaseController
                 SELECT p.id, p.plot_number, p.colony_id, p.block, p.area_sqft, p.status, 
                        p.total_price, p.price_per_sqft, p.facing, p.corner_plot,
                        p.width_ft, p.length_ft,
-                       c.name as colony_name, c.slug as colony_slug, c.district_name
+                        c.name as colony_name, c.slug as colony_slug, d.name as district_name
                 FROM plots p 
                 LEFT JOIN colonies c ON p.colony_id = c.id 
+                LEFT JOIN districts d ON d.id = c.district_id
                 WHERE {$whereClause}
                 ORDER BY c.name, p.block, p.plot_number
                 LIMIT ? OFFSET ?
@@ -5088,7 +5128,7 @@ class MobileApiController extends BaseController
                     'pages' => (int)ceil($total / $limit),
                 ],
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
@@ -5122,7 +5162,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW() WHERE id = ?");
             $stmt->execute([$userId, $id]);
             echo json_encode(['success' => true, 'message' => 'Plot held successfully']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
@@ -5143,7 +5183,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL WHERE id = ? AND held_by = ?");
             $stmt->execute([$id, $userId]);
             echo json_encode(['success' => true, 'message' => 'Plot released successfully']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
@@ -5171,7 +5211,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$userId]);
             $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'data' => $notifications]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => true, 'data' => []]);
         }
     }
@@ -5191,7 +5231,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0");
             $stmt->execute([$userId]);
             echo json_encode(['success' => true, 'message' => 'Notifications marked as read']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => true, 'message' => 'Done']);
         }
     }
@@ -5239,7 +5279,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE plots SET status = 'booked' WHERE id = ?");
             $stmt->execute([$plotId]);
             echo json_encode(['success' => true, 'data' => ['booking_id' => $bookingId, 'booking_number' => $bookingNumber, 'plot_id' => $plotId, 'booking_amount' => $bookingAmount, 'total_plot_value' => $plot['total_price'] ?? 0, 'status' => 'pending']]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
@@ -5257,11 +5297,12 @@ class MobileApiController extends BaseController
             $stmt->execute([$userId]);
             $accounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($accounts as &$a) {
-                $a['account_number'] = substr($a['account_number'], -4);
-                $a['masked'] = 'XXXX' . substr($a['account_number'], -4);
+                $last4 = substr($a['account_number'], -4);
+                $a['masked'] = 'XXXX' . $last4;
+                $a['account_number'] = $last4;
             }
             echo json_encode(['success' => true, 'data' => $accounts]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => true, 'data' => []]);
         }
     }
@@ -5288,7 +5329,7 @@ class MobileApiController extends BaseController
         }
         try {
             if ($isPrimary) {
-                $this->db->exec("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = $userId");
+                $this->db->prepare("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ?")->execute([$userId]);
             }
             if ($id) {
                 $stmt = $this->db->prepare("UPDATE user_bank_accounts SET bank_name=?, account_holder_name=?, account_number=?, ifsc_code=?, branch_name=?, is_primary=? WHERE id=? AND user_id=?");
@@ -5299,7 +5340,7 @@ class MobileApiController extends BaseController
                 $id = $this->db->lastInsertId();
             }
             echo json_encode(['success' => true, 'data' => ['id' => $id]]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5315,7 +5356,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ?");
             $stmt->execute([$id, $userId]);
             echo json_encode(['success' => true]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => true]);
         }
     }
@@ -5328,10 +5369,10 @@ class MobileApiController extends BaseController
         $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $stmt = $this->db->prepare("SELECT id, full_address, city, state, pincode, type, is_primary, created_at FROM user_addresses WHERE user_id = ? ORDER BY is_primary DESC, created_at DESC");
+            $stmt = $this->db->prepare("SELECT id, address_line1 AS address, address_line2, city, state, pincode, address_type AS type, label, is_primary, created_at FROM user_addresses WHERE user_id = ? ORDER BY is_primary DESC, created_at DESC");
             $stmt->execute([$userId]);
             echo json_encode(['success' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => true, 'data' => []]);
         }
     }
@@ -5353,18 +5394,21 @@ class MobileApiController extends BaseController
         }
         try {
             if ($isPrimary) {
-                $this->db->exec("UPDATE user_addresses SET is_primary = 0 WHERE user_id = $userId");
+                $this->db->prepare("UPDATE user_addresses SET is_primary = 0 WHERE user_id = ?")->execute([$userId]);
             }
+            $validTypes = ['home', 'office', 'billing', 'shipping', 'other'];
+            $addressType = in_array($type, $validTypes, true) ? $type : 'home';
+            $label = ucfirst($addressType);
             if ($id) {
-                $stmt = $this->db->prepare("UPDATE user_addresses SET full_address=?, city=?, state=?, pincode=?, type=?, is_primary=? WHERE id=? AND user_id=?");
-                $stmt->execute([$address, $city, $state, $pincode, $type, $isPrimary, $id, $userId]);
+                $stmt = $this->db->prepare("UPDATE user_addresses SET address_line1=?, city=?, state=?, pincode=?, address_type=?, label=?, is_primary=? WHERE id=? AND user_id=?");
+                $stmt->execute([$address, $city, $state, $pincode, $addressType, $label, $isPrimary, $id, $userId]);
             } else {
-                $stmt = $this->db->prepare("INSERT INTO user_addresses (user_id, full_address, city, state, pincode, type, is_primary, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
-                $stmt->execute([$userId, $address, $city, $state, $pincode, $type, $isPrimary]);
+                $stmt = $this->db->prepare("INSERT INTO user_addresses (user_id, address_line1, city, state, pincode, address_type, label, is_primary, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                $stmt->execute([$userId, $address, $city, $state, $pincode, $addressType, $label, $isPrimary]);
                 $id = $this->db->lastInsertId();
             }
             echo json_encode(['success' => true, 'data' => ['id' => $id]]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5380,7 +5424,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("DELETE FROM user_addresses WHERE id = ? AND user_id = ?");
             $stmt->execute([$id, $userId]);
             echo json_encode(['success' => true]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => true]);
         }
     }
@@ -5393,7 +5437,7 @@ class MobileApiController extends BaseController
         $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $stmt = $this->db->prepare("SELECT p.id, p.booking_id, b.booking_number, b.plot_id, p.amount, p.payment_method, p.transaction_id, p.receipt_number, p.status, p.payment_date, p.type FROM booking_payments p JOIN plot_bookings b ON p.booking_id = b.id WHERE b.customer_id = ? ORDER BY p.payment_date DESC LIMIT 50");
+            $stmt = $this->db->prepare("SELECT p.payment_id AS id, p.booking_id, b.booking_number, b.plot_id, p.payment_amount AS amount, p.payment_method, p.transaction_id, p.payment_notes, p.payment_date FROM booking_payments p JOIN plot_bookings b ON p.booking_id = b.id WHERE b.customer_id = ? ORDER BY p.payment_date DESC LIMIT 50");
             $stmt->execute([$userId]);
             $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $stats = [
@@ -5405,13 +5449,13 @@ class MobileApiController extends BaseController
             ];
             foreach ($payments as &$p) {
                 $p['amount'] = (float)$p['amount'];
+                // booking_payments has no status column; recorded payments are completed
+                $p['status'] = 'completed';
                 $stats['total_paid'] += $p['amount'];
-                if ($p['status'] === 'completed' || $p['status'] === 'success') $stats['completed']++;
-                elseif ($p['status'] === 'pending') $stats['pending']++;
-                else $stats['failed']++;
+                $stats['completed']++;
             }
             echo json_encode(['success' => true, 'data' => ['payments' => $payments, 'stats' => $stats]]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => true, 'data' => ['payments' => [], 'stats' => ['total_paid' => 0, 'total_count' => 0, 'completed' => 0, 'pending' => 0, 'failed' => 0]]]);
         }
     }
@@ -5464,7 +5508,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->query("SELECT id, title, department, location, employment_type, experience_required, salary_range, vacancies, description, requirements, created_at FROM careers WHERE status = 'open' ORDER BY created_at DESC");
             $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'data' => $jobs]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => true, 'data' => []]);
         }
     }
@@ -5477,7 +5521,7 @@ class MobileApiController extends BaseController
             $job = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$job) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Not found']); return; }
             echo json_encode(['success' => true, 'data' => $job]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5501,7 +5545,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO career_applications (career_id, full_name, email, phone, cover_letter, experience_years, current_company, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'new', NOW())");
             $stmt->execute([$jobId, $name, $email, $phone, $coverLetter, $experience, $company]);
             echo json_encode(['success' => true, 'message' => 'Application submitted successfully']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5518,9 +5562,9 @@ class MobileApiController extends BaseController
             try {
                 $stmt2 = $this->db->query("SELECT id, name, position, photo, bio, experience, expertise, linkedin, facebook_url, instagram_url, category, group_name, sort_order FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC LIMIT 10");
                 $team = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-            } catch (Exception $e) {}
+            } catch (\Exception $e) {}
             echo json_encode(['success' => true, 'data' => ['content' => $content, 'team' => $team, 'stats' => ['projects' => 4, 'plots' => 5000, 'families' => 500, 'colonies' => 4]]]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => true, 'data' => ['content' => [], 'team' => [], 'stats' => ['projects' => 4, 'plots' => 5000, 'families' => 500, 'colonies' => 4]]]);
         }
     }
@@ -5551,7 +5595,7 @@ class MobileApiController extends BaseController
             $token = bin2hex(random_bytes(32));
             $stmt->execute([$email, $phone, $otp, $token, $expires, $otp, $expires]);
             echo json_encode(['success'=>true,'message'=>'OTP sent','otp'=>$otp,'token'=>$token]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5575,7 +5619,7 @@ class MobileApiController extends BaseController
                 http_response_code(400); echo json_encode(['success'=>false,'error'=>'Invalid or expired OTP']); return;
             }
             echo json_encode(['success'=>true,'message'=>'OTP verified','token'=>$row['token']]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5596,7 +5640,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE password_reset_tokens SET otp=?, expires_at=?, created_at=NOW() WHERE $field=? ORDER BY created_at DESC LIMIT 1");
             $stmt->execute([$otp, $expires, $value]);
             echo json_encode(['success'=>true,'message'=>'OTP resent','otp'=>$otp]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5626,7 +5670,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("DELETE FROM password_resets WHERE $field = ?");
             $stmt->execute([$value]);
             echo json_encode(['success'=>true,'message'=>'Password reset successfully']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5652,7 +5696,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
             $stmt->execute([$hash, $userId]);
             echo json_encode(['success'=>true,'message'=>'Password changed successfully']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5671,7 +5715,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$value]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true,'exists'=>!!$user,'user'=>$user]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5687,7 +5731,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$code]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true,'found'=>!!$user,'data'=>$user ?: null]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5712,10 +5756,17 @@ class MobileApiController extends BaseController
                 $user = ['id' => $userId, 'name' => $name, 'phone' => $phone, 'role' => 'customer', 'status' => 'active'];
             }
             $token = bin2hex(random_bytes(32));
-            $stmt = $this->db->prepare("UPDATE users SET api_token = ? WHERE id = ?");
-            $stmt->execute([$token, $user['id']]);
+            $userType = $user['role'] ?? 'customer';
+            $stmt = $this->db->prepare("INSERT INTO api_tokens (user_id, user_type, token, device_info, ip_address, expires_at, created_at) VALUES (?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 90 DAY), NOW())");
+            $stmt->execute([
+                $user['id'],
+                $userType,
+                $token,
+                'firebase_phone_auth',
+                $_SERVER['REMOTE_ADDR'] ?? null,
+            ]);
             echo json_encode(['success'=>true,'token'=>$token,'user'=>$user]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5734,7 +5785,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ?");
             $stmt->execute([$status, $id]);
             echo json_encode(['success'=>true,'message'=>'Status updated']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5751,7 +5802,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE leads SET next_followup = ?, notes = CONCAT(COALESCE(notes,''), ?), updated_at = NOW() WHERE id = ?");
             $stmt->execute([$followupDate, "\n[Follow-up: $notes]", $id]);
             echo json_encode(['success'=>true,'message'=>'Follow-up scheduled']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5768,7 +5819,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, ?, ?, NOW())");
             $stmt->execute([$id, $userId, $type, $description]);
             echo json_encode(['success'=>true,'message'=>'Activity logged']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5784,7 +5835,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$dealValue, $id]);
             $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, 'conversion', 'Lead converted to deal', NOW())")->execute([$id, $userId]);
             echo json_encode(['success'=>true,'message'=>'Lead converted']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5800,7 +5851,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$reason, $id]);
             $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, type, description, created_at) VALUES (?, ?, 'lost', 'Lead lost: $reason', NOW())")->execute([$id, $userId]);
             echo json_encode(['success'=>true,'message'=>'Lead marked as lost']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5822,7 +5873,7 @@ class MobileApiController extends BaseController
                 'closed_lost' => (int)($stats['closed_lost'] ?? 0),
                 'total' => array_sum($stats),
             ]]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5841,7 +5892,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$id, $userId, $desc]);
             $this->db->prepare("UPDATE leads SET call_count = COALESCE(call_count, 0) + 1, updated_at = NOW() WHERE id = ?")->execute([$id]);
             echo json_encode(['success'=>true,'message'=>'Call logged']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5864,7 +5915,7 @@ class MobileApiController extends BaseController
             $params[] = $id;
             $this->db->prepare("UPDATE plot_bookings SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ? AND customer_id = ?")->execute([...$params, $userId]);
             echo json_encode(['success'=>true,'message'=>'Booking updated']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5881,7 +5932,7 @@ class MobileApiController extends BaseController
             $this->db->prepare("UPDATE plot_bookings SET status = 'cancelled', updated_at = NOW() WHERE id = ?")->execute([$id]);
             $this->db->prepare("UPDATE plots SET status = 'available' WHERE id = ?")->execute([$booking['plot_id']]);
             echo json_encode(['success'=>true,'message'=>'Booking cancelled, plot released']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5900,7 +5951,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$plot['colony_id'], $id, $plot['area_sqft']]);
             $similar = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true,'data'=>$similar]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>true,'data'=>[]]);
         }
     }
@@ -5912,7 +5963,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$colonyId]);
             $plots = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true,'data'=>$plots]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>true,'data'=>[]]);
         }
     }
@@ -5927,7 +5978,7 @@ class MobileApiController extends BaseController
         try {
             $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE id = ? AND user_id = ?")->execute([$id, $userId]);
             echo json_encode(['success'=>true]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5939,7 +5990,7 @@ class MobileApiController extends BaseController
         try {
             $this->db->prepare("DELETE FROM notifications WHERE id = ? AND user_id = ?")->execute([$id, $userId]);
             echo json_encode(['success'=>true]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -5955,7 +6006,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("SELECT id, name, email, phone, referral_code FROM users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            $stmt = $this->db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status='active' THEN 1 ELSE 0 END) as active_signups FROM customer_referrals WHERE referrer_user_id = ?");
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status IN ('registered','booked') THEN 1 ELSE 0 END) as active_signups FROM customer_referrals WHERE referrer_user_id = ?");
             $stmt->execute([$userId]);
             $stats = $stmt->fetch(PDO::FETCH_ASSOC);
             $stmt = $this->db->prepare("SELECT COUNT(*) as bookings FROM plot_bookings WHERE referred_by = ? AND status NOT IN ('cancelled')");
@@ -5968,7 +6019,7 @@ class MobileApiController extends BaseController
                 'total_bookings' => (int)($bookingStats['bookings'] ?? 0),
                 'share_url' => "https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome/register?ref=" . ($user['referral_code'] ?? ''),
             ]]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>true,'data'=>['referral_code'=>'','total_signups'=>0,'active_signups'=>0,'total_bookings'=>0,'share_url'=>'']]);
         }
     }
@@ -5983,7 +6034,7 @@ class MobileApiController extends BaseController
             $shares = json_decode(file_get_contents('php://input'), true)['shares'] ?? 1;
             $this->db->prepare("UPDATE users SET share_clicks = COALESCE(share_clicks,0) + ? WHERE id = ?")->execute([$shares, $userId]);
             echo json_encode(['success'=>true]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>true]);
         }
     }
@@ -6000,7 +6051,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$userId]);
             $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true,'data'=>$tickets]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>true,'data'=>[]]);
         }
     }
@@ -6021,7 +6072,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO support_tickets (user_id, subject, category, message, priority, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'open', NOW(), NOW())");
             $stmt->execute([$userId, $subject, $category, $message, $priority]);
             echo json_encode(['success'=>true,'ticket_id'=>$this->db->lastInsertId()]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -6039,7 +6090,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$id]);
             $ticket['replies'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true,'data'=>$ticket]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -6056,7 +6107,7 @@ class MobileApiController extends BaseController
             $prefs = json_encode($input);
             $this->db->prepare("UPDATE users SET notification_preferences = ? WHERE id = ?")->execute([$prefs, $userId]);
             echo json_encode(['success'=>true]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>true]);
         }
     }
@@ -6070,7 +6121,7 @@ class MobileApiController extends BaseController
             $prefs = json_encode($input);
             $this->db->prepare("UPDATE users SET preferences = ? WHERE id = ?")->execute([$prefs, $userId]);
             echo json_encode(['success'=>true]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>true]);
         }
     }
@@ -6090,9 +6141,12 @@ class MobileApiController extends BaseController
                     http_response_code(400); echo json_encode(['success'=>false,'error'=>'Incorrect password']); return;
                 }
             }
-            $this->db->prepare("UPDATE users SET status = 'deleted', name = CONCAT(name, '_deleted_', id), email = CONCAT('deleted_', id, '@deleted.com'), api_token = NULL, updated_at = NOW() WHERE id = ?")->execute([$userId]);
+            // users.status enum has no 'deleted' value; use 'inactive' + anonymize PII
+            $this->db->prepare("UPDATE users SET status = 'inactive', name = CONCAT(name, '_deleted_', id), email = CONCAT('deleted_', id, '@deleted.com'), updated_at = NOW() WHERE id = ?")->execute([$userId]);
+            // Revoke any active API tokens
+            try { $this->db->prepare("DELETE FROM api_tokens WHERE user_id = ?")->execute([$userId]); } catch (\Throwable $t) {}
             echo json_encode(['success'=>true,'message'=>'Account deleted']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -6111,10 +6165,12 @@ class MobileApiController extends BaseController
             http_response_code(400); echo json_encode(['success'=>false,'error'=>'Sale amount and plot ID required']); return;
         }
         try {
-            $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, commission_type, amount, source_type, source_id, status, notes, created_at) VALUES (?, 'direct_sale', ?, 'plot_sale', ?, 'pending', 'Mobile app sale submission', NOW())");
-            $stmt->execute([$userId, $saleAmount * 0.05, $plotId]);
+            $commissionPct = 5.00;
+            $commissionAmt = $saleAmount * ($commissionPct / 100);
+            $stmt = $this->db->prepare("INSERT INTO mlm_commission_ledger (beneficiary_user_id, source_user_id, commission_type, amount, sale_amount, commission_percentage, status, notes, created_at) VALUES (?, ?, 'direct_sale', ?, ?, ?, 'pending', 'Mobile app sale submission', NOW())");
+            $stmt->execute([$userId, $userId, $commissionAmt, $saleAmount, $commissionPct]);
             echo json_encode(['success'=>true,'message'=>'Sale submitted for commission processing','commission_estimate'=>round($saleAmount * 0.05, 2)]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -6124,23 +6180,37 @@ class MobileApiController extends BaseController
         $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $stmt = $this->db->prepare("SELECT rank FROM mlm_network_tree WHERE user_id = ?");
+            // Resolve associate row for this user
+            $stmt = $this->db->prepare("SELECT id FROM associates WHERE user_id = ? LIMIT 1");
             $stmt->execute([$userId]);
+            $assoc = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$assoc) {
+                http_response_code(404); echo json_encode(['success'=>false,'error'=>'Associate record not found']); return;
+            }
+            $associateId = (int)$assoc['id'];
+
+            // Current rank = latest to_rank in rank history (default 'associate')
+            $stmt = $this->db->prepare("SELECT to_rank FROM mlm_rank_history WHERE associate_id = ? ORDER BY promoted_at DESC, id DESC LIMIT 1");
+            $stmt->execute([$associateId]);
             $current = $stmt->fetch(PDO::FETCH_ASSOC);
-            $currentRank = $current['rank'] ?? null;
-            $newRank = '';
+            $currentRank = $current['to_rank'] ?? 'associate';
+
             $ranks = ['associate','sr_associate','bdm','sr_bdm','vice_president','president','site_manager'];
             $idx = array_search($currentRank, $ranks);
-            if ($idx !== false && $idx < count($ranks) - 1) {
-                $newRank = $ranks[$idx + 1];
-            } elseif ($idx === false) {
+            if ($idx === false) {
                 $newRank = 'associate';
+                $fromRank = null;
+            } elseif ($idx < count($ranks) - 1) {
+                $newRank = $ranks[$idx + 1];
+                $fromRank = $currentRank;
             } else {
                 http_response_code(400); echo json_encode(['success'=>false,'error'=>'Already at highest rank']); return;
             }
-            $this->db->prepare("UPDATE mlm_network_tree SET rank = ?, updated_at = NOW() WHERE user_id = ?")->execute([$newRank, $userId]);
-            echo json_encode(['success'=>true,'message'=>"Rank upgraded to $newRank"]);
-        } catch (Exception $e) {
+
+            $this->db->prepare("INSERT INTO mlm_rank_history (associate_id, from_rank, to_rank, qualifying_volume_at_promotion, leg_count_at_promotion, promoted_by, is_manual, reason, created_at) VALUES (?, ?, ?, 0, 0, ?, 1, 'Requested via mobile app', NOW())")
+                ->execute([$associateId, $fromRank, $newRank, $userId]);
+            echo json_encode(['success'=>true,'message'=>"Rank upgraded to $newRank",'from_rank'=>$fromRank,'to_rank'=>$newRank]);
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -6150,17 +6220,27 @@ class MobileApiController extends BaseController
         $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $year = $_GET['year'] ?? date('Y');
-            $stmt = $this->db->prepare("SELECT SUM(amount) as total_commission, SUM(tds_deducted) as total_tds FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND YEAR(created_at) = ? AND status = 'approved'");
+            $year = (int)($_GET['year'] ?? date('Y'));
+            // Ledger has no TDS column; TDS is deducted at payout-batch level. Report gross commission here.
+            $stmt = $this->db->prepare("SELECT SUM(amount) as total_commission FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND YEAR(created_at) = ? AND status IN ('approved','paid')");
             $stmt->execute([$userId, $year]);
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            $gross = (float)($data['total_commission'] ?? 0);
+            // Pull actual TDS from payout batches linked to this user's ledger entries, if any
+            $tds = 0.0;
+            try {
+                $t = $this->db->prepare("SELECT COALESCE(SUM(pe.tds_amount),0) as tds FROM payout_entries pe WHERE pe.beneficiary_user_id = ? AND YEAR(pe.created_at) = ?");
+                $t->execute([$userId, $year]);
+                $tds = (float)($t->fetch(PDO::FETCH_ASSOC)['tds'] ?? 0);
+            } catch (\Throwable $e) { $tds = 0.0; }
             echo json_encode(['success'=>true,'data'=>[
                 'financial_year' => "$year-" . ($year + 1),
-                'total_commission' => (float)($data['total_commission'] ?? 0),
-                'tds_deducted' => (float)($data['total_tds'] ?? 0),
-                'net_payout' => (float)(($data['total_commission'] ?? 0) - ($data['total_tds'] ?? 0)),
+                'total_commission' => $gross,
+                'tds_deducted' => $tds,
+                'net_payout' => $gross - $tds,
             ]]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            $year = (int)($_GET['year'] ?? date('Y'));
             echo json_encode(['success'=>true,'data'=>['financial_year'=>"$year-".($year+1),'total_commission'=>0,'tds_deducted'=>0,'net_payout'=>0]]);
         }
     }
@@ -6170,18 +6250,21 @@ class MobileApiController extends BaseController
         $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $stmt = $this->db->prepare("SELECT commission_type, SUM(amount) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'approved' GROUP BY commission_type");
+            $stmt = $this->db->prepare("SELECT commission_type, SUM(amount) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status IN ('approved','paid') GROUP BY commission_type");
             $stmt->execute([$userId]);
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $stmt = $this->db->prepare("SELECT SUM(tds_deducted) as total_tds FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'approved'");
-            $stmt->execute([$userId]);
-            $tds = $stmt->fetch(PDO::FETCH_ASSOC);
+            $totalTds = 0.0;
+            try {
+                $t = $this->db->prepare("SELECT COALESCE(SUM(tds_amount),0) as total_tds FROM payout_entries WHERE beneficiary_user_id = ?");
+                $t->execute([$userId]);
+                $totalTds = (float)($t->fetch(PDO::FETCH_ASSOC)['total_tds'] ?? 0);
+            } catch (\Throwable $e) { $totalTds = 0.0; }
             echo json_encode(['success'=>true,'data'=>[
                 'breakdown' => $rows,
-                'total_tds' => (float)($tds['total_tds'] ?? 0),
+                'total_tds' => $totalTds,
                 'total_commission' => array_sum(array_column($rows, 'total')),
             ]]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>true,'data'=>['breakdown'=>[],'total_tds'=>0,'total_commission'=>0]]);
         }
     }
@@ -6204,7 +6287,7 @@ class MobileApiController extends BaseController
         try {
             $this->db->prepare("INSERT INTO notifications (user_id, title, message, type, is_read, created_at) VALUES (?, ?, ?, ?, 0, NOW())")->execute([$targetUserId, $title, $message, $type]);
             echo json_encode(['success'=>true]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>true]);
         }
     }
@@ -6217,10 +6300,10 @@ class MobileApiController extends BaseController
         $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
             $loans = $svc->listLoans(['customer_id' => $userId]);
             echo json_encode(['success'=>true, 'data' => $loans]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -6230,14 +6313,14 @@ class MobileApiController extends BaseController
         $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
             $loan = $svc->getLoanById((int)$id);
             if (!$loan) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Not found']); return; }
             $installments = $svc->getInstallments((int)$id);
             $guarantors = $svc->getGuarantors((int)$id);
             $documents = $svc->getDocuments((int)$id);
             echo json_encode(['success'=>true, 'data'=>['loan'=>$loan,'installments'=>$installments,'guarantors'=>$guarantors,'documents'=>$documents]]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -6247,10 +6330,10 @@ class MobileApiController extends BaseController
         $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
             $installments = $svc->getInstallments((int)$id);
             echo json_encode(['success'=>true, 'data'=>$installments]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -6263,10 +6346,10 @@ class MobileApiController extends BaseController
         if (empty($input)) $input = $_POST;
         $input['customer_id'] = $userId;
         try {
-            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
             $result = $svc->createLoan($input);
             echo json_encode($result);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -6274,11 +6357,11 @@ class MobileApiController extends BaseController
     public function getLoanOffers() {
         $this->setCorsHeaders();
         try {
-            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
             $offers = $svc->getOffers();
             $offers = array_map(function($o) { return ['id'=>$o['id'],'name'=>$o['name'],'description'=>$o['description'],'offer_type'=>$o['offer_type'],'interest_free_months'=>$o['interest_free_months'],'max_tenure_months'=>$o['max_tenure_months'],'max_amount'=>$o['max_amount']]; }, $offers);
             echo json_encode(['success'=>true, 'data'=>$offers]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -6292,10 +6375,10 @@ class MobileApiController extends BaseController
         $tenure = (int)($input['tenure_months'] ?? 60);
         $interestFreeMonths = (int)($input['interest_free_months'] ?? 0);
         try {
-            $svc = new \App\Services\Loan\InterestFreeOfferService($this->db);
+            $svc = new \App\Services\Loan\InterestFreeOfferService($this->db->getConnection());
             $result = $svc->calculateSavings($amount, $rate, $tenure, $interestFreeMonths);
             echo json_encode(['success'=>true, 'data'=>$result]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -6305,15 +6388,46 @@ class MobileApiController extends BaseController
         $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
         try {
-            $svc = new \App\Services\Loan\CompanyLoanService($this->db);
+            $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
             $result = $svc->calculateEarlySettlement((int)$id);
             echo json_encode($result);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
 
     // ─── In-App Messaging ───
+
+    /**
+     * Find an existing direct conversation between two users, or create one.
+     * Returns the conversation_id (required NOT NULL on messages).
+     */
+    private function getOrCreateDirectConversation(int $userId, int $otherUserId): int
+    {
+        // Look for a direct conversation both users participate in
+        $stmt = $this->db->prepare("
+            SELECT cp1.conversation_id
+            FROM conversation_participants cp1
+            JOIN conversation_participants cp2
+              ON cp1.conversation_id = cp2.conversation_id
+            JOIN conversations c ON c.id = cp1.conversation_id
+            WHERE cp1.user_id = ? AND cp2.user_id = ? AND c.conversation_type = 'direct'
+            LIMIT 1
+        ");
+        $stmt->execute([$userId, $otherUserId]);
+        $existing = $stmt->fetchColumn();
+        if ($existing) {
+            return (int)$existing;
+        }
+        // Create new direct conversation + participants
+        $this->db->prepare("INSERT INTO conversations (conversation_type, created_by, is_active, created_at) VALUES ('direct', ?, 1, NOW())")
+            ->execute([$userId]);
+        $conversationId = (int)$this->db->lastInsertId();
+        $ins = $this->db->prepare("INSERT INTO conversation_participants (conversation_id, user_id, joined_at) VALUES (?, ?, NOW())");
+        $ins->execute([$conversationId, $userId]);
+        $ins->execute([$conversationId, $otherUserId]);
+        return $conversationId;
+    }
 
     public function getConversations() {
         $this->setCorsHeaders();
@@ -6338,7 +6452,7 @@ class MobileApiController extends BaseController
             ");
             $conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true, 'data'=>$conversations]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -6360,7 +6474,7 @@ class MobileApiController extends BaseController
             $stmt->execute([$userId, (int)$otherUserId, (int)$otherUserId, $userId]);
             $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true, 'data'=>$messages]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -6377,9 +6491,16 @@ class MobileApiController extends BaseController
                 echo json_encode(['success'=>false, 'error'=>'receiver_id and message required']);
                 return;
             }
-            $this->db->prepare("INSERT INTO messages (sender_id, receiver_id, content, message_type, sent_at) VALUES (?, ?, ?, 'text', NOW())")
-                ->execute([$userId, $receiverId, $message]);
+            // messages.conversation_id is NOT NULL — resolve/create the direct conversation
+            $conversationId = $this->getOrCreateDirectConversation((int)$userId, $receiverId);
+            $this->db->prepare("INSERT INTO messages (conversation_id, sender_id, receiver_id, content, message_type, sent_at) VALUES (?, ?, ?, ?, 'text', NOW())")
+                ->execute([$conversationId, $userId, $receiverId, $message]);
             $msgId = $this->db->lastInsertId();
+            // Update conversation last-message metadata
+            try {
+                $this->db->prepare("UPDATE conversations SET last_message_at = NOW(), last_message_preview = ? WHERE id = ?")
+                    ->execute([mb_substr($message, 0, 500), $conversationId]);
+            } catch (\Throwable $t) {}
             $resp = [
                 'id'=>(int)$msgId, 'sender_id'=>$userId, 'receiver_id'=>$receiverId,
                 'message'=>$message, 'content'=>$message,
@@ -6387,7 +6508,7 @@ class MobileApiController extends BaseController
                 'is_read'=>0, 'read_at'=>null,
             ];
             echo json_encode(['success'=>true, 'data'=>$resp]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -6400,7 +6521,7 @@ class MobileApiController extends BaseController
             $this->db->prepare("UPDATE messages SET read_at = NOW() WHERE sender_id = ? AND receiver_id = ? AND read_at IS NULL")
                 ->execute([(int)$otherUserId, $userId]);
             echo json_encode(['success'=>true]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -6414,8 +6535,268 @@ class MobileApiController extends BaseController
             $stmt->execute([$userId]);
             $count = (int)$stmt->fetchColumn();
             echo json_encode(['success'=>true, 'data'=>['unread_count'=>$count]]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API — RERA Verification
+    // ============================================================
+
+    public function reraVerify($reraNumber = null) {
+        $this->setCorsHeaders();
+        $reraNumber = $reraNumber ?? ($_GET['rera_number'] ?? '');
+        $stateCode = strtoupper($_GET['state_code'] ?? 'UP');
+
+        if (empty($reraNumber)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'RERA number is required']);
+            return;
+        }
+
+        try {
+            $service = new \App\Services\Legal\RERAVerificationService();
+            $result = $service->verifyByReraNumber($reraNumber, $stateCode);
+
+            if (!empty($result['success']) && !empty($result['project'])) {
+                $project = $result['project'];
+                echo json_encode([
+                    'success' => true,
+                    'data' => [
+                        'rera_number' => $project['rera_number'] ?? $reraNumber,
+                        'project_name' => $project['project_name'] ?? '',
+                        'builder_name' => $project['builder_name'] ?? '',
+                        'status' => $project['status'] ?? 'Unknown',
+                        'registration_date' => $project['registration_date'] ?? '',
+                        'valid_upto' => $project['valid_upto'] ?? '',
+                        'total_area' => $project['total_area'] ?? '',
+                        'total_units' => $project['total_units'] ?? 0,
+                        'address' => $project['address'] ?? '',
+                        'city' => $project['city'] ?? '',
+                        'state_code' => $project['state_code'] ?? $stateCode,
+                    ],
+                    'source' => $result['source'] ?? 'database',
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'No project found for RERA number: ' . $reraNumber,
+                ]);
+            }
+        } catch (\Throwable $e) {
+            error_log('reraVerify error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Verification failed']);
+        }
+    }
+
+    public function reraSearch() {
+        $this->setCorsHeaders();
+        $builder = $_GET['builder'] ?? '';
+        $city = $_GET['city'] ?? '';
+        $stateCode = strtoupper($_GET['state_code'] ?? 'UP');
+
+        try {
+            $service = new \App\Services\Legal\RERAVerificationService();
+            $criteria = ['state_code' => $stateCode];
+            if ($builder) $criteria['builder_name'] = $builder;
+            if ($city) $criteria['city'] = $city;
+
+            $result = $service->searchProjects($criteria);
+            echo json_encode([
+                'success' => true,
+                'data' => $result['projects'] ?? [],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('reraSearch error: ' . $e->getMessage());
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    public function reraProjects() {
+        $this->setCorsHeaders();
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $pdo->query("SELECT id, rera_number, project_name, builder_name, status, registration_date, valid_upto, total_area, total_units, city, state_code FROM rera_projects WHERE is_active = 1 ORDER BY created_at DESC LIMIT 20");
+            $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success' => true, 'data' => $projects]);
+        } catch (\Throwable $e) {
+            error_log('reraProjects error: ' . $e->getMessage());
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API — Directory / Services
+    // ============================================================
+
+    public function directoryCategories() {
+        $this->setCorsHeaders();
+        try {
+            $service = new \App\Services\DirectoryService();
+            $categories = $service->getActiveCategories();
+            $catData = [];
+            foreach ($categories as $cat) {
+                $catData[] = [
+                    'id' => $cat['id'],
+                    'name' => $cat['name'],
+                    'slug' => $cat['slug'] ?? '',
+                    'description' => $cat['description'] ?? '',
+                    'icon' => $cat['icon'] ?? 'fas fa-building',
+                    'listing_count' => (int)($cat['listing_count'] ?? 0),
+                ];
+            }
+            echo json_encode(['success' => true, 'data' => $catData]);
+        } catch (\Throwable $e) {
+            error_log('directoryCategories error: ' . $e->getMessage());
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    public function directoryFeatured() {
+        $this->setCorsHeaders();
+        try {
+            $service = new \App\Services\DirectoryService();
+            $listings = $service->getFeaturedListings(10);
+            $listingData = [];
+            foreach ($listings as $l) {
+                $listingData[] = [
+                    'id' => $l['id'],
+                    'business_name' => $l['business_name'] ?? '',
+                    'category_name' => $l['category_name'] ?? '',
+                    'rating' => (float)($l['rating'] ?? 0),
+                    'review_count' => (int)($l['review_count'] ?? 0),
+                    'city' => $l['city'] ?? '',
+                    'is_verified' => (bool)($l['is_verified'] ?? false),
+                    'description' => $l['description'] ?? '',
+                    'phone' => $l['phone'] ?? '',
+                ];
+            }
+            echo json_encode(['success' => true, 'data' => $listingData]);
+        } catch (\Throwable $e) {
+            error_log('directoryFeatured error: ' . $e->getMessage());
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    public function directoryJobs() {
+        $this->setCorsHeaders();
+        try {
+            $service = new \App\Services\DirectoryService();
+            $jobs = $service->getJobs('', '', -1, 1);
+            $jobData = [];
+            foreach ($jobs as $j) {
+                $jobData[] = [
+                    'id' => $j['id'],
+                    'title' => $j['title'] ?? '',
+                    'company' => $j['business_name'] ?? '',
+                    'location' => $j['location'] ?? $j['city'] ?? '',
+                    'salary_min' => (int)($j['salary_min'] ?? 0),
+                    'salary_max' => (int)($j['salary_max'] ?? 0),
+                    'job_type' => $j['job_type'] ?? '',
+                    'category' => $j['category'] ?? '',
+                ];
+            }
+            echo json_encode(['success' => true, 'data' => $jobData]);
+        } catch (\Throwable $e) {
+            error_log('directoryJobs error: ' . $e->getMessage());
+            echo json_encode(['success' => true, 'data' => []]);
+        }
+    }
+
+    // ============================================================
+    // MOBILE API — Property Valuation
+    // ============================================================
+
+    public function propertyValuation() {
+        $this->setCorsHeaders();
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (!$input) $input = $_POST;
+
+        $city = $input['city'] ?? 'Gorakhpur';
+        $propertyType = $input['property_type'] ?? 'plot';
+        $areaSqft = (float)($input['area_sqft'] ?? 0);
+        $locationType = $input['location_type'] ?? 'urban';
+        $frontRoad = (float)($input['front_road_ft'] ?? 20);
+        $isCorner = !empty($input['is_corner']);
+        $isParkFacing = !empty($input['is_park_facing']);
+
+        if ($areaSqft <= 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Area must be greater than 0']);
+            return;
+        }
+
+        try {
+            $engine = new \App\Services\AI\PropertyValuationEngine();
+            $result = $engine->calculateValuation([
+                'city' => $city,
+                'location' => $city,
+                'property_type' => $propertyType,
+                'type' => $propertyType,
+                'area_sqft' => $areaSqft,
+                'location_type' => $locationType,
+                'front_road_ft' => $frontRoad,
+                'is_corner' => $isCorner,
+                'is_park_facing' => $isParkFacing,
+            ]);
+
+            $estimatedPrice = $result['estimated_price'] ?? 0;
+            $confidence = $result['confidence_score'] ?? 0.85;
+
+            // Calculate per sqft
+            $pricePerSqft = $areaSqft > 0 ? $estimatedPrice / $areaSqft : 0;
+            $minPrice = $estimatedPrice * 0.85;
+            $maxPrice = $estimatedPrice * 1.15;
+
+            // Market trend
+            $marketAnalysis = $result['market_analysis'] ?? [];
+            $trend = $marketAnalysis['trend'] ?? 'upward';
+            $trendPct = $marketAnalysis['trend_percentage'] ?? 8.5;
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'estimated_price' => round($estimatedPrice),
+                    'price_per_sqft' => round($pricePerSqft),
+                    'min_price' => round($minPrice),
+                    'max_price' => round($maxPrice),
+                    'area_sqft' => $areaSqft,
+                    'confidence' => round($confidence, 2),
+                    'market_trend' => $trend,
+                    'trend_percentage' => round($trendPct, 1),
+                    'recommendations' => $result['recommendations'] ?? [],
+                    'comparable_properties' => $result['comparable_properties'] ?? [],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('propertyValuation error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Valuation failed']);
+        }
+    }
+
+    public function valuationCities() {
+        $this->setCorsHeaders();
+        // Return available cities with their base rates from the valuation engine
+        try {
+            $engine = new \App\Services\AI\PropertyValuationEngine();
+            $cities = [
+                ['name' => 'Gorakhpur', 'base_rate' => 3000, 'state' => 'UP'],
+                ['name' => 'Lucknow', 'base_rate' => 4200, 'state' => 'UP'],
+                ['name' => 'Varanasi', 'base_rate' => 3800, 'state' => 'UP'],
+                ['name' => 'Kushinagar', 'base_rate' => 2800, 'state' => 'UP'],
+                ['name' => 'Kanpur', 'base_rate' => 3500, 'state' => 'UP'],
+                ['name' => 'Prayagraj', 'base_rate' => 3200, 'state' => 'UP'],
+                ['name' => 'Noida', 'base_rate' => 5500, 'state' => 'UP'],
+                ['name' => 'Ghaziabad', 'base_rate' => 4800, 'state' => 'UP'],
+                ['name' => 'Agra', 'base_rate' => 3400, 'state' => 'UP'],
+                ['name' => 'Meerut', 'base_rate' => 3600, 'state' => 'UP'],
+            ];
+            echo json_encode(['success' => true, 'data' => $cities]);
+        } catch (\Throwable $e) {
+            echo json_encode(['success' => true, 'data' => []]);
         }
     }
 }

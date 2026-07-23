@@ -112,7 +112,7 @@ try {
         'total_activities' => count($activities)
     ]);
 
-} catch (Exception $e) {
+} catch (\Exception $e) {
     error_log('Recent activity error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([

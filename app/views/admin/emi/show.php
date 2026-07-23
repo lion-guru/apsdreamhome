@@ -3,7 +3,7 @@ $emi_plan = $emi_plan ?? [];
 $schedule = $schedule ?? [];
 $payments = $payments ?? [];
 $page_title = $page_title ?? 'EMI Plan Details';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <div class="container-fluid py-4">
         <!-- Header -->
@@ -224,7 +224,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             formData.append('payment_method', document.getElementById('paymentMethod').value);
             formData.append('transaction_id', document.getElementById('transactionId').value);
             
-            fetch('<?php echo $base; ?>/admin/emi/<?php echo $emi_plan['id'] ?? 0; ?>/process-payment', {
+            fetch('<?php echo $base; ?>/admin/emi/payment/<?php echo $emi_plan['id'] ?? 0; ?>', {
                 method: 'POST',
                 body: formData
             })

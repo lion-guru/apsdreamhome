@@ -33,18 +33,19 @@ class ReviewController extends BaseApiController
             if ($targetType === 'property') {
                 $reviewModel = $this->model('PropertyReview');
                 $reviews = $reviewModel->getPropertyReviews($targetId, $limit, $offset);
-                $summary = $reviewModel->getPropertyReviewSummary($targetId);
+                $summary = (array)$reviewModel->getPropertyReviewSummary($targetId);
                 $distribution = $reviewModel->getPropertyRatingDistribution($targetId);
             } else {
                 $reviewModel = $this->model('AgentReview');
                 $reviews = $reviewModel->getAgentReviews($targetId, $limit, $offset);
-                $summary = $reviewModel->getAgentReviewSummary($targetId);
+                $summary = (array)$reviewModel->getAgentReviewSummary($targetId);
                 $distribution = $reviewModel->getAgentRatingDistribution($targetId);
             }
 
             $distFormatted = \array_fill(1, 5, 0);
             foreach ($distribution as $row) {
-                $distFormatted[(int)\round($row['rating'])] = (int)$row['count'];
+                $row = (array)$row;
+                $distFormatted[(int)\round($row['rating'])] = (int)($row['count'] ?? 0);
             }
 
             return $this->jsonSuccess([
@@ -61,7 +62,7 @@ class ReviewController extends BaseApiController
                     'total_pages' => \ceil(($summary['total_reviews'] ?? 0) / $limit)
                 ]
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -76,7 +77,10 @@ class ReviewController extends BaseApiController
         }
 
         try {
-            $user = $this->auth->user();
+            $userId = $GLOBALS['api_user_id'] ?? ($_SESSION['user_id'] ?? null);
+            if (!$userId) {
+                return $this->jsonError('Authentication required', 401);
+            }
 
             $targetType = $this->request()->input('target_type', '');
             $targetId = (int)$this->request()->input('target_id', 0);
@@ -93,12 +97,12 @@ class ReviewController extends BaseApiController
 
             if ($targetType === 'property') {
                 $reviewModel = $this->model('PropertyReview');
-                if ($reviewModel->hasReviewed($user->uid, $targetId)) {
+                if ($reviewModel->hasReviewed($userId, $targetId)) {
                     return $this->jsonError('You have already reviewed this property', 400);
                 }
 
-                $review = new \App\Models\PropertyReview([
-                    'customer_id' => $user->uid,
+                $saved = \App\Models\PropertyReview::create([
+                    'customer_id' => $userId,
                     'property_id' => $targetId,
                     'rating' => $rating,
                     'review_text' => $reviewText,
@@ -106,25 +110,26 @@ class ReviewController extends BaseApiController
                 ]);
             } else {
                 $reviewModel = $this->model('AgentReview');
-                if ($reviewModel->hasReviewed($user->uid, $targetId)) {
+                if ($reviewModel->hasReviewed($userId, $targetId)) {
                     return $this->jsonError('You have already reviewed this agent', 400);
                 }
 
-                $review = new \App\Models\AgentReview([
-                    'user_id' => $user->uid,
+                $saved = \App\Models\AgentReview::create([
+                    'user_id' => $userId,
                     'agent_id' => $targetId,
                     'rating' => $rating,
-                    'review_text' => $reviewText
+                    'review_text' => $reviewText,
+                    'status' => 'pending'
                 ]);
             }
 
-            if ($review->save()) {
+            if ($saved) {
                 return $this->jsonSuccess(null, 'Review submitted successfully and is awaiting approval', 201);
             }
 
             return $this->jsonError('Failed to submit review', 500);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }

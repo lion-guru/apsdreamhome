@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Cash Collections';
 $page_heading = $page_heading ?? 'On-Field Cash Collections';
 $collections = $collections ?? [];
@@ -9,7 +9,7 @@ $filters = $filters ?? [];
 <div class="aps-cp-container">
     <div class="aps-cp-page-header">
         <h1 class="aps-cp-page-title"><?= htmlspecialchars($page_heading) ?></h1>
-        <a href="/admin/finance/collection-form" class="aps-cp-btn aps-cp-btn-primary">
+        <a href="<?= BASE_URL ?>/admin/finance/collection-form" class="aps-cp-btn aps-cp-btn-primary">
             <i class="fas fa-plus"></i> Record Collection
         </a>
     </div>
@@ -60,7 +60,7 @@ $filters = $filters ?? [];
     <!-- Filters -->
     <div class="aps-cp-card" style="margin-bottom: 24px;">
         <div class="aps-cp-card-body">
-            <form method="GET" action="/admin/finance/collections" class="aps-cp-form-row" style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
+            <form method="GET" action="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-form-row" style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
                 <div class="aps-cp-form-group" style="flex:1;min-width:150px;">
                     <label class="aps-cp-form-label">Status</label>
                     <select name="status" class="aps-cp-form-select">
@@ -89,7 +89,7 @@ $filters = $filters ?? [];
                     <input type="date" name="to_date" class="aps-cp-form-input" value="<?= htmlspecialchars($filters['to_date'] ?? '') ?>">
                 </div>
                 <button type="submit" class="aps-cp-btn aps-cp-btn-primary"><i class="fas fa-filter"></i> Filter</button>
-                <a href="/admin/finance/collections" class="aps-cp-btn aps-cp-btn-outline">Reset</a>
+                <a href="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-btn aps-cp-btn-outline">Reset</a>
             </form>
         </div>
     </div>
@@ -136,12 +136,12 @@ $filters = $filters ?? [];
                                     </td>
                                     <td>
                                         <?php if ($c['status'] === 'submitted'): ?>
-                                            <form method="POST" action="/admin/finance/collections/verify" style="display:inline;">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/finance/collections/verify" style="display:inline;">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="id" value="<?= $c['id'] ?>">
                                                 <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-success" onclick="return confirm('Verify this collection?')"><i class="fas fa-check"></i></button>
                                             </form>
-                                            <form method="POST" action="/admin/finance/collections/reject" style="display:inline;">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/finance/collections/reject" style="display:inline;">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="id" value="<?= $c['id'] ?>">
                                                 <input type="text" name="reason" placeholder="Reason" required style="width:120px;display:inline;padding:4px 8px;border:1px solid #e2e8f0;border-radius:6px;font-size:0.8rem;">

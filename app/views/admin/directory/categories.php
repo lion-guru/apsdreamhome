@@ -48,6 +48,15 @@
                                 <tr><th>ID</th><th>Icon</th><th>Name</th><th>Slug</th><th>Listings</th><th>Active</th><th>Order</th><th>Actions</th></tr>
                             </thead>
                             <tbody>
+                                <?php if (empty($categories ?? [])): ?>
+                                <tr>
+                                    <td colspan="8" class="text-center py-5">
+                                        <i class="fas fa-tags fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                        <h5 class="text-muted">No categories found</h5>
+                                        <p class="text-muted mb-3">Create your first directory category using the form on the left.</p>
+                                    </td>
+                                </tr>
+                                <?php else: ?>
                                 <?php foreach ($categories as $c): ?>
                                 <tr>
                                     <td><?= $c['id'] ?></td>
@@ -62,6 +71,7 @@
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>

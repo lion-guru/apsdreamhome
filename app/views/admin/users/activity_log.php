@@ -4,7 +4,7 @@ $logs = $logs ?? [];
 $total = $total ?? 0;
 $page = $page ?? 1;
 $total_pages = $total_pages ?? 1;
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 $actionIcons = [
     'user_created' => ['fas fa-user-plus', 'success'],

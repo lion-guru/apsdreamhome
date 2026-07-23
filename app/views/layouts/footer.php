@@ -15,7 +15,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <div class="container">
         <div class="row text-center">
             <div class="col-6 col-md-3 mb-2 mb-md-0">
-                <div class="fs-3 fw-bold">15+</div>
+                <div class="fs-3 fw-bold">4+</div>
                 <div class="small opacity-75"><?= __('years_experience') ?></div>
             </div>
             <div class="col-6 col-md-3 mb-2 mb-md-0">
@@ -170,6 +170,9 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
 <!-- APS Premium Animations (scroll reveal + card tilt) -->
 <script src="<?php echo BASE_URL; ?>/assets/js/premium-animations.js"></script>
+<!-- APS Voice Booking Widget -->
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/voice-widget.css">
+<script src="<?php echo BASE_URL; ?>/assets/js/voice-widget.js" defer></script>
 
 <script>
 // Newsletter Form Handler

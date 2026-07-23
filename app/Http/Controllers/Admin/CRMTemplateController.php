@@ -72,11 +72,16 @@ class CRMTemplateController extends AdminController
     public function edit($id)
     {
         $this->requireAdmin();
+        $id = (int)$id;
         try {
             $db = Database::getInstance()->getConnection();
-            $template = $db->query("SELECT * FROM email_templates WHERE id = $id")->fetch(\PDO::FETCH_ASSOC);
+            $stmt = $db->prepare("SELECT * FROM email_templates WHERE id = ?");
+            $stmt->execute([$id]);
+            $template = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$template) {
-                $template = $db->query("SELECT * FROM sms_templates WHERE id = $id")->fetch(\PDO::FETCH_ASSOC);
+                $stmt = $db->prepare("SELECT * FROM sms_templates WHERE id = ?");
+                $stmt->execute([$id]);
+                $template = $stmt->fetch(\PDO::FETCH_ASSOC);
             }
         } catch (\Throwable $e) {
             $template = null;

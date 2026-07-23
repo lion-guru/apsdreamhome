@@ -548,13 +548,11 @@ class LegalDocumentService
     public function updateDocumentStatus(int $id, string $status): array
     {
         try {
-            $extra = '';
-            if ($status === 'signed') {
-                $extra = ", signed_by_customer = 1, signed_at = NOW()";
-            } elseif ($status === 'final') {
-                $extra = "";
+            $valid = ['active', 'inactive'];
+            if (!in_array($status, $valid, true)) {
+                $status = 'active';
             }
-            $this->db->prepare("UPDATE legal_documents SET status = ?{$extra} WHERE id = ?")->execute([$status, $id]);
+            $this->db->prepare("UPDATE legal_documents SET status = ? WHERE id = ?")->execute([$status, $id]);
             return ['success' => true];
         } catch (\Exception $e) {
             error_log('LegalDocumentService::updateDocumentStatus error: ' . $e->getMessage());
@@ -588,6 +586,57 @@ class LegalDocumentService
             $this->db->prepare("UPDATE legal_documents SET kyc_verified = 1, kyc_verified_at = NOW(), kyc_verified_by = ? WHERE id = ?")->execute([$verifiedBy, $id]);
             return ['success' => true];
         } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Sign a document digitally
+     * Creates a record in booking_document_signatures table
+     */
+    public function signDocument(int $documentId, array $signatureData): array
+    {
+        try {
+            $this->db->beginTransaction();
+            
+            // Check if document exists
+            $doc = $this->getDocumentById($documentId);
+            if (!$doc) {
+                return ['success' => false, 'error' => 'Document not found'];
+            }
+            
+            // Insert signature record
+            $stmt = $this->db->prepare("
+                INSERT INTO booking_document_signatures 
+                (document_id, booking_id, customer_id, signature_data, signature_type, signed_at, ip_address, user_agent, video_consent, video_url)
+                VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE
+                    signature_data = VALUES(signature_data),
+                    signature_type = VALUES(signature_type),
+                    signed_at = VALUES(signed_at),
+                    video_consent = VALUES(video_consent),
+                    video_url = VALUES(video_url)
+            ");
+            $stmt->execute([
+                $documentId,
+                $doc['entity_id'] ?? 0,
+                $doc['customer_id'] ?? null,
+                $signatureData['signature_data'] ?? '',
+                $signatureData['signature_type'] ?? 'digital',
+                $signatureData['ip_address'] ?? '',
+                $signatureData['user_agent'] ?? '',
+                !empty($signatureData['video_consent']) ? 1 : 0,
+                $signatureData['video_url'] ?? null,
+            ]);
+            
+            // Update document status to signed
+            $this->db->prepare("UPDATE legal_documents SET status = 'active' WHERE id = ?")->execute([$documentId]);
+            
+            $this->db->commit();
+            return ['success' => true, 'document' => ['id' => $documentId, 'status' => 'signed']];
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            error_log('LegalDocumentService::signDocument error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

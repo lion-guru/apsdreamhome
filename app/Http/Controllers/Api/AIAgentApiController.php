@@ -34,6 +34,15 @@ class AIAgentApiController extends BaseController
     }
 
     /**
+     * API endpoints are token/session authenticated (not CSRF-cookie based),
+     * so skip the BaseController CSRF check for all POST routes here.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
+    /**
      * POST /api/v2/mobile/ai-agent/chat
      * AI chat — send message, get intelligent response
      */
@@ -65,8 +74,13 @@ class AIAgentApiController extends BaseController
             if (empty($response)) {
                 // Fallback to SelfLearningAI
                 try {
-                    $selfLearning = SelfLearningAI::getInstance();
-                    $response = $selfLearning->respond($message, $userId);
+                    $sessionId = session_id() ?: ('mobile_' . ($userId ?? 'guest'));
+                    $selfLearning = new SelfLearningAI($sessionId, $userId ? (int) $userId : null);
+                    $slResult = $selfLearning->processMessage($message);
+                    $response = $slResult['response'] ?? $slResult['message'] ?? $slResult['text'] ?? '';
+                    if (empty($response)) {
+                        $response = $this->getFallbackResponse($message);
+                    }
                 } catch (\Throwable $e) {
                     $response = $this->getFallbackResponse($message);
                 }

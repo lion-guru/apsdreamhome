@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Custom Error Page for APS Dream Home
  * Handles all HTTP error codes with user-friendly messages
@@ -281,7 +281,7 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
 
             <?php if ($error_code === 404): ?>
                 <div class="error-search">
-                    <form action="/search" method="get">
+                    <form action="<?= BASE_URL ?>/search" method="get">
                         <input type="text" name="q" placeholder="<?= __('error_search_placeholder') ?>" aria-label="Search">
                         <button type="submit"><i class="fas fa-search"></i> <?= __('common_search') ?></button>
                     </form>

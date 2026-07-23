@@ -1,19 +1,19 @@
-<?php $pageTitle = 'Job Details'; ?>
+﻿<?php $pageTitle = 'Job Details'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-briefcase me-2"></i>Job Details</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/careers">Careers</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/careers">Careers</a></li>
                     <li class="breadcrumb-item active"><?= $job['title'] ?? 'Job' ?></li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/careers/edit/<?= $job['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
-                <a href="/admin/careers/applications?job_id=<?= $job['id'] ?? 0 ?>" class="btn btn-info btn-sm"><i class="fas fa-users me-1"></i>Applications (<?= $applicationCount ?? 0 ?>)</a>
-                <a href="/admin/careers" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+                <a href="<?= BASE_URL ?>/admin/careers/<?= $job['id'] ?? 0 ?>/edit" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
+                <a href="<?= BASE_URL ?>/admin/careers/applications?job_id=<?= $job['id'] ?? 0 ?>" class="btn btn-info btn-sm"><i class="fas fa-users me-1"></i>Applications (<?= $applicationCount ?? 0 ?>)</a>
+                <a href="<?= BASE_URL ?>/admin/careers" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
             </div>
         </div>
     </div>

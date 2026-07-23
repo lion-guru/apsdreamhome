@@ -1,14 +1,7 @@
 <?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
 <style>
 :root { --primary: #0d9488; --secondary: #ff6f00; --accent: #00c853; }
-.interior-hero {
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d9488 100%);
-    color: #fff; padding: 100px 0 80px; position: relative; overflow: hidden;
-}
-.interior-hero::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle fill="rgba(255,255,255,0.03)" cx="50" cy="50" r="40"/><circle fill="rgba(255,255,255,0.03)" cx="150" cy="150" r="60"/><circle fill="rgba(255,255,255,0.02)" cx="180" cy="30" r="30"/></svg>') repeat;
-}
+
 .service-card { border: none; border-radius: 16px; transition: all 0.3s ease; background: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.08); height: 100%; padding: 2rem; }
 .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
 .service-card .icon-wrap { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 1rem; }
@@ -27,27 +20,27 @@
 .tool-card:hover { border-color: #0d9488; background: #f0fdfa; }
 </style>
 
-<section class="interior-hero">
-    <div class="container position-relative">
+<section class="hero-premium pt-5 pb-5">
+    <div class="container position-relative premium-reveal fade-up z-2">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <span class="badge bg-warning text-dark mb-3 px-3 py-2"><i class="fas fa-palette me-1"></i> <?= __('id_hero_badge') ?></span>
-                <h1 class="display-4 fw-bold mb-4"><?= __('id_hero_title') ?><br><span class="text-warning"><?= __('id_hero_title_span') ?></span></h1>
-                <p class="lead mb-4 fs-5 opacity-90"><?= __('id_hero_desc') ?></p>
+                <span class="capsule-badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 mb-3 px-3 py-2"><i class="fas fa-palette me-1"></i> <?= __('id_hero_badge') ?></span>
+                <h1 class="display-4 fw-bold text-white mb-4"><?= __('id_hero_title') ?><br><span class="text-warning"><?= __('id_hero_title_span') ?></span></h1>
+                <p class="lead text-white-50 mb-4 fs-5"><?= __('id_hero_desc') ?></p>
                 <div class="d-flex gap-3 flex-wrap">
-                    <a href="#contact-form" class="btn btn-warning btn-lg px-4"><i class="fas fa-pen-fancy me-2"></i><?= __('id_free_consultation') ?></a>
+                    <a href="#contact-form" class="btn btn-premium px-4 py-2"><i class="fas fa-pen-fancy me-2"></i><?= __('id_free_consultation') ?></a>
                     <a href="#services" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-list me-2"></i><?= __('id_our_services') ?></a>
                     <a href="#tools" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-calculator me-2"></i><?= __('id_free_tools') ?></a>
                 </div>
                 <div class="row mt-5 g-3">
-                    <div class="col-4"><h3 class="text-warning mb-0">200+</h3><small><?= __('id_projects_done') ?></small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">10+</h3><small><?= __('id_designers') ?></small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">98%</h3><small><?= __('id_satisfaction') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">200+</h3><small class="text-white-50"><?= __('id_projects_done') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">10+</h3><small class="text-white-50"><?= __('id_designers') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">98%</h3><small class="text-white-50"><?= __('id_satisfaction') ?></small></div>
                 </div>
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="position-relative">
-                    <img loading="lazy" src="https://img.freepik.com/free-photo/living-room-interior-design_23-2148892625.jpg" alt="Interior Design" class="img-fluid rounded-4 shadow-lg">
+                    <img loading="lazy" src="https://img.freepik.com/free-photo/living-room-interior-design_23-2148892625.jpg" alt="Interior Design" class="img-fluid rounded-4 shadow-lg glass-panel p-2">
                     <div class="position-absolute bottom-0 end-0 bg-white text-dark p-3 rounded-3 m-3 shadow">
                         <i class="fas fa-star text-warning me-1"></i> <?= __('id_award_winning') ?>
                     </div>

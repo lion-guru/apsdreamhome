@@ -100,7 +100,7 @@ document.getElementById('propertyForm').addEventListener('submit', async (e) => 
     descriptionDiv.textContent = '';
 
     try {
-        const response = await fetch('<?= BASE_URL ?>api/ai/generate-description', {
+        const response = await fetch('<?= BASE_URL ?>/ai/content/description', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

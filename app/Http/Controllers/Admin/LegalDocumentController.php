@@ -19,7 +19,7 @@ class LegalDocumentController extends AdminController
             $pdo = method_exists($db, 'getConnection') ? $db->getConnection() : $db;
             $this->docService = new LegalDocumentService($pdo);
             $this->aiService = new LegalAIService($this->docService);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->docService = null;
             $this->aiService = null;
         }

@@ -38,7 +38,7 @@ $featuredProperties = [
                         <div class="h4 text-primary">₹<?= $property['price'] ?></div>
                     </div>
                     <div class="card-footer bg-white border-0 pb-3">
-                        <a href="/apsdreamhome/properties" class="btn btn-primary w-100"><?= __('featured_view_details') ?></a>
+                        <a href="<?= BASE_URL ?>/properties" class="btn btn-primary w-100"><?= __('featured_view_details') ?></a>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Scheduler Health';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $health = $health ?? ['worker_status' => 'unknown', 'queue_size' => 0, 'last_heartbeat' => '', 'memory_usage' => 0, 'uptime' => 0, 'tasks_processed' => 0, 'failed_tasks' => 0];
 ?>
 <div class="container-fluid">

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'GST E-Filing';
 ob_start();
 ?>
@@ -7,7 +7,7 @@ ob_start();
         <h4 class="mb-1"><i class="fas fa-file-alt me-2 text-primary"></i><?= htmlspecialchars($page_title) ?></h4>
         <span class="text-muted">FY <?= htmlspecialchars($fy) ?></span>
     </div>
-    <a href="/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
+    <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
 
 <?php if (!empty($_SESSION['flash_success'])): ?>
@@ -56,7 +56,7 @@ ob_start();
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-export me-2 text-primary"></i>Generate GSTR-1</h6></div>
             <div class="card-body aps-cp-card-body">
-                <form method="POST" action="/admin/efiling/gst/gstr1">
+                <form method="POST" action="<?= BASE_URL ?>/admin/efiling/gst/gstr1">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="row g-2 mb-3">
                         <div class="col-6">
@@ -81,7 +81,7 @@ ob_start();
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-file-export me-1"></i>Generate GSTR-1 JSON</button>
-                    <a href="/admin/efiling/gst/export/gstr1?fy=<?= urlencode($fy) ?>&month=<?= (int)$month ?>&year=<?= (int)$year ?>" class="btn btn-sm btn-outline-success ms-2"><i class="fas fa-download me-1"></i>Export GSTR-1 JSON</a>
+                    <a href="<?= BASE_URL ?>/admin/efiling/gst/export/gstr1?fy=<?= urlencode($fy) ?>&month=<?= (int)$month ?>&year=<?= (int)$year ?>" class="btn btn-sm btn-outline-success ms-2"><i class="fas fa-download me-1"></i>Export GSTR-1 JSON</a>
                 </form>
             </div>
         </div>
@@ -90,7 +90,7 @@ ob_start();
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-invoice me-2 text-warning"></i>Generate GSTR-3B</h6></div>
             <div class="card-body aps-cp-card-body">
-                <form method="POST" action="/admin/efiling/gst/gstr3b">
+                <form method="POST" action="<?= BASE_URL ?>/admin/efiling/gst/gstr3b">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="row g-2 mb-3">
                         <div class="col-6">
@@ -115,7 +115,7 @@ ob_start();
                         </div>
                     </div>
                     <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-file-export me-1"></i>Generate GSTR-3B JSON</button>
-                    <a href="/admin/efiling/gst/export/gstr3b?fy=<?= urlencode($fy) ?>&month=<?= (int)$month ?>&year=<?= (int)$year ?>" class="btn btn-sm btn-outline-success ms-2"><i class="fas fa-download me-1"></i>Export GSTR-3B JSON</a>
+                    <a href="<?= BASE_URL ?>/admin/efiling/gst/export/gstr3b?fy=<?= urlencode($fy) ?>&month=<?= (int)$month ?>&year=<?= (int)$year ?>" class="btn btn-sm btn-outline-success ms-2"><i class="fas fa-download me-1"></i>Export GSTR-3B JSON</a>
                 </form>
             </div>
         </div>
@@ -126,7 +126,7 @@ ob_start();
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white border-bottom d-flex justify-content-between">
         <h6 class="mb-0"><i class="fas fa-paper-plane me-2"></i>GST Filing Submissions</h6>
-        <a href="/admin/efiling/submissions?type=gstr1&fy=<?= urlencode($fy) ?>" class="btn btn-sm btn-outline-primary">View All</a>
+        <a href="<?= BASE_URL ?>/admin/efiling/submissions?type=gstr1&fy=<?= urlencode($fy) ?>" class="btn btn-sm btn-outline-primary">View All</a>
     </div>
     <div class="card-body p-0">
         <?php if (empty($submissions)): ?>
@@ -145,7 +145,7 @@ ob_start();
                             <td>₹<?= number_format($s['total_amount'], 0) ?></td>
                             <td><span class="badge bg-<?= $s['status'] === 'accepted' ? 'success' : ($s['status'] === 'rejected' ? 'danger' : ($s['status'] === 'submitted' ? 'primary' : 'secondary')) ?>"><?= ucfirst($s['status']) ?></span></td>
                             <td class="small"><?= htmlspecialchars($s['portal_reference'] ?? '-') ?></td>
-                            <td><a href="/admin/efiling/submissions/<?= $s['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a></td>
+                            <td><a href="<?= BASE_URL ?>/admin/efiling/submissions/<?= $s['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

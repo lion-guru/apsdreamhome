@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/glass_card.dart';
 
@@ -16,6 +19,8 @@ class _TeamPageState extends State<TeamPage>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  List<_TeamMember> _teamMembers = _defaultTeamMembers;
+  bool _isLoadingTeam = true;
 
   @override
   void initState() {
@@ -35,6 +40,97 @@ class _TeamPageState extends State<TeamPage>
           ),
         );
     _animationController.forward();
+    _loadTeam();
+  }
+
+  Future<void> _loadTeam() async {
+    try {
+      AppConstants.initBaseUrl();
+      final url = '${AppConstants.baseUrl}/api/v2/mobile/about';
+      final resp = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 10));
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data['success'] == true && data['data'] != null) {
+          final teamList = (data['data']['team'] ?? []) as List;
+          if (teamList.isNotEmpty) {
+            final colors = [
+              const Color(0xFF1A237E),
+              const Color(0xFF283593),
+              const Color(0xFF3949AB),
+              const Color(0xFF5C6BC0),
+              const Color(0xFF7986CB),
+              const Color(0xFF9FA8DA),
+              const Color(0xFFCE93D8),
+              const Color(0xFFB39DDB),
+            ];
+            final icons = [
+              Icons.business_rounded,
+              Icons.balance_rounded,
+              Icons.campaign_rounded,
+              Icons.account_balance_rounded,
+              Icons.gavel_rounded,
+              Icons.computer_rounded,
+              Icons.star_rounded,
+              Icons.lightbulb_rounded,
+            ];
+            final members = teamList.asMap().entries.map((e) {
+              final i = e.key;
+              final m = e.value;
+              final name = (m['name'] ?? '').toString();
+              final initials = name
+                  .split(' ')
+                  .map((w) => w.isNotEmpty ? w[0] : '')
+                  .join();
+              final expertiseRaw = m['expertise'];
+              List<String> expertiseList = [];
+              if (expertiseRaw is List) {
+                expertiseList = expertiseRaw.map((s) => s.toString()).toList();
+              } else if (expertiseRaw is String && expertiseRaw.isNotEmpty) {
+                try {
+                  final parsed = jsonDecode(expertiseRaw);
+                  if (parsed is List) {
+                    expertiseList = parsed.map((s) => s.toString()).toList();
+                  }
+                } catch (_) {
+                  expertiseList = [expertiseRaw];
+                }
+              }
+              return _TeamMember(
+                name,
+                (m['position'] ?? '').toString(),
+                (m['bio'] ?? '').toString(),
+                icons[i % icons.length],
+                colors[i % colors.length],
+                linkedIn: (m['linkedin'] ?? '').toString().isNotEmpty
+                    ? m['linkedin'].toString()
+                    : null,
+                twitter: (m['facebook_url'] ?? '').toString().isNotEmpty
+                    ? m['facebook_url'].toString()
+                    : null,
+                email: null,
+                phone: null,
+                initials: initials.length > 2
+                    ? initials.substring(0, 2)
+                    : initials,
+                expertise: expertiseList.isNotEmpty
+                    ? expertiseList
+                    : ['Real Estate'],
+              );
+            }).toList();
+            if (mounted) {
+              setState(() {
+                _teamMembers = members;
+                _isLoadingTeam = false;
+              });
+            }
+            return;
+          }
+        }
+      }
+    } catch (_) {}
+    if (mounted) setState(() => _isLoadingTeam = false);
   }
 
   @override
@@ -43,7 +139,7 @@ class _TeamPageState extends State<TeamPage>
     super.dispose();
   }
 
-  static const _teamMembers = [
+  static const _defaultTeamMembers = [
     _TeamMember(
       'Abhaay Singh',
       'Founder & Director',

@@ -22,7 +22,7 @@ class CompanyLoanController extends AdminController
             if (method_exists($this->db, 'getPdo')) {
                 $this->db = $this->db->getPdo();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->db = null;
         }
         $this->loanService = new CompanyLoanService($this->db);
@@ -44,7 +44,7 @@ class CompanyLoanController extends AdminController
             $this->data['offers'] = $this->loanService->getOffers();
 
             $this->render('admin/loans/company/index', $this->data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to load loan dashboard: ' . $e->getMessage());
             $this->redirect('/admin/dashboard');
         }
@@ -80,7 +80,7 @@ class CompanyLoanController extends AdminController
                 $this->setFlash('error', $result['error']);
                 $this->redirect('/admin/company-loans/create');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error creating loan: ' . $e->getMessage());
             $this->redirect('/admin/company-loans/create');
         }
@@ -113,7 +113,7 @@ class CompanyLoanController extends AdminController
             $this->data['early_settlement'] = $earlySettlement;
 
             $this->render('admin/loans/company/detail', $this->data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading loan: ' . $e->getMessage());
             $this->redirect('/admin/company-loans');
         }
@@ -131,7 +131,7 @@ class CompanyLoanController extends AdminController
             } else {
                 $this->setFlash('error', $result['error']);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error disbursing loan: ' . $e->getMessage());
         }
         $this->redirect('/admin/company-loans/' . $id);
@@ -220,7 +220,7 @@ class CompanyLoanController extends AdminController
             } else {
                 $this->setFlash('error', $result['error']);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error generating document: ' . $e->getMessage());
         }
         $this->redirect('/admin/company-loans/' . $id);
@@ -243,7 +243,7 @@ class CompanyLoanController extends AdminController
             header('Content-Type: text/html; charset=utf-8');
             echo $doc['content'];
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error viewing document');
             $this->redirect('/admin/company-loans');
         }

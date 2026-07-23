@@ -31,7 +31,7 @@ try {
     
     echo "\nMigration completed successfully.\n";
     
-} catch (Exception $e) {
+} catch (\Exception $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
     exit(1);
 }

@@ -80,7 +80,13 @@ ob_start();
                     </thead>
                     <tbody>
                         <?php if (empty($reviews)): ?>
-                            <tr><td colspan="9" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No reviews yet</td></tr>
+                            <tr>
+                                <td colspan="9" class="text-center py-5">
+                                    <i class="fas fa-star fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <h5 class="text-muted">No reviews yet</h5>
+                                    <p class="text-muted mb-3">Customer reviews will appear here once buyers start sharing feedback about their property experience.</p>
+                                </td>
+                            </tr>
                         <?php else: ?>
                             <?php foreach ($reviews as $r): ?>
                                 <tr>
@@ -167,7 +173,16 @@ ob_start();
                     </thead>
                     <tbody>
                         <?php if (empty($testimonials)): ?>
-                            <tr><td colspan="9" class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted" aria-hidden="true"></i>No testimonials yet</td></tr>
+                            <tr>
+                                <td colspan="9" class="text-center py-5">
+                                    <i class="fas fa-quote-left fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                    <h5 class="text-muted">No testimonials yet</h5>
+                                    <p class="text-muted mb-3">Add customer testimonials to build trust and showcase your best property experiences.</p>
+                                    <a href="<?= BASE_URL ?>/admin/testimonials/create" class="btn btn-primary">
+                                        <i class="fas fa-plus me-1"></i> Add Testimonial
+                                    </a>
+                                </td>
+                            </tr>
                         <?php else: ?>
                             <?php foreach ($testimonials as $t): ?>
                                 <tr>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Admin Layout Management Interface
 // Auth handled by LayoutController constructor (calls requireAdmin())
 // Data passed from LayoutController::layoutManager() — settings already loaded
@@ -49,7 +49,7 @@ $settings = $settings ?? [
                 <h1 class="mb-4"><i class="fas fa-palette me-2"></i>Layout Manager</h1>
 
 
-                <form method="POST" action="/admin/layout-manager">
+                <form method="POST" action="<?= BASE_URL ?>/admin/layout-manager">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="row">
                         <!-- Layout Type Selection -->
@@ -139,7 +139,7 @@ $settings = $settings ?? [
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-save me-2"></i>Save Layout Settings
                             </button>
-                            <a href="/admin/dashboard" class="btn btn-secondary btn-lg ms-2">
+                            <a href="<?= BASE_URL ?>/admin/dashboard" class="btn btn-secondary btn-lg ms-2">
                                 <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
                             </a>
                         </div>

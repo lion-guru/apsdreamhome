@@ -5,7 +5,7 @@
 
 /* ===== HERO BACKGROUND IMAGE ===== */
 .hero.hero-with-bg {
-  background-image: url('/apsdreamhome/assets/images/hero/hero-bg.jpg') !important;
+  background-image: url('/apsdreamhome/assets/images/hero/luxury-home-1.jpg') !important;
 }
 
 /* ===== HERO SECTION ===== */
@@ -596,6 +596,11 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 12px;
+}
+
+.tool-icon-circle {
+  width: 70px;
+  height: 70px;
 }
 
 .invest-card .progress {
@@ -1281,6 +1286,314 @@
   color: #ef4444;
 }
 
+/* ============================================================
+   COLONIES PAGE — Full card styles for colonies.php
+   ============================================================ */
+
+/* Stats Row */
+.stats-section .stat-counter {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.stats-section .stat-counter .stat-number {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800;
+  color: #1e293b;
+  display: block;
+}
+
+.stats-section .stat-counter .stat-label {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: block;
+  margin-top: 4px;
+}
+
+/* Filter Buttons */
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding: 8px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.filter-btn {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  color: #0d9488;
+  border-color: #0d9488;
+  background: rgba(13, 148, 136, 0.05);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #0d9488, #0f766e);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 3px 12px rgba(13, 148, 136, 0.3);
+}
+
+/* Colony Card — Image wrapper */
+.colony-item .colony-card {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.colony-item .colony-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+.colony-item .colony-image {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.colony-item .colony-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.colony-item .colony-card:hover .colony-image img {
+  transform: scale(1.06);
+}
+
+.colony-item .colony-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+.colony-item .colony-overlay .status-badge {
+  background: #10b981;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 50px;
+  letter-spacing: 0.3px;
+}
+
+/* Colony Content (below image) */
+.colony-item .colony-content {
+  padding: 20px;
+}
+
+.colony-item .colony-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.colony-item .colony-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.colony-item .colony-location i {
+  color: #0d9488;
+  font-size: 0.8rem;
+}
+
+.colony-item .colony-description {
+  color: #64748b;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Highlight Tags */
+.colony-item .colony-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.colony-item .highlight-tag {
+  background: rgba(13, 148, 136, 0.08);
+  color: #0d9488;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+/* Specs Row */
+.colony-item .colony-specs {
+  display: flex;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 14px;
+}
+
+.colony-item .spec-item {
+  flex: 1;
+  text-align: center;
+}
+
+.colony-item .spec-item .spec-value {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.colony-item .spec-item .spec-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Amenities */
+.colony-item .colony-amenities {
+  margin-bottom: 16px;
+}
+
+.colony-item .colony-amenities h6 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.colony-item .colony-amenities h6 i {
+  color: #f59e0b;
+}
+
+.colony-item .amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.colony-item .amenity-item i {
+  color: #10b981;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+}
+
+/* Action Buttons */
+.colony-item .colony-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.colony-item .btn-view-plots {
+  background: linear-gradient(135deg, #0d9488, #0f766e);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.colony-item .btn-view-plots:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(13, 148, 136, 0.3);
+  color: #fff;
+}
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d9488 100%);
+  color: #fff;
+  padding: 5rem 0;
+  text-align: center;
+}
+
+.cta-section h2 {
+  color: #fff;
+  font-weight: 800;
+}
+
+.cta-section .lead {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ============================================================
+   COLONIES PAGE RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .filter-buttons {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 6px;
+  }
+  .filter-buttons::-webkit-scrollbar {
+    display: none;
+  }
+  .colony-item .colony-image {
+    height: 180px;
+  }
+  .colony-item .colony-specs {
+    gap: 8px;
+  }
+  .colony-item .spec-item .spec-value {
+    font-size: 0.85rem;
+  }
+  .colony-item .colony-actions {
+    flex-direction: column;
+  }
+  .colony-item .btn-view-plots,
+  .colony-item .btn-outline-primary {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
 /* ===== RESPONSIVE — HERO (Mobile Polish) ===== */
 @media (max-width: 768px) {
   .hero-modern .row.g-5 {
@@ -1303,4 +1616,389 @@
   .hero-search-glass .mb-3 {
     margin-bottom: 0.75rem !important;
   }
+}
+
+/* ============================================================
+   HOME.PAGE — Missing CSS Classes
+   ============================================================ */
+
+/* Scroll Reveal Animation */
+.premium-reveal,
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+.premium-reveal.revealed,
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Typing Cursor Blink */
+.typing-cursor::after {
+  content: '|';
+  animation: blink 0.8s step-end infinite;
+  font-weight: 300;
+}
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Gold Gradient Text */
+.gradient-text-gold {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Button Shine Effect */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  transform: rotate(25deg);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+.btn-shine:hover::after {
+  left: 120%;
+}
+
+/* Button Glow */
+.btn-glow {
+  transition: all 0.3s ease;
+}
+.btn-glow:hover {
+  box-shadow:
+    0 0 20px rgba(13, 148, 136, 0.3),
+    0 4px 16px rgba(13, 148, 136, 0.2);
+}
+
+/* Quick Link Card hover */
+.quick-link-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.quick-link-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+/* Section divider modern */
+.section-divider-modern {
+  width: 60px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #0d9488, #0f766e);
+  margin: 12px auto 0;
+}
+
+/* Trust card hover */
+.trust-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* EMI Donut Chart */
+.emi-donut-svg {
+  display: block;
+  margin: 0 auto;
+}
+.emi-donut-ring {
+  fill: none;
+  stroke: #334155;
+  stroke-width: 12;
+}
+.emi-donut-segment-principal {
+  fill: none;
+  stroke: #14b8a6;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 0.5s ease;
+}
+.emi-donut-segment-interest {
+  fill: none;
+  stroke: #f59e0b;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 0.5s ease;
+}
+.emi-donut-val {
+  fill: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.emi-donut-label {
+  fill: rgba(255, 255, 255, 0.6);
+  font-size: 6px;
+  text-anchor: middle;
+}
+
+/* Float animation */
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+/* Glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+}
+
+/* ===== UTILITY: Icon Colors (replaces inline style="color:..." on <i> elements) ===== */
+.iu-emerald {
+  color: #10b981;
+}
+.iu-amber {
+  color: #f59e0b;
+}
+.iu-teal {
+  color: #0d9488;
+}
+.iu-teal-light {
+  color: #14b8a6;
+}
+.iu-navy {
+  color: var(--premium-navy);
+}
+.iu-red {
+  color: #ef4444;
+}
+.iu-blue {
+  color: #3b82f6;
+}
+.iu-pink {
+  color: #ec4899;
+}
+.iu-indigo {
+  color: #6366f1;
+}
+.iu-cyan {
+  color: #06b6d4;
+}
+.iu-gold {
+  color: var(--premium-gold);
+}
+.iu-green {
+  color: #22c55e;
+}
+
+/* ===== UTILITY: Section background helpers ===== */
+.bg-premium-navy {
+  background: var(--premium-navy);
+}
+
+/* ===== UTILITY: Text size helpers ===== */
+.text-xs-sm {
+  font-size: 0.8rem;
+}
+.text-subtitle {
+  font-size: 1.1rem;
+}
+
+/* ===== UTILITY: Layout helpers ===== */
+.checklist-flex {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+.colony-img-height {
+  height: 220px;
+}
+.section-desc-max {
+  max-width: 600px;
+}
+.section-heading-navy {
+  color: var(--premium-navy);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+.progress-thin {
+  height: 6px;
+}
+
+/* ===== UTILITY: Gradient text ===== */
+.gradient-text-gold {
+  background: linear-gradient(135deg, #d4af37, #aa8822);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-text-teal {
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-text-amber {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== UTILITY: Glass / overlay helpers ===== */
+.glass-header-border {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+.colony-overlay-gradient {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+}
+.hero-bg-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== UTILITY: Capsule badges ===== */
+.capsule-green {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+.capsule-teal {
+  background: rgba(13, 148, 136, 0.1);
+  color: #0d9488;
+}
+.capsule-amber {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+.capsule-navy {
+  background: rgba(15, 23, 42, 0.1);
+  color: var(--premium-navy);
+}
+
+/* ===== UTILITY: Colony status badges ===== */
+.badge-delivered {
+  background: var(--premium-emerald);
+}
+.badge-ongoing {
+  background: var(--premium-gold);
+}
+.badge-upcoming {
+  background: var(--premium-navy);
+}
+
+/* ===== UTILITY: Testimonial ===== */
+.testimonial-location {
+  color: var(--gray-400);
+}
+.testimonial-ticker-item {
+  color: var(--premium-navy);
+  font-size: 0.95rem;
+  height: 24px;
+  line-height: 24px;
+}
+.section-heading-lg {
+  color: var(--premium-navy);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+/* ===== UTILITY: Service icon colors ===== */
+.svc-icon-green {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+.svc-icon-red {
+  color: #ef4444;
+}
+.svc-icon-cyan {
+  color: #06b6d4;
+}
+
+/* ===== UTILITY: Construction grid ===== */
+.construction-img-wrap img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+.img-cover {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ===== UTILITY: Section description ===== */
+.section-desc {
+  max-width: 600px;
+}
+.section-subtitle {
+  font-size: 1.1rem;
+}
+
+/* ===== UTILITY: Modal ===== */
+.modal-premium {
+  border-radius: 16px;
+  overflow: hidden;
+}
+.modal-icon-circle {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+}
+.modal-header-teal {
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.9), rgba(15, 23, 42, 0.9));
+}
+.inquiry-form-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200) !important;
+  border-radius: var(--radius-md);
+}
+
+/* ===== UTILITY: EMI badge ===== */
+.badge-glass-light {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--premium-gold);
+}
+
+/* ===== UTILITY: Typing cursor ===== */
+.typing-cursor {
+  color: #14b8a6;
+}
+
+/* ===== UTILITY: No top pad ===== */
+.main-no-top-pad {
+  padding-top: 0 !important;
 }

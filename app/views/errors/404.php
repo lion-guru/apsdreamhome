@@ -23,7 +23,7 @@
         <div class="error-code">404</div>
         <div class="error-title">Page Not Found</div>
         <div class="error-desc">The page you're looking for doesn't exist or has been moved. Let us help you find your dream property!</div>
-        <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>" class="error-btn">
+        <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'); ?>" class="error-btn">
             <i class="fas fa-home"></i> Back to Home
         </a>
     </div>

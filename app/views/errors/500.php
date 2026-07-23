@@ -23,7 +23,7 @@
         <div class="error-code">500</div>
         <div class="error-title">Server Error</div>
         <div class="error-desc">Something went wrong on our end. We've been notified and are working on it. Please try again in a moment.</div>
-        <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>" class="error-btn">
+        <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'); ?>" class="error-btn">
             <i class="fas fa-home"></i> Back to Home
         </a>
     </div>

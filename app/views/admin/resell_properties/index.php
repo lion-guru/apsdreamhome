@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
+﻿<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1">Resell Properties</h1>
         <p class="text-muted mb-0">Manage all resell property listings</p>
@@ -102,7 +102,7 @@
                                 <td><span class="badge bg-primary"><?= ucfirst(htmlspecialchars($p['property_type'] ?? '')) ?></span></td>
                                 <td><?= htmlspecialchars($p['seller_name'] ?? $p['name'] ?? 'N/A') ?></td>
                                 <td><?= htmlspecialchars($p['location'] ?? $p['city_name'] ?? '') ?></td>
-                                <td><strong>₹<?= number_format((float)($p['price'] ?? 0)) ?></strong></td>
+                                    <td><strong>₹<?= number_format((float)($p['price'] ?? 0)) ?></strong></td>
                                 <td>
                                     <?php
                                     $statusColors = [
@@ -153,3 +153,4 @@
         <?php endif; ?>
     </div>
 </div>
+

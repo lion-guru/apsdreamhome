@@ -1252,3 +1252,46 @@ _40. **Dual AgentManager classes = confusion** — `app/Services/AI/Agents/Agent
 _31. **Mobile API column mismatches cause silent failures** — `getAboutInfo()` was querying `designation`, `photo_url`, `is_active` columns that don't exist in `team_members` table. The try/catch swallowed the error, returning empty team data to the app. Always verify column names match between API and DB schema._
 _32. **Chat-shared images aren't saved to filesystem** — When users share images in chat, they're embedded as attachments but not automatically saved to the project filesystem. Need to create upload mechanism or instruct user to save manually._
 _33. **`site_content` vs `team_members` dual-source for team data** — About page reads leaders from `site_content` table, Team page reads members from `team_members` table. Both must be updated separately when team data changes._
+---
+
+## Future AI Engine Candidates (External — NOT integrated, evaluate later)
+
+User mentioned these external AI/LLM model names for possible future evaluation as `AIGateway` engine options. They are NOT in the codebase and NOT currently wired. Current AI stack uses `AIGateway` → rule engine → self-learning → intent detector → Gemini Flash (free tier).
+
+| Name | What it is |
+|------|------------|
+| **yesakana** | Transliteration of **Sakana AI** (AI lab building small/specialized "model fusion" LLMs). |
+| **sakana** | **Sakana AI** — the company (Japanese for "fish"). Small efficient domain-specific models. |
+| **fugu** | Likely **Sakana AI "Fugu"** — Japanese-language LLM. |
+| **marlin** | Likely **Sakana AI "Marlin"** — Japanese/English embedding model family. |
+| **rokin** | Unrecognized — possible typo/private codename. Not a known public model. |
+| **llm jp4** | **LLM-jp** project 4th-gen Japanese open LLM (llm-jp-2/3/...). |
+| **sisha** | Model/agent codename (possibly from Japanese shisho = librarian). Not widely known. |
+
+ACTION: Before integrating any, verify availability, API/cost, and whether self-hosted (Ollama) or cloud. Log decision in this file.
+
+---
+
+## Incident Log (2026-07-20)
+
+### leads table data loss + recovery
+
+- **Root cause:** `app/Core/Database/Model.php` had NO `delete()` method. A `DELETE /api/leads/{id}` call fell through to the query builder with no WHERE → wiped ALL ~11,014 rows in `leads`.
+- **Fix:** Added scoped `delete()` to `Model` (lines ~312-319) — deletes only the model's primary key, guards on `exists()`. Prevents recurrence.
+- **Recovery:** Unrecoverable locally (MySQL `log_bin` OFF; both `backup_apsdreamhome_20260612.sql` and `backup_before_land_fix.sql` are structure-only dumps with 0 `leads` INSERTs). Table was empty.
+- **Reseed:** `scripts/seed_leads_testdata.php` created (400 realistic test leads with valid `assigned_to` FK to `users`). NOTE: these are TEST data, not original production leads. Re-run anytime: `php scripts/seed_leads_testdata.php`.
+- **Lesson:** Always verify `Model` has the method you call; a missing method that falls through to `__call`/`Builder` can drop entire tables. Add regression guard before any destructive endpoint test.
+
+### Mobile API endpoint hardening (2026-07-20 sweep, Batches 15-19)
+
+Fixed across `app/Http/Controllers/Api/*`:
+
+- `BaseApiController::model()` now auto-instantiates (was returning null → 500 on ReviewController/SharingController/FollowupController).
+- Added `inputWithJson()`/`getJsonInput()` to `BaseApiController` — framework `createFromGlobals()` fails to parse `php://input` JSON (consumed upstream), so JSON POSTs returned empty → 400/500.
+- `Request::getSession()` made defensive (referenced non-existent `App` class → 500).
+- Fixed `Model` insert patterns: use `::create()`/`::insert()` (no `save()`/`array ctor`).
+- Fixed `catch (Exception $e)` → `catch (\Exception $e)` in namespaced API controllers.
+- Created missing tables: `agent_reviews`, `traffic_stats`, `seo_metadata`, `lead_files`.
+- Routing: added/api-fixed DocumentAI, ESign, DigiLocker, LegalApi endpoints; fixed CommissionSimulation, Workflow, PushNotification, Communication, LegalApi base classes (CSRF skip + method visibility).
+- E2E suite: **153/153 passing** after all fixes.
+

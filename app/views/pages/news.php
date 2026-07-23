@@ -40,7 +40,7 @@
             <div class="col-12">
                 <div class="news-filter text-center">
                     <a href="<?= BASE_URL ?>/news" class="btn btn-primary me-2 mb-2"><?= __('news_all') ?></a>
-                    <?php foreach ($categories as $cat): ?>
+                    <?php foreach (($categories ?? []) as $cat): ?>
                         <a href="<?= BASE_URL ?>/news?category=<?= urlencode($cat) ?>"
                             class="btn btn-outline-primary me-2 mb-2">
                             <?= htmlspecialchars(ucwords($cat)) ?>
@@ -67,7 +67,9 @@
                             <div class="news-image position-relative">
                                 <?php
                                 $imagePath = !empty($news['image']) ? $news['image'] : 'assets/images/property-placeholder.jpg';
-                                $imageUrl = get_asset_url($imagePath);
+                                $imageUrl = (strpos($imagePath, 'http://') === 0 || strpos($imagePath, 'https://') === 0)
+                                    ? $imagePath
+                                    : get_asset_url($imagePath);
                                 ?>
                                 <img src="<?= htmlspecialchars($imageUrl) ?>"
                                     alt="<?= htmlspecialchars($news['title'] ?? '') ?>"
@@ -104,16 +106,55 @@
         <div class="newsletter-cta text-center mt-5 py-5 bg-light rounded-3">
             <h3><?= __('news_subscribe_title') ?></h3>
             <p class="text-muted mb-4"><?= __('news_subscribe_desc') ?></p>
-            <form class="newsletter-form" id="newsletterForm" onsubmit="event.preventDefault(); this.querySelector('button').textContent = 'Subscribed!'; this.querySelector('button').classList.replace('btn-primary','btn-success'); this.reset();">
+            <form class="newsletter-form" id="newsletterForm">
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <div class="input-group">
-                            <input type="email" class="form-control" placeholder="<?= __('newsletter_email_placeholder') ?>" required>
+                            <input type="email" class="form-control" name="email" placeholder="<?= __('newsletter_email_placeholder') ?>" required>
                             <button class="btn btn-primary" type="submit"><?= __('newsletter_subscribe_btn') ?></button>
                         </div>
+                        <div id="newsletterMsg" class="mt-2 small" style="display:none;"></div>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </main>
+<script>
+document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var btn = this.querySelector('button');
+    var msg = document.getElementById('newsletterMsg');
+    var email = this.querySelector('input[name="email"]').value;
+    btn.disabled = true;
+    btn.textContent = '...';
+    fetch('<?= BASE_URL ?>/api/newsletter', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: email})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+        msg.style.display = 'block';
+        if (d.success) {
+            msg.className = 'mt-2 small text-success';
+            msg.textContent = '✓ Subscribed successfully!';
+            btn.textContent = 'Subscribed!';
+            btn.classList.replace('btn-primary', 'btn-success');
+            this.reset();
+        } else {
+            msg.className = 'mt-2 small text-danger';
+            msg.textContent = d.message || 'Already subscribed or invalid email.';
+            btn.disabled = false;
+            btn.textContent = 'Subscribe';
+        }
+    }.bind(this))
+    .catch(function() {
+        msg.style.display = 'block';
+        msg.className = 'mt-2 small text-danger';
+        msg.textContent = 'Network error. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Subscribe';
+    });
+});
+</script>

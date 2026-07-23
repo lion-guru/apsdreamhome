@@ -65,7 +65,7 @@
                             <label class="form-label">Send To</label>
                             <input type="email" class="form-control" name="test_email" placeholder="your@email.com">
                         </div>
-                        <button type="button" class="btn btn-outline-primary w-100 btn-sm" onclick="alert('Test email functionality would send here')"><i class="fas fa-paper-plane me-1"></i>Send Test</button>
+                        <button type="button" class="btn btn-outline-primary w-100 btn-sm" onclick="sendTestEmail()"><i class="fas fa-paper-plane me-1"></i>Send Test</button>
                         <hr>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-2"></i>Save Settings</button>
                     </div>
@@ -95,3 +95,21 @@
         </div>
     </form>
 </div>
+
+<script>
+function sendTestEmail() {
+    var emailInput = document.querySelector('input[name="test_email"]');
+    var email = emailInput ? emailInput.value.trim() : '';
+    if (!email) { alert('Please enter a test email address.'); emailInput.focus(); return; }
+    var btn = event.target.closest('button');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Sending...';
+    fetch('<?= BASE_URL ?>admin/settings/email-config/test', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>') + '&test_email=' + encodeURIComponent(email)
+    }).then(function(r){return r.json()}).then(function(d){
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Send Test';
+        if (d.success) { alert('Test email sent successfully to ' + email); } else { alert('Failed: ' + (d.error || 'Unknown error')); }
+    }).catch(function(){ btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Send Test'; alert('Network error. Please try again.'); });
+}
+</script>

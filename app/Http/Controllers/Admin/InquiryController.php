@@ -76,7 +76,7 @@ class InquiryController extends AdminController
             $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM inquiries WHERE status = ?");
             $stmt->execute([$status]);
             return $stmt->fetch()['cnt'];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
     }
@@ -104,7 +104,7 @@ class InquiryController extends AdminController
                 $updateStmt = $this->db->prepare("UPDATE inquiries SET status = 'contacted', updated_at = NOW() WHERE id = ?");
                 $updateStmt->execute([$id]);
                 $inquiry['status'] = 'contacted';
-            } catch (Exception $e) { error_log('InquiryController view status update: ' . $e->getMessage()); }
+            } catch (\Exception $e) { error_log('InquiryController view status update: ' . $e->getMessage()); }
         }
 
         $data = ['inquiry' => $inquiry];
@@ -121,7 +121,7 @@ class InquiryController extends AdminController
                 $stmt = $this->db->prepare("UPDATE inquiries SET status = ?, updated_at = NOW() WHERE id = ?");
                 $stmt->execute([$status, $id]);
                 $this->setFlash('success', 'Status updated successfully');
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->setFlash('error', 'Failed to update status');
             }
         }
@@ -139,7 +139,7 @@ class InquiryController extends AdminController
             $stmt = $this->db->prepare("DELETE FROM inquiries WHERE id = ?");
             $stmt->execute([$id]);
             $this->setFlash('success', 'Inquiry deleted successfully');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to delete inquiry');
         }
         $this->redirect('/admin/inquiries');

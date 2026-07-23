@@ -33,7 +33,7 @@ class CFODashboardController extends AdminController
                     "SELECT COALESCE(SUM(payment_amount), 0) as total, COUNT(*) as count
                      FROM booking_payments WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
                 );
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $bp_revenue = ['total' => 0, 'count' => 0];
             }
 
@@ -63,21 +63,21 @@ class CFODashboardController extends AdminController
                     "SELECT COALESCE(SUM(payment_amount), 0) as total
                      FROM booking_payments WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
                 );
-            } catch (Exception $e) { $bp_sum = ['total' => 0]; }
+            } catch (\Exception $e) { $bp_sum = ['total' => 0]; }
 
             try {
                 $exp_sum = $this->db->fetchOne(
                     "SELECT COALESCE(SUM(amount), 0) as total
                      FROM expenses WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
                 );
-            } catch (Exception $e) { $exp_sum = ['total' => 0]; }
+            } catch (\Exception $e) { $exp_sum = ['total' => 0]; }
 
             try {
                 $comm_sum = $this->db->fetchOne(
                     "SELECT COALESCE(SUM(CASE WHEN status = 'paid' THEN amount END), 0) as total
                      FROM commissions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
                 );
-            } catch (Exception $e) { $comm_sum = ['total' => 0]; }
+            } catch (\Exception $e) { $comm_sum = ['total' => 0]; }
 
             $profit_analysis = [
                 'net_profit' => $bp_sum['total'] - $exp_sum['total'] - $comm_sum['total'],
@@ -133,7 +133,7 @@ class CFODashboardController extends AdminController
             ];
 
             return $this->render('admin/dashboards/cfo');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("CFO Dashboard Exception: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
             $this->loggingService->error("CFO Dashboard Error: " . $e->getMessage());
             $this->setFlash('error', 'Dashboard loading failed');
@@ -158,7 +158,7 @@ class CFODashboardController extends AdminController
                 GROUP BY DATE(payment_date)
                 ORDER BY date DESC"
             )->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Financial Analytics error: " . $e->getMessage());
             $analytics = [];
         }
@@ -184,7 +184,7 @@ class CFODashboardController extends AdminController
             )->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $breakdown]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Expense Breakdown error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }

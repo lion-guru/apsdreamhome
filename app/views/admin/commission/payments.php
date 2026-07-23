@@ -1,4 +1,4 @@
-
+﻿
 
 <div class="container-fluid">
     <div class="row">
@@ -6,7 +6,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-coins"></i> Payments</h2>
                 <div>
-                    <a href="/admin/commission" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Commission
                     </a>
                 </div>

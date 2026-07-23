@@ -188,7 +188,7 @@ $page_title = "SMS Dashboard";
         
         function loadStats() {
             // Fetch stats from API
-            fetch(`${baseUrl}/api/sms/stats`)
+            fetch(`${baseUrl}/admin/sms/stats`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('totalSent').textContent = data.total_sent || 0;
@@ -203,7 +203,7 @@ $page_title = "SMS Dashboard";
             const type = document.getElementById('typeFilter').value;
             const status = document.getElementById('statusFilter').value;
             
-            fetch(`${baseUrl}/api/sms/logs?type=${type}&status=${status}`)
+            fetch(`${baseUrl}/admin/sms/logs?type=${type}&status=${status}`)
                 .then(response => response.json())
                 .then(data => {
                     renderSMSLogs(data);

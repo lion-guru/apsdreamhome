@@ -83,7 +83,14 @@ $active_page = 'properties';
                 <tbody>
                     <?php if (empty($properties)): ?>
                         <tr>
-                            <td colspan="9" class="text-center">No properties found</td>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="fas fa-home fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No properties found</h5>
+                                <p class="text-muted mb-3">Add your first property listing to start showcasing plots, apartments, and commercial spaces to potential buyers.</p>
+                                <a href="<?= BASE_URL ?>/admin/properties/create" class="btn btn-primary">
+                                    <i class="fas fa-plus me-1"></i> Add Property
+                                </a>
+                            </td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($properties as $property): ?>
@@ -197,11 +204,11 @@ $active_page = 'properties';
 </div>
 <script>
 function bookProperty(id) {
-    window.location.href = '<?= BASE_URL ?>admin/bookings/create?property_id=' + id;
+    window.location.href = '<?= BASE_URL ?>/admin/bookings/create?property_id=' + id;
 }
 function confirmDelete(id) {
     var form = document.getElementById('deleteForm');
-    form.action = '<?= BASE_URL ?>admin/properties/' + id + '/destroy';
+    form.action = '<?= BASE_URL ?>/admin/properties/' + id + '/destroy';
     var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
     modal.show();
 }

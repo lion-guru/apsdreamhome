@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = 'Add New Site';
 $active_page = 'sites';
 ?>
@@ -7,7 +7,7 @@ $active_page = 'sites';
     <h1 class="h2">Add New Site</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-            <a href="/admin/sites" class="btn btn-outline-secondary">
+            <a href="<?= BASE_URL ?>/admin/sites" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left"></i> Back to Sites
             </a>
         </div>
@@ -17,7 +17,7 @@ $active_page = 'sites';
 <!-- Site Form -->
 <div class="card aps-cp-card">
     <div class="card-body aps-cp-card-body">
-        <form method="POST" action="/admin/sites">
+        <form method="POST" action="<?= BASE_URL ?>/admin/sites" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
             <div class="row">
@@ -144,11 +144,32 @@ $active_page = 'sites';
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <h5 class="mb-3"><i class="fas fa-star"></i> Amenities</h5>
+                    <h5 class="mb-3"><i class="fas fa-image"></i> Media</h5>
                     <div class="mb-3">
-                        <label for="amenities" class="form-label">Site Amenities</label>
-                        <textarea class="form-control" id="amenities" name="amenities" rows="4"></textarea>
-                        <div class="form-text">List of amenities available at the site (one per line)</div>
+                        <label for="image" class="form-label">Featured Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <div class="form-text">Recommended size: 800x600px</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <h5 class="mb-3"><i class="fas fa-star"></i> Site Details</h5>
+                    <div class="mb-3">
+                        <label for="amenities" class="form-label">Amenities (JSON array)</label>
+                        <textarea class="form-control" id="amenities" name="amenities" rows="3" placeholder='["Wide Roads", "24/7 Water Supply", "CCTV Security"]'></textarea>
+                        <div class="form-text">JSON array of amenities, or one per line (auto-converted to JSON)</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="key_highlights" class="form-label">Key Highlights (JSON array)</label>
+                        <textarea class="form-control" id="key_highlights" name="key_highlights" rows="3" placeholder='["Wide Roads (30-40 ft)", "Gated Community", "Underground Electricity"]'></textarea>
+                        <div class="form-text">JSON array of key project highlights, or one per line</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nearby_places" class="form-label">Nearby Places (JSON array of objects)</label>
+                        <textarea class="form-control" id="nearby_places" name="nearby_places" rows="4" placeholder='[{"name":"Railway Station","distance":"3-5 km","type":"railway"},{"name":"School","distance":"0.5-2 km","type":"school"}]'></textarea>
+                        <div class="form-text">JSON array with name, distance, type (railway/bus/school/hospital/market/temple/park/bank/airport/mall/college/gas)</div>
                     </div>
                 </div>
             </div>
@@ -157,7 +178,7 @@ $active_page = 'sites';
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="d-flex justify-content-between">
-                        <a href="/admin/sites" class="btn btn-outline-secondary">
+                        <a href="<?= BASE_URL ?>/admin/sites" class="btn btn-outline-secondary">
                             <i class="fas fa-times"></i> Cancel
                         </a>
                         <div>
@@ -194,6 +215,33 @@ $active_page = 'sites';
         const developedArea = document.getElementById('developed_area');
         if (developedArea.value === '0' || developedArea.value === '') {
             developedArea.value = this.value;
+        }
+    });
+
+    // Auto-convert newline-separated text to JSON array before submit
+    document.querySelector('form').addEventListener('submit', function(e) {
+        ['amenities', 'key_highlights'].forEach(function(fieldId) {
+            var el = document.getElementById(fieldId);
+            if (el && el.value.trim()) {
+                var val = el.value.trim();
+                try { JSON.parse(val); } catch(ex) {
+                    // Not JSON — convert newline-separated to JSON array
+                    var items = val.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+                    el.value = JSON.stringify(items);
+                }
+            }
+        });
+        // nearby_places: convert newline-separated "Name | Distance | Type" to JSON
+        var np = document.getElementById('nearby_places');
+        if (np && np.value.trim()) {
+            var val = np.value.trim();
+            try { JSON.parse(val); } catch(ex) {
+                var places = val.split('\n').map(function(s){ return s.trim(); }).filter(Boolean).map(function(line) {
+                    var parts = line.split('|').map(function(s){ return s.trim(); });
+                    return { name: parts[0] || line, distance: parts[1] || '', type: parts[2] || '' };
+                });
+                np.value = JSON.stringify(places);
+            }
         }
     });
 </script>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'TDS Certificates (Form 16A)';
 ob_start();
 ?>
@@ -7,7 +7,7 @@ ob_start();
         <h4 class="mb-1"><i class="fas fa-certificate me-2 text-info"></i><?= htmlspecialchars($page_title) ?></h4>
         <span class="text-muted">FY <?= htmlspecialchars($fy) ?></span>
     </div>
-    <a href="/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
+    <a href="<?= BASE_URL ?>/admin/efiling" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
 
 <!-- Filters -->
@@ -66,8 +66,8 @@ ob_start();
                             <td><span class="badge bg-<?= $c['status'] === 'sent' ? 'success' : ($c['status'] === 'generated' ? 'info' : 'secondary') ?>"><?= ucfirst($c['status']) ?></span></td>
                             <td class="small"><?= $c['issued_date'] ? date('d M Y', strtotime($c['issued_date'])) : '-' ?></td>
                             <td class="text-nowrap">
-                                <a href="/admin/efiling/tds/certificates/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a>
-                                <a href="/admin/efiling/tds/certificate/<?= $c['id'] ?>/download" class="btn btn-sm btn-success" title="Download Form 16A"><i class="fas fa-download me-1"></i>Form 16A</a>
+                                <a href="<?= BASE_URL ?>/admin/efiling/tds/certificates/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a>
+                                <a href="<?= BASE_URL ?>/admin/efiling/tds/certificate/<?= $c['id'] ?>/download" class="btn btn-sm btn-success" title="Download Form 16A"><i class="fas fa-download me-1"></i>Form 16A</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

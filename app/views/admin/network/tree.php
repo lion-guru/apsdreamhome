@@ -2,7 +2,7 @@
 $network_data = $network_data ?? [];
 $selected_associate = $selected_associate ?? 0;
 $page_title = $page_title ?? 'Network Tree';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <style>
         .tree-container { overflow-x: auto; padding: 20px; }

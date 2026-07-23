@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Collection Reconciliation';
 $page_heading = $page_heading ?? 'Cash Collection Reconciliation';
 $sessions = $sessions ?? [];
@@ -16,7 +16,7 @@ $filters = $filters ?? [];
             <span><i class="fas fa-play-circle"></i> Start New Reconciliation Session</span>
         </div>
         <div class="aps-cp-card-body">
-            <form method="POST" action="/admin/finance/reconciliation-collections/start" style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
+            <form method="POST" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections/start" style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <div class="aps-cp-form-group" style="flex:1;min-width:180px;">
                     <label class="aps-cp-form-label">Collector</label>
@@ -41,7 +41,7 @@ $filters = $filters ?? [];
     <!-- Filters -->
     <div class="aps-cp-card" style="margin-bottom:24px;">
         <div class="aps-cp-card-body">
-            <form method="GET" action="/admin/finance/reconciliation-collections" style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
+            <form method="GET" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections" style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
                 <div class="aps-cp-form-group" style="flex:1;min-width:150px;">
                     <label class="aps-cp-form-label">Status</label>
                     <select name="status" class="aps-cp-form-select">
@@ -115,7 +115,7 @@ $filters = $filters ?? [];
                                     </td>
                                     <td>
                                         <?php if ($s['status'] !== 'closed'): ?>
-                                            <form method="POST" action="/admin/finance/reconciliation-collections/close" style="display:inline;">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections/close" style="display:inline;">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="session_id" value="<?= $s['id'] ?>">
                                                 <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary" onclick="return confirm('Close this session?')"><i class="fas fa-lock"></i> Close</button>

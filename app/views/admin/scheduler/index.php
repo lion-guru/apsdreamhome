@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Initialize default values if not set
 $health = $health ?? [
     'healthy' => true,
@@ -14,13 +14,13 @@ $tasks = $tasks ?? [];
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">⏰ Task Scheduler</h1>
         <div>
-            <a href="/admin/scheduler/create" class="btn btn-primary me-2">
+            <a href="<?= BASE_URL ?>/admin/scheduler/create" class="btn btn-primary me-2">
                 <i class="fas fa-plus"></i> New Task
             </a>
-            <a href="/admin/scheduler/health" class="btn btn-info me-2">
+            <a href="<?= BASE_URL ?>/admin/scheduler/health" class="btn btn-info me-2">
                 <i class="fas fa-heartbeat"></i> Health
             </a>
-            <a href="/admin/scheduler/logs" class="btn btn-secondary">
+            <a href="<?= BASE_URL ?>/admin/scheduler/logs" class="btn btn-secondary">
                 <i class="fas fa-list"></i> Logs
             </a>
         </div>
@@ -91,6 +91,18 @@ $tasks = $tasks ?? [];
                         </tr>
                     </thead>
                     <tbody>
+                        <?php if (empty($tasks)): ?>
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <i class="fas fa-clock fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No scheduled tasks</h5>
+                                <p class="text-muted mb-3">Create your first cron task to automate recurring operations like lead follow-ups, commission calculations, and report generation.</p>
+                                <a href="<?= BASE_URL ?>/admin/scheduler/create" class="btn btn-primary">
+                                    <i class="fas fa-plus me-1"></i> Create Task
+                                </a>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($tasks as $task): ?>
                         <tr>
                             <td>
@@ -124,20 +136,20 @@ $tasks = $tasks ?? [];
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <a href="/admin/scheduler/tasks/<?= $task['id'] ?? 0 ?>" class="btn btn-sm btn-info">
+                                <a href="<?= BASE_URL ?>/admin/scheduler/tasks/<?= $task['id'] ?? 0 ?>" class="btn btn-sm btn-info">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="/admin/scheduler/tasks/edit/<?= $task['id'] ?? 0 ?>" class="btn btn-sm btn-primary">
+                                <a href="<?= BASE_URL ?>/admin/scheduler/tasks/edit/<?= $task['id'] ?? 0 ?>" class="btn btn-sm btn-primary">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="/admin/scheduler/tasks/run/<?= $task['id'] ?? 0 ?>" method="POST" style="display: inline;">
+                                <form action="<?= BASE_URL ?>/admin/scheduler/tasks/run/<?= $task['id'] ?? 0 ?>" method="POST" style="display: inline;">
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Run this task now?')">
                                         <i class="fas fa-play"></i>
                                     </button>
                                 </form>
                                 <?php if (!($task['is_system'] ?? true)): ?>
-                                <form action="/admin/scheduler/tasks/delete/<?= $task['id'] ?>" method="POST" style="display: inline;">
+                                <form action="<?= BASE_URL ?>/admin/scheduler/tasks/delete/<?= $task['id'] ?>" method="POST" style="display: inline;">
                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this task?')">
                                         <i class="fas fa-trash"></i>
@@ -147,6 +159,7 @@ $tasks = $tasks ?? [];
                             </td>
                         </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

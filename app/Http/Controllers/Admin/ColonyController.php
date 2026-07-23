@@ -53,8 +53,9 @@ class ColonyController extends AdminController
             isset($_POST['is_featured']) ? 1 : 0,
             isset($_POST['is_active']) ? 1 : 0,
         ]);
-        $this->setFlash('success', 'Colony created successfully');
-        $this->redirect('/admin/colonies');
+        $newId = $this->db->lastInsertId();
+        $this->setFlash('success', 'Colony "' . htmlspecialchars($name) . '" created! Next: add plots to start bookings.');
+        $this->redirect('/admin/colonies/' . $newId);
     }
 
     public function show($id)

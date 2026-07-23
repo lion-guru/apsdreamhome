@@ -30,7 +30,19 @@ class TwoFactorController extends BaseController
             }
         }
 
-        $userEmail = $_SESSION['user_email'] ?? 'user@example.com';
+        $userEmail = $_SESSION['user_email'] ?? '';
+        if (empty($userEmail)) {
+            // Fetch from DB if not in session
+            try {
+                $stmt = $this->db->prepare("SELECT email FROM users WHERE id = ?");
+                $stmt->execute([$userId]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $userEmail = $row['email'] ?? '';
+            } catch (\Throwable $e) {
+                // Use user ID as identifier if email unavailable
+                $userEmail = 'user_' . $userId . '@apsdreamhome.com';
+            }
+        }
         $qrUrl = $totp->qrCodeUrl($secret, $userEmail, 200);
         $manualKey = $secret;
         $otp = $totp->getOtp($secret);

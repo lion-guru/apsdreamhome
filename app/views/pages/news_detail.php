@@ -36,6 +36,18 @@
 <!-- Article Content -->
 <main class="py-5">
     <div class="container">
+        <?php if (empty($news)): ?>
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center py-5">
+                    <i class="far fa-newspaper fa-3x text-muted mb-3"></i>
+                    <h3><?= __('news_not_found', [], 'Article Not Found') ?></h3>
+                    <p class="text-muted mb-4"><?= __('news_not_found_desc', [], 'The article you are looking for does not exist or has been removed.') ?></p>
+                    <a href="<?= BASE_URL ?>/news" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i><?= __('news_back_to_news', [], 'Back to News') ?>
+                    </a>
+                </div>
+            </div>
+        <?php else: ?>
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <?php if (!empty($news['image'])): ?>
@@ -93,6 +105,7 @@
                 </div>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 </main>
 

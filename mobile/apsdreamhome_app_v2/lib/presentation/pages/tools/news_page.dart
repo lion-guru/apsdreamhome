@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/glass_card.dart';
 
@@ -12,9 +14,76 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   int _selectedTab = 0;
+  List<Map<String, dynamic>> _allPosts = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPosts();
+  }
+
+  Future<void> _loadPosts() async {
+    try {
+      AppConstants.initBaseUrl();
+      final url = '${AppConstants.baseUrl}/api/v2/mobile/blog';
+      final resp = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 10));
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data['success'] == true && data['data'] is List) {
+          final posts = (data['data'] as List).cast<Map<String, dynamic>>();
+          setState(() {
+            _allPosts = posts;
+            _loading = false;
+          });
+          return;
+        }
+      }
+    } catch (_) {}
+    // Fallback to mock data
+    setState(() {
+      _allPosts = _mockNews
+          .map(
+            (n) => {
+              'title': n.title,
+              'excerpt': n.excerpt,
+              'category': n.category,
+              'created_at': n.date,
+              'reading_time': n.readTime,
+              'views': n.views,
+              'featured_image': '',
+            },
+          )
+          .toList();
+      _loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final newsItems = _selectedTab == 0
+        ? _allPosts
+        : _selectedTab == 1
+        ? _allPosts
+              .where(
+                (p) =>
+                    (p['category'] ?? '').toString().toLowerCase() == 'company',
+              )
+              .toList()
+        : _allPosts
+              .where(
+                (p) =>
+                    (p['category'] ?? '').toString().toLowerCase().contains(
+                      'policy',
+                    ) ||
+                    (p['category'] ?? '').toString().toLowerCase().contains(
+                      'regulatory',
+                    ),
+              )
+              .toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('News & Updates'),
@@ -26,17 +95,42 @@ class _NewsPageState extends State<NewsPage> {
           _buildSearchBar(),
           _buildTabBar(),
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (_selectedTab == 0) ..._buildNewsFeed(),
-                  if (_selectedTab == 1) ..._buildAnnouncements(),
-                  if (_selectedTab == 2) ..._buildRegulatory(),
-                ],
-              ),
-            ),
+            child: _loading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: AppTheme.primaryColor,
+                    ),
+                  )
+                : newsItems.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.article_outlined,
+                          size: 64,
+                          color: Colors.grey.shade400,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No news found',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: newsItems
+                          .map((item) => _buildNewsCard(item))
+                          .toList(),
+                    ),
+                  ),
           ),
         ],
       ),
@@ -74,7 +168,7 @@ class _NewsPageState extends State<NewsPage> {
         children: [
           _buildTab('News', 0),
           const SizedBox(width: 8),
-          _buildTab('Announcements', 1),
+          _buildTab('Company', 1),
           const SizedBox(width: 8),
           _buildTab('Regulatory', 2),
         ],
@@ -111,31 +205,33 @@ class _NewsPageState extends State<NewsPage> {
     );
   }
 
-  List<Widget> _buildNewsFeed() {
-    return _newsItems.map((item) => _buildNewsCard(item)).toList();
-  }
-
-  List<Widget> _buildAnnouncements() {
-    return _announcements.map((item) => _buildNewsCard(item)).toList();
-  }
-
-  List<Widget> _buildRegulatory() {
-    return _regulatoryItems.map((item) => _buildNewsCard(item)).toList();
-  }
-
-  Widget _buildNewsCard(_NewsItem item) {
+  Widget _buildNewsCard(Map<String, dynamic> item) {
     final categoryColors = {
       'Company': const Color(0xFF1565C0),
       'Market': const Color(0xFFE65100),
       'Project': const Color(0xFF2E7D32),
       'Policy': const Color(0xFF6A1B9A),
+      'Legal': const Color(0xFF37474F),
+      'Finance': const Color(0xFF00838F),
       'Launch': const Color(0xFFC62828),
       'Event': const Color(0xFF00838F),
       'Achievement': const Color(0xFFF9A825),
       'Regulatory': const Color(0xFF37474F),
     };
 
-    final catColor = categoryColors[item.category] ?? Colors.grey;
+    final category = (item['category'] ?? '').toString();
+    final catColor = categoryColors[category] ?? Colors.grey;
+
+    String dateStr = '';
+    if (item['created_at'] != null &&
+        item['created_at'].toString().isNotEmpty) {
+      try {
+        final dt = DateTime.parse(item['created_at'].toString());
+        dateStr = '${dt.day} ${_monthName(dt.month)} ${dt.year}';
+      } catch (_) {
+        dateStr = item['created_at'].toString();
+      }
+    }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
@@ -156,7 +252,7 @@ class _NewsPageState extends State<NewsPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    item.category,
+                    category.isNotEmpty ? category : 'News',
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -166,7 +262,7 @@ class _NewsPageState extends State<NewsPage> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  item.date,
+                  dateStr,
                   style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
                 const Spacer(),
@@ -177,14 +273,14 @@ class _NewsPageState extends State<NewsPage> {
                 ),
                 const SizedBox(width: 3),
                 Text(
-                  item.readTime,
+                  '${item['reading_time'] ?? 5} min read',
                   style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
               ],
             ),
             const SizedBox(height: 10),
             Text(
-              item.title,
+              (item['title'] ?? '').toString(),
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
@@ -193,7 +289,7 @@ class _NewsPageState extends State<NewsPage> {
             ),
             const SizedBox(height: 6),
             Text(
-              item.excerpt,
+              (item['excerpt'] ?? '').toString(),
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey.shade600,
@@ -212,7 +308,7 @@ class _NewsPageState extends State<NewsPage> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  '${item.views} views',
+                  '${item['views'] ?? 0} views',
                   style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
                 const Spacer(),
@@ -236,6 +332,25 @@ class _NewsPageState extends State<NewsPage> {
       ),
     );
   }
+
+  String _monthName(int m) {
+    const months = [
+      '',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return months[m];
+  }
 }
 
 class _NewsItem {
@@ -245,7 +360,6 @@ class _NewsItem {
   final String title;
   final String excerpt;
   final int views;
-
   const _NewsItem({
     required this.category,
     required this.date,
@@ -256,138 +370,59 @@ class _NewsItem {
   });
 }
 
-const _newsItems = [
+const _mockNews = [
   _NewsItem(
     category: 'Market',
     date: '8 Jul 2026',
-    readTime: '3 min read',
-    title: 'Gurgaon Real Estate Sees 23% Price Appreciation in Q2 2026',
+    readTime: '3 min',
+    title: 'Gorakhpur Real Estate Market Update Q2 2026',
     excerpt:
-        'Top residential colonies in Gurgaon have witnessed significant price growth driven by infrastructure upgrades and new metro corridors.',
+        'Residential colonies in Gorakhpur have witnessed steady price growth driven by infrastructure upgrades.',
     views: 1245,
   ),
   _NewsItem(
     category: 'Project',
     date: '6 Jul 2026',
-    readTime: '2 min read',
+    readTime: '2 min',
     title: 'Budh Bihar Township Reaches 40% Construction Milestone',
     excerpt:
-        'The affordable housing project near Sector 103 is on track for December 2027 delivery with 200+ units already booked.',
+        'The affordable housing project near Sector 103 is on track for December 2027 delivery.',
     views: 892,
   ),
   _NewsItem(
     category: 'Company',
     date: '4 Jul 2026',
-    readTime: '4 min read',
+    readTime: '4 min',
     title: 'APS Dream Home Launches Customer Referral Program 2.0',
     excerpt:
-        'New tiered rewards system offers up to ₹5,000 per successful referral with Platinum tier benefits for top referrers.',
+        'New tiered rewards system offers up to ₹5,000 per successful referral.',
     views: 2103,
   ),
   _NewsItem(
-    category: 'Market',
+    category: 'Policy',
     date: '1 Jul 2026',
-    readTime: '5 min read',
+    readTime: '5 min',
     title: 'RERA Compliance Deadline Extended — What Homebuyers Should Know',
     excerpt:
-        'Haryana RERA extends compliance deadline for ongoing projects. Key implications for buyers and developers explained.',
+        'UP RERA extends compliance deadline for ongoing projects. Key implications for buyers.',
     views: 1567,
   ),
   _NewsItem(
     category: 'Project',
     date: '28 Jun 2026',
-    readTime: '2 min read',
+    readTime: '2 min',
     title: 'Raghunath Nagri Commercial Plaza Now Open for Booking',
     excerpt:
-        '12 premium commercial shops in the heart of Sector 37C with metro connectivity and high foot traffic.',
+        '12 premium commercial shops in the heart of Gorakhpur with metro connectivity.',
     views: 734,
   ),
   _NewsItem(
-    category: 'Event',
-    date: '25 Jun 2026',
-    readTime: '3 min read',
-    title: 'APS Dream Home Hosts Property Expo — Record 500+ Visitors',
-    excerpt:
-        'One-day expo at Leela Ambience saw 45+ on-the-spot bookings with special discounts and flexible payment plans.',
-    views: 1890,
-  ),
-];
-
-const _announcements = [
-  _NewsItem(
-    category: 'Company',
-    date: '9 Jul 2026',
-    readTime: '1 min read',
-    title: 'Holiday Notice: Office Closed on 15 July 2026',
-    excerpt:
-        'All APS Dream Home offices will remain closed on 15th July on account of local festival. Regular operations resume 16 July.',
-    views: 445,
-  ),
-  _NewsItem(
-    category: 'Achievement',
-    date: '5 Jul 2026',
-    readTime: '2 min read',
-    title: 'APS Dream Home Crosses ₹100 Crore Sales Milestone',
-    excerpt:
-        'A historic achievement driven by our loyal customers, dedicated associates, and world-class project quality.',
-    views: 3210,
-  ),
-  _NewsItem(
-    category: 'Launch',
-    date: '2 Jul 2026',
-    readTime: '2 min read',
-    title: 'New Mobile App v1.2 Released — Virtual Tours & RERA Lookup',
-    excerpt:
-        'Our updated mobile app now features virtual property tours, RERA compliance lookup, and 7 new financial calculators.',
-    views: 1876,
-  ),
-  _NewsItem(
-    category: 'Company',
-    date: '29 Jun 2026',
-    readTime: '1 min read',
-    title: 'New Associate Training Program — Batch of July 2026',
-    excerpt:
-        'Enroll in our comprehensive 3-day training program covering sales, documentation, and customer handling. Free for all associates.',
-    views: 567,
-  ),
-];
-
-const _regulatoryItems = [
-  _NewsItem(
-    category: 'Policy',
+    category: 'Regulatory',
     date: '7 Jul 2026',
-    readTime: '4 min read',
-    title:
-        'Haryana Government Revises Circle Rates — Impact on Property Prices',
+    readTime: '4 min',
+    title: 'UP Government Revises Circle Rates — Impact on Property Prices',
     excerpt:
-        'New circle rates effective August 2026 may increase property registration costs by 8-12% across Gurgaon districts.',
+        'New circle rates effective August 2026 may increase property registration costs by 8-12%.',
     views: 2890,
-  ),
-  _NewsItem(
-    category: 'Regulatory',
-    date: '3 Jul 2026',
-    readTime: '3 min read',
-    title: 'GST on Under-Construction Properties — Current Rates Explained',
-    excerpt:
-        'Updated GST rates for affordable (1%) and premium (5%) housing with input tax credit eligibility criteria.',
-    views: 1456,
-  ),
-  _NewsItem(
-    category: 'Policy',
-    date: '30 Jun 2026',
-    readTime: '5 min read',
-    title: 'PM Awas Yojana — CLSS Beneficiary List Expanded',
-    excerpt:
-        'Credit Linked Subsidy Scheme now includes middle-income groups up to ₹18L annual income. Check your eligibility.',
-    views: 2234,
-  ),
-  _NewsItem(
-    category: 'Regulatory',
-    date: '26 Jun 2026',
-    readTime: '3 min read',
-    title: 'New NOC Requirements for Property Registration in Haryana',
-    excerpt:
-        'Updated documentation requirements include mandatory No Objection Certificate from local municipal corporation for all transactions.',
-    views: 1678,
   ),
 ];

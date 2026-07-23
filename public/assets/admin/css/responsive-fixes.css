@@ -938,3 +938,15 @@ body {
     padding: 0 !important;
   }
 }
+
+/* ===== RESPONSIVE GRID FOR INLINE STYLES ===== */
+@media (max-width: 992px) {
+  [style*='grid-template-columns:repeat(4'] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 576px) {
+  [style*='grid-template-columns:repeat(4'] {
+    grid-template-columns: 1fr !important;
+  }
+}

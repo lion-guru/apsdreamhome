@@ -1,11 +1,11 @@
-<?php $page_title = $page_title ?? 'Voice CRM'; $recent = $recent ?? []; $stats = $stats ?? []; ?>
+﻿<?php $page_title = $page_title ?? 'Voice CRM'; $recent = $recent ?? []; $stats = $stats ?? []; ?>
 <style>.voice-card{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-radius:14px;padding:24px}.voice-stat{background:#fff;border-radius:14px;border:1px solid #f0f0f5;padding:16px;text-align:center}.voice-stat .val{font-size:24px;font-weight:800}.voice-stat .lbl{font-size:11px;color:#888;text-transform:uppercase}</style>
 
 <div class="container-fluid px-4 py-4">
     <div class="voice-card mb-4">
         <div class="d-flex justify-content-between align-items-center">
             <div><h4 class="fw-bold mb-1"><i class="fas fa-microphone me-2"></i>Voice CRM</h4><p class="mb-0 opacity-75">Hindi voice commands, call logging, and voice notes</p></div>
-            <a href="/admin/voice-bot" class="btn btn-light btn-lg"><i class="fas fa-phone-alt me-2"></i>Open Voice Bot</a>
+            <a href="<?= BASE_URL ?>/admin/voice-bot" class="btn btn-light btn-lg"><i class="fas fa-phone-alt me-2"></i>Open Voice Bot</a>
         </div>
     </div>
 

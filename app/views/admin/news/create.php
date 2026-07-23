@@ -1,8 +1,8 @@
-<?php $page_title = 'Create News Article'; $active_page = 'news'; ?>
+﻿<?php $page_title = 'Create News Article'; $active_page = 'news'; ?>
 
 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Create News Article</h1>
-    <a href="/admin/news" class="btn btn-outline-secondary">
+    <a href="<?= BASE_URL ?>/admin/news" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left"></i> Back
     </a>
 </div>
@@ -95,14 +95,14 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
 
-        fetch('/admin/news', {
+        fetch('<?= BASE_URL ?>/admin/news', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = '/admin/news';
+                    window.location.href = '<?= BASE_URL ?>/admin/news';
                 } else {
                     alert(data.error || 'Failed to create article');
                     submitBtn.disabled = false;

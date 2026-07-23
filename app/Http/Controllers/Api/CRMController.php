@@ -18,6 +18,11 @@ class CRMController extends BaseController
         $this->crm = new CRMService();
     }
 
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     private function getUser() {
         // Check session first (web admin panel)
         $userId = $_SESSION['user_id'] ?? null;

@@ -1,4 +1,4 @@
-<!-- Designation Form - Create/Edit -->
+﻿<!-- Designation Form - Create/Edit -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -8,8 +8,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="/admin/designations">Designations</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/designations">Designations</a></li>
                         <li class="breadcrumb-item active"><?= $designation ? 'Edit' : 'Create' ?></li>
                     </ol>
                 </div>
@@ -117,7 +117,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save mr-1"></i> <?= $designation ? 'Update Designation' : 'Create Designation' ?>
                             </button>
-                            <a href="/admin/designations" class="btn btn-secondary ml-2">Cancel</a>
+                            <a href="<?= BASE_URL ?>/admin/designations" class="btn btn-secondary ml-2">Cancel</a>
                         </div>
                     </form>
                 </div>

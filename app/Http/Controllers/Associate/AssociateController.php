@@ -39,14 +39,14 @@ class AssociateController extends AdminController
             
             // Calculate total earnings from commission ledger
             $totalEarnings = $this->db->fetchOne(
-                "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE associate_id = ?",
+                "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ?",
                 [$associateId]
             );
             
             // Calculate this month earnings
             $monthEarnings = $this->db->fetchOne(
-                "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger 
-                 WHERE associate_id = ? AND MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())",
+                 "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger 
+                 WHERE beneficiary_user_id = ? AND MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())",
                 [$associateId]
             );
             
@@ -66,7 +66,7 @@ class AssociateController extends AdminController
             $networkByLevel = $this->db->fetchAll(
                 "SELECT level, COUNT(*) as members,
                         SUM(CASE WHEN nt.associate_id IN (SELECT id FROM users WHERE status = 'active') THEN 1 ELSE 0 END) as active,
-                        COALESCE(SUM((SELECT SUM(amount) FROM mlm_commission_ledger WHERE associate_id = nt.associate_id)), 0) as commission
+                        COALESCE(SUM((SELECT SUM(amount) FROM mlm_commission_ledger WHERE beneficiary_user_id = nt.associate_id)), 0) as commission
                  FROM mlm_network_tree nt
                  WHERE nt.parent_id = ?
                  GROUP BY level
@@ -77,24 +77,24 @@ class AssociateController extends AdminController
             // Get recent commissions
             $recentCommissions = $this->db->fetchAll(
                 "SELECT commission_type as type, amount, created_at as date
-                 FROM mlm_commission_ledger
-                 WHERE associate_id = ?
-                 ORDER BY created_at DESC
-                 LIMIT 10",
+                  FROM mlm_commission_ledger
+                  WHERE beneficiary_user_id = ?
+                  ORDER BY created_at DESC
+                  LIMIT 10",
                 [$associateId]
             );
             
             // Get pending payouts
             $pendingPayouts = $this->db->fetchOne(
                 "SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger 
-                 WHERE associate_id = ? AND status = 'pending'",
+                 WHERE beneficiary_user_id = ? AND status = 'pending'",
                 [$associateId]
             );
             
             // Get rank progress
             $nextRank = $this->db->fetchOne(
-                "SELECT * FROM mlm_rank_benefits WHERE gbv_threshold > ? ORDER BY gbv_threshold ASC LIMIT 1",
-                [$rankInfo['gbv_threshold'] ?? 0]
+                "SELECT * FROM mlm_rank_benefits WHERE min_qualifying_volume > ? ORDER BY min_qualifying_volume ASC LIMIT 1",
+                [$rankInfo['min_qualifying_volume'] ?? 0]
             );
             
             // Calculate GBV (Group Business Volume) for current associate
@@ -118,7 +118,7 @@ class AssociateController extends AdminController
                     'direct_referrals' => $directReferrals['cnt'] ?? 0,
                     'pending_payouts' => $pendingPayouts['total'] ?? 0,
                     'gbv' => $gbv['gbv'] ?? 0,
-                    'next_rank_threshold' => $nextRank['gbv_threshold'] ?? 0,
+                    'next_rank_threshold' => $nextRank['min_qualifying_volume'] ?? 0,
                 ],
                 'network' => $networkByLevel,
                 'commissions' => $recentCommissions,

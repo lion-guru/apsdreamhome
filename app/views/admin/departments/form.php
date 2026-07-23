@@ -1,4 +1,4 @@
-<!-- Department Form - Create/Edit -->
+﻿<!-- Department Form - Create/Edit -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -8,8 +8,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="/admin/departments">Departments</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/departments">Departments</a></li>
                         <li class="breadcrumb-item active"><?= $department ? 'Edit' : 'Create' ?></li>
                     </ol>
                 </div>
@@ -107,7 +107,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save mr-1"></i> <?= $department ? 'Update Department' : 'Create Department' ?>
                             </button>
-                            <a href="/admin/departments" class="btn btn-secondary ml-2">Cancel</a>
+                            <a href="<?= BASE_URL ?>/admin/departments" class="btn btn-secondary ml-2">Cancel</a>
                         </div>
                     </form>
                 </div>

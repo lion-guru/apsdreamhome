@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../core/constants/app_constants.dart';
 
@@ -12,11 +14,9 @@ class PropertyValuationPage extends StatefulWidget {
 }
 
 class _PropertyValuationPageState extends State<PropertyValuationPage> {
-  // Input fields
   final _areaController = TextEditingController();
   final _addressController = TextEditingController();
 
-  // State
   String _selectedCity = 'Gorakhpur';
   String _selectedType = 'Plot';
   String _selectedLocation = 'Urban';
@@ -25,9 +25,9 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
   bool _isParkFacing = false;
   bool _isCalculating = false;
   Map<String, dynamic>? _valuationResult;
+  bool _loadingRates = true;
 
-  // Cities data with base rates
-  final Map<String, double> _cityRates = {
+  Map<String, double> _cityRates = {
     'Gorakhpur': 3000,
     'Lucknow': 4200,
     'Varanasi': 3800,
@@ -36,14 +36,12 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
     'Prayagraj': 3200,
   };
 
-  // Location multipliers
   final Map<String, double> _locationMultipliers = {
     'Urban': 1.3,
     'Semi-Urban': 1.0,
     'Rural': 0.7,
   };
 
-  // Recent sales nearby
   final List<Map<String, dynamic>> _recentSales = [
     {
       'area': 1000,
@@ -71,61 +69,126 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
     },
   ];
 
-  void _calculateValuation() {
+  @override
+  void initState() {
+    super.initState();
+    _loadCircleRates();
+  }
+
+  Future<void> _loadCircleRates() async {
+    try {
+      AppConstants.initBaseUrl();
+      final url =
+          '${AppConstants.baseUrl}/api/v2/mobile/stamp-duty/circle-rates';
+      final resp = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 10));
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data['success'] == true && data['data'] is List) {
+          final rates = data['data'] as List;
+          final Map<String, double> cityRates = {};
+          for (final rate in rates) {
+            final city = rate['city']?.toString() ?? '';
+            final ratePerSqft =
+                double.tryParse('${rate['rate_per_sqft'] ?? 0}') ?? 0;
+            if (city.isNotEmpty && ratePerSqft > 0) {
+              cityRates[city] = ratePerSqft;
+            }
+          }
+          if (cityRates.isNotEmpty) {
+            setState(() {
+              _cityRates = cityRates;
+              if (!_cityRates.containsKey(_selectedCity)) {
+                _selectedCity = _cityRates.keys.first;
+              }
+              _loadingRates = false;
+            });
+            return;
+          }
+        }
+      }
+    } catch (_) {}
+    setState(() => _loadingRates = false);
+  }
+
+  Future<void> _calculateValuation() async {
     if (_areaController.text.isEmpty) {
       _showError('Please enter plot area');
       return;
     }
 
+    setState(() => _isCalculating = true);
+
+    try {
+      AppConstants.initBaseUrl();
+      final url =
+          '${AppConstants.baseUrl}/api/v2/mobile/property-valuation/calculate';
+      final resp = await http
+          .post(
+            Uri.parse(url),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'city': _selectedCity,
+              'property_type': _selectedType.toLowerCase(),
+              'area_sqft': double.tryParse(_areaController.text) ?? 0,
+              'location_type': _selectedLocation.toLowerCase(),
+              'front_road_ft': _frontRoad,
+              'is_corner': _isCorner,
+              'is_park_facing': _isParkFacing,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data['success'] == true && data['data'] != null) {
+          final d = data['data'];
+          setState(() {
+            _isCalculating = false;
+            _valuationResult = {
+              'area':
+                  d['area_sqft'] ?? double.tryParse(_areaController.text) ?? 0,
+              'pricePerSqft': d['price_per_sqft'] ?? 0,
+              'estimatedPrice': d['estimated_price'] ?? 0,
+              'minPrice': d['min_price'] ?? 0,
+              'maxPrice': d['max_price'] ?? 0,
+              'confidence': d['confidence'] ?? 0.85,
+              'marketTrend': d['market_trend'] ?? 'upward',
+              'trendPercentage': d['trend_percentage'] ?? 8.5,
+            };
+          });
+          return;
+        }
+      }
+    } catch (_) {}
+
+    // Fallback: local calculation
+    final area = double.tryParse(_areaController.text) ?? 0;
+    final baseRate = _cityRates[_selectedCity] ?? 3000;
+    final locationMultiplier = _locationMultipliers[_selectedLocation] ?? 1.0;
+    double pricePerSqft = baseRate * locationMultiplier;
+    if (_frontRoad >= 30) {
+      pricePerSqft *= 1.15;
+    } else if (_frontRoad >= 20) {
+      pricePerSqft *= 1.08;
+    }
+    if (_isCorner) pricePerSqft *= 1.10;
+    if (_isParkFacing) pricePerSqft *= 1.05;
+    final estimatedPrice = area * pricePerSqft;
+
     setState(() {
-      _isCalculating = true;
-    });
-
-    // Simulate AI calculation
-    Future.delayed(const Duration(seconds: 2), () {
-      final area = double.tryParse(_areaController.text) ?? 0;
-      final baseRate = _cityRates[_selectedCity] ?? 3000;
-      final locationMultiplier = _locationMultipliers[_selectedLocation] ?? 1.0;
-
-      // Calculate price
-      double pricePerSqft = baseRate * locationMultiplier;
-
-      // Front road premium
-      if (_frontRoad >= 30) {
-        pricePerSqft *= 1.15; // 15% premium for 30ft+ road
-      } else if (_frontRoad >= 20) {
-        pricePerSqft *= 1.08; // 8% premium for 20ft+ road
-      }
-
-      // Corner plot premium
-      if (_isCorner) {
-        pricePerSqft *= 1.10; // 10% premium
-      }
-
-      // Park facing premium
-      if (_isParkFacing) {
-        pricePerSqft *= 1.05; // 5% premium
-      }
-
-      final estimatedPrice = area * pricePerSqft;
-
-      // Price range (±15%)
-      final minPrice = estimatedPrice * 0.85;
-      final maxPrice = estimatedPrice * 1.15;
-
-      setState(() {
-        _isCalculating = false;
-        _valuationResult = {
-          'area': area,
-          'pricePerSqft': pricePerSqft,
-          'estimatedPrice': estimatedPrice,
-          'minPrice': minPrice,
-          'maxPrice': maxPrice,
-          'confidence': 0.87,
-          'marketTrend': 'upward',
-          'trendPercentage': 8.5,
-        };
-      });
+      _isCalculating = false;
+      _valuationResult = {
+        'area': area,
+        'pricePerSqft': pricePerSqft,
+        'estimatedPrice': estimatedPrice,
+        'minPrice': estimatedPrice * 0.85,
+        'maxPrice': estimatedPrice * 1.15,
+        'confidence': 0.87,
+        'marketTrend': 'upward',
+        'trendPercentage': 8.5,
+      };
     });
   }
 
@@ -144,27 +207,16 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // AI Header
                   _buildAIHeader(),
                   const SizedBox(height: 24),
-
-                  // Input Form
                   _buildInputForm(),
                   const SizedBox(height: 24),
-
-                  // Calculate Button
                   _buildCalculateButton(),
                   const SizedBox(height: 32),
-
-                  // Result Card
                   if (_valuationResult != null) _buildResultCard(),
                   if (_valuationResult != null) const SizedBox(height: 24),
-
-                  // Recent Sales Comparison
                   if (_valuationResult != null) _buildRecentSalesCard(),
                   if (_valuationResult != null) const SizedBox(height: 24),
-
-                  // Tips
                   _buildTipsCard(),
                 ],
               ),
@@ -301,9 +353,9 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
 
             // City Selection
             DropdownButtonFormField<String>(
-              initialValue: _selectedCity,
+              value: _selectedCity,
               decoration: InputDecoration(
-                labelText: 'City',
+                labelText: _loadingRates ? 'Loading rates...' : 'City',
                 prefixIcon: const Icon(Icons.location_city),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -312,7 +364,9 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
               items: _cityRates.keys.map((city) {
                 return DropdownMenuItem(
                   value: city,
-                  child: Text('$city (₹${_cityRates[city]}/sqft base)'),
+                  child: Text(
+                    '$city (₹${_cityRates[city]!.toStringAsFixed(0)}/sqft base)',
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
@@ -325,7 +379,7 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
 
             // Property Type
             DropdownButtonFormField<String>(
-              initialValue: _selectedType,
+              value: _selectedType,
               decoration: InputDecoration(
                 labelText: 'Property Type',
                 prefixIcon: const Icon(Icons.home),
@@ -361,7 +415,7 @@ class _PropertyValuationPageState extends State<PropertyValuationPage> {
 
             // Location Type
             DropdownButtonFormField<String>(
-              initialValue: _selectedLocation,
+              value: _selectedLocation,
               decoration: InputDecoration(
                 labelText: 'Location Type',
                 prefixIcon: const Icon(Icons.place),

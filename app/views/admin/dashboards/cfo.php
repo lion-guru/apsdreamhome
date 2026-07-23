@@ -156,8 +156,8 @@
                                         <small class="text-muted"><?php echo date('M d, Y H:i', strtotime($activity['created_at'])); ?></small>
                                     </div>
                                     <p class="mb-1"><?php echo htmlspecialchars($activity['description'] ?? ''); ?></p>
-                                    <small class="text-<?php echo $activity['amount'] > 0 ? 'success' : 'danger'; ?>">
-                                        <?php echo $activity['amount'] > 0 ? '+' : ''; ?>₹<?php echo number_format(floatval($activity['amount'] ?? 0)); ?>
+                                    <small class="text-<?php echo ($activity['amount'] ?? 0) > 0 ? 'success' : 'danger'; ?>">
+                                        <?php echo ($activity['amount'] ?? 0) > 0 ? '+' : ''; ?>₹<?php echo number_format(floatval($activity['amount'] ?? 0)); ?>
                                     </small>
                                 </div>
                             <?php endforeach; ?>

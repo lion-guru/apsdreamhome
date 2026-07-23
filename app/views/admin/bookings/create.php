@@ -1,11 +1,11 @@
-<?php
+﻿<?php
 $page_title = 'Add New Booking';
 $active_page = 'bookings';
 ?>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Add New Booking</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="/admin/bookings" class="btn btn-secondary">
+        <a href="<?= BASE_URL ?>/admin/bookings" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to Bookings
         </a>
     </div>

@@ -32,8 +32,7 @@ class MonitoringController extends AdminController
      */
     public function dashboard()
     {
-        // Temporarily disable login for testing
-        // $this->requireLogin();
+        $this->requireAdmin();
 
         $healthStatus = $this->getSystemHealth();
         $recentAlerts = $this->getRecentAlerts();
@@ -364,7 +363,7 @@ class MonitoringController extends AdminController
                 ]
             ]);
 
-            $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+            $baseUrl = rtrim(BASE_URL, '/');
             $url = $baseUrl . $endpoint;
             $response = @file_get_contents($url, false, $context);
 
@@ -391,20 +390,33 @@ class MonitoringController extends AdminController
      */
     private function getRecentAlerts()
     {
-        // This would typically read from a database or log file
-        // For now, return sample data
-        return [
-            [
-                'type' => 'warning',
-                'message' => 'High memory usage detected',
-                'timestamp' => date('Y-m-d H:i:s', strtotime('-1 hour'))
-            ],
-            [
-                'type' => 'info',
-                'message' => 'Database backup completed successfully',
-                'timestamp' => date('Y-m-d H:i:s', strtotime('-2 hours'))
-            ]
-        ];
+        $alerts = [];
+        try {
+            if (function_exists('App\Services\Monitoring\HealthAlertService')) {
+                $health = new \App\Services\Monitoring\HealthAlertService();
+                $raw = $health->getRecentAlerts(10);
+                foreach ($raw as $a) {
+                    $alerts[] = [
+                        'type' => $a['severity'] ?? $a['level'] ?? 'info',
+                        'message' => $a['message'] ?? $a['alert_message'] ?? 'Unknown alert',
+                        'timestamp' => $a['created_at'] ?? $a['timestamp'] ?? date('Y-m-d H:i:s')
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {
+            // fallback to log file
+        }
+
+        if (empty($alerts) && file_exists($this->logFile)) {
+            $lines = array_slice(file($this->logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [], -5);
+            foreach ($lines as $line) {
+                if (preg_match('/\[(\w+)\]\s+(.*)/', $line, $m)) {
+                    $alerts[] = ['type' => $m[1], 'message' => $m[2], 'timestamp' => substr($line, 0, 19)];
+                }
+            }
+        }
+
+        return $alerts;
     }
 
     /**
@@ -412,26 +424,39 @@ class MonitoringController extends AdminController
      */
     private function getPerformanceMetrics()
     {
-        return [
-            'today' => [
-                'page_views' => 1250,
-                'unique_visitors' => 450,
-                'avg_response_time' => '245ms',
-                'error_rate' => '0.8%'
-            ],
-            'this_week' => [
-                'page_views' => 8750,
-                'unique_visitors' => 3150,
-                'avg_response_time' => '267ms',
-                'error_rate' => '1.2%'
-            ],
-            'this_month' => [
-                'page_views' => 35200,
-                'unique_visitors' => 12600,
-                'avg_response_time' => '289ms',
-                'error_rate' => '1.5%'
-            ]
-        ];
+        $today = date('Y-m-d');
+        $weekAgo = date('Y-m-d', strtotime('-7 days'));
+        $monthAgo = date('Y-m-d', strtotime('-30 days'));
+
+        $metrics = ['today' => [], 'this_week' => [], 'this_month' => []];
+
+        try {
+            if ($this->db) {
+                // Today
+                $row = $this->db->fetch("SELECT COUNT(*) as pv, COUNT(DISTINCT ip_address) as uv FROM visitor_logs WHERE DATE(created_at) = ?", [$today]) ?: [];
+                $metrics['today'] = ['page_views' => (int)($row['pv'] ?? 0), 'unique_visitors' => (int)($row['uv'] ?? 0)];
+
+                // This week
+                $row = $this->db->fetch("SELECT COUNT(*) as pv, COUNT(DISTINCT ip_address) as uv FROM visitor_logs WHERE created_at >= ?", [$weekAgo]) ?: [];
+                $metrics['this_week'] = ['page_views' => (int)($row['pv'] ?? 0), 'unique_visitors' => (int)($row['uv'] ?? 0)];
+
+                // This month
+                $row = $this->db->fetch("SELECT COUNT(*) as pv, COUNT(DISTINCT ip_address) as uv FROM visitor_logs WHERE created_at >= ?", [$monthAgo]) ?: [];
+                $metrics['this_month'] = ['page_views' => (int)($row['pv'] ?? 0), 'unique_visitors' => (int)($row['uv'] ?? 0)];
+            }
+        } catch (\Throwable $e) {
+            // visitor_logs table may not exist
+        }
+
+        // Add execution time from current request
+        $execMs = round((microtime(true) - ($_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true))) * 1000, 2);
+        foreach ($metrics as &$period) {
+            $period['avg_response_time'] = $execMs . 'ms';
+            $period['error_rate'] = 'N/A';
+        }
+        unset($period);
+
+        return $metrics;
     }
 
     /**

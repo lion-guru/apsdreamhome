@@ -5,7 +5,7 @@
 $page_title = $page_title ?? 'Testimonials - APS Dream Home';
 $page_description = $page_description ?? 'Read what our satisfied users have to say about APS Dream Home';
 $testimonials = $testimonials ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <style>
         .testimonial-card {

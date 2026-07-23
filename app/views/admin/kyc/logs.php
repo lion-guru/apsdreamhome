@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'KYC Verification Logs';
 $logs = $logs ?? [];
 ob_start();
@@ -7,7 +7,7 @@ ob_start();
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-shield-alt me-2"></i>KYC Verification Logs</h4>
-        <a href="/admin/kyc" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to KYC</a>
+        <a href="<?= BASE_URL ?>/admin/kyc" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to KYC</a>
     </div>
 
     <div class="card aps-cp-card">

@@ -13,7 +13,7 @@ class LegalController extends AdminController
         try {
             $stmt = $this->db->query("SELECT * FROM legal_services ORDER BY display_order ASC, created_at DESC");
             $services = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $services = [];
         }
         $total = count($services);
@@ -49,7 +49,7 @@ class LegalController extends AdminController
             $stmt = $this->db->prepare("INSERT INTO legal_services (title, description, icon, price_range, duration, features, status, display_order, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
             $stmt->execute([$title, $description, $icon, $price_range, $duration, $features, $status, $display_order]);
             $this->setFlash('success', 'Legal service created successfully');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to create legal service: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/services');
@@ -61,7 +61,7 @@ class LegalController extends AdminController
         try {
             $stmt = $this->db->query("SELECT d.*, u.name as assigned_name FROM legal_disputes d LEFT JOIN users u ON d.assigned_to = u.id ORDER BY d.filed_date DESC");
             $disputes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $disputes = [];
         }
         $total = count($disputes);
@@ -87,7 +87,7 @@ class LegalController extends AdminController
             }
             $stmt->execute([(int)$id]);
             $dispute = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $dispute = null;
         }
         if (!$dispute) {
@@ -97,7 +97,7 @@ class LegalController extends AdminController
         try {
             $usersStmt = $this->db->query("SELECT id, name FROM users WHERE role IN ('admin','employee','agent') ORDER BY name");
             $users = $usersStmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $users = [];
         }
         return $this->render('admin/legal/dispute-show', [
@@ -122,7 +122,7 @@ class LegalController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$status, $notes, $assigned_to, $resolved_date, (int)$id]);
             $this->setFlash('success', 'Dispute updated successfully');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to update dispute: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/disputes/' . $id);
@@ -134,13 +134,13 @@ class LegalController extends AdminController
         try {
             $stmt = $this->db->query("SELECT d.*, u.name as assigned_name FROM legal_deadlines d LEFT JOIN users u ON d.assigned_to = u.id ORDER BY d.deadline_date ASC");
             $deadlines = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $deadlines = [];
         }
         try {
             $usersStmt = $this->db->query("SELECT id, name FROM users WHERE role IN ('admin','employee','agent') ORDER BY name");
             $users = $usersStmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $users = [];
         }
         $total = count($deadlines);
@@ -176,7 +176,7 @@ class LegalController extends AdminController
             $stmt = $this->db->prepare("INSERT INTO legal_deadlines (title, description, legal_type, deadline_date, assigned_to, status, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
             $stmt->execute([$title, $description, $legal_type, $deadline_date, $assigned_to, $status]);
             $this->setFlash('success', 'Deadline created successfully');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Failed to create deadline: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/deadlines');

@@ -89,7 +89,7 @@ class Monitor {
             $db = Database::getInstance();
             $db->query("SELECT 1")->fetch();
             $health['checks']['database'] = 'pass';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $health['checks']['database'] = 'fail';
             $health['status'] = 'unhealthy';
             self::log('CRITICAL', 'Database health check failed', ['error' => $e->getMessage()]);

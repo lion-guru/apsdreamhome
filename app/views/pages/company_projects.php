@@ -25,12 +25,15 @@ if (empty($grouped_projects) && !empty($projects)) {
 ?>
 
 <!-- Company Projects Hero -->
-<section class="py-5 text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-4 fw-bold mb-4"><i class="fas fa-building me-3"></i><?= __('cproj_heading', [], 'Our Projects') ?></h1>
-                <p class="lead mb-0"><?= __('cproj_subtitle', [], 'Explore our completed and ongoing projects across Uttar Pradesh') ?></p>
+<section class="hero-section text-white py-5 position-relative" style="background: linear-gradient(135deg, #0a192f 0%, #0d9488 100%); min-height: 300px; display: flex; align-items: center;">
+    <div class="container position-relative">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-lg-8 text-center">
+                <span class="badge px-3 py-2 mb-3" style="background:rgba(212,175,55,0.2);color:#d4af37;border-radius:50px;font-size:0.8rem;backdrop-filter:blur(10px);">
+                    <i class="fas fa-building me-1"></i> Portfolio
+                </span>
+                <h1 class="display-4 fw-bold mb-3"><i class="fas fa-building me-3"></i><?= __('cproj_heading', [], 'Our Projects') ?></h1>
+                <p class="lead mb-0 opacity-75"><?= __('cproj_subtitle', [], 'Explore our completed and ongoing projects across Uttar Pradesh') ?></p>
             </div>
         </div>
     </div>
@@ -65,32 +68,24 @@ if (empty($grouped_projects) && !empty($projects)) {
                             <?php foreach ($districtProjects as $project): 
                                 $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $project->site_name));
                                 $district = strtolower($project->district ?? 'gorakhpur');
-                                $imgPath = '/assets/images/placeholder/property.svg';
-                                if (stripos($project->site_name, 'Suryoday') !== false) {
-                                    $imgPath = '/assets/images/projects/gorakhpur/suryoday.jpg';
-                                } elseif (stripos($project->site_name, 'Raghunath') !== false) {
-                                    $imgPath = '/assets/images/projects/gorakhpur/raghunath-nagri.jpg';
-                                } elseif (stripos($project->site_name, 'Braj') !== false || stripos($project->site_name, 'Radha') !== false) {
-                                    $imgPath = '/assets/images/projects/lucknow/braj-radha-nagri.jpg';
-                                } elseif (stripos($project->site_name, 'Budh') !== false || stripos($project->site_name, 'Bihar') !== false) {
-                                    $imgPath = '/assets/images/projects/' . $district . '/budh-bihar.jpg';
-                                } elseif (stripos($project->site_name, 'Awadhpuri') !== false) {
-                                    $imgPath = '/assets/images/projects/' . $district . '/awadhpuri.jpg';
-                                } elseif (stripos($project->site_name, 'Ganga') !== false) {
-                                    $imgPath = '/assets/images/projects/' . $district . '/ganga-nagri.jpg';
+                                
+                                // Dynamic image priority
+                                $imgPath = '/assets/images/projects/placeholder/property.svg';
+                                if (!empty($project->image)) {
+                                    $imgPath = '/' . ltrim($project->image, '/');
                                 }
                             ?>
                                 <div class="col-lg-4 col-md-6 mb-4">
-                                    <div class="card project-card h-100 shadow-sm border-0 overflow-hidden">
-                                        <div class="project-image position-relative">
-                                            <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="img-fluid card-img-top" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="height: 180px; object-fit: cover;" onerror="this.src='<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg'">
-                                            <div class="position-absolute top-0 start-0 m-2">
-                                                <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : ($project->status === 'completed' ? 'primary' : 'warning'); ?>">
+                                    <div class="card property-card h-100 shadow-sm border-0 overflow-hidden">
+                                        <div class="card-img-wrapper position-relative">
+                                            <img src="<?= BASE_URL . $imgPath ?>" class="img-fluid card-img-top" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="height: 250px; object-fit: cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/projects/placeholder/property.svg'">
+                                            <div class="position-absolute top-0 start-0 m-3">
+                                                <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : ($project->status === 'completed' ? 'primary' : 'warning'); ?> shadow-sm">
                                                     <?php echo ucfirst(str_replace('_', ' ', $project->status ?? 'Active')); ?>
                                                 </span>
                                             </div>
-                                            <div class="position-absolute top-0 end-0 m-2">
-                                                <span class="badge bg-dark">
+                                            <div class="position-absolute top-0 end-0 m-3">
+                                                <span class="badge bg-dark bg-opacity-75 shadow-sm">
                                                     <?php echo ucfirst($project->site_type ?? 'Residential'); ?>
                                                 </span>
                                             </div>

@@ -1,8 +1,8 @@
-<?php $page_title = $page_title ?? 'SLA Rules'; $rules = $rules ?? []; ?>
+﻿<?php $page_title = $page_title ?? 'SLA Rules'; $rules = $rules ?? []; ?>
 <div class="container-fluid px-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold mb-0"><i class="fas fa-clock me-2 text-primary"></i>SLA Rules</h4>
-        <a href="/admin/crm/sla" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
+        <a href="<?= BASE_URL ?>/admin/crm/sla" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
     </div>
     <div class="card border-0 shadow-sm" style="border-radius:14px"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th>Name</th><th>Type</th><th>Target</th><th>Applies To (Roles)</th><th>Stages</th><th>Status</th></tr></thead><tbody>
     <?php if (empty($rules)): ?><tr><td colspan="6" class="text-center py-4 text-muted">No SLA rules configured</td></tr>

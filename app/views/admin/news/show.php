@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'News Article';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'publish_date' => '', 'status' => '', 'image' => '', 'excerpt' => '', 'category' => ''];
 ?>
 <div class="container-fluid">

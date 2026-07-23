@@ -1,4 +1,4 @@
-<!-- Payroll Batch Preview -->
+﻿<!-- Payroll Batch Preview -->
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -8,8 +8,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="/admin/salary">Salary</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/salary">Salary</a></li>
                         <li class="breadcrumb-item active">Batch Preview</li>
                     </ol>
                 </div>
@@ -31,7 +31,7 @@
             <!-- Month Selector -->
             <div class="card mb-4">
                 <div class="card-body">
-                    <form method="GET" action="/admin/salary/batch/preview" class="form-inline">
+                    <form method="GET" action="<?= BASE_URL ?>/admin/salary/batch/preview" class="form-inline">
                         <label class="mr-2">Month:</label>
                         <select name="month" class="form-control form-control-sm mr-2">
                             <?php for ($m = 1; $m <= 12; $m++): ?>
@@ -82,7 +82,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Detailed Breakdown</h3>
                     <?php if (!empty($entries)): ?>
-                        <form method="POST" action="/admin/salary/batch/generate" style="display:inline" onsubmit="return confirm('Generate <?= count($entries) ?> payslips for <?= $month ?>/<?= $year ?>?')">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/salary/batch/generate" style="display:inline" onsubmit="return confirm('Generate <?= count($entries) ?> payslips for <?= $month ?>/<?= $year ?>?')">
                             <input type="hidden" name="month" value="<?= $month ?>">
                             <input type="hidden" name="year" value="<?= $year ?>">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">

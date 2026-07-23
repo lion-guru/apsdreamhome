@@ -64,12 +64,27 @@ class PageController extends BaseController
                 }
                 $siteName = $project->site_name ?? '';
                 $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $siteName));
+
+                // Get starting price from plots table
+                $priceText = 'Price on Request';
+                try {
+                    $priceStmt = $this->db->prepare("SELECT MIN(price_per_sqft) as min_price FROM plots WHERE colony_id = ? AND status != 'sold'");
+                    $priceStmt->execute([(int)$project->id]);
+                    $priceRow = $priceStmt->fetch(\PDO::FETCH_ASSOC);
+                    if ($priceRow && !empty($priceRow['min_price'])) {
+                        $minPrice = (float)$priceRow['min_price'];
+                        $priceText = 'Starting from ' . "\xE2\x82\xB9" . number_format($minPrice) . '/sqft';
+                    }
+                } catch (\Exception $e) {
+                    // fallback to generic text
+                }
+
                 $featured_properties[] = [
                     'id' => $project->id ?? null,
                     'title' => $siteName,
                     'location' => ($project->district ?? '') . ', ' . ($project->state ?? ''),
                     'city' => $project->district ?? '',
-                    'price' => 'Starting from Γé╣5.5 Lakhs',
+                    'price' => $priceText,
                     'slug' => $slug,
                     'type' => ucfirst($project->site_type ?? 'Residential'),
                     'status' => ($project->status === 'active') ? 'Available' : 'Completed',
@@ -222,7 +237,7 @@ class PageController extends BaseController
             'page_title' => 'Customer Reviews - APS Dream Home',
             'page_description' => 'Read customer reviews',
         ];
-        $this->render('pages/reviews', $data);
+        $this->render('pages/customer_reviews', $data);
     }
 
     public function comingSoon()
@@ -313,7 +328,7 @@ class PageController extends BaseController
             'page_description' => $post['excerpt'] ?? '',
             'post' => $post,
         ];
-        $this->render('pages/blog_detail', $data);
+        $this->render('pages/blog_article_detail', $data);
     }
 
     public function careerApply()
@@ -417,7 +432,7 @@ public function navigation()
             'page_description' => 'Legal services for property',
             'pageContent' => $pageContent,
         ];
-        $this->render('pages/legal_services', $data);
+        $this->render('pages/legal/services', $data);
     }
 
     public function documents()
@@ -428,7 +443,7 @@ public function navigation()
             'page_description' => 'Legal documents and templates',
             'pageContent' => $pageContent,
         ];
-        $this->render('pages/legal_documents', $data);
+        $this->render('pages/legal/documents', $data);
     }
 
     public function index()
@@ -437,7 +452,7 @@ public function navigation()
             'page_title' => 'Legal - APS Dream Home',
             'page_description' => 'Legal information and documents',
         ];
-        $this->render('pages/legal', $data);
+        $this->render('pages/legal/legal', $data);
     }
 
     public function insurance()
@@ -1583,7 +1598,7 @@ public function createMobileApp()
             'page_title' => 'Mobile App - APS Dream Home',
             'page_description' => 'Download APS Dream Home mobile application'
         ];
-        $this->render('pages/create_mobile_app', $data);
+        $this->render('pages/mobile_app', $data);
     }
 
 public function constructionInquiry()
@@ -2437,15 +2452,36 @@ public function colonies()
                         }
                     }
                 }
+                $totalPlotsColony = intval($row['total_plots'] ?? 0);
+                $availablePlotsColony = intval($row['available_plots'] ?? 0);
+                $soldPlots = $totalPlotsColony - $availablePlotsColony;
+                if ($totalPlotsColony > 0 && $soldPlots === $totalPlotsColony) {
+                    $completionStatus = 'Sold Out';
+                } elseif ($soldPlots > 0) {
+                    $completionStatus = 'Selling Fast';
+                } else {
+                    $completionStatus = 'New Launch';
+                }
+                $districtName = $row['district_name'] ?? '';
+                $stateName = $row['state_name'] ?? '';
+                $location = trim($districtName . ', ' . $stateName, ', ');
+                if (empty($location)) {
+                    $location = 'Uttar Pradesh';
+                }
                 $colonies[] = [
                     'id' => $row['id'],
                     'name' => $row['name'],
                     'slug' => $row['slug'] ?? '',
-                    'district_name' => $row['district_name'],
-                    'state_name' => $row['state_name'],
-                    'available_plots' => $row['total_plots'] ?? 0,
+                    'image' => $row['image_path'] ?? '',
+                    'location' => $location,
+                    'district_name' => $districtName,
+                    'state_name' => $stateName,
+                    'total_area' => ($totalPlotsColony * 1200) . ' sqft',
+                    'available_plots' => $availablePlotsColony,
+                    'starting_price' => !empty($row['starting_price']) ? '₹' . number_format($row['starting_price']) : 'Contact Us',
                     'price_per_sqft' => $row['price_per_sqft'] ?? 0,
                     'description' => $row['description'] ?? '',
+                    'completion_status' => $completionStatus,
                     'amenities' => $amenities,
                     'highlights' => $highlights,
                 ];

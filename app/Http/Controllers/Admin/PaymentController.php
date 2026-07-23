@@ -71,10 +71,10 @@ class PaymentController extends AdminController
                 $params[] = $method;
             }
 
-            $sql .= " ORDER BY p.created_at DESC";
+            $sql .= " ORDER BY p.payment_date DESC";
 
             // Count total
-            $countSql = str_replace("SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email, pr.title as property_title", "SELECT COUNT(DISTINCT p.id) as total", $sql);
+            $countSql = str_replace("SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email, pr.title as property_title", "SELECT COUNT(DISTINCT p.payment_id) as total", $sql);
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch()['total'];
@@ -104,7 +104,7 @@ class PaymentController extends AdminController
             ];
 
             return $this->render('admin/payments/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Payment Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load payments');
             return $this->redirect('admin/dashboard');
@@ -122,7 +122,7 @@ class PaymentController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Payment Dashboard Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
@@ -186,7 +186,7 @@ class PaymentController extends AdminController
             ];
 
             return $this->render('admin/payments/show', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Payment Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load payment details');
             return $this->redirect('admin/payments');
@@ -262,11 +262,11 @@ class PaymentController extends AdminController
                     'success' => true,
                     'message' => 'Payment processed successfully'
                 ]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Process Payment error: " . $e->getMessage());
             return $this->jsonError('Failed to process payment', 500);
         }
@@ -340,11 +340,11 @@ class PaymentController extends AdminController
                     'success' => true,
                     'message' => 'Payment refunded successfully'
                 ]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Refund Payment error: " . $e->getMessage());
             return $this->jsonError('Failed to refund payment', 500);
         }
@@ -363,7 +363,7 @@ class PaymentController extends AdminController
             ];
 
             return $this->render('admin/payments/analytics', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Payment Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load payment analytics');
             return $this->redirect('admin/payments');
@@ -411,7 +411,7 @@ class PaymentController extends AdminController
             $stats['pending_amount'] = (float)($result['total_amount'] ?? 0);
 
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Dashboard Stats error: " . $e->getMessage());
             return [];
         }
@@ -449,7 +449,7 @@ class PaymentController extends AdminController
             $sql = "UPDATE bookings SET payment_status = ?, updated_at = NOW() WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$paymentStatus, $bookingId]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Update Booking Payment Status error: " . $e->getMessage());
         }
     }
@@ -497,7 +497,7 @@ class PaymentController extends AdminController
             $analytics['status_distribution'] = $this->db->fetchAll($sql) ?: [];
 
             return $analytics;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Payment Analytics error: " . $e->getMessage());
             return [];
         }
@@ -536,7 +536,7 @@ class PaymentController extends AdminController
 
             $this->setFlash('error', 'Invalid export format');
             return $this->redirect('admin/payments');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Payment Export error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to export data');
             return $this->redirect('admin/payments');
@@ -560,7 +560,7 @@ class PaymentController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get All Payments error: " . $e->getMessage());
             return [];
         }
@@ -583,7 +583,7 @@ class PaymentController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Completed Payments error: " . $e->getMessage());
             return [];
         }
@@ -606,7 +606,7 @@ class PaymentController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Pending Payments error: " . $e->getMessage());
             return [];
         }
@@ -629,7 +629,7 @@ class PaymentController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Refunded Payments error: " . $e->getMessage());
             return [];
         }

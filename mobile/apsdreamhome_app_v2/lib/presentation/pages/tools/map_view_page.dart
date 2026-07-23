@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import '../../../core/constants/app_constants.dart';
 
-/// Map View Page
-/// Interactive map showing all colonies with markers
 class MapViewPage extends StatefulWidget {
   const MapViewPage({super.key});
 
@@ -11,71 +13,75 @@ class MapViewPage extends StatefulWidget {
 }
 
 class _MapViewPageState extends State<MapViewPage> {
-  // Sample colony data with coordinates
-  final List<Map<String, dynamic>> _colonies = [
-    {
-      'id': '1',
-      'name': 'Suryoday Heights Phase 1',
-      'location': 'Gorakhpur',
-      'lat': 26.7606,
-      'lng': 83.3732,
-      'plots': 120,
-      'price': '₹3,000/sqft',
-      'amenities': ['Park', 'Security', 'Water'],
-      'status': 'active',
-    },
-    {
-      'id': '2',
-      'name': 'Raghunath City Center',
-      'location': 'Gorakhpur',
-      'lat': 26.7324,
-      'lng': 83.3603,
-      'plots': 80,
-      'price': '₹3,500/sqft',
-      'amenities': ['Mall', 'Hospital', 'School'],
-      'status': 'active',
-    },
-    {
-      'id': '3',
-      'name': 'Braj Radha Enclave',
-      'location': 'Lucknow',
-      'lat': 26.8467,
-      'lng': 80.9462,
-      'plots': 200,
-      'price': '₹4,200/sqft',
-      'amenities': ['Pool', 'Club', 'Gym'],
-      'status': 'active',
-    },
-    {
-      'id': '4',
-      'name': 'Budh Bihar Colony',
-      'location': 'Kushinagar',
-      'lat': 27.1339,
-      'lng': 83.9023,
-      'plots': 60,
-      'price': '₹2,800/sqft',
-      'amenities': ['Park', 'Temple'],
-      'status': 'active',
-    },
-    {
-      'id': '5',
-      'name': 'Ganga Nagri',
-      'location': 'Varanasi',
-      'lat': 25.3176,
-      'lng': 83.0100,
-      'plots': 150,
-      'price': '₹3,800/sqft',
-      'amenities': ['River View', 'Garden'],
-      'status': 'active',
-    },
-  ];
-
+  List<Map<String, dynamic>> _colonies = [];
+  bool _loading = true;
   String? _selectedColonyId;
-  String _filter = 'all'; // all, active, upcoming
+  String _filter = 'all';
   bool _showList = false;
 
   @override
+  void initState() {
+    super.initState();
+    _loadColonies();
+  }
+
+  Future<void> _loadColonies() async {
+    try {
+      AppConstants.initBaseUrl();
+      final url = '${AppConstants.baseUrl}/api/v2/mobile/colonies';
+      final resp = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 10));
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data['success'] == true && data['data'] is List) {
+          final colonies = List<Map<String, dynamic>>.from(
+            data['data'] as List,
+          );
+          setState(() {
+            _colonies = colonies.map((c) {
+              final int plots = c['total_plots'] is int
+                  ? c['total_plots'] as int
+                  : int.tryParse('${c['total_plots']}') ?? 0;
+              final int available = c['available_plots'] is int
+                  ? c['available_plots'] as int
+                  : int.tryParse('${c['available_plots']}') ?? 0;
+              final double price = c['starting_price'] is double
+                  ? c['starting_price'] as double
+                  : double.tryParse('${c['starting_price']}') ?? 0;
+              return {
+                'id': (c['id'] ?? '').toString(),
+                'name': c['name'] ?? '',
+                'location': c['district_name'] ?? '',
+                'plots': plots,
+                'available_plots': available,
+                'price': price > 0
+                    ? '₹${(price / 100000).toStringAsFixed(1)}L+'
+                    : 'Contact',
+                'status': c['is_active'] == true ? 'active' : 'upcoming',
+                'featured': c['is_featured'] == true,
+                'image_url': c['image_url'],
+              };
+            }).toList();
+            _loading = false;
+          });
+          return;
+        }
+      }
+    } catch (_) {}
+    // Fallback to mock data
+    setState(() {
+      _colonies = _mockColonies;
+      _loading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final filteredColonies = _filter == 'all'
+        ? _colonies
+        : _colonies.where((c) => c['status'] == _filter).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Colony Map'),
@@ -84,19 +90,17 @@ class _MapViewPageState extends State<MapViewPage> {
         actions: [
           IconButton(
             icon: Icon(_showList ? Icons.map : Icons.list),
-            onPressed: () {
-              setState(() {
-                _showList = !_showList;
-              });
-            },
+            onPressed: () => setState(() => _showList = !_showList),
           ),
         ],
       ),
-      body: _showList ? _buildListView() : _buildMapView(),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : _showList
+          ? _buildListView(filteredColonies)
+          : _buildMapView(filteredColonies),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          _showFilterSheet();
-        },
+        onPressed: () => _showFilterSheet(),
         icon: const Icon(Icons.filter_list),
         label: const Text('Filter'),
         backgroundColor: Colors.blue.shade700,
@@ -105,24 +109,19 @@ class _MapViewPageState extends State<MapViewPage> {
     );
   }
 
-  Widget _buildMapView() {
+  Widget _buildMapView(List<Map<String, dynamic>> colonies) {
     return Stack(
       children: [
-        // Simulated Map Background
         Container(
           color: Colors.grey.shade200,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.map,
-                  size: 120,
-                  color: Colors.grey.shade400,
-                ),
+                Icon(Icons.map, size: 120, color: Colors.grey.shade400),
                 const SizedBox(height: 24),
                 Text(
-                  'Interactive Map',
+                  'Colony Locations',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -131,44 +130,34 @@ class _MapViewPageState extends State<MapViewPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Google Maps integration\n(Requires API key configuration)',
+                  '${colonies.length} colonies found\nTap list view for details',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade500),
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    _showColonyMarkers();
-                  },
-                  icon: const Icon(Icons.location_on),
-                  label: const Text('Show Colony Locations'),
+                  onPressed: () => setState(() => _showList = true),
+                  icon: const Icon(Icons.list),
+                  label: const Text('Show List View'),
                 ),
               ],
             ),
           ),
         ),
-        
-        // Colony Markers (simulated)
-        ..._buildSimulatedMarkers(),
-        
-        // Selected Colony Card
+        ..._buildSimulatedMarkers(colonies),
         if (_selectedColonyId != null)
           Positioned(
             bottom: 80,
             left: 16,
             right: 16,
-            child: _buildSelectedColonyCard(),
+            child: _buildSelectedColonyCard(colonies),
           ),
       ],
     );
   }
 
-  List<Widget> _buildSimulatedMarkers() {
-    // In production, these would be positioned based on actual map coordinates
-    // For demo, we'll show floating position indicators
-    return _colonies.asMap().entries.map((entry) {
+  List<Widget> _buildSimulatedMarkers(List<Map<String, dynamic>> colonies) {
+    return colonies.asMap().entries.map((entry) {
       final int index = entry.key;
       final Map<String, dynamic> colony = entry.value;
       final isSelected = _selectedColonyId == (colony['id'] as String);
@@ -176,11 +165,8 @@ class _MapViewPageState extends State<MapViewPage> {
         left: 50 + (index * 70).toDouble(),
         top: 100 + (index * 50).toDouble(),
         child: GestureDetector(
-          onTap: () {
-            setState(() {
-              _selectedColonyId = colony['id'] as String;
-            });
-          },
+          onTap: () =>
+              setState(() => _selectedColonyId = colony['id'] as String),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             transform: isSelected
@@ -189,7 +175,10 @@ class _MapViewPageState extends State<MapViewPage> {
             child: Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected ? Colors.blue.shade700 : Colors.white,
                     borderRadius: BorderRadius.circular(8),
@@ -223,12 +212,15 @@ class _MapViewPageState extends State<MapViewPage> {
     }).toList();
   }
 
-  Widget _buildSelectedColonyCard() {
-    final colony = _colonies.firstWhere((c) => (c['id'] as String) == _selectedColonyId);
-    
+  Widget _buildSelectedColonyCard(List<Map<String, dynamic>> colonies) {
+    final colony = colonies.firstWhere(
+      (c) => (c['id'] as String) == _selectedColonyId,
+      orElse: () => colonies.first,
+    );
+
     return Card(
       elevation: 8,
-      child: Container(
+      child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,7 +255,11 @@ class _MapViewPageState extends State<MapViewPage> {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(Icons.location_on, size: 14, color: Colors.grey.shade600),
+                          Icon(
+                            Icons.location_on,
+                            size: 14,
+                            color: Colors.grey.shade600,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             colony['location'] as String,
@@ -285,32 +281,12 @@ class _MapViewPageState extends State<MapViewPage> {
               ],
             ),
             const SizedBox(height: 16),
-            
-            // Amenities
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: (colony['amenities'] as List<String>)
-                  .map((amenity) => Chip(
-                        label: Text(
-                          amenity,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        backgroundColor: Colors.grey.shade100,
-                        padding: EdgeInsets.zero,
-                      ))
-                  .toList(),
-            ),
-            const SizedBox(height: 16),
-            
-            // Action Buttons
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      context.push('/colony-detail/${colony['id']}');
-                    },
+                    onPressed: () =>
+                        context.push('/colony-detail/${colony['id']}'),
                     icon: const Icon(Icons.visibility, size: 18),
                     label: const Text('View Details'),
                     style: ElevatedButton.styleFrom(
@@ -322,29 +298,27 @@ class _MapViewPageState extends State<MapViewPage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {
-                      _showDirections(colony);
+                    onPressed: () async {
+                      final name = '${colony['name'] ?? ''}';
+                      final location = '${colony['location'] ?? ''}';
+                      final query = Uri.encodeComponent(
+                        '$name $location Gorakhpur',
+                      );
+                      final url =
+                          'https://www.google.com/maps/search/?api=1&query=$query';
+                      final uri = Uri.parse(url);
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
                     },
                     icon: const Icon(Icons.directions, size: 18),
-                    label: const Text('Get Directions'),
+                    label: const Text('Directions'),
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  context.push('/site-visit', extra: colony);
-                },
-                icon: const Icon(Icons.calendar_today, size: 18),
-                label: const Text('Book Site Visit'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                ),
-              ),
             ),
           ],
         ),
@@ -352,16 +326,12 @@ class _MapViewPageState extends State<MapViewPage> {
     );
   }
 
-  Widget _buildListView() {
-    final filteredColonies = _filter == 'all'
-        ? _colonies
-        : _colonies.where((c) => c['status'] == _filter).toList();
-    
+  Widget _buildListView(List<Map<String, dynamic>> colonies) {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: filteredColonies.length,
+      itemCount: colonies.length,
       itemBuilder: (context, index) {
-        final colony = filteredColonies[index];
+        final colony = colonies[index];
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: InkWell(
@@ -404,7 +374,11 @@ class _MapViewPageState extends State<MapViewPage> {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(Icons.location_on, size: 14, color: Colors.grey.shade600),
+                            Icon(
+                              Icons.location_on,
+                              size: 14,
+                              color: Colors.grey.shade600,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               colony['location'] as String,
@@ -419,7 +393,10 @@ class _MapViewPageState extends State<MapViewPage> {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.green.shade100,
                                 borderRadius: BorderRadius.circular(4),
@@ -435,7 +412,7 @@ class _MapViewPageState extends State<MapViewPage> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              '${colony['plots']} plots available',
+                              '${colony['plots'] ?? 0} plots',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey.shade600,
@@ -459,7 +436,7 @@ class _MapViewPageState extends State<MapViewPage> {
   void _showFilterSheet() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Container(
+      builder: (context) => Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -467,21 +444,15 @@ class _MapViewPageState extends State<MapViewPage> {
           children: [
             const Text(
               'Filter Colonies',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            
             ListTile(
               leading: const Icon(Icons.all_inclusive),
               title: const Text('All Colonies'),
               trailing: _filter == 'all' ? const Icon(Icons.check) : null,
               onTap: () {
-                setState(() {
-                  _filter = 'all';
-                });
+                setState(() => _filter = 'all');
                 Navigator.pop(context);
               },
             ),
@@ -490,9 +461,7 @@ class _MapViewPageState extends State<MapViewPage> {
               title: const Text('Active Projects'),
               trailing: _filter == 'active' ? const Icon(Icons.check) : null,
               onTap: () {
-                setState(() {
-                  _filter = 'active';
-                });
+                setState(() => _filter = 'active');
                 Navigator.pop(context);
               },
             ),
@@ -501,91 +470,56 @@ class _MapViewPageState extends State<MapViewPage> {
               title: const Text('Upcoming Projects'),
               trailing: _filter == 'upcoming' ? const Icon(Icons.check) : null,
               onTap: () {
-                setState(() {
-                  _filter = 'upcoming';
-                });
+                setState(() => _filter = 'upcoming');
                 Navigator.pop(context);
               },
             ),
-            const SizedBox(height: 16),
-            
-            // Price Range Filter
-            const Text(
-              'Price Range',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: [
-                FilterChip(label: const Text('Under ₹30L'), onSelected: (_) {}),
-                FilterChip(label: const Text('₹30-50L'), onSelected: (_) {}),
-                FilterChip(label: const Text('₹50L-1Cr'), onSelected: (_) {}),
-                FilterChip(label: const Text('Above ₹1Cr'), onSelected: (_) {}),
-              ],
-            ),
           ],
         ),
       ),
     );
   }
 
-  void _showColonyMarkers() {
-    // In production, this would open Google Maps with markers
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Map View'),
-        content: const Text(
-          'Google Maps integration requires:\n\n'
-          '1. Google Maps API Key\n'
-          '2. Enable Maps SDK for Android/iOS\n'
-          '3. Add billing account\n\n'
-          'Contact developer to enable full map functionality.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showDirections(Map<String, dynamic> colony) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Directions to ${colony['name'] as String}'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Location: ${colony['location'] as String}'),
-            const SizedBox(height: 8),
-            Text('Coordinates: ${colony['lat']}, ${colony['lng']}'),
-            const SizedBox(height: 16),
-            const Text(
-              'In production, this will open Google Maps or Apple Maps for navigation.',
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.pop(context);
-              // Would launch external maps app
-            },
-            icon: const Icon(Icons.open_in_new),
-            label: const Text('Open in Maps'),
-          ),
-        ],
-      ),
-    );
-  }
+  static final List<Map<String, dynamic>> _mockColonies = [
+    {
+      'id': '1',
+      'name': 'Suryoday Heights Phase 1',
+      'location': 'Gorakhpur',
+      'plots': 120,
+      'price': '₹3,000/sqft',
+      'status': 'active',
+    },
+    {
+      'id': '2',
+      'name': 'Raghunath City Center',
+      'location': 'Gorakhpur',
+      'plots': 80,
+      'price': '₹3,500/sqft',
+      'status': 'active',
+    },
+    {
+      'id': '3',
+      'name': 'Braj Radha Enclave',
+      'location': 'Lucknow',
+      'plots': 200,
+      'price': '₹4,200/sqft',
+      'status': 'active',
+    },
+    {
+      'id': '4',
+      'name': 'Budh Bihar Colony',
+      'location': 'Kushinagar',
+      'plots': 60,
+      'price': '₹2,800/sqft',
+      'status': 'active',
+    },
+    {
+      'id': '5',
+      'name': 'Ganga Nagri',
+      'location': 'Varanasi',
+      'plots': 150,
+      'price': '₹3,800/sqft',
+      'status': 'active',
+    },
+  ];
 }

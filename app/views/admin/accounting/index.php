@@ -1,17 +1,17 @@
-<?php $pageTitle = 'Accounting Dashboard'; ?>
+﻿<?php $pageTitle = 'Accounting Dashboard'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-book me-2"></i>Accounting Dashboard</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item active">Accounting</li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/accounting/add_income" class="btn btn-success btn-sm me-2"><i class="fas fa-plus me-1"></i>Add Income</a>
-                <a href="/admin/accounting/add_expenses" class="btn btn-danger btn-sm"><i class="fas fa-minus me-1"></i>Add Expense</a>
+                <a href="<?= BASE_URL ?>/admin/accounting/add_income" class="btn btn-success btn-sm me-2"><i class="fas fa-plus me-1"></i>Add Income</a>
+                <a href="<?= BASE_URL ?>/admin/accounting/add_expenses" class="btn btn-danger btn-sm"><i class="fas fa-minus me-1"></i>Add Expense</a>
             </div>
         </div>
     </div>

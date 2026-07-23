@@ -120,7 +120,7 @@ class SiteController extends AdminController
             ];
 
             return $this->render('admin/sites/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Site Index error: " . $e->getMessage());
             $data = [
                 'page_title' => 'Site Management - APS Dream Home',
@@ -149,7 +149,7 @@ class SiteController extends AdminController
             ];
 
             return $this->render('admin/sites/create', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Site Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load site form');
             return $this->redirect('admin/sites');
@@ -198,10 +198,11 @@ class SiteController extends AdminController
 
             // Insert site
             $sql = "INSERT INTO sites 
-                    (site_name, location, site_type, total_area, description, 
-                     address, city, state, pincode, contact_person, contact_email, contact_phone,
-                     latitude, longitude, image, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
+                    (site_name, location, site_type, total_area, developed_area, 
+                     description, district, city, state, pincode, 
+                     manager_id, latitude, longitude, amenities, key_highlights, nearby_places, image, 
+                     total_plots, available_plots, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
 
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
@@ -209,17 +210,21 @@ class SiteController extends AdminController
                 CoreFunctionsServiceCustom::validateInput($data['location'], 'string'),
                 CoreFunctionsServiceCustom::validateInput($data['site_type'], 'string'),
                 $totalArea,
+                !empty($data['developed_area']) ? (float)$data['developed_area'] : 0,
                 CoreFunctionsServiceCustom::validateInput($data['description'] ?? '', 'string'),
-                CoreFunctionsServiceCustom::validateInput($data['address'] ?? '', 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['district'] ?? $data['city'] ?? '', 'string'),
                 CoreFunctionsServiceCustom::validateInput($data['city'] ?? '', 'string'),
                 CoreFunctionsServiceCustom::validateInput($data['state'] ?? '', 'string'),
                 CoreFunctionsServiceCustom::validateInput($data['pincode'] ?? '', 'string'),
-                CoreFunctionsServiceCustom::validateInput($data['contact_person'] ?? '', 'string'),
-                CoreFunctionsServiceCustom::validateInput($data['contact_email'] ?? '', 'string'),
-                CoreFunctionsServiceCustom::validateInput($data['contact_phone'] ?? '', 'string'),
+                !empty($data['manager_id']) ? (int)$data['manager_id'] : null,
                 !empty($data['latitude']) ? (float)$data['latitude'] : null,
                 !empty($data['longitude']) ? (float)$data['longitude'] : null,
-                $imagePath
+                CoreFunctionsServiceCustom::validateInput($data['amenities'] ?? '', 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['key_highlights'] ?? '', 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['nearby_places'] ?? '', 'string'),
+                $imagePath,
+                !empty($data['total_plots']) ? (int)$data['total_plots'] : 0,
+                !empty($data['available_plots']) ? (int)$data['available_plots'] : 0
             ]);
 
             if ($result) {
@@ -244,7 +249,7 @@ class SiteController extends AdminController
             }
 
             return $this->jsonError('Failed to create site', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Site Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create site', 500);
         }
@@ -312,7 +317,7 @@ class SiteController extends AdminController
             ];
 
             return $this->render('admin/sites/show', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Site Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load site details');
             return $this->redirect('admin/sites');
@@ -349,7 +354,7 @@ class SiteController extends AdminController
             ];
 
             return $this->render('admin/sites/edit', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Site Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load site form');
             return $this->redirect('admin/sites');
@@ -396,9 +401,12 @@ class SiteController extends AdminController
                     return $this->jsonError('Failed to upload image', 500);
                 }
 
-                // Delete old image if exists
-                if ($site['image'] && file_exists($site['image'])) {
-                    unlink($site['image']);
+                // Delete old image if exists (resolve web-relative path to absolute)
+                if (!empty($site['image'])) {
+                    $oldImagePath = __DIR__ . '/../../../../public/' . ltrim($site['image'], '/');
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
                 }
 
                 $imagePath = $newImagePath;
@@ -482,6 +490,46 @@ class SiteController extends AdminController
                 $updateValues[] = !empty($data['longitude']) ? (float)$data['longitude'] : null;
             }
 
+            if (isset($data['amenities'])) {
+                $updateFields[] = "amenities = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['amenities'], 'string');
+            }
+
+            if (isset($data['key_highlights'])) {
+                $updateFields[] = "key_highlights = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['key_highlights'], 'string');
+            }
+
+            if (isset($data['nearby_places'])) {
+                $updateFields[] = "nearby_places = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['nearby_places'], 'string');
+            }
+
+            if (isset($data['developed_area'])) {
+                $updateFields[] = "developed_area = ?";
+                $updateValues[] = (float)$data['developed_area'];
+            }
+
+            if (isset($data['manager_id'])) {
+                $updateFields[] = "manager_id = ?";
+                $updateValues[] = !empty($data['manager_id']) ? (int)$data['manager_id'] : null;
+            }
+
+            if (isset($data['district'])) {
+                $updateFields[] = "district = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['district'], 'string');
+            }
+
+            if (isset($data['total_plots'])) {
+                $updateFields[] = "total_plots = ?";
+                $updateValues[] = (int)$data['total_plots'];
+            }
+
+            if (isset($data['available_plots'])) {
+                $updateFields[] = "available_plots = ?";
+                $updateValues[] = (int)$data['available_plots'];
+            }
+
             if (isset($data['status'])) {
                 $validStatuses = ['active', 'inactive', 'under_construction', 'completed'];
                 if (in_array($data['status'], $validStatuses)) {
@@ -513,7 +561,7 @@ class SiteController extends AdminController
             }
 
             return $this->jsonError('Failed to update site', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Site Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update site', 500);
         }
@@ -563,9 +611,12 @@ class SiteController extends AdminController
             //     return $this->jsonError('Cannot delete site with existing projects', 400);
             // }
 
-            // Delete image if exists
-            if ($site['image'] && file_exists($site['image'])) {
-                unlink($site['image']);
+            // Delete image if exists (resolve web-relative path to absolute)
+            if (!empty($site['image'])) {
+                $imagePath = __DIR__ . '/../../../../public/' . ltrim($site['image'], '/');
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
             }
 
             // Delete site
@@ -587,7 +638,7 @@ class SiteController extends AdminController
             }
 
             return $this->jsonError('Failed to delete site', 500);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Site Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete site', 500);
         }
@@ -598,19 +649,8 @@ class SiteController extends AdminController
      */
     private function validateImage(array $file): array
     {
-        // Check file size (5MB max)
-        $maxSize = 5 * 1024 * 1024; // 5MB
-        if ($file['size'] > $maxSize) {
-            return ['valid' => false, 'error' => 'Image size too large. Maximum 5MB allowed.'];
-        }
-
-        // Check image type
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        if (!in_array(mime_content_type($file['tmp_name']), $allowedTypes)) {
-            return ['valid' => false, 'error' => 'Invalid image type. Allowed types: JPG, PNG, GIF, WebP'];
-        }
-
-        return ['valid' => true];
+        $result = \UploadValidator::validate($file, ['types' => 'images', 'max_size' => 5]);
+        return ['valid' => $result['valid'], 'error' => $result['error'] ?? ''];
     }
 
     /**
@@ -619,17 +659,17 @@ class SiteController extends AdminController
     private function uploadImage(array $file): ?string
     {
         try {
-            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $fileName = uniqid('site_') . '.' . $extension;
+            $safeName = \UploadValidator::safeFilename($file['name']);
+            $dateDir = date('Y/m');
+            $result = \UploadValidator::store($file, 'public/uploads/sites/' . $dateDir, $safeName);
 
-            // Create upload directory if it doesn't exist
-            $uploadDir = 'uploads/sites/' . date('Y/m');
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
+            if ($result['success']) {
+                return 'uploads/sites/' . $dateDir . '/' . $safeName;
             }
 
-            return $uploadDir . '/' . $fileName;
-        } catch (Exception $e) {
+            $this->loggingService->error("Failed to move uploaded file: " . $result['error']);
+            return null;
+        } catch (\Exception $e) {
             $this->loggingService->error("Upload image error: " . $e->getMessage());
             return null;
         }
@@ -642,14 +682,17 @@ class SiteController extends AdminController
     {
         try {
             // Get site details for logging
-            $sql = "SELECT site_name FROM sites WHERE id = ?";
+            $sql = "SELECT site_name, image FROM sites WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$siteId]);
             $site = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-            // Delete image if exists
-            if ($site['image'] && file_exists($site['image'])) {
-                unlink($site['image']);
+            // Delete image if exists (resolve web-relative path to absolute)
+            if (!empty($site['image'])) {
+                $imagePath = __DIR__ . '/../../../../public/' . ltrim($site['image'], '/');
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
             }
 
             // Delete site
@@ -678,7 +721,7 @@ class SiteController extends AdminController
                 try {
                     $stmt = $this->db->query($sql);
                     $stats['by_type'] = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $this->loggingService->error("Get Site Stats error: " . $e->getMessage());
                     return $this->jsonResponse([
                         'success' => false,
@@ -691,7 +734,7 @@ class SiteController extends AdminController
                 'success' => true,
                 'message' => 'Site deleted successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Delete site error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
@@ -737,7 +780,7 @@ class SiteController extends AdminController
                 'totalSold' => $totalSold,
                 'page_title' => 'Plot Inventory Overview'
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Inventory error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load inventory data');
             return $this->redirect('admin/dashboard');

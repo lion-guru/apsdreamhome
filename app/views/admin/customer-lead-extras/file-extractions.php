@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Session started by controller
 $page_title = 'Lead File Extractions';
 $page_description = 'View extracted data from lead documents and files';

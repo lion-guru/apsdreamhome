@@ -52,6 +52,15 @@ $total_count = $total_count ?? 0;
                 </tr>
             </thead>
             <tbody>
+                <?php if (empty($results)): ?>
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <i class="fas fa-sync fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                        <h5 class="text-muted">No evaluation results</h5>
+                        <p class="text-muted mb-3">Run a rank evaluation to see promotion results here.</p>
+                    </td>
+                </tr>
+                <?php else: ?>
                 <?php foreach ($results as $r): ?>
                 <tr class="<?php echo ($r['promoted'] ?? false) ? 'table-success' : ''; ?>">
                     <td><?php echo $r['user_id'] ?? 'N/A'; ?></td>
@@ -71,6 +80,7 @@ $total_count = $total_count ?? 0;
                     </td>
                 </tr>
                 <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

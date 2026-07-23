@@ -60,13 +60,17 @@ class TeamController extends AdminController
 
         $photo = '';
         if (!empty($_FILES['photo']['name']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = __DIR__ . '/../../../../assets/images/team/';
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-            $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
-            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-            if (in_array($ext, $allowed)) {
-                $photo = 'team/' . time() . '_' . preg_replace('/[^a-zA-Z0-9_-]/', '', $name) . '.' . $ext;
-                move_uploaded_file($_FILES['photo']['tmp_name'], $uploadDir . basename($photo));
+            $validation = \UploadValidator::validate($_FILES['photo'], ['types' => 'images', 'max_size' => 5]);
+            if ($validation['valid']) {
+                $uploadDir = __DIR__ . '/../../../../assets/images/team/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $safeName = \UploadValidator::safeFilename($_FILES['photo']['name']);
+                $photo = 'team/' . $safeName;
+                move_uploaded_file($_FILES['photo']['tmp_name'], $uploadDir . $safeName);
+            } else {
+                $_SESSION['error'] = 'Photo upload failed: ' . $validation['error'];
+                header('Location: ' . BASE_URL . '/admin/team/create');
+                exit;
             }
         }
 
@@ -133,16 +137,20 @@ class TeamController extends AdminController
         $photo = $member['photo'];
 
         if (!empty($_FILES['photo']['name']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = __DIR__ . '/../../../../assets/images/team/';
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-            $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
-            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-            if (in_array($ext, $allowed)) {
+            $validation = \UploadValidator::validate($_FILES['photo'], ['types' => 'images', 'max_size' => 5]);
+            if ($validation['valid']) {
+                $uploadDir = __DIR__ . '/../../../../assets/images/team/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                 if ($photo && file_exists($uploadDir . basename($photo))) {
                     unlink($uploadDir . basename($photo));
                 }
-                $photo = 'team/' . time() . '_' . preg_replace('/[^a-zA-Z0-9_-]/', '', $name) . '.' . $ext;
-                move_uploaded_file($_FILES['photo']['tmp_name'], $uploadDir . basename($photo));
+                $safeName = \UploadValidator::safeFilename($_FILES['photo']['name']);
+                $photo = 'team/' . $safeName;
+                move_uploaded_file($_FILES['photo']['tmp_name'], $uploadDir . $safeName);
+            } else {
+                $_SESSION['error'] = 'Photo upload failed: ' . $validation['error'];
+                header('Location: ' . BASE_URL . '/admin/team/edit/' . $id);
+                exit;
             }
         }
 

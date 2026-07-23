@@ -9,7 +9,7 @@
         <h2 class="h3 mb-0 text-gray-800 fw-bold"><?= __('user_inv_title', null, 'My Investments') ?></h2>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>dashboard" class="text-decoration-none"><?= __('user_inv_breadcrumb_dashboard', null, 'Dashboard') ?></a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/dashboard" class="text-decoration-none"><?= __('user_inv_breadcrumb_dashboard', null, 'Dashboard') ?></a></li>
                 <li class="breadcrumb-item active"><?= __('user_inv_breadcrumb_investments', null, 'Investments') ?></li>
             </ol>
         </nav>

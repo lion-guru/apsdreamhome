@@ -1,14 +1,14 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <a href="/admin/payout-batches" class="btn btn-sm btn-outline-secondary mb-2"><i class="fas fa-arrow-left me-1"></i> Back</a>
+            <a href="<?= BASE_URL ?>/admin/payout-batches" class="btn btn-sm btn-outline-secondary mb-2"><i class="fas fa-arrow-left me-1"></i> Back</a>
             <h2 style="color:#e0e0e0;"><i class="fas fa-plus-circle me-2" style="color:#28a745;"></i> Create Payout Batch</h2>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-8">
-            <form method="POST" action="/admin/payout-batches/store">
+            <form method="POST" action="<?= BASE_URL ?>/admin/payout-batches/store">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                 <div class="card mb-4" style="background:rgba(30,30,30,0.9);border:1px solid #444;">

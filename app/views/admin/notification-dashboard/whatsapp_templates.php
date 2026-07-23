@@ -1,6 +1,6 @@
 <?php
 $templates = $templates ?? [];
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <!DOCTYPE html>
 <html lang="en">

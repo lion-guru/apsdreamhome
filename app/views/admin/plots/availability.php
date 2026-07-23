@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $colonies = $colonies ?? [];
 $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, 'total' => 0];
 ?>
@@ -11,7 +11,7 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                     <button type="button" class="btn btn-outline-primary" onclick="refreshAvailability()">
                         <i class="fas fa-sync-alt"></i> Refresh
                     </button>
-                    <a href="/admin/plots" class="btn btn-outline-secondary">
+                    <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-outline-secondary">
                         <i class="fas fa-th"></i> All Plots
                     </a>
                 </div>
@@ -155,16 +155,16 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="/admin/plots/<?= $p['id'] ?>" class="btn btn-sm btn-outline-info" title="View Details"><i class="fas fa-eye"></i></a>
-                                                <a href="/admin/plots/<?= $p['id'] ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                                                <a href="<?= BASE_URL ?>/admin/plots/<?= $p['id'] ?>" class="btn btn-sm btn-outline-info" title="View Details"><i class="fas fa-eye"></i></a>
+                                                <a href="<?= BASE_URL ?>/admin/plots/<?= $p['id'] ?>/edit" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
                                                 <?php if (($p['status'] ?? '') === 'available'): ?>
-                                                    <a href="/admin/plots/<?= $p['id'] ?>/book" class="btn btn-sm btn-outline-success" title="Book Now"><i class="fas fa-book"></i></a>
+                                                    <a href="<?= BASE_URL ?>/admin/plots/<?= $p['id'] ?>/book" class="btn btn-sm btn-outline-success" title="Book Now"><i class="fas fa-book"></i></a>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <tr><td colspan="10" class="text-center text-muted py-4">No plots found. <a href="/admin/plots/create">Create a plot</a> to get started.</td></tr>
+                                    <tr><td colspan="10" class="text-center text-muted py-4">No plots found. <a href="<?= BASE_URL ?>/admin/plots/create">Create a plot</a> to get started.</td></tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>

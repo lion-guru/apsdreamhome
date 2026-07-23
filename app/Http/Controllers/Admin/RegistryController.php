@@ -66,7 +66,7 @@ class RegistryController extends AdminController
                 'filters' => ['status' => $status, 'search' => $search],
                 'status_counts' => $counts
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->render('admin/registry/index', [
                 'page_title' => 'Registry Management',
                 'bookings' => [],
@@ -108,7 +108,7 @@ class RegistryController extends AdminController
                 'booking' => $booking,
                 'activities' => $activities
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry');
         }
@@ -135,7 +135,7 @@ class RegistryController extends AdminController
 
             $this->setFlash('success', 'Documents status updated successfully');
             $this->redirect('/admin/registry/show/' . $id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -157,7 +157,7 @@ class RegistryController extends AdminController
 
             $this->setFlash('success', 'Stamp duty details recorded successfully');
             $this->redirect('/admin/registry/show/' . $id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -190,7 +190,7 @@ class RegistryController extends AdminController
 
             $this->setFlash('success', 'Appointment scheduled successfully');
             $this->redirect('/admin/registry/show/' . $id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -223,7 +223,7 @@ class RegistryController extends AdminController
 
             $this->setFlash('success', 'Property marked as registered successfully');
             $this->redirect('/admin/registry/show/' . $id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -272,7 +272,7 @@ class RegistryController extends AdminController
 
             $this->setFlash('success', 'Mutation status updated successfully');
             $this->redirect('/admin/registry/show/' . $id);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -319,7 +319,7 @@ class RegistryController extends AdminController
 
             $pdf->Output('Registry_Certificate_' . ($booking['booking_number'] ?? $id) . '.pdf', 'D');
             exit;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error generating certificate: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -347,7 +347,7 @@ class RegistryController extends AdminController
                 'booking' => $booking,
                 'booking_id' => $bookingId
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->render('admin/registry/history', [
                 'page_title' => 'Registry History',
                 'activities' => [],
@@ -367,7 +367,7 @@ class RegistryController extends AdminController
                 // Gracefully handle dropped table ref
             }
             $stmt->execute([$bookingId, $action, $details, $_SESSION['admin_id'] ?? null]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
                     error_log("RegistryController.php: " . $e->getMessage());
         }
     }

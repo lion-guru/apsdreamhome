@@ -22,7 +22,7 @@ class DealController extends AdminController
      */
     public function index()
     {
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
         $stages = [];
         $dealsByStage = [];
         $stats = ['total_deals' => 0, 'total_value' => 0, 'won_this_month' => ['count' => 0, 'total' => 0], 'lost_this_month' => ['count' => 0]];
@@ -95,7 +95,7 @@ class DealController extends AdminController
      */
     public function kanban()
     {
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
         $deals = []; $stages = []; $stats = [];
 
         try {
@@ -150,7 +150,7 @@ class DealController extends AdminController
      */
     public function create()
     {
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
         $leads = []; $users = []; $properties = []; $stages = []; $users = [];
 
         try {
@@ -180,11 +180,11 @@ class DealController extends AdminController
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ' . (BASE_URL ?? '/apsdreamhome') . '/admin/deals');
+            header('Location: ' . (BASE_URL) . '/admin/deals');
             exit;
         }
 
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
 
         $dealName = trim($_POST['deal_name'] ?? '');
         $dealValue = floatval($_POST['deal_value'] ?? 0);
@@ -248,7 +248,7 @@ class DealController extends AdminController
      */
     public function show($id)
     {
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
         $dealId = intval($id);
 
         // Get deal details
@@ -332,11 +332,11 @@ class DealController extends AdminController
     public function update($id)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ' . (BASE_URL ?? '/apsdreamhome') . '/admin/deals');
+            header('Location: ' . (BASE_URL) . '/admin/deals');
             exit;
         }
 
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
         $dealId = intval($id);
 
         // Get current deal to track stage changes
@@ -468,7 +468,7 @@ class DealController extends AdminController
      */
     public function delete($id)
     {
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
         $dealId = intval($id);
 
         try {
@@ -488,11 +488,11 @@ class DealController extends AdminController
     public function addActivity($dealId)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ' . (BASE_URL ?? '/apsdreamhome') . '/admin/deals');
+            header('Location: ' . (BASE_URL) . '/admin/deals');
             exit;
         }
 
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
 
         $activityType = trim($_POST['activity_type'] ?? 'note');
         $activityTitle = trim($_POST['activity_title'] ?? '');

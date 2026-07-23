@@ -187,10 +187,13 @@ class LocationController extends BaseApiController
         }
         
         try {
-            $result = $this->db->fetch(
-                "SELECT pincode, area_name FROM pincodes WHERE pincode = ? AND is_active = 1 LIMIT 1",
-                [$pincode]
-            );
+            $result = \App\Services\LookupCacheService::remember("pincode:$pincode", 3600, function() use ($pincode) {
+                return $this->db->fetch(
+                    "SELECT pincode, office_name, district_name, state_name, state_code, latitude, longitude 
+                     FROM pincodes WHERE pincode = ? LIMIT 1",
+                    [$pincode]
+                );
+            });
         } catch (\Exception $e) {
             $result = null;
         }
@@ -199,14 +202,20 @@ class LocationController extends BaseApiController
             $this->jsonResponse([
                 'found' => true,
                 'pincode' => $result['pincode'],
-                'area' => $result['area_name'],
+                'area' => $result['office_name'],
+                'city' => $result['district_name'],
+                'district' => $result['district_name'],
+                'state' => $result['state_name'],
+                'state_code' => $result['state_code'],
+                'latitude' => $result['latitude'],
+                'longitude' => $result['longitude'],
                 'message' => 'Pincode found'
             ]);
         } else {
             $this->jsonResponse([
                 'found' => false,
                 'pincode' => $pincode,
-                'message' => 'Pincode not found. Please enter details manually.',
+                'message' => 'Pincode not found in database. Please enter details manually.',
                 'manual_entry_required' => true
             ]);
         }
@@ -225,17 +234,13 @@ class LocationController extends BaseApiController
         }
         
         try {
-            $sql = "SELECT p.pincode, p.area_name,
-                           c.name as city, d.name as district, s.name as state
-                    FROM pincodes p
-                    LEFT JOIN cities c ON p.city_id = c.id
-                    LEFT JOIN districts d ON p.district_id = d.id
-                    LEFT JOIN states s ON p.state_id = s.id
-                    WHERE p.is_active = 1 AND (p.pincode LIKE ? OR p.area_name LIKE ?)
-                    ORDER BY p.pincode
+            $sql = "SELECT pincode, office_name, district_name as city, district_name as district, state_name as state, state_code, latitude, longitude
+                    FROM pincodes 
+                    WHERE (pincode LIKE ? OR office_name LIKE ? OR district_name LIKE ? OR state_name LIKE ?)
+                    ORDER BY pincode
                     LIMIT 50";
             
-            $results = $this->db->fetchAll($sql, ["%$search%", "%$search%"]);
+            $results = $this->db->fetchAll($sql, ["%$search%", "%$search%", "%$search%", "%$search%"]);
         } catch (\Exception $e) {
             $results = [];
         }

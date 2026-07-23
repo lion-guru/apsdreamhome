@@ -1,4 +1,4 @@
-<?php include __DIR__ . "/../layouts/header.php"; ?>
+﻿<?php include __DIR__ . "/../layouts/header.php"; ?>
 
 <div class="container-fluid">
     <div class="row">
@@ -14,7 +14,7 @@
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i> Initiate - APS Dream Home Payment System
                     </div>
-                    <form method="POST" action="/payment/process" id="paymentForm">
+                    <form method="POST" action="<?= BASE_URL ?>/payment/process" id="paymentForm">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <div class="col-md-6">

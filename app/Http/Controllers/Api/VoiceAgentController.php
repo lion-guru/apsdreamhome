@@ -11,7 +11,32 @@ class VoiceAgentController extends BaseController
     public function __construct()
     {
         parent::__construct();
+        $this->parseJsonBody();
         $this->db = \App\Core\Database\Database::getInstance();
+    }
+
+    /**
+     * Populate $_POST from a JSON request body so controllers can read
+     * $_POST['key'] regardless of whether the client sent form-encoded
+     * or application/json payloads.
+     */
+    private function parseJsonBody(): void
+    {
+        if (empty($_POST)
+            && !empty($_SERVER['CONTENT_TYPE'])
+            && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== false
+        ) {
+            $raw = file_get_contents('php://input');
+            $data = json_decode($raw, true);
+            if (is_array($data)) {
+                $_POST = $data;
+            }
+        }
+    }
+
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
     }
 
     public function startCall()
@@ -37,17 +62,21 @@ class VoiceAgentController extends BaseController
             $sessionId = bin2hex(random_bytes(16));
 
             $agent = $this->db->fetch(
-                "SELECT * FROM ai_calling_agents WHERE agent_type = ? AND is_active = 1 ORDER BY current_load ASC LIMIT 1",
-                [$agentType]
+                "SELECT * FROM ai_calling_agents WHERE status = 'active' ORDER BY current_calls ASC LIMIT 1"
             );
 
-            $agentName = $agent['name'] ?? 'AI Calling Agent';
+            $agentName = $agent['agent_name'] ?? 'AI Calling Agent';
             $agentId = $agent['id'] ?? null;
 
-            $script = $this->db->fetch(
-                "SELECT * FROM ai_calling_scripts WHERE script_code = ? AND is_active = 1 LIMIT 1",
-                [$scriptCode]
-            );
+            $script = null;
+            try {
+                $script = $this->db->fetch(
+                    "SELECT * FROM ai_calling_scripts WHERE script_code = ? AND is_active = 1 LIMIT 1",
+                    [$scriptCode]
+                );
+            } catch (\Exception $e) {
+                $script = null;
+            }
 
             $this->db->execute(
                 "INSERT INTO ai_call_sessions (session_id, lead_id, phone, agent_id, agent_type, script_code, agent_name, status, started_at, created_at)
@@ -57,7 +86,7 @@ class VoiceAgentController extends BaseController
 
             if ($agentId) {
                 $this->db->execute(
-                    "UPDATE ai_calling_agents SET current_load = current_load + 1 WHERE id = ?",
+                    "UPDATE ai_calling_agents SET current_calls = current_calls + 1 WHERE id = ?",
                     [$agentId]
                 );
             }
@@ -184,13 +213,13 @@ class VoiceAgentController extends BaseController
         }
     }
 
-    public function getSession($id)
+    public function getSession($id = null)
     {
         try {
             $session = $this->db->fetch(
                 "SELECT s.*, l.name as lead_name, l.phone as lead_phone, l.email as lead_email,
                         l.property_interest, l.budget_range, l.status as lead_status,
-                        a.name as agent_name, a.agent_type as agent_type_name
+                        a.agent_name as agent_name, a.status as agent_type_name
                  FROM ai_call_sessions s
                  LEFT JOIN leads l ON s.lead_id = l.id
                  LEFT JOIN ai_calling_agents a ON s.agent_id = a.id
@@ -239,7 +268,7 @@ class VoiceAgentController extends BaseController
 
             if ($session['agent_id']) {
                 $this->db->execute(
-                    "UPDATE ai_calling_agents SET current_load = GREATEST(current_load - 1, 0) WHERE id = ?",
+                    "UPDATE ai_calling_agents SET current_calls = GREATEST(current_calls - 1, 0) WHERE id = ?",
                     [$session['agent_id']]
                 );
             }
@@ -260,8 +289,8 @@ class VoiceAgentController extends BaseController
 
             if ($outcome === 'followup_needed') {
                 $this->db->execute(
-                    "INSERT INTO ai_calling_schedule (lead_id, user_id, phone, agent_type, scheduled_date, priority, status, created_at)
-                     VALUES (?, ?, ?, ?, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 5, 'scheduled', NOW())",
+                    "INSERT INTO ai_calling_schedule (lead_id, user_id, phone, agent_type, scheduled_date, scheduled_time, priority, status, created_at)
+                     VALUES (?, ?, ?, ?, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00:00', 'medium', 'scheduled', NOW())",
                     [$session['lead_id'], $session['lead_id'], $session['phone'] ?? '', 'followup']
                 );
             }
@@ -287,10 +316,10 @@ class VoiceAgentController extends BaseController
             $status = $_GET['status'] ?? null;
 
             $sql = "SELECT s.*, l.name as lead_name, l.phone as lead_phone,
-                           a.name as agent_name, a.agent_type
+                           a.agent_name as agent_name, a.status as agent_type
                     FROM ai_calling_schedule s
                     LEFT JOIN leads l ON s.lead_id = l.id
-                    LEFT JOIN ai_calling_agents a ON s.assigned_agent = a.id
+                    LEFT JOIN ai_calling_agents a ON s.ai_agent_id = a.id
                     WHERE (s.scheduled_date = ? OR ? IS NULL)";
             $params = [$date, $date];
 
@@ -321,22 +350,22 @@ class VoiceAgentController extends BaseController
             $phone = $_POST['phone'] ?? '';
             $agentType = $_POST['agent_type'] ?? 'followup';
             $scheduledDate = $_POST['scheduled_date'] ?? date('Y-m-d', strtotime('+1 day'));
-            $priority = $_POST['priority'] ?? 5;
+            $priority = $_POST['priority'] ?? 'medium';
             $notes = $_POST['notes'] ?? '';
 
             if (!$leadId) {
                 return $this->jsonResponse(['success' => false, 'error' => 'lead_id is required'], 400);
             }
 
-            $lead = $this->db->fetch("SELECT id, user_id, phone FROM leads WHERE id = ?", [$leadId]);
+            $lead = $this->db->fetch("SELECT id, phone FROM leads WHERE id = ?", [$leadId]);
             if (!$lead) {
                 return $this->jsonResponse(['success' => false, 'error' => 'Lead not found'], 404);
             }
 
             $this->db->execute(
-                "INSERT INTO ai_calling_schedule (lead_id, user_id, phone, agent_type, scheduled_date, priority, notes, status, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, 'scheduled', NOW())",
-                [$leadId, $lead['user_id'], $phone ?: ($lead['phone'] ?? ''), $agentType, $scheduledDate, $priority, $notes]
+                "INSERT INTO ai_calling_schedule (lead_id, user_id, phone, agent_type, scheduled_date, scheduled_time, priority, notes, status, created_at)
+                 VALUES (?, ?, ?, ?, ?, '09:00:00', ?, ?, 'scheduled', NOW())",
+                [$leadId, $lead['user_id'] ?? null, $phone ?: ($lead['phone'] ?? ''), $agentType, $scheduledDate, $priority, $notes]
             );
 
             $scheduleId = $this->db->lastInsertId();
@@ -518,7 +547,7 @@ class VoiceAgentController extends BaseController
 
             $calls = $this->db->fetchAll(
                 "SELECT s.*, l.name as lead_name, l.phone as lead_phone,
-                        a.name as agent_name
+                        a.agent_name as agent_name
                  FROM ai_call_sessions s
                  LEFT JOIN leads l ON s.lead_id = l.id
                  LEFT JOIN ai_calling_agents a ON s.agent_id = a.id

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $page_title = $page_title ?? 'Challan Detail';
 ob_start();
 ?>
@@ -7,7 +7,7 @@ ob_start();
         <h4 class="mb-1"><i class="fas fa-money-check me-2 text-warning"></i><?= htmlspecialchars($page_title) ?></h4>
         <span class="text-muted">Form 281 Challan</span>
     </div>
-    <a href="/admin/efiling/tds/challans" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Challans</a>
+    <a href="<?= BASE_URL ?>/admin/efiling/tds/challans" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Challans</a>
 </div>
 
 <div class="card border-0 shadow-sm">

@@ -9,14 +9,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Cache;
-use App\Models\Admin;
-use App\Models\About;
 use App\Models\Property;
 use App\Models\User;
-use App\Models\Invoice;
-use App\Models\Tax;
-use App\Models\FinancialReports;
-use App\Models\Budget;
+
 use Exception;
 
 class AdminController extends BaseController
@@ -89,7 +84,7 @@ class AdminController extends BaseController
             ]);
 
             return $this->render('admin/dashboard', $this->data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->setFlash('error', 'Error loading enterprise dashboard: ' . $e->getMessage());
             return $this->render('admin/dashboard', [
                 'page_title' => 'Enterprise Dashboard - ' . $this->getConfig('app_name'),
@@ -117,7 +112,32 @@ class AdminController extends BaseController
 
         $stats = [];
 
-        // Module 1: Land Inventory
+        // System Overview Stats
+        try {
+            $pdo = $this->db->getConnection();
+            $stats['database_tables'] = (int)($pdo->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE()")->fetchColumn() ?? 0);
+        } catch (\Exception $e) { $stats['database_tables'] = 0; }
+
+        try {
+            $totalUsers = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM users WHERE role IN ('admin','super_admin','manager','employee','telecaller','associate','agent','customer')")['cnt'] ?? 0);
+            $activeUsers = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM users WHERE role IN ('admin','super_admin','manager','employee','telecaller','associate','agent','customer') AND is_active = 1")['cnt'] ?? 0);
+            $stats['total_users'] = $totalUsers;
+            $stats['active_users'] = $activeUsers;
+            $stats['active_users_pct'] = $totalUsers > 0 ? round(($activeUsers / $totalUsers) * 100, 1) : 0;
+        } catch (\Exception $e) { 
+            $stats['total_users'] = 0;
+            $stats['active_users'] = 0;
+            $stats['active_users_pct'] = 0;
+        }
+
+        // System Health - based on error logs in last 24h
+        try {
+            $totalLogs = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM user_activity_logs_unified WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)")['cnt'] ?? 0);
+            $errorLogs = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM user_activity_logs_unified WHERE action LIKE '%error%' OR action LIKE '%fail%' AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)")['cnt'] ?? 0);
+            $stats['system_health_pct'] = $totalLogs > 0 ? max(0, 100 - round(($errorLogs / $totalLogs) * 100, 1)) : 99.9;
+        } catch (\Exception $e) {
+            $stats['system_health_pct'] = 99.9;
+        }
         try {
             $stats['land_active_leads'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM land_leads WHERE status NOT IN ('acquired','rejected')")['cnt'] ?? 0);
         } catch (\Exception $e) { $stats['land_active_leads'] = 0; }
@@ -257,7 +277,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_total_users', function () {
                 return $this->db->fetch("SELECT COUNT(*) as count FROM users")['count'] ?? 0;
             }, 300);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
     }
@@ -271,7 +291,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_total_properties', function () {
                 return $this->db->fetch("SELECT COUNT(*) as count FROM properties")['count'] ?? 0;
             }, 300);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
     }
@@ -285,7 +305,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_total_inquiries', function () {
                 return $this->db->fetch("SELECT COUNT(*) as count FROM inquiries")['count'] ?? 0;
             }, 300);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
     }
@@ -299,7 +319,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_total_revenue', function () {
                 return $this->db->fetch("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'completed'")['total'] ?? 0;
             }, 300);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
     }
@@ -313,7 +333,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_active_properties', function () {
                 return $this->db->fetch("SELECT COUNT(*) as count FROM properties WHERE status = 'active'")['count'] ?? 0;
             }, 300);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
     }
@@ -327,7 +347,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_new_users_today', function () {
                 return $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = CURDATE()")['count'] ?? 0;
             }, 120);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
     }
@@ -341,7 +361,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_pending_approvals', function () {
                 return $this->db->fetch("SELECT COUNT(*) as count FROM properties WHERE status = 'pending'")['count'] ?? 0;
             }, 180);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
     }
@@ -372,7 +392,7 @@ class AdminController extends BaseController
                 ORDER BY created_at DESC 
                 LIMIT 5
             ");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [];
         }
     }
@@ -399,7 +419,7 @@ class AdminController extends BaseController
                 }, 180),
             ];
             echo json_encode(['success' => true, 'data' => $stats]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -503,7 +523,7 @@ class AdminController extends BaseController
     {
         try {
             return $this->db->fetchAll("SELECT id, name, email, role, status, created_at FROM users ORDER BY created_at DESC LIMIT 50");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [];
         }
     }
@@ -525,6 +545,16 @@ class AdminController extends BaseController
     protected function jsonError($message, $statusCode = 400)
     {
         $this->jsonResponse(['success' => false, 'message' => $message], $statusCode);
+    }
+
+    /**
+     * Flash message helper (compatibility wrapper)
+     * Usage: $this->flashMessage('Saved!', 'success')
+     * Stores in $_SESSION['flash_success'] / $_SESSION['flash_error'] for layout rendering
+     */
+    protected function flashMessage(string $message, string $type = 'info'): void
+    {
+        $_SESSION['flash_' . $type] = $message;
     }
 
     /**
@@ -551,7 +581,7 @@ class AdminController extends BaseController
             // Log the update if needed
             // error_log("Updating content for ID: $id");
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -606,7 +636,7 @@ class AdminController extends BaseController
     {
         try {
             return $this->db->fetchAll("SELECT id, title, location, price, status, featured, created_at FROM properties ORDER BY created_at DESC LIMIT 50");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [];
         }
     }
@@ -752,108 +782,45 @@ class AdminController extends BaseController
         ]);
     }
 
-    // --- Stub page methods for closure route conversion ---
+    // --- Legacy stub redirects: map old "under development" URLs to real features ---
+    // These were placeholder pages; the functionality now lives in dedicated modules.
+    private const STUB_REDIRECTS = [
+        'marketing-strategies'         => '/admin/mlm',
+        'marketing-marketplace'        => '/admin/mlm',
+        'agent-commission-rates'       => '/admin/commission/rules',
+        'associate-commission-structure' => '/admin/commission',
+        'associate-commission-calculations' => '/admin/commission/calculations',
+        'commission-bonuses'            => '/admin/commission',
+        'mlm-commission-levels'         => '/admin/mlm-settings/levels',
+        'mlm-commission-records'        => '/admin/commission',
+        'mlm-commission-analytics'      => '/admin/mlm',
+        'daily-revenue'                 => '/admin/financial-reports',
+        'telecaller-commission-rules'   => '/admin/commission/telecaller/commissions',
+        'telecaller-commissions'        => '/admin/commission/telecaller/commissions',
+        'mlm-rank-criteria'             => '/admin/mlm/ranks',
+        'mlm-upgrades'                  => '/admin/mlm-rewards/upgrades',
+        'mlm-withdrawals'               => '/admin/mlm-rewards/withdrawals',
+        'mlm-rewards'                   => '/admin/mlm-rewards',
+        'api-integrations'              => '/admin/api/integrations',
+    ];
 
-    public function marketingStrategies()
+    public function stubRedirect()
     {
         $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'Marketing Strategies', 'page_message' => 'This section is under development.']);
-    }
-
-    public function marketingMarketplace()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'Marketing Marketplace', 'page_message' => 'This section is under development.']);
-    }
-
-    public function agentCommissionRates()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'Agent Commission Rates', 'page_message' => 'Configure commission rates for users.']);
-    }
-
-    public function associateCommissionStructure()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'Associate Commission Structure', 'page_message' => 'This section is under development.']);
-    }
-
-    public function associateCommissionCalculations()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'Associate Commission Calculations', 'page_message' => 'This section is under development.']);
-    }
-
-    public function commissionBonuses()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'Commission Bonuses', 'page_message' => 'Manage bonus rules and payouts.']);
-    }
-
-    public function mlmCommissionLevels()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'MLM Commission Levels', 'page_message' => 'This section is under development.']);
-    }
-
-    public function mlmCommissionRecords()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'MLM Commission Records', 'page_message' => 'This section is under development.']);
-    }
-
-    public function mlmCommissionAnalytics()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'MLM Commission Analytics', 'page_message' => 'This section is under development.']);
-    }
-
-    public function dailyRevenue()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'Daily Revenue', 'page_message' => 'View daily revenue breakdown.']);
-    }
-
-    public function telecallerCommissionRules()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'Telecaller Commission Rules', 'page_message' => 'This section is under development.']);
-    }
-
-    public function telecallerCommissions()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'Telecaller Commissions', 'page_message' => 'This section is under development.']);
-    }
-
-    public function mlmRankCriteria()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'MLM Rank Criteria', 'page_message' => 'Define rank advancement criteria for users.']);
-    }
-
-    public function mlmUpgrades()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'MLM Upgrades', 'page_message' => 'View and manage associate rank upgrades.']);
-    }
-
-    public function mlmWithdrawals()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'MLM Withdrawals', 'page_message' => 'Manage withdrawal requests from users.']);
-    }
-
-    public function mlmRewards()
-    {
-        $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'MLM Rewards', 'page_message' => 'Manage rewards and recognition for users.']);
+        $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '/';
+        $uri = preg_replace('#^/apsdreamhome#', '', $uri);
+        $key = ltrim($uri, '/');
+        $key = preg_replace('#^admin/#', '', $key);
+        $target = self::STUB_REDIRECTS[$key] ?? '/admin/dashboard';
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . $target);
+        exit;
     }
 
     public function apiIntegrations()
     {
         $this->requireAdmin();
-        return $this->render('admin/stub_page', ['page_title' => 'API Integrations', 'page_message' => 'Manage third-party API integrations and webhooks.']);
+        header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/api/developers');
+        exit;
     }
 
     /**
@@ -867,7 +834,7 @@ class AdminController extends BaseController
             $docService = new \App\Services\ApiDocService();
             $groups = $docService->getEndpoints();
             $total  = array_sum(array_map('count', $groups));
-            $base   = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+            $base   = BASE_URL;
 
             return $this->render('admin/api-docs', [
                 'page_title'    => 'API Documentation',

@@ -1,4 +1,4 @@
-
+﻿
 
 <div class="container-fluid">
     <div class="row">
@@ -6,7 +6,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-coins"></i> Create rule</h2>
                 <div>
-                    <a href="/admin/commission" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Commission
                     </a>
                 </div>
@@ -17,7 +17,7 @@
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i> Create rule Management - Complete Commission System
                     </div>
-                    <form method="POST" action="/admin/commission/create-rule">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/commission/create-rule">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <div class="col-md-6">
@@ -111,7 +111,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <a href="/admin/commission" class="btn btn-secondary">
+                            <a href="<?= BASE_URL ?>/admin/commission" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">

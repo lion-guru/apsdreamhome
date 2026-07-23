@@ -51,11 +51,10 @@ if (!isset($GLOBALS['_html_doc_started'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <!-- APS Core CSS - Proper loading order: base → components → utilities → premium overrides -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>/assets/css/style.css" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>/assets/css/frontend.css?v=20260716" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>/assets/css/header.css" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/apsdreamhome'; ?>/assets/css/premium-theme.css" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/style.css?v=6" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/frontend.css?v=6" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/header.css?v=6" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/premium-theme.css?v=6" rel="stylesheet">
 
     <?php if ($ga4_enabled): ?>
     <!-- Google Analytics 4 -->
@@ -128,9 +127,14 @@ if (!isset($GLOBALS['_html_doc_started'])) {
     <?php
 }
 if (!defined('BASE_URL')) {
-    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+    $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
+               (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+    $protocol = $isHttps ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    define('BASE_URL', $protocol . '://' . $host . '/apsdreamhome');
+    // Auto-detect base path: /public/index.php → strip /public suffix
+    $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+    $basePath = preg_replace('#/public$#', '', $scriptDir);
+    define('BASE_URL', $protocol . '://' . $host . $basePath);
 }
 
 $projectLocations = [];
@@ -253,13 +257,21 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
         ['label' => 'Braj Radha Nagri', 'url' => '/colony/braj-radha-nagri', 'icon' => 'fas fa-city'],
     ];
 }
-    ?>
-    <header class="premium-header fixed-top glass-navbar" id="mainHeader">
+
+// Determine if we are on the homepage for header styling
+$current_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$base_path = (string) parse_url(BASE_URL, PHP_URL_PATH);
+$current_path = str_replace($base_path, '', $current_path);
+$current_path = $current_path ?: '/';
+$is_home = ($current_path === '/');
+$header_class = $is_home ? 'premium-header hero-header fixed-top' : 'premium-header fixed-top';
+?>
+    <header class="<?= $header_class ?>" id="mainHeader">
         <nav class="navbar navbar-expand-xl">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
                     <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo"
-                        style="height: 32px; width: auto; max-width: 110px;" loading="eager" fetchpriority="high" />
+                        style="height: 36px; width: auto; max-width: 100px;" loading="eager" fetchpriority="high" />
                 </a>
 
                 <!-- Quick Search Bar (Typeahead) -->
@@ -284,11 +296,6 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav align-items-center" style="margin-left: 0;">
                         <?php
-                        $current_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-                        $base_path = (string) parse_url(BASE_URL, PHP_URL_PATH);
-                        $current_path = str_replace($base_path, '', $current_path);
-                        $current_path = $current_path ?: '/';
-
                         $nav_items = [
                             ['label' => __('home'), 'url' => '/', 'icon' => 'fas fa-home'],
                             [
@@ -540,7 +547,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                                 <i class="fas fa-user-plus me-1"></i><?= __('register') ?>
                             </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/register">
                                         <i class="fas fa-user me-2"></i><?= __('customer_registration') ?>
                                     </a></li>
@@ -556,7 +563,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                                 <i class="fas fa-sign-in-alt me-1"></i><?= __('login') ?>
                             </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/login">
                                         <i class="fas fa-user me-2"></i><?= __('customer_login') ?>
                                     </a></li>
@@ -608,448 +615,7 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     </header>
 
 
-    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-    /* Premium Header Styling */
-    .premium-header {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-    }
-
-    .premium-header::after {
-		display: none !important;
-        content: '';
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: linear-gradient(90deg, #0d9488, #0f766e, #10b981, #0d9488);
-        background-size: 300% 100%;
-        animation: gradientSlide 4s ease infinite;
-        pointer-events: none;
-    }
-
-    @keyframes gradientSlide {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    .premium-header.header-scrolled {
-        background: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.12);
-    }
-
-    /* Desktop nav links */
-    .premium-header .navbar-nav {
-        flex-wrap: wrap;
-    }
-    .premium-header .navbar-nav .nav-link {
-        font-weight: 600;
-        font-size: 13.5px;
-        padding: 24px 12px !important;
-        color: #1e293b;
-        position: relative;
-        transition: color 0.2s;
-        letter-spacing: 0.2px;
-    }
-
-    .premium-header .navbar-nav .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: 12px;
-        left: 50%;
-        width: 0;
-        height: 2px;
-        background: linear-gradient(90deg, #0d9488, #0f766e);
-        transition: all 0.3s ease;
-        transform: translateX(-50%);
-        border-radius: 2px;
-    }
-
-    .premium-header .navbar-nav .nav-link:hover::after,
-    .premium-header .navbar-nav .nav-link.active::after {
-        width: 60%;
-    }
-
-    .premium-header .navbar-nav .nav-link:hover {
-        color: #0d9488;
-    }
-
-    .premium-header .navbar-nav .nav-link.active {
-        color: #0d9488;
-    }
-
-    /* Premium dropdown menus */
-    .premium-header .dropdown-menu {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
-        padding: 8px;
-        margin-top: 8px;
-        background: #fff;
-        animation: dropdownIn 0.2s ease;
-        min-width: 200px;
-    }
-
-    .premium-header .dropdown-menu .dropdown-item {
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 500;
-        color: #475569;
-        transition: all 0.15s;
-    }
-
-    .premium-header .dropdown-menu .dropdown-item:hover {
-        background: #f0fdfa;
-        color: #0d9488;
-        transform: translateX(4px);
-    }
-
-    .premium-header .dropdown-menu .dropdown-item i {
-        width: 20px;
-        color: #0d9488;
-    }
-
-    .premium-header .dropdown-menu .dropdown-header {
-        font-size: 11px;
-        color: #94a3b8;
-        padding: 6px 14px;
-        letter-spacing: 0.5px;
-    }
-
-    @keyframes dropdownIn {
-        from {
-            opacity: 0;
-            transform: translateY(-8px) scale(0.98);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-
-    /* Call & Admin buttons */
-    .btn-call {
-        background: linear-gradient(135deg, #22c55e, #16a34a);
-        border: none;
-        color: #fff !important;
-        border-radius: 24px;
-        padding: 8px 18px;
-        font-weight: 600;
-        font-size: 13px;
-        transition: all 0.3s;
-        box-shadow: 0 2px 12px rgba(34, 197, 94, 0.3);
-    }
-
-    .btn-call:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
-    }
-
-    .btn-admin {
-        background: linear-gradient(135deg, #1e293b, #334155);
-        border: none;
-        color: #fff !important;
-        border-radius: 24px;
-        padding: 8px 16px;
-        font-weight: 500;
-        font-size: 13px;
-        transition: all 0.3s;
-    }
-
-    .btn-admin:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Highlighted nav item (Post Property FREE) */
-    .premium-header .nav-link[style*="background"] {
-        border-radius: 24px !important;
-        margin: 12px 0 !important;
-    }
-
-    /* Mobile menu enhancements */
-    .navbar-toggler {
-        border: none;
-        padding: 8px;
-        transition: transform .3s;
-        position: relative;
-        z-index: 9999;
-    }
-
-    .navbar-toggler[aria-expanded="true"] {
-        transform: rotate(90deg);
-    }
-
-    .navbar-toggler-icon {
-        background-image: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .navbar-toggler-icon::before {
-        content: '\f0c9';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 1.3rem;
-        color: #0d9488;
-    }
-
-    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
-        content: '\f00d';
-    }
-
-    /* Mobile backdrop overlay */
-    .nav-backdrop {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, .5);
-        z-index: 9997;
-        opacity: 0;
-        transition: opacity .3s;
-    }
-
-    .nav-backdrop.show {
-        display: block;
-        opacity: 1;
-    }
-
-    .premium-header.menu-open {
-        z-index: 9999;
-    }
-
-    .premium-header.menu-open .navbar-toggler {
-        z-index: 10000;
-    }
-
-    @media (max-width: 1199.98px) {
-        .premium-header .navbar-collapse {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 85%;
-            max-width: 350px;
-            height: 100vh;
-            background: #fff;
-            z-index: 9998;
-            padding: 20px 16px;
-            overflow-y: auto;
-            transform: translateX(-100%);
-            transition: transform .3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 4px 0 30px rgba(0, 0, 0, .15);
-            display: block !important;
-        }
-
-        .premium-header .navbar-collapse.show {
-            transform: translateX(0);
-        }
-
-        .premium-header .navbar-nav {
-            margin-left: 0 !important;
-            flex-direction: column;
-            width: 100%;
-            align-items: flex-start;
-        }
-
-        .premium-header .navbar-nav .nav-item {
-            width: 100%;
-            margin-bottom: 4px;
-        }
-
-        .premium-header .navbar-nav .nav-link {
-            padding: 14px 12px !important;
-            border-radius: 8px;
-            font-size: 15px;
-            justify-content: flex-start;
-        }
-
-        .premium-header .navbar-nav .nav-link::after {
-            display: none;
-        }
-
-        .premium-header .navbar-nav .dropdown-menu {
-            position: static !important;
-            border: none;
-            box-shadow: none;
-            padding-left: 15px;
-            background: #f8fafc;
-            border-radius: 8px;
-            margin: 4px 0;
-            display: block !important;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height .3s ease;
-            padding-top: 0;
-            padding-bottom: 0;
-            animation: none;
-        }
-
-        .premium-header .navbar-nav .dropdown-menu.show-mobile {
-            max-height: 2000px;
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
-
-        .premium-header .navbar-nav .dropdown-menu .dropdown-item {
-            padding: 10px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .premium-header .navbar-nav .dropdown-menu .dropdown-item:hover {
-            background: #e2e8f0;
-            transform: none;
-        }
-
-        .premium-header .ms-2 {
-            margin-left: 0 !important;
-            margin-top: 8px;
-        }
-
-        .premium-header .btn-admin {
-            display: block !important;
-            margin-top: 8px;
-        }
-
-        .premium-header .btn-call {
-            display: block !important;
-            margin-top: 8px;
-        }
-
-        #compareBadge,
-        .btn-compare {
-            display: none !important;
-        }
-
-        .btn-admin {
-            margin-top: 8px;
-        }
-
-        /* Add brand to top of mobile menu */
-        .premium-header .navbar-collapse::before {
-            content: 'APS Dream Home';
-            display: block;
-            font-weight: 700;
-            font-size: 18px;
-            color: #0d9488;
-            padding: 12px 0 16px;
-            margin-bottom: 8px;
-            border-bottom: 1px solid #e2e8f0;
-            letter-spacing: -0.3px;
-        }
-    }
-
-    @media (min-width: 768px) and (max-width: 1199.98px) {
-        .premium-header .navbar-collapse {
-            width: 60%;
-            max-width: 340px;
-        }
-
-        .premium-header .navbar-brand img {
-            height: 38px;
-        }
-    }
-
-    @media (max-width: 400px) {
-        .premium-header .navbar-brand img {
-            height: 32px;
-        }
-
-        .premium-header .navbar-brand span {
-            font-size: 14px;
-        }
-
-        .btn-call {
-            font-size: 12px;
-            padding: 4px 8px;
-        }
-    }
-
-    main {
-        padding-top: var(--header-height, 80px);
-    }
-
-    /* Quick Search Typeahead */
-    .quick-search-form {
-        position: relative;
-    }
-
-    .quick-search-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        margin-top: 4px;
-        max-height: 420px;
-        overflow-y: auto;
-        z-index: 9999;
-    }
-
-    .quick-search-result {
-        padding: 10px 14px;
-        cursor: pointer;
-        border-bottom: 1px solid #f1f5f9;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        transition: background 0.15s;
-    }
-
-    .quick-search-result:hover,
-    .quick-search-result.active {
-        background: #f8fafc;
-    }
-
-    .quick-search-result i {
-        color: #0d9488;
-        width: 18px;
-    }
-
-    .quick-search-result .label {
-        font-weight: 500;
-        color: #1e293b;
-        flex: 1;
-    }
-
-    .quick-search-result .type-tag {
-        font-size: 10px;
-        text-transform: uppercase;
-        background: #ccfbf1;
-        color: #0d9488;
-        padding: 2px 6px;
-        border-radius: 4px;
-    }
-
-    .quick-search-footer {
-        padding: 10px 14px;
-        background: #f8fafc;
-        border-top: 1px solid #e2e8f0;
-        text-align: center;
-    }
-
-    @media (max-width: 991px) {
-        .quick-search-form {
-            display: none !important;
-        }
-    }
-    </style>
+    <!-- Header styles moved to /assets/css/header.css (single source of truth) -->
 
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     window.BASE_URL = '<?php echo BASE_URL; ?>';
@@ -1057,7 +623,9 @@ if (empty($projectsSubmenu) || count($projectsSubmenu) === 1) {
     function updateHeaderNotifCount() {
         var b = document.getElementById('headerNotifBadge');
         if (!b) return;
-        <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id']): ?>
+        <?php
+        $notifUserId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? $_SESSION['associate_id'] ?? $_SESSION['employee_id'] ?? null;
+        if ($notifUserId): ?>
         fetch(BASE_URL + '/api/user/notifications/unread-count').then(function(r) {
             return r.json();
         }).then(function(d) {

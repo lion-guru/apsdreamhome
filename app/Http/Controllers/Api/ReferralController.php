@@ -19,7 +19,7 @@ class ReferralController extends BaseController
     public function dashboard()
     {
         header('Content-Type: application/json');
-        $userId = $GLOBALS['api_user_id'] ?? $_GET['user_id'] ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) {
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'Unauthenticated']);
@@ -47,7 +47,7 @@ class ReferralController extends BaseController
     public function stats()
     {
         header('Content-Type: application/json');
-        $userId = $GLOBALS['api_user_id'] ?? $_GET['user_id'] ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) {
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'Unauthenticated']);
@@ -68,7 +68,7 @@ class ReferralController extends BaseController
     public function index()
     {
         header('Content-Type: application/json');
-        $userId = $GLOBALS['api_user_id'] ?? $_GET['user_id'] ?? null;
+        $userId = $GLOBALS['api_user_id'] ?? null;
         if (!$userId) {
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'Unauthenticated']);

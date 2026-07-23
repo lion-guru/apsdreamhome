@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // TODO: Add proper error handling with try-catch blocks
 
@@ -27,7 +27,7 @@ if (!defined('BASE_URL')) {
                         <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
                     <?php endif; ?>
 
-                    <form action="/change-password" method="POST">
+                    <form action="<?= BASE_URL ?>/change-password" method="POST">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label for="current_password" class="form-label">Current Password *</label>

@@ -298,7 +298,7 @@ class PasswordOtpService
         ];
         $action = $purposeText[$purpose] ?? 'verify your account';
 
-        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome';
+        $baseUrl = rtrim(BASE_URL, '/');
 
         return <<<HTML
 <!DOCTYPE html>

@@ -5,7 +5,7 @@
 $user = $user ?? [];
 $action = $action ?? '/users/update-password/' . ($user['id'] ?? 0);
 $page_title = $page_title ?? 'Change Password - APS Dream Home';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
 <!DOCTYPE html>
 <html lang="en">

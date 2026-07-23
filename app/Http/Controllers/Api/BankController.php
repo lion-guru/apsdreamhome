@@ -46,23 +46,19 @@ class BankController extends BaseApiController
         $search = $_GET['q'] ?? '';
         $bankId = intval($bankId);
         
-        if (!$bankId) {
-            $this->jsonResponse([]);
-        }
-        
         try {
-            $sql = "SELECT id, ifsc, branch, city, district, state, pincode, address
+            $sql = "SELECT id, ifsc_code as ifsc, branch_name as branch, city, district, state, pincode, address
                     FROM bank_branches 
-                    WHERE bank_id = ? AND is_active = 1";
-            $params = [$bankId];
+                    WHERE is_active = 1";
+            $params = [];
             
             if ($search) {
-                $sql .= " AND (branch LIKE ? OR city LIKE ?)";
+                $sql .= " AND (branch_name LIKE ? OR city LIKE ?)";
                 $params[] = "%$search%";
                 $params[] = "%$search%";
             }
             
-            $sql .= " ORDER BY branch LIMIT 50";
+            $sql .= " ORDER BY branch_name LIMIT 50";
             
             $branches = $this->db->fetchAll($sql, $params);
         } catch (\Exception $e) {
@@ -85,13 +81,14 @@ class BankController extends BaseApiController
         }
         
         try {
-            $sql = "SELECT bb.ifsc, bb.branch, bb.address, bb.city, bb.district, bb.state, bb.pincode,
-                           b.id as bank_id, b.name as bank_name, b.short_name as bank_short
-                    FROM bank_branches bb
-                    LEFT JOIN banks b ON bb.bank_id = b.id
-                    WHERE bb.ifsc = ? AND bb.is_active = 1";
-            
-            $result = $this->db->fetch($sql, [$ifsc]);
+            $result = \App\Services\LookupCacheService::remember("ifsc:$ifsc", 3600, function() use ($ifsc) {
+                $sql = "SELECT bb.ifsc, bb.branch, bb.address, bb.city, bb.district, bb.state, bb.pincode,
+                               b.id as bank_id, b.name as bank_name, b.short_name as bank_short
+                        FROM bank_branches bb
+                        LEFT JOIN banks b ON bb.bank_id = b.id
+                        WHERE bb.ifsc = ? AND bb.is_active = 1";
+                return $this->db->fetch($sql, [$ifsc]);
+            });
         } catch (\Exception $e) {
             $result = null;
         }
@@ -191,7 +188,7 @@ class BankController extends BaseApiController
     /**
      * Helper: JSON response
      */
-    private function jsonResponse($data, $code = 200)
+    public function jsonResponse($data, $code = 200)
     {
         http_response_code($code);
         header('Content-Type: application/json');

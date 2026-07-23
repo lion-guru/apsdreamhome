@@ -278,7 +278,9 @@ class LeadController extends AdminController
             $lead = $db->prepare("SELECT * FROM leads WHERE id = ?");
             $lead->execute([$id]);
             $lead = $lead->fetch(\PDO::FETCH_ASSOC);
-            $notes = \App\Models\LeadNote::findMany(['lead_id' => $id], 'created_at DESC');
+            $notesStmt = $db->prepare("SELECT * FROM lead_notes WHERE lead_id = ? ORDER BY created_at DESC");
+            $notesStmt->execute([$id]);
+            $notes = $notesStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $activities = $db->prepare("SELECT * FROM lead_activities WHERE lead_id=? ORDER BY activity_date DESC LIMIT 20");
             $activities->execute([$id]);
             $activities = $activities->fetchAll(\PDO::FETCH_ASSOC) ?: [];

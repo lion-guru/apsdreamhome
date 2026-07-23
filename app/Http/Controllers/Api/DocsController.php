@@ -84,7 +84,7 @@ class DocsController extends BaseController
      */
     public function index()
     {
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
         header('Content-Type: text/html; charset=utf-8');
         echo $this->renderSwaggerUi($base . '/api/docs/spec');
         exit;
@@ -205,7 +205,7 @@ class DocsController extends BaseController
 
     private function buildSpec(): array
     {
-        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+        $base = BASE_URL;
         $endpoints = [];
         foreach ($this->getApiRoutes() as $r) {
             $endpoints[] = $this->buildEndpoint($r['method'], $r['path'], $r['handler']);

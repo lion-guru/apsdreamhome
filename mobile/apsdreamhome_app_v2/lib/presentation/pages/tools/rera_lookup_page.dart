@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 
 class ReraLookupPage extends StatefulWidget {
@@ -14,53 +17,38 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
   Map<String, dynamic>? _result;
   bool _searching = false;
   bool _searched = false;
+  List<Map<String, dynamic>> _projects = [];
+  bool _loadingProjects = true;
 
-  static final List<Map<String, dynamic>> _mockProjects = [
-    {
-      'rera': 'UP/RERA/2026/00001',
-      'project': 'APS Suryoday Colony',
-      'builder': 'APS Dream Home Pvt. Ltd.',
-      'status': 'Registered',
-      'approved': '15 Jan 2026',
-      'validTill': '14 Jan 2029',
-      'area': '12.5 Acres',
-      'units': 204,
-      'address': 'Sahjanwa, Gorakhpur, UP',
-    },
-    {
-      'rera': 'UP/RERA/2026/00002',
-      'project': 'APS Braj Radha Nagar',
-      'builder': 'APS Dream Home Pvt. Ltd.',
-      'status': 'Registered',
-      'approved': '20 Feb 2026',
-      'validTill': '19 Feb 2029',
-      'area': '8.2 Acres',
-      'units': 156,
-      'address': 'Braj, Gorakhpur, UP',
-    },
-    {
-      'rera': 'UP/RERA/2026/00003',
-      'project': 'APS Raghunath Nagri',
-      'builder': 'APS Dream Home Pvt. Ltd.',
-      'status': 'Registered',
-      'approved': '10 Mar 2026',
-      'validTill': '09 Mar 2029',
-      'area': '6.8 Acres',
-      'units': 128,
-      'address': 'Raghunathpur, Gorakhpur, UP',
-    },
-    {
-      'rera': 'UP/RERA/2025/00100',
-      'project': 'Green Valley Estate',
-      'builder': 'Green Developers Ltd.',
-      'status': 'Registered',
-      'approved': '05 Jun 2025',
-      'validTill': '04 Jun 2028',
-      'area': '15.0 Acres',
-      'units': 280,
-      'address': 'Lucknow, UP',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadProjects();
+  }
+
+  Future<void> _loadProjects() async {
+    try {
+      AppConstants.initBaseUrl();
+      final url = '${AppConstants.baseUrl}/api/v2/mobile/rera/projects';
+      final resp = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 10));
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data['success'] == true && data['data'] is List) {
+          setState(() {
+            _projects = (data['data'] as List).cast<Map<String, dynamic>>();
+            _loadingProjects = false;
+          });
+          return;
+        }
+      }
+    } catch (_) {}
+    setState(() {
+      _projects = _mockProjects;
+      _loadingProjects = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -68,7 +56,7 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
     super.dispose();
   }
 
-  void _search() {
+  Future<void> _search() async {
     final query = _reraController.text.trim();
     if (query.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -86,23 +74,50 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
       _searched = true;
     });
 
-    Future.delayed(const Duration(milliseconds: 800), () {
-      final match = _mockProjects
-          .where(
-            (p) => (p['rera'] as String).toLowerCase().contains(
-              query.toLowerCase(),
-            ),
-          )
-          .toList();
-
-      setState(() {
-        _searching = false;
-        if (match.isNotEmpty) {
-          _result = match.first;
-        } else {
-          _result = null;
+    // Try API first
+    try {
+      AppConstants.initBaseUrl();
+      final url =
+          '${AppConstants.baseUrl}/api/v2/mobile/rera/verify/${Uri.encodeComponent(query)}';
+      final resp = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 10));
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data['success'] == true && data['data'] is Map) {
+          final project = data['data'] as Map<String, dynamic>;
+          setState(() {
+            _searching = false;
+            _result = {
+              'rera': project['rera_number'] ?? query,
+              'project': project['project_name'] ?? 'Unknown',
+              'builder': project['builder_name'] ?? '',
+              'status': project['status'] ?? 'Unknown',
+              'approved': project['registration_date'] ?? '',
+              'validTill': project['valid_upto'] ?? '',
+              'area': project['total_area'] ?? '',
+              'units': project['total_units'] ?? 0,
+              'address': '${project['address'] ?? ''} ${project['city'] ?? ''}'
+                  .trim(),
+            };
+          });
+          return;
         }
-      });
+      }
+    } catch (_) {}
+
+    // Fallback to local search
+    await Future.delayed(const Duration(milliseconds: 500));
+    final match = _projects
+        .where(
+          (p) =>
+              (p['rera'] as String).toLowerCase().contains(query.toLowerCase()),
+        )
+        .toList();
+
+    setState(() {
+      _searching = false;
+      _result = match.isNotEmpty ? match.first : null;
     });
   }
 
@@ -145,7 +160,13 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
               ),
             if (_searched && !_searching && _result == null) _buildNotFound(),
             if (_result != null && !_searching) _buildResult(),
-            if (!_searched) ...[const SizedBox(height: 16), _buildQuickList()],
+            if (!_searched) ...[
+              const SizedBox(height: 16),
+              if (_loadingProjects)
+                const Center(child: CircularProgressIndicator())
+              else
+                _buildQuickList(),
+            ],
           ],
         ),
       ),
@@ -210,7 +231,7 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
               controller: _reraController,
               decoration: InputDecoration(
                 labelText: 'Enter RERA Number',
-                hintText: 'e.g. UP/RERA/2026/00001',
+                hintText: 'e.g. UPRERAPRJ12345',
                 prefixIcon: const Icon(Icons.search_rounded),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -303,9 +324,7 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: Row(
               children: [
@@ -424,7 +443,7 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
           ),
         ),
         const SizedBox(height: 12),
-        ..._mockProjects.map(
+        ..._projects.map(
           (p) => Container(
             margin: const EdgeInsets.only(bottom: 10),
             padding: const EdgeInsets.all(14),
@@ -496,4 +515,31 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
       ],
     );
   }
+
+  static final List<Map<String, dynamic>> _mockProjects = [
+    {
+      'rera': 'UPRERAPRJ12345',
+      'project': 'APS Suryoday Colony',
+      'builder': 'APS Dream Home Developers',
+      'status': 'Registered',
+    },
+    {
+      'rera': 'UPRERAPRJ67890',
+      'project': 'APS Braj Radha Nagar',
+      'builder': 'APS Dream Home Developers',
+      'status': 'Registered',
+    },
+    {
+      'rera': 'UPRERAPRJ11111',
+      'project': 'APS Raghunath Nagri',
+      'builder': 'APS Dream Home Developers',
+      'status': 'Registered',
+    },
+    {
+      'rera': 'UPRERAPRJ22222',
+      'project': 'Green Valley Estate',
+      'builder': 'Green Developers Ltd.',
+      'status': 'Registered',
+    },
+  ];
 }

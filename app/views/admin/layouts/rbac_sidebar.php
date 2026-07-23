@@ -10,7 +10,7 @@ use App\Services\AdminMenuService;
 
 // Get current page for active state
 $currentPage = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 
 // Initialize menu service
 $menuItems = [];

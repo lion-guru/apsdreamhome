@@ -1,11 +1,11 @@
-
+﻿
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-edit"></i> Edit State</h2>
-                <a href="/admin/locations/states" class="btn btn-secondary">
+                <a href="<?= BASE_URL ?>/admin/locations/states" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back
                 </a>
             </div>
@@ -14,7 +14,7 @@
                 <div class="card-body aps-cp-card-body">
                     
                     
-                    <form method="POST" action="/admin/locations/states/edit/<?php echo $state['id']; ?>">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/locations/states/edit/<?php echo $state['id']; ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row">
                             <div class="col-md-6">
@@ -42,7 +42,7 @@
                         </div>
                         
                         <div class="d-flex justify-content-between">
-                            <a href="/admin/locations/states" class="btn btn-secondary">
+                            <a href="<?= BASE_URL ?>/admin/locations/states" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">

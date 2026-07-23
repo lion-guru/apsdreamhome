@@ -18,7 +18,7 @@ try {
             $amenities = $result;
         }
     }
-} catch (Exception $e) { error_log('kushinagar-budha-city amenities fetch: ' . $e->getMessage()); }
+} catch (\Exception $e) { error_log('kushinagar-budha-city amenities fetch: ' . $e->getMessage()); }
 
 // Fallback static amenities
 if (empty($amenities)) {

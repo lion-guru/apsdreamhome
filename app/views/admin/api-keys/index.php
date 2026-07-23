@@ -94,6 +94,18 @@ $extraHead .= '<style>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php if (empty($api_keys)): ?>
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="fas fa-key fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                                <h5 class="text-muted">No API keys configured</h5>
+                                <p class="text-muted mb-3">Add API keys for third-party services like payment gateways, SMS providers, email services, and AI engines.</p>
+                                <a href="<?= BASE_URL ?>/admin/api-keys/create" class="btn btn-primary">
+                                    <i class="fas fa-plus me-1"></i> Add New Key
+                                </a>
+                            </td>
+                        </tr>
+                        <?php else: ?>
                         <?php foreach ($api_keys as $key): ?>
                             <tr class="<?= $key['is_active'] ? 'key-active' : 'key-inactive' ?>">
                                 <td>
@@ -136,6 +148,7 @@ $extraHead .= '<style>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

@@ -25,7 +25,16 @@
                 </thead>
                 <tbody>
                     <?php if (empty($members)): ?>
-                    <tr><td colspan="10" class="text-center py-4 text-muted">No team members found.</td></tr>
+                    <tr>
+                        <td colspan="10" class="text-center py-5">
+                            <i class="fas fa-users fa-3x text-muted mb-3" style="opacity:0.2"></i>
+                            <h5 class="text-muted">No team members found</h5>
+                            <p class="text-muted mb-3">Add your leadership team, advisors, and key staff to showcase them on the website and build trust with customers.</p>
+                            <a href="<?= BASE_URL ?>/admin/team/create" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i> Add Team Member
+                            </a>
+                        </td>
+                    </tr>
                     <?php else: ?>
                     <?php foreach ($members as $i => $m): ?>
                     <tr>

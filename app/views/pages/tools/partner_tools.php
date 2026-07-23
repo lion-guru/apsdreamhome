@@ -271,10 +271,10 @@
                 <div class="card-body py-5">
                     <h3 class="text-white fw-bold">Become an APS Dream Home Partner</h3>
                     <p class="text-white-50 mb-4">Join 50+ associates earning commission on land deals. Free training, CRM tools, and regular income.</p>
-                    <a href="/apsdreamhome/become-associate" class="btn btn-success btn-lg me-3">
+                    <a href="<?= BASE_URL ?>/become-associate" class="btn btn-success btn-lg me-3">
                         <i class="fas fa-user-plus me-2"></i>Become Associate
                     </a>
-                    <a href="/apsdreamhome/properties" class="btn btn-outline-light btn-lg">
+                    <a href="<?= BASE_URL ?>/properties" class="btn btn-outline-light btn-lg">
                         <i class="fas fa-search me-2"></i>Browse Properties
                     </a>
                 </div>

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Loyalty Rules';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $rules = $rules ?? [];
 ?>
 <div class="container-fluid">
@@ -11,7 +11,7 @@ $rules = $rules ?? [];
     <div class="card shadow">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 fw-bold text-primary">Points Award Rules</h6>
-            <a href="<?= $base ?>/admin/commission/create_rule" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>New Rule</a>
+            <a href="<?= $base ?>/admin/commission/create-rule" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>New Rule</a>
         </div>
         <div class="card-body aps-cp-card-body">
             <?php if (empty($rules)): ?>
@@ -39,11 +39,7 @@ $rules = $rules ?? [];
                                     <span class="badge bg-<?= $s === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($s) ?></span>
                                 </td>
                                 <td>
-                                    <a href="<?= $base ?>/admin/commission/edit_rule/<?= $rule['id'] ?? 0 ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
-                                    <form method="POST" action="<?= $base ?>/admin/commission/rules/<?= $rule['id'] ?? 0 ?>/delete" style="display:inline" onsubmit="return confirm('Delete this rule?')">
-                                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </form>
+                                    <a href="<?= $base ?>/admin/commission/edit-rule/<?= $rule['id'] ?? 0 ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

@@ -120,7 +120,7 @@ class BaseController
         $this->setSecurityHeaders();
 
         // Automated CSRF protection for POST requests (skip for public forms)
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$this->skipCsrfProtection()) {
+        if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && !$this->skipCsrfProtection()) {
             $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
             if (!$this->validateCsrfToken($token)) {
                 \App\Core\ErrorHandler::render(403, "Invalid or missing CSRF token.");
@@ -183,8 +183,8 @@ class BaseController
         // Content Security Policy with nonce support
         $base = defined('BASE_URL') ? BASE_URL : '';
         $csp = "default-src 'self'; "
-            . "script-src 'self' 'nonce-{$cspNonce}' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com; "
-            . "style-src 'self' 'nonce-{$cspNonce}' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
+            . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com; "
+            . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
             . "img-src 'self' data: blob: https:; "
             . "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; "
             . "frame-src 'self' https://www.google.com; "
@@ -515,7 +515,7 @@ class BaseController
     {
         $config = [
             'app_name' => 'APS Dream Home',
-            'app_url' => defined('BASE_URL') ? rtrim(BASE_URL, '/') : 'http://localhost/apsdreamhome',
+            'app_url' => rtrim(BASE_URL, '/'),
             'timezone' => 'Asia/Kolkata'
         ];
 

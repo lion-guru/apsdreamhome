@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\AdminController;
+// AdminController resolved via namespace
 use App\Core\Database\Database;
 
 /**
@@ -22,7 +22,7 @@ class NotificationDashboardController extends AdminController
     public function index()
     {
         $db = Database::getInstance();
-        $stats = $this->getStats($db);
+        $stats = $this->getNotificationStats($db);
         $recentLogs = $this->getRecentLogs($db);
         $channelStats = $this->getChannelStats($db);
         $typeStats = $this->getTypeStats($db);
@@ -116,7 +116,7 @@ class NotificationDashboardController extends AdminController
 
     // ─── Stats Helpers ──────────────────────────────────────
 
-    private function getStats($db): array
+    private function getNotificationStats($db = null): array
     {
         $stats = [
             'total_sent' => 0,

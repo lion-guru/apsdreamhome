@@ -29,6 +29,13 @@ class PropertyValuationEngine
      */
     public function calculateValuation($propertyData)
     {
+        // Normalise required keys so downstream accessors never hit undefined-key warnings.
+        $propertyData = is_array($propertyData) ? $propertyData : [];
+        $propertyData['location'] = $propertyData['location'] ?? ($propertyData['city'] ?? ($propertyData['city_name'] ?? 'default'));
+        $propertyData['type'] = $propertyData['type'] ?? ($propertyData['property_type'] ?? 'plot');
+        $propertyData['condition'] = $propertyData['condition'] ?? 'good';
+        $propertyData['amenities'] = $propertyData['amenities'] ?? [];
+
         // Base valuation factors
         $basePrice = $this->getBasePrice($propertyData['location'], $propertyData['type']);
         
@@ -91,7 +98,7 @@ class PropertyValuationEngine
                 ]
             ];
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Valuation calculation failed: ' . $e->getMessage()
@@ -320,7 +327,7 @@ class PropertyValuationEngine
             ");
             $stmt->execute([$propertyId, $limit]);
             return $stmt->fetchAll();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

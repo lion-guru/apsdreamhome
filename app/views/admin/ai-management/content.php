@@ -116,7 +116,7 @@ $stats = $stats ?? ['total' => 0, 'published' => 0, 'draft' => 0];
 <script>
 function toggleContent(id) {
     if (!confirm('Toggle publish status for this content?')) return;
-    fetch('<?= BASE_URL ?>/admin/ai-management/content/toggle/' + id, { method: 'POST' })
+    fetch('<?= BASE_URL ?>/admin/ai-management/toggle-content/' + id, { method: 'POST' })
         .then(r => r.json())
         .then(d => {
             if (d.success) {

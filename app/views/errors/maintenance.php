@@ -7,7 +7,7 @@ $message = $message ?? "We're performing scheduled maintenance. We'll be back so
 $eta = $eta ?? '';
 $logo = defined('BASE_URL') ? BASE_URL . '/assets/images/logo.png' : '/assets/images/logo.png';
 $contact = 'info@apsdreamhome.com';
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 http_response_code(503);
 header('Retry-After: 3600');
 ?>

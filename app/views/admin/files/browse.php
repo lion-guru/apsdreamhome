@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'File Browser';
-$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/apsdreamhome');
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 $files = $files ?? [];
 ?>
 <div class="container-fluid">

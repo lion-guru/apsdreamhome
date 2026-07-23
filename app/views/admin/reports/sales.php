@@ -1,12 +1,12 @@
-<?php $pageTitle = 'Sales Report'; ?>
+﻿<?php $pageTitle = 'Sales Report'; ?>
 <div class="container-fluid">
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-chart-line me-2"></i>Sales Report</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="/admin/reports">Reports</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/reports">Reports</a></li>
                     <li class="breadcrumb-item active">Sales</li>
                 </ul>
             </div>

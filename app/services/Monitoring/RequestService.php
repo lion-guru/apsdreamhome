@@ -179,7 +179,7 @@ class RequestService
             // Send response
             return $this->sendResponse($result);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error('Request processing error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -341,7 +341,7 @@ class RequestService
             
             return $result;
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error('Route handler execution failed', [
                 'method' => $route['method'],
                 'path' => $route['path'],

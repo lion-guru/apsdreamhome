@@ -92,7 +92,7 @@ $orderId = 'ORD_' . strtoupper(bin2hex(random_bytes(5)));
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating order...';
 
-        fetch('/checkout/process/' + bookingId, {
+        fetch('<?= BASE_URL ?>/checkout/process/' + bookingId, {
             method: 'POST',
             credentials: 'same-origin',
             headers: {

@@ -24,7 +24,7 @@ class AIValuationController extends BaseController
      */
     public function index()
     {
-        // $this->requireLogin(); // Temporarily removed for testing
+        $this->requireLogin();
 
         $this->render('pages/ai-valuation', [
             'page_title' => 'AI Property Valuation - APS Dream Home',

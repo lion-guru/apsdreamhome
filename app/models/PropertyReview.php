@@ -27,9 +27,9 @@ class PropertyReview extends Model {
      */
     public function getPropertyReviews($propertyId, $limit = 10, $offset = 0) {
         return static::query()
-            ->select(['r.*', 'u.uname as user_name'])
+            ->select(['r.*', 'u.name as user_name'])
             ->from(static::$table . ' as r')
-            ->join('user as u', 'r.customer_id', '=', 'u.uid')
+            ->join('users as u', 'r.customer_id', '=', 'u.id')
             ->where('r.property_id', $propertyId)
             ->where('r.status', 'approved')
             ->orderBy('r.created_at', 'DESC')
@@ -42,26 +42,25 @@ class PropertyReview extends Model {
      * Get review summary for a property
      */
     public function getPropertyReviewSummary($propertyId) {
-        return static::query()
-            ->select([
-                'COUNT(*) as total_reviews',
-                'AVG(rating) as average_rating'
-            ])
-            ->where('property_id', $propertyId)
-            ->where('status', 'approved')
-            ->first();
+        $sql = "SELECT COUNT(*) as total_reviews, AVG(rating) as average_rating
+                FROM " . static::$table . "
+                WHERE property_id = ? AND status = ?";
+        $row = static::getDb()->fetch($sql, [$propertyId, 'approved']);
+        return [
+            'total_reviews' => (int)($row['total_reviews'] ?? 0),
+            'average_rating' => (float)($row['average_rating'] ?? 0)
+        ];
     }
 
     /**
      * Get rating distribution for a property
      */
     public function getPropertyRatingDistribution($propertyId) {
-        return static::query()
-            ->select(['rating', 'COUNT(*) as count'])
-            ->where('property_id', $propertyId)
-            ->where('status', 'approved')
-            ->groupBy('rating')
-            ->get();
+        $sql = "SELECT rating, COUNT(*) as count
+                FROM " . static::$table . "
+                WHERE property_id = ? AND status = ?
+                GROUP BY rating";
+        return static::getDb()->fetchAll($sql, [$propertyId, 'approved']);
     }
 
     /**

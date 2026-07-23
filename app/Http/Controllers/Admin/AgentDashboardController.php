@@ -122,11 +122,12 @@ class AgentDashboardController extends AdminController
                 WHERE user_id = ? 
                 AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                 GROUP BY DATE(created_at)
-                ORDER BY date DESC"
+                ORDER BY date DESC",
+                [$user_id]
             )->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $performance]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Performance Data error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
@@ -158,7 +159,7 @@ class AgentDashboardController extends AdminController
             $network = $network->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $network]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->loggingService->error("Get Network Tree error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
