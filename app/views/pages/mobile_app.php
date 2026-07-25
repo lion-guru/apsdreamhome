@@ -1,10 +1,12 @@
 <?php
 $page_title = $page_title ?? 'Mobile App - APS Dream Home';
 $apk_url_direct = BASE_URL . '/downloads/apsdreamhome.apk';
+$apk_url_release = BASE_URL . '/downloads/apsdreamhome-release.apk';
 $apk_url_php = BASE_URL . '/download-apk.php';
-$apk_size = '82 MB';
+$apk_size_debug = '245 MB';
+$apk_size_release = '82 MB';
 $app_version = '1.2.0';
-$updated_date = '2026-07-07';
+$updated_date = '2026-07-24';
 ?>
 <div class="mobile-app-page">
     <style>
@@ -275,13 +277,15 @@ $updated_date = '2026-07-07';
             <p>Find your dream property on the go. Browse plots, book site visits, track payments, and more — all from your phone.</p>
             <a href="<?= $apk_url_direct ?>" class="download-btn" download id="downloadBtn">
                 <i class="fab fa-android"></i>
-                Download APK (<?= $apk_size ?>)
+                Download APK (<?= $apk_size_debug ?>)
             </a>
             <div class="mt-2">
                 <small class="opacity-75">Direct download. If it fails, <a href="<?= $apk_url_php ?>" class="text-white text-decoration-underline">try alternate link</a>.</small>
             </div>
             <div class="app-info-badge">
-                <span>📦 <?= $apk_size ?></span>
+                <span>📦 Debug: <?= $apk_size_debug ?></span>
+                <span class="sep">|</span>
+                <span>📦 Release: <?= $apk_size_release ?></span>
                 <span class="sep">|</span>
                 <span>📌 v<?= $app_version ?></span>
                 <span class="sep">|</span>

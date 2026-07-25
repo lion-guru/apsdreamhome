@@ -128,6 +128,7 @@ class Router
                 '/employee/logout',
                 '/ai/property-valuation/generate',
                 '/ai/',
+                '/admin/ai/',
                 '/csp-report',
                 '/webhook/',
                 '/compare/',

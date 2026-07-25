@@ -5,6 +5,28 @@
  */
 $admin_name = $_SESSION['admin_name'] ?? 'CM';
 $admin_role = $_SESSION['admin_role'] ?? 'cm';
+$stats = $stats ?? [
+    'team_size' => 0,
+    'active_projects' => 0,
+    'monthly_sales' => 0,
+    'performance_score' => 0,
+];
+$team_performance = $team_performance ?? [];
+$recentActivities = $recentActivities ?? [];
+$projectsOverview = $projectsOverview ?? [];
+// Helper functions (avoids $this-> calls when rendered from RoleBasedDashboardController)
+if (!function_exists('cm_getActivityClass')) {
+    function cm_getActivityClass($type) {
+        $map = ['call'=>'bg-primary','meeting'=>'bg-success','email'=>'bg-info','visit'=>'bg-warning','note'=>'bg-secondary'];
+        return $map[$type] ?? 'bg-secondary';
+    }
+}
+if (!function_exists('cm_getProjectStatusClass')) {
+    function cm_getProjectStatusClass($status) {
+        $map = ['active'=>'badge bg-success','pending'=>'badge bg-warning','completed'=>'badge bg-primary','on_hold'=>'badge bg-secondary','cancelled'=>'badge bg-danger'];
+        return $map[$status] ?? 'badge bg-secondary';
+    }
+}
 ?>
 
 <!-- CM Dashboard Header -->
@@ -20,6 +42,9 @@ $admin_role = $_SESSION['admin_role'] ?? 'cm';
             </div>
             <div class="col-md-6 text-end">
                 <div class="d-flex align-items-center justify-content-end gap-3">
+                    <a href="<?= BASE_URL ?>/admin/ai/executive-assistant" class="btn btn-sm btn-info text-white me-2" title="AI Assistant">
+                        <i class="fas fa-robot me-1"></i>Ask AI
+                    </a>
                     <div class="performance-indicator">
                         <div class="indicator-label">Performance Score</div>
                         <div class="indicator-value"><?= $stats['performance_score'] ?>%</div>
@@ -201,7 +226,7 @@ $admin_role = $_SESSION['admin_role'] ?? 'cm';
                 <?php if (!empty($recentActivities)): ?>
                     <?php foreach ($recentActivities as $activity): ?>
                         <div class="activity-item">
-                            <div class="activity-dot <?= $this->getActivityClass($activity['activity_type']) ?>"></div>
+                            <div class="activity-dot <?= cm_getActivityClass($activity['activity_type']) ?>"></div>
                             <div class="activity-content">
                                 <div class="activity-text"><?= htmlspecialchars($activity['description'] ?? '') ?></div>
                                 <small class="text-white-50"><?= date('M j, Y H:i', strtotime($activity['created_at'])) ?></small>
@@ -237,7 +262,7 @@ $admin_role = $_SESSION['admin_role'] ?? 'cm';
                     <?php foreach ($projectsOverview as $project): ?>
                         <div class="col-md-3 mb-3">
                             <div class="project-stat">
-                                <div class="project-status <?= $this->getProjectStatusClass($project['status']) ?>">
+                                <div class="project-status <?= cm_getProjectStatusClass($project['status']) ?>">
                                     <?= ucfirst($project['status']) ?>
                                 </div>
                                 <div class="project-count"><?= number_format($project['count']) ?></div>

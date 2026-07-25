@@ -74,8 +74,15 @@ $stats = [
 <div class="container-fluid py-4">
         <div class="row mb-4">
             <div class="col-12">
-                <h2 class="mb-0">Welcome, <?php echo $builder_name; ?>!</h2>
-                <div class="text-muted small">Builder Dashboard</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0">Welcome, <?php echo $builder_name; ?>!</h2>
+                        <div class="text-muted small">Builder Dashboard</div>
+                    </div>
+                    <a href="<?= BASE_URL ?>/admin/ai/executive-assistant" class="btn btn-sm btn-info text-white me-2" title="AI Assistant">
+                        <i class="fas fa-robot me-1"></i>Ask AI
+                    </a>
+                </div>
             </div>
         </div>
         <!-- Stats Cards -->

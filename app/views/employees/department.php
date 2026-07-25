@@ -1,9 +1,10 @@
 <?php
 /**
  * Employee Department Page — shared view for 16 department routes
- * Data: $dept_title, $dept_icon, $dept_desc, $dept_color, $dept_slug, $employee_name
+ * Data: $dept_title, $dept_icon, $dept_desc, $dept_color, $dept_slug, $employee_name, $stats
  */
 $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
+$stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 0];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,7 +85,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <div class="stat-label">Total Items</div>
-                        <div class="stat-value">—</div>
+                        <div class="stat-value"><?= number_format($stats['total'] ?? 0) ?></div>
                     </div>
                     <div class="stat-icon" style="background: <?= $dept_color ?>12; color: <?= $dept_color ?>;">
                         <i class="fas fa-layer-group"></i>
@@ -97,7 +98,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <div class="stat-label">Active</div>
-                        <div class="stat-value">—</div>
+                        <div class="stat-value"><?= number_format($stats['active'] ?? 0) ?></div>
                     </div>
                     <div class="stat-icon" style="background: #10b98112; color: #10b981;">
                         <i class="fas fa-check-circle"></i>
@@ -110,7 +111,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <div class="stat-label">Pending</div>
-                        <div class="stat-value">—</div>
+                        <div class="stat-value"><?= number_format($stats['pending'] ?? 0) ?></div>
                     </div>
                     <div class="stat-icon" style="background: #f59e0b12; color: #f59e0b;">
                         <i class="fas fa-clock"></i>
@@ -123,7 +124,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <div class="stat-label">Completed</div>
-                        <div class="stat-value">—</div>
+                        <div class="stat-value"><?= number_format($stats['completed'] ?? 0) ?></div>
                     </div>
                     <div class="stat-icon" style="background: #3b82f612; color: #3b82f6;">
                         <i class="fas fa-flag-checkered"></i>
@@ -141,35 +142,85 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="empty-state">
                     <i class="<?= $dept_icon ?>"></i>
                     <h5><?= htmlspecialchars($dept_title) ?></h5>
-                    <p>This module is ready for data integration. Connect your department data sources to see activity here.</p>
+                    <p>Use the quick actions on the right to navigate to the relevant admin modules for this department.</p>
                 </div>
             </div>
         </div>
 
         <!-- Sidebar -->
         <div class="col-lg-4">
-            <div class="section-card mb-0">
+            <div class="section-card mb-3">
                 <h6><i class="fas fa-bolt me-2" style="color: <?= $dept_color ?>;"></i>Quick Actions</h6>
                 <div class="d-flex flex-column gap-2">
+                    <?php
+                    $quickActions = match($dept_slug) {
+                        'leads' => [
+                            ['icon' => 'fas fa-user-plus', 'color' => '#06b6d4', 'label' => 'All Leads', 'url' => '/admin/leads'],
+                            ['icon' => 'fas fa-columns', 'color' => '#8b5cf6', 'label' => 'Lead Kanban', 'url' => '/admin/lead-kanban'],
+                            ['icon' => 'fas fa-chart-line', 'color' => '#10b981', 'label' => 'Lead Scoring', 'url' => '/admin/leads/scoring'],
+                            ['icon' => 'fas fa-phone', 'color' => '#f59e0b', 'label' => 'Telecalling', 'url' => '/admin/leads'],
+                        ],
+                        'deals' => [
+                            ['icon' => 'fas fa-handshake', 'color' => '#10b981', 'label' => 'Deals Pipeline', 'url' => '/admin/deals'],
+                            ['icon' => 'fas fa-coins', 'color' => '#f59e0b', 'label' => 'Payments', 'url' => '/admin/payments'],
+                            ['icon' => 'fas fa-file-invoice-dollar', 'color' => '#3b82f6', 'label' => 'Invoices', 'url' => '/admin/invoices'],
+                        ],
+                        'employees' => [
+                            ['icon' => 'fas fa-users', 'color' => '#f59e0b', 'label' => 'HR Management', 'url' => '/admin/hrm/employees'],
+                            ['icon' => 'fas fa-user-tag', 'color' => '#8b5cf6', 'label' => 'Roles', 'url' => '/admin/roles'],
+                            ['icon' => 'fas fa-calendar-check', 'color' => '#10b981', 'label' => 'Attendance', 'url' => '/employee/attendance'],
+                        ],
+                        'campaigns' => [
+                            ['icon' => 'fas fa-bullhorn', 'color' => '#a855f7', 'label' => 'Campaigns', 'url' => '/admin/campaigns'],
+                            ['icon' => 'fas fa-newspaper', 'color' => '#3b82f6', 'label' => 'Blog', 'url' => '/admin/blog'],
+                            ['icon' => 'fas fa-ad', 'color' => '#f59e0b', 'label' => 'Ad Manager', 'url' => '/admin/ads'],
+                        ],
+                        'complaints' => [
+                            ['icon' => 'fas fa-headset', 'color' => '#ef4444', 'label' => 'Support Tickets', 'url' => '/admin/support_tickets'],
+                            ['icon' => 'fas fa-star', 'color' => '#f59e0b', 'label' => 'Testimonials', 'url' => '/admin/testimonials'],
+                        ],
+                        'compliance' => [
+                            ['icon' => 'fas fa-shield-alt', 'color' => '#14b8a6', 'label' => 'KYC Management', 'url' => '/admin/kyc'],
+                            ['icon' => 'fas fa-gavel', 'color' => '#8b5cf6', 'label' => 'Legal Documents', 'url' => '/admin/legal'],
+                            ['icon' => 'fas fa-clipboard-check', 'color' => '#3b82f6', 'label' => 'Compliance', 'url' => '/admin/compliance'],
+                        ],
+                        'reports' => [
+                            ['icon' => 'fas fa-chart-bar', 'color' => '#3b82f6', 'label' => 'Analytics', 'url' => '/admin/analytics'],
+                            ['icon' => 'fas fa-file-alt', 'color' => '#10b981', 'label' => 'Reports', 'url' => '/admin/reports'],
+                            ['icon' => 'fas fa-download', 'color' => '#f59e0b', 'label' => 'Export Data', 'url' => '/admin/analytics'],
+                        ],
+                        'vendors' => [
+                            ['icon' => 'fas fa-truck', 'color' => '#0ea5e9', 'label' => 'Vendors', 'url' => '/admin/vendors'],
+                            ['icon' => 'fas fa-receipt', 'color' => '#f59e0b', 'label' => 'Expenses', 'url' => '/admin/expenses'],
+                            ['icon' => 'fas fa-file-invoice', 'color' => '#8b5cf6', 'label' => 'Accounting', 'url' => '/admin/accounting'],
+                        ],
+                        'projects' => [
+                            ['icon' => 'fas fa-project-diagram', 'color' => '#ec4899', 'label' => 'Projects', 'url' => '/admin/projects'],
+                            ['icon' => 'fas fa-map', 'color' => '#10b981', 'label' => 'Colonies', 'url' => '/admin/plots'],
+                            ['icon' => 'fas fa-hard-hat', 'color' => '#f59e0b', 'label' => 'Construction', 'url' => '/admin/dashboard/operations'],
+                        ],
+                        'recruitment' => [
+                            ['icon' => 'fas fa-briefcase', 'color' => '#ef4444', 'label' => 'Careers', 'url' => '/admin/careers'],
+                            ['icon' => 'fas fa-users', 'color' => '#f59e0b', 'label' => 'Employees', 'url' => '/admin/hrm/employees'],
+                        ],
+                        default => [
+                            ['icon' => 'fas fa-tachometer-alt', 'color' => '#6366f1', 'label' => 'Dashboard', 'url' => '/employee/dashboard'],
+                            ['icon' => 'fas fa-tasks', 'color' => '#3b82f6', 'label' => 'My Tasks', 'url' => '/employee/tasks'],
+                        ],
+                    };
+                    foreach ($quickActions as $action): ?>
+                        <a href="<?= $base ?><?= $action['url'] ?>" class="quick-action">
+                            <i class="<?= $action['icon'] ?>" style="color: <?= $action['color'] ?>;"></i>
+                            <span><?= $action['label'] ?></span>
+                        </a>
+                    <?php endforeach; ?>
                     <a href="<?= $base ?>/employee/dashboard" class="quick-action">
-                        <i class="fas fa-tachometer-alt" style="color: #6366f1;"></i>
+                        <i class="fas fa-arrow-left" style="color: #64748b;"></i>
                         <span>Back to Dashboard</span>
-                    </a>
-                    <a href="<?= $base ?>/employee/tasks" class="quick-action">
-                        <i class="fas fa-tasks" style="color: #3b82f6;"></i>
-                        <span>My Tasks</span>
                     </a>
                     <a href="<?= $base ?>/employee/attendance" class="quick-action">
                         <i class="fas fa-calendar-check" style="color: #10b981;"></i>
                         <span>Attendance</span>
-                    </a>
-                    <a href="<?= $base ?>/employee/leaves" class="quick-action">
-                        <i class="fas fa-calendar-times" style="color: #f59e0b;"></i>
-                        <span>Apply for Leave</span>
-                    </a>
-                    <a href="<?= $base ?>/employee/profile" class="quick-action">
-                        <i class="fas fa-user-circle" style="color: #8b5cf6;"></i>
-                        <span>My Profile</span>
                     </a>
                 </div>
             </div>

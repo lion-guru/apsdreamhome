@@ -1117,7 +1117,15 @@ $router->get('/admin/dashboard/builder', 'App\\Http\\Controllers\\RoleBasedDashb
 $router->get('/admin/dashboard/ceo', 'App\\Http\\Controllers\\RoleBasedDashboardController@ceo');
 $router->get('/admin/dashboard/cfo', 'App\\Http\\Controllers\\RoleBasedDashboardController@cfo');
 $router->get('/admin/dashboard/cto', 'App\\Http\\Controllers\\RoleBasedDashboardController@cto');
+$router->get('/admin/dashboard/coo', 'App\\Http\\Controllers\\RoleBasedDashboardController@coo');
+$router->get('/admin/dashboard/cmo', 'App\\Http\\Controllers\\RoleBasedDashboardController@cm');
+$router->get('/admin/dashboard/chro', 'App\\Http\\Controllers\\RoleBasedDashboardController@hr');
 $router->get('/admin/dashboard/sales', 'App\\Http\\Controllers\\RoleBasedDashboardController@sales');
+$router->get('/admin/dashboard/marketing', 'App\\Http\\Controllers\\RoleBasedDashboardController@marketing');
+$router->get('/admin/dashboard/finance', 'App\\Http\\Controllers\\RoleBasedDashboardController@finance');
+$router->get('/admin/dashboard/hr', 'App\\Http\\Controllers\\RoleBasedDashboardController@hr');
+$router->get('/admin/dashboard/it', 'App\\Http\\Controllers\\RoleBasedDashboardController@it');
+$router->get('/admin/dashboard/operations', 'App\\Http\\Controllers\\RoleBasedDashboardController@operations');
 
 // Admin AJAX Dashboard APIs
 $router->get('/admin/api/dashboard-stats', function () {
@@ -2441,50 +2449,10 @@ $router->get('/admin/ajax/global-search', 'App\\Http\\Controllers\\Admin\\AjaxCo
 $router->post('/admin/ajax/save-content', 'App\\Http\\Controllers\\Admin\\AjaxController@saveContent');
 
 // ============================================================
-// OLD ADMIN ROLE-BASED DASHBOARDS — all redirect to unified /admin/dashboard
-// which renders role-appropriate stats via admin.php canonical layout
+// REMOVED: Duplicate dashboard redirect routes (were overriding working
+// controller routes at lines 1114-1128). All dashboard routing now goes
+// through RoleBasedDashboardController with real DB data.
 // ============================================================
-
-$router->get('/admin/dashboard/accounting', function () {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-});
-$router->get('/admin/dashboard/cm', function () {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-});
-$router->get('/admin/dashboard/coo', function () {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-});
-$router->get('/admin/dashboard/director', function () {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-});
-$router->get('/admin/dashboard/finance', function () {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-});
-$router->get('/admin/dashboard/hr', function () {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-});
-$router->get('/admin/dashboard/it', function () {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-});
-$router->get('/admin/dashboard/marketing', function () {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-});
-$router->get('/admin/dashboard/operations', function () {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-});
-$router->get('/admin/dashboard/superadmin', function () {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-});
 
 // ============================================================
 // ORPHANED PUBLIC PAGE ROUTES (added 2026-05-15)
@@ -2729,6 +2697,9 @@ $router->get('/admin/ai-system/market-report', 'App\\Http\\Controllers\\Admin\\A
 $router->get('/admin/ai-system/settings', 'App\\Http\\Controllers\\Admin\\AISystemController@settings');
 $router->post('/admin/ai-system/settings', 'App\\Http\\Controllers\\Admin\\AISystemController@settings');
 $router->get('/admin/ai-system/health', 'App\\Http\\Controllers\\Admin\\AISystemController@engineHealth');
+// Executive AI Assistant (unified role-aware assistant)
+$router->get('/admin/ai/executive-assistant', 'App\\Http\\Controllers\\Admin\\ExecutiveAIController@index');
+$router->post('/admin/ai/executive-assistant/chat', 'App\\Http\\Controllers\\Admin\\ExecutiveAIController@chat');
 // AI Content Generation (description + blog draft) — AJAX
 $router->post('/ai/content/description', 'App\\Http\\Controllers\\AI\\AIContentController@generateDescription');
 $router->post('/ai/content/blog-draft', 'App\\Http\\Controllers\\AI\\AIContentController@generateBlogDraft');

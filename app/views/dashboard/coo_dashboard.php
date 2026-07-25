@@ -1,12 +1,17 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-user-tie me-2"></i><?= ($title ?? 'COO Dashboard') ?></h4>
-        <span class="badge bg-info fs-6">COO</span>
+        <div>
+            <a href="<?= BASE_URL ?>/admin/ai/executive-assistant" class="btn btn-sm btn-info text-white me-2" title="AI Assistant">
+                <i class="fas fa-robot me-1"></i>Ask AI
+            </a>
+            <span class="badge bg-info fs-6">COO</span>
+        </div>
     </div>
     <div class="row g-3 mb-4">
         <?php foreach (($widgets ?? []) as $widget): ?>
         <div class="col-md-3">
-            <a href="<?= ($base ?? BASE_URL) . ltrim($widget['link'] ?? '#', '/') ?>" class="text-decoration-none">
+            <a href="<?= BASE_URL . '/' . ltrim($widget['link'] ?? '#', '/') ?>" class="text-decoration-none">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-<?= ($widget['icon'] ?? 'chart-bar') ?> fa-2x text-info mb-2"></i>
@@ -36,8 +41,8 @@
                 <div class="card-header bg-white py-3"><h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h6></div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <a href="<?= ($base ?? BASE_URL) ?>admin/backoffice" class="btn btn-outline-info btn-sm"><i class="fas fa-clipboard-list me-1"></i>Backoffice</a>
-                        <a href="<?= ($base ?? BASE_URL) ?>admin/reports" class="btn btn-outline-success btn-sm"><i class="fas fa-file-alt me-1"></i>Reports</a>
+                        <a href="<?= BASE_URL ?>/admin/backoffice" class="btn btn-outline-info btn-sm"><i class="fas fa-clipboard-list me-1"></i>Backoffice</a>
+                        <a href="<?= BASE_URL ?>/admin/reports" class="btn btn-outline-success btn-sm"><i class="fas fa-file-alt me-1"></i>Reports</a>
                     </div>
                 </div>
             </div>

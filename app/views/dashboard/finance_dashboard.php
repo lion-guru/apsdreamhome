@@ -1,7 +1,12 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-calculator me-2"></i><?= ($title ?? 'Finance Dashboard') ?></h4>
-        <span class="badge bg-success fs-6">Finance</span>
+        <div>
+            <a href="<?= BASE_URL ?>/admin/ai/executive-assistant" class="btn btn-sm btn-info text-white me-2" title="AI Assistant">
+                <i class="fas fa-robot me-1"></i>Ask AI
+            </a>
+            <span class="badge bg-success fs-6">Finance</span>
+        </div>
     </div>
     <div class="row g-3 mb-4">
         <?php foreach (($widgets ?? []) as $widget): ?>
