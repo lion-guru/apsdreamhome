@@ -3,10 +3,10 @@ $page_title = $page_title ?? 'Mobile App - APS Dream Home';
 $apk_url_direct = BASE_URL . '/downloads/apsdreamhome.apk';
 $apk_url_release = BASE_URL . '/downloads/apsdreamhome-release.apk';
 $apk_url_php = BASE_URL . '/download-apk.php';
-$apk_size_debug = '245 MB';
-$apk_size_release = '82 MB';
+$apk_size_debug = '251 MB';
+$apk_size_release = '90 MB';
 $app_version = '1.2.0';
-$updated_date = '2026-07-24';
+$updated_date = '2026-07-25';
 ?>
 <div class="mobile-app-page">
     <style>
