@@ -86,7 +86,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                                 <?php foreach ($fields as $i => $field): ?>
                                     <div class="form-field-card mb-3 p-3 border rounded bg-white position-relative" data-index="<?= $i ?>" data-type="<?= htmlspecialchars($field['type']) ?>">
                                         <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <span class="badge bg-<?= match($field['type']) { 'text'=>'primary', 'email'=>'success', 'phone'=>'info', 'textarea'=>'warning', 'select'=>'purple', 'checkbox'=>'secondary', 'hidden'=>'muted', default=>'dark' } ?>">
+                                            <span class="badge bg-<?= match($field['type']) { 'text'=>'primary', 'email'=>'success', 'phone'=>'info', 'textarea'=>'warning', 'select'=>'info', 'checkbox'=>'secondary', 'hidden'=>'dark', default=>'dark' } ?>">
                                                 <?= ucfirst($field['type']) ?>
                                             </span>
                                             <div>
@@ -288,7 +288,7 @@ function renderCanvas() {
     document.getElementById('fieldsJson').value = JSON.stringify(fields);
 }
 
-function getTypeColor(t) { return {text:'primary',email:'success',phone:'info',textarea:'warning',select:'purple',checkbox:'secondary',hidden:'muted'}[t] || 'dark'; }
+function getTypeColor(t) { return {text:'primary',email:'success',phone:'info',textarea:'warning',select:'info',checkbox:'secondary',hidden:'dark'}[t] || 'dark'; }
 function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 function escapeHtml(s) { return s.replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"'); }
 

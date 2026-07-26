@@ -1,299 +1,191 @@
 <?php
+$tasks = $tasks ?? [];
+$stats = $stats ?? ['total' => 0, 'pending' => 0, 'in_progress' => 0, 'completed' => 0, 'overdue' => 0];
+$filter = $_GET['status'] ?? '';
+$sort = $_GET['sort'] ?? 'priority';
 
-// TODO: Add proper error handling with try-catch blocks
+function taskPriorityBadge($p) {
+    $map = ['High' => 'danger', 'Medium' => 'warning', 'Low' => 'success'];
+    return '<span class="badge bg-' . ($map[$p] ?? 'secondary') . ' bg-opacity-10 text-' . ($map[$p] ?? 'secondary') . '">' . htmlspecialchars($p) . '</span>';
+}
+function taskStatusBadge($s) {
+    $map = ['completed' => 'success', 'in progress' => 'info', 'pending' => 'secondary', 'on hold' => 'warning'];
+    $cls = $map[strtolower($s)] ?? 'secondary';
+    return '<span class="badge bg-' . $cls . '">' . htmlspecialchars($s) . '</span>';
+}
+function taskPriorityIcon($p) {
+    $map = ['High' => 'arrow-up text-danger', 'Medium' => 'minus text-warning', 'Low' => 'arrow-down text-success'];
+    return $map[$p] ?? 'circle text-muted';
+}
+function taskProgress($t) {
+    $s = strtolower($t['status'] ?? '');
+    if ($s === 'completed') return 100;
+    if ($s === 'in progress') return 50;
+    return 10;
+}
+function taskProgressColor($t) {
+    $s = strtolower($t['status'] ?? '');
+    if ($s === 'completed') return 'success';
+    if ($s === 'in progress') return 'info';
+    return 'secondary';
+}
+function timeAgo($date) {
+    if (!$date) return '';
+    $diff = time() - strtotime($date);
+    if ($diff < 60) return 'Just now';
+    if ($diff < 3600) return floor($diff / 60) . 'm ago';
+    if ($diff < 86400) return floor($diff / 3600) . 'h ago';
+    return floor($diff / 86400) . 'd ago';
+}
 
-/**
- * Employee Tasks View
- * Shows employee tasks and allows status updates
- */
+$filtered = $tasks;
+if ($filter && $filter !== 'all') {
+    $filtered = array_filter($tasks, function($t) use ($filter) {
+        return strtolower($t['status'] ?? '') === $filter;
+    });
+}
 ?>
 
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+.emp-task-stat { border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+.emp-task-stat:hover { transform: translateY(-2px); }
+.emp-task-stat.active { border-color: var(--bs-primary); }
+.emp-task-stat .stat-num { font-size: 1.5rem; font-weight: 700; }
+.emp-task-card { border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.2s; }
+.emp-task-card:hover { border-color: #7c2d12; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.emp-task-card.overdue { border-left: 3px solid #ef4444; }
+.emp-task-progress { height: 6px; border-radius: 3px; background: #e2e8f0; overflow: hidden; }
+.emp-task-progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.emp-task-filter-btn { border: 1px solid #e2e8f0; border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; transition: all 0.2s; }
+.emp-task-filter-btn:hover, .emp-task-filter-btn.active { background: #7c2d12; color: #fff; border-color: #7c2d12; }
+</style>
+
 <div class="container-fluid">
-    <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-tasks me-2"></i>My Tasks</h2>
-        <div class="d-flex gap-2">
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-filter me-2"></i>Filter by Status
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="?status=">All Tasks</a></li>
-                    <li><a class="dropdown-item" href="?status=pending">Pending</a></li>
-                    <li><a class="dropdown-item" href="?status=in_progress">In Progress</a></li>
-                    <li><a class="dropdown-item" href="?status=completed">Completed</a></li>
-                    <li><a class="dropdown-item" href="?status=overdue">Overdue</a></li>
-                </ul>
-            </div>
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-sort me-2"></i>Sort by Priority
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="?priority=">All Priorities</a></li>
-                    <li><a class="dropdown-item" href="?priority=high">High</a></li>
-                    <li><a class="dropdown-item" href="?priority=medium">Medium</a></li>
-                    <li><a class="dropdown-item" href="?priority=low">Low</a></li>
-                </ul>
-            </div>
+        <div>
+            <h4 class="mb-1 fw-bold"><i class="fas fa-tasks me-2 text-primary"></i>My Tasks</h4>
+            <p class="text-muted mb-0 small"><?= $stats['total'] ?> tasks assigned to you</p>
         </div>
     </div>
 
-    <!-- Tasks List -->
-    <div class="row">
-        <?php if (empty($tasks)): ?>
-            <div class="col-12">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>No tasks found.
+    <!-- Stats Row -->
+    <div class="row g-2 mb-3">
+        <div class="col">
+            <a href="/employee/tasks" class="card emp-task-stat <?= !$filter || $filter === 'all' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
+                <div class="card-body py-2 px-3 text-center">
+                    <div class="stat-num text-dark"><?= $stats['total'] ?></div>
+                    <div class="text-muted small">All</div>
                 </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/employee/tasks?status=pending" class="card emp-task-stat <?= $filter === 'pending' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
+                <div class="card-body py-2 px-3 text-center">
+                    <div class="stat-num text-warning"><?= $stats['pending'] ?></div>
+                    <div class="text-muted small">Pending</div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/employee/tasks?status=in+progress" class="card emp-task-stat <?= $filter === 'in progress' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
+                <div class="card-body py-2 px-3 text-center">
+                    <div class="stat-num text-info"><?= $stats['in_progress'] ?></div>
+                    <div class="text-muted small">In Progress</div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/employee/tasks?status=completed" class="card emp-task-stat <?= $filter === 'completed' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
+                <div class="card-body py-2 px-3 text-center">
+                    <div class="stat-num text-success"><?= $stats['completed'] ?></div>
+                    <div class="text-muted small">Done</div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/employee/tasks?status=overdue" class="card emp-task-stat <?= $filter === 'overdue' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
+                <div class="card-body py-2 px-3 text-center">
+                    <div class="stat-num text-danger"><?= $stats['overdue'] ?></div>
+                    <div class="text-muted small">Overdue</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Task List -->
+    <?php if (empty($filtered)): ?>
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center py-5">
+                <div class="mb-3"><i class="fas fa-clipboard-check fa-4x text-muted opacity-25"></i></div>
+                <h5 class="text-muted"><?= $filter ? 'No tasks with this status' : 'No Tasks Assigned' ?></h5>
+                <p class="text-muted small">You're all caught up!</p>
             </div>
-        <?php else: ?>
-            <?php foreach ($tasks as $task): ?>
-                <div class="col-md-6 col-lg-4 mb-3">
-                    <div class="card task-card h-100">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0">
-                                <i class="fas fa-<?= $this->getTaskIcon($task['priority'] ?? 'medium') ?> me-2"></i>
-                                Task #<?= htmlspecialchars($task['task_id']) ?>
-                            </h6>
-                            <span class="badge bg-<?= $this->getStatusBadgeClass($task['status'] ?? 'pending') ?>">
-                                <?= ucfirst(str_replace('_', ' ', $task['status'] ?? 'pending')) ?>
-                            </span>
-                        </div>
-                        <div class="card-body aps-cp-card-body">
-                            <h5 class="card-title mb-2">
-                                <?= htmlspecialchars($task['title'] ?? 'Untitled Task') ?>
-                            </h5>
-                            <p class="card-text text-muted mb-2">
-                                <?= htmlspecialchars(substr($task['description'] ?? '', 0, 100)) ?>
-                                <?php if (strlen($task['description'] ?? '') > 100): ?>...<?php endif; ?>
-                            </p>
-
-                            <!-- Task Meta -->
-                            <div class="task-meta mb-3">
-                                <small class="text-muted">
-                                    <i class="fas fa-calendar me-1"></i>
-                                    Due: <?= htmlspecialchars($task['due_date'] ?? 'No deadline') ?>
-                                </small>
-                                <br>
-                                <small class="text-muted">
-                                    <i class="fas fa-clock me-1"></i>
-                                    Priority: <?= ucfirst($task['priority'] ?? 'medium') ?>
-                                </small>
-                                <?php if (!empty($task['estimated_hours'])): ?>
-                                    <br>
-                                    <small class="text-muted">
-                                        <i class="fas fa-hourglass-half me-1"></i>
-                                        Est. Hours: <?= htmlspecialchars($task['estimated_hours']) ?>
-                                    </small>
-                                <?php endif; ?>
+        </div>
+    <?php else: ?>
+        <div class="d-flex flex-column gap-2">
+            <?php foreach ($filtered as $t):
+                $isOverdue = !empty($t['due_date']) && $t['due_date'] < date('Y-m-d') && strtolower($t['status'] ?? '') !== 'completed';
+                $progress = taskProgress($t);
+                $progColor = taskProgressColor($t);
+            ?>
+                <div class="card emp-task-card <?= $isOverdue ? 'overdue' : '' ?> shadow-sm" id="task-<?= $t['id'] ?>">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="mt-1">
+                                <input type="checkbox" class="form-check-input task-check" data-task-id="<?= $t['id'] ?>"
+                                    <?= strtolower($t['status'] ?? '') === 'completed' ? 'checked disabled' : '' ?>
+                                    onchange="toggleTask(<?= $t['id'] ?>, this.checked)">
                             </div>
-
-                            <!-- Progress Bar for In Progress Tasks -->
-                            <?php if (($task['status'] ?? 'pending') === 'in_progress' && !empty($task['progress'])): ?>
-                                <div class="progress mb-3">
-                                    <div class="progress-bar" role="progressbar"
-                                         style="width: <?= htmlspecialchars($task['progress']) ?>%">
-                                        <?= htmlspecialchars($task['progress']) ?>%
+                            <div class="flex-grow-1 min-width-0">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <h6 class="mb-0 fw-semibold <?= strtolower($t['status'] ?? '') === 'completed' ? 'text-decoration-line-through text-muted' : '' ?>">
+                                        <?= htmlspecialchars($t['title'] ?? '') ?>
+                                    </h6>
+                                    <div class="d-flex gap-1 align-items-center">
+                                        <?= taskPriorityBadge($t['priority'] ?? 'Medium') ?>
+                                        <?= taskStatusBadge($t['status'] ?? 'pending') ?>
                                     </div>
                                 </div>
-                            <?php endif; ?>
-
-                            <!-- Action Buttons -->
-                            <div class="task-actions">
-                                <?php if (($task['status'] ?? 'pending') === 'pending'): ?>
-                                    <button class="btn btn-sm btn-success" onclick="updateTaskStatus(<?= $task['task_id'] ?>, 'in_progress')">
-                                        <i class="fas fa-play me-1"></i>Start Task
-                                    </button>
-                                <?php elseif (($task['status'] ?? 'pending') === 'in_progress'): ?>
-                                    <button class="btn btn-sm btn-warning" onclick="updateTaskStatus(<?= $task['task_id'] ?>, 'completed')">
-                                        <i class="fas fa-check me-1"></i>Complete
-                                    </button>
+                                <?php if (!empty($t['description'])): ?>
+                                    <p class="text-muted small mb-2"><?= htmlspecialchars(mb_strimwidth($t['description'], 0, 120, '...')) ?></p>
                                 <?php endif; ?>
-
-                                <button class="btn btn-sm btn-info" onclick="viewTaskDetails(<?= $task['task_id'] ?>)">
-                                    <i class="fas fa-eye me-1"></i>Details
-                                </button>
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <?php if (!empty($t['due_date'])): ?>
+                                        <span class="small <?= $isOverdue ? 'text-danger fw-semibold' : 'text-muted' ?>">
+                                            <i class="fas fa-calendar me-1"></i><?= date('d M', strtotime($t['due_date'])) ?>
+                                            <?php if ($isOverdue): ?>
+                                                <span class="badge bg-danger bg-opacity-10 text-danger ms-1">Overdue</span>
+                                            <?php endif; ?>
+                                        </span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($t['assigned_by_name'])): ?>
+                                        <span class="small text-muted"><i class="fas fa-user me-1"></i><?= htmlspecialchars($t['assigned_by_name']) ?></span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($t['created_at'])): ?>
+                                        <span class="small text-muted"><i class="fas fa-clock me-1"></i><?= timeAgo($t['created_at']) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="emp-task-progress">
+                                    <div class="emp-task-progress-fill bg-<?= $progColor ?>" style="width: <?= $progress ?>%"></div>
+                                </div>
                             </div>
-                        </div>
-
-                        <!-- Task Footer -->
-                        <div class="card-footer text-muted">
-                            <small>
-                                <i class="fas fa-user me-1"></i>
-                                Assigned by: <?= htmlspecialchars($task['assigned_by_name'] ?? 'System') ?>
-                            </small>
-                            <br>
-                            <small>
-                                <i class="fas fa-calendar-plus me-1"></i>
-                                Created: <?= htmlspecialchars($task['created_at'] ?? '') ?>
-                            </small>
                         </div>
                     </div>
                 </div>
             <?php endforeach; ?>
-        <?php endif; ?>
-    </div>
-
-    <!-- Pagination (if needed) -->
-    <?php if (!empty($tasks) && count($tasks) >= 20): ?>
-        <div class="row">
-            <div class="col-12">
-                <nav aria-label="Task pagination">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1">Previous</a>
-                        </li>
-                        <li class="page-item active">
-                            <a class="page-link" href="#">1</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
         </div>
     <?php endif; ?>
 </div>
 
-<!-- Task Details Modal -->
-<div class="modal fade" id="taskDetailsModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Task Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="taskDetailsContent">
-                <!-- Task details will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-function updateTaskStatus(taskId, status) {
-    if (confirm('Are you sure you want to update this task status?')) {
-        // Create form and submit
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/employee/update-task/${taskId}`;
-
-        const statusInput = document.createElement('input');
-        statusInput.type = 'hidden';
-        statusInput.name = 'status';
-        statusInput.value = status;
-
-        form.appendChild(statusInput);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-
-function viewTaskDetails(taskId) {
-    // In a real implementation, you would make an AJAX call to fetch task details
-    $('#taskDetailsModal').modal('show');
-    $('#taskDetailsContent').html('<p>Loading task details...</p>');
-}
-
-function updateTaskProgress(taskId) {
-    const progress = prompt('Enter progress percentage (0-100):');
-    if (progress !== null && progress >= 0 && progress <= 100) {
-        // Submit progress update
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/employee/update-task/${taskId}`;
-
-        const progressInput = document.createElement('input');
-        progressInput.type = 'hidden';
-        progressInput.name = 'progress';
-        progressInput.value = progress;
-
-        form.appendChild(progressInput);
-        document.body.appendChild(form);
-        form.submit();
-    }
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+function toggleTask(taskId, completed) {
+    const status = completed ? 'completed' : 'pending';
+    fetch('<?= BASE_URL ?>/employee/api/update-task', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task_id: taskId, status: status })
+    }).then(r => r.json()).then(d => {
+        if (d.success) location.reload();
+    }).catch(() => { location.reload(); });
 }
 </script>
-
-<style>
-.task-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.task-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.task-meta {
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-    margin-top: 10px;
-}
-
-.task-actions {
-    margin-top: 15px;
-}
-
-.task-actions .btn {
-    margin-right: 5px;
-    margin-bottom: 5px;
-}
-
-.stats-card {
-    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
-    color: white;
-}
-
-.progress {
-    height: 10px;
-}
-
-.timeline {
-    position: relative;
-    padding-left: 30px;
-}
-
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 15px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #dee2e6;
-}
-
-.timeline-item {
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.timeline-marker {
-    position: absolute;
-    left: -23px;
-    top: 5px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid white;
-}
-
-.timeline-title {
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
-.timeline-text {
-    margin-bottom: 5px;
-    color: #666;
-}
-</style>

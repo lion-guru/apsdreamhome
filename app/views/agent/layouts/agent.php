@@ -96,12 +96,12 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/clients" class="sidebar-link <?php echo $current_page == 'clients' ? 'active' : ''; ?>">
+                <a href="<?php echo $base; ?>/agent/leads" class="sidebar-link <?php echo $current_page == 'clients' ? 'active' : ''; ?>">
                     <i class="fas fa-users"></i> Clients
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/bookings" class="sidebar-link <?php echo $current_page == 'bookings' ? 'active' : ''; ?>">
+                <a href="<?php echo $base; ?>/agent/deals" class="sidebar-link <?php echo $current_page == 'bookings' ? 'active' : ''; ?>">
                     <i class="fas fa-calendar-check"></i> Bookings
                 </a>
             </li>
@@ -116,7 +116,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/settings" class="sidebar-link <?php echo $current_page == 'settings' ? 'active' : ''; ?>">
+                <a href="<?php echo $base; ?>/agent/profile" class="sidebar-link <?php echo $current_page == 'settings' ? 'active' : ''; ?>">
                     <i class="fas fa-cog"></i> Settings
                 </a>
             </li>
@@ -161,7 +161,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?php echo $base; ?>/agent/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="<?php echo $base; ?>/agent/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><a class="dropdown-item" href="<?php echo $base; ?>/agent/profile"><i class="fas fa-cog me-2"></i>Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="<?php echo $base; ?>/agent/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                     </ul>

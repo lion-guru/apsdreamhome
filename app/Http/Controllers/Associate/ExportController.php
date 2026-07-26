@@ -91,8 +91,8 @@ class ExportController extends BaseController
 
         $total = 0; $active = 0;
         try {
-            $total = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE parent_id = ?", [$associate_id])['cnt'] ?? 0);
-            $active = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE parent_id = ? AND status = 'active'", [$associate_id])['cnt'] ?? 0);
+            $total = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE referred_by = ? AND role = 'associate'", [$associate_id])['cnt'] ?? 0);
+            $active = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM users WHERE referred_by = ? AND role = 'associate' AND status = 'active'", [$associate_id])['cnt'] ?? 0);
         } catch (\Exception $e) { error_log('ExportController exception: ' . $e->getMessage()); }
         $active_pct = ($total > 0) ? round(($active / $total) * 100, 1) : 0;
 
@@ -152,7 +152,7 @@ class ExportController extends BaseController
 
         try {
             $members = $this->db->fetchAll(
-                "SELECT name, phone, created_at, status FROM users WHERE parent_id = ? ORDER BY created_at DESC",
+                "SELECT name, phone, created_at, status FROM users WHERE referred_by = ? AND role = 'associate' ORDER BY created_at DESC",
                 [$associate_id]
             );
             foreach ($members as $i => $row) {

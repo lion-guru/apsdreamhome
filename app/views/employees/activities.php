@@ -1,208 +1,167 @@
 <?php
+$activities = $activities ?? [];
+$stats = $stats ?? ['total' => 0, 'today' => 0, 'this_week' => 0, 'types' => []];
+$filter = $filter ?? '';
 
-// TODO: Add proper error handling with try-catch blocks
-
-/**
- * Employee Activities View
- * Shows employee activity logs and history
- */
+function actIcon($action) {
+    $map = ['login' => 'sign-in-alt', 'logout' => 'sign-out-alt', 'task' => 'tasks', 'attendance' => 'calendar-check', 'leave' => 'calendar-minus', 'document' => 'file-alt', 'system' => 'cog', 'note' => 'sticky-note', 'update' => 'edit', 'view' => 'eye', 'create' => 'plus-circle', 'delete' => 'trash-alt', 'check_in' => 'fingerprint', 'check_out' => 'door-open'];
+    return $map[$action] ?? 'circle';
+}
+function actColor($action) {
+    $map = ['login' => 'success', 'logout' => 'secondary', 'task' => 'info', 'attendance' => 'primary', 'leave' => 'warning', 'document' => 'purple', 'system' => 'dark', 'note' => 'info', 'check_in' => 'success', 'check_out' => 'danger'];
+    return $map[$action] ?? 'secondary';
+}
+function actBadge($action) {
+    $map = ['login' => 'success', 'logout' => 'secondary', 'task' => 'info', 'attendance' => 'primary', 'leave' => 'warning', 'document' => 'purple', 'system' => 'dark', 'note' => 'info', 'check_in' => 'success', 'check_out' => 'danger'];
+    return $map[$action] ?? 'secondary';
+}
+function timeAgo($date) {
+    if (!$date) return '';
+    $diff = time() - strtotime($date);
+    if ($diff < 60) return 'Just now';
+    if ($diff < 3600) return floor($diff / 60) . 'm ago';
+    if ($diff < 86400) return floor($diff / 3600) . 'h ago';
+    if ($diff < 604800) return floor($diff / 86400) . 'd ago';
+    return date('d M', strtotime($date));
+}
+$filtered = $activities;
+if ($filter && in_array($filter, ['login','task','attendance','leave','document','system'])) {
+    $filtered = array_filter($activities, function($a) use ($filter) { return ($a['action'] ?? '') === $filter; });
+}
+$maxTypeCount = max(array_values($stats['types'] ?: [1]));
 ?>
 
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+.emp-act-stat { border: none; border-radius: 12px; transition: transform 0.2s; }
+.emp-act-stat:hover { transform: translateY(-2px); }
+.emp-act-stat .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+.emp-act-timeline { position: relative; padding-left: 40px; }
+.emp-act-timeline::before { content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
+.emp-act-item { position: relative; margin-bottom: 20px; }
+.emp-act-marker { position: absolute; left: -30px; top: 6px; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; border: 3px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-size: 0.85rem; }
+.emp-act-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; transition: all 0.2s; }
+.emp-act-card:hover { border-color: #cbd5e1; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.emp-act-meta { font-size: 0.78rem; color: #64748b; }
+.emp-act-type-btn { border: 1px solid #e2e8f0; border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; text-decoration: none; transition: all 0.2s; color: #475569; }
+.emp-act-type-btn:hover { background: #e2e8f0; }
+.emp-act-type-btn.active { background: #7c2d12; color: #fff; border-color: #7c2d12; }
+.emp-act-type-bar { height: 6px; border-radius: 3px; background: #e2e8f0; overflow: hidden; }
+.emp-act-type-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+</style>
+
 <div class="container-fluid">
-    <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-history me-2"></i>My Activities</h2>
+        <div>
+            <h4 class="mb-1 fw-bold"><i class="fas fa-history me-2 text-primary"></i>Activity Timeline</h4>
+            <p class="text-muted mb-0 small"><?= $stats['total'] ?> activities recorded</p>
+        </div>
         <div class="d-flex gap-2">
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-filter me-2"></i>Filter by Type
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="?activity_type=">All Activities</a></li>
-                    <li><a class="dropdown-item" href="?activity_type=login">Login</a></li>
-                    <li><a class="dropdown-item" href="?activity_type=task">Task Updates</a></li>
-                    <li><a class="dropdown-item" href="?activity_type=attendance">Attendance</a></li>
-                    <li><a class="dropdown-item" href="?activity_type=leave">Leave</a></li>
-                    <li><a class="dropdown-item" href="?activity_type=document">Documents</a></li>
-                </ul>
-            </div>
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-calendar me-2"></i>Date Range
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="?date_range=today">Today</a></li>
-                    <li><a class="dropdown-item" href="?date_range=yesterday">Yesterday</a></li>
-                    <li><a class="dropdown-item" href="?date_range=week">This Week</a></li>
-                    <li><a class="dropdown-item" href="?date_range=month">This Month</a></li>
-                    <li><a class="dropdown-item" href="?date_range=3months">Last 3 Months</a></li>
-                </ul>
-            </div>
+            <a href="/employee/activities" class="btn btn-sm <?= !$filter ? 'btn-primary' : 'btn-outline-secondary' ?>">All</a>
+            <a href="/employee/activities?type=login" class="btn btn-sm <?= $filter === 'login' ? 'btn-primary' : 'btn-outline-secondary' ?>"><i class="fas fa-sign-in-alt me-1"></i>Login</a>
+            <a href="/employee/activities?type=task" class="btn btn-sm <?= $filter === 'task' ? 'btn-primary' : 'btn-outline-secondary' ?>"><i class="fas fa-tasks me-1"></i>Tasks</a>
+            <a href="/employee/activities?type=attendance" class="btn btn-sm <?= $filter === 'attendance' ? 'btn-primary' : 'btn-outline-secondary' ?>"><i class="fas fa-calendar-check me-1"></i>Attendance</a>
         </div>
     </div>
 
-    <!-- Activity Summary -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $totalActivities = count($activities);
-                                echo $totalActivities;
-                                ?>
-                            </h4>
-                            <small>Total Activities</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-list fa-2x"></i>
-                        </div>
-                    </div>
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card emp-act-stat shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-list"></i></div>
+                    <div><div class="fw-bold fs-4"><?= $stats['total'] ?></div><div class="text-muted small">Total</div></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $todayActivities = count(array_filter($activities, function($a) {
-                                    return date('Y-m-d') === date('Y-m-d', strtotime($a['created_at']));
-                                }));
-                                echo $todayActivities;
-                                ?>
-                            </h4>
-                            <small>Today</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-calendar-day fa-2x"></i>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-3">
+            <div class="card emp-act-stat shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="fas fa-calendar-day"></i></div>
+                    <div><div class="fw-bold fs-4 text-success"><?= $stats['today'] ?></div><div class="text-muted small">Today</div></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $weekActivities = count(array_filter($activities, function($a) {
-                                    $activityDate = date('Y-m-d', strtotime($a['created_at']));
-                                    $weekStart = date('Y-m-d', strtotime('monday this week'));
-                                    $weekEnd = date('Y-m-d', strtotime('sunday this week'));
-                                    return $activityDate >= $weekStart && $activityDate <= $weekEnd;
-                                }));
-                                echo $weekActivities;
-                                ?>
-                            </h4>
-                            <small>This Week</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-calendar-week fa-2x"></i>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-3">
+            <div class="card emp-act-stat shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-info bg-opacity-10 text-info"><i class="fas fa-calendar-week"></i></div>
+                    <div><div class="fw-bold fs-4 text-info"><?= $stats['this_week'] ?></div><div class="text-muted small">This Week</div></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $uniqueTypes = count(array_unique(array_column($activities, 'activity_type')));
-                                echo $uniqueTypes;
-                                ?>
-                            </h4>
-                            <small>Activity Types</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-tags fa-2x"></i>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-3">
+            <div class="card emp-act-stat shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-tags"></i></div>
+                    <div><div class="fw-bold fs-4 text-warning"><?= count($stats['types']) ?></div><div class="text-muted small">Types</div></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Activities Timeline -->
     <div class="row">
-        <div class="col-12">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-stream me-2"></i>Activity Timeline</h5>
+        <!-- Timeline Column -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-transparent border-bottom-0 pt-3">
+                    <h6 class="fw-bold mb-0"><i class="fas fa-stream me-2 text-primary"></i>Timeline</h6>
                 </div>
-                <div class="card-body aps-cp-card-body">
-                    <?php if (empty($activities)): ?>
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>No activities found.
+                <div class="card-body">
+                    <?php if (empty($filtered)): ?>
+                        <div class="text-center py-5">
+                            <div class="mb-3"><i class="fas fa-history fa-4x text-muted opacity-25"></i></div>
+                            <h5 class="text-muted"><?= $filter ? 'No activities of this type' : 'No Activities Yet' ?></h5>
+                            <p class="text-muted small">Your activity history will appear here</p>
                         </div>
                     <?php else: ?>
-                        <div class="timeline">
-                            <?php foreach ($activities as $activity): ?>
-                                <div class="timeline-item">
-                                    <div class="timeline-marker bg-<?= $this->getActivityColor($activity['activity_type'] ?? 'general') ?>">
-                                        <i class="fas fa-<?= $this->getActivityIcon($activity['activity_type'] ?? 'general') ?>"></i>
+                        <div class="emp-act-timeline">
+                            <?php $lastDate = ''; foreach ($filtered as $a):
+                                $actionDate = date('Y-m-d', strtotime($a['created_at'] ?? ''));
+                                if ($actionDate !== $lastDate): $lastDate = $actionDate; ?>
+                                    <div class="d-flex align-items-center gap-2 mb-3 mt-2">
+                                        <div class="fw-semibold text-dark small"><?= date('d M Y', strtotime($actionDate)) ?></div>
+                                        <div class="flex-grow-1" style="height:1px;background:#e2e8f0"></div>
+                                        <?php if ($actionDate === date('Y-m-d')): ?>
+                                            <span class="badge bg-success bg-opacity-10 text-success">Today</span>
+                                        <?php endif; ?>
                                     </div>
-                                    <div class="timeline-content">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h6 class="timeline-title">
-                                                    <?= htmlspecialchars($activity['activity_type'] ?? 'Activity') ?>
-                                                </h6>
-                                                <p class="timeline-text mb-2">
-                                                    <?= htmlspecialchars($activity['description'] ?? 'No description') ?>
-                                                </p>
+                                <?php endif; ?>
+                                <div class="emp-act-item">
+                                    <div class="emp-act-marker bg-<?= actColor($a['action'] ?? 'system') ?>">
+                                        <i class="fas fa-<?= actIcon($a['action'] ?? 'system') ?>"></i>
+                                    </div>
+                                    <div class="emp-act-card">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div class="fw-semibold text-dark">
+                                                <?= htmlspecialchars($a['description'] ?? ucfirst(str_replace('_', ' ', $a['action'] ?? 'Activity'))) ?>
                                             </div>
-                                            <span class="badge bg-<?= $this->getActivityBadgeClass($activity['activity_type'] ?? 'general') ?>">
-                                                <?= htmlspecialchars($activity['activity_type'] ?? 'General') ?>
+                                            <span class="badge bg-<?= actBadge($a['action'] ?? 'system') ?> bg-opacity-10 text-<?= actBadge($a['action'] ?? 'system') ?>">
+                                                <?= ucfirst(htmlspecialchars($a['action'] ?? 'other')) ?>
                                             </span>
                                         </div>
-
-                                        <!-- Additional Details -->
-                                        <?php if (!empty($activity['metadata'])): ?>
-                                            <div class="activity-metadata mb-2">
-                                                <?php
-                                                $metadata = json_decode($activity['metadata'], true);
-                                                if ($metadata && is_array($metadata)):
-                                                    foreach ($metadata as $key => $value):
-                                                ?>
-                                                    <small class="text-muted">
-                                                        <strong><?= htmlspecialchars($key) ?>:</strong>
-                                                        <?= htmlspecialchars($value) ?>
-                                                    </small>
-                                                    <br>
-                                                <?php
-                                                    endforeach;
-                                                endif;
-                                                ?>
+                                        <?php
+                                        $details = null;
+                                        if (!empty($a['context'])) {
+                                            $details = is_array($a['context']) ? $a['context'] : json_decode($a['context'], true);
+                                        } elseif (!empty($a['details'])) {
+                                            $details = is_array($a['details']) ? $a['details'] : json_decode($a['details'], true);
+                                        }
+                                        ?>
+                                        <?php if ($details && is_array($details) && count($details) > 0): ?>
+                                            <div class="bg-light rounded p-2 mb-2" style="font-size:0.78rem;">
+                                                <?php foreach ($details as $k => $v): ?>
+                                                    <span class="me-3"><strong><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $k))) ?>:</strong> <?= htmlspecialchars(is_array($v) ? json_encode($v) : $v) ?></span>
+                                                <?php endforeach; ?>
                                             </div>
                                         <?php endif; ?>
-
-                                        <!-- Activity Footer -->
-                                        <div class="activity-footer">
-                                            <small class="text-muted">
-                                                <i class="fas fa-calendar me-1"></i>
-                                                <?= date('M d, Y h:i A', strtotime($activity['created_at'])) ?>
-                                            </small>
-                                            <?php if (!empty($activity['ip_address'])): ?>
-                                                <small class="text-muted ms-3">
-                                                    <i class="fas fa-globe me-1"></i>
-                                                    IP: <?= htmlspecialchars($activity['ip_address']) ?>
-                                                </small>
-                                            <?php endif; ?>
-                                            <?php if (!empty($activity['user_agent'])): ?>
-                                                <small class="text-muted ms-3">
-                                                    <i class="fas fa-browser me-1"></i>
-                                                    <?= htmlspecialchars(substr($activity['user_agent'], 0, 50)) ?>...
-                                                </small>
+                                        <?php if (!empty($a['entity_type'])): ?>
+                                            <div class="mb-1"><small class="text-muted"><i class="fas fa-link me-1"></i><?= htmlspecialchars(ucfirst($a['entity_type'])) ?><?php if (!empty($a['entity_id'])): ?> #<?= $a['entity_id'] ?><?php endif; ?></small></div>
+                                        <?php endif; ?>
+                                        <div class="d-flex align-items-center gap-3 emp-act-meta mt-1">
+                                            <span><i class="fas fa-clock me-1"></i><?= date('h:i A', strtotime($a['created_at'] ?? '')) ?></span>
+                                            <span><i class="fas fa-history me-1"></i><?= timeAgo($a['created_at'] ?? '') ?></span>
+                                            <?php if (!empty($a['ip_address'])): ?>
+                                                <span><i class="fas fa-globe me-1"></i><?= htmlspecialchars($a['ip_address']) ?></span>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -213,222 +172,50 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Activity Types Breakdown -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-chart-pie me-2"></i>Activity Types Breakdown</h5>
+        <!-- Sidebar: Type Breakdown -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-header bg-transparent border-bottom-0 pt-3">
+                    <h6 class="fw-bold mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>By Type</h6>
                 </div>
-                <div class="card-body aps-cp-card-body">
-                    <div class="row">
-                        <?php
-                        $activityTypes = [];
-                        foreach ($activities as $activity) {
-                            $type = $activity['activity_type'] ?? 'general';
-                            $activityTypes[$type] = ($activityTypes[$type] ?? 0) + 1;
-                        }
-
-                        foreach ($activityTypes as $type => $count):
-                        ?>
-                            <div class="col-md-3 col-sm-6 mb-3">
-                                <div class="activity-type-card">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">
-                                                <i class="fas fa-<?= $this->getActivityIcon($type) ?> me-2"></i>
-                                                <?= ucfirst($type) ?>
-                                            </h6>
-                                            <p class="mb-0 text-muted">
-                                                <?= htmlspecialchars($count, ENT_QUOTES, 'UTF-8') ?> activities
-                                            </p>
-                                        </div>
-                                        <div class="activity-count">
-                                            <?= htmlspecialchars($count, ENT_QUOTES, 'UTF-8') ?>
-                                        </div>
+                <div class="card-body">
+                    <?php if (empty($stats['types'])): ?>
+                        <p class="text-muted small mb-0">No data yet</p>
+                    <?php else: ?>
+                        <?php foreach ($stats['types'] as $type => $count): ?>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-<?= actColor($type) ?> bg-opacity-10" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;">
+                                        <i class="fas fa-<?= actIcon($type) ?> text-<?= actColor($type) ?>" style="font-size:0.8rem;"></i>
                                     </div>
-                                    <div class="progress mt-2">
-                                        <div class="progress-bar bg-<?= $this->getActivityColor($type) ?>"
-                                             style="width: <?= ($count / max($activityTypes)) * 100 ?>%">
-                                        </div>
+                                    <div>
+                                        <div class="fw-semibold small text-dark"><?= ucfirst(htmlspecialchars($type)) ?></div>
+                                        <div class="text-muted" style="font-size:0.7rem;"><?= $count ?> activities</div>
                                     </div>
                                 </div>
+                                <span class="badge bg-<?= actColor($type) ?> bg-opacity-10 text-<?= actColor($type) ?>"><?= $count ?></span>
+                            </div>
+                            <div class="emp-act-type-bar mb-3">
+                                <div class="emp-act-type-bar-fill bg-<?= actColor($type) ?>" style="width: <?= $maxTypeCount > 0 ? round(($count / $maxTypeCount) * 100) : 0 ?>%"></div>
                             </div>
                         <?php endforeach; ?>
-                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Quick Filter -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-transparent border-bottom-0 pt-3">
+                    <h6 class="fw-bold mb-0"><i class="fas fa-filter me-2 text-primary"></i>Quick Filter</h6>
+                </div>
+                <div class="card-body d-flex flex-wrap gap-2">
+                    <a href="/employee/activities" class="emp-act-type-btn <?= !$filter ? 'active' : '' ?>">All</a>
+                    <?php foreach ($stats['types'] as $type => $count): ?>
+                        <a href="/employee/activities?type=<?= urlencode($type) ?>" class="emp-act-type-btn <?= $filter === $type ? 'active' : '' ?>"><?= ucfirst(htmlspecialchars($type)) ?></a>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-// Auto-refresh activities every 2 minutes
-setInterval(function() {
-    if (!document.hidden) {
-        location.reload();
-    }
-}, 120000);
-
-// Expandable activity details
-function toggleActivityDetails(activityId) {
-    const details = document.getElementById(`activity-details-${activityId}`);
-    if (details) {
-        details.style.display = details.style.display === 'none' ? 'block' : 'none';
-    }
-}
-
-// Filter activities by date range
-document.querySelectorAll('[href*="date_range"]').forEach(link => {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-        const range = this.href.split('date_range=')[1];
-        applyDateFilter(range);
-    });
-});
-
-function applyDateFilter(range) {
-    const now = new Date();
-    let startDate, endDate;
-
-    switch (range) {
-        case 'today':
-            startDate = endDate = new Date().toISOString().split('T')[0];
-            break;
-        case 'yesterday':
-            const yesterday = new Date(now);
-            yesterday.setDate(yesterday.getDate() - 1);
-            startDate = endDate = yesterday.toISOString().split('T')[0];
-            break;
-        case 'week':
-            const weekStart = new Date(now);
-            weekStart.setDate(now.getDate() - now.getDay());
-            startDate = weekStart.toISOString().split('T')[0];
-            endDate = new Date().toISOString().split('T')[0];
-            break;
-        case 'month':
-            startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-            endDate = new Date().toISOString().split('T')[0];
-            break;
-        case '3months':
-            const threeMonthsAgo = new Date(now);
-            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-            startDate = threeMonthsAgo.toISOString().split('T')[0];
-            endDate = new Date().toISOString().split('T')[0];
-            break;
-    }
-
-    // Apply the filter (in a real implementation, you would submit a form or make an AJAX call)
-    console.log(`Filtering activities from ${startDate} to ${endDate}`);
-}
-</script>
-
-<style>
-.stats-card {
-    border: none;
-    border-radius: 10px;
-    transition: transform 0.2s;
-}
-
-.stats-card:hover {
-    transform: translateY(-2px);
-}
-
-.timeline {
-    position: relative;
-    padding-left: 40px;
-}
-
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 20px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #dee2e6;
-}
-
-.timeline-item {
-    position: relative;
-    margin-bottom: 30px;
-}
-
-.timeline-marker {
-    position: absolute;
-    left: -28px;
-    top: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    border: 3px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.timeline-content {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 15px;
-    margin-left: 10px;
-}
-
-.timeline-title {
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #495057;
-}
-
-.timeline-text {
-    margin-bottom: 10px;
-    color: #6c757d;
-}
-
-.activity-footer {
-    border-top: 1px solid #e9ecef;
-    padding-top: 8px;
-    margin-top: 10px;
-}
-
-.activity-metadata {
-    background: #e9ecef;
-    border-radius: 4px;
-    padding: 8px;
-    margin: 10px 0;
-    font-size: 0.875rem;
-}
-
-.activity-type-card {
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 15px;
-    transition: box-shadow 0.2s;
-}
-
-.activity-type-card:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.activity-count {
-    background: #007bff;
-    color: white;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.badge {
-    font-size: 0.75em;
-}
-</style>

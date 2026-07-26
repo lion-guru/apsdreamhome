@@ -13,7 +13,7 @@ $properties = $properties ?? [];
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
-                    <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
+                    <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
                                 <th><?= __('assoc_sold_th_title') ?></th>
@@ -30,11 +30,15 @@ $properties = $properties ?? [];
                                     <td><?php echo htmlspecialchars($p['property_type'] ?? __('assoc_sold_na')); ?></td>
                                     <td>₹<?php echo number_format($p['price'] ?? 0); ?></td>
                                     <td><?php echo htmlspecialchars($p['date'] ?? ''); ?></td>
-                                    <td><a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
+                                    <td>
+                                        <a href="<?= BASE_URL ?>/associate/properties/edit/<?= (int)($p['id'] ?? 0) ?>" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye me-1"></i><?= __('assoc_view') ?>
+                                        </a>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
-                    </table></div>
+                    </table>
                 </div>
             <?php endif; ?>
         </div>

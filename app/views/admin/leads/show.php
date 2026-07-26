@@ -14,8 +14,8 @@ $agents = $agents ?? [];
 
 $statusColors = [
     'new'=>'danger','contacted'=>'info','qualified'=>'primary','site_visit'=>'warning',
-    'proposal'=>'pink','negotiation'=>'dark','booking'=>'success','won'=>'success',
-    'lost'=>'secondary','dead'=>'muted','nurture'=>'orange','converted'=>'success','closed'=>'muted'
+    'proposal'=>'danger','negotiation'=>'dark','booking'=>'success','won'=>'success',
+    'lost'=>'secondary','dead'=>'dark','nurture'=>'warning','converted'=>'success','closed'=>'secondary'
 ];
 $statusColor = $statusColors[$lead['status'] ?? 'new'] ?? 'secondary';
 $leadScore = (int)($lead['lead_score'] ?? 0);

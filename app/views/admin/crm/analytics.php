@@ -138,7 +138,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
                 <div class="card-body">
                     <div class="row g-3">
                         <?php
-                        $stageColors = ['new'=>'primary','contacted'=>'info','qualified'=>'purple','site_visit'=>'warning','proposal'=>'pink','negotiation'=>'danger','booking'=>'success','won'=>'success','lost'=>'muted','nurture'=>'orange'];
+                        $stageColors = ['new'=>'primary','contacted'=>'info','qualified'=>'info','site_visit'=>'warning','proposal'=>'danger','negotiation'=>'danger','booking'=>'success','won'=>'success','lost'=>'secondary','nurture'=>'warning'];
                         foreach ($pipeline_value['by_stage'] ?? [] as $stage):
                             $color = $stageColors[$stage['stage']] ?? 'secondary';
                         ?>

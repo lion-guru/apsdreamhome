@@ -608,92 +608,477 @@ class EmployeeController extends BaseController
         parent::middleware($name, $options);
     }
 
-    // Missing page methods - each renders its view
+    // ── Employee Tasks ──
     public function tasks()
     {
-        $data = ['page_title' => 'My Tasks', 'page_description' => 'View and manage your tasks'];
-        $this->render('users/tasks', $data);
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $tasks = [];
+        $stats = ['total' => 0, 'pending' => 0, 'in_progress' => 0, 'completed' => 0, 'overdue' => 0];
+        if ($employeeId > 0) {
+            try {
+                $emp = $this->db->fetch("SELECT name, department FROM employees WHERE id = ?", [$employeeId]);
+                $tasks = $this->db->fetchAll(
+                    "SELECT t.*, u.name AS assigned_by_name FROM tasks t LEFT JOIN users u ON t.created_by = u.id WHERE t.assigned_to = ? ORDER BY FIELD(t.priority, 'High', 'Medium', 'Low'), t.due_date ASC",
+                    [$employeeId]
+                );
+                $stats['total'] = count($tasks);
+                $now = date('Y-m-d');
+                foreach ($tasks as $t) {
+                    $s = strtolower($t['status'] ?? '');
+                    if ($s === 'completed') $stats['completed']++;
+                    elseif ($s === 'in progress') $stats['in_progress']++;
+                    else {
+                        $stats['pending']++;
+                        if (!empty($t['due_date']) && $t['due_date'] < $now && $s !== 'completed') $stats['overdue']++;
+                    }
+                }
+            } catch (\Exception $e) { $tasks = []; }
+        }
+        $this->render('employees/tasks', [
+            'page_title' => 'My Tasks',
+            'page_description' => 'View and manage your assigned tasks',
+            'tasks' => $tasks,
+            'stats' => $stats,
+        ]);
     }
 
+    // ── Employee Activities ──
     public function activities()
     {
         $employeeId = $_SESSION['employee_id'] ?? 0;
         $activities = [];
+        $stats = ['total' => 0, 'today' => 0, 'this_week' => 0, 'types' => []];
+        $filter = $_GET['type'] ?? '';
         if ($employeeId > 0) {
             try {
-                $activities = $this->db->fetchAll("SELECT * FROM activity_logs_unified WHERE user_id = ? ORDER BY created_at DESC LIMIT 100", [$employeeId]);
-            } catch (\Exception $e) {
-                $activities = [];
-            }
+                $where = "WHERE user_id = ? AND (log_type = 'employee' OR user_id = ?)";
+                $params = [$employeeId, $employeeId];
+                if ($filter && in_array($filter, ['login','task','attendance','leave','document','system'])) {
+                    $where .= " AND action = ?";
+                    $params[] = $filter;
+                }
+                $activities = $this->db->fetchAll(
+                    "SELECT * FROM user_activity_logs_unified {$where} ORDER BY created_at DESC LIMIT 100",
+                    $params
+                );
+                $stats['total'] = count($activities);
+                $today = date('Y-m-d');
+                $weekAgo = date('Y-m-d', strtotime('-7 days'));
+                foreach ($activities as $a) {
+                    $ts = substr($a['created_at'] ?? '', 0, 10);
+                    if ($ts === $today) $stats['today']++;
+                    if ($ts >= $weekAgo) $stats['this_week']++;
+                    $act = $a['action'] ?? 'other';
+                    $stats['types'][$act] = ($stats['types'][$act] ?? 0) + 1;
+                }
+            } catch (\Exception $e) { $activities = []; }
         }
-        $data = [
-            'page_title' => 'Activities',
-            'page_description' => 'Your recent activities',
-            'activities' => $activities
-        ];
-        $this->render('users/activities', $data);
+        $this->render('employees/activities', [
+            'page_title' => 'Activity Timeline',
+            'page_description' => 'Your recent activity history',
+            'activities' => $activities,
+            'stats' => $stats,
+            'filter' => $filter,
+        ]);
     }
 
     public function attendance()
     {
-        $data = ['page_title' => 'Attendance', 'page_description' => 'Your attendance records'];
-        $this->render('users/attendance', $data);
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $attendance = [];
+        $stats = ['present' => 0, 'absent' => 0, 'late' => 0, 'half_day' => 0, 'total_hours' => 0];
+        $month = $_GET['month'] ?? date('Y-m');
+        if ($employeeId > 0) {
+            try {
+                $attendance = $this->db->fetchAll(
+                    "SELECT attendance_date AS date, check_in_time AS check_in, check_out_time AS check_out, hours_worked AS hours, status FROM employee_attendance WHERE employee_id = ? AND DATE_FORMAT(attendance_date, '%Y-%m') = ? ORDER BY attendance_date DESC",
+                    [$employeeId, $month]
+                );
+                foreach ($attendance as $a) {
+                    $s = strtolower($a['status'] ?? '');
+                    if ($s === 'present' || $s === 'full day') $stats['present']++;
+                    elseif ($s === 'absent') $stats['absent']++;
+                    elseif ($s === 'late') $stats['late']++;
+                    elseif ($s === 'half day') $stats['half_day']++;
+                    $stats['total_hours'] += (float)($a['hours'] ?? 0);
+                }
+                $stats['total_hours'] = round($stats['total_hours'], 1);
+            } catch (\Exception $e) { $attendance = []; }
+        }
+        $this->render('users/attendance', [
+            'page_title' => 'Attendance',
+            'page_description' => 'Your attendance records',
+            'attendance' => $attendance,
+            'stats' => $stats,
+            'month' => $month,
+        ]);
     }
 
+    // ── Employee Performance ──
     public function performancePage()
     {
-        $data = ['page_title' => 'Performance', 'page_description' => 'Your performance metrics'];
-        $this->render('users/performance', $data);
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $overall = ['tasks_completed' => 0, 'on_time_rate' => 0, 'rating' => 0, 'attendance_percent' => 0, 'total_tasks' => 0];
+        $reviews = [];
+        $recentTasks = [];
+        if ($employeeId > 0) {
+            try {
+                $completed = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM tasks WHERE assigned_to = ? AND status = 'completed'", [$employeeId])['cnt'] ?? 0);
+                $total = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM tasks WHERE assigned_to = ?", [$employeeId])['cnt'] ?? 0);
+                $onTime = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM tasks WHERE assigned_to = ? AND status = 'completed' AND (completed_at <= due_date OR due_date IS NULL)", [$employeeId])['cnt'] ?? 0);
+                $overall['tasks_completed'] = $completed;
+                $overall['total_tasks'] = $total;
+                $overall['on_time_rate'] = $completed > 0 ? round(($onTime / $completed) * 100) : 0;
+
+                $reviews = $this->db->fetchAll(
+                    "SELECT pr.*, u.name AS reviewer_name FROM performance_reviews pr LEFT JOIN users u ON pr.reviewer_id = u.id WHERE pr.employee_id = ? ORDER BY pr.review_date DESC LIMIT 10",
+                    [$employeeId]
+                );
+                if (!empty($reviews)) {
+                    $totalRating = 0;
+                    foreach ($reviews as $r) $totalRating += (float)($r['overall_rating'] ?? 0);
+                    $overall['rating'] = round($totalRating / count($reviews), 1);
+                }
+
+                $att = $this->db->fetch("SELECT COUNT(*) as present FROM employee_attendance WHERE employee_id = ? AND status = 'present' AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)", [$employeeId]);
+                $totalDays = (int)($this->db->fetch("SELECT COUNT(*) as cnt FROM employee_attendance WHERE employee_id = ? AND attendance_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)", [$employeeId])['cnt'] ?? 0);
+                $presentDays = (int)($att['present'] ?? 0);
+                $overall['attendance_percent'] = $totalDays > 0 ? round(($presentDays / $totalDays) * 100) : 0;
+
+                $recentTasks = $this->db->fetchAll(
+                    "SELECT title, priority, status, due_date, completed_at FROM tasks WHERE assigned_to = ? ORDER BY updated_at DESC LIMIT 8",
+                    [$employeeId]
+                );
+            } catch (\Exception $e) {}
+        }
+        $this->render('employees/performance', [
+            'page_title' => 'Performance Overview',
+            'page_description' => 'Track your performance metrics and goals',
+            'overall' => $overall,
+            'reviews' => $reviews,
+            'recent_tasks' => $recentTasks,
+        ]);
     }
 
     public function salary()
     {
         $employeeId = $_SESSION['employee_id'] ?? 0;
         $salary_history = [];
+        $stats = ['total' => 0, 'paid' => 0, 'pending' => 0, 'total_earned' => 0];
         if ($employeeId > 0) {
             try {
                 $salary_history = $this->db->fetchAll("SELECT * FROM salary_records WHERE employee_id = ? ORDER BY pay_date DESC LIMIT 12", [$employeeId]);
+                $stats['total'] = count($salary_history);
+                foreach ($salary_history as $s) {
+                    $st = strtolower($s['status'] ?? '');
+                    if ($st === 'paid') { $stats['paid']++; $stats['total_earned'] += (float)($s['net_pay'] ?? 0); }
+                    else $stats['pending']++;
+                }
             } catch (\Exception $e) {
                 $salary_history = [];
             }
         }
-        $data = [
+        $this->render('users/salary_history', [
             'page_title' => 'Salary History',
             'page_description' => 'Your salary records',
-            'salary_history' => $salary_history
-        ];
-        $this->render('users/salary_history', $data);
+            'salary_history' => $salary_history,
+            'stats' => $stats,
+        ]);
     }
 
+    // ── Employee Documents ──
     public function documents()
     {
         $employeeId = $_SESSION['employee_id'] ?? 0;
         $documents = [];
+        $stats = ['total' => 0, 'verified' => 0, 'pending' => 0, 'expired' => 0];
         if ($employeeId > 0) {
             try {
-                $documents = $this->db->fetchAll("SELECT * FROM documents WHERE entity_type = 'employee' AND entity_id = ? ORDER BY uploaded_on DESC", [$employeeId]);
-            } catch (\Exception $e) {
-                $documents = [];
-            }
+                $documents = $this->db->fetchAll(
+                    "SELECT * FROM documents WHERE entity_type = 'employee' AND entity_id = ? ORDER BY uploaded_on DESC",
+                    [$employeeId]
+                );
+                $now = date('Y-m-d');
+                foreach ($documents as $d) {
+                    $stats['total']++;
+                    $vs = $d['verification_status'] ?? '';
+                    if ($vs === 'verified') $stats['verified']++;
+                    else $stats['pending']++;
+                    if (!empty($d['expiry_date']) && $d['expiry_date'] < $now) $stats['expired']++;
+                }
+            } catch (\Exception $e) { $documents = []; }
         }
-        $data = [
-            'page_title' => 'Documents',
-            'page_description' => 'Your documents',
-            'documents' => $documents
-        ];
-        $this->render('users/documents', $data);
+        $this->render('employees/documents', [
+            'page_title' => 'My Documents',
+            'page_description' => 'Manage your employee documents',
+            'documents' => $documents,
+            'stats' => $stats,
+        ]);
+    }
+
+    public function uploadDocument()
+    {
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        if (!$employeeId) { $this->redirect('/employee/login'); return; }
+        try {
+            if (!empty($_FILES['document_file']['name']) && $_FILES['document_file']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = __DIR__ . '/../../../../assets/documents/employees/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $safeName = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES['document_file']['name']));
+                $newName = 'emp_' . $employeeId . '_' . time() . '_' . $safeName;
+                $target = $uploadDir . $newName;
+                if (move_uploaded_file($_FILES['document_file']['tmp_name'], $target)) {
+                    $this->db->query(
+                        "INSERT INTO documents (entity_type, entity_id, type, document_type, document_number, issued_by, issue_date, expiry_date, verification_status, uploaded_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())",
+                        [
+                            'employee_id', $employeeId,
+                            $_POST['document_type'] ?? 'other',
+                            $_POST['document_type'] ?? 'other',
+                            $_POST['document_number'] ?? '',
+                            $_POST['issued_by'] ?? '',
+                            $_POST['issue_date'] ?? null,
+                            $_POST['expiry_date'] ?? null,
+                        ]
+                    );
+                    $_SESSION['success'] = 'Document uploaded successfully.';
+                } else {
+                    $_SESSION['error'] = 'Failed to move uploaded file.';
+                }
+            } else {
+                $_SESSION['error'] = 'Please select a file to upload.';
+            }
+        } catch (\Exception $e) {
+            $_SESSION['error'] = 'Upload failed: ' . $e->getMessage();
+        }
+        $this->redirect('/employee/documents');
     }
 
     public function leaves()
     {
-        $data = ['page_title' => 'Leaves', 'page_description' => 'Your leave records'];
-        $this->render('users/leaves', $data);
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $leaveTypes = [];
+        $leaveBalance = [];
+        $leaves = [];
+        $stats = ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0];
+        try {
+            $db = $this->db;
+            $leaveTypes = $db->fetchAll("SELECT * FROM leave_types WHERE status = 'active' ORDER BY name ASC");
+            if ($employeeId > 0) {
+                $balanceRows = $db->fetchAll(
+                    "SELECT elb.*, lt.name as type_name, lt.code as type_code, lt.color
+                     FROM employee_leave_balances elb
+                     JOIN leave_types lt ON elb.leave_type_id = lt.id
+                     WHERE elb.employee_id = ? AND elb.year = YEAR(CURDATE())",
+                    [$employeeId]
+                );
+                foreach ($balanceRows as $b) {
+                    $leaveBalance[] = $b;
+                }
+                $leaves = $db->fetchAll(
+                    "SELECT el.*, lt.name as type_name, lt.color as type_color
+                     FROM employee_leaves el
+                     LEFT JOIN leave_types lt ON el.leave_type_id = lt.id
+                     WHERE el.employee_id = ?
+                     ORDER BY el.created_at DESC LIMIT 50",
+                    [$employeeId]
+                );
+                $stats['total'] = count($leaves);
+                foreach ($leaves as $l) {
+                    $st = strtolower($l['status'] ?? 'pending');
+                    if (isset($stats[$st])) $stats[$st]++;
+                }
+            }
+        } catch (\Exception $e) {
+            error_log("Employee leaves error: " . $e->getMessage());
+        }
+        $this->render('users/leaves', [
+            'page_title' => 'Leave Management',
+            'page_description' => 'Apply for leaves and track your leave history',
+            'leaveTypes' => $leaveTypes,
+            'leaveBalance' => $leaveBalance,
+            'leaves' => $leaves,
+            'stats' => $stats,
+        ]);
     }
 
+    public function leaveApply()
+    {
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        if ($employeeId <= 0) {
+            $_SESSION['flash_error'] = 'Invalid session.';
+            $this->redirect('/employee/leaves');
+            return;
+        }
+        $leaveTypeId = (int)($_POST['leave_type_id'] ?? 0);
+        $startDate = trim($_POST['start_date'] ?? '');
+        $endDate = trim($_POST['end_date'] ?? '');
+        $reason = trim($_POST['reason'] ?? '');
+        $emergencyContact = trim($_POST['emergency_contact'] ?? '');
+        $workCoverage = trim($_POST['work_coverage'] ?? '');
+        if ($leaveTypeId <= 0 || !$startDate || !$endDate || !$reason) {
+            $_SESSION['flash_error'] = 'Please fill all required fields (leave type, dates, reason).';
+            $this->redirect('/employee/leaves');
+            return;
+        }
+        if ($endDate < $startDate) {
+            $_SESSION['flash_error'] = 'End date cannot be before start date.';
+            $this->redirect('/employee/leaves');
+            return;
+        }
+        $start = new \DateTime($startDate);
+        $end = new \DateTime($endDate);
+        $totalDays = $end->diff($start)->days + 1;
+        try {
+            $db = $this->db;
+            $typeRow = $db->fetch("SELECT * FROM leave_types WHERE id = ? AND status = 'active'", [$leaveTypeId]);
+            if (!$typeRow) {
+                $_SESSION['flash_error'] = 'Invalid leave type selected.';
+                $this->redirect('/employee/leaves');
+                return;
+            }
+            $balance = $db->fetch(
+                "SELECT * FROM employee_leave_balances WHERE employee_id = ? AND leave_type_id = ? AND year = YEAR(CURDATE())",
+                [$employeeId, $leaveTypeId]
+            );
+            if ($balance && $balance['remaining_days'] < $totalDays) {
+                $_SESSION['flash_error'] = 'Insufficient leave balance. You have ' . $balance['remaining_days'] . ' days remaining for ' . htmlspecialchars($typeRow['name']) . '.';
+                $this->redirect('/employee/leaves');
+                return;
+            }
+            $db->insert('employee_leaves', [
+                'leave_type_id' => $leaveTypeId,
+                'employee_id' => $employeeId,
+                'leave_type' => strtolower($typeRow['code']),
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'total_days' => $totalDays,
+                'reason' => $reason,
+                'emergency_contact' => $emergencyContact ?: null,
+                'work_coverage' => $workCoverage ?: null,
+                'status' => 'pending',
+            ]);
+            $_SESSION['flash_success'] = 'Leave application submitted successfully! Waiting for approval.';
+        } catch (\Exception $e) {
+            error_log("Leave apply error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to submit leave application. Please try again.';
+        }
+        $this->redirect('/employee/leaves');
+    }
+
+    public function leaveDetail($id = 0)
+    {
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $id = (int)$id;
+        if ($id <= 0 || $employeeId <= 0) {
+            $_SESSION['flash_error'] = 'Invalid request.';
+            $this->redirect('/employee/leaves');
+            return;
+        }
+        $leave = null;
+        try {
+            $leave = $this->db->fetch(
+                "SELECT el.*, lt.name as type_name, lt.color as type_color,
+                        u.name as approved_by_name
+                 FROM employee_leaves el
+                 LEFT JOIN leave_types lt ON el.leave_type_id = lt.id
+                 LEFT JOIN users u ON el.approved_by = u.id
+                 WHERE el.id = ? AND el.employee_id = ?",
+                [$id, $employeeId]
+            );
+        } catch (\Exception $e) {
+            error_log("Leave detail error: " . $e->getMessage());
+        }
+        if (!$leave) {
+            $_SESSION['flash_error'] = 'Leave record not found.';
+            $this->redirect('/employee/leaves');
+            return;
+        }
+        $this->render('users/leave_detail', [
+            'page_title' => 'Leave Details',
+            'page_description' => 'View leave application details',
+            'leave' => $leave,
+        ]);
+    }
+
+    public function leaveCancel($id = 0)
+    {
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $id = (int)$id;
+        if ($id <= 0 || $employeeId <= 0) {
+            $_SESSION['flash_error'] = 'Invalid request.';
+            $this->redirect('/employee/leaves');
+            return;
+        }
+        try {
+            $leave = $this->db->fetch(
+                "SELECT * FROM employee_leaves WHERE id = ? AND employee_id = ? AND status = 'pending'",
+                [$id, $employeeId]
+            );
+            if (!$leave) {
+                $_SESSION['flash_error'] = 'Leave record not found or cannot be cancelled (only pending leaves can be cancelled).';
+                $this->redirect('/employee/leaves');
+                return;
+            }
+            $this->db->update('employee_leaves', ['status' => 'cancelled'], ['id' => $id]);
+            $_SESSION['flash_success'] = 'Leave application cancelled successfully.';
+        } catch (\Exception $e) {
+            error_log("Leave cancel error: " . $e->getMessage());
+            $_SESSION['flash_error'] = 'Failed to cancel leave application.';
+        }
+        $this->redirect('/employee/leaves');
+    }
+
+    // ── Employee Reporting Structure ──
     public function reporting()
     {
-        $data = ['page_title' => 'Reporting', 'page_description' => 'Your reporting structure'];
-        $this->render('users/reporting_structure', $data);
+        $employeeId = $_SESSION['employee_id'] ?? 0;
+        $employee = null;
+        $manager = null;
+        $subordinates = [];
+        $departmentMembers = [];
+        if ($employeeId > 0) {
+            try {
+                $employee = $this->db->fetch("SELECT * FROM employees WHERE id = ?", [$employeeId]);
+                if ($employee) {
+                    $dept = $employee['department'] ?? '';
+                    $departmentMembers = $this->db->fetchAll(
+                        "SELECT id, name, designation, role, email, phone, status FROM employees WHERE department = ? AND id != ? ORDER BY designation ASC",
+                        [$dept, $employeeId]
+                    );
+                    $myDesig = $employee['designation'] ?? '';
+                    $desigRow = $this->db->fetch("SELECT level FROM designations WHERE name = ? LIMIT 1", [$myDesig]);
+                    $myLevel = (int)($desigRow['level'] ?? 3);
+                    if ($myLevel > 1) {
+                        $managerDesig = $this->db->fetch("SELECT name FROM designations WHERE department_id = (SELECT id FROM departments WHERE name = ? LIMIT 1) AND level = ? LIMIT 1", [$dept, $myLevel - 1]);
+                        if ($managerDesig) {
+                            $manager = $this->db->fetch("SELECT id, name, designation, role, email, phone FROM employees WHERE department = ? AND designation = ? LIMIT 1", [$dept, $managerDesig['name']]);
+                        }
+                        if (!$manager) {
+                            $manager = $this->db->fetch("SELECT id, name, designation, role, email, phone FROM employees WHERE department = ? AND id != ? ORDER BY id ASC LIMIT 1", [$dept, $employeeId]);
+                        }
+                    }
+                    $subordinates = $this->db->fetchAll(
+                        "SELECT e.id, e.name, e.designation, e.role, e.email, e.phone, e.status,
+                         (SELECT COUNT(*) FROM tasks t WHERE t.assigned_to = e.id AND t.status = 'completed') AS tasks_completed,
+                         (SELECT COUNT(*) FROM tasks t WHERE t.assigned_to = e.id) AS total_tasks
+                         FROM employees e WHERE e.department = ? AND e.id != ? ORDER BY e.designation ASC",
+                        [$dept, $employeeId]
+                    );
+                    foreach ($subordinates as &$sub) {
+                        $sub['performance_score'] = $sub['total_tasks'] > 0 ? round(($sub['tasks_completed'] / $sub['total_tasks']) * 100) : 0;
+                    }
+                    unset($sub);
+                }
+            } catch (\Exception $e) {}
+        }
+        $this->render('users/reporting_structure', [
+            'page_title' => 'Reporting Structure',
+            'page_description' => 'Your team hierarchy and department',
+            'employee' => $employee,
+            'manager' => $manager,
+            'subordinates' => $subordinates,
+            'department_members' => $departmentMembers,
+        ]);
     }
 
     public function userProperties()

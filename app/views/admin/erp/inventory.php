@@ -22,7 +22,7 @@
 </div>
 
 <div class="row g-3 mb-4">
-    <?php $colors = ['available'=>'primary', 'reserved'=>'warning', 'booked'=>'info', 'sold'=>'success', 'under_development'=>'purple']; ?>
+    <?php $colors = ['available'=>'primary', 'reserved'=>'warning', 'booked'=>'info', 'sold'=>'success', 'under_development'=>'info']; ?>
     <?php foreach (['available','reserved','booked','sold','under_development'] as $s): ?>
     <div class="col-md-2 col-6">
         <div class="card inv-card border-start border-4 border-<?php echo $colors[$s]; ?>">

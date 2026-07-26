@@ -2,6 +2,8 @@
 /**
  * Lead Management Controller
  * CRM: Leads, Enquiries, Follow-ups
+ * Phase 1: Wired to CRMService for audit trail
+ * Phase 2: Role-based lead visibility
  */
 
 namespace App\Http\Controllers\Admin;
@@ -10,14 +12,55 @@ use App\Http\Controllers\Admin\AdminController;
 
 class LeadController extends AdminController
 {
+    private $crm;
+
+    public function __construct() {
+        parent::__construct();
+        $this->crm = new \App\Services\CRMService();
+    }
+
+    private function getCurrentUserId() {
+        return (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
+    }
+
+    private function getCurrentUserRole() {
+        return $_SESSION['role'] ?? $_SESSION['admin_role'] ?? 'admin';
+    }
+
     /**
-     * All leads list
+     * All leads list — Phase 2: role-based visibility
      */
     public function index()
     {
         $this->requireAdmin();
-        $leads = \App\Models\Lead::all();
-        return $this->render('admin/leads/index', ['leads' => $leads]);
+        $userId = $this->getCurrentUserId();
+        $role = $this->getCurrentUserRole();
+
+        $filters = [
+            'search' => $_GET['search'] ?? null,
+            'status' => $_GET['status'] ?? null,
+            'source' => $_GET['source'] ?? null,
+            'assigned_to' => $_GET['assigned_to'] ?? null,
+            'priority' => $_GET['priority'] ?? null,
+            'date_from' => $_GET['date_from'] ?? null,
+            'date_to' => $_GET['date_to'] ?? null,
+            'page' => (int)($_GET['page'] ?? 1),
+            'per_page' => (int)($_GET['per_page'] ?? 25),
+        ];
+
+        $result = $this->crm->getLeads($filters, $userId, $role);
+
+        $stats = $this->crm->getDashboardStats($userId, $role);
+
+        return $this->render('admin/leads/index', [
+            'leads' => $result['leads'],
+            'total' => $result['total'],
+            'page' => $result['page'],
+            'per_page' => $result['per_page'],
+            'total_pages' => $result['total_pages'],
+            'filters' => $filters,
+            'stats' => $stats,
+        ]);
     }
     
     /**
@@ -27,10 +70,10 @@ class LeadController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $sources = \App\Models\LeadSource::active();
             $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $sources = $db->query("SELECT id, name FROM lead_sources ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $statuses = $db->query("SELECT status_name FROM lead_statuses ORDER BY id")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $sources = []; $statuses = []; $assignees = [];
         }
@@ -38,68 +81,98 @@ class LeadController extends AdminController
     }
     
     /**
-     * Store lead
+     * Store lead — Phase 1: uses CRMService for audit trail
      */
     public function store()
     {
         $this->requireAdmin();
-        try {
-            $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $name = trim($_POST['name'] ?? '');
-            $phone = trim($_POST['phone'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $source = trim($_POST['source'] ?? 'manual');
-            $status = trim($_POST['status'] ?? 'new');
-            $notes = trim($_POST['notes'] ?? $_POST['message'] ?? '');
-            $assigned_to = !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
-            $budget = !empty($_POST['budget']) ? floatval($_POST['budget']) : null;
-            $location_pref = trim($_POST['location_preference'] ?? '');
-            $source_id = !empty($_POST['source_id']) ? (int)$_POST['source_id'] : null;
+        $adminId = $this->getCurrentUserId();
 
-            if (empty($name)) {
-                $this->setFlash('error', 'Lead name is required');
-                return $this->redirect('/admin/leads/create');
-            }
+        $name = trim($_POST['name'] ?? '');
+        if (empty($name)) {
+            $this->setFlash('error', 'Lead name is required');
+            return $this->redirect('/admin/leads/create');
+        }
 
-            $stmt = $db->prepare("INSERT INTO leads (name, phone, email, source, source_id, status, assigned_to, budget, location_preference, notes, message, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-            $stmt->execute([$name, $phone, $email, $source, $source_id, $status, $assigned_to, $budget, $location_pref, $notes, $notes]);
-            $leadId = $db->lastInsertId();
+        $result = $this->crm->createLead([
+            'name' => $name,
+            'phone' => trim($_POST['phone'] ?? ''),
+            'email' => trim($_POST['email'] ?? ''),
+            'company' => trim($_POST['company'] ?? ''),
+            'source' => trim($_POST['source'] ?? 'manual'),
+            'property_interest' => trim($_POST['property_interest'] ?? ''),
+            'budget' => !empty($_POST['budget']) ? floatval($_POST['budget']) : 0,
+            'budget_range' => trim($_POST['budget_range'] ?? ''),
+            'location_preference' => trim($_POST['location_preference'] ?? ''),
+            'city' => trim($_POST['city'] ?? ''),
+            'notes' => trim($_POST['notes'] ?? $_POST['message'] ?? ''),
+            'tags' => trim($_POST['tags'] ?? ''),
+            'assigned_to' => !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null,
+            'created_by' => $adminId,
+            'priority' => trim($_POST['priority'] ?? 'medium'),
+            'lead_score' => 0,
+            'lead_category' => 'cold',
+            'source_type' => trim($_POST['source'] ?? 'manual'),
+        ]);
 
+        if ($result['success']) {
             try {
                 $automation = new \App\Services\AutomationTriggerService();
-                $automation->onLeadCreated($leadId);
+                $automation->onLeadCreated($result['lead_id']);
             } catch (\Exception $e) {
                 error_log('LeadController::store automation error: ' . $e->getMessage());
             }
 
-            $this->setFlash('success', 'Lead created successfully');
-        } catch (\Exception $e) {
-            $this->setFlash('error', 'Failed to create lead: ' . $e->getMessage());
+            // Phase 4: Trigger SLA on lead creation
+            try {
+                $slaTrigger = new \App\Services\SLATriggerService();
+                $slaTrigger->onLeadCreated($result['lead_id'], [
+                    'lead_score' => 0,
+                    'priority' => trim($_POST['priority'] ?? 'medium'),
+                    'lead_category' => 'cold',
+                ]);
+            } catch (\Exception $e) {
+                error_log('LeadController::store SLA trigger error: ' . $e->getMessage());
+            }
+
+            $this->setFlash('success', 'Lead created successfully (' . ($result['lead_number'] ?? '') . ')');
+        } else {
+            $this->setFlash('error', 'Failed to create lead: ' . ($result['error'] ?? 'Unknown error'));
         }
         return $this->redirect('/admin/leads');
     }
     
     /**
-     * View lead
+     * View lead — Phase 1: uses CRMService, Phase 2: visibility check, Phase 5: timeline
      */
     public function show($id)
     {
         $this->requireAdmin();
-        $service = new \App\Services\CRMService();
-        $lead = $service->getLeadById((int)$id);
+        $adminId = $this->getCurrentUserId();
+        $role = $this->getCurrentUserRole();
+
+        $lead = $this->crm->getLeadById((int)$id);
         if (!$lead) {
             $this->setFlash('error', 'Lead not found');
             return $this->redirect('/admin/leads');
         }
 
-        $timeline = $service->getLeadTimeline((int)$id, 100);
-        $interactions = $service->getLeadInteractions((int)$id, 50);
-        $tasks = $service->getLeadTasks((int)$id);
-        $deals = $service->getDeals(['lead_id' => (int)$id]);
-        $scoreBreakdown = $service->getScoreBreakdown((int)$id);
-        $commission = $service->estimateCommission((int)$id);
-        $sourceDetails = $service->getLeadSourceDetails((int)$id);
-        $assignments = $service->getLeadAssignments((int)$id);
+        // Phase 2: Visibility check — non-admins can only see own leads
+        if (!in_array($role, ['admin', 'super_admin', 'manager'])) {
+            if ((int)($lead['assigned_to'] ?? 0) !== $adminId) {
+                $this->setFlash('error', 'You do not have permission to view this lead');
+                return $this->redirect('/admin/leads');
+            }
+        }
+
+        $timeline = $this->crm->getLeadTimeline((int)$id, 100);
+        $interactions = $this->crm->getLeadInteractions((int)$id, 50);
+        $tasks = $this->crm->getLeadTasks((int)$id);
+        $deals = $this->crm->getDeals(['lead_id' => (int)$id]);
+        $scoreBreakdown = $this->crm->getScoreBreakdown((int)$id);
+        $commission = $this->crm->estimateCommission((int)$id);
+        $sourceDetails = $this->crm->getLeadSourceDetails((int)$id);
+        $assignments = $this->crm->getLeadAssignments((int)$id);
 
         // Notes
         $notes = [];
@@ -114,7 +187,7 @@ class LeadController extends AdminController
         $agents = [];
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $agents = $db->query("SELECT id, name FROM users WHERE role IN ('associate','employee','agent') AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $agents = $db->query("SELECT id, name FROM users WHERE role IN ('associate','employee','agent') AND deleted_at IS NULL ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {}
 
         return $this->render('admin/leads/show', [
@@ -293,62 +366,198 @@ class LeadController extends AdminController
     public function edit($id)
     {
         $this->requireAdmin();
-        $lead = \App\Models\Lead::find($id);
+        $lead = $this->crm->getLeadById((int)$id);
         if (!$lead) {
-            return $this->render('admin/leads/edit', ['error' => 'Lead not found', 'lead' => null]);
+            $this->setFlash('error', 'Lead not found');
+            return $this->redirect('/admin/leads');
         }
-        return $this->render('admin/leads/edit', ['lead' => $lead]);
+        $assignees = [];
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Exception $e) {}
+        return $this->render('admin/leads/edit', ['lead' => $lead, 'assignees' => $assignees]);
     }
 
-    public function update($id) { return $this->render('admin/leads/edit', ['lead' => \App\Models\Lead::find($id)]); }
-    public function destroy($id) { try { \App\Models\Lead::delete($id); $this->setFlash('success', 'Lead deleted'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect('/admin/leads'); }
-    public function addNote($id) {
+    /**
+     * Update lead — Phase 1: uses CRMService for audit trail
+     */
+    public function update($id)
+    {
+        $this->requireAdmin();
+        $adminId = $this->getCurrentUserId();
+        $role = $this->getCurrentUserRole();
+
+        $lead = $this->crm->getLeadById((int)$id);
+        if (!$lead) {
+            $this->setFlash('error', 'Lead not found');
+            return $this->redirect('/admin/leads');
+        }
+
+        // Phase 2: Visibility check
+        if (!in_array($role, ['admin', 'super_admin', 'manager'])) {
+            if ((int)($lead['assigned_to'] ?? 0) !== $adminId) {
+                $this->setFlash('error', 'You do not have permission to edit this lead');
+                return $this->redirect('/admin/leads');
+            }
+        }
+
+        $result = $this->crm->updateLead((int)$id, [
+            'name' => trim($_POST['name'] ?? $lead['name']),
+            'phone' => trim($_POST['phone'] ?? $lead['phone']),
+            'email' => trim($_POST['email'] ?? $lead['email']),
+            'company' => trim($_POST['company'] ?? $lead['company']),
+            'source' => trim($_POST['source'] ?? $lead['source']),
+            'property_interest' => trim($_POST['property_interest'] ?? $lead['property_interest']),
+            'budget' => isset($_POST['budget']) ? floatval($_POST['budget']) : $lead['budget'],
+            'location_preference' => trim($_POST['location_preference'] ?? $lead['location_preference']),
+            'city' => trim($_POST['city'] ?? $lead['city']),
+            'notes' => trim($_POST['notes'] ?? $lead['notes']),
+            'tags' => trim($_POST['tags'] ?? $lead['tags']),
+            'priority' => trim($_POST['priority'] ?? $lead['priority']),
+            'assigned_to' => isset($_POST['assigned_to']) ? ($_POST['assigned_to'] !== '' ? (int)$_POST['assigned_to'] : null) : $lead['assigned_to'],
+        ]);
+
+        if ($result['success']) {
+            $this->crm->logActivity((int)$id, $adminId, 'update', 'Lead updated', 'Lead details modified by admin');
+            $this->setFlash('success', 'Lead updated successfully');
+        } else {
+            $this->setFlash('error', 'Failed to update: ' . ($result['error'] ?? 'Unknown'));
+        }
+        return $this->redirect("/admin/leads/$id");
+    }
+
+    public function destroy($id)
+    {
+        $this->requireAdmin();
+        $adminId = $this->getCurrentUserId();
+
+        $result = $this->crm->deleteLead((int)$id);
+        if ($result['success']) {
+            $this->crm->logActivity((int)$id, $adminId, 'delete', 'Lead deleted', 'Lead soft-deleted by admin');
+            $this->setFlash('success', 'Lead deleted');
+        } else {
+            $this->setFlash('error', 'Failed to delete: ' . ($result['error'] ?? 'Unknown'));
+        }
+        return $this->redirect('/admin/leads');
+    }
+
+    /**
+     * Add note — Phase 1: uses CRMService for activity logging
+     */
+    public function addNote($id)
+    {
+        $this->requireAdmin();
+        $adminId = $this->getCurrentUserId();
+        $noteText = trim($_POST['note'] ?? '');
+
+        if (empty($noteText)) {
+            $this->setFlash('error', 'Note text is required');
+            return $this->redirect("/admin/leads/$id");
+        }
+
         try {
-            $noteText = $_POST['note'] ?? '';
-            \App\Models\LeadNote::create([
-                'lead_id' => $id,
-                'note' => $noteText,
-                'content' => $noteText,
-                'created_by' => $_SESSION['admin_id'] ?? 0,
-                'created_at' => date('Y-m-d H:i:s'),
-            ]);
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $db->prepare("INSERT INTO lead_notes (lead_id, note, content, created_by, created_at) VALUES (?, ?, ?, ?, NOW())");
+            $stmt->execute([(int)$id, $noteText, $noteText, $adminId]);
         } catch (\Exception $e) {
             error_log('LeadController::addNote error: ' . $e->getMessage());
         }
-        return $this->redirect("/admin/leads/show/$id");
-    }
-    public function updateStatus($id) {
+
+        $this->crm->logActivity((int)$id, $adminId, 'note', 'Note added', $noteText);
+
+        // Phase 4: SLA trigger on interaction
         try {
-            $oldLead = \App\Models\Lead::find($id);
-            $oldStatus = $oldLead ? ($oldLead['status'] ?? 'new') : 'new';
-            $newStatus = $_POST['status'] ?? 'new';
+            $slaTrigger = new \App\Services\SLATriggerService();
+            $slaTrigger->onInteractionLogged((int)$id, 'note');
+        } catch (\Exception $e) {
+            error_log('LeadController::addNote SLA trigger error: ' . $e->getMessage());
+        }
 
-            $this->db->query("UPDATE leads SET status = ? WHERE id = ?", [$newStatus, $id]);
-            \App\Services\Cache\HotPathCacheService::invalidateAdminDashboard();
+        return $this->redirect("/admin/leads/$id");
+    }
 
+    /**
+     * Update status — Phase 1: uses CRMService for pipeline tracking
+     */
+    public function updateStatus($id)
+    {
+        $this->requireAdmin();
+        $adminId = $this->getCurrentUserId();
+        $newStatus = $_POST['status'] ?? 'new';
+
+        $result = $this->crm->moveLeadToStage((int)$id, $newStatus, $adminId);
+
+        if ($result['success']) {
             try {
                 $automation = new \App\Services\AutomationTriggerService();
-                $automation->onLeadStatusChange($id, $oldStatus, $newStatus);
+                $automation->onLeadStatusChange($id, $result['old_status'], $newStatus);
             } catch (\Exception $e) {
                 error_log('LeadController::updateStatus automation error: ' . $e->getMessage());
             }
-        } catch (\Exception $e) {
-            error_log('LeadController::updateStatus error: ' . $e->getMessage());
+
+            try {
+                \App\Services\Cache\HotPathCacheService::invalidateAdminDashboard();
+            } catch (\Exception $e) {}
+
+            // Phase 4: SLA trigger on status change
+            try {
+                $slaTrigger = new \App\Services\SLATriggerService();
+                $lead = $this->crm->getLeadById((int)$id);
+                $slaTrigger->onStatusChanged((int)$id, $result['old_status'], $newStatus, $lead ?? []);
+            } catch (\Exception $e) {
+                error_log('LeadController::updateStatus SLA trigger error: ' . $e->getMessage());
+            }
+
+            $this->setFlash('success', "Status changed: {$result['old_status']} → $newStatus");
+        } else {
+            $this->setFlash('error', 'Failed to update status');
         }
-        return $this->redirect("/admin/leads/show/$id");
+        return $this->redirect("/admin/leads/$id");
     }
-    public function uploadDocument($id) { try { $this->setFlash('info', 'Document upload feature available'); } catch (\Exception $e) {} return $this->redirect("/admin/leads/show/$id"); }
-    public function deleteDocument($id, $docId) { try { $this->db->query("DELETE FROM lead_documents WHERE id = ? AND lead_id = ?", [$docId, $id]); $this->setFlash('success', 'Document deleted'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/leads/show/$id"); }
 
     /**
-     * Lead Assignment Page — Assign/transfer leads to associates/telecallers
+     * Assign lead — Phase 1: uses CRMService for assignment audit trail
+     */
+    public function assign($id)
+    {
+        $this->requireAdmin();
+        $adminId = $this->getCurrentUserId();
+        $assignedTo = !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null;
+        $reason = trim($_POST['reason'] ?? 'Admin assignment');
+
+        if (!$assignedTo) {
+            $this->setFlash('error', 'Please select an assignee');
+            return $this->redirect("/admin/leads/$id");
+        }
+
+        $result = $this->crm->assignLead((int)$id, $assignedTo, $adminId, $reason);
+        if ($result['success']) {
+            $this->setFlash('success', 'Lead assigned successfully');
+        } else {
+            $this->setFlash('error', 'Failed to assign: ' . ($result['error'] ?? 'Unknown'));
+        }
+        return $this->redirect("/admin/leads/$id");
+    }
+    public function uploadDocument($id) { try { $this->setFlash('info', 'Document upload feature available'); } catch (\Exception $e) {} return $this->redirect("/admin/leads/$id"); }
+    public function deleteDocument($id, $docId) {
+        try {
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $db->query("DELETE FROM lead_documents WHERE id = ? AND lead_id = ?", [$docId, $id]);
+            $this->crm->logActivity((int)$id, $this->getCurrentUserId(), 'document_delete', 'Document deleted', "Document #$docId deleted");
+            $this->setFlash('success', 'Document deleted');
+        } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); }
+        return $this->redirect("/admin/leads/$id");
+    }
+
+    /**
+     * Lead Assignment Page — Phase 1: uses CRMService
      */
     public function assignPage()
     {
         $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance()->getConnection();
 
-        // Get unassigned leads
         $unassigned = $db->query("SELECT l.id, l.name, l.phone, l.email, l.source, l.status, l.lead_score, l.created_at,
             u.name as created_by_name
             FROM leads l
@@ -356,10 +565,8 @@ class LeadController extends AdminController
             WHERE l.assigned_to IS NULL AND l.deleted_at IS NULL
             ORDER BY l.created_at DESC LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-        // Get assignable users (associates, agents, telecallers)
-        $assignees = $db->query("SELECT id, name, email, role FROM users WHERE role IN ('associate','agent','employee') AND deleted_at IS NULL ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        $assignees = $db->query("SELECT id, name, email, role FROM users WHERE role IN ('associate','agent','employee','telecaller') AND deleted_at IS NULL ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-        // Get recent assignments
         $recentAssignments = $db->query("SELECT ca.*, l.name as lead_name, u1.name as from_name, u2.name as to_name, u3.name as by_name
             FROM crm_assignments ca
             LEFT JOIN leads l ON l.id = ca.lead_id
@@ -367,9 +574,6 @@ class LeadController extends AdminController
             LEFT JOIN users u2 ON u2.id = ca.assigned_to
             LEFT JOIN users u3 ON u3.id = ca.assigned_by
             ORDER BY ca.created_at DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-
-        // Load CRMService for assignment
-        $crm = new \App\Services\CRMService();
 
         return $this->render('admin/leads/assign', [
             'unassigned' => $unassigned,
@@ -379,7 +583,7 @@ class LeadController extends AdminController
     }
 
     /**
-     * Process single or bulk lead assignment
+     * Process single or bulk lead assignment — Phase 1: uses CRMService
      */
     public function processAssignment()
     {
@@ -400,12 +604,11 @@ class LeadController extends AdminController
 
         if (!is_array($leadIds)) $leadIds = [$leadIds];
 
-        $crm = new \App\Services\CRMService();
-        $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+        $adminId = $this->getCurrentUserId();
         $assigned = 0;
 
         foreach ($leadIds as $leadId) {
-            $result = $crm->assignLead((int)$leadId, $assignedTo, $adminId, $reason ?: 'Admin assignment');
+            $result = $this->crm->assignLead((int)$leadId, $assignedTo, $adminId, $reason ?: 'Admin assignment');
             if ($result['success']) $assigned++;
         }
 

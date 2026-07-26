@@ -749,7 +749,7 @@ class BaseController
      */
     protected function isLoggedIn()
     {
-        return isset($_SESSION['user_id']) || isset($_SESSION['admin_id']);
+        return isset($_SESSION['user_id']) || isset($_SESSION['admin_id']) || isset($_SESSION['associate_id']) || isset($_SESSION['agent_id']) || isset($_SESSION['employee_id']);
     }
 
     /**

@@ -17,7 +17,7 @@ try {
 ?>
 
 <!-- Hero Section -->
-<section class="hero-premium pt-5 pb-5">
+<section class="hero-premium pt-5 pb-5" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%) !important;">
     <div class="container premium-reveal fade-up position-relative z-2">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">

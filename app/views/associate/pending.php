@@ -13,7 +13,7 @@ $properties = $properties ?? [];
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
-                    <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
+                    <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
                                 <th><?= __('assoc_pending_th_title') ?></th>
@@ -32,7 +32,7 @@ $properties = $properties ?? [];
                                     <td>₹<?php echo number_format($p['price'] ?? 0); ?></td>
                                     <td><span class="badge bg-warning"><?php echo ucfirst($p['status'] ?? __('assoc_pending_na')); ?></span></td>
                                     <td><?php echo htmlspecialchars($p['date'] ?? ''); ?></td>
-                                    <td><a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
+                                    <td><a href="<?= BASE_URL ?>/associate/properties/edit/<?= (int)($p['id'] ?? 0) ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

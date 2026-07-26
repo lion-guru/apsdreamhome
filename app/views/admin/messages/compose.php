@@ -1,4 +1,8 @@
-﻿<div class="container-fluid px-4">
+<?php
+$search = $search ?? '';
+$users = $users ?? [];
+?>
+<div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <a href="<?= BASE_URL ?>/admin/messages" class="btn btn-outline-secondary btn-sm me-2">

@@ -129,9 +129,9 @@ $GLOBALS['_html_doc_started'] = true;
                     <i class="fas fa-bell"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" style="font-size:9px;">0</span>
                 </a>
-                <button class="btn-icon" title="Messages">
+                <a href="<?= BASE_URL ?>/user/messages" class="btn-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
-                </button>
+                </a>
                 <a href="<?php echo BASE_URL; ?>/user/profile" class="btn-icon" title="Profile">
                     <i class="fas fa-user"></i>
                 </a>

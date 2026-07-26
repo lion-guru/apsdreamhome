@@ -38,21 +38,26 @@ try {
     $stats = [
         'direct_referrals' => count($directReferrals),
         'total_downline' => $totalDownline['cnt'] ?? 0,
-        'total_points' => $db->fetch("SELECT SUM(points) as total FROM mlm_points WHERE user_id = ?", [$userId])['total'] ?? 0,
-        'total_earnings' => $db->fetch("SELECT SUM(amount) as total FROM mlm_earnings WHERE user_id = ?", [$userId])['total'] ?? 0,
+        'total_points' => 0,
+        'total_earnings' => $db->fetch("SELECT COALESCE(SUM(amount), 0) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ?", [$userId])['total'] ?? 0,
     ];
 } catch (\Throwable $e) {
-    // Gracefully handle dropped table ref
+    $stats = [
+        'direct_referrals' => count($directReferrals),
+        'total_downline' => $totalDownline['cnt'] ?? 0,
+        'total_points' => 0,
+        'total_earnings' => 0,
+    ];
 }
 
 // Get recent activity
 try {
     $recentActivity = $db->fetchAll(
-        "SELECT m.*, u.name as from_user 
-         FROM mlm_transactions m 
-         LEFT JOIN users u ON m.from_user_id = u.id 
-         WHERE m.user_id = ? 
-         ORDER BY m.created_at DESC LIMIT 10",
+        "SELECT l.*, u.name as from_user
+         FROM mlm_commission_ledger l
+         LEFT JOIN users u ON l.beneficiary_user_id = u.id
+         WHERE l.beneficiary_user_id = ?
+         ORDER BY l.created_at DESC LIMIT 10",
         [$userId]
     );
 } catch (\Throwable $e) {
@@ -208,16 +213,14 @@ try {
                                 <li class="list-group-item">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <small><?= htmlspecialchars($activity['transaction_type'] ?? 'Activity') ?></small>
-                                            <?php if ($activity['from_user']): ?>
+                                            <small><?= htmlspecialchars(str_replace('_', ' ', $activity['commission_type'] ?? 'Activity')) ?></small>
+                                            <?php if (!empty($activity['from_user'])): ?>
                                                 <br><small class="text-muted">From: <?= htmlspecialchars($activity['from_user']) ?></small>
                                             <?php endif; ?>
                                         </div>
                                         <div class="text-end">
-                                            <?php if ($activity['amount'] > 0): ?>
+                                            <?php if (($activity['amount'] ?? 0) > 0): ?>
                                                 <span class="text-success">+₹<?= number_format($activity['amount']) ?></span>
-                                            <?php elseif ($activity['points'] != 0): ?>
-                                                <span class="text-info"><?= $activity['points'] > 0 ? '+' : '' ?><?= $activity['points'] ?> pts</span>
                                             <?php endif; ?>
                                         </div>
                                     </div>

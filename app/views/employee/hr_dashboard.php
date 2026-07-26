@@ -3,13 +3,13 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home me-1"></i>Home</a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/employee">Employee</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/employee/dashboard">Employee</a></li>
             <li class="breadcrumb-item active" aria-current="page">HR Dashboard</li>
         </ol>
     </nav>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-users me-2"></i>HR Dashboard</h4>
-        <a href="<?= BASE_URL ?>/employee/hr/payroll" class="btn btn-sm btn-outline-primary"><i class="fas fa-print me-1"></i>Payroll</a>
+        <a href="<?= BASE_URL ?>/employee/payroll" class="btn btn-sm btn-outline-primary"><i class="fas fa-print me-1"></i>Payroll</a>
     </div>
     <div class="row g-3 mb-4">
         <div class="col-xl-3 col-md-6">

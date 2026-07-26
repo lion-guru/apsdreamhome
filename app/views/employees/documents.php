@@ -1,357 +1,212 @@
-﻿<?php
+<?php
+$documents = $documents ?? [];
+$stats = $stats ?? ['total' => 0, 'verified' => 0, 'pending' => 0, 'expired' => 0];
 
-// TODO: Add proper error handling with try-catch blocks
-
-/**
- * Employee Documents View
- * Shows employee documents and allows uploads
- */
+function docIcon($type) {
+    $icons = ['aadhaar' => 'id-card', 'pan' => 'id-badge', 'salary_slip' => 'money-bill', 'offer_letter' => 'file-contract', 'experience_letter' => 'briefcase', 'education' => 'graduation-cap', 'photo' => 'camera', 'other' => 'file'];
+    return $icons[$type] ?? 'file';
+}
+function docStatusBadge($status) {
+    $map = ['verified' => 'success', 'approved' => 'success', 'pending' => 'warning', 'rejected' => 'danger', 'expired' => 'danger'];
+    $cls = $map[$status] ?? 'secondary';
+    return '<span class="badge bg-' . $cls . '">' . ucfirst(htmlspecialchars($status)) . '</span>';
+}
+function docSizeHuman($bytes) {
+    if (!$bytes) return '—';
+    $u = ['B','KB','MB','GB'];
+    $i = 0;
+    while ($bytes >= 1024 && $i < 3) { $bytes /= 1024; $i++; }
+    return round($bytes, 1) . ' ' . $u[$i];
+}
+function docTypeLabel($type) {
+    $labels = ['aadhaar' => 'Aadhaar Card', 'pan' => 'PAN Card', 'salary_slip' => 'Salary Slip', 'offer_letter' => 'Offer Letter', 'experience_letter' => 'Experience Letter', 'education' => 'Education Certificate', 'photo' => 'Photo ID', 'other' => 'Other'];
+    return $labels[$type] ?? ucfirst(str_replace('_', ' ', $type));
+}
 ?>
 
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+.emp-doc-stat { border: none; border-radius: 12px; transition: transform 0.2s; }
+.emp-doc-stat:hover { transform: translateY(-2px); }
+.emp-doc-stat .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+.emp-doc-card { border: 1px solid #e2e8f0; border-radius: 12px; transition: all 0.2s; position: relative; overflow: hidden; }
+.emp-doc-card:hover { border-color: #7c2d12; box-shadow: 0 4px 15px rgba(124,45,18,0.1); transform: translateY(-1px); }
+.emp-doc-card .doc-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+.emp-doc-card .doc-meta { font-size: 0.8rem; color: #64748b; }
+.emp-doc-type-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; background: #f1f5f9; color: #475569; }
+.emp-doc-expired { border-left: 3px solid #ef4444 !important; }
+</style>
+
 <div class="container-fluid">
-    <!-- Page Header -->
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-file-alt me-2"></i>My Documents</h2>
-        <button class="btn btn-primary" onclick="showUploadModal()">
-            <i class="fas fa-upload me-2"></i>Upload Document
+        <div>
+            <h4 class="mb-1 fw-bold"><i class="fas fa-folder-open me-2 text-primary"></i>My Documents</h4>
+            <p class="text-muted mb-0 small">Manage and upload your employee documents</p>
+        </div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocModal">
+            <i class="fas fa-cloud-upload-alt me-1"></i> Upload Document
         </button>
     </div>
 
-    <!-- Document Stats -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $totalApproved = count(array_filter($documents, function($d) {
-                                    return $d['status'] === 'approved';
-                                }));
-                                echo $totalApproved;
-                                ?>
-                            </h4>
-                            <small>Approved</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-check-circle fa-2x"></i>
-                        </div>
-                    </div>
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card emp-doc-stat shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-files-o"></i></div>
+                    <div><div class="fw-bold fs-4"><?= $stats['total'] ?></div><div class="text-muted small">Total</div></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $totalPending = count(array_filter($documents, function($d) {
-                                    return $d['status'] === 'pending';
-                                }));
-                                echo $totalPending;
-                                ?>
-                            </h4>
-                            <small>Pending</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-clock fa-2x"></i>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-3">
+            <div class="card emp-doc-stat shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="fas fa-check-circle"></i></div>
+                    <div><div class="fw-bold fs-4 text-success"><?= $stats['verified'] ?></div><div class="text-muted small">Verified</div></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $totalRejected = count(array_filter($documents, function($d) {
-                                    return $d['status'] === 'rejected';
-                                }));
-                                echo $totalRejected;
-                                ?>
-                            </h4>
-                            <small>Rejected</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-times-circle fa-2x"></i>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-3">
+            <div class="card emp-doc-stat shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-clock"></i></div>
+                    <div><div class="fw-bold fs-4 text-warning"><?= $stats['pending'] ?></div><div class="text-muted small">Pending</div></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $totalDocuments = count($documents);
-                                echo $totalDocuments;
-                                ?>
-                            </h4>
-                            <small>Total Documents</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-file-alt fa-2x"></i>
-                        </div>
-                    </div>
+        <div class="col-6 col-md-3">
+            <div class="card emp-doc-stat shadow-sm">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-danger bg-opacity-10 text-danger"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div><div class="fw-bold fs-4 text-danger"><?= $stats['expired'] ?></div><div class="text-muted small">Expired</div></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Documents List -->
-    <div class="row">
-        <?php if (empty($documents)): ?>
-            <div class="col-12">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>No documents found. Upload your first document to get started.
-                </div>
+    <!-- Documents Grid -->
+    <?php if (empty($documents)): ?>
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center py-5">
+                <div class="mb-3"><i class="fas fa-folder-open fa-4x text-muted opacity-25"></i></div>
+                <h5 class="text-muted">No Documents Yet</h5>
+                <p class="text-muted small mb-3">Upload your first document to get started</p>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#uploadDocModal">
+                    <i class="fas fa-cloud-upload-alt me-1"></i> Upload Document
+                </button>
             </div>
-        <?php else: ?>
-            <?php foreach ($documents as $document): ?>
-                <div class="col-md-6 col-lg-4 mb-3">
-                    <div class="card document-card h-100">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0">
-                                <i class="fas fa-file-<?= $this->getDocumentIcon($document['document_type'] ?? 'pdf') ?> me-2"></i>
-                                <?= htmlspecialchars($document['document_name'] ?? 'Untitled Document') ?>
-                            </h6>
-                            <span class="badge bg-<?= $this->getDocumentStatusBadgeClass($document['status'] ?? 'pending') ?>">
-                                <?= ucfirst($document['status'] ?? 'pending') ?>
-                            </span>
-                        </div>
-                        <div class="card-body aps-cp-card-body">
-                            <div class="document-info mb-3">
-                                <p class="mb-2">
-                                    <strong>Type:</strong>
-                                    <span class="badge bg-info">
-                                        <?= htmlspecialchars($document['document_type_name'] ?? 'N/A') ?>
-                                    </span>
-                                </p>
-                                <p class="mb-2">
-                                    <strong>Size:</strong>
-                                    <?= $this->formatFileSize($document['file_size'] ?? 0) ?>
-                                </p>
-                                <p class="mb-2">
-                                    <strong>Uploaded:</strong>
-                                    <?= date('M d, Y', strtotime($document['uploaded_date'])) ?>
-                                </p>
-                                <?php if (!empty($document['expiry_date'])): ?>
-                                    <p class="mb-2">
-                                        <strong>Expires:</strong>
-                                        <?= date('M d, Y', strtotime($document['expiry_date'])) ?>
-                                        <?php if (strtotime($document['expiry_date']) < time()): ?>
-                                            <span class="badge bg-danger ms-2">Expired</span>
+        </div>
+    <?php else: ?>
+        <div class="row g-3">
+            <?php foreach ($documents as $d): ?>
+                <?php
+                    $vs = $d['verification_status'] ?? 'pending';
+                    $isExpired = !empty($d['expiry_date']) && $d['expiry_date'] < date('Y-m-d');
+                    $cardClass = $isExpired ? 'emp-doc-card emp-doc-expired' : 'emp-doc-card';
+                ?>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card <?= $cardClass ?> shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="doc-icon bg-primary bg-opacity-10 text-primary">
+                                    <i class="fas fa-<?= docIcon($d['document_type'] ?? $d['type'] ?? 'other') ?>"></i>
+                                </div>
+                                <div class="flex-grow-1 min-width-0">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h6 class="mb-1 fw-semibold"><?= htmlspecialchars($d['document_number'] ?: ($d['type'] ?? 'Document')) ?></h6>
+                                        <?= docStatusBadge($vs) ?>
+                                    </div>
+                                    <div class="doc-meta mb-2">
+                                        <span class="emp-doc-type-badge"><?= docTypeLabel($d['document_type'] ?? $d['type'] ?? 'other') ?></span>
+                                    </div>
+                                    <?php if (!empty($d['issued_by'])): ?>
+                                        <div class="doc-meta"><i class="fas fa-building me-1"></i> <?= htmlspecialchars($d['issued_by']) ?></div>
+                                    <?php endif; ?>
+                                    <div class="d-flex gap-3 mt-2 doc-meta">
+                                        <?php if (!empty($d['issue_date'])): ?>
+                                            <span><i class="fas fa-calendar me-1"></i> <?= date('d M Y', strtotime($d['issue_date'])) ?></span>
                                         <?php endif; ?>
-                                    </p>
-                                <?php endif; ?>
-                            </div>
-
-                            <!-- Document Description -->
-                            <?php if (!empty($document['description'])): ?>
-                                <p class="card-text text-muted mb-3">
-                                    <?= htmlspecialchars(substr($document['description'], 0, 100)) ?>
-                                    <?php if (strlen($document['description']) > 100): ?>...<?php endif; ?>
-                                </p>
-                            <?php endif; ?>
-
-                            <!-- Action Buttons -->
-                            <div class="document-actions">
-                                <button class="btn btn-sm btn-primary" onclick="viewDocument(<?= $document['document_id'] ?>)">
-                                    <i class="fas fa-eye me-1"></i>View
-                                </button>
-                                <button class="btn btn-sm btn-success" onclick="downloadDocument(<?= $document['document_id'] ?>)">
-                                    <i class="fas fa-download me-1"></i>Download
-                                </button>
-                                <?php if (($document['status'] ?? 'pending') === 'pending'): ?>
-                                    <button class="btn btn-sm btn-warning" onclick="updateDocumentStatus(<?= $document['document_id'] ?>, 'approved')">
-                                        <i class="fas fa-check me-1"></i>Approve
-                                    </button>
-                                <?php endif; ?>
-                                <button class="btn btn-sm btn-danger" onclick="deleteDocument(<?= $document['document_id'] ?>)">
-                                    <i class="fas fa-trash me-1"></i>Delete
-                                </button>
+                                        <?php if ($isExpired): ?>
+                                            <span class="text-danger fw-semibold"><i class="fas fa-exclamation-circle me-1"></i> Expired <?= date('d M Y', strtotime($d['expiry_date'])) ?></span>
+                                        <?php elseif (!empty($d['expiry_date'])): ?>
+                                            <span><i class="fas fa-calendar-check me-1"></i> Valid till <?= date('d M Y', strtotime($d['expiry_date'])) ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Document Footer -->
-                        <div class="card-footer text-muted">
-                            <small>
-                                <i class="fas fa-user me-1"></i>
-                                Uploaded by: <?= htmlspecialchars($document['uploaded_by_name'] ?? 'You') ?>
-                            </small>
+                        <div class="card-footer bg-transparent border-top-0 d-flex gap-2">
+                            <?php if (!empty($d['url'])): ?>
+                                <a href="<?= htmlspecialchars($d['url']) ?>" target="_blank" class="btn btn-sm btn-outline-primary flex-grow-1">
+                                    <i class="fas fa-eye me-1"></i> View
+                                </a>
+                            <?php endif; ?>
+                            <button class="btn btn-sm btn-outline-secondary flex-grow-1" onclick="alert('Download coming soon')">
+                                <i class="fas fa-download me-1"></i> Download
+                            </button>
                         </div>
                     </div>
                 </div>
             <?php endforeach; ?>
-        <?php endif; ?>
-    </div>
+        </div>
+    <?php endif; ?>
 </div>
 
-<!-- Upload Document Modal -->
-<div class="modal fade" id="uploadModal" tabindex="-1">
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadDocModal" tabindex="-1" aria-labelledby="uploadDocModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Upload Document</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="<?= BASE_URL ?>/employee/documents/upload" method="POST" enctype="multipart/form-data">
-                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <form action="<?= BASE_URL ?>/employee/documents/upload" method="POST" enctype="multipart/form-data" id="uploadDocForm">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="uploadDocModalLabel"><i class="fas fa-cloud-upload-alt me-2"></i>Upload Document</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="document_type" class="form-label">Document Type *</label>
-                                <select class="form-select" id="document_type" name="document_type" required>
-                                    <option value="">Select Document Type</option>
-                                    <?php foreach (($document_types ?? []) as $type): ?>
-                                        <option value="<?= $type['document_type_id'] ?>">
-                                            <?= htmlspecialchars($type['document_type_name']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                            <label class="form-label fw-semibold">Document Type *</label>
+                            <select name="document_type" class="form-select" required>
+                                <option value="">Select type...</option>
+                                <option value="aadhaar">Aadhaar Card</option>
+                                <option value="pan">PAN Card</option>
+                                <option value="salary_slip">Salary Slip</option>
+                                <option value="offer_letter">Offer Letter</option>
+                                <option value="experience_letter">Experience Letter</option>
+                                <option value="education">Education Certificate</option>
+                                <option value="photo">Photo ID</option>
+                                <option value="other">Other</option>
+                            </select>
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="document_file" class="form-label">File *</label>
-                                <input type="file" class="form-control" id="document_file" name="document_file"
-                                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
-                                <div class="form-text">Supported formats: PDF, DOC, DOCX, JPG, JPEG, PNG (Max: 10MB)</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="document_name" class="form-label">Document Name *</label>
-                        <input type="text" class="form-control" id="document_name" name="document_name"
-                               placeholder="Enter document name" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3"
-                                  placeholder="Brief description of the document..."></textarea>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="expiry_date" class="form-label">Expiry Date (if applicable)</label>
-                                <input type="date" class="form-control" id="expiry_date" name="expiry_date">
-                            </div>
+                            <label class="form-label fw-semibold">Document Number</label>
+                            <input type="text" name="document_number" class="form-control" placeholder="e.g. ABCDE1234F">
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="is_confidential" class="form-label">Confidential</label>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="is_confidential" name="is_confidential">
-                                    <label class="form-check-label" for="is_confidential">
-                                        Mark as confidential document
-                                    </label>
-                                </div>
-                            </div>
+                            <label class="form-label fw-semibold">Issued By</label>
+                            <input type="text" name="issued_by" class="form-control" placeholder="e.g. UIDAI, NSDL">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Issue Date</label>
+                            <input type="date" name="issue_date" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Expiry Date</label>
+                            <input type="date" name="expiry_date" class="form-control">
+                            <small class="text-muted">Leave blank if no expiry</small>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">File *</label>
+                            <input type="file" name="document_file" class="form-control" required accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                            <small class="text-muted">Accepted: PDF, JPG, PNG, DOC, DOCX (Max 10MB)</small>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Upload Document</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-upload me-1"></i> Upload</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<script>
-function showUploadModal() {
-    $('#uploadModal').modal('show');
-}
-
-function viewDocument(documentId) {
-    // In a real implementation, you would open the document in a viewer
-    window.open(`/employee/documents/view/${documentId}`, '_blank');
-}
-
-function downloadDocument(documentId) {
-    // In a real implementation, you would download the document
-    window.location.href = `/employee/documents/download/${documentId}`;
-}
-
-function updateDocumentStatus(documentId, status) {
-    if (confirm(`Are you sure you want to mark this document as ${status}?`)) {
-        // In a real implementation, you would submit a form to update status
-        alert(`Document ${status} feature would be implemented here.`);
-    }
-}
-
-function deleteDocument(documentId) {
-    if (confirm('Are you sure you want to delete this document? This action cannot be undone.')) {
-        // In a real implementation, you would submit a form to delete the document
-        alert('Document deletion feature would be implemented here.');
-    }
-}
-
-// File size validation
-document.getElementById('document_file')?.addEventListener('change', function() {
-    const file = this.files[0];
-    if (file && file.size > 10 * 1024 * 1024) { // 10MB limit
-        alert('File size must be less than 10MB');
-        this.value = '';
-    }
-});
-</script>
-
-<style>
-.stats-card {
-    border: none;
-    border-radius: 10px;
-    transition: transform 0.2s;
-}
-
-.stats-card:hover {
-    transform: translateY(-2px);
-}
-
-.document-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.document-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.document-info {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-}
-
-.document-actions {
-    margin-top: 15px;
-}
-
-.document-actions .btn {
-    margin-right: 5px;
-    margin-bottom: 5px;
-}
-
-.table th {
-    border-top: none;
-    font-weight: 600;
-}
-
-.badge {
-    font-size: 0.8em;
-}
-</style>

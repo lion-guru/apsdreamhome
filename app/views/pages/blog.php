@@ -103,7 +103,7 @@
                                 </small>
                             </div>
                             <h3 class="card-title mb-3"><?php echo htmlspecialchars($blog_posts[0]['title']); ?></h3>
-                            <p class="card-text mb-3"><?php echo htmlspecialchars(substr($blog_posts[0]['excerpt'], 0, 200)) . '...'; ?></p>
+                            <p class="card-text mb-3"><?php echo htmlspecialchars(substr($blog_posts[0]['excerpt'] ?? '', 0, 200)) . '...'; ?></p>
                             <a href="<?= BASE_URL ?>/blog/<?= htmlspecialchars($blog_posts[0]['slug']) ?>" class="read-more-btn">
                                 <i class="fas fa-arrow-right me-1"></i><?= __('blog_read_more') ?>
                             </a>
@@ -145,7 +145,7 @@
                             </div>
                             <h6 class="card-title mb-2"><?php echo htmlspecialchars($blog_posts[$i]['title']); ?></h6>
                             <p class="card-text small text-muted mb-3">
-                                <?php echo htmlspecialchars(substr($blog_posts[$i]['excerpt'], 0, 100)) . '...'; ?>
+                                <?php echo htmlspecialchars(substr($blog_posts[$i]['excerpt'] ?? '', 0, 100)) . '...'; ?>
                             </p>
                             <a href="<?= BASE_URL ?>/blog/<?= htmlspecialchars($blog_posts[$i]['slug']) ?>" class="read-more-btn btn-sm">
                                 <i class="fas fa-arrow-right me-1"></i><?= __('blog_read_more') ?>

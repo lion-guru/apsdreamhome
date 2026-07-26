@@ -145,7 +145,7 @@ $channels = $channels ?? [];
                                     <small class="text-muted"><?= $ch['c'] ?> sessions</small>
                                 </div>
                                 <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar bg-<?= $ch['otp_channel'] === 'whatsapp' ? 'success' : ($ch['otp_channel'] === 'sms' ? 'primary' : 'purple') ?>"
+                                    <div class="progress-bar bg-<?= $ch['otp_channel'] === 'whatsapp' ? 'success' : ($ch['otp_channel'] === 'sms' ? 'primary' : 'info') ?>"
                                          style="width: <?= $maxCh > 0 ? ($ch['c'] / $maxCh * 100) : 0 ?>%;"></div>
                                 </div>
                             </div>

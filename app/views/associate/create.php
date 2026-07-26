@@ -3,7 +3,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home me-1"></i><?= __('assoc_home') ?></a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate"><?= __('assoc_users') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/associate/manage/list"><?= __('assoc_users') ?></a></li>
             <li class="breadcrumb-item active" aria-current="page"><?= __('assoc_create_title') ?></li>
         </ol>
     </nav>
@@ -17,7 +17,7 @@
                     <?php if (!empty($errors)): ?>
                         <div class="alert alert-danger"><?= implode('<br>', array_map('htmlspecialchars', $errors)) ?></div>
                     <?php endif; ?>
-                    <form method="POST" action="<?= BASE_URL ?>/associate/create">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/associate/manage/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -62,7 +62,7 @@
                         </div>
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i><?= __('assoc_create_save') ?></button>
-                            <a href="<?= BASE_URL ?>/associate" class="btn btn-secondary ms-2"><?= __('assoc_create_cancel') ?></a>
+                            <a href="<?= BASE_URL ?>/admin/associate/manage/list" class="btn btn-secondary ms-2"><?= __('assoc_create_cancel') ?></a>
                         </div>
                     </form>
                 </div>

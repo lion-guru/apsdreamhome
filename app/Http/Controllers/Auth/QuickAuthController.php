@@ -144,7 +144,7 @@ class QuickAuthController extends BaseController
             $_SESSION['logged_in'] = true;
             $_SESSION['success'] = 'Account created successfully! Welcome to APS Dream Home.';
 
-            echo json_encode(['success' => true, 'redirect' => '/customer/dashboard']);
+            echo json_encode(['success' => true, 'redirect' => '/user/dashboard']);
             exit;
 
         } catch (\Exception $e) {

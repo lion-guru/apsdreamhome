@@ -653,7 +653,7 @@ $dashBookingCount = count($dashBookings);
 
         <div class="aps-cp-card mb-4">
             <div class="aps-cp-card-header">
-                <h5><i class="fas fa-user text-purple"></i> <?= __('dash_section_account_info', null, 'Account Info') ?></h5>
+                <h5><i class="fas fa-user text-info"></i> <?= __('dash_section_account_info', null, 'Account Info') ?></h5>
             </div>
             <div class="aps-cp-card-body">
                 <div class="d-flex flex-column gap-2 small">

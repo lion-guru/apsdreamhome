@@ -3,8 +3,8 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home me-1"></i><?= __('assoc_home') ?></a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate"><?= __('assoc_users') ?></a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate/show/<?= $associate['id'] ?? '' ?>"><?= htmlspecialchars($associate['name'] ?? '') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/associate/manage/list"><?= __('assoc_users') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/associate/manage/show/<?= $associate['id'] ?? '' ?>"><?= htmlspecialchars($associate['name'] ?? '') ?></a></li>
             <li class="breadcrumb-item active" aria-current="page"><?= __('assoc_edit_title') ?></li>
         </ol>
     </nav>
@@ -19,7 +19,7 @@
                     <?php if (!empty($errors)): ?>
                         <div class="alert alert-danger"><?= implode('<br>', array_map('htmlspecialchars', $errors)) ?></div>
                     <?php endif; ?>
-                    <form method="POST" action="<?= BASE_URL ?>/associate/edit/<?= $associate['id'] ?>">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/associate/manage/update/<?= $associate['id'] ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -60,7 +60,7 @@
                         </div>
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i><?= __('assoc_edit_update') ?></button>
-                            <a href="<?= BASE_URL ?>/associate/show/<?= $associate['id'] ?>" class="btn btn-secondary ms-2"><?= __('assoc_edit_cancel') ?></a>
+                            <a href="<?= BASE_URL ?>/admin/associate/manage/show/<?= $associate['id'] ?>" class="btn btn-secondary ms-2"><?= __('assoc_edit_cancel') ?></a>
                         </div>
                     </form>
                 </div>
@@ -72,7 +72,7 @@
         <div class="card-body text-center py-5">
             <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
             <h5 class="text-muted"><?= __('assoc_edit_not_found') ?></h5>
-            <a href="<?= BASE_URL ?>/associate" class="btn btn-primary mt-2"><?= __('assoc_edit_back') ?></a>
+            <a href="<?= BASE_URL ?>/admin/associate/manage/list" class="btn btn-primary mt-2"><?= __('assoc_edit_back') ?></a>
         </div>
     </div>
     <?php endif; ?>

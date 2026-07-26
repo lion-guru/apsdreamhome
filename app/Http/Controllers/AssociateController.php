@@ -673,6 +673,7 @@ class AssociateController extends BaseController
 
         $leads = [];
         $totalCount = 0;
+        $pipelineCounts = [];
 
         try {
             $totalCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM leads l $where", $params);
@@ -685,6 +686,11 @@ class AssociateController extends BaseController
                  ORDER BY l.created_at DESC LIMIT $perPage OFFSET $offset",
                 $params
             );
+            $cntRows = $this->db->fetchAll(
+                "SELECT status, COUNT(*) as cnt FROM leads WHERE created_by = ? AND deleted_at IS NULL GROUP BY status",
+                [$userId]
+            );
+            foreach ($cntRows as $r) $pipelineCounts[$r['status']] = (int)$r['cnt'];
         } catch (\Exception $e) { error_log('AssociateController leads exception: ' . $e->getMessage()); }
 
         $totalPages = max(1, ceil($totalCount / $perPage));
@@ -697,6 +703,7 @@ class AssociateController extends BaseController
             'page_description' => 'Manage your client leads',
             'leads' => $leads,
             'total_count' => $totalCount,
+            'pipeline_counts' => $pipelineCounts,
             'current_page' => 'leads',
             'status_filter' => $statusFilter,
             'search' => $search,
@@ -1083,7 +1090,7 @@ class AssociateController extends BaseController
         try {
             $properties = $this->db->fetchAll(
                 "SELECT id, name as title, property_type, price, address, DATE(created_at) as date, views
-                 FROM user_properties WHERE user_id = ? AND status = 'approved' AND posted_by_type = 'associate'
+                 FROM user_properties WHERE user_id = ? AND status = 'sold' AND posted_by_type = 'associate'
                  ORDER BY created_at DESC LIMIT 20",
                 [$userId]
             );
@@ -1602,12 +1609,94 @@ class AssociateController extends BaseController
     {
         $this->requireAuth();
         $this->layout = 'layouts/associate';
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        $documents = [];
+        $stats = ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0];
+        try {
+            $locker = new \App\Services\DocumentLockerService();
+            $documents = $locker->getUserDocuments($userId) ?? [];
+            foreach ($documents as $doc) {
+                $stats['total']++;
+                $stats[$doc['status'] ?? 'pending'] = ($stats[$doc['status'] ?? 'pending'] ?? 0) + 1;
+            }
+        } catch (\Exception $e) {
+            error_log('AssociateController documents: ' . $e->getMessage());
+        }
 
         $this->render('associate/documents', [
             'page_title' => 'Document Locker - APS Dream Home',
             'page_description' => 'Manage your documents',
-            'current_page' => 'documents'
+            'current_page' => 'documents',
+            'documents' => $documents,
+            'stats' => $stats,
         ], 'layouts/associate');
+    }
+
+    /**
+     * Handle document upload for associate document locker
+     */
+    public function uploadDocument()
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/associate/documents');
+            return;
+        }
+
+        try {
+            $title = trim($_POST['title'] ?? '');
+            $docType = $_POST['document_type'] ?? 'general';
+            $allowedTypes = ['aadhaar', 'pan', 'agreement', 'payment_receipt', 'general', 'photo', 'bank_statement', 'salary_slip'];
+            if (!in_array($docType, $allowedTypes)) $docType = 'general';
+
+            if (empty($title)) {
+                $_SESSION['error'] = 'Document title is required.';
+                $this->redirect('/associate/documents');
+                return;
+            }
+
+            $fileUrl = '';
+            if (!empty($_FILES['document_file']['tmp_name']) && $_FILES['document_file']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['document_file'];
+                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                $allowedExts = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
+                if (!in_array($ext, $allowedExts)) {
+                    $_SESSION['error'] = 'Invalid file type. Allowed: PDF, JPG, PNG, DOC/DOCX.';
+                    $this->redirect('/associate/documents');
+                    return;
+                }
+                if ($file['size'] > 10 * 1024 * 1024) {
+                    $_SESSION['error'] = 'File too large. Maximum size is 10MB.';
+                    $this->redirect('/associate/documents');
+                    return;
+                }
+
+                $uploadDir = 'uploads/documents/' . $userId . '/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $filename = 'doc_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                $dest = $uploadDir . $filename;
+                if (move_uploaded_file($file['tmp_name'], $dest)) {
+                    $fileUrl = $dest;
+                }
+            }
+
+            $locker = new \App\Services\DocumentLockerService();
+            $result = $locker->addDocument($userId, $title, $docType, $fileUrl);
+
+            if ($result['success'] ?? false) {
+                $_SESSION['success'] = 'Document uploaded successfully.';
+            } else {
+                $_SESSION['error'] = $result['error'] ?? 'Failed to save document.';
+            }
+        } catch (\Exception $e) {
+            error_log('AssociateController uploadDocument: ' . $e->getMessage());
+            $_SESSION['error'] = 'Upload failed. Please try again.';
+        }
+
+        $this->redirect('/associate/documents');
     }
 
     /**

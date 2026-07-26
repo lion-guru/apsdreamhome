@@ -12,12 +12,12 @@ $statuses = [
     'new' => ['label' => __('assoc_status_new', [], 'New'), 'color' => 'primary', 'icon' => 'fa-star'],
     'contacted' => ['label' => __('assoc_status_contacted', [], 'Contacted'), 'color' => 'info', 'icon' => 'fa-phone'],
     'qualified' => ['label' => __('assoc_status_qualified', [], 'Qualified'), 'color' => 'warning', 'icon' => 'fa-check-circle'],
-    'site_visit' => ['label' => __('assoc_status_site_visit', [], 'Site Visit'), 'color' => 'purple', 'icon' => 'fa-map-marker-alt'],
-    'proposal' => ['label' => __('assoc_status_proposal', [], 'Proposal'), 'color' => 'pink', 'icon' => 'fa-file-alt'],
-    'negotiation' => ['label' => __('assoc_status_negotiation', [], 'Negotiation'), 'color' => 'orange', 'icon' => 'fa-handshake'],
+    'site_visit' => ['label' => __('assoc_status_site_visit', [], 'Site Visit'), 'color' => 'info', 'icon' => 'fa-map-marker-alt'],
+    'proposal' => ['label' => __('assoc_status_proposal', [], 'Proposal'), 'color' => 'danger', 'icon' => 'fa-file-alt'],
+    'negotiation' => ['label' => __('assoc_status_negotiation', [], 'Negotiation'), 'color' => 'warning', 'icon' => 'fa-handshake'],
     'closed_won' => ['label' => __('assoc_status_won', [], 'Won'), 'color' => 'success', 'icon' => 'fa-trophy'],
     'closed_lost' => ['label' => __('assoc_status_lost', [], 'Lost'), 'color' => 'secondary', 'icon' => 'fa-times-circle'],
-    'nurture' => ['label' => __('assoc_status_nurture', [], 'Nurture'), 'color' => 'teal', 'icon' => 'fa-seedling'],
+    'nurture' => ['label' => __('assoc_status_nurture', [], 'Nurture'), 'color' => 'success', 'icon' => 'fa-seedling'],
 ];
 
 $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
@@ -52,7 +52,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         <div class="d-flex gap-2">
             <form method="POST" action="<?= BASE_URL ?>/associate/leads/recalculate-all-scores" class="d-inline">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                <button type="submit" class="btn btn-outline-purple btn-sm" style="border-color:#14b8a6;color:#14b8a6;" onclick="return confirm('Recalculate AI scores for all your leads?')">
+                <button type="submit" class="btn btn-sm" style="border-color:#14b8a6;color:#14b8a6;" onclick="return confirm('Recalculate AI scores for all your leads?')">
                     <i class="fas fa-brain me-1"></i> <?= __('assoc_leads_score_all', [], 'Score All') ?>
                 </button>
             </form>
@@ -65,13 +65,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
     <!-- Pipeline Summary Cards -->
     <div class="crm-pipeline">
         <?php
-        $pipelineCounts = [];
-        try {
-            $db = \App\Core\Database\Database::getInstance();
-            $userId = $_SESSION['user_id'] ?? 0;
-            $cntRows = $db->fetchAll("SELECT status, COUNT(*) as cnt FROM leads WHERE created_by = ? AND deleted_at IS NULL GROUP BY status", [$userId]);
-            foreach ($cntRows as $r) $pipelineCounts[$r['status']] = (int)$r['cnt'];
-        } catch (\Exception $e) {}
+        $pipelineCounts = $pipeline_counts ?? [];
         ?>
         <div class="crm-stage" style="background: #eff6ff; color: #2563eb;" onclick="filterLeads('')">
             <i class="fas fa-layer-group"></i> <?= __('assoc_leads_all', [], 'All') ?>

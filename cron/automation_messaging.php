@@ -15,6 +15,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+ob_start(); // Buffer output so bootstrap can send headers without warnings
+
 $startTime = microtime(true);
 $logFile = __DIR__ . '/logs/automation_' . date('Y-m-d') . '.log';
 
@@ -34,6 +36,8 @@ logMsg("=== Communication Automation Cron Started ===");
 
 // Bootstrap
 require __DIR__ . '/../config/bootstrap.php';
+
+ob_end_flush(); // Flush buffered output now that headers are sent
 require __DIR__ . '/../app/Core/Database.php';
 
 use App\Core\Database\Database;

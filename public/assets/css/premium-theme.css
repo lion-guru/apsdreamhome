@@ -16,6 +16,12 @@
   --premium-light: #f8fafc;
   --premium-white: #ffffff;
 
+  /* TEXT COLOR VARIABLES — SINGLE SOURCE OF TRUTH */
+  /* Default: dark text on light background. Dark sections override these. */
+  --aps-text: var(--premium-dark);
+  --aps-heading: var(--premium-navy);
+  --aps-text-muted: #64748b;
+
   /* RE-MAPPING EXISTING VARIABLES */
   --primary: var(--premium-navy);
   --primary-color: var(--premium-navy);
@@ -48,12 +54,75 @@
 }
 
 /* ============================================
+   DARK SECTION OVERRIDES — Automatic white text
+   Add any new dark section class here. One place.
+   ============================================ */
+.bg-dark,
+.bg-premium-navy,
+.hero,
+.hero-premium:has(.hero-overlay),
+.section-dark,
+.cta-gradient,
+.cta-section,
+.emi-section,
+.glass-dark,
+[class*='bg-gradient-dark'],
+[class*='booking-hero'],
+footer.bg-dark {
+  --aps-text: #fff;
+  --aps-heading: #fff;
+  --aps-text-muted: rgba(255, 255, 255, 0.7);
+}
+
+/* ============================================
    BASE OVERRIDES
    ============================================ */
 body {
   font-family: var(--font-primary) !important;
   background-color: var(--premium-light);
-  color: var(--premium-dark);
+  color: var(--aps-text);
+}
+
+/* Text elements inherit from CSS variables — dark sections auto-override */
+.bg-dark p,
+.bg-dark span,
+.bg-dark td,
+.bg-dark th,
+.bg-dark label,
+.bg-dark li,
+.hero-premium:has(.hero-overlay) p,
+.hero-premium:has(.hero-overlay) span,
+.section-dark p,
+.section-dark span,
+.cta-gradient p,
+.cta-gradient span,
+.cta-section p,
+.cta-section span,
+.emi-section p,
+.emi-section span,
+.glass-dark p,
+.glass-dark span {
+  color: var(--aps-text);
+}
+
+.bg-dark .lead,
+.bg-dark .text-muted,
+.hero-premium:has(.hero-overlay) .lead,
+.section-dark .lead,
+.cta-gradient .lead,
+.cta-section .lead,
+.emi-section .lead {
+  color: var(--aps-text-muted);
+}
+
+.bg-dark .lead,
+.bg-dark .text-muted,
+.hero-premium .lead,
+.section-dark .lead,
+.cta-gradient .lead,
+.cta-section .lead,
+.emi-section .lead {
+  color: var(--aps-text-muted);
 }
 
 h1,
@@ -71,7 +140,7 @@ h6,
   font-family: var(--font-primary) !important;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--premium-navy);
+  color: var(--aps-heading);
 }
 
 a {
@@ -96,15 +165,6 @@ a {
 .section-dark {
   padding: 5rem 0;
   background: var(--gradient-luxury);
-  color: #fff;
-}
-
-.section-dark h1,
-.section-dark h2,
-.section-dark h3,
-.section-dark h4,
-.section-dark h5,
-.section-dark h6 {
   color: #fff;
 }
 
@@ -679,6 +739,20 @@ html {
 .hero-premium .hero-content {
   position: relative;
   z-index: 3;
+}
+
+/* Hero element-specific colors (only when dark overlay is present) */
+.hero-premium:has(.hero-overlay) .hero-title {
+  color: #fff !important;
+}
+.hero-premium:has(.hero-overlay) .hero-subtitle {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+.hero-premium:has(.hero-overlay) .hero-typed-label {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+.hero-premium:has(.hero-overlay) .hero-trust-badge {
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 /* ============================================================

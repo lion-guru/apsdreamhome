@@ -6,8 +6,8 @@ $current_page = 'metrics';
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home me-1"></i><?= __('assoc_met_home', [], 'Home') ?></a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate"><?= __('assoc_met_users', [], 'users') ?></a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate/show/<?= $associate['id'] ?? '' ?>"><?= htmlspecialchars($associate['name'] ?? '') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/associate/manage/list"><?= __('assoc_met_users', [], 'users') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/associate/manage/show/<?= $associate['id'] ?? '' ?>"><?= htmlspecialchars($associate['name'] ?? '') ?></a></li>
             <li class="breadcrumb-item active" aria-current="page"><?= __('assoc_met_metrics', [], 'Metrics') ?></li>
         </ol>
     </nav>
@@ -100,7 +100,7 @@ $current_page = 'metrics';
         <div class="card-body text-center py-5">
             <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
             <h5 class="text-muted"><?= __('assoc_met_not_found', [], 'Associate Not Found') ?></h5>
-            <a href="<?= BASE_URL ?>/associate" class="btn btn-primary mt-2"><?= __('assoc_met_back_users', [], 'Back to users') ?></a>
+            <a href="<?= BASE_URL ?>/admin/associate/manage/list" class="btn btn-primary mt-2"><?= __('assoc_met_back_users', [], 'Back to users') ?></a>
         </div>
     </div>
     <?php endif; ?>

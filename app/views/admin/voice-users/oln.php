@@ -43,7 +43,7 @@
         'interested' => ['label' => 'Interested', 'color' => 'primary'],
         'qualified' => ['label' => 'Qualified', 'color' => 'success'],
         'viewing' => ['label' => 'Viewing', 'color' => 'warning'],
-        'negotiating' => ['label' => 'Negotiating', 'color' => 'orange'],
+        'negotiating' => ['label' => 'Negotiating', 'color' => 'warning'],
         'closed' => ['label' => 'Closed', 'color' => 'dark'],
     ]; ?>
     <?php foreach ($stages as $key => $stage): ?>

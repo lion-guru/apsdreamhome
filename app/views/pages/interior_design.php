@@ -20,7 +20,7 @@
 .tool-card:hover { border-color: #0d9488; background: #f0fdfa; }
 </style>
 
-<section class="hero-premium pt-5 pb-5">
+<section class="hero-premium pt-5 pb-5" style="background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%) !important;">
     <div class="container position-relative premium-reveal fade-up z-2">
         <div class="row align-items-center">
             <div class="col-lg-7">

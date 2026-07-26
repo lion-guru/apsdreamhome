@@ -236,9 +236,10 @@ $bannerImage = $colony['banner_image'] ? BASE_URL . '/' . ltrim($colony['banner_
         <h2 class="text-center mb-5"><i class="fas fa-images text-primary me-2"></i><?= __('colony_gallery_heading') ?></h2>
         <div class="row g-3">
             <?php foreach ($galleryImages as $img): ?>
+            <?php $imgIsExternal = (strpos($img, 'http://') === 0 || strpos($img, 'https://') === 0); ?>
             <div class="col-md-4 col-sm-6">
-                <a href="<?php echo BASE_URL . '/' . ltrim($img, '/'); ?>" data-lightbox="gallery">
-                    <img src="<?php echo BASE_URL . '/' . htmlspecialchars(ltrim($img, '/')); ?>" alt="Gallery" class="gallery-img" loading="lazy">
+                <a href="<?php echo $imgIsExternal ? $img : BASE_URL . '/' . ltrim($img, '/'); ?>" data-lightbox="gallery">
+                    <img src="<?php echo $imgIsExternal ? htmlspecialchars($img) : BASE_URL . '/' . htmlspecialchars(ltrim($img, '/')); ?>" alt="Gallery" class="gallery-img" loading="lazy">
                 </a>
             </div>
             <?php endforeach; ?>

@@ -1085,7 +1085,7 @@ class UserController extends BaseController
 
     public function notifications()
     {
-        $this->requireCustomerLogin();
+        $this->requireLogin();
         $user = $this->getUser();
 
         $notifService = new NotificationService();
@@ -1103,7 +1103,7 @@ class UserController extends BaseController
 
     public function markNotificationRead($notificationId)
     {
-        $this->requireCustomerLogin();
+        $this->requireLogin();
 
         $notifService = new NotificationService();
         $notifService->markAsRead($notificationId);
@@ -1115,7 +1115,7 @@ class UserController extends BaseController
 
     public function markAllNotificationsRead()
     {
-        $this->requireCustomerLogin();
+        $this->requireLogin();
         $user = $this->getUser();
 
         $notifService = new NotificationService();

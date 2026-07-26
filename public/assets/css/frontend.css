@@ -42,7 +42,12 @@ section {
 .hero.hero-with-bg .lead,
 .hero.hero-with-bg .badge,
 .hero.hero-with-bg p,
-.hero.hero-with-bg span {
+.hero.hero-with-bg span,
+.hero-premium:has(.hero-overlay) h1,
+.hero-premium:has(.hero-overlay) .lead,
+.hero-premium:has(.hero-overlay) .badge,
+.hero-premium:has(.hero-overlay) p,
+.hero-premium:has(.hero-overlay) span {
   color: #fff !important;
 }
 .hero.hero-with-bg .card-header {
@@ -116,7 +121,8 @@ section {
     transform: translateY(0);
   }
 }
-.hero .lead {
+.hero .lead,
+.hero-premium:has(.hero-overlay) .lead {
   font-size: clamp(0.95rem, 1.5vw, 1.15rem);
   opacity: 0.85;
   line-height: 1.6;

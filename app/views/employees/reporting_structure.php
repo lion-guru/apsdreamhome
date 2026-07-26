@@ -1,528 +1,193 @@
 <?php
-
-// TODO: Add proper error handling with try-catch blocks
-
-/**
- * Employee Reporting Structure View
- * Shows employee reporting hierarchy and team structure
- */
+$employee = $employee ?? null;
+$manager = $manager ?? null;
+$subordinates = $subordinates ?? [];
+$department_members = $department_members ?? [];
 ?>
 
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-sitemap me-2"></i>Reporting Structure</h2>
-        <div class="d-flex gap-2">
-            <button class="btn btn-outline-primary" onclick="printStructure()">
-                <i class="fas fa-print me-2"></i>Print Structure
-            </button>
-            <button class="btn btn-outline-secondary" onclick="exportStructure()">
-                <i class="fas fa-download me-2"></i>Export
-            </button>
-        </div>
-    </div>
-
-    <!-- Current Position -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-user me-2"></i>My Position</h5>
-                </div>
-                <div class="card-body aps-cp-card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="position-info">
-                                <h4 class="text-primary mb-2">
-                                    <?= htmlspecialchars($reporting_structure['current_employee']['name'] ?? 'N/A') ?>
-                                </h4>
-                                <p class="mb-1">
-                                    <strong>Position:</strong>
-                                    <?= htmlspecialchars($reporting_structure['current_employee']['position'] ?? 'N/A') ?>
-                                </p>
-                                <p class="mb-1">
-                                    <strong>Department:</strong>
-                                    <span class="badge bg-info">
-                                        <?= htmlspecialchars($reporting_structure['current_employee']['department'] ?? 'N/A') ?>
-                                    </span>
-                                </p>
-                                <p class="mb-1">
-                                    <strong>Employee ID:</strong>
-                                    <?= htmlspecialchars($reporting_structure['current_employee']['employee_id'] ?? 'N/A') ?>
-                                </p>
-                                <p class="mb-1">
-                                    <strong>Joining Date:</strong>
-                                    <?= htmlspecialchars($reporting_structure['current_employee']['joining_date'] ?? 'N/A') ?>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="hierarchy-preview">
-                                <h6>Reporting Hierarchy</h6>
-                                <?php if (!empty($reporting_structure['manager'])): ?>
-                                    <div class="manager-info">
-                                        <div class="d-flex align-items-center">
-                                            <div class="manager-avatar me-3">
-                                                <i class="fas fa-user-tie fa-2x text-primary"></i>
-                                            </div>
-                                            <div>
-                                                <strong>Reports to:</strong><br>
-                                                <?= htmlspecialchars($reporting_structure['manager']['name']) ?><br>
-                                                <small class="text-muted">
-                                                    <?= htmlspecialchars($reporting_structure['manager']['position']) ?>
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (!empty($reporting_structure['subordinates'])): ?>
-                                    <div class="subordinates-info mt-3">
-                                        <div class="d-flex align-items-center">
-                                            <div class="subordinates-avatar me-3">
-                                                <i class="fas fa-users fa-2x text-success"></i>
-                                            </div>
-                                            <div>
-                                                <strong>Team Size:</strong><br>
-                                                <?= count($reporting_structure['subordinates']) ?> Direct Report<?= count($reporting_structure['subordinates']) > 1 ? 's' : '' ?><br>
-                                                <small class="text-muted">
-                                                    <?= array_sum(array_column($reporting_structure['subordinates'], 'team_size')) ?> Total Team Members
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Organizational Chart -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-project-diagram me-2"></i>Organizational Chart</h5>
-                </div>
-                <div class="card-body aps-cp-card-body">
-                    <div class="org-chart">
-                        <?php if (!empty($reporting_structure['org_chart'])): ?>
-                            <?php echo $this->renderOrgChart($reporting_structure['org_chart']); ?>
-                        <?php else: ?>
-                            <div class="text-center text-muted">
-                                <i class="fas fa-sitemap fa-3x mb-3"></i>
-                                <p>Organizational chart not available</p>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Manager Information -->
-    <?php if (!empty($reporting_structure['manager'])): ?>
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card aps-cp-card">
-                    <div class="card-header aps-cp-card-header">
-                        <h5><i class="fas fa-user-tie me-2"></i>Manager Information</h5>
-                    </div>
-                    <div class="card-body aps-cp-card-body">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="manager-details">
-                                    <h5 class="mb-3">
-                                        <?= htmlspecialchars($reporting_structure['manager']['name']) ?>
-                                    </h5>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <p class="mb-2">
-                                                <strong>Position:</strong>
-                                                <?= htmlspecialchars($reporting_structure['manager']['position']) ?>
-                                            </p>
-                                            <p class="mb-2">
-                                                <strong>Department:</strong>
-                                                <?= htmlspecialchars($reporting_structure['manager']['department']) ?>
-                                            </p>
-                                            <p class="mb-2">
-                                                <strong>Email:</strong>
-                                                <a href="mailto:<?= htmlspecialchars($reporting_structure['manager']['email']) ?>">
-                                                    <?= htmlspecialchars($reporting_structure['manager']['email']) ?>
-                                                </a>
-                                            </p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <p class="mb-2">
-                                                <strong>Phone:</strong>
-                                                <?= htmlspecialchars($reporting_structure['manager']['phone'] ?? 'N/A') ?>
-                                            </p>
-                                            <p class="mb-2">
-                                                <strong>Experience:</strong>
-                                                <?= htmlspecialchars($reporting_structure['manager']['experience'] ?? 'N/A') ?>
-                                            </p>
-                                            <p class="mb-2">
-                                                <strong>Team Size:</strong>
-                                                <?= $reporting_structure['manager']['team_size'] ?? 0 ?> members
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="manager-stats">
-                                    <h6>Manager's Team Performance</h6>
-                                    <div class="progress mb-2">
-                                        <div class="progress-bar bg-success" style="width: <?= $reporting_structure['manager']['team_performance'] ?? 75 ?>%">
-                                            <?= $reporting_structure['manager']['team_performance'] ?? 75 ?>%
-                                        </div>
-                                    </div>
-                                    <p class="mb-2">
-                                        <strong>Projects:</strong>
-                                        <?= $reporting_structure['manager']['active_projects'] ?? 0 ?> Active
-                                    </p>
-                                    <p class="mb-2">
-                                        <strong>Team Satisfaction:</strong>
-                                        <span class="badge bg-success">
-                                            <?= $reporting_structure['manager']['team_satisfaction'] ?? 'Good' ?>
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    <!-- Team Members -->
-    <?php if (!empty($reporting_structure['subordinates'])): ?>
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card aps-cp-card">
-                    <div class="card-header aps-cp-card-header">
-                        <h5><i class="fas fa-users me-2"></i>My Team Members</h5>
-                    </div>
-                    <div class="card-body aps-cp-card-body">
-                        <div class="row">
-                            <?php foreach ($reporting_structure['subordinates'] as $subordinate): ?>
-                                <div class="col-md-6 col-lg-4 mb-3">
-                                    <div class="card team-member-card">
-                                        <div class="card-body aps-cp-card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="team-member-avatar me-3">
-                                                    <i class="fas fa-user fa-2x text-primary"></i>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <h6 class="mb-1">
-                                                        <?= htmlspecialchars($subordinate['name']) ?>
-                                                    </h6>
-                                                    <p class="mb-1 text-muted">
-                                                        <?= htmlspecialchars($subordinate['position']) ?>
-                                                    </p>
-                                                    <small class="text-muted">
-                                                        <?= htmlspecialchars($subordinate['department']) ?>
-                                                    </small>
-                                                </div>
-                                                <div class="team-member-status">
-                                                    <?php if ($subordinate['is_active'] ?? true): ?>
-                                                        <span class="badge bg-success">Active</span>
-                                                    <?php else: ?>
-                                                        <span class="badge bg-secondary">Inactive</span>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-
-                                            <div class="team-member-details mt-3">
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                        <small class="text-muted">
-                                                            <strong>Joined:</strong><br>
-                                                            <?= date('M Y', strtotime($subordinate['joining_date'])) ?>
-                                                        </small>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <small class="text-muted">
-                                                            <strong>Performance:</strong><br>
-                                                            <span class="badge bg-<?= $this->getPerformanceBadgeClass($subordinate['performance_score'] ?? 0) ?>">
-                                                                <?= $subordinate['performance_score'] ?? 0 ?>%
-                                                            </span>
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="team-member-actions mt-3">
-                                                <button class="btn btn-sm btn-outline-primary" onclick="viewTeamMember(<?= $subordinate['employee_id'] ?>)">
-                                                    <i class="fas fa-eye me-1"></i>View Profile
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-info" onclick="contactTeamMember(<?= $subordinate['employee_id'] ?>)">
-                                                    <i class="fas fa-envelope me-1"></i>Contact
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <!-- Department Information -->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-building me-2"></i>Department Information</h5>
-                </div>
-                <div class="card-body aps-cp-card-body">
-                    <?php if (!empty($reporting_structure['department'])): ?>
-                        <?php $dept = $reporting_structure['department']; ?>
-                        <div class="department-info">
-                            <h5 class="mb-3">
-                                <?= htmlspecialchars($dept['department_name']) ?>
-                            </h5>
-                            <p class="mb-2">
-                                <strong>Head:</strong>
-                                <?= htmlspecialchars($dept['department_head'] ?? 'N/A') ?>
-                            </p>
-                            <p class="mb-2">
-                                <strong>Total users:</strong>
-                                <?= $dept['total_employees'] ?? 0 ?>
-                            </p>
-                            <p class="mb-2">
-                                <strong>Budget:</strong>
-                                ₹<?= number_format($dept['annual_budget'] ?? 0) ?>
-                            </p>
-                            <p class="mb-3">
-                                <strong>Description:</strong><br>
-                                <small class="text-muted">
-                                    <?= htmlspecialchars($dept['description'] ?? 'No description available.') ?>
-                                </small>
-                            </p>
-
-                            <h6>Department Goals</h6>
-                            <ul class="list-unstyled">
-                                <?php foreach (($dept['goals'] ?? []) as $goal): ?>
-                                    <li class="mb-2">
-                                        <i class="fas fa-check text-success me-2"></i>
-                                        <?= htmlspecialchars($goal) ?>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </div>
-                    <?php else: ?>
-                        <p class="text-muted">No department information available.</p>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-chart-bar me-2"></i>Department Performance</h5>
-                </div>
-                <div class="card-body aps-cp-card-body">
-                    <?php if (!empty($reporting_structure['department'])): ?>
-                        <?php $dept = $reporting_structure['department']; ?>
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="metric-item text-center">
-                                    <h3 class="text-primary mb-1">
-                                        <?= $dept['productivity_score'] ?? 0 ?>%
-                                    </h3>
-                                    <small class="text-muted">Productivity</small>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="metric-item text-center">
-                                    <h3 class="text-success mb-1">
-                                        <?= $dept['satisfaction_score'] ?? 0 ?>%
-                                    </h3>
-                                    <small class="text-muted">Satisfaction</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-info" style="width: <?= $dept['productivity_score'] ?? 0 ?>%">
-                                Productivity: <?= $dept['productivity_score'] ?? 0 ?>%
-                            </div>
-                        </div>
-
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-success" style="width: <?= $dept['satisfaction_score'] ?? 0 ?>%">
-                                Satisfaction: <?= $dept['satisfaction_score'] ?? 0 ?>%
-                            </div>
-                        </div>
-
-                        <h6>Recent Achievements</h6>
-                        <ul class="list-unstyled">
-                            <?php foreach (($dept['achievements'] ?? []) as $achievement): ?>
-                                <li class="mb-2">
-                                    <i class="fas fa-trophy text-warning me-2"></i>
-                                    <?= htmlspecialchars($achievement) ?>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php else: ?>
-                        <p class="text-muted">No department performance data available.</p>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-function printStructure() {
-    window.print();
-}
-
-function exportStructure() {
-    // In a real implementation, you would generate and download a PDF or Excel file
-    alert('Export functionality would be implemented here.');
-}
-
-function viewTeamMember(employeeId) {
-    // In a real implementation, you would redirect to the team member's profile
-    window.location.href = `/employee/team-member/${employeeId}`;
-}
-
-function contactTeamMember(employeeId) {
-    // In a real implementation, you would open a contact form or send an email
-    window.location.href = `mailto:?subject=Regarding Team Member`;
-}
-
-// Auto-refresh data every 10 minutes
-setInterval(function() {
-    if (!document.hidden) {
-        location.reload();
-    }
-}, 600000);
-</script>
-
-<style>
-.org-chart {
-    min-height: 300px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-}
-
-.position-info {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-}
-
-.hierarchy-preview {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    border: 1px solid #dee2e6;
-}
-
-.manager-info, .subordinates-info {
-    background: #e9ecef;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 10px;
-}
-
-.manager-avatar, .subordinates-avatar, .team-member-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #007bff;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.team-member-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.team-member-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.team-member-status {
-    align-self: flex-start;
-}
-
-.team-member-details {
-    background: #f8f9fa;
-    border-radius: 6px;
-    padding: 10px;
-}
-
-.team-member-actions .btn {
-    margin-right: 5px;
-    margin-bottom: 5px;
-}
-
-.department-info {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-}
-
-.metric-item {
-    padding: 15px;
-    border-radius: 8px;
-    background: #f8f9fa;
-    margin-bottom: 10px;
-}
-
-.manager-stats {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 15px;
-}
-
-.badge {
-    font-size: 0.8em;
-}
-
-@media print {
-    .btn, .card-header {
-        display: none !important;
-    }
-
-    .card {
-        border: none !important;
-        box-shadow: none !important;
-    }
-}
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+.org-card { border: 1px solid #e2e8f0; border-radius: 14px; transition: all 0.2s; }
+.org-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+.org-avatar { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; color: #fff; }
+.org-line { position: relative; }
+.org-line::before { content: ''; position: absolute; left: 50%; top: 0; width: 2px; height: 30px; background: #cbd5e1; transform: translateX(-50%); }
+.org-line::after { content: ''; position: absolute; left: 50%; top: 30px; width: 60%; height: 2px; background: #cbd5e1; transform: translateX(-50%); }
+.member-card { border: 1px solid #e2e8f0; border-radius: 12px; transition: all 0.2s; }
+.member-card:hover { border-color: #3b82f6; box-shadow: 0 4px 12px rgba(59,130,246,0.08); }
+.dept-badge { font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; background: #eff6ff; color: #2563eb; font-weight: 600; }
+.level-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; }
 </style>
 
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 510 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//
+<div class="container-fluid">
+    <div class="mb-4">
+        <h4 class="mb-1 fw-bold"><i class="fas fa-sitemap me-2 text-primary"></i>Reporting Structure</h4>
+        <p class="text-muted mb-0 small">Your team hierarchy and department overview</p>
+    </div>
+
+    <?php if (!$employee): ?>
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center py-5">
+                <div class="mb-3"><i class="fas fa-sitemap fa-4x text-muted opacity-25"></i></div>
+                <h5 class="text-muted">No Employee Data</h5>
+                <p class="text-muted small">Your employee profile is not set up yet.</p>
+            </div>
+        </div>
+    <?php else: ?>
+        <!-- Manager Section -->
+        <div class="text-center mb-4">
+            <?php if ($manager): ?>
+                <p class="text-muted small fw-semibold text-uppercase mb-3"><i class="fas fa-arrow-up me-1"></i>Reports To</p>
+                <div class="d-inline-block">
+                    <div class="card org-card shadow-sm">
+                        <div class="card-body px-4 py-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="org-avatar" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                                    <?= strtoupper(substr($manager['name'] ?? 'M', 0, 1)) ?>
+                                </div>
+                                <div class="text-start">
+                                    <h5 class="mb-0 fw-bold"><?= htmlspecialchars($manager['name'] ?? '') ?></h5>
+                                    <div class="text-muted small"><?= htmlspecialchars($manager['designation'] ?? '') ?></div>
+                                    <?php if (!empty($manager['email'])): ?>
+                                        <div class="small"><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($manager['email']) ?></div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="org-line my-3" style="height:30px;"></div>
+            <?php else: ?>
+                <p class="text-muted small mb-3"><i class="fas fa-info-circle me-1"></i>No manager assigned</p>
+            <?php endif; ?>
+        </div>
+
+        <!-- Self Card -->
+        <div class="text-center mb-4">
+            <div class="d-inline-block">
+                <div class="card org-card shadow-sm border-primary border-2">
+                    <div class="card-body px-4 py-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="org-avatar" style="background: linear-gradient(135deg, #7c3aed, #5b21b6);">
+                                <?= strtoupper(substr($employee['name'] ?? 'E', 0, 1)) ?>
+                            </div>
+                            <div class="text-start">
+                                <h5 class="mb-0 fw-bold"><?= htmlspecialchars($employee['name'] ?? '') ?></h5>
+                                <div class="text-muted small"><?= htmlspecialchars($employee['designation'] ?? '') ?></div>
+                                <?php if (!empty($employee['department'])): ?>
+                                    <span class="dept-badge mt-1"><?= htmlspecialchars($employee['department']) ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subordinates -->
+        <?php if (!empty($subordinates)): ?>
+            <div class="org-line mb-4" style="height:30px;"></div>
+            <p class="text-muted small fw-semibold text-uppercase text-center mb-3"><i class="fas fa-arrow-down me-1"></i>Team Members (<?= count($subordinates) ?>)</p>
+            <div class="row g-3 mb-4 justify-content-center">
+                <?php foreach ($subordinates as $sub):
+                    $score = (int)($sub['performance_score'] ?? 0);
+                    $scoreColor = $score >= 75 ? '#10b981' : ($score >= 50 ? '#f59e0b' : '#ef4444');
+                    $levelColor = match(true) { ($sub['designation'] ?? '') === 'Director' => 'danger', ($sub['designation'] ?? '') === 'Manager' => 'primary', ($sub['designation'] ?? '') === 'Senior' => 'info', default => 'secondary' };
+                ?>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card member-card shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="org-avatar" style="background: linear-gradient(135deg, #10b981, #059669); width:44px; height:44px; font-size:1rem; border-radius:10px;">
+                                        <?= strtoupper(substr($sub['name'] ?? 'T', 0, 1)) ?>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="mb-0 fw-bold"><?= htmlspecialchars($sub['name'] ?? '') ?></h6>
+                                                <small class="text-muted"><?= htmlspecialchars($sub['designation'] ?? '') ?></small>
+                                            </div>
+                                            <span class="level-badge bg-<?= $levelColor ?> bg-opacity-10 text-<?= $levelColor ?>"><?= ucfirst(htmlspecialchars($sub['designation'] ?? '')) ?></span>
+                                        </div>
+                                        <div class="d-flex gap-3 mt-2">
+                                            <div class="small">
+                                                <span class="text-muted">Tasks:</span>
+                                                <strong><?= (int)($sub['tasks_completed'] ?? 0) ?>/<?= (int)($sub['total_tasks'] ?? 0) ?></strong>
+                                            </div>
+                                            <div class="small">
+                                                <span class="text-muted">Score:</span>
+                                                <strong style="color: <?= $scoreColor ?>"><?= $score ?>%</strong>
+                                            </div>
+                                        </div>
+                                        <div class="progress mt-1" style="height:4px;">
+                                            <div class="progress-bar" style="width:<?= $score ?>%; background: <?= $scoreColor ?>;"></div>
+                                        </div>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <?php if (!empty($sub['email'])): ?>
+                                                <a href="mailto:<?= htmlspecialchars($sub['email']) ?>" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size:0.75rem;"><i class="fas fa-envelope"></i></a>
+                                            <?php endif; ?>
+                                            <?php if (!empty($sub['phone'])): ?>
+                                                <a href="tel:<?= htmlspecialchars($sub['phone']) ?>" class="btn btn-sm btn-outline-success py-0 px-2" style="font-size:0.75rem;"><i class="fas fa-phone"></i></a>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <!-- Department Members -->
+        <?php if (!empty($department_members)): ?>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom-0 pt-3">
+                    <h6 class="fw-bold mb-0"><i class="fas fa-building me-2 text-primary"></i>Department Members (<?= count($department_members) ?>)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Designation</th>
+                                    <th>Contact</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($department_members as $m): ?>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="org-avatar" style="background: linear-gradient(135deg, #6366f1, #4f46e5); width:36px; height:36px; font-size:0.85rem; border-radius:8px; min-width:36px;">
+                                                    <?= strtoupper(substr($m['name'] ?? 'M', 0, 1)) ?>
+                                                </div>
+                                                <strong class="small"><?= htmlspecialchars($m['name'] ?? '') ?></strong>
+                                            </div>
+                                        </td>
+                                        <td><small><?= htmlspecialchars($m['designation'] ?? '') ?></small></td>
+                                        <td>
+                                            <?php if (!empty($m['email'])): ?>
+                                                <a href="mailto:<?= htmlspecialchars($m['email']) ?>" class="small text-decoration-none"><i class="fas fa-envelope me-1 text-muted"></i><?= htmlspecialchars($m['email']) ?></a>
+                                            <?php else: ?>
+                                                <span class="text-muted small">—</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $st = strtolower($m['status'] ?? 'active');
+                                            $stColor = $st === 'active' ? 'success' : ($st === 'inactive' ? 'secondary' : 'warning');
+                                            ?>
+                                            <span class="badge bg-<?= $stColor ?> bg-opacity-10 text-<?= $stColor ?>"><?= ucfirst(htmlspecialchars($st)) ?></span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>

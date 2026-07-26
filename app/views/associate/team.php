@@ -13,6 +13,10 @@ $rankLabels = [
     'president' => __('assoc_rank_president', [], 'President'),
     'site_manager' => __('assoc_rank_site_manager', [], 'Site Manager'),
 ];
+$rankColors = [
+    'associate' => '#94a3b8', 'senior_associate' => '#d97706', 'bdm' => '#ca8a04',
+    'sr_bdm' => '#0891b2', 'vice_president' => '#0f766e', 'president' => '#dc2626', 'site_manager' => '#059669',
+];
 ?>
 
 <div class="container-fluid px-4 py-3">

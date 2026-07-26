@@ -170,14 +170,14 @@ $kpis = [
                                         $statusBadge = match($l['status'] ?? 'new') {
                                             'new' => 'primary',
                                             'contacted' => 'info',
-                                            'qualified' => 'purple',
+                                            'qualified' => 'info',
                                             'site_visit' => 'warning',
-                                            'proposal' => 'pink',
+                                            'proposal' => 'danger',
                                             'negotiation' => 'danger',
                                             'won' => 'success',
                                             'converted' => 'success',
                                             'lost' => 'secondary',
-                                            'dead' => 'muted',
+                                            'dead' => 'dark',
                                             default => 'secondary'
                                         };
                                     ?>

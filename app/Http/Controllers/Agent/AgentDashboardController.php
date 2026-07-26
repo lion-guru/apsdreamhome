@@ -28,6 +28,8 @@ class AgentDashboardController extends BaseController
         parent::__construct();
         $this->db = Database::getInstance();
         $this->layout = 'layouts/agent';
+        $this->userId = $_SESSION['user_id'] ?? 0;
+        $this->associateId = $_SESSION['associate_id'] ?? 0;
     }
 
     /**

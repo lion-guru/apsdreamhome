@@ -44,7 +44,7 @@ ob_start();
                   'failed' => 'danger',
                   'pending' => 'warning',
                   default => 'secondary'
-                }" style="width: 16px; height: 16px; border: 3px solid white; box-shadow: 0 0 0 2px <?= match($log['status'] ?? 'success') {
+                } ?>" style="width: 16px; height: 16px; border: 3px solid white; box-shadow: 0 0 0 2px <?= match($log['status'] ?? 'success') {
                   'success' => '#198754',
                   'failed' => '#dc3545',
                   'pending' => '#ffc107',

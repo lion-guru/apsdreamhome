@@ -1,148 +1,220 @@
 <?php
+$overall = $overall ?? ['tasks_completed' => 0, 'on_time_rate' => 0, 'rating' => 0, 'attendance_percent' => 0, 'total_tasks' => 0];
+$reviews = $reviews ?? [];
+$recent_tasks = $recent_tasks ?? [];
 
-// TODO: Add proper error handling with try-catch blocks
-
-/**
- * Employee Performance View
- * Shows employee performance metrics and analytics
- */
+function gradeFromRating($r) {
+    $r = (float)$r;
+    if ($r >= 4.5) return ['A+', 'success'];
+    if ($r >= 4.0) return ['A', 'success'];
+    if ($r >= 3.5) return ['B+', 'info'];
+    if ($r >= 3.0) return ['B', 'primary'];
+    if ($r >= 2.0) return ['C', 'warning'];
+    return ['D', 'danger'];
+}
+function perfLevelBadge($level) {
+    $map = ['excellent' => 'success', 'good' => 'info', 'average' => 'warning', 'needs_improvement' => 'danger', 'poor' => 'danger'];
+    $cls = $map[strtolower($level ?? '')] ?? 'secondary';
+    return '<span class="badge bg-' . $cls . '">' . ucfirst(htmlspecialchars($level ?? 'N/A')) . '</span>';
+}
 ?>
 
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+.emp-perf-stat { border: none; border-radius: 14px; overflow: hidden; position: relative; }
+.emp-perf-stat .stat-body { padding: 1.25rem; color: #fff; position: relative; z-index: 1; }
+.emp-perf-stat .stat-bg { position: absolute; top: 0; right: 0; width: 100px; height: 100%; opacity: 0.1; font-size: 4rem; display: flex; align-items: center; justify-content: center; }
+.emp-perf-stat .stat-val { font-size: 2rem; font-weight: 700; }
+.emp-review-card { border: 1px solid #e2e8f0; border-radius: 12px; transition: all 0.2s; }
+.emp-review-card:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.08); transform: translateY(-1px); }
+.emp-rating-stars { color: #f59e0b; letter-spacing: 2px; }
+.emp-task-mini { border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; font-size: 0.85rem; }
+.emp-perf-progress { height: 8px; border-radius: 4px; background: #e2e8f0; }
+.emp-perf-progress-fill { height: 100%; border-radius: 4px; }
+</style>
+
 <div class="container-fluid">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-chart-line me-2"></i>My Performance</h2>
-        <div class="dropdown">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                <i class="fas fa-calendar me-2"></i>Select Period
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="?period=month">This Month</a></li>
-                <li><a class="dropdown-item" href="?period=quarter">This Quarter</a></li>
-                <li><a class="dropdown-item" href="?period=year">This Year</a></li>
-            </ul>
-        </div>
+    <div class="mb-4">
+        <h4 class="mb-1 fw-bold"><i class="fas fa-chart-line me-2 text-primary"></i>Performance Overview</h4>
+        <p class="text-muted mb-0 small">Track your metrics, reviews, and task performance</p>
     </div>
 
-    <!-- Performance Overview -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $overallScore = ($monthly_performance['overall_score'] ?? 0);
-                                echo number_format($overallScore, 1);
-                                ?>%
-                            </h4>
-                            <small>Overall Score</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-star fa-2x"></i>
-                        </div>
-                    </div>
+    <!-- Top Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card emp-perf-stat" style="background: linear-gradient(135deg, #7c2d12, #dc2626);">
+                <div class="stat-body">
+                    <div class="text-white-50 small mb-1"><i class="fas fa-check-double me-1"></i> Tasks Completed</div>
+                    <div class="stat-val"><?= $overall['tasks_completed'] ?? 0 ?></div>
+                    <div class="small text-white-50">of <?= $overall['total_tasks'] ?? 0 ?> total</div>
                 </div>
+                <div class="stat-bg"><i class="fas fa-check-double"></i></div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $productivityScore = ($monthly_performance['productivity_score'] ?? 0);
-                                echo number_format($productivityScore, 1);
-                                ?>%
-                            </h4>
-                            <small>Productivity</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-rocket fa-2x"></i>
-                        </div>
-                    </div>
+        <div class="col-6 col-lg-3">
+            <div class="card emp-perf-stat" style="background: linear-gradient(135deg, #065f46, #10b981);">
+                <div class="stat-body">
+                    <div class="text-white-50 small mb-1"><i class="fas fa-clock me-1"></i> On-Time Rate</div>
+                    <div class="stat-val"><?= $overall['on_time_rate'] ?? 0 ?>%</div>
+                    <div class="small text-white-50">delivery metric</div>
                 </div>
+                <div class="stat-bg"><i class="fas fa-clock"></i></div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $qualityScore = ($monthly_performance['quality_score'] ?? 0);
-                                echo number_format($qualityScore, 1);
-                                ?>%
-                            </h4>
-                            <small>Quality</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-gem fa-2x"></i>
-                        </div>
-                    </div>
+        <div class="col-6 col-lg-3">
+            <div class="card emp-perf-stat" style="background: linear-gradient(135deg, #92400e, #f59e0b);">
+                <div class="stat-body">
+                    <div class="text-white-50 small mb-1"><i class="fas fa-star me-1"></i> Avg Rating</div>
+                    <div class="stat-val"><?= number_format((float)($overall['rating'] ?? 0), 1) ?></div>
+                    <div class="small text-white-50">out of 5.0</div>
                 </div>
+                <div class="stat-bg"><i class="fas fa-star"></i></div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
-                <div class="card-body aps-cp-card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $attendanceScore = ($monthly_performance['attendance_score'] ?? 0);
-                                echo number_format($attendanceScore, 1);
-                                ?>%
-                            </h4>
-                            <small>Attendance</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-calendar-check fa-2x"></i>
-                        </div>
-                    </div>
+        <div class="col-6 col-lg-3">
+            <div class="card emp-perf-stat" style="background: linear-gradient(135deg, #1e3a5f, #3b82f6);">
+                <div class="stat-body">
+                    <div class="text-white-50 small mb-1"><i class="fas fa-calendar-check me-1"></i> Attendance</div>
+                    <div class="stat-val"><?= $overall['attendance_percent'] ?? 0 ?>%</div>
+                    <div class="small text-white-50">last 30 days</div>
                 </div>
+                <div class="stat-bg"><i class="fas fa-calendar-check"></i></div>
             </div>
         </div>
     </div>
 
-    <!-- Performance Charts -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-chart-bar me-2"></i>Performance Trend</h5>
+    <div class="row g-4">
+        <!-- Left: Performance Gauge + Recent Tasks -->
+        <div class="col-lg-7">
+            <!-- Performance Meter -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0 fw-semibold"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Performance Meter</h6>
                 </div>
-                <div class="card-body aps-cp-card-body">
-                    <canvas id="performanceChart" width="400" height="200"></canvas>
+                <div class="card-body">
+                    <?php
+                    $totalTasks = max((int)($overall['total_tasks'] ?? 0), 1);
+                    $tasksCompleted = (int)($overall['tasks_completed'] ?? 0);
+                    $onTimeRate = (float)($overall['on_time_rate'] ?? 0);
+                    $rating = (float)($overall['rating'] ?? 0);
+                    $attendancePercent = (float)($overall['attendance_percent'] ?? 0);
+
+                    $overallScore = $totalTasks > 0
+                        ? round(($tasksCompleted / $totalTasks) * 50 + $onTimeRate * 0.3 + $rating * 10, 0)
+                        : 0;
+                    $overallScore = min(100, max(0, $overallScore));
+                    $scoreColor = $overallScore >= 80 ? '#10b981' : ($overallScore >= 60 ? '#f59e0b' : '#ef4444');
+                    ?>
+                    <div class="text-center mb-3">
+                        <div style="position:relative;display:inline-block;width:160px;height:80px;">
+                            <svg viewBox="0 0 160 80" style="width:100%;height:100%;">
+                                <path d="M 10 75 A 70 70 0 0 1 150 75" fill="none" stroke="#e2e8f0" stroke-width="12" stroke-linecap="round"/>
+                                <path d="M 10 75 A 70 70 0 0 1 150 75" fill="none" stroke="<?= $scoreColor ?>" stroke-width="12" stroke-linecap="round"
+                                    stroke-dasharray="<?= $overallScore * 2.2 ?> 220" style="transition: stroke-dasharray 1s ease;"/>
+                            </svg>
+                            <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);text-align:center;">
+                                <div class="fw-bold fs-3" style="color:<?= $scoreColor ?>"><?= $overallScore ?>%</div>
+                                <div class="text-muted small">Overall Score</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Breakdown bars -->
+                    <?php
+                    $metrics = [
+                        ['label' => 'Task Completion', 'value' => $totalTasks > 0 ? round(($tasksCompleted / $totalTasks) * 100) : 0, 'color' => '#7c2d12'],
+                        ['label' => 'On-Time Delivery', 'value' => $onTimeRate, 'color' => '#065f46'],
+                        ['label' => 'Rating', 'value' => round($rating * 20), 'color' => '#92400e'],
+                        ['label' => 'Attendance', 'value' => $attendancePercent, 'color' => '#1e3a5f'],
+                    ];
+                    foreach ($metrics as $m): ?>
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <div class="text-muted small" style="width:130px;"><?= $m['label'] ?></div>
+                            <div class="flex-grow-1 emp-perf-progress">
+                                <div class="emp-perf-progress-fill" style="width:<?= $m['value'] ?>%;background:<?= $m['color'] ?>;"></div>
+                            </div>
+                            <div class="fw-semibold small" style="width:40px;text-align:right;"><?= $m['value'] ?>%</div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-trophy me-2"></i>Achievements</h5>
+
+            <!-- Recent Tasks -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0 fw-semibold"><i class="fas fa-clipboard-list me-2 text-primary"></i>Recent Tasks</h6>
                 </div>
-                <div class="card-body aps-cp-card-body">
-                    <?php if (empty($monthly_performance['achievements'] ?? [])): ?>
-                        <p class="text-muted">No achievements yet.</p>
+                <div class="card-body p-0">
+                    <?php if (empty($recent_tasks)): ?>
+                        <div class="text-center text-muted py-4">No tasks found</div>
                     <?php else: ?>
-                        <?php foreach (($monthly_performance['achievements'] ?? []) as $achievement): ?>
-                            <div class="achievement-item mb-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="achievement-icon me-3">
-                                        <i class="fas fa-<?= $achievement['icon'] ?? 'trophy' ?> text-warning"></i>
+                        <?php foreach ($recent_tasks as $rt):
+                            $s = strtolower($rt['status'] ?? '');
+                            $sColor = $s === 'completed' ? 'success' : ($s === 'in progress' ? 'info' : 'secondary');
+                            $isOverdue = !empty($rt['due_date']) && $rt['due_date'] < date('Y-m-d') && $s !== 'completed';
+                        ?>
+                            <div class="d-flex align-items-center gap-3 px-3 py-2 border-bottom">
+                                <div class="emp-task-mini d-flex align-items-center gap-2 flex-grow-1 <?= $isOverdue ? 'border-danger' : '' ?>">
+                                    <span class="badge bg-<?= $sColor ?> bg-opacity-10 text-<?= $sColor ?>"><?= $s === 'completed' ? 'Done' : ucfirst($rt['status'] ?? 'Pending') ?></span>
+                                    <span class="<?= $s === 'completed' ? 'text-decoration-line-through text-muted' : '' ?>"><?= htmlspecialchars($rt['title'] ?? '') ?></span>
+                                </div>
+                                <div class="text-end">
+                                    <?php if (!empty($rt['due_date'])): ?>
+                                        <span class="small <?= $isOverdue ? 'text-danger' : 'text-muted' ?>"><?= date('d M', strtotime($rt['due_date'])) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Reviews -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-semibold"><i class="fas fa-star-half-alt me-2 text-primary"></i>Performance Reviews</h6>
+                    <span class="badge bg-primary bg-opacity-10 text-primary"><?= count($reviews) ?> reviews</span>
+                </div>
+                <div class="card-body">
+                    <?php if (empty($reviews)): ?>
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-clipboard fa-3x mb-3 opacity-25"></i>
+                            <p>No reviews yet</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($reviews as $rv):
+                            [$grade, $gradeColor] = gradeFromRating((float)($rv['overall_rating'] ?? 0));
+                        ?>
+                            <div class="card emp-review-card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <span class="badge bg-<?= $gradeColor ?> fs-6 me-2"><?= $grade ?></span>
+                                            <span class="fw-bold fs-5"><?= number_format((float)($rv['overall_rating'] ?? 0), 1) ?></span>
+                                            <span class="text-muted">/5.0</span>
+                                        </div>
+                                        <?= perfLevelBadge($rv['performance_level'] ?? '') ?>
                                     </div>
-                                    <div>
-                                        <h6 class="mb-1">
-                                            <?= htmlspecialchars($achievement['title'] ?? 'Achievement') ?>
-                                        </h6>
-                                        <small class="text-muted">
-                                            <?= htmlspecialchars($achievement['description'] ?? '') ?>
-                                        </small>
+                                    <div class="emp-rating-stars mb-2">
+                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                            <i class="fas fa-star<?= $i <= round((float)($rv['overall_rating'] ?? 0)) ? '' : '-o' ?>"></i>
+                                        <?php endfor; ?>
                                     </div>
+                                    <div class="small text-muted mb-2">
+                                        <i class="fas fa-calendar me-1"></i> <?= date('d M Y', strtotime($rv['review_date'] ?? $rv['created_at'] ?? 'now')) ?>
+                                        <?php if (!empty($rv['reviewer_name'])): ?>
+                                            &middot; <i class="fas fa-user me-1"></i> <?= htmlspecialchars($rv['reviewer_name']) ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php if (!empty($rv['strengths'])): ?>
+                                        <div class="small mb-1"><strong class="text-success"><i class="fas fa-thumbs-up me-1"></i>Strengths:</strong> <?= htmlspecialchars($rv['strengths']) ?></div>
+                                    <?php endif; ?>
+                                    <?php if (!empty($rv['areas_for_improvement'])): ?>
+                                        <div class="small mb-1"><strong class="text-warning"><i class="fas fa-bolt me-1"></i>Improve:</strong> <?= htmlspecialchars($rv['areas_for_improvement']) ?></div>
+                                    <?php endif; ?>
+                                    <?php if (!empty($rv['reviewer_comments'])): ?>
+                                        <div class="small mt-2 p-2 bg-light rounded"><i class="fas fa-quote-left me-1 text-muted"></i> <?= htmlspecialchars($rv['reviewer_comments']) ?></div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -151,291 +223,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Detailed Metrics -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-tasks me-2"></i>Task Performance</h5>
-                </div>
-                <div class="card-body aps-cp-card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="metric-item text-center">
-                                <h3 class="text-primary mb-1">
-                                    <?= $monthly_performance['tasks_completed'] ?? 0 ?>
-                                </h3>
-                                <small class="text-muted">Tasks Completed</small>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="metric-item text-center">
-                                <h3 class="text-success mb-1">
-                                    <?= number_format($monthly_performance['avg_completion_time'] ?? 0, 1) ?>h
-                                </h3>
-                                <small class="text-muted">Avg. Completion Time</small>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="metric-item text-center">
-                                <h3 class="text-info mb-1">
-                                    <?= $monthly_performance['on_time_delivery'] ?? 0 ?>%
-                                </h3>
-                                <small class="text-muted">On-Time Delivery</small>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="metric-item text-center">
-                                <h3 class="text-warning mb-1">
-                                    <?= $monthly_performance['revision_rate'] ?? 0 ?>%
-                                </h3>
-                                <small class="text-muted">Revision Rate</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-chart-pie me-2"></i>Performance Breakdown</h5>
-                </div>
-                <div class="card-body aps-cp-card-body">
-                    <canvas id="performanceBreakdownChart" width="400" height="200"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Goals and Targets -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-bullseye me-2"></i>Goals & Targets</h5>
-                </div>
-                <div class="card-body aps-cp-card-body">
-                    <div class="row">
-                        <?php foreach (($monthly_performance['goals'] ?? []) as $goal): ?>
-                            <div class="col-md-4 mb-3">
-                                <div class="goal-card">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="mb-0">
-                                            <?= htmlspecialchars($goal['title'] ?? 'Goal') ?>
-                                        </h6>
-                                        <span class="badge bg-<?= $goal['status'] === 'achieved' ? 'success' : 'warning' ?>">
-                                            <?= ucfirst($goal['status'] ?? 'pending') ?>
-                                        </span>
-                                    </div>
-                                    <div class="progress mb-2">
-                                        <div class="progress-bar bg-<?= $goal['status'] === 'achieved' ? 'success' : 'warning' ?>"
-                                             style="width: <?= min(($goal['progress'] ?? 0), 100) ?>%">
-                                            <?= $goal['progress'] ?? 0 ?>%
-                                        </div>
-                                    </div>
-                                    <small class="text-muted">
-                                        Target: <?= htmlspecialchars($goal['target'] ?? 'N/A') ?> |
-                                        Current: <?= htmlspecialchars($goal['current'] ?? '0') ?>
-                                    </small>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Performance History -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card aps-cp-card">
-                <div class="card-header aps-cp-card-header">
-                    <h5><i class="fas fa-history me-2"></i>Performance History</h5>
-                </div>
-                <div class="card-body aps-cp-card-body">
-                    <div class="table-responsive">
-                        <div class="table-responsive"><table class="table table-striped table-hover table-responsive">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Period</th>
-                                    <th>Overall Score</th>
-                                    <th>Productivity</th>
-                                    <th>Quality</th>
-                                    <th>Attendance</th>
-                                    <th>Tasks Completed</th>
-                                    <th>Grade</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach (($monthly_performance['history'] ?? []) as $period): ?>
-                                    <tr>
-                                        <td>
-                                            <strong><?= htmlspecialchars($period['period'] ?? 'N/A') ?></strong>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-<?= $this->getScoreBadgeClass($period['overall_score'] ?? 0) ?>">
-                                                <?= number_format($period['overall_score'] ?? 0, 1) ?>%
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <?= number_format($period['productivity'] ?? 0, 1) ?>%
-                                        </td>
-                                        <td>
-                                            <?= number_format($period['quality'] ?? 0, 1) ?>%
-                                        </td>
-                                        <td>
-                                            <?= number_format($period['attendance'] ?? 0, 1) ?>%
-                                        </td>
-                                        <td>
-                                            <?= $period['tasks_completed'] ?? 0 ?>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-<?= $this->getGradeBadgeClass($period['grade'] ?? 'N/A') ?>">
-                                                <?= htmlspecialchars($period['grade'] ?? 'N/A') ?>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-// Performance Trend Chart
-const performanceCtx = document.getElementById('performanceChart');
-if (performanceCtx) {
-    new Chart(performanceCtx, {
-        type: 'line',
-        data: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            datasets: [{
-                label: 'Overall Performance',
-                data: [
-                    <?= $monthly_performance['week1_score'] ?? 75 ?>,
-                    <?= $monthly_performance['week2_score'] ?? 80 ?>,
-                    <?= $monthly_performance['week3_score'] ?? 85 ?>,
-                    <?= $monthly_performance['week4_score'] ?? 90 ?>
-                ],
-                borderColor: '#007bff',
-                backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100
-                }
-            }
-        }
-    });
-}
-
-// Performance Breakdown Chart
-const breakdownCtx = document.getElementById('performanceBreakdownChart');
-if (breakdownCtx) {
-    new Chart(breakdownCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Productivity', 'Quality', 'Attendance', 'Other'],
-            datasets: [{
-                data: [
-                    <?= $monthly_performance['productivity_score'] ?? 80 ?>,
-                    <?= $monthly_performance['quality_score'] ?? 85 ?>,
-                    <?= $monthly_performance['attendance_score'] ?? 90 ?>,
-                    <?= 100 - (($monthly_performance['productivity_score'] ?? 80) + ($monthly_performance['quality_score'] ?? 85) + ($monthly_performance['attendance_score'] ?? 90)) ?>
-                ],
-                backgroundColor: [
-                    '#007bff',
-                    '#28a745',
-                    '#ffc107',
-                    '#6c757d'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
-}
-
-// Auto-refresh performance data every 5 minutes
-setInterval(function() {
-    if (!document.hidden) {
-        location.reload();
-    }
-}, 300000);
-</script>
-
-<style>
-.stats-card {
-    border: none;
-    border-radius: 10px;
-    transition: transform 0.2s;
-}
-
-.stats-card:hover {
-    transform: translateY(-2px);
-}
-
-.metric-item {
-    padding: 15px;
-    border-radius: 8px;
-    background: #f8f9fa;
-    margin-bottom: 10px;
-}
-
-.goal-card {
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 15px;
-    transition: box-shadow 0.2s;
-}
-
-.goal-card:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.achievement-item {
-    padding: 10px;
-    border-radius: 8px;
-    background: #f8f9fa;
-    border-left: 4px solid #ffc107;
-}
-
-.achievement-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #ffc107;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.table th {
-    border-top: none;
-    font-weight: 600;
-}
-
-.badge {
-    font-size: 0.8em;
-}
-</style>

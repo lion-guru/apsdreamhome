@@ -54,8 +54,9 @@ foreach ($nodes as $n) {
 
 <style>
 .tree-node { position: relative; }
-.tree-node .card { transition: all 0.25s ease; cursor: default; }
+.tree-node .card { transition: all 0.25s ease; cursor: pointer; }
 .tree-node .card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.12) !important; }
+.tree-node .card:hover .tree-tooltip { display: block; }
 .tree-connector { position: relative; }
 .tree-connector::before { content:''; position:absolute; left:50%; top:0; width:2px; height:100%; background:#cbd5e1; }
 .tree-h-line { height:2px; background:#cbd5e1; position:relative; }
@@ -63,7 +64,18 @@ foreach ($nodes as $n) {
 .rank-pulse { animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.3); } 50% { box-shadow: 0 0 0 8px rgba(99,102,241,0); } }
 .leg-badge { font-size:0.6rem; padding:2px 8px; border-radius:10px; font-weight:700; letter-spacing:0.5px; }
+.gen-badge { font-size:0.55rem; padding:1px 6px; border-radius:8px; font-weight:700; background:rgba(99,102,241,0.15); color:#6366f1; }
 .overflow-x-auto { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tree-tooltip {
+    display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    background: #1e293b; color: #fff; padding: 8px 12px; border-radius: 8px;
+    font-size: 0.72rem; white-space: nowrap; z-index: 10; pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.tree-tooltip::after {
+    content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: #1e293b;
+}
 </style>
 
 <div class="container-fluid px-4 py-3">
@@ -175,6 +187,7 @@ foreach ($nodes as $n) {
                     <!-- Root node (YOU) -->
                     <div class="text-center mb-2">
                         <div class="d-inline-block border-2 rounded-3 p-3 position-relative rank-pulse" style="border-color:<?= $rootColor ?> !important;background:#f8fafc;min-width:220px;">
+                            <span class="gen-badge mb-1 d-inline-block"><?php echo __('assoc_net_you', [], 'YOU'); ?> (Gen 0)</span>
                             <span class="leg-badge mb-2 d-inline-block" style="background:<?= $rootColor ?>;color:#fff;"><?php echo __('assoc_net_you', [], 'YOU'); ?></span>
                             <div class="fw-bold" style="font-size:1.1rem;"><?= htmlspecialchars($root['name'] ?? 'You') ?></div>
                             <div class="small text-muted mt-1">
@@ -211,6 +224,7 @@ foreach ($nodes as $n) {
                             <tr>
                                 <th><?php echo __('assoc_net_th_hash', [], '#'); ?></th>
                                 <th><?php echo __('assoc_net_th_member', [], 'Member'); ?></th>
+                                <th><?php echo __('assoc_net_th_gen', [], 'Gen'); ?></th>
                                 <th><?php echo __('assoc_net_th_rank', [], 'Rank'); ?></th>
                                 <th><?php echo __('assoc_net_th_position', [], 'Position'); ?></th>
                                 <th><?php echo __('assoc_net_th_level', [], 'Level'); ?></th>
@@ -221,7 +235,7 @@ foreach ($nodes as $n) {
                         </thead>
                         <tbody>
                             <?php if (empty($nodes)): ?>
-                                <tr><td colspan="8" class="text-center text-muted py-4"><?php echo __('assoc_net_no_members', [], 'No members in your network yet.'); ?></td></tr>
+                                <tr><td colspan="9" class="text-center text-muted py-4"><?php echo __('assoc_net_no_members', [], 'No members in your network yet.'); ?></td></tr>
                             <?php else: ?>
                                 <?php foreach ($nodes as $i => $n):
                                     $level = strtolower($n['current_level'] ?? 'associate');
@@ -234,6 +248,7 @@ foreach ($nodes as $n) {
                                     <td>
                                         <div class="fw-bold"><?= htmlspecialchars($n['name'] ?? __('assoc_net_unknown', [], 'Unknown')) ?></div>
                                     </td>
+                                    <td><span class="gen-badge">Gen <?= (int)($n['level'] ?? 0) ?></span></td>
                                     <td>
                                         <span class="badge" style="background:<?= $color ?>;color:#fff;font-size:0.75rem;">
                                             <i class="fas <?= $icon ?> me-1"></i><?= htmlspecialchars($label) ?>
@@ -279,6 +294,7 @@ foreach ($nodes as $n) {
                         </div>
                         <h6 class="fw-bold mb-1"><?= htmlspecialchars($n['name'] ?? 'Unknown') ?></h6>
                         <span class="badge mb-2" style="background:<?= $color ?>;color:#fff;font-size:0.7rem;"><?= htmlspecialchars($label) ?></span>
+                        <div class="gen-badge mb-2 d-inline-block">Gen <?= (int)($n['level'] ?? 0) ?></div>
                         <div class="d-flex justify-content-around mt-2" style="font-size:0.78rem;">
                             <div>
                                 <div class="fw-bold text-primary">₹<?= number_format((float)($n['total_commission'] ?? 0)) ?></div>
@@ -322,6 +338,7 @@ function buildTreeLevel($parentId, $byParent, $rankColors, $rankIcons, $rankLabe
         $icon = $rankIcons[$level] ?? 'fa-user';
         $label = $rankLabels[$level] ?? ucfirst(str_replace('_', ' ', $level));
         $name = htmlspecialchars($child['name'] ?? __('assoc_net_unknown', [], 'Unknown'));
+        $email = htmlspecialchars($child['email'] ?? '');
         $commission = number_format((float)($child['total_commission'] ?? 0));
         $bv = number_format((float)($child['personal_bv'] ?? 0));
         $joinDate = date('d M Y', strtotime($child['joined_at'] ?? 'now'));
@@ -331,6 +348,7 @@ function buildTreeLevel($parentId, $byParent, $rankColors, $rankIcons, $rankLabe
         $isActive = (int)($child['is_active'] ?? 1);
         $childId = $child['id'] ?? null;
         $hasChildren = !empty($byParent[$childId]);
+        $genNum = $depth + 1;
 
         $html .= '<div class="tree-node text-center" style="min-width:170px;max-width:200px;flex:0 0 auto;">';
 
@@ -342,16 +360,34 @@ function buildTreeLevel($parentId, $byParent, $rankColors, $rankIcons, $rankLabe
             $html .= '<span class="leg-badge mb-1 d-inline-block" style="background:'.$posColor.';color:#fff;">'.$posLabel.' '.__('assoc_net_leg', [], 'LEG').'</span>';
         }
 
-        // Card
+        // Card with tooltip and click-through
+        $profileUrl = BASE_URL . '/associate/team';
+        $html .= '<a href="'.$profileUrl.'" class="text-decoration-none">';
         $html .= '<div class="card border-0 shadow-sm p-2 text-center" style="border-left:4px solid '.$color.' !important;'.(!$isActive ? 'opacity:0.5;':'').($depth >= 2 ? 'font-size:0.85rem;':'').'">';
+
+        // Tooltip on hover
+        $html .= '<div class="tree-tooltip">';
+        $html .= $name;
+        if ($email) $html .= '<br><small>'.$email.'</small>';
+        $html .= '<br>Rank: '.$label.' | Earned: ₹'.$commission;
+        if ($pos) $html .= ' | '.strtoupper($pos).' Leg';
+        $html .= '</div>';
+
+        // Gen badge
+        $html .= '<span class="gen-badge mb-1 d-inline-block">Gen '.$genNum.'</span>';
         $html .= '<span class="badge mb-1" style="background:'.$color.';color:#fff;font-size:0.65rem;"><i class="fas '.$icon.'"></i> '.$label.'</span>';
         $html .= '<div class="fw-bold" style="font-size:'.($depth >= 2 ? '0.82rem':'0.9rem').';">'.$name.'</div>';
         $html .= '<div class="mt-1" style="font-size:0.72rem;">';
         $html .= '<span class="me-2"><i class="fas fa-rupee-sign"></i>'.$commission.'</span>';
         $html .= '<span><i class="fas fa-chart-line"></i>'.$bv.'</span>';
         $html .= '</div>';
+        if ($hasChildren) {
+            $directChildCount = count($byParent[$childId]);
+            $html .= '<div class="text-muted" style="font-size:0.6rem;"><i class="fas fa-sitemap me-1"></i>'.$directChildCount.' direct</div>';
+        }
         $html .= '<div class="text-muted" style="font-size:0.65rem;"><i class="fas fa-calendar me-1"></i>'.__('assoc_net_joined', [], 'Joined').' '.$joinDate.'</div>';
         $html .= '</div>';
+        $html .= '</a>';
 
         // Recurse children
         $childHtml = buildTreeLevel($childId, $byParent, $rankColors, $rankIcons, $rankLabels, $depth + 1);

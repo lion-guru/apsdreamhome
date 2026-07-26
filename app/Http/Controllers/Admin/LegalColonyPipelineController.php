@@ -580,12 +580,14 @@ class LegalColonyPipelineController extends AdminController
         $this->requireAdmin();
         $colonyId = intval($colonyId);
 
-        $data = $this->analytics->getColonyAnalytics($colonyId);
+        try {
+            $data = $this->analytics->getColonyAnalytics($colonyId);
+        } catch (\Throwable $e) {
+            die('Analytics Exception: ' . $e->getMessage());
+        }
 
         if (!$data['success']) {
-            $_SESSION['flash_error'] = $data['error'] ?? 'Analytics unavailable';
-            header('Location: /admin/legal-colony-pipeline');
-            exit;
+            die('Analytics failed: ' . ($data['error'] ?? 'unknown'));
         }
 
         return $this->render('admin/legal-colony-pipeline/analytics', [
@@ -700,7 +702,7 @@ class LegalColonyPipelineController extends AdminController
             }
 
             $this->db->execute(
-                "UPDATE rera_milestones SET status = ?, completion_date = IF(? = 'completed', CURDATE(), completion_date), notes = IF(? != '', ?, notes) WHERE id = ?",
+                "UPDATE rera_milestones SET status = ?, actual_date = IF(? = 'completed', CURDATE(), actual_date), remarks = IF(? != '', ?, remarks) WHERE id = ?",
                 [$status, $status, $notes, $notes, $milestoneId]
             );
 

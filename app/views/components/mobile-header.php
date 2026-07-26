@@ -45,7 +45,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                                 <i class="bi bi-person-badge me-2"></i>Agent Dashboard
                             </a></li>
                         <?php elseif ($userRole === 'customer'): ?>
-                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>customer/dashboard">
+                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>user/dashboard">
                                 <i class="bi bi-person-circle me-2"></i>Customer Dashboard
                             </a></li>
                         <?php elseif ($userRole === 'employee'): ?>
@@ -101,9 +101,9 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                                     <a href="<?php echo BASE_URL; ?>properties" class="nav-link px-3">__('component_properties', 'Properties')</a>
                                     <a href="<?php echo BASE_URL; ?>agent/leads" class="nav-link px-3">__('component_leads', 'Leads')</a>
                                 <?php elseif ($userRole === 'customer'): ?>
-                                    <a href="<?php echo BASE_URL; ?>customer/dashboard" class="nav-link px-3">Dashboard</a>
-                                    <a href="<?php echo BASE_URL; ?>customer/properties" class="nav-link px-3">__('component_properties', 'Properties')</a>
-                                    <a href="<?php echo BASE_URL; ?>customer/inquiries" class="nav-link px-3">__('component_my_inquiries', 'My Inquiries')</a>
+                                    <a href="<?php echo BASE_URL; ?>user/dashboard" class="nav-link px-3">Dashboard</a>
+                                    <a href="<?php echo BASE_URL; ?>properties" class="nav-link px-3">__('component_properties', 'Properties')</a>
+                                    <a href="<?php echo BASE_URL; ?>user/saved-searches" class="nav-link px-3">__('component_my_inquiries', 'My Inquiries')</a>
                                 <?php elseif ($userRole === 'employee'): ?>
                                     <a href="<?php echo BASE_URL; ?>employee/dashboard" class="nav-link px-3">Dashboard</a>
                                     <a href="<?php echo BASE_URL; ?>employee/tasks" class="nav-link px-3">__('component_tasks', 'Tasks')</a>
@@ -155,13 +155,13 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
                                         <i class="bi bi-person-lines-fill me-2"></i>Leads
                                     </a></li>
                                 <?php elseif ($userRole === 'customer'): ?>
-                                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>customer/dashboard">
+                                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>user/dashboard">
                                         <i class="bi bi-person-circle me-2"></i>Dashboard
                                     </a></li>
-                                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>customer/properties">
+                                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>properties">
                                         <i class="bi bi-house me-2"></i>Properties
                                     </a></li>
-                                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>customer/inquiries">
+                                    <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>user/saved-searches">
                                         <i class="bi bi-envelope me-2"></i>My Inquiries
                                     </a></li>
                                 <?php elseif ($userRole === 'employee'): ?>

@@ -102,9 +102,7 @@ $active_page = 'profile';
                     <h5 class="card-title mb-0"><i class="fas fa-shield-alt me-2"></i>Security</h5>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <a href="<?php echo BASE_URL; ?>/agent/profile/security" class="btn btn-outline-primary">
-                        <i class="fas fa-key me-2"></i> Change Password
-                    </a>
+                    <p class="text-muted mb-2">Contact admin to change your password.</p>
                 </div>
             </div>
         </div>

@@ -210,7 +210,7 @@ class AssociateAuthController extends BaseController
                 return '/employee/dashboard';
             case 'customer':
             default:
-                return '/customer/dashboard';
+                return '/user/dashboard';
         }
     }
 }

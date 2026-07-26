@@ -63,7 +63,7 @@ $leads = $leads ?? [];
                                     <td><?= htmlspecialchars($l['phone'] ?? '') ?></td>
                                     <td><small class="text-muted"><?= htmlspecialchars($l['email'] ?? '') ?></small></td>
                                     <td><span class="badge bg-light text-dark"><?= htmlspecialchars($l['source'] ?? 'N/A') ?></span></td>
-                                    <td><span class="badge bg-<?= match($l['status'] ?? 'new') { 'new'=>'primary', 'contacted'=>'info', 'qualified'=>'purple', 'site_visit'=>'warning', 'proposal'=>'pink', 'negotiation'=>'danger', 'won'=>'success', default=>'secondary' } ?>"><?= ucfirst(str_replace('_',' ',$l['status'] ?? '')) ?></span></td>
+                                    <td><span class="badge bg-<?= match($l['status'] ?? 'new') { 'new'=>'primary', 'contacted'=>'info', 'qualified'=>'info', 'site_visit'=>'warning', 'proposal'=>'danger', 'negotiation'=>'danger', 'won'=>'success', default=>'secondary' } ?>"><?= ucfirst(str_replace('_',' ',$l['status'] ?? '')) ?></span></td>
                                     <td><span class="badge bg-<?= ($l['lead_score'] ?? 0) >= 70 ? 'success' : (($l['lead_score'] ?? 0) >= 40 ? 'warning' : 'danger') ?>"><?= $l['lead_score'] ?? 0 ?></span></td>
                                     <td class="fw-semibold"><?= isset($l['budget']) ? '₹' . number_format((float)$l['budget'], 0) : 'N/A' ?></td>
                                     <td><small class="text-muted"><?= htmlspecialchars($l['assignee_name'] ?? 'Unassigned') ?></small></td>

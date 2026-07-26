@@ -485,7 +485,7 @@ class AdvancedFeaturesController extends BaseController
             'super_admin' => '/admin/dashboard',
             'employee' => '/employee/dashboard',
             'associate' => '/associate/dashboard',
-            'customer' => '/customer/dashboard',
+            'customer' => '/user/dashboard',
             'manager' => '/manager/dashboard'
         ];
 

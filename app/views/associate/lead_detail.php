@@ -11,12 +11,12 @@ $statuses = [
     'new' => ['label' => __('assoc_status_new', [], 'New'), 'color' => 'primary', 'icon' => 'fa-star'],
     'contacted' => ['label' => __('assoc_status_contacted', [], 'Contacted'), 'color' => 'info', 'icon' => 'fa-phone'],
     'qualified' => ['label' => __('assoc_status_qualified', [], 'Qualified'), 'color' => 'warning', 'icon' => 'fa-check-circle'],
-    'site_visit' => ['label' => __('assoc_status_site_visit', [], 'Site Visit'), 'color' => 'purple', 'icon' => 'fa-map-marker-alt'],
-    'proposal' => ['label' => __('assoc_status_proposal_sent', [], 'Proposal Sent'), 'color' => 'pink', 'icon' => 'fa-file-alt'],
-    'negotiation' => ['label' => __('assoc_status_negotiation', [], 'Negotiation'), 'color' => 'orange', 'icon' => 'fa-handshake'],
+    'site_visit' => ['label' => __('assoc_status_site_visit', [], 'Site Visit'), 'color' => 'info', 'icon' => 'fa-map-marker-alt'],
+    'proposal' => ['label' => __('assoc_status_proposal_sent', [], 'Proposal Sent'), 'color' => 'danger', 'icon' => 'fa-file-alt'],
+    'negotiation' => ['label' => __('assoc_status_negotiation', [], 'Negotiation'), 'color' => 'warning', 'icon' => 'fa-handshake'],
     'closed_won' => ['label' => __('assoc_status_closed_won', [], 'Closed Won'), 'color' => 'success', 'icon' => 'fa-trophy'],
     'closed_lost' => ['label' => __('assoc_status_closed_lost', [], 'Closed Lost'), 'color' => 'secondary', 'icon' => 'fa-times-circle'],
-    'nurture' => ['label' => __('assoc_status_nurture', [], 'Nurture'), 'color' => 'teal', 'icon' => 'fa-seedling'],
+    'nurture' => ['label' => __('assoc_status_nurture', [], 'Nurture'), 'color' => 'success', 'icon' => 'fa-seedling'],
 ];
 $pipelineOrder = ['new','contacted','qualified','site_visit','proposal','negotiation','closed_won'];
 $currentStatus = $lead['status'] ?? 'new';

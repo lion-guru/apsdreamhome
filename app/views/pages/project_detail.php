@@ -429,13 +429,19 @@ if ($project) {
                 <?php foreach (array_slice($related_projects, 0, 3) as $related): 
                     $relSlug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $related->site_name));
                     $relImg = '/assets/images/projects/placeholder/property.svg';
+                    $relIsExternal = false;
                     if (!empty($related->image)) {
-                        $relImg = '/' . ltrim($related->image, '/');
+                        if (strpos($related->image, 'http://') === 0 || strpos($related->image, 'https://') === 0) {
+                            $relImg = $related->image;
+                            $relIsExternal = true;
+                        } else {
+                            $relImg = '/' . ltrim($related->image, '/');
+                        }
                     }
                 ?>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm project-card">
-                        <img src="<?= BASE_URL . $relImg ?>" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?= $baseUrl ?>/assets/images/projects/placeholder/property.svg'">
+                        <img src="<?= $relIsExternal ? $relImg : BASE_URL . $relImg ?>" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" style="height: 150px; object-fit: cover;" onerror="this.src='<?= $baseUrl ?>/assets/images/projects/placeholder/property.svg'">
                         <div class="card-body aps-cp-card-body">
                             <h6 class="card-title"><?php echo htmlspecialchars($related->site_name); ?></h6>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($related->district ?? ''); ?></p>

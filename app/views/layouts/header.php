@@ -351,7 +351,6 @@ $header_class = $is_home ? 'premium-header hero-header fixed-top' : 'premium-hea
                                     ['label' => __('about_us'), 'url' => '/about', 'icon' => 'fas fa-info-circle'],
                                     ['label' => __('nav_our_team'), 'url' => '/team', 'icon' => 'fas fa-users'],
                                     ['label' => __('nav_gallery'), 'url' => '/gallery', 'icon' => 'fas fa-images'],
-                                    ['label' => __('nav_career_opportunity', null, 'Career Opportunity'), 'url' => '/opportunity', 'icon' => 'fas fa-rocket'],
                                     ['label' => __('nav_careers'), 'url' => '/careers', 'icon' => 'fas fa-briefcase'],
                                     ['label' => __('nav_news', null, 'News'), 'url' => '/news', 'icon' => 'fas fa-newspaper'],
                                     ['label' => __('nav_testimonials'), 'url' => '/testimonials', 'icon' => 'fas fa-comment-alt'],

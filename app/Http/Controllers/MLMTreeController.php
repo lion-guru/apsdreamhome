@@ -53,22 +53,43 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
         // Fetch network tree data for this user
         $treeData = ['nodes' => [], 'stats' => []];
         try {
-            // Get downline members from mlm_network_tree
-            $nodes = $this->db->fetchAll(
-                "SELECT n.id, n.associate_id as id, u.name, u.email, 
-                        n.level, n.position, n.parent_id,
-                        COALESCE(ml.current_level, 'associate') as current_level,
-                        COALESCE(ml.total_team_size, 0) as personal_bv,
-                        COALESCE(ml.lifetime_sales, 0) as total_commission,
-                        n.created_at as joined_at,
-                        CASE WHEN u.status = 'active' THEN 1 ELSE 0 END as is_active
-                 FROM mlm_network_tree n
-                 LEFT JOIN users u ON u.id = n.associate_id
-                 LEFT JOIN mlm_profiles ml ON ml.user_id = n.associate_id
-                 WHERE n.parent_id = ?
-                 ORDER BY n.level ASC, n.position ASC",
-                [$userId]
-            );
+            // Get full downline from mlm_network_tree (iterative descent for all levels)
+            $allNodes = [];
+            $currentParentIds = [$userId];
+            $visitedIds = [$userId];
+            $maxDepth = 10;
+            $depth = 0;
+
+            while (!empty($currentParentIds) && $depth < $maxDepth) {
+                $placeholders = implode(',', array_fill(0, count($currentParentIds), '?'));
+                $levelNodes = $this->db->fetchAll(
+                    "SELECT n.id, n.associate_id as id, u.name, u.email,
+                            n.level, n.position, n.parent_id,
+                            COALESCE(ml.current_level, 'associate') as current_level,
+                            COALESCE(ml.total_team_size, 0) as personal_bv,
+                            COALESCE(ml.lifetime_sales, 0) as total_commission,
+                            n.created_at as joined_at,
+                            CASE WHEN u.status = 'active' THEN 1 ELSE 0 END as is_active,
+                            u.id as profile_user_id
+                     FROM mlm_network_tree n
+                     LEFT JOIN users u ON u.id = n.associate_id
+                     LEFT JOIN mlm_profiles ml ON ml.user_id = n.associate_id
+                     WHERE n.parent_id IN ({$placeholders})
+                     ORDER BY n.level ASC, n.position ASC",
+                    $currentParentIds
+                );
+
+                $nextParentIds = [];
+                foreach ($levelNodes as $ln) {
+                    if (!in_array($ln['id'], $visitedIds)) {
+                        $allNodes[] = $ln;
+                        $visitedIds[] = $ln['id'];
+                        $nextParentIds[] = $ln['id'];
+                    }
+                }
+                $currentParentIds = $nextParentIds;
+                $depth++;
+            }
 
             // Also include self as root
             $self = $this->db->fetchOne(
@@ -84,16 +105,15 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
                 [$userId]
             );
 
-            $allNodes = $nodes;
             if ($self) {
                 $self['parent_id'] = null;
-                $allNodes = array_merge([$self], $nodes);
+                $allNodes = array_merge([$self], $allNodes);
             }
 
-            $totalDownline = count($nodes);
+            $totalDownline = count($allNodes) - 1; // exclude self
             $leftCount = 0;
             $rightCount = 0;
-            foreach ($nodes as $n) {
+            foreach ($allNodes as $n) {
                 if (($n['position'] ?? '') === 'left') $leftCount++;
                 elseif (($n['position'] ?? '') === 'right') $rightCount++;
             }

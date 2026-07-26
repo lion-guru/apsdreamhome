@@ -8,7 +8,7 @@
     </nav>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-handshake me-2"></i><?= __('assoc_index_title') ?></h4>
-        <a href="<?= BASE_URL ?>/associate/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i><?= __('assoc_index_add') ?></a>
+        <a href="<?= BASE_URL ?>/admin/associate/manage/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i><?= __('assoc_index_add') ?></a>
     </div>
     <?php if (!empty($users)): ?>
     <div class="card border-0 shadow-sm">
@@ -31,15 +31,15 @@
                         <?php foreach ($users as $i => $a): ?>
                         <tr>
                             <td><?= $i + 1 ?></td>
-                            <td><a href="<?= BASE_URL ?>/associate/show/<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?></a></td>
+                            <td>                                <a href="<?= BASE_URL ?>/admin/associate/manage/show/<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?></a></td>
                             <td><?= htmlspecialchars($a['email'] ?? '') ?></td>
                             <td><?= htmlspecialchars($a['phone'] ?? '') ?></td>
                             <td><?= $a['property_count'] ?? 0 ?></td>
                             <td><span class="badge bg-<?= ($a['status'] ?? 'active') === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($a['status'] ?? 'active') ?></span></td>
                             <td class="small"><?= htmlspecialchars($a['created_at'] ?? '') ?></td>
                             <td>
-                                <a href="<?= BASE_URL ?>/associate/show/<?= $a['id'] ?>" class="btn btn-sm btn-outline-info" title="<?= __('assoc_index_view_title') ?>"><i class="fas fa-eye"></i></a>
-                                <a href="<?= BASE_URL ?>/associate/edit/<?= $a['id'] ?>" class="btn btn-sm btn-outline-primary" title="<?= __('assoc_index_edit_title') ?>"><i class="fas fa-edit"></i></a>
+                                <a href="<?= BASE_URL ?>/admin/associate/manage/show/<?= $a['id'] ?>" class="btn btn-sm btn-outline-info" title="<?= __('assoc_index_view_title') ?>"><i class="fas fa-eye"></i></a>
+                                <a href="<?= BASE_URL ?>/admin/associate/manage/edit/<?= $a['id'] ?>" class="btn btn-sm btn-outline-primary" title="<?= __('assoc_index_edit_title') ?>"><i class="fas fa-edit"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -54,7 +54,7 @@
             <i class="fas fa-user-friends fa-3x text-muted mb-3"></i>
             <h5 class="text-muted"><?= __('assoc_index_no_users') ?></h5>
             <p class="text-muted mb-3"><?= __('assoc_index_start_adding') ?></p>
-            <a href="<?= BASE_URL ?>/associate/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i><?= __('assoc_index_add_first') ?></a>
+            <a href="<?= BASE_URL ?>/admin/associate/manage/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i><?= __('assoc_index_add_first') ?></a>
         </div>
     </div>
     <?php endif; ?>

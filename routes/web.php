@@ -1571,19 +1571,8 @@ $router->post('/reset-password', 'App\Http\Controllers\Auth\AuthenticationContro
 $router->get('/verify-email', 'App\Http\Controllers\AuthController@verifyEmail');
 $router->post('/verify-email', 'App\Http\Controllers\AuthController@verifyEmail');
 
-// Customer Routes
-$router->get('/customer', 'App\Http\Controllers\CustomerController@index');
-$router->get('/customer/dashboard', 'App\Http\Controllers\CustomerController@index');
-$router->get('/customer/profile', 'App\Http\Controllers\CustomerController@profile');
-$router->post('/customer/profile', 'App\Http\Controllers\CustomerController@profile');
-$router->get('/customer/wishlist', 'App\Http\Controllers\CustomerController@wishlist');
-$router->get('/customer/inquiries', 'App\Http\Controllers\CustomerController@inquiries');
-$router->get('/customer/documents', 'App\Http\Controllers\CustomerController@documents');
-$router->get('/customer/settings', 'App\Http\Controllers\CustomerController@settings');
-$router->get('/customer/property-history', 'App\Http\Controllers\CustomerController@propertyHistory');
-$router->get('/customer/payments', 'App\Http\Controllers\CustomerController@payments');
-$router->get('/customer/notifications', 'App\Http\Controllers\CustomerController@notifications');
-
+// Legacy /customer/* routes removed — customers use /user/dashboard via Front\UserController
+// AppCoreService handles any lingering /customer/dashboard URLs with a redirect
 
 // Property Routes (Note: /properties handled by Front\PropertyController@properties)
 $router->get('/properties/search', 'App\Http\Controllers\PropertyController@search');
@@ -2190,6 +2179,19 @@ $router->get('/admin/legal-colony-pipeline/pricing/{id}',                     'A
 $router->post('/admin/legal-colony-pipeline/calculate-pricing',               'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@calculatePricing');
 $router->get('/admin/legal-colony-pipeline/readiness/{id}',                   'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@readiness');
 $router->post('/admin/legal-colony-pipeline/compliance-check',                'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@complianceCheck');
+
+// ── Pipeline Workflow Automation ──────────────────────────────
+$router->post('/admin/legal-colony-pipeline/advance-stage',                 'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@advanceStage');
+$router->post('/admin/legal-colony-pipeline/stage-readiness',               'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@stageReadiness');
+$router->post('/admin/legal-colony-pipeline/stage-history',                 'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@stageHistory');
+
+// ── Colony Analytics ──────────────────────────────────────────
+$router->get('/admin/legal-colony-pipeline/analytics/{id}',                 'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@analytics');
+$router->get('/admin/legal-colony-pipeline/analytics-all',                  'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@analyticsComparison');
+
+// ── RERA Milestone Tracker ────────────────────────────────────
+$router->get('/admin/legal-colony-pipeline/milestones/{id}',                'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@milestones');
+$router->post('/admin/legal-colony-pipeline/update-milestone',              'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@updateMilestone');
 
 // ============================================================
 // COLONY FEASIBILITY & PRICING ENGINE

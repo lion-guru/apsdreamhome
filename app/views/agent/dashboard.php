@@ -158,36 +158,12 @@ $active_page = 'dashboard';
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo $base; ?>/agent/leads" class="sidebar-link">
-                    <i class="fas fa-bullseye"></i> Leads
+                    <i class="fas fa-users"></i> My Leads
                 </a>
             </li>
-            <?php if ($agent_type !== 'freelancer' && $agent_type !== 'independent'): ?>
-            <!-- MLM specific: network/team -->
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/team" class="sidebar-link">
-                    <i class="fas fa-sitemap"></i> My Team
-                </a>
-            </li>
-            <?php endif; ?>
             <li class="sidebar-item">
                 <a href="<?php echo $base; ?>/agent/properties" class="sidebar-link">
-                    <i class="fas fa-building"></i> 
-                    <?php echo $agent_type === 'freelancer' ? 'My Listings' : 'Assigned Properties'; ?>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/clients" class="sidebar-link">
-                    <i class="fas fa-users"></i> Clients
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/site-visits" class="sidebar-link">
-                    <i class="fas fa-calendar-check"></i> Site Visits
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/bookings" class="sidebar-link">
-                    <i class="fas fa-file-signature"></i> Bookings
+                    <i class="fas fa-building"></i> My Properties
                 </a>
             </li>
             <li class="sidebar-item">
@@ -196,13 +172,23 @@ $active_page = 'dashboard';
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/profile" class="sidebar-link">
-                    <i class="fas fa-user"></i> Profile
+                <a href="<?php echo $base; ?>/agent/wallet" class="sidebar-link">
+                    <i class="fas fa-wallet"></i> Wallet
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/agent/settings" class="sidebar-link">
-                    <i class="fas fa-cog"></i> Settings
+                <a href="<?php echo $base; ?>/agent/deals" class="sidebar-link">
+                    <i class="fas fa-handshake"></i> My Deals
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/properties" class="sidebar-link">
+                    <i class="fas fa-search"></i> Browse Properties
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo $base; ?>/agent/profile" class="sidebar-link">
+                    <i class="fas fa-user"></i> Profile
                 </a>
             </li>
             <li class="sidebar-item">
@@ -229,8 +215,8 @@ $active_page = 'dashboard';
                 </nav>
             </div>
             <div class="nav-right">
-                <button class="nav-icon" title="Notifications"><i class="fas fa-bell"></i></button>
-                <button class="nav-icon" title="Messages"><i class="fas fa-envelope"></i></button>
+                <button class="nav-icon" title="Notifications" onclick="window.location.href='<?php echo $base; ?>/user/notifications'"><i class="fas fa-bell"></i></button>
+                <button class="nav-icon" title="Messages" onclick="window.location.href='<?php echo $base; ?>/user/notifications'"><i class="fas fa-envelope"></i></button>
                 <div class="dropdown">
                     <div class="user-box" data-bs-toggle="dropdown">
                         <div class="user-av"><?php echo strtoupper(substr($agent_name,0,1)); ?></div>
@@ -242,7 +228,7 @@ $active_page = 'dashboard';
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?php echo $base; ?>/agent/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="<?php echo $base; ?>/agent/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><a class="dropdown-item" href="<?php echo $base; ?>/agent/profile"><i class="fas fa-cog me-2"></i>Settings</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="<?php echo $base; ?>/agent/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                     </ul>
@@ -276,11 +262,11 @@ $active_page = 'dashboard';
                     <p class="text-muted mb-0"><?php echo htmlspecialchars($page_description); ?></p>
                 </div>
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="<?php echo $base; ?>/agent/add-lead" class="btn btn-primary">
+                    <a href="<?php echo $base; ?>/agent/leads" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i> Add Lead
                     </a>
-                    <a href="<?php echo $base; ?>/agent/site-visits/schedule" class="btn btn-outline-primary">
-                        <i class="fas fa-calendar-plus me-1"></i> Schedule Visit
+                    <a href="<?php echo $base; ?>/agent/deals" class="btn btn-outline-primary">
+                        <i class="fas fa-handshake me-1"></i> My Deals
                     </a>
                 </div>
             </div>
@@ -629,7 +615,7 @@ $active_page = 'dashboard';
                             <?php if (empty($recent_leads)): ?>
                             <div class="text-center py-4 text-muted">
                                 <i class="fas fa-bullseye fa-2x mb-2 d-block"></i>
-                                No leads yet. <a href="<?php echo $base; ?>/agent/add-lead" class="text-primary">Add your first lead</a>
+                                No leads yet. Contact your admin to assign leads.
                             </div>
                             <?php else: ?>
                             <div class="list-group list-group-flush">

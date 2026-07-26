@@ -3,7 +3,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home me-1"></i><?= __('assoc_home') ?></a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate"><?= __('assoc_users') ?></a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/associate/manage/list"><?= __('assoc_users') ?></a></li>
             <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($associate['name'] ?? __('assoc_show_title')) ?></li>
         </ol>
     </nav>
@@ -11,8 +11,8 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-user me-2"></i><?= htmlspecialchars($associate['name']) ?></h4>
         <div>
-            <a href="<?= BASE_URL ?>/associate/edit/<?= $associate['id'] ?>" class="btn btn-outline-primary btn-sm"><i class="fas fa-edit me-1"></i><?= __('assoc_show_edit') ?></a>
-            <a href="<?= BASE_URL ?>/associate/metrics/<?= $associate['id'] ?>" class="btn btn-outline-info btn-sm"><i class="fas fa-chart-bar me-1"></i><?= __('assoc_show_metrics') ?></a>
+            <a href="<?= BASE_URL ?>/admin/associate/manage/edit/<?= $associate['id'] ?>" class="btn btn-outline-primary btn-sm"><i class="fas fa-edit me-1"></i><?= __('assoc_show_edit') ?></a>
+            <a href="<?= BASE_URL ?>/admin/associate/manage/metrics/<?= $associate['id'] ?>" class="btn btn-outline-info btn-sm"><i class="fas fa-chart-bar me-1"></i><?= __('assoc_show_metrics') ?></a>
         </div>
     </div>
     <div class="row g-3">
@@ -78,7 +78,7 @@
         <div class="card-body text-center py-5">
             <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
             <h5 class="text-muted"><?= __('assoc_show_not_found') ?></h5>
-            <a href="<?= BASE_URL ?>/associate" class="btn btn-primary mt-2"><?= __('assoc_show_back') ?></a>
+            <a href="<?= BASE_URL ?>/admin/associate/manage/list" class="btn btn-primary mt-2"><?= __('assoc_show_back') ?></a>
         </div>
     </div>
     <?php endif; ?>

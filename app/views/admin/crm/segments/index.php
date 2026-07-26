@@ -20,7 +20,7 @@
     <?php else: ?>
         <div class="row g-3">
             <?php
-            $colors = ['primary','success','warning','danger','info','purple','pink','dark'];
+            $colors = ['primary','success','warning','danger','info','info','danger','dark'];
             foreach ($segments as $i => $seg):
                 $color = $colors[$i % count($colors)];
                 $criteria = json_decode($seg['filter_criteria'] ?? '{}', true) ?? [];
@@ -30,7 +30,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <div style="width:40px;height:40px;border-radius:10px;background:var(--bs-<?= $color ?>-subtle);display:flex;align-items:center;justify-content:center">
+                                    <div style="width:40px;height:40px;border-radius:10px;background:rgba(var(--bs-<?= $color ?>-rgb),0.12);display:flex;align-items:center;justify-content:center">
                                         <i class="fas fa-<?= $color === 'primary' ? 'users' : ($color === 'success' ? 'check-circle' : ($color === 'warning' ? 'star' : 'filter')) ?> text-<?= $color ?>"></i>
                                     </div>
                                     <div>

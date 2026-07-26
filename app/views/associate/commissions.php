@@ -18,11 +18,11 @@ $typeLabels = [
     'level_bonus' => ['label' => __('assoc_comm_type_level_bonus', [], 'Level Bonus'), 'icon' => 'fa-stairs', 'color' => 'success'],
     'generation_bonus' => ['label' => __('assoc_comm_type_generation_bonus', [], 'Generation Bonus'), 'icon' => 'fa-users', 'color' => 'warning'],
     'matching_bonus' => ['label' => __('assoc_comm_type_matching_bonus', [], 'Matching Bonus'), 'icon' => 'fa-code-compare', 'color' => 'danger'],
-    'rank_bonus' => ['label' => __('assoc_comm_type_rank_bonus', [], 'Rank Bonus'), 'icon' => 'fa-medal', 'color' => 'purple'],
-    'royalty_pool' => ['label' => __('assoc_comm_type_royalty_pool', [], 'Royalty Pool'), 'icon' => 'fa-crown', 'color' => 'gold'],
+    'rank_bonus' => ['label' => __('assoc_comm_type_rank_bonus', [], 'Rank Bonus'), 'icon' => 'fa-medal', 'color' => 'primary'],
+    'royalty_pool' => ['label' => __('assoc_comm_type_royalty_pool', [], 'Royalty Pool'), 'icon' => 'fa-crown', 'color' => 'warning'],
     'infinity_override' => ['label' => __('assoc_comm_type_infinity_override', [], 'Infinity Override'), 'icon' => 'fa-infinity', 'color' => 'dark'],
-    'performance_bonus' => ['label' => __('assoc_comm_type_performance_bonus', [], 'Performance Bonus'), 'icon' => 'fa-chart-line', 'color' => 'teal'],
-    'team_bonus' => ['label' => __('assoc_comm_type_team_bonus', [], 'Team Bonus'), 'icon' => 'fa-people-group', 'color' => 'indigo'],
+    'performance_bonus' => ['label' => __('assoc_comm_type_performance_bonus', [], 'Performance Bonus'), 'icon' => 'fa-chart-line', 'color' => 'info'],
+    'team_bonus' => ['label' => __('assoc_comm_type_team_bonus', [], 'Team Bonus'), 'icon' => 'fa-people-group', 'color' => 'secondary'],
 ];
 ?>
 <div class="container-fluid px-4">

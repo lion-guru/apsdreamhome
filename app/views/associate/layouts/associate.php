@@ -86,7 +86,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/associate/network" class="sidebar-link <?php echo $current_page == 'network' ? 'active' : ''; ?>">
+                <a href="<?php echo $base; ?>/associate/network/tree" class="sidebar-link <?php echo $current_page == 'network' ? 'active' : ''; ?>">
                     <i class="fas fa-network-wired"></i> My Network
                 </a>
             </li>
@@ -121,7 +121,7 @@ $current_page = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
                 </a>
             </li>
             <li class="sidebar-item">
-                <a href="<?php echo $base; ?>/associate/referrals" class="sidebar-link <?php echo $current_page == 'referrals' ? 'active' : ''; ?>">
+                <a href="<?php echo $base; ?>/associate/referral" class="sidebar-link <?php echo $current_page == 'referrals' ? 'active' : ''; ?>">
                     <i class="fas fa-user-plus"></i> Referrals
                 </a>
             </li>
