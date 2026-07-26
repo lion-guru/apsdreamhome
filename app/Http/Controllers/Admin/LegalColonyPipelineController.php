@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Core\Database\Database;
 use App\Services\Land\LegalColonyDevelopmentService;
+use App\Services\Land\PipelineWorkflowService;
+use App\Services\Land\ColonyAnalyticsService;
 use Exception;
 
 /**
@@ -16,14 +18,22 @@ class LegalColonyPipelineController extends AdminController
     /** @var LegalColonyDevelopmentService */
     private $service;
 
+    /** @var PipelineWorkflowService */
+    private $workflow;
+
+    /** @var ColonyAnalyticsService */
+    private $analytics;
+
     /** @var Database */
     protected $db;
 
     public function __construct()
     {
         parent::__construct();
-        $this->db      = Database::getInstance();
-        $this->service = new LegalColonyDevelopmentService();
+        $this->db        = Database::getInstance();
+        $this->service   = new LegalColonyDevelopmentService();
+        $this->workflow  = new PipelineWorkflowService();
+        $this->analytics = new ColonyAnalyticsService();
     }
 
     // ── Pipeline Overview ──────────────────────────────────────
@@ -512,6 +522,202 @@ class LegalColonyPipelineController extends AdminController
         ];
 
         echo json_encode($this->service->runComplianceChecks($colonyId, $config));
+        exit;
+    }
+
+    // ── Pipeline Workflow: Auto-Advance ────────────────────────
+
+    /**
+     * Check if colony can advance + advance it (POST)
+     */
+    public function advanceStage()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        $colonyId = intval($_POST['colony_id'] ?? 0);
+        $reason   = trim($_POST['reason'] ?? '');
+
+        echo json_encode($this->workflow->advanceStage($colonyId, $reason));
+        exit;
+    }
+
+    /**
+     * Get stage readiness for a colony (AJAX)
+     */
+    public function stageReadiness()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        $colonyId = intval($_POST['colony_id'] ?? 0);
+
+        echo json_encode($this->workflow->checkAdvanceReadiness($colonyId));
+        exit;
+    }
+
+    /**
+     * Get stage transition history (AJAX)
+     */
+    public function stageHistory()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        $colonyId = intval($_POST['colony_id'] ?? 0);
+
+        echo json_encode($this->workflow->getStageHistory($colonyId));
+        exit;
+    }
+
+    // ── Colony Analytics ───────────────────────────────────────
+
+    /**
+     * Colony-wise analytics dashboard
+     */
+    public function analytics($colonyId)
+    {
+        $this->requireAdmin();
+        $colonyId = intval($colonyId);
+
+        $data = $this->analytics->getColonyAnalytics($colonyId);
+
+        if (!$data['success']) {
+            $_SESSION['flash_error'] = $data['error'] ?? 'Analytics unavailable';
+            header('Location: /admin/legal-colony-pipeline');
+            exit;
+        }
+
+        return $this->render('admin/legal-colony-pipeline/analytics', [
+            'page_title' => 'Analytics — ' . ($data['colony']['name'] ?? ''),
+            'data'       => $data,
+        ]);
+    }
+
+    /**
+     * Cross-colony comparison (all colonies)
+     */
+    public function analyticsComparison()
+    {
+        $this->requireAdmin();
+
+        $data = $this->analytics->getCrossColonyComparison();
+
+        return $this->render('admin/legal-colony-pipeline/analytics_comparison', [
+            'page_title' => 'Colony Analytics Comparison',
+            'data'       => $data,
+        ]);
+    }
+
+    // ── RERA Milestone Tracker ─────────────────────────────────
+
+    /**
+     * RERA milestone tracker for a colony
+     */
+    public function milestones($colonyId)
+    {
+        $this->requireAdmin();
+        $colonyId = intval($colonyId);
+
+        $colony = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [$colonyId]);
+        if (!$colony) {
+            $_SESSION['flash_error'] = 'Colony not found';
+            header('Location: /admin/legal-colony-pipeline');
+            exit;
+        }
+
+        // Get RERA project
+        $rera = null;
+        if (!empty($colony['rera_number'])) {
+            $rera = $this->db->fetchOne(
+                "SELECT * FROM rera_projects WHERE rera_number = ? LIMIT 1",
+                [$colony['rera_number']]
+            );
+        }
+
+        // Get milestones
+        $milestones = [];
+        if ($rera) {
+            $milestones = $this->db->fetchAll(
+                "SELECT * FROM rera_milestones WHERE project_id = ? ORDER BY planned_date ASC",
+                [$rera['id']]
+            ) ?: [];
+        }
+
+        // Milestone stats
+        $stats = [
+            'total'      => count($milestones),
+            'completed'  => 0,
+            'in_progress'=> 0,
+            'delayed'    => 0,
+            'pending'    => 0,
+        ];
+        foreach ($milestones as $m) {
+            $status = $m['status'] ?? 'pending';
+            if (isset($stats[$status])) {
+                $stats[$status]++;
+            } else {
+                $stats['pending']++;
+            }
+        }
+
+        return $this->render('admin/legal-colony-pipeline/milestones', [
+            'page_title' => 'RERA Milestones — ' . ($colony['name'] ?? ''),
+            'colony'     => $colony,
+            'rera'       => $rera,
+            'milestones' => $milestones,
+            'stats'      => $stats,
+        ]);
+    }
+
+    /**
+     * Update a RERA milestone (POST)
+     */
+    public function updateMilestone()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        $milestoneId = intval($_POST['milestone_id'] ?? 0);
+        $status      = trim($_POST['status'] ?? '');
+        $notes       = trim($_POST['notes'] ?? '');
+
+        $validStatuses = ['pending', 'in_progress', 'completed', 'delayed', 'on_hold'];
+        if (!in_array($status, $validStatuses)) {
+            echo json_encode(['success' => false, 'error' => 'Invalid status']);
+            exit;
+        }
+
+        try {
+            $updateData = [
+                'status' => $status,
+            ];
+            if ($status === 'completed') {
+                $updateData['completion_date'] = date('Y-m-d');
+            }
+            if ($notes !== '') {
+                $updateData['notes'] = $notes;
+            }
+
+            $this->db->execute(
+                "UPDATE rera_milestones SET status = ?, completion_date = IF(? = 'completed', CURDATE(), completion_date), notes = IF(? != '', ?, notes) WHERE id = ?",
+                [$status, $status, $notes, $notes, $milestoneId]
+            );
+
+            // Log activity
+            $this->db->insert('user_activity_logs_unified', [
+                'user_id'    => $_SESSION['admin_id'] ?? 0,
+                'action'     => 'rera_milestone_updated',
+                'context'    => json_encode(['milestone_id' => $milestoneId, 'status' => $status, 'notes' => $notes]),
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '',
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            echo json_encode(['success' => true, 'milestone_id' => $milestoneId, 'status' => $status]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
         exit;
     }
 }
