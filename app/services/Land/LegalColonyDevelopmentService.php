@@ -101,11 +101,10 @@ class LegalColonyDevelopmentService
                 'created_at'           => date('Y-m-d H:i:s'),
             ]);
 
-            // Create land acquisition record
-            $acquisitionId = $this->db->insert('land_acquisitions', [
+            // Create land acquisition record (land_deals is the base table; land_acquisitions is a VIEW)
+            $acquisitionId = $this->db->insert('land_deals', [
                 'colony_id'           => $colonyId,
                 'total_area_sqft'     => $totalAreaSqft,
-                'acquisition_cost'    => $estCost,
                 'total_consideration' => $estCost,
                 'advance_paid'        => floatval($data['advance_paid'] ?? 0),
                 'balance_amount'      => $estCost - floatval($data['advance_paid'] ?? 0),
@@ -187,7 +186,7 @@ class LegalColonyDevelopmentService
             $params[] = $acquisitionId;
 
             $this->db->execute(
-                "UPDATE land_acquisitions SET " . implode(', ', $setClauses) . " WHERE id = ?",
+                "UPDATE land_deals SET " . implode(', ', $setClauses) . " WHERE id = ?",
                 $params
             );
 
