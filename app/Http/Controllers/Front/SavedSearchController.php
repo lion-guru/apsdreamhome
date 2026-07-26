@@ -321,7 +321,7 @@ class SavedSearchController extends BaseController
     /**
      * GET /api/saved-searches/autocomplete?q=
      * Typeahead endpoint used by the header quick-search bar.
-     * Returns top 8 distinct property names + locations + types
+     * Returns top 8 distinct property names + locations + types + plots + projects
      * matching the query.
      */
     public function autocomplete($request = null)
@@ -351,10 +351,17 @@ class SavedSearchController extends BaseController
                 (SELECT 0 AS id, property_type AS label, 'type' AS type, '' AS sub, 4 AS ord FROM user_properties
                  WHERE status='approved' AND property_type LIKE ? AND property_type != ''
                  GROUP BY property_type LIMIT 3)
+                UNION ALL
+                (SELECT p.id, c.name AS label, 'plot' AS type, CONCAT(c.name, ' - ', p.block) AS sub, 5 AS ord FROM plots p
+                 JOIN colonies c ON p.colony_id = c.id
+                 WHERE c.is_active = 1 AND p.status = 'available' AND (c.name LIKE ? OR p.block LIKE ?) LIMIT 3)
+                UNION ALL
+                (SELECT s.id, s.site_name AS label, 'project' AS type, CONCAT(s.city, ', ', s.state) AS sub, 6 AS ord FROM sites s
+                 WHERE s.status IN ('active','under_development') AND s.site_name LIKE ? LIMIT 3)
                 ORDER BY ord, label
                 LIMIT 8
             ");
-            $stmt->execute([$like, $like, $start, $start]);
+            $stmt->execute([$like, $like, $start, $start, $like, $like, $start]);
             $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             // Build URL
@@ -365,6 +372,8 @@ class SavedSearchController extends BaseController
                 elseif ($r['type'] === 'address') $url .= '?q=' . urlencode($r['label']);
                 elseif ($r['type'] === 'location') $url .= '?location=' . urlencode($r['label']);
                 elseif ($r['type'] === 'type') $url .= '?type=' . urlencode($r['label']);
+                elseif ($r['type'] === 'plot') $url = $baseUrl . '/colony/' . urlencode($r['sub'] ?? '') . '/plots';
+                elseif ($r['type'] === 'project') $url = $baseUrl . '/projects';
                 $results[] = [
                     'label' => $r['label'],
                     'type' => $r['type'],

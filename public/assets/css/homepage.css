@@ -1622,17 +1622,19 @@
    HOME.PAGE — Missing CSS Classes
    ============================================================ */
 
-/* Scroll Reveal Animation */
-.premium-reveal,
-.scroll-reveal {
+/* Scroll Reveal Animation — progressive enhancement
+   Only hidden when body has .js-animations (added by JS on load).
+   Without JS, content is always visible. */
+.js-animations .premium-reveal,
+.js-animations .scroll-reveal {
   opacity: 0;
   transform: translateY(24px);
   transition:
     opacity 0.6s ease,
     transform 0.6s ease;
 }
-.premium-reveal.revealed,
-.scroll-reveal.revealed {
+.js-animations .premium-reveal.revealed,
+.js-animations .scroll-reveal.revealed {
   opacity: 1;
   transform: translateY(0);
 }

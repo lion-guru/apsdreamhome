@@ -122,7 +122,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 }
 </style>
 
-<div class="hero-premium pt-5 pb-5 mb-0" style="margin-bottom: -30px !important;">
+<div class="hero-premium pt-5 pb-5 mb-0" style="margin-bottom: -30px !important; background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%) !important;">
     <div class="container hero-content premium-reveal fade-up position-relative z-2">
         <h1 class="display-4 fw-bold text-white mb-2"><i class="fas fa-building me-3"></i><?= __('properties') ?></h1>
         <p class="lead text-white-50 mb-4">Discover premium properties across India — plots, flats, villas, farmhouses & more</p>
@@ -263,6 +263,24 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                         </a>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cross-link Section: Also Explore -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-2 align-items-center" style="background:rgba(13,148,136,0.04);border:1px solid rgba(13,148,136,0.12);border-radius:12px;padding:14px 18px;">
+                <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
+                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3" style="background:rgba(13,148,136,0.1);color:#0d9488;border-radius:8px;border:1px solid rgba(13,148,136,0.2);">
+                    <i class="fas fa-vector-square me-1"></i><?= __('company_plots') ?>
+                </a>
+                <a href="<?= BASE_URL ?>/projects" class="btn btn-sm px-3" style="background:rgba(10,25,47,0.1);color:#0a192f;border-radius:8px;border:1px solid rgba(10,25,47,0.2);">
+                    <i class="fas fa-project-diagram me-1"></i><?= __('company_projects') ?>
+                </a>
+                <a href="<?= BASE_URL ?>/colony" class="btn btn-sm px-3" style="background:rgba(16,185,129,0.1);color:#10b981;border-radius:8px;border:1px solid rgba(16,185,129,0.2);">
+                    <i class="fas fa-city me-1"></i><?= __('colonies') ?>
+                </a>
             </div>
         </div>
     </div>

@@ -779,26 +779,50 @@ public function propertyDetails($id = null)
         $property_images = [];
         $related_properties = [];
         $reviews = [];
+        $source = 'properties';
 
         if ($id) {
             try {
-                $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = ? AND status = 'available' LIMIT 1");
+                // First check user_properties (user-submitted listings)
+                $stmt = $this->db->prepare("SELECT *, 'user_properties' as source FROM user_properties WHERE id = ? AND status IN ('approved','verified') LIMIT 1");
                 $stmt->execute([$id]);
                 $property = $stmt->fetch(\PDO::FETCH_ASSOC);
 
+                if (!$property) {
+                    // Fallback to admin properties table
+                    $stmt = $this->db->prepare("SELECT *, 'properties' as source FROM properties WHERE id = ? AND status = 'available' LIMIT 1");
+                    $stmt->execute([$id]);
+                    $property = $stmt->fetch(\PDO::FETCH_ASSOC);
+                    $source = 'properties';
+                } else {
+                    $source = 'user_properties';
+                }
+
                 if ($property) {
-                    $imgStmt = $this->db->prepare("SELECT * FROM property_images WHERE property_id = ? ORDER BY is_featured DESC LIMIT 5");
-                    $imgStmt->execute([$id]);
-                    $property_images = $imgStmt->fetchAll(\PDO::FETCH_ASSOC);
+                    if ($source === 'user_properties') {
+                        // Use image column directly from user_properties
+                        if (!empty($property['image'])) {
+                            $property_images[] = ['image_path' => $property['image'], 'is_primary' => 1, 'caption' => ''];
+                        }
+                        // Related from user_properties
+                        $relStmt = $this->db->prepare("SELECT * FROM user_properties WHERE id != ? AND status IN ('approved','verified') ORDER BY RAND() LIMIT 3");
+                        $relStmt->execute([$id]);
+                        $related_properties = $relStmt->fetchAll(\PDO::FETCH_ASSOC);
+                    } else {
+                        // Admin properties - use property_images table
+                        $imgStmt = $this->db->prepare("SELECT * FROM property_images WHERE property_id = ? ORDER BY is_primary DESC LIMIT 5");
+                        $imgStmt->execute([$id]);
+                        $property_images = $imgStmt->fetchAll(\PDO::FETCH_ASSOC);
 
-                    $relStmt = $this->db->prepare("SELECT * FROM properties WHERE id != ? AND status = 'available' ORDER BY RAND() LIMIT 3");
-                    $relStmt->execute([$id]);
-                    $related_properties = $relStmt->fetchAll(\PDO::FETCH_ASSOC);
+                        $relStmt = $this->db->prepare("SELECT * FROM properties WHERE id != ? AND status = 'available' ORDER BY RAND() LIMIT 3");
+                        $relStmt->execute([$id]);
+                        $related_properties = $relStmt->fetchAll(\PDO::FETCH_ASSOC);
 
-                    // Fetch approved reviews
-                    $revStmt = $this->db->prepare("SELECT r.*, COALESCE(u.name, 'Anonymous') as user_name FROM property_reviews r LEFT JOIN users u ON r.customer_id = u.id WHERE r.property_id = ? AND r.status = 'approved' ORDER BY r.created_at DESC");
-                    $revStmt->execute([$id]);
-                    $reviews = $revStmt->fetchAll(\PDO::FETCH_ASSOC);
+                        // Reviews for admin properties
+                        $revStmt = $this->db->prepare("SELECT r.*, COALESCE(u.name, 'Anonymous') as user_name FROM property_reviews r LEFT JOIN users u ON r.customer_id = u.id WHERE r.property_id = ? AND r.status = 'approved' ORDER BY r.created_at DESC");
+                        $revStmt->execute([$id]);
+                        $reviews = $revStmt->fetchAll(\PDO::FETCH_ASSOC);
+                    }
                 }
             } catch (\Exception $e) {
                 error_log("Property fetch error: " . $e->getMessage());
@@ -806,12 +830,13 @@ public function propertyDetails($id = null)
         }
 
         $data = [
-            'page_title' => $property ? ($property['title'] ?? 'Property') . ' - APS Dream Home' : 'Property Not Found',
+            'page_title' => $property ? ($property['title'] ?? $property['name'] ?? 'Property') . ' - APS Dream Home' : 'Property Not Found',
             'page_description' => 'View property details',
             'property' => $property,
             'property_images' => $property_images,
             'related_properties' => $related_properties,
-            'reviews' => $reviews
+            'reviews' => $reviews,
+            'property_source' => $source
         ];
         $this->render('properties/detail', $data);
     }
@@ -2600,7 +2625,9 @@ public function location($slug = null)
         int $perPage,
         int $offset
     ): array {
-        $where = ['p.status = \'active\''];
+        // DB has status: 'approved', 'pending' (not 'active')
+        // Column names: property_type, listing_type, city_name (not type, listing_type, city)
+        $where = ["p.status IN ('approved', 'verified')"];
         $params = [];
 
         if ($keyword) {
@@ -2611,7 +2638,7 @@ public function location($slug = null)
             $params[] = $kw;
         }
         if ($type) {
-            $where[] = 'p.type = ?';
+            $where[] = 'p.property_type = ?';
             $params[] = $type;
         }
         if ($listingType) {
@@ -2619,7 +2646,7 @@ public function location($slug = null)
             $params[] = $listingType;
         }
         if ($location) {
-            $where[] = '(p.city LIKE ? OR p.address LIKE ?)';
+            $where[] = '(p.city_name LIKE ? OR p.address LIKE ?)';
             $loc = '%' . $location . '%';
             $params[] = $loc;
             $params[] = $loc;

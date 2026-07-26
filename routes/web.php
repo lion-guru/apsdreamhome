@@ -875,6 +875,7 @@ $router->get('/associate/bank-details', 'App\\Http\\Controllers\\WalletControlle
 $router->get('/associate/settings', 'App\\Http\\Controllers\\AssociateController@settings');
 $router->get('/associate/mlm-plan', 'App\\Http\\Controllers\\AssociateController@mlmPlan');
 $router->get('/associate/documents', 'App\\Http\\Controllers\\AssociateController@documents');
+$router->post('/associate/documents/upload', 'App\\Http\\Controllers\\AssociateController@uploadDocument');
 $router->get('/associate/browse', 'App\\Http\\Controllers\\AssociateController@browse');
 $router->get('/associate/list-property', 'App\\Http\\Controllers\\AssociateController@listProperty');
 $router->post('/associate/list-property/submit', 'App\\Http\\Controllers\\AssociateController@submitProperty');
@@ -899,8 +900,6 @@ $router->get('/associate/commissions/history', 'App\\Http\\Controllers\\Associat
 $router->get('/associate/wallet/withdraw', 'App\\Http\\Controllers\\WalletController@withdrawal');
 $router->get('/associate/network/tree', 'App\\Http\\Controllers\\MLMTreeController@tree');
 $router->get('/associate/team', 'App\\Http\\Controllers\\AssociateController@team');
-$router->get('/associate/team/add', 'App\\Http\\Controllers\\AssociateController@team');
-$router->get('/associate/team/performance', 'App\\Http\\Controllers\\AssociateController@team');
 
 
 // Associate Cash Collections
@@ -1002,7 +1001,11 @@ $router->get('/employee/performance', 'Employee\\EmployeeController@performanceP
 $router->get('/employee/salary', 'Employee\\EmployeeController@salary');
 $router->get('/employee/payroll', 'Employee\\EmployeeController@salary');
 $router->get('/employee/documents', 'Employee\\EmployeeController@documents');
+$router->post('/employee/documents/upload', 'Employee\\EmployeeController@uploadDocument');
 $router->get('/employee/leaves', 'Employee\\EmployeeController@leaves');
+$router->post('/employee/leaves/apply', 'Employee\\EmployeeController@leaveApply');
+$router->get('/employee/leaves/{id}', 'Employee\\EmployeeController@leaveDetail');
+$router->post('/employee/leaves/{id}/cancel', 'Employee\\EmployeeController@leaveCancel');
 $router->get('/employee/reporting', 'Employee\\EmployeeController@reporting');
 $router->get('/employee/settings', 'Employee\\EmployeeController@dashboard');
 $router->get('/employee/user-properties', 'Employee\\EmployeeController@userProperties');
@@ -1235,6 +1238,7 @@ $router->post('/admin/leads/{id}/update', 'App\\Http\\Controllers\\Admin\\LeadCo
 $router->post('/admin/leads/{id}/destroy', 'App\\Http\\Controllers\\Admin\\LeadController@destroy');
 $router->post('/admin/leads/{id}/note', 'App\\Http\\Controllers\\Admin\\LeadController@addNote');
 $router->post('/admin/leads/{id}/status', 'App\\Http\\Controllers\\Admin\\LeadController@updateStatus');
+$router->post('/admin/leads/{id}/assign', 'App\\Http\\Controllers\\Admin\\LeadController@assign');
 
 // Lead Scoring Dashboard
 $router->get('/admin/leads/scoring', 'App\\Http\\Controllers\\Admin\\LeadScoringController@index');
@@ -2167,6 +2171,27 @@ $router->get('/admin/colony-pipeline/{id}/map',                              'Ap
 $router->get('/admin/colony-pipeline/{id}/map/geojson',                      'App\\Http\\Controllers\\Admin\\ColonyPipelineController@plotMapGeoJson');
 
 // ============================================================
+// LEGAL COLONY DEVELOPMENT PIPELINE (7-Phase)
+// ============================================================
+$router->get('/admin/legal-colony-pipeline',                                  'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@index');
+$router->get('/admin/legal-colony-pipeline/detail/{id}',                      'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@detail');
+$router->get('/admin/legal-colony-pipeline/start-acquisition',                'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@startAcquisition');
+$router->post('/admin/legal-colony-pipeline/store-acquisition',               'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@storeAcquisition');
+$router->post('/admin/legal-colony-pipeline/update-acquisition-status',       'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@updateAcquisitionStatus');
+$router->get('/admin/legal-colony-pipeline/master-plan/{id}',                 'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@createMasterPlan');
+$router->post('/admin/legal-colony-pipeline/store-master-plan',               'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@storeMasterPlan');
+$router->get('/admin/legal-colony-pipeline/plot-cutting/{id}',                'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@plotCutting');
+$router->post('/admin/legal-colony-pipeline/generate-plots',                  'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@generatePlots');
+$router->get('/admin/legal-colony-pipeline/rera/{id}',                        'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@reraRegistration');
+$router->post('/admin/legal-colony-pipeline/store-rera',                      'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@storeRera');
+$router->get('/admin/legal-colony-pipeline/development/{id}',                 'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@recordCost');
+$router->post('/admin/legal-colony-pipeline/store-cost',                      'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@storeCost');
+$router->get('/admin/legal-colony-pipeline/pricing/{id}',                     'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@applyPricing');
+$router->post('/admin/legal-colony-pipeline/calculate-pricing',               'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@calculatePricing');
+$router->get('/admin/legal-colony-pipeline/readiness/{id}',                   'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@readiness');
+$router->post('/admin/legal-colony-pipeline/compliance-check',                'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@complianceCheck');
+
+// ============================================================
 // COLONY FEASIBILITY & PRICING ENGINE
 // ============================================================
 $router->get('/admin/colony-feasibility',                                     'App\\Http\\Controllers\\Admin\\ColonyFeasibilityController@index');
@@ -2709,6 +2734,25 @@ $router->get('/admin/crm/role-dashboard', 'App\\Http\\Controllers\\Admin\\CRMAdm
 $router->get('/admin/crm/dedup', 'App\\Http\\Controllers\\Admin\\CRMAdminController@dedup');
 $router->post('/admin/crm/dedup/merge', 'App\\Http\\Controllers\\Admin\\CRMAdminController@merge');
 $router->post('/admin/crm/dedup/bulk-merge', 'App\\Http\\Controllers\\Admin\\CRMAdminController@bulkMerge');
+
+// ============================================================
+// CRM - Lead Routing Rules (Phase 3)
+// ============================================================
+$router->get('/admin/crm/routing', 'App\\Http\\Controllers\\Admin\\LeadRoutingController@index');
+$router->get('/admin/crm/routing/create', 'App\\Http\\Controllers\\Admin\\LeadRoutingController@create');
+$router->post('/admin/crm/routing/store', 'App\\Http\\Controllers\\Admin\\LeadRoutingController@store');
+$router->get('/admin/crm/routing/{id}/edit', 'App\\Http\\Controllers\\Admin\\LeadRoutingController@edit');
+$router->post('/admin/crm/routing/{id}/update', 'App\\Http\\Controllers\\Admin\\LeadRoutingController@update');
+$router->post('/admin/crm/routing/{id}/delete', 'App\\Http\\Controllers\\Admin\\LeadRoutingController@delete');
+$router->post('/admin/crm/routing/{id}/toggle', 'App\\Http\\Controllers\\Admin\\LeadRoutingController@toggle');
+
+// ============================================================
+// CRM - Assignment Approvals (Phase 6)
+// ============================================================
+$router->get('/admin/crm/assignments', 'App\\Http\\Controllers\\Admin\\AssignmentApprovalController@index');
+$router->post('/admin/crm/assignments/{id}/approve', 'App\\Http\\Controllers\\Admin\\AssignmentApprovalController@approve');
+$router->post('/admin/crm/assignments/{id}/reject', 'App\\Http\\Controllers\\Admin\\AssignmentApprovalController@reject');
+$router->post('/admin/crm/assignments/bulk', 'App\\Http\\Controllers\\Admin\\AssignmentApprovalController@bulkAction');
 
 // ============================================================
 // Smart Registration — Admin Dashboard

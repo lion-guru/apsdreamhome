@@ -39,7 +39,25 @@ if (empty($grouped_projects) && !empty($projects)) {
     </div>
 </section>
 
-<!-- Company Projects Content -->
+    <!-- Cross-link Section: Also Explore -->
+    <section class="py-3" style="background:#f8fafc;">
+        <div class="container">
+            <div class="d-flex flex-wrap gap-2 align-items-center" style="background:rgba(13,148,136,0.04);border:1px solid rgba(13,148,136,0.12);border-radius:12px;padding:14px 18px;">
+                <span class="fw-semibold text-success me-2"><i class="fas fa-compass me-1"></i><?= __('also_explore') ?></span>
+                <a href="<?= BASE_URL ?>/properties" class="btn btn-sm px-3" style="background:rgba(13,148,136,0.1);color:#0d9488;border-radius:8px;border:1px solid rgba(13,148,136,0.2);">
+                    <i class="fas fa-building me-1"></i><?= __('user_properties') ?>
+                </a>
+                <a href="<?= BASE_URL ?>/plots" class="btn btn-sm px-3" style="background:rgba(10,25,47,0.1);color:#0a192f;border-radius:8px;border:1px solid rgba(10,25,47,0.2);">
+                    <i class="fas fa-vector-square me-1"></i><?= __('available_plots') ?>
+                </a>
+                <a href="<?= BASE_URL ?>/colony" class="btn btn-sm px-3" style="background:rgba(16,185,129,0.1);color:#10b981;border-radius:8px;border:1px solid rgba(16,185,129,0.2);">
+                    <i class="fas fa-city me-1"></i><?= __('colonies') ?>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Company Projects Content -->
 <section class="py-5">
     <div class="container">
         <?php if (!empty($grouped_projects)): ?>
@@ -71,14 +89,20 @@ if (empty($grouped_projects) && !empty($projects)) {
                                 
                                 // Dynamic image priority
                                 $imgPath = '/assets/images/projects/placeholder/property.svg';
+                                $isExternal = false;
                                 if (!empty($project->image)) {
-                                    $imgPath = '/' . ltrim($project->image, '/');
+                                    if (strpos($project->image, 'http://') === 0 || strpos($project->image, 'https://') === 0) {
+                                        $imgPath = $project->image;
+                                        $isExternal = true;
+                                    } else {
+                                        $imgPath = '/' . ltrim($project->image, '/');
+                                    }
                                 }
                             ?>
                                 <div class="col-lg-4 col-md-6 mb-4">
                                     <div class="card property-card h-100 shadow-sm border-0 overflow-hidden">
                                         <div class="card-img-wrapper position-relative">
-                                            <img src="<?= BASE_URL . $imgPath ?>" class="img-fluid card-img-top" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="height: 250px; object-fit: cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/projects/placeholder/property.svg'">
+                                            <img src="<?= $isExternal ? $imgPath : BASE_URL . $imgPath ?>" class="img-fluid card-img-top" alt="<?php echo htmlspecialchars($project->site_name); ?>" style="height: 250px; object-fit: cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/projects/placeholder/property.svg'">
                                             <div class="position-absolute top-0 start-0 m-3">
                                                 <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : ($project->status === 'completed' ? 'primary' : 'warning'); ?> shadow-sm">
                                                     <?php echo ucfirst(str_replace('_', ' ', $project->status ?? 'Active')); ?>

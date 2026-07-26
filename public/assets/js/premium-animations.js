@@ -1,7 +1,13 @@
 /**
  * Premium Animations - APS Dream Home
  * Scroll reveal, tilt effects, and micro-interactions
+ * Progressive enhancement: page works without JS,
+ * animations only activate when this script loads.
  */
+// Activate animations IMMEDIATELY (before DOMContentLoaded)
+// This ensures .js-animations is set before any paint
+document.documentElement.classList.add('js-animations');
+
 (function () {
   'use strict';
 
@@ -66,21 +72,22 @@
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             const el = entry.target;
-            
+
             // Check if it's part of a staggered group
             const staggerBase = el.closest('.stagger-group');
             let applyDelay = parseInt(el.style.animationDelay) || 0;
-            
+
             if (staggerBase && !el.hasAttribute('data-stagger-applied')) {
-                applyDelay += (delayCounter * 100); // 100ms stagger between elements
-                el.style.transitionDelay = `${applyDelay}ms`;
-                el.setAttribute('data-stagger-applied', 'true');
-                delayCounter++;
+              applyDelay += delayCounter * 100; // 100ms stagger between elements
+              el.style.transitionDelay = `${applyDelay}ms`;
+              el.setAttribute('data-stagger-applied', 'true');
+              delayCounter++;
             }
 
-            // Add visible class with delay
+            // Add visible + revealed class with delay
             setTimeout(() => {
               el.classList.add('visible');
+              el.classList.add('revealed');
             }, applyDelay || 10);
 
             // Unobserve after animation
@@ -96,8 +103,8 @@
       }
     );
 
-    // Observe all elements with scroll-reveal class
-    document.querySelectorAll('.scroll-reveal').forEach(el => {
+    // Observe all elements with scroll-reveal OR premium-reveal class
+    document.querySelectorAll('.scroll-reveal, .premium-reveal').forEach(el => {
       observer.observe(el);
     });
   }
@@ -106,7 +113,7 @@
   // PAGE TRANSITION FADE-IN (Disabled to prevent link interception bugs)
   // ============================================================
   function initPageTransitions() {
-      // Disabled.
+    // Disabled.
   }
 
   // ============================================================
@@ -433,21 +440,38 @@
     initNavbarScroll();
     initPageTransitions();
 
-    // Add visible class to already-visible elements on load
-    document.addEventListener('DOMContentLoaded', () => {
-      // Trigger initial scroll check
-      setTimeout(() => {
-        window.dispatchEvent(new Event('scroll'));
-      }, 100);
-    });
-
     console.log('🎨 Premium Animations initialized');
   }
 
-  // Start initialization
+  // ============================================================
+  // REVEAL ELEMENTS ON LOAD
+  // ============================================================
+  function revealOnLoad() {
+    // Reveal all premium-reveal elements in viewport immediately
+    document.querySelectorAll('.premium-reveal, .scroll-reveal').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 50) {
+        el.classList.add('revealed');
+        el.classList.add('visible');
+      }
+    });
+    // Trigger scroll observer for elements below fold
+    window.dispatchEvent(new Event('scroll'));
+  }
+
+  // ============================================================
+  // INITIALIZATION — run reveal at the right time
+  // ============================================================
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+      revealOnLoad();
+    });
   } else {
     init();
+    // DOM already ready — reveal immediately
+    revealOnLoad();
   }
+  // Safety net: also reveal on window load (after all assets)
+  window.addEventListener('load', revealOnLoad);
 })();

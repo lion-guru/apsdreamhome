@@ -163,11 +163,11 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=6" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=6" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=6" rel="stylesheet">
-    <?php endif; ?>
-    <?php if ($isPremiumPage): ?>
-    <!-- Homepage-only extras (hero carousel, animations) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=6" rel="stylesheet">
+    <!-- Homepage + public page extras (hero, projects, animations) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=8" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=1" rel="stylesheet">
+    <!-- Customer portal components (wizard, hero, cards, checklist) -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=1" rel="stylesheet">
     <?php endif; ?>
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=6" rel="stylesheet">
 
