@@ -75,8 +75,8 @@ class PortalMenuService
         return [
             // Account
             $this->item('profile', 'Account', 'My Profile', $this->profileUrl(), 'fas fa-user'),
-            $this->item('notifications', 'Account', 'Notifications', '/user/notifications', 'fas fa-bell', $this->countTable('notifications', 'user_id')),
-            $this->item('messages', 'Account', 'Messages', '/user/messages', 'fas fa-envelope'),
+            $this->item('notifications', 'Account', 'Notifications', $this->notificationsUrl(), 'fas fa-bell', $this->countTable('notifications', 'user_id')),
+            $this->item('messages', 'Account', 'Messages', $this->messagesUrl(), 'fas fa-envelope'),
             $this->item('address', 'Account', 'My Address', $this->addressUrl(), 'fas fa-map-marker-alt'),
             $this->item('bank', 'Account', 'Bank Details', $this->bankUrl(), 'fas fa-university'),
             $this->item('kyc', 'Account', 'KYC', $this->kycUrl(), 'fas fa-id-card'),
@@ -136,7 +136,7 @@ class PortalMenuService
             // Explore
             $this->item('browse', 'Explore', 'Browse Properties', '/properties', 'fas fa-search'),
             $this->item('list-property', 'Explore', 'Post Property', '/list-property', 'fas fa-plus-circle'),
-            $this->item('compare', 'Explore', 'Compare Properties', '/properties/compare', 'fas fa-balance-scale'),
+            $this->item('compare', 'Explore', 'Compare Properties', '/compare', 'fas fa-balance-scale'),
             $this->item('auctions', 'Explore', 'Auctions', '/auctions', 'fas fa-gavel'),
         ];
     }
@@ -161,6 +161,7 @@ class PortalMenuService
 
             // Network & Team
             $this->item('network', 'Network', 'Network Tree', '/associate/network/tree', 'fas fa-project-diagram'),
+            $this->item('genealogy', 'Network', 'Interactive Genealogy', '/associate/genealogy', 'fas fa-sitemap'),
             $this->item('team', 'Network', 'Team Members', '/associate/team', 'fas fa-users'),
             $this->item('rank-eligibility', 'Network', 'Rank & Eligibility', '/associate/rank-eligibility', 'fas fa-trophy'),
             $this->item('mlm-plan', 'Network', 'Commission Plan', '/associate/mlm-plan', 'fas fa-file-invoice-dollar'),
@@ -194,11 +195,12 @@ class PortalMenuService
     {
         return [
             $this->item('dashboard', 'Main', 'Dashboard', '/agent/dashboard', 'fas fa-tachometer-alt'),
-            $this->item('leads', 'Main', 'My Leads', '/agent/leads', 'fas fa-users', $this->countTable('leads', 'assigned_to')),
+            $this->item('leads', 'CRM', 'My Leads', '/agent/leads', 'fas fa-users', $this->countTable('leads', 'assigned_to')),
+            $this->item('leads-add', 'CRM', 'Add Lead', '/agent/leads/add', 'fas fa-plus-circle'),
+            $this->item('deals', 'CRM', 'My Deals', '/agent/deals', 'fas fa-handshake'),
             $this->item('properties', 'Main', 'My Properties', '/agent/properties', 'fas fa-building', $this->countTable('user_properties', 'posted_by')),
             $this->item('commissions', 'Earnings', 'Commissions', '/agent/commissions', 'fas fa-rupee-sign'),
             $this->item('wallet', 'Earnings', 'Wallet', '/agent/wallet', 'fas fa-wallet'),
-            $this->item('deals', 'Pipeline', 'My Deals', '/agent/deals', 'fas fa-handshake'),
             $this->item('browse', 'Explore', 'Browse Properties', '/properties', 'fas fa-search'),
         ];
     }
@@ -231,7 +233,9 @@ class PortalMenuService
                             
                             // Dynamic badges for specific items
                             $badge = null;
-                            if ($row['name'] === 'My Tasks') {
+                            if ($row['name'] === 'My Leads') {
+                                $badge = $this->countTable('leads', 'assigned_to');
+                            } elseif ($row['name'] === 'My Tasks') {
                                 $badge = $this->countTable('agent_tasks', 'assigned_to');
                             } elseif ($row['name'] === 'Leaves') {
                                 $badge = $this->countTable('employee_leave_requests', 'employee_id', 'status', 'pending');
@@ -250,6 +254,8 @@ class PortalMenuService
         // Hardcoded fallback (when DB is unavailable or sub-role not found)
         return [
             $this->item('dashboard', 'Main', 'Dashboard', '/employee/dashboard', 'fas fa-tachometer-alt'),
+            $this->item('leads', 'CRM', 'My Leads', '/employee/leads', 'fas fa-user-tie', $this->countTable('leads', 'assigned_to')),
+            $this->item('leads-add', 'CRM', 'Add Lead', '/employee/leads/add', 'fas fa-plus-circle'),
             $this->item('tasks', 'Work', 'My Tasks', '/employee/tasks', 'fas fa-tasks', $this->countTable('agent_tasks', 'assigned_to')),
             $this->item('attendance', 'Work', 'Attendance', '/employee/attendance', 'fas fa-calendar-check'),
             $this->item('leaves', 'Work', 'Leaves', '/employee/leaves', 'fas fa-umbrella-beach'),
@@ -373,12 +379,17 @@ class PortalMenuService
     }
     private function addressUrl(): string
     {
-        return '/user/address';
+        return match ($this->normalizeRole($this->role)) {
+            'employee' => '/employee/profile',
+            'associate' => '/associate/profile',
+            default => '/user/address',
+        };
     }
     private function bankUrl(): string
     {
         return match ($this->normalizeRole($this->role)) {
             'associate' => '/associate/bank-details',
+            'employee' => '/employee/profile',
             default => '/user/bank-details',
         };
     }
@@ -386,7 +397,26 @@ class PortalMenuService
     {
         return match ($this->normalizeRole($this->role)) {
             'admin', 'super_admin' => '/admin/kyc',
+            'employee' => '/employee/profile',
             default => '/user/kyc',
+        };
+    }
+    private function notificationsUrl(): string
+    {
+        return match ($this->normalizeRole($this->role)) {
+            'employee' => '/employee/notifications',
+            'associate' => '/associate/settings',
+            'agent' => '/agent/profile',
+            default => '/user/notifications',
+        };
+    }
+    private function messagesUrl(): string
+    {
+        return match ($this->normalizeRole($this->role)) {
+            'employee' => '/employee/notifications',
+            'associate' => '/associate/settings',
+            'agent' => '/agent/profile',
+            default => '/user/messages',
         };
     }
     private function documentsUrl(): string
@@ -395,14 +425,16 @@ class PortalMenuService
             'admin', 'super_admin' => '/admin/documents',
             'employee' => '/employee/documents',
             'associate' => '/associate/documents',
-            default => '/customer/documents',
+            default => '/user/kyc',
         };
     }
     private function settingsUrl(): string
     {
         return match ($this->normalizeRole($this->role)) {
             'associate' => '/associate/settings',
-            default => '/user/settings',
+            'agent' => '/agent/profile',
+            'employee' => '/employee/profile',
+            default => '/user/notification-settings',
         };
     }
     private function logoutUrl(): string

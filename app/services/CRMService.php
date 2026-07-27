@@ -47,10 +47,21 @@ class CRMService
 
     // ─────────── Lead CRUD ─────────────────────────────────────────────
 
-    public function getLeads($filters = []) {
+    public function getLeads($filters = [], $userId = null, $role = 'admin') {
         try {
             $where = ["l.deleted_at IS NULL"];
             $params = [];
+
+            // Phase 2: Role-based visibility filter
+            if ($userId && !in_array($role, ['admin', 'super_admin'])) {
+                if ($role === 'manager') {
+                    $where[] = "l.assigned_to IN (SELECT id FROM users WHERE reports_to = ?)";
+                    $params[] = $userId;
+                } else {
+                    $where[] = "l.assigned_to = ?";
+                    $params[] = $userId;
+                }
+            }
 
             if (!empty($filters['search'])) {
                 $where[] = "(l.name LIKE ? OR l.email LIKE ? OR l.phone LIKE ? OR l.company LIKE ?)";
@@ -157,6 +168,14 @@ class CRMService
     }
 
     public function createLead($data) {
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isCrmEnabled()) {
+            return ['success' => false, 'error' => 'CRM is currently disabled by administrator'];
+        }
+        $role = $data['creator_role'] ?? ($data['role'] ?? 'admin');
+        if (!$guard->canCreateLead($role)) {
+            return ['success' => false, 'error' => 'Your role does not have permission to create leads'];
+        }
         try {
             $leadNumber = 'CR-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
             $stmt = $this->db->query(
@@ -207,6 +226,16 @@ class CRMService
                 $this->addSourceDetail($leadId, $data);
             }
 
+            // Phase 3: Auto-route lead if no manual assignment
+            if (empty($data['assigned_to'])) {
+                try {
+                    $routingService = new LeadRoutingService();
+                    $routingService->routeLead($leadId);
+                } catch (\Exception $routeEx) {
+                    error_log('CRMService::createLead routing error: ' . $routeEx->getMessage());
+                }
+            }
+
             return ['success' => true, 'lead_id' => $leadId, 'lead_number' => $leadNumber];
         } catch (\Exception $e) {
             error_log('CRMService::createLead error: ' . $e->getMessage());
@@ -239,9 +268,83 @@ class CRMService
         }
     }
 
-    public function deleteLead($id) {
+    public function deleteLead($id, string $role = 'admin') {
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isCrmEnabled()) {
+            return ['success' => false, 'error' => 'CRM is currently disabled by administrator'];
+        }
+        if (!$guard->canDeleteLead($role)) {
+            return ['success' => false, 'error' => 'Your role does not have permission to delete leads'];
+        }
         try {
             $this->db->query("UPDATE leads SET deleted_at = NOW() WHERE id = ?", [$id]);
+            return ['success' => true];
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    public function restoreLead($id) {
+        try {
+            $this->db->query("UPDATE leads SET deleted_at = NULL WHERE id = ?", [$id]);
+            return ['success' => true];
+        } catch (\Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    public function getDeletedLeads($filters = []) {
+        try {
+            $page = max(1, (int)($filters['page'] ?? 1));
+            $perPage = max(1, min(100, (int)($filters['per_page'] ?? 25)));
+            $offset = ($page - 1) * $perPage;
+
+            $where = ["l.deleted_at IS NOT NULL"];
+            $params = [];
+
+            if (!empty($filters['search'])) {
+                $search = '%' . $filters['search'] . '%';
+                $where[] = "(l.name LIKE ? OR l.email LIKE ? OR l.phone LIKE ?)";
+                $params[] = $search;
+                $params[] = $search;
+                $params[] = $search;
+            }
+
+            $whereSql = implode(' AND ', $where);
+
+            $countResult = $this->db->query("SELECT COUNT(*) as total FROM leads l WHERE $whereSql", $params)->fetch();
+            $total = (int)($countResult['total'] ?? 0);
+            $totalPages = max(1, (int)ceil($total / $perPage));
+
+            $params[] = $perPage;
+            $params[] = $offset;
+            $leads = $this->db->query(
+                "SELECT l.*, u.name as assigned_by_name, creator.name as created_by_name
+                 FROM leads l
+                 LEFT JOIN users u ON u.id = l.assigned_to
+                 LEFT JOIN users creator ON creator.id = l.created_by
+                 WHERE $whereSql
+                 ORDER BY l.deleted_at DESC
+                 LIMIT ? OFFSET ?",
+                $params
+            )->fetchAll() ?: [];
+
+            return [
+                'leads' => $leads,
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => $totalPages,
+            ];
+        } catch (\Exception $e) {
+            error_log('CRMService::getDeletedLeads error: ' . $e->getMessage());
+            return ['leads' => [], 'total' => 0, 'page' => 1, 'per_page' => 25, 'total_pages' => 1];
+        }
+    }
+
+    public function permanentDeleteLead($id) {
+        try {
+            $this->db->query("DELETE FROM leads WHERE id = ? AND deleted_at IS NOT NULL", [$id]);
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -544,6 +647,10 @@ class CRMService
     }
 
     public function autoAssignLeads($strategy = 'round_robin') {
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isAutoAssignEnabled()) {
+            return ['success' => false, 'error' => 'Auto-assignment is disabled'];
+        }
         try {
             $unassigned = $this->db->query(
                 "SELECT id FROM leads WHERE assigned_to IS NULL AND deleted_at IS NULL ORDER BY created_at ASC LIMIT 50"
@@ -581,6 +688,10 @@ class CRMService
     // ─────────── Scoring ───────────────────────────────────────────────
 
     public function recalculateScore($leadId) {
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isScoringEnabled()) {
+            return 0;
+        }
         try {
             $lead = $this->db->fetchOne("SELECT * FROM leads WHERE id = ?", [$leadId]);
             if (!$lead) return 0;
@@ -1388,11 +1499,34 @@ class CRMService
     public function getLeadTimeline(int $leadId, int $limit = 100): array
     {
         try {
-            $stmt = $this->db->query(
-                "SELECT * FROM lead_activities WHERE lead_id = ? ORDER BY created_at DESC LIMIT ?",
+            // Lead activities (status changes, notes, updates, assignments)
+            $activities = $this->db->fetchAll(
+                "SELECT id, lead_id, 'activity' as timeline_type, type, subject as title, details as description, created_at, user_id as actor_id
+                 FROM lead_activities WHERE lead_id = ? ORDER BY created_at DESC LIMIT ?",
                 [$leadId, $limit]
-            );
-            return $stmt->fetchAll() ?: [];
+            ) ?: [];
+
+            // Interactions (calls, emails, WhatsApp, meetings)
+            $interactions = $this->db->fetchAll(
+                "SELECT id, lead_id, 'interaction' as timeline_type, type, subject, body as description, created_at, user_id as actor_id
+                 FROM crm_interactions WHERE lead_id = ? ORDER BY created_at DESC LIMIT ?",
+                [$leadId, $limit]
+            ) ?: [];
+
+            // Tasks (follow-ups, to-dos)
+            $tasks = $this->db->fetchAll(
+                "SELECT id, lead_id, 'task' as timeline_type, type, title, description, created_at, assigned_to as actor_id
+                 FROM crm_tasks WHERE lead_id = ? ORDER BY created_at DESC LIMIT ?",
+                [$leadId, $limit]
+            ) ?: [];
+
+            // Merge all sources and sort by created_at DESC
+            $all = array_merge($activities, $interactions, $tasks);
+            usort($all, function($a, $b) {
+                return strtotime($b['created_at']) - strtotime($a['created_at']);
+            });
+
+            return array_slice($all, 0, $limit);
         } catch (\Exception $e) {
             return [];
         }
