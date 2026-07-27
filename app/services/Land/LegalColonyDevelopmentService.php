@@ -342,12 +342,40 @@ class LegalColonyDevelopmentService
                 ];
             }
 
+            // ── Transform pipeline form config → PlotCutterService config ──
+            $totalLandSqft = floatval($config['total_land_sqft'] ?? 0);
+            $plotWidth     = floatval($config['plot_width_ft'] ?? 30);
+            $plotLength    = floatval($config['plot_length_ft'] ?? 40);
+            $blockNames    = array_map('trim', explode(',', $config['blocks'] ?? 'A'));
+            $plotsPerBlock = intval($config['plots_per_block'] ?? 20);
+
+            $plotSizes = [
+                ['width' => $plotWidth, 'length' => $plotLength, 'area' => $plotWidth * $plotLength, 'count' => $plotsPerBlock * count($blockNames)],
+            ];
+
+            // Derive land dimensions: assume rectangular plot with ~4:3 ratio
+            $landWidth  = round(sqrt($totalLandSqft * 3 / 4) * 1.05);
+            $landLength = round($totalLandSqft / max($landWidth, 1));
+
+            $cutterConfig = [
+                'colony_id'       => $colonyId,
+                'total_land_sqft' => $totalLandSqft,
+                'land_width_ft'   => $landWidth,
+                'land_length_ft'  => $landLength,
+                'block_name'      => $blockNames[0],
+                'road_width_ft'   => floatval($config['road_width_ft'] ?? 30),
+                'park_area_pct'   => floatval($config['park_area_pct'] ?? 10),
+                'amenity_area_pct'=> floatval($config['amenity_area_pct'] ?? 5),
+                'plot_sizes'      => $plotSizes,
+                'created_by'      => $config['created_by'] ?? 1,
+            ];
+
             // ── Generate plots via PlotCutterService ───────────
             $cutter = new PlotCutterService();
-            $result = $cutter->generatePlots($config);
+            $result = $cutter->generatePlots($cutterConfig);
 
             if (!$result['success']) {
-                return ['success' => false, 'error' => $result['message'] ?? 'Plot generation failed'];
+                return ['success' => false, 'error' => $result['error'] ?? $result['message'] ?? 'Plot generation failed'];
             }
 
             $plots = $result['plots'] ?? [];
@@ -355,9 +383,9 @@ class LegalColonyDevelopmentService
             // ── Per-plot legal validation ──────────────────────
             $plotViolations = [];
             foreach ($plots as $idx => $plot) {
-                $width  = floatval($plot['width'] ?? 0);
-                $length = floatval($plot['length'] ?? 0);
-                $area   = floatval($plot['area'] ?? 0);
+                $width  = floatval($plot['width_ft'] ?? $plot['width'] ?? 0);
+                $length = floatval($plot['length_ft'] ?? $plot['length'] ?? 0);
+                $area   = floatval($plot['area_sqft'] ?? $plot['area'] ?? 0);
 
                 if ($width > 0 && $length / $width > self::RERA_MAX_PLOT_DEPTH_RATIO) {
                     $plotViolations[] = "Plot #{$idx}: Depth ratio {$length}/{$width} exceeds max 3:1";

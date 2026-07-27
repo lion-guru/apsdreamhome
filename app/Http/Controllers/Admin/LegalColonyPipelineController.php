@@ -6,6 +6,9 @@ use App\Core\Database\Database;
 use App\Services\Land\LegalColonyDevelopmentService;
 use App\Services\Land\PipelineWorkflowService;
 use App\Services\Land\ColonyAnalyticsService;
+use App\Services\Land\ColonyFeasibilityService;
+use App\Services\Land\LandAcquisitionService;
+use App\Services\Land\ColonyHealthService;
 use Exception;
 
 /**
@@ -24,16 +27,28 @@ class LegalColonyPipelineController extends AdminController
     /** @var ColonyAnalyticsService */
     private $analytics;
 
+    /** @var ColonyFeasibilityService */
+    private $feasibility;
+
+    /** @var LandAcquisitionService */
+    private $landAcquisition;
+
+    /** @var ColonyHealthService */
+    private $health;
+
     /** @var Database */
     protected $db;
 
     public function __construct()
     {
         parent::__construct();
-        $this->db        = Database::getInstance();
-        $this->service   = new LegalColonyDevelopmentService();
-        $this->workflow  = new PipelineWorkflowService();
-        $this->analytics = new ColonyAnalyticsService();
+        $this->db             = Database::getInstance();
+        $this->service        = new LegalColonyDevelopmentService();
+        $this->workflow       = new PipelineWorkflowService();
+        $this->analytics      = new ColonyAnalyticsService();
+        $this->feasibility    = new ColonyFeasibilityService();
+        $this->landAcquisition = new LandAcquisitionService();
+        $this->health         = new ColonyHealthService();
     }
 
     // ── Pipeline Overview ──────────────────────────────────────
@@ -145,6 +160,17 @@ class LegalColonyPipelineController extends AdminController
                     [$rera['id']]
                 ) ?: [];
             }
+
+            // Get feasibility pricing (ColonyFeasibilityService)
+            $feasibility = $this->feasibility->previewFeasibility($colonyId);
+
+            // Get land acquisition leads for this colony
+            $landLeads = $this->landAcquisition->listLeads([
+                'district' => $colony['district'] ?? '',
+            ]);
+
+            // Get colony health score
+            $health = $this->health->getColonyHealth($colonyId);
         } catch (Exception $e) {
             error_log('LegalPipeline detail error: ' . $e->getMessage());
             $result = ['success' => false, 'error' => $e->getMessage()];
@@ -154,6 +180,9 @@ class LegalColonyPipelineController extends AdminController
             $rera = null;
             $devCosts = ['count' => 0, 'total' => 0, 'total_gst' => 0, 'total_tds' => 0, 'total_paid' => 0];
             $milestones = [];
+            $feasibility = ['success' => false];
+            $landLeads = ['success' => false, 'data' => [], 'count' => 0];
+            $health = ['success' => false, 'overall_score' => 0, 'grade' => [], 'stages' => [], 'risks' => [], 'recommendations' => []];
         }
 
         return $this->render('admin/legal-colony-pipeline/detail', [
@@ -165,6 +194,8 @@ class LegalColonyPipelineController extends AdminController
             'rera'        => $rera,
             'dev_costs'   => $devCosts,
             'milestones'  => $milestones,
+            'feasibility' => $feasibility,
+            'land_leads'  => $landLeads,
         ]);
     }
 
@@ -580,14 +611,12 @@ class LegalColonyPipelineController extends AdminController
         $this->requireAdmin();
         $colonyId = intval($colonyId);
 
-        try {
-            $data = $this->analytics->getColonyAnalytics($colonyId);
-        } catch (\Throwable $e) {
-            die('Analytics Exception: ' . $e->getMessage());
-        }
+        $data = $this->analytics->getColonyAnalytics($colonyId);
 
         if (!$data['success']) {
-            die('Analytics failed: ' . ($data['error'] ?? 'unknown'));
+            $_SESSION['flash_error'] = $data['error'] ?? 'Analytics unavailable';
+            header('Location: /admin/legal-colony-pipeline');
+            exit;
         }
 
         return $this->render('admin/legal-colony-pipeline/analytics', [

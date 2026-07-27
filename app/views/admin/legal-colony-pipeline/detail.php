@@ -6,6 +6,8 @@ $layout      = $layout ?? null;
 $rera        = $rera ?? null;
 $dev_costs   = $dev_costs ?? ['count' => 0, 'total' => 0, 'total_gst' => 0, 'total_tds' => 0, 'total_paid' => 0];
 $milestones  = $milestones ?? [];
+$feasibility = $feasibility ?? ['success' => false];
+$landLeads   = $landLeads ?? ['success' => false, 'data' => [], 'count' => 0];
 $stages      = $pipeline['stages'] ?? [];
 $currentStage = $pipeline['current_stage'] ?? '';
 $plotStats   = $pipeline['plot_stats'] ?? [];
@@ -163,7 +165,30 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
               </div>
             </div>
           <?php else: ?>
-            <p class="text-muted mb-0">No land acquisition record. <a href="/admin/legal-colony-pipeline/start-acquisition">Start one →</a></p>
+            <p class="text-muted mb-2">No land acquisition record for this colony.</p>
+          <?php endif; ?>
+          <?php if (!empty($landLeads['data'])): ?>
+            <hr class="border-secondary">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h6 class="text-warning mb-0"><i class="fas fa-search me-1"></i> Land Leads (<?= $landLeads['count'] ?>)</h6>
+              <a href="/admin/land-inventory/leads" class="btn btn-sm btn-outline-warning">View All</a>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-dark table-sm mb-0">
+                <thead><tr><th>Owner</th><th>Village</th><th>Area</th><th>Expected</th><th>Status</th></tr></thead>
+                <tbody>
+                  <?php foreach (array_slice($landLeads['data'], 0, 5) as $lead): ?>
+                    <tr>
+                      <td><?= htmlspecialchars($lead['land_owner_name'] ?? '-') ?></td>
+                      <td><?= htmlspecialchars($lead['village'] ?? '-') ?></td>
+                      <td><?= number_format(floatval($lead['area_acres'] ?? 0)) ?> acres</td>
+                      <td>₹<?= number_format(floatval($lead['expected_price'] ?? 0)) ?></td>
+                      <td><span class="badge bg-<?= ($lead['status'] ?? '') === 'registered' ? 'success' : 'warning' ?>"><?= ucfirst($lead['status'] ?? 'new') ?></span></td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div>
           <?php endif; ?>
         </div>
       </div>
@@ -267,7 +292,10 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
       <div class="card border-0 shadow-sm mb-4 <?= $currentStage === 'pricing' ? 'border-success' : '' ?>">
         <div class="card-header bg-dark text-white d-flex justify-content-between">
           <strong><i class="fas fa-tag me-1 text-success"></i> Phase 6: Pricing</strong>
-          <a href="/admin/legal-colony-pipeline/pricing/<?= $colony['id'] ?>" class="btn btn-sm btn-success"><i class="fas fa-calculator me-1"></i> Apply Pricing</a>
+          <div>
+            <a href="/admin/colony-feasibility/<?= $colony['id'] ?>" class="btn btn-sm btn-outline-success me-1"><i class="fas fa-calculator me-1"></i> Feasibility</a>
+            <a href="/admin/legal-colony-pipeline/pricing/<?= $colony['id'] ?>" class="btn btn-sm btn-success"><i class="fas fa-dollar-sign me-1"></i> Apply Pricing</a>
+          </div>
         </div>
         <div class="card-body">
           <div class="row g-3">
@@ -275,6 +303,59 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
             <div class="col-md-4"><small class="text-muted d-block">Min Price/sqft</small><strong>₹<?= number_format(floatval($colony['min_price_per_sqft'] ?? 0)) ?></strong></div>
             <div class="col-md-4"><small class="text-muted d-block">Total Land Cost</small><strong>₹<?= number_format(floatval($colony['estimated_land_cost'] ?? 0)) ?></strong></div>
           </div>
+          <?php if (!empty($feasibility['success'])): ?>
+            <hr class="border-secondary">
+            <h6 class="text-success mb-3"><i class="fas fa-chart-line me-1"></i> Feasibility Analysis (ColonyFeasibilityService)</h6>
+            <div class="row g-3">
+              <div class="col-md-3">
+                <div class="card bg-dark border-secondary">
+                  <div class="card-body text-center py-2">
+                    <small class="text-muted">Cost Basis/sqft</small>
+                    <div class="fs-5 fw-bold text-info">₹<?= number_format($feasibility['raw_cost_per_sqft'] ?? 0) ?></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card bg-dark border-secondary">
+                  <div class="card-body text-center py-2">
+                    <small class="text-muted">Markup Factor</small>
+                    <div class="fs-5 fw-bold text-warning"><?= $feasibility['markup_factor'] ?? 0 ?>x</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card bg-dark border-secondary">
+                  <div class="card-body text-center py-2">
+                    <small class="text-muted">Revenue Projection</small>
+                    <div class="fs-5 fw-bold text-success">₹<?= number_format($feasibility['total_revenue'] ?? 0) ?></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card bg-dark border-secondary">
+                  <div class="card-body text-center py-2">
+                    <small class="text-muted">Total Costs</small>
+                    <div class="fs-5 fw-bold text-danger">₹<?= number_format($feasibility['total_cost_basis'] ?? 0) ?></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <?php if (!empty($feasibility['breakdown'])): ?>
+              <div class="mt-2">
+                <small class="text-muted">
+                  Land: ₹<?= number_format($feasibility['breakdown']['land'] ?? 0) ?> |
+                  Registry: ₹<?= number_format($feasibility['breakdown']['registry'] ?? 0) ?> |
+                  Dev: ₹<?= number_format($feasibility['breakdown']['dev'] ?? 0) ?> |
+                  Approvals: ₹<?= number_format($feasibility['breakdown']['approvals'] ?? 0) ?> |
+                  G&A: ₹<?= number_format($feasibility['breakdown']['ga_rupees'] ?? 0) ?>
+                </small>
+              </div>
+            <?php endif; ?>
+          <?php else: ?>
+            <hr class="border-secondary">
+            <p class="text-muted mb-2 small"><i class="fas fa-info-circle me-1"></i> Feasibility analysis not yet calculated.</p>
+            <a href="/admin/colony-feasibility/<?= $colony['id'] ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-calculator me-1"></i> Run Feasibility Analysis</a>
+          <?php endif; ?>
         </div>
       </div>
 
@@ -355,6 +436,12 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
           <?php endif; ?>
           <a href="/admin/legal-colony-pipeline/readiness/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
             <i class="fas fa-clipboard-check me-2 text-warning"></i> Sales Readiness
+          </a>
+          <a href="/admin/colony-feasibility/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+            <i class="fas fa-chart-line me-2 text-success"></i> Feasibility Calculator
+          </a>
+          <a href="/admin/legal-colony-pipeline/analytics/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+            <i class="fas fa-chart-bar me-2 text-info"></i> Colony Analytics
           </a>
         </div>
       </div>
