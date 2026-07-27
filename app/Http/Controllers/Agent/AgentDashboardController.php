@@ -554,36 +554,6 @@ class AgentDashboardController extends BaseController
     }
 
     /**
-     * Update lead status
-     */
-    public function updateLeadStatus($leadId)
-    {
-        $this->requireLogin();
-        $this->requireAgentRole();
-
-        try {
-            $data = $this->getRequestData();
-            $status = Security::sanitize($data['status'] ?? 'new');
-
-            $this->db->execute(
-                "UPDATE leads SET status = ?, updated_at = ? WHERE id = ? AND agent_id = ?",
-                [$status, date('Y-m-d H:i:s'), $leadId, $_SESSION['user_id']]
-            );
-
-            return $this->jsonResponse([
-                'success' => true,
-                'message' => 'Lead status updated successfully',
-                'status' => $status,
-            ]);
-        } catch (Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to update lead status: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
      * Get request data from various sources
      */
     private function getRequestData(): array
@@ -793,5 +763,151 @@ class AgentDashboardController extends BaseController
             'page_title' => 'My Deals',
             'deals' => $deals,
         ]);
+    }
+
+    /**
+     * Agent lead detail — single lead with timeline + notes
+     */
+    public function leadDetail(int $id)
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+        $lead = null;
+        $activities = [];
+        $notes = [];
+
+        try {
+            $lead = $this->db->fetchOne(
+                "SELECT l.*, u.name as assigned_by_name
+                 FROM leads l
+                 LEFT JOIN users u ON u.id = l.assigned_by
+                 WHERE l.id = ? AND l.assigned_to = ?",
+                [$id, $userId]
+            );
+
+            if (!$lead) {
+                $_SESSION['error'] = 'Lead not found or not assigned to you';
+                $this->redirect('/agent/leads');
+                return;
+            }
+
+            $activities = $this->db->fetchAll(
+                "SELECT * FROM lead_activities WHERE lead_id = ? ORDER BY created_at DESC LIMIT 30",
+                [$id]
+            ) ?: [];
+
+            $notes = $this->db->fetchAll(
+                "SELECT * FROM lead_notes WHERE lead_id = ? ORDER BY created_at DESC",
+                [$id]
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('Agent leadDetail error: ' . $e->getMessage());
+        }
+
+        $statuses = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotiation', 'booking', 'won', 'lost', 'nurture'];
+
+        $this->render('agent/lead_detail', [
+            'page_title' => 'Lead: ' . ($lead['name'] ?? 'Detail'),
+            'lead' => $lead,
+            'activities' => $activities,
+            'notes' => $notes,
+            'statuses' => $statuses,
+        ]);
+    }
+
+    /**
+     * Update lead status
+     */
+    public function updateLeadStatus(int $id)
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+        $newStatus = trim($_POST['status'] ?? '');
+
+        if (empty($newStatus)) {
+            $_SESSION['error'] = 'Status is required';
+            $this->redirect('/agent/leads/' . $id);
+            return;
+        }
+
+        try {
+            $lead = $this->db->fetchOne(
+                "SELECT id, status FROM leads WHERE id = ? AND assigned_to = ?",
+                [$id, $userId]
+            );
+
+            if (!$lead) {
+                $_SESSION['error'] = 'Lead not found or not assigned to you';
+                $this->redirect('/agent/leads');
+                return;
+            }
+
+            $oldStatus = $lead['status'];
+            $this->db->execute(
+                "UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ?",
+                [$newStatus, $id]
+            );
+
+            $this->db->execute(
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                 VALUES (?, 'status_change', ?, ?, NOW())",
+                [$id, "Status changed from " . ucfirst($oldStatus) . " to " . ucfirst($newStatus), $userId]
+            );
+
+            $_SESSION['success'] = 'Lead status updated to ' . ucfirst($newStatus);
+        } catch (\Throwable $e) {
+            error_log('Agent updateLeadStatus error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to update status';
+        }
+
+        $this->redirect('/agent/leads/' . $id);
+    }
+
+    /**
+     * Add note to lead
+     */
+    public function addLeadNote(int $id)
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+        $note = trim($_POST['note'] ?? '');
+
+        if (empty($note)) {
+            $_SESSION['error'] = 'Note cannot be empty';
+            $this->redirect('/agent/leads/' . $id);
+            return;
+        }
+
+        try {
+            $lead = $this->db->fetchOne(
+                "SELECT id FROM leads WHERE id = ? AND assigned_to = ?",
+                [$id, $userId]
+            );
+
+            if (!$lead) {
+                $_SESSION['error'] = 'Lead not found';
+                $this->redirect('/agent/leads');
+                return;
+            }
+
+            $this->db->execute(
+                "INSERT INTO lead_notes (lead_id, note, content, created_by, created_at)
+                 VALUES (?, ?, ?, ?, NOW())",
+                [$id, $note, $note, $userId]
+            );
+
+            $this->db->execute(
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                 VALUES (?, 'note_added', ?, ?, NOW())",
+                [$id, 'Note added: ' . substr($note, 0, 100), $userId]
+            );
+
+            $_SESSION['success'] = 'Note added successfully';
+        } catch (\Throwable $e) {
+            error_log('Agent addLeadNote error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to add note';
+        }
+
+        $this->redirect('/agent/leads/' . $id);
     }
 }
