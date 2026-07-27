@@ -4891,3 +4891,17 @@ $router->post('/admin/communication/email-templates', 'App\\Http\\Controllers\\A
 $router->post('/admin/communication/email-templates/{id}/delete', 'App\\Http\\Controllers\\Admin\\CommunicationAdminController@emailTemplatesDelete');
 $router->get('/admin/communication/logs',             'App\\Http\\Controllers\\Admin\\CommunicationAdminController@logs');
 $router->post('/admin/communication/test-send',       'App\\Http\\Controllers\\Admin\\CommunicationAdminController@testSend');
+
+// ============================================================
+// SAAS TENANT MANAGEMENT (Super Admin)
+// ============================================================
+$router->get('/admin/tenants',                          'App\\Http\\Controllers\\Admin\\TenantController@index');
+$router->get('/admin/tenants/dashboard',                'App\\Http\\Controllers\\Admin\\TenantController@dashboard');
+$router->get('/admin/tenants/create',                   'App\\Http\\Controllers\\Admin\\TenantController@create');
+$router->post('/admin/tenants/store',                   'App\\Http\\Controllers\\Admin\\TenantController@store');
+$router->get('/admin/tenants/{id}',                     'App\\Http\\Controllers\\Admin\\TenantController@show');
+$router->get('/admin/tenants/{id}/edit',                'App\\Http\\Controllers\\Admin\\TenantController@edit');
+$router->post('/admin/tenants/{id}/update',             'App\\Http\\Controllers\\Admin\\TenantController@update');
+$router->post('/admin/tenants/{id}/delete',             'App\\Http\\Controllers\\Admin\\TenantController@delete');
+$router->post('/admin/tenants/{id}/suspend',            'App\\Http\\Controllers\\Admin\\TenantController@suspend');
+$router->post('/admin/tenants/{id}/restore',            'App\\Http\\Controllers\\Admin\\TenantController@restore');

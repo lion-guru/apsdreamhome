@@ -24,6 +24,8 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/responsive-fixes.css" rel="stylesheet">
     <!-- Notification system CSS (dropdowns, toasts, popups) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/notification-system.css" rel="stylesheet">
+    <!-- Dark mode CSS (toggle via button or system preference) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/dark-mode.css" rel="stylesheet">
     <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo $extra_css; ?><?php endif; ?>
 </head>
 
@@ -42,6 +44,37 @@ $GLOBALS['_html_doc_started'] = true;
             APS._sidebar = null;
             APS._overlay = null;
             APS._touchStartX = 0;
+
+            // Notification toggle (called by bell icon onclick)
+            function toggleNotifications() {
+                if (typeof notificationSystem !== 'undefined' && notificationSystem.toggleNotificationDropdown) {
+                    notificationSystem.toggleNotificationDropdown();
+                } else {
+                    window.location.href = '/admin/notifications';
+                }
+            }
+            function toggleMessages() {
+                window.location.href = '/admin/notifications/manage';
+            }
+
+            // Dark mode toggle
+            function toggleDarkMode() {
+                const isDark = document.body.classList.toggle('dark-mode');
+                localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
+                const icon = document.getElementById('darkModeIcon');
+                if (icon) {
+                    icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+                }
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                const saved = localStorage.getItem('aps-dark-mode');
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === '1' || (saved === null && prefersDark)) {
+                    document.body.classList.add('dark-mode');
+                    const icon = document.getElementById('darkModeIcon');
+                    if (icon) icon.className = 'fas fa-sun';
+                }
+            });
 
             APS._init = function() {
                 APS._sidebar = document.getElementById('sidebarMenu');
@@ -198,6 +231,11 @@ $GLOBALS['_html_doc_started'] = true;
             </div>
 
             <div class="nav-right">
+                <!-- Dark Mode Toggle -->
+                <button class="nav-icon" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <i class="fas fa-moon" id="darkModeIcon"></i>
+                </button>
+
                 <!-- Notifications (Leads) -->
                 <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
                     <i class="fas fa-bell"></i>
