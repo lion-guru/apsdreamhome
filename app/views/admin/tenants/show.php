@@ -138,6 +138,15 @@ function tenantUsageBar($used, $max, $color = 'primary') {
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-cog me-2"></i>Actions</h6></div>
             <div class="card-body d-grid gap-2">
+                <?php if (($tenant['status'] ?? '') === 'active' && ($_SESSION['admin_role'] ?? '') === 'super_admin'): ?>
+                    <form method="POST" action="<?= $base ?>/admin/tenants/<?= $tenant['id'] ?>/switch">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                        <button type="submit" class="btn btn-primary w-100 mb-2" onclick="return confirm('Switch to <?= htmlspecialchars($tenant['name'] ?? '') ?>? You can stop anytime.')">
+                            <i class="fas fa-exchange-alt me-2"></i>Switch to This Tenant
+                        </button>
+                    </form>
+                <?php endif; ?>
+
                 <a href="<?= $base ?>/admin/tenants/<?= $tenant['id'] ?>/edit" class="btn btn-outline-primary"><i class="fas fa-edit me-2"></i>Edit Tenant</a>
 
                 <?php if (($tenant['status'] ?? '') !== 'suspended'): ?>

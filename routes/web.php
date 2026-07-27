@@ -4905,3 +4905,17 @@ $router->post('/admin/tenants/{id}/update',             'App\\Http\\Controllers\
 $router->post('/admin/tenants/{id}/delete',             'App\\Http\\Controllers\\Admin\\TenantController@delete');
 $router->post('/admin/tenants/{id}/suspend',            'App\\Http\\Controllers\\Admin\\TenantController@suspend');
 $router->post('/admin/tenants/{id}/restore',            'App\\Http\\Controllers\\Admin\\TenantController@restore');
+$router->post('/admin/tenants/{id}/switch',             'App\\Http\\Controllers\\Admin\\TenantController@switchTenant');
+$router->post('/admin/tenants/stop-switch',             'App\\Http\\Controllers\\Admin\\TenantController@stopSwitch');
+
+// ============================================================
+// SAAS BILLING & SUBSCRIPTIONS (Super Admin)
+// ============================================================
+$router->get('/admin/billing',                              'App\\Http\\Controllers\\Admin\\BillingController@dashboard');
+$router->get('/admin/billing/plans',                        'App\\Http\\Controllers\\Admin\\BillingController@plans');
+$router->get('/admin/billing/subscribe/{id}',               'App\\Http\\Controllers\\Admin\\BillingController@subscribe');
+$router->post('/admin/billing/subscribe/{id}',              'App\\Http\\Controllers\\Admin\\BillingController@processSubscription');
+$router->post('/admin/billing/cancel/{id}',                 'App\\Http\\Controllers\\Admin\\BillingController@cancelSubscription');
+$router->post('/admin/billing/change-plan/{id}',            'App\\Http\\Controllers\\Admin\\BillingController@changePlan');
+$router->get('/admin/billing/invoices/{id}',                'App\\Http\\Controllers\\Admin\\BillingController@invoices');
+$router->post('/admin/billing/webhook',                     'App\\Http\\Controllers\\Admin\\BillingController@webhook');

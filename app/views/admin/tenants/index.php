@@ -159,6 +159,14 @@ $base = BASE_URL ?? '';
                                     <div class="btn-group btn-group-sm">
                                         <a href="<?= $base ?>/admin/tenants/<?= $t['id'] ?>" class="btn btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
                                         <a href="<?= $base ?>/admin/tenants/<?= $t['id'] ?>/edit" class="btn btn-outline-secondary" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <?php if (($t['status'] ?? '') === 'active' && ($_SESSION['admin_role'] ?? '') === 'super_admin'): ?>
+                                            <form method="POST" action="<?= $base ?>/admin/tenants/<?= $t['id'] ?>/switch" style="display:inline;">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                                                <button type="submit" class="btn btn-outline-success btn-sm" title="Switch to this tenant" onclick="return confirm('Switch to <?= htmlspecialchars($t['name']) ?>?')">
+                                                    <i class="fas fa-exchange-alt"></i>
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>

@@ -98,6 +98,27 @@ $groupedItems = $sortedGrouped;
         </a>
         <div class="sidebar-sub">Admin Panel v2.0</div>
     </div>
+
+    <?php
+    // Tenant Switch Banner — show when SuperAdmin is impersonating a tenant
+    $switchActive = !empty($_SESSION['tenant_switch_active']);
+    $switchName = $_SESSION['tenant_switch_name'] ?? '';
+    ?>
+    <?php if ($switchActive): ?>
+    <div style="background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;padding:10px 14px;margin:0 8px;border-radius:8px;font-size:0.82rem;">
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <i class="fas fa-exchange-alt"></i>
+            <strong>Viewing: <?= htmlspecialchars($switchName) ?></strong>
+        </div>
+        <form method="POST" action="<?= $base ?>/admin/tenants/stop-switch" style="margin:0;">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+            <button type="submit" class="btn btn-sm btn-light w-100" style="font-size:0.78rem;padding:3px 8px;">
+                <i class="fas fa-undo me-1"></i>Back to My Tenant
+            </button>
+        </form>
+    </div>
+    <?php endif; ?>
+
     <!-- Tenant CSS Variables for white-labeling -->
     <style>
         :root {

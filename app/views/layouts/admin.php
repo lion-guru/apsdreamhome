@@ -208,7 +208,7 @@ $GLOBALS['_html_doc_started'] = true;
                     <i class="fas fa-moon" id="darkModeIcon"></i>
                 </button>
 
-                <!-- Notifications (Leads) -->
+                <!-- Notifications (Leads) — replaced by notification-system.js -->
                 <button class="nav-icon" id="notification-bell-placeholder" onclick="toggleNotifications()" title="New Leads Today">
                     <i class="fas fa-bell"></i>
                     <span class="badge"><?php echo $newLeadsCount; ?></span>
@@ -277,6 +277,8 @@ $GLOBALS['_html_doc_started'] = true;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Admin JS -->
     <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/js/admin.js"></script>
+    <!-- Admin Form Enhancer (IFSC, pincode auto-fill, form validation, CSRF) -->
+    <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/js/admin-form-enhancer.js"></script>
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     function toggleNotifications() {
         var dropdown = document.getElementById('notificationDropdown');

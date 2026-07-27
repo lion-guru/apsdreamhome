@@ -1,4 +1,4 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-14 — Session 54)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-28 — Session 55)
 
 ---
 
@@ -1252,21 +1252,22 @@ _40. **Dual AgentManager classes = confusion** — `app/Services/AI/Agents/Agent
 _31. **Mobile API column mismatches cause silent failures** — `getAboutInfo()` was querying `designation`, `photo_url`, `is_active` columns that don't exist in `team_members` table. The try/catch swallowed the error, returning empty team data to the app. Always verify column names match between API and DB schema._
 _32. **Chat-shared images aren't saved to filesystem** — When users share images in chat, they're embedded as attachments but not automatically saved to the project filesystem. Need to create upload mechanism or instruct user to save manually._
 _33. **`site_content` vs `team_members` dual-source for team data** — About page reads leaders from `site_content` table, Team page reads members from `team_members` table. Both must be updated separately when team data changes._
+
 ---
 
 ## Future AI Engine Candidates (External — NOT integrated, evaluate later)
 
 User mentioned these external AI/LLM model names for possible future evaluation as `AIGateway` engine options. They are NOT in the codebase and NOT currently wired. Current AI stack uses `AIGateway` → rule engine → self-learning → intent detector → Gemini Flash (free tier).
 
-| Name | What it is |
-|------|------------|
-| **yesakana** | Transliteration of **Sakana AI** (AI lab building small/specialized "model fusion" LLMs). |
-| **sakana** | **Sakana AI** — the company (Japanese for "fish"). Small efficient domain-specific models. |
-| **fugu** | Likely **Sakana AI "Fugu"** — Japanese-language LLM. |
-| **marlin** | Likely **Sakana AI "Marlin"** — Japanese/English embedding model family. |
-| **rokin** | Unrecognized — possible typo/private codename. Not a known public model. |
-| **llm jp4** | **LLM-jp** project 4th-gen Japanese open LLM (llm-jp-2/3/...). |
-| **sisha** | Model/agent codename (possibly from Japanese shisho = librarian). Not widely known. |
+| Name         | What it is                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------ |
+| **yesakana** | Transliteration of **Sakana AI** (AI lab building small/specialized "model fusion" LLMs).  |
+| **sakana**   | **Sakana AI** — the company (Japanese for "fish"). Small efficient domain-specific models. |
+| **fugu**     | Likely **Sakana AI "Fugu"** — Japanese-language LLM.                                       |
+| **marlin**   | Likely **Sakana AI "Marlin"** — Japanese/English embedding model family.                   |
+| **rokin**    | Unrecognized — possible typo/private codename. Not a known public model.                   |
+| **llm jp4**  | **LLM-jp** project 4th-gen Japanese open LLM (llm-jp-2/3/...).                             |
+| **sisha**    | Model/agent codename (possibly from Japanese shisho = librarian). Not widely known.        |
 
 ACTION: Before integrating any, verify availability, API/cost, and whether self-hosted (Ollama) or cloud. Log decision in this file.
 
@@ -1295,3 +1296,17 @@ Fixed across `app/Http/Controllers/Api/*`:
 - Routing: added/api-fixed DocumentAI, ESign, DigiLocker, LegalApi endpoints; fixed CommissionSimulation, Workflow, PushNotification, Communication, LegalApi base classes (CSRF skip + method visibility).
 - E2E suite: **153/153 passing** after all fixes.
 
+---
+
+## New Features (2026-07-28 — Session 55: Layout Path Fix + Documentation)
+
+| Feature                                 | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **52 View Files Fixed**                 | All `admin/features/` and `admin/*/` views that referenced `APP_PATH . '/views/admin/layouts/admin.php'` were broken after the old layout was archived. Batch-replaced to correct path `APP_PATH . '/views/layouts/admin.php'`. Affected: api_keys, analytics, agent_tasks, bulk_operations, commissions, finance, maintenance, notifications, ocr, payroll, progressive_registrations, realtime_analytics, resell_properties, security, system_health, webhooks + 36 views in visits, audit-log, auctions, reviews, property_alerts, nps, drip_campaigns, marketing_campaigns, cash-collections, live_chat, kyc. |
+| **api_keys Schema Mismatch Fixed**      | `ApiKeyService.php` was rewritten to match actual `api_keys` DB columns (`key_name`, `key_value`, `key_type`, `service_name`, `description`). Controller and view also rewritten. Was causing 500 on `/admin/api-keys`.                                                                                                                                                                                                                                                                                                                                                                                           |
+| **PROJECT_RULES.md Created**            | Comprehensive coding standards document covering: PHP style, controller patterns, service patterns, model patterns, view conventions, DB conventions, route rules, error handling, frontend rules, file organization, ADRs, testing rules, prohibited patterns.                                                                                                                                                                                                                                                                                                                                                   |
+| **Notification Architecture Clarified** | `notification-system.js` (450 lines) is PRIMARY — handles bell, dropdown, popups, 30s polling. `notification-widget.js` (WebSocket + toast) was removed from admin layout to avoid conflict. SSE stream routes exist at `web.php:4353-4355`.                                                                                                                                                                                                                                                                                                                                                                      |
+
+### Key Lesson (Session 55)
+
+_46. **Archiving a layout file breaks ALL views that reference it** — When we archived `app/views/admin/layouts/admin.php` to `_archive/old_admin_layout/`, we didn't realize 52 view files across the codebase had `require_once APP_PATH . '/views/admin/layouts/admin.php'`. The files still existed but were dead references. Always grep for ALL references before archiving. Fix: batch find-and-replace across all affected files._

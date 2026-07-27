@@ -190,6 +190,47 @@ class TenantController extends AdminController
         $this->redirect('/admin/tenants/' . $id);
     }
 
+    // ── Tenant Switching (SuperAdmin Impersonation) ────────
+
+    public function switchTenant(int $id)
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/tenants/' . $id);
+        }
+
+        // Only super_admin can switch
+        if (($_SESSION['admin_role'] ?? '') !== 'super_admin') {
+            $this->setFlash('error', 'Only Super Admins can switch tenants');
+            $this->redirect('/admin/tenants/' . $id);
+        }
+
+        $result = $this->tenantService->switchTenant($id);
+        if ($result['success']) {
+            $this->setFlash('success', 'Switched to tenant: ' . $result['tenant_name']);
+            $this->redirect('/admin/dashboard');
+        } else {
+            $this->setFlash('error', $result['error']);
+            $this->redirect('/admin/tenants/' . $id);
+        }
+    }
+
+    public function stopSwitch()
+    {
+        $this->requireAdmin();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/dashboard');
+        }
+
+        $result = $this->tenantService->stopTenantSwitch();
+        if ($result['success']) {
+            $this->setFlash('success', 'Restored to original tenant');
+        } else {
+            $this->setFlash('error', $result['error']);
+        }
+        $this->redirect('/admin/tenants');
+    }
+
     private function getInputData(): array
     {
         return [
