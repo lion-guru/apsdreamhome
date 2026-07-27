@@ -407,9 +407,10 @@ class App
             return $this->loadController("Employee\\DashboardController", "index");
         }
         
-        // Customer routes
+        // Customer routes (redirect to user dashboard)
         elseif ($uri === "/customer/dashboard") {
-            return $this->loadController("Customer\\DashboardController", "index");
+            header('Location: ' . BASE_URL . '/user/dashboard');
+            exit;
         }
         
         // User routes

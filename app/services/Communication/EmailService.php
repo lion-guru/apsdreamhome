@@ -182,7 +182,7 @@ class EmailService
                 'booking_id' => $payment['booking_id'],
                 'property_title' => $payment['property_title'],
                 'payment_date' => date('d M Y, h:i A', strtotime($payment['created_at'])),
-                'dashboard_url' => BASE_URL . '/customer/dashboard',
+                'dashboard_url' => BASE_URL . '/user/dashboard',
                 'support_email' => $this->fromEmail
             ]);
             
@@ -219,7 +219,7 @@ class EmailService
                 'location' => $property['address'],
                 'price' => number_format($property['price'], 2),
                 'listing_url' => BASE_URL . '/properties/' . $propertyId,
-                'dashboard_url' => BASE_URL . '/customer/dashboard',
+                'dashboard_url' => BASE_URL . '/user/dashboard',
                 'support_email' => $this->fromEmail
             ]);
             

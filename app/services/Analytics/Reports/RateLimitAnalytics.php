@@ -18,7 +18,7 @@ class RateLimitAnalytics {
 
     public function __construct() {
         $this->db = App::database();
-        $this->logger = App::make('logger') ?? new \App\Services\Legacy\SecurityLogger();
+        $this->logger = App::make('logger') ?? new class { public function log($msg) { error_log('[RateLimitAnalytics] ' . $msg); } };
         $this->initializeCache();
         $this->loadConfig();
         $this->ensureTables();

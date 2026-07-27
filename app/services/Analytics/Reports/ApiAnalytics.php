@@ -19,7 +19,7 @@ class ApiAnalytics {
     public function __construct() {
         $this->db = App::database();
         // Use a generic logger or the one from App if available
-        $this->logger = App::make('logger') ?? new \App\Services\Legacy\SecurityLogger();
+        $this->logger = App::make('logger') ?? new class { public function log($msg) { error_log('[ApiAnalytics] ' . $msg); } };
         $this->initializeCache();
         $this->loadConfig();
     }

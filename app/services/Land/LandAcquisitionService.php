@@ -661,7 +661,7 @@ class LandAcquisitionService
     {
         try {
             $rows = $this->db->fetchAll(
-                "SELECT * FROM land_brokers ORDER BY active DESC, broker_name ASC"
+                "SELECT * FROM land_brokers ORDER BY `active` DESC, broker_name ASC"
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
         } catch (Exception $e) {

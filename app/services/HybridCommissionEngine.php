@@ -1506,12 +1506,18 @@ class HybridCommissionEngine
             ");
             $stmt->execute([$monthYear, $contribution]);
 
-            // Log the individual contribution for audit trail
+            // Log the individual contribution for audit trail (skip if already contributed this month)
             $stmt = $this->pdo->prepare("
-                INSERT INTO mlm_royalty_contributions (month_year, booking_id, payment_amount, contribution_amount)
-                VALUES (?, ?, ?, ?)
+                SELECT COUNT(*) FROM mlm_royalty_contributions WHERE month_year = ? AND booking_id = ?
             ");
-            $stmt->execute([$monthYear, $bookingId, $amountReceived, $contribution]);
+            $stmt->execute([$monthYear, $bookingId]);
+            if ((int)$stmt->fetchColumn() === 0) {
+                $stmt = $this->pdo->prepare("
+                    INSERT INTO mlm_royalty_contributions (month_year, booking_id, payment_amount, contribution_amount)
+                    VALUES (?, ?, ?, ?)
+                ");
+                $stmt->execute([$monthYear, $bookingId, $amountReceived, $contribution]);
+            }
 
             // Fetch updated pool total
             $stmt = $this->pdo->prepare("SELECT total_pool_amount FROM mlm_royalty_pool WHERE month_year = ?");

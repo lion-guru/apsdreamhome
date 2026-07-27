@@ -636,7 +636,7 @@ class CommunicationAutomationService
             // Diwali, Holi, Eid dates vary - would need lunar calendar
         ];
 
-        return $festivalCalendar[$today] ? [$festivalCalendar[$today]] : [];
+        return isset($festivalCalendar[$today]) ? [$festivalCalendar[$today]] : [];
     }
 
     private function getFestivalMessage(array $festival): string

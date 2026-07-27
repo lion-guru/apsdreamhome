@@ -36,7 +36,7 @@ class Lead extends Model
     
     public static function delete($id)
     {
-        return self::getDb()->query("DELETE FROM leads WHERE id = ?", [$id]);
+        return self::getDb()->query("UPDATE leads SET deleted_at = NOW() WHERE id = ?", [$id]);
     }
     
     public static function getByStatus($status)

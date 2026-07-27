@@ -123,10 +123,10 @@ class ColonyAnalyticsService
             // RERA milestones progress
             $milestoneProgress = $this->db->fetchOne("
                 SELECT
-                    COUNT(*) as total,
-                    SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as done,
-                    SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as active,
-                    SUM(CASE WHEN status = 'delayed' THEN 1 ELSE 0 END) as delayed
+                    COALESCE(COUNT(*), 0) as total,
+                    COALESCE(SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END), 0) as done,
+                    COALESCE(SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END), 0) as `active`,
+                    COALESCE(SUM(CASE WHEN status = 'delayed' THEN 1 ELSE 0 END), 0) as delayed_count
                 FROM rera_milestones
                 WHERE project_id = (SELECT rera_project_id FROM colonies WHERE id = ?)
             ", [$colonyId]) ?: ['total' => 0, 'done' => 0, 'active' => 0, 'delayed' => 0];
