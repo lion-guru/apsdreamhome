@@ -2,91 +2,211 @@
 
 namespace App\Http\Controllers\Admin;
 
-// AdminController resolved via namespace
+use App\Services\CRMService;
+use App\Services\CRMGuard;
 
 /**
- * Lead Kanban Controller
- * Visual pipeline management for sales team
+ * Lead Kanban Controller — Professional Pipeline Board
+ * Visual drag-drop pipeline with CRMService backend
  */
 class LeadKanbanController extends AdminController
 {
+    /** @var CRMService */
+    private $crm;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->crm = new CRMService();
+    }
+
+    /**
+     * Pipeline board — all stages with leads, stats, filters
+     */
     public function index()
     {
         $this->requireAdmin();
-        $stages = ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'closed_won', 'closed_lost', 'nurture'];
-        $stageLabels = [
-            'new' => ['label' => 'New', 'icon' => 'fa-plus', 'color' => 'primary'],
-            'contacted' => ['label' => 'Contacted', 'icon' => 'fa-phone', 'color' => 'info'],
-            'qualified' => ['label' => 'Qualified', 'icon' => 'fa-check', 'color' => 'success'],
-            'proposal' => ['label' => 'Proposal', 'icon' => 'fa-file-alt', 'color' => 'warning'],
-            'negotiation' => ['label' => 'Negotiation', 'icon' => 'fa-handshake', 'color' => 'secondary'],
-            'closed_won' => ['label' => 'Won', 'icon' => 'fa-trophy', 'color' => 'success'],
-            'closed_lost' => ['label' => 'Lost', 'icon' => 'fa-times-circle', 'color' => 'danger'],
-            'nurture' => ['label' => 'Nurture', 'icon' => 'fa-seedling', 'color' => 'info']
+
+        $userId = (int)($_SESSION['admin_id'] ?? 0);
+        $role   = $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin';
+
+        // Filters
+        $filters = [
+            'assigned_to' => $_GET['assigned_to'] ?? null,
+            'source'      => $_GET['source'] ?? null,
+            'role'        => $role,
         ];
-        $leadsByStage = [];
-        try {
-            $sql = "SELECT id, name, email, phone, status, source, score, created_at FROM leads ORDER BY created_at DESC LIMIT 500";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            $allLeads = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            foreach ($stages as $s) $leadsByStage[$s] = [];
-            foreach ($allLeads as $lead) {
-                $s = $lead['status'] ?? 'new';
-                if (!isset($leadsByStage[$s])) $leadsByStage[$s] = [];
-                $leadsByStage[$s][] = $lead;
+
+        // Pipeline board from CRMService
+        $board = $this->crm->getPipelineBoard($filters);
+
+        // Dashboard stats
+        $stats = $this->crm->getDashboardStats($userId, $role);
+
+        // Pipeline totals
+        $totalLeads    = 0;
+        $totalValue    = 0;
+        $wonValue      = 0;
+        $wonCount      = 0;
+        $activeLeads   = 0;
+
+        foreach ($board as $col) {
+            $totalLeads += $col['count'];
+            $totalValue += $col['total_value'];
+            if ($col['stage']['slug'] === 'won') {
+                $wonValue = $col['total_value'];
+                $wonCount = $col['count'];
             }
-        } catch (\Throwable $e) {
-            // Table may not exist; render empty
-            foreach ($stages as $s) $leadsByStage[$s] = [];
+            if (!in_array($col['stage']['slug'], ['won', 'lost'])) {
+                $activeLeads += $col['count'];
+            }
         }
-        $stats = ['total' => 0];
-        foreach ($leadsByStage as $s => $arr) $stats['total'] += count($arr);
-        $this->render('admin/lead_kanban/index', [
-            'page_title' => 'Lead Pipeline - APS Dream Home',
-            'leadsByStage' => $leadsByStage,
-            'stageLabels' => $stageLabels,
-            'stages' => $stages,
-            'stats' => $stats
+
+        $conversionRate = $totalLeads > 0 ? round(($wonCount / $totalLeads) * 100, 1) : 0;
+
+        // Assignable users (for filter dropdown)
+        $users = [];
+        try {
+            $users = $this->db->fetchAll(
+                "SELECT id, name FROM users WHERE status = 'active' ORDER BY name"
+            ) ?: [];
+        } catch (\Throwable $e) {
+            // fallback
+        }
+
+        // Source list
+        $sources = [];
+        try {
+            $sources = $this->db->fetchAll(
+                "SELECT DISTINCT source FROM leads WHERE source IS NOT NULL AND source != '' AND deleted_at IS NULL ORDER BY source"
+            ) ?: [];
+            $sources = array_column($sources, 'source');
+        } catch (\Throwable $e) {
+            $sources = ['website', 'referral', 'facebook', 'google', 'walk_in', 'call_in'];
+        }
+
+        return $this->render('admin/lead_kanban/index', [
+            'page_title'      => 'Pipeline Board',
+            'board'           => $board,
+            'stats'           => $stats,
+            'totalLeads'      => $totalLeads,
+            'totalValue'      => $totalValue,
+            'wonValue'        => $wonValue,
+            'activeLeads'     => $activeLeads,
+            'conversionRate'  => $conversionRate,
+            'users'           => $users,
+            'sources'         => $sources,
+            'currentFilters'  => $filters,
         ]);
     }
 
+    /**
+     * AJAX: Move lead to new stage (from drag-drop)
+     */
     public function updateStage()
     {
         $this->requireAdmin();
         header('Content-Type: application/json');
-        $leadId = (int)($_POST['lead_id'] ?? $_GET['lead_id'] ?? 0);
-        $newStage = $_POST['status'] ?? $_GET['status'] ?? '';
-        $allowed = ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'closed_won', 'closed_lost', 'nurture'];
-        if (!$leadId || !in_array($newStage, $allowed, true)) {
-            echo json_encode(['error' => 'Invalid input']);
+
+        $leadId   = (int)($_POST['lead_id'] ?? 0);
+        $newStage = $_POST['status'] ?? '';
+        $userId   = (int)($_SESSION['admin_id'] ?? 0);
+
+        if (!$leadId || !$newStage) {
+            echo json_encode(['error' => 'Missing lead_id or status']);
             exit;
         }
-        try {
-            $stmt = $this->db->prepare("UPDATE leads SET status = ? WHERE id = ?");
-            $stmt->execute([$newStage, $leadId]);
-            $userId = (int)($_SESSION['admin_id'] ?? 0);
-            $role = $_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin';
-            $this->db->prepare("INSERT INTO audit_log (user_id, user_role, action, entity_type, entity_id, description, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?)")
-                ->execute([$userId, $role, 'kanban_move', 'lead', $leadId, "Moved lead to $newStage", $_SERVER['REMOTE_ADDR'] ?? null]);
 
-            // WebSocket broadcast - tells all open kanban boards to update in place
+        $result = $this->crm->moveLeadToStage($leadId, $newStage, $userId);
+
+        // WebSocket broadcast
+        if ($result['success']) {
             try {
                 \App\Services\WebSocketBroadcaster::broadcastKanban([
-                    'event' => 'stage_change',
-                    'lead_id' => $leadId,
-                    'new_stage' => $newStage,
-                    'moved_by' => $userId,
-                    'moved_at' => date('Y-m-d H:i:s')
+                    'event'      => 'stage_change',
+                    'lead_id'    => $leadId,
+                    'new_stage'  => $newStage,
+                    'moved_by'   => $userId,
+                    'moved_at'   => date('Y-m-d H:i:s'),
                 ], 'kanban_global');
             } catch (\Throwable $e) {
                 error_log("LeadKanbanController: WS broadcast failed: " . $e->getMessage());
             }
-
-            echo json_encode(['success' => true]);
-        } catch (\Throwable $e) {
-            echo json_encode(['error' => $e->getMessage()]);
         }
+
+        echo json_encode($result);
+        exit;
+    }
+
+    /**
+     * AJAX: Get lead quick-view data (for modal on card click)
+     */
+    public function leadQuickView()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        $leadId = (int)($_GET['id'] ?? 0);
+        if (!$leadId) {
+            echo json_encode(['error' => 'Missing lead ID']);
+            exit;
+        }
+
+        $lead = $this->crm->getLeadById($leadId);
+        echo json_encode($lead);
+        exit;
+    }
+
+    /**
+     * AJAX: Get pipeline stats (for live stat refresh)
+     */
+    public function pipelineStats()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        $filters = [
+            'assigned_to' => $_GET['assigned_to'] ?? null,
+            'source'      => $_GET['source'] ?? null,
+        ];
+
+        $board = $this->crm->getPipelineBoard($filters);
+
+        $stats = [
+            'total'   => 0,
+            'active'  => 0,
+            'won'     => 0,
+            'lost'    => 0,
+            'value'   => 0,
+            'won_value' => 0,
+            'columns' => [],
+        ];
+
+        foreach ($board as $col) {
+            $slug = $col['stage']['slug'];
+            $stats['total'] += $col['count'];
+            $stats['value'] += $col['total_value'];
+
+            if ($slug === 'won') {
+                $stats['won'] = $col['count'];
+                $stats['won_value'] = $col['total_value'];
+            } elseif ($slug === 'lost') {
+                $stats['lost'] = $col['count'];
+            } else {
+                $stats['active'] += $col['count'];
+            }
+
+            $stats['columns'][$slug] = [
+                'count' => $col['count'],
+                'value' => $col['total_value'],
+            ];
+        }
+
+        $stats['conversion'] = $stats['total'] > 0
+            ? round(($stats['won'] / $stats['total']) * 100, 1)
+            : 0;
+
+        echo json_encode($stats);
         exit;
     }
 }

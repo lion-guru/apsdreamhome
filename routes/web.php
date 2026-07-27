@@ -606,6 +606,8 @@ $router->get('/admin/saved-searches/apply/{id}', 'App\\Http\\Controllers\\Admin\
 
 $router->get('/admin/lead-kanban', 'App\\Http\\Controllers\\Admin\\LeadKanbanController@index');
 $router->post('/admin/lead-kanban/update-stage', 'App\\Http\\Controllers\\Admin\\LeadKanbanController@updateStage');
+$router->get('/admin/lead-kanban/lead-quickview', 'App\\Http\\Controllers\\Admin\\LeadKanbanController@leadQuickView');
+$router->get('/admin/lead-kanban/pipeline-stats', 'App\\Http\\Controllers\\Admin\\LeadKanbanController@pipelineStats');
 
 $router->get('/admin/sales-dashboard', 'App\\Http\\Controllers\\Admin\\SalesManagerDashboardController@index');
 
@@ -2222,6 +2224,7 @@ $router->post('/admin/legal-colony-pipeline/compliance-check',                'A
 $router->post('/admin/legal-colony-pipeline/advance-stage',                 'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@advanceStage');
 $router->post('/admin/legal-colony-pipeline/stage-readiness',               'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@stageReadiness');
 $router->post('/admin/legal-colony-pipeline/stage-history',                 'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@stageHistory');
+$router->post('/admin/legal-colony-pipeline/auto-advance',                  'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@autoAdvance');
 
 // ── Colony Analytics ──────────────────────────────────────────
 $router->get('/admin/legal-colony-pipeline/analytics/{id}',                 'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@analytics');
