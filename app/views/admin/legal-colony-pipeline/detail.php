@@ -8,6 +8,7 @@ $dev_costs   = $dev_costs ?? ['count' => 0, 'total' => 0, 'total_gst' => 0, 'tot
 $milestones  = $milestones ?? [];
 $feasibility = $feasibility ?? ['success' => false];
 $landLeads   = $landLeads ?? ['success' => false, 'data' => [], 'count' => 0];
+$health      = $health ?? ['success' => false, 'overall_score' => 0, 'grade' => ['letter' => '-', 'label' => 'N/A', 'color' => 'secondary'], 'risks' => [], 'recommendations' => []];
 $stages      = $pipeline['stages'] ?? [];
 $currentStage = $pipeline['current_stage'] ?? '';
 $plotStats   = $pipeline['plot_stats'] ?? [];
@@ -39,6 +40,19 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
       <small class="text-muted">Pipeline Stage: <strong class="text-white"><?= ucfirst(str_replace('_', ' ', $currentStage)) ?></strong></small>
     </div>
     <div class="text-end">
+      <?php if (!empty($health['success'])): ?>
+        <div class="mb-2">
+          <a href="/admin/legal-colony-pipeline/health" class="text-decoration-none">
+            <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-<?= $health['grade']['color'] ?> text-white fw-bold" style="width:52px;height:52px;font-size:1.1rem;" title="Health: <?= $health['grade']['label'] ?> (<?= $health['overall_score'] ?>%)">
+              <?= $health['grade']['letter'] ?>
+            </span>
+          </a>
+          <div class="small text-muted mt-1">Health: <?= $health['overall_score'] ?>%</div>
+          <?php if (!empty($health['risks'])): ?>
+            <div class="small text-danger"><i class="fas fa-exclamation-triangle"></i> <?= count($health['risks']) ?> risk(s)</div>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
       <?php if (!empty($colony['rera_number'])): ?>
         <span class="badge bg-danger fs-6"><i class="fas fa-stamp me-1"></i> RERA: <?= htmlspecialchars($colony['rera_number']) ?></span>
       <?php endif; ?>
@@ -442,6 +456,9 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
           </a>
           <a href="/admin/legal-colony-pipeline/analytics/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
             <i class="fas fa-chart-bar me-2 text-info"></i> Colony Analytics
+          </a>
+          <a href="/admin/legal-colony-pipeline/health" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+            <i class="fas fa-heartbeat me-2 text-danger"></i> Health Dashboard
           </a>
         </div>
       </div>

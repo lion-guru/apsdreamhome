@@ -196,6 +196,7 @@ class LegalColonyPipelineController extends AdminController
             'milestones'  => $milestones,
             'feasibility' => $feasibility,
             'land_leads'  => $landLeads,
+            'health'      => $health,
         ]);
     }
 
@@ -748,6 +749,41 @@ class LegalColonyPipelineController extends AdminController
             echo json_encode(['success' => true, 'milestone_id' => $milestoneId, 'status' => $status]);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    // ── Colony Health Dashboard ──────────────────────────────────
+
+    /**
+     * Colony health overview — all colonies with scores, grades, risks
+     */
+    public function healthOverview()
+    {
+        $this->requireAdmin();
+
+        $data = $this->health->getAllColoniesHealth();
+
+        return $this->render('admin/legal-colony-pipeline/health_overview', [
+            'page_title' => 'Colony Health Dashboard',
+            'data'       => $data,
+        ]);
+    }
+
+    /**
+     * Health score API endpoint (JSON)
+     */
+    public function healthApi()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        $colonyId = intval($_GET['colony_id'] ?? 0);
+
+        if ($colonyId > 0) {
+            echo json_encode($this->health->getColonyHealth($colonyId));
+        } else {
+            echo json_encode($this->health->getAllColoniesHealth());
         }
         exit;
     }
