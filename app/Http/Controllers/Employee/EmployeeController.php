@@ -1381,4 +1381,230 @@ class EmployeeController extends BaseController
             return $default;
         }
     }
+
+    /**
+     * Employee leads list — shows only leads assigned to this employee
+     */
+    public function leads()
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            $this->redirect('/employee/login');
+            return;
+        }
+        $employeeId = $_SESSION['employee_id'];
+        $status = $_GET['status'] ?? '';
+        $search = trim($_GET['search'] ?? '');
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 20;
+        $offset = ($page - 1) * $perPage;
+
+        $leads = [];
+        $total = 0;
+
+        try {
+            $where = 'WHERE l.assigned_to = ?';
+            $params = [$employeeId];
+
+            if ($status && $status !== 'all') {
+                $where .= ' AND l.status = ?';
+                $params[] = $status;
+            }
+            if ($search) {
+                $where .= ' AND (l.name LIKE ? OR l.phone LIKE ? OR l.email LIKE ?)';
+                $searchTerm = "%{$search}%";
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+
+            $countRow = $this->db->fetchOne(
+                "SELECT COUNT(*) as cnt FROM leads l {$where}",
+                $params
+            );
+            $total = (int)($countRow['cnt'] ?? 0);
+
+            $params[] = $perPage;
+            $params[] = $offset;
+            $leads = $this->db->fetchAll(
+                "SELECT l.*, u.name as assigned_by_name
+                 FROM leads l
+                 LEFT JOIN users u ON u.id = l.assigned_by
+                 {$where}
+                 ORDER BY l.created_at DESC
+                 LIMIT ? OFFSET ?",
+                $params
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('Employee leads error: ' . $e->getMessage());
+        }
+
+        $totalPages = max(1, (int)ceil($total / $perPage));
+
+        $this->render('employee/leads', [
+            'page_title' => 'My Leads',
+            'leads' => $leads,
+            'total' => $total,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'status' => $status,
+            'search' => $search,
+        ]);
+    }
+
+    /**
+     * Employee lead detail — shows single lead with timeline + notes
+     */
+    public function leadDetail(int $id)
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            $this->redirect('/employee/login');
+            return;
+        }
+        $employeeId = $_SESSION['employee_id'];
+        $lead = null;
+        $activities = [];
+        $notes = [];
+
+        try {
+            $lead = $this->db->fetchOne(
+                "SELECT l.*, u.name as assigned_by_name
+                 FROM leads l
+                 LEFT JOIN users u ON u.id = l.assigned_by
+                 WHERE l.id = ? AND l.assigned_to = ?",
+                [$id, $employeeId]
+            );
+
+            if (!$lead) {
+                $_SESSION['error'] = 'Lead not found or not assigned to you';
+                $this->redirect('/employee/leads');
+                return;
+            }
+
+            $activities = $this->db->fetchAll(
+                "SELECT * FROM lead_activities WHERE lead_id = ? ORDER BY created_at DESC LIMIT 30",
+                [$id]
+            ) ?: [];
+
+            $notes = $this->db->fetchAll(
+                "SELECT * FROM lead_notes WHERE lead_id = ? ORDER BY created_at DESC",
+                [$id]
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('Employee leadDetail error: ' . $e->getMessage());
+        }
+
+        $statuses = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotiation', 'booking', 'won', 'lost', 'nurture'];
+
+        $this->render('employee/lead_detail', [
+            'page_title' => 'Lead: ' . ($lead['name'] ?? 'Detail'),
+            'lead' => $lead,
+            'activities' => $activities,
+            'notes' => $notes,
+            'statuses' => $statuses,
+        ]);
+    }
+
+    /**
+     * Update lead status (AJAX POST)
+     */
+    public function updateLeadStatus(int $id)
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Unauthorized']);
+            return;
+        }
+        $employeeId = $_SESSION['employee_id'];
+        $newStatus = trim($_POST['status'] ?? '');
+
+        if (empty($newStatus)) {
+            $_SESSION['error'] = 'Status is required';
+            $this->redirect('/employee/leads/' . $id);
+            return;
+        }
+
+        try {
+            $lead = $this->db->fetchOne(
+                "SELECT id, status FROM leads WHERE id = ? AND assigned_to = ?",
+                [$id, $employeeId]
+            );
+
+            if (!$lead) {
+                $_SESSION['error'] = 'Lead not found or not assigned to you';
+                $this->redirect('/employee/leads');
+                return;
+            }
+
+            $oldStatus = $lead['status'];
+            $this->db->execute(
+                "UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ?",
+                [$newStatus, $id]
+            );
+
+            $this->db->execute(
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                 VALUES (?, 'status_change', ?, ?, NOW())",
+                [$id, "Status changed from " . ucfirst($oldStatus) . " to " . ucfirst($newStatus), $employeeId]
+            );
+
+            $_SESSION['success'] = 'Lead status updated to ' . ucfirst($newStatus);
+        } catch (\Throwable $e) {
+            error_log('Employee updateLeadStatus error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to update status';
+        }
+
+        $this->redirect('/employee/leads/' . $id);
+    }
+
+    /**
+     * Add note to lead
+     */
+    public function addLeadNote(int $id)
+    {
+        if (!isset($_SESSION['employee_id'])) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Unauthorized']);
+            return;
+        }
+        $employeeId = $_SESSION['employee_id'];
+        $note = trim($_POST['note'] ?? '');
+
+        if (empty($note)) {
+            $_SESSION['error'] = 'Note cannot be empty';
+            $this->redirect('/employee/leads/' . $id);
+            return;
+        }
+
+        try {
+            $lead = $this->db->fetchOne(
+                "SELECT id FROM leads WHERE id = ? AND assigned_to = ?",
+                [$id, $employeeId]
+            );
+
+            if (!$lead) {
+                $_SESSION['error'] = 'Lead not found';
+                $this->redirect('/employee/leads');
+                return;
+            }
+
+            $this->db->execute(
+                "INSERT INTO lead_notes (lead_id, note, content, created_by, created_at)
+                 VALUES (?, ?, ?, ?, NOW())",
+                [$id, $note, $note, $employeeId]
+            );
+
+            $this->db->execute(
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                 VALUES (?, 'note_added', ?, ?, NOW())",
+                [$id, 'Note added: ' . substr($note, 0, 100), $employeeId]
+            );
+
+            $_SESSION['success'] = 'Note added successfully';
+        } catch (\Throwable $e) {
+            error_log('Employee addLeadNote error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to add note';
+        }
+
+        $this->redirect('/employee/leads/' . $id);
+    }
 }

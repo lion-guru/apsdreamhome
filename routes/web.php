@@ -993,6 +993,10 @@ $router->post('/employee/notifications/read-all', 'Employee\\EmployeeController@
 $router->post('/employee/notifications/{id}/read', 'Employee\\EmployeeController@markNotificationRead');
 
 // Employee Pages
+$router->get('/employee/leads', 'Employee\\EmployeeController@leads');
+$router->get('/employee/leads/{id}', 'Employee\\EmployeeController@leadDetail');
+$router->post('/employee/leads/{id}/status', 'Employee\\EmployeeController@updateLeadStatus');
+$router->post('/employee/leads/{id}/note', 'Employee\\EmployeeController@addLeadNote');
 $router->get('/employee/tasks', 'Employee\\EmployeeController@tasks');
 $router->get('/employee/activities', 'Employee\\EmployeeController@activities');
 $router->get('/employee/attendance', 'Employee\\EmployeeController@attendance');
