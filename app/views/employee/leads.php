@@ -204,6 +204,12 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
                                         <i class="fas fa-phone"></i>
                                     </a>
                                 <?php endif; ?>
+                                <form method="POST" action="<?= $base ?>/employee/leads/<?= (int)$lead['id'] ?>/delete" style="display:inline;" onsubmit="return confirm('Move this lead to trash?')">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

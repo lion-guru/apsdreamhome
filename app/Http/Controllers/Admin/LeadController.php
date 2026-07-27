@@ -435,11 +435,103 @@ class LeadController extends AdminController
         $result = $this->crm->deleteLead((int)$id);
         if ($result['success']) {
             $this->crm->logActivity((int)$id, $adminId, 'delete', 'Lead deleted', 'Lead soft-deleted by admin');
-            $this->setFlash('success', 'Lead deleted');
+            $this->setFlash('success', 'Lead moved to trash (recoverable)');
         } else {
             $this->setFlash('error', 'Failed to delete: ' . ($result['error'] ?? 'Unknown'));
         }
         return $this->redirect('/admin/leads');
+    }
+
+    public function trash()
+    {
+        $this->requireAdmin();
+
+        $filters = [
+            'search' => $_GET['search'] ?? null,
+            'page' => (int)($_GET['page'] ?? 1),
+            'per_page' => (int)($_GET['per_page'] ?? 25),
+        ];
+
+        $result = $this->crm->getDeletedLeads($filters);
+
+        return $this->render('admin/leads/trash', [
+            'leads' => $result['leads'],
+            'total' => $result['total'],
+            'page' => $result['page'],
+            'per_page' => $result['per_page'],
+            'total_pages' => $result['total_pages'],
+            'filters' => $filters,
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $this->requireAdmin();
+        $adminId = $this->getCurrentUserId();
+
+        $result = $this->crm->restoreLead((int)$id);
+        if ($result['success']) {
+            $this->crm->logActivity((int)$id, $adminId, 'restore', 'Lead restored', 'Lead restored from trash by admin');
+            $this->setFlash('success', 'Lead restored successfully');
+        } else {
+            $this->setFlash('error', 'Failed to restore: ' . ($result['error'] ?? 'Unknown'));
+        }
+        return $this->redirect('/admin/leads/trash');
+    }
+
+    public function permanentDelete($id)
+    {
+        $this->requireAdmin();
+
+        $result = $this->crm->permanentDeleteLead((int)$id);
+        if ($result['success']) {
+            $this->setFlash('success', 'Lead permanently deleted');
+        } else {
+            $this->setFlash('error', 'Failed to permanently delete');
+        }
+        return $this->redirect('/admin/leads/trash');
+    }
+
+    public function export()
+    {
+        $this->requireAdmin();
+
+        $filters = [
+            'search' => $_GET['search'] ?? null,
+            'status' => $_GET['status'] ?? null,
+            'source' => $_GET['source'] ?? null,
+            'assigned_to' => $_GET['assigned_to'] ?? null,
+        ];
+
+        $userId = $this->getCurrentUserId();
+        $role = $this->getCurrentUserRole();
+        $result = $this->crm->getLeads(array_merge($filters, ['per_page' => 9999]), $userId, $role);
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="leads_export_' . date('Y-m-d') . '.csv"');
+
+        $output = fopen('php://output', 'w');
+        fputcsv($output, ['ID', 'Name', 'Email', 'Phone', 'Source', 'Status', 'Priority', 'Score', 'Budget', 'City', 'Assigned To', 'Created At']);
+
+        foreach ($result['leads'] as $lead) {
+            fputcsv($output, [
+                $lead['id'] ?? '',
+                $lead['name'] ?? '',
+                $lead['email'] ?? '',
+                $lead['phone'] ?? '',
+                $lead['source'] ?? '',
+                $lead['status'] ?? '',
+                $lead['priority'] ?? '',
+                $lead['lead_score'] ?? 0,
+                $lead['budget'] ?? '',
+                $lead['city'] ?? '',
+                $lead['assigned_to_name'] ?? $lead['assigned_by_name'] ?? '',
+                $lead['created_at'] ?? '',
+            ]);
+        }
+
+        fclose($output);
+        exit;
     }
 
     /**

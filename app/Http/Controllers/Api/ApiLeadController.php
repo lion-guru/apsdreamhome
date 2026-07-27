@@ -242,21 +242,18 @@ class ApiLeadController extends BaseController
                 $this->jsonError('Lead not found', 404);
             }
 
-            // Check permissions
             $this->authorize($lead);
 
-            // Log activity before deleting
-            $this->logLeadActivity($lead->id, 'lead_deleted', 'Lead deleted');
+            $this->logLeadActivity($lead->id, 'lead_deleted', 'Lead soft-deleted');
 
-            // Delete lead
-            $lead->delete();
+            $userId = (int)($_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 0);
+            $crm = new \App\Services\CRMService();
+            $result = $crm->deleteLead((int)$id);
 
-            $response = [
+            $this->jsonResponse([
                 'success' => true,
-                'message' => 'Lead deleted successfully',
-            ];
-
-            $this->jsonResponse($response);
+                'message' => 'Lead deleted successfully (recoverable from trash)',
+            ]);
         } catch (\Throwable $e) {
             $this->jsonError('Failed to delete lead: ' . $e->getMessage(), 500);
         }

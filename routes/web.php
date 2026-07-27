@@ -836,6 +836,9 @@ $router->post('/agent/login', 'Auth\\AgentAuthController@authenticate');
 $router->get('/agent/logout', 'Auth\\AgentAuthController@logout');
 $router->get('/agent/dashboard', 'Agent\\AgentDashboardController@index');
 $router->get('/agent/leads', 'Agent\\AgentDashboardController@leads');
+$router->get('/agent/leads/{id}', 'Agent\\AgentDashboardController@leadDetail');
+$router->post('/agent/leads/{id}/status', 'Agent\\AgentDashboardController@updateLeadStatus');
+$router->post('/agent/leads/{id}/note', 'Agent\\AgentDashboardController@addLeadNote');
 $router->get('/agent/properties', 'Agent\\AgentDashboardController@properties');
 $router->get('/agent/commissions', 'Agent\\AgentDashboardController@commissions');
 $router->get('/agent/profile', 'Agent\\AgentDashboardController@profile');
@@ -1243,6 +1246,34 @@ $router->post('/admin/leads/{id}/destroy', 'App\\Http\\Controllers\\Admin\\LeadC
 $router->post('/admin/leads/{id}/note', 'App\\Http\\Controllers\\Admin\\LeadController@addNote');
 $router->post('/admin/leads/{id}/status', 'App\\Http\\Controllers\\Admin\\LeadController@updateStatus');
 $router->post('/admin/leads/{id}/assign', 'App\\Http\\Controllers\\Admin\\LeadController@assign');
+
+// Lead Trash & Recovery
+$router->get('/admin/leads/trash', 'App\\Http\\Controllers\\Admin\\LeadController@trash');
+$router->get('/admin/leads/trash/list', 'App\\Http\\Controllers\\Admin\\LeadController@trash');
+$router->post('/admin/leads/{id}/restore', 'App\\Http\\Controllers\\Admin\\LeadController@restore');
+$router->post('/admin/leads/{id}/permanent-delete', 'App\\Http\\Controllers\\Admin\\LeadController@permanentDelete');
+
+// Lead Export
+$router->get('/admin/leads/export/csv', 'App\\Http\\Controllers\\Admin\\LeadController@export');
+
+// CRM Settings
+$router->get('/admin/crm/settings', 'App\\Http\\Controllers\\Admin\\CRMSettingsController@index');
+$router->get('/admin/crm-settings', 'App\\Http\\Controllers\\Admin\\CRMSettingsController@index');
+$router->post('/admin/crm/settings/save', 'App\\Http\\Controllers\\Admin\\CRMSettingsController@save');
+$router->post('/admin/crm-settings/save', 'App\\Http\\Controllers\\Admin\\CRMSettingsController@save');
+
+// Employee lead create
+$router->get('/employee/leads/add', 'Employee\\EmployeeController@addLead');
+$router->post('/employee/leads/store', 'Employee\\EmployeeController@storeLead');
+$router->post('/employee/leads/{id}/delete', 'Employee\\EmployeeController@deleteLead');
+
+// Agent lead create (form-based)
+$router->get('/agent/leads/add', 'Agent\\AgentDashboardController@addLeadForm');
+$router->post('/agent/leads/store', 'Agent\\AgentDashboardController@storeLeadForm');
+$router->post('/agent/leads/{id}/delete', 'Agent\\AgentDashboardController@deleteLead');
+
+// Associate lead soft delete
+$router->post('/associate/leads/{id}/delete', 'App\\Http\\Controllers\\AssociateController@deleteLead');
 
 // Lead Scoring Dashboard
 $router->get('/admin/leads/scoring', 'App\\Http\\Controllers\\Admin\\LeadScoringController@index');

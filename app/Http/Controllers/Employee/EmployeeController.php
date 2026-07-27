@@ -1607,4 +1607,103 @@ class EmployeeController extends BaseController
 
         $this->redirect('/employee/leads/' . $id);
     }
+
+    public function addLead()
+    {
+        if (!isset($_SESSION['employee_id'])) { $this->redirect('/employee/login'); return; }
+
+        $sources = [];
+        $assignees = [];
+        try {
+            $sources = $this->db->fetchAll("SELECT id, name FROM lead_sources ORDER BY name") ?: [];
+            $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('employee','admin','manager') AND deleted_at IS NULL ORDER BY name") ?: [];
+            $assignees = $users;
+        } catch (\Throwable $e) {}
+
+        return $this->render('employee/lead_form', [
+            'page_title' => 'Add New Lead',
+            'sources' => $sources,
+            'assignees' => $assignees,
+            'mode' => 'create',
+        ]);
+    }
+
+    public function storeLead()
+    {
+        if (!isset($_SESSION['employee_id'])) { $this->redirect('/employee/login'); return; }
+        $employeeId = $_SESSION['employee_id'];
+
+        $name = trim($_POST['name'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $source = trim($_POST['source'] ?? 'manual');
+        $budget = (float)($_POST['budget'] ?? 0);
+        $city = trim($_POST['city'] ?? '');
+        $notes = trim($_POST['notes'] ?? '');
+        $propertyInterest = trim($_POST['property_interest'] ?? '');
+
+        if (empty($name) || empty($phone)) {
+            $_SESSION['error'] = 'Name and phone are required';
+            $this->redirect('/employee/leads/add');
+            return;
+        }
+
+        try {
+            $existing = $this->db->fetchOne("SELECT id FROM leads WHERE phone = ? AND deleted_at IS NULL", [$phone]);
+            if ($existing) {
+                $_SESSION['error'] = 'A lead with this phone already exists';
+                $this->redirect('/employee/leads/add');
+                return;
+            }
+
+            $this->db->execute(
+                "INSERT INTO leads (name, phone, email, source, budget, city, notes, property_interest, status, assigned_to, created_by, created_at, updated_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, NOW(), NOW())",
+                [$name, $phone, $email, $source, $budget > 0 ? $budget : null, $city, $notes, $propertyInterest, $employeeId, $employeeId]
+            );
+            $leadId = $this->db->lastInsertId();
+
+            $this->db->execute(
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                 VALUES (?, 'created', 'Lead created by employee', ?, NOW())",
+                [$leadId, $employeeId]
+            );
+
+            $_SESSION['success'] = 'Lead created successfully';
+            $this->redirect('/employee/leads');
+        } catch (\Throwable $e) {
+            error_log('Employee storeLead error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to create lead: ' . $e->getMessage();
+            $this->redirect('/employee/leads/add');
+        }
+    }
+
+    public function deleteLead(int $id)
+    {
+        if (!isset($_SESSION['employee_id'])) { $this->redirect('/employee/login'); return; }
+        $employeeId = $_SESSION['employee_id'];
+
+        try {
+            $lead = $this->db->fetchOne("SELECT id, assigned_to, created_by FROM leads WHERE id = ? AND deleted_at IS NULL", [$id]);
+            if (!$lead || ((int)$lead['assigned_to'] !== $employeeId && (int)$lead['created_by'] !== $employeeId)) {
+                $_SESSION['error'] = 'Lead not found or access denied';
+                $this->redirect('/employee/leads');
+                return;
+            }
+
+            $this->db->execute("UPDATE leads SET deleted_at = NOW() WHERE id = ?", [$id]);
+            $this->db->execute(
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                 VALUES (?, 'delete', 'Lead soft-deleted by employee', ?, NOW())",
+                [$id, $employeeId]
+            );
+
+            $_SESSION['success'] = 'Lead moved to trash';
+        } catch (\Throwable $e) {
+            error_log('Employee deleteLead error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to delete lead';
+        }
+
+        $this->redirect('/employee/leads');
+    }
 }

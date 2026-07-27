@@ -910,4 +910,100 @@ class AgentDashboardController extends BaseController
 
         $this->redirect('/agent/leads/' . $id);
     }
+
+    public function addLeadForm()
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+
+        $sources = [];
+        try {
+            $sources = $this->db->fetchAll("SELECT id, name FROM lead_sources ORDER BY name") ?: [];
+        } catch (\Throwable $e) {}
+
+        return $this->render('agent/lead_form', [
+            'page_title' => 'Add New Lead',
+            'sources' => $sources,
+            'mode' => 'create',
+        ]);
+    }
+
+    public function storeLeadForm()
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+
+        $name = trim($_POST['name'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $source = trim($_POST['source'] ?? 'manual');
+        $budget = (float)($_POST['budget'] ?? 0);
+        $city = trim($_POST['city'] ?? '');
+        $notes = trim($_POST['notes'] ?? '');
+        $propertyInterest = trim($_POST['property_interest'] ?? '');
+
+        if (empty($name) || empty($phone)) {
+            $_SESSION['error'] = 'Name and phone are required';
+            $this->redirect('/agent/leads/add');
+            return;
+        }
+
+        try {
+            $existing = $this->db->fetchOne("SELECT id FROM leads WHERE phone = ? AND deleted_at IS NULL", [$phone]);
+            if ($existing) {
+                $_SESSION['error'] = 'A lead with this phone already exists';
+                $this->redirect('/agent/leads/add');
+                return;
+            }
+
+            $this->db->execute(
+                "INSERT INTO leads (name, phone, email, source, budget, city, notes, property_interest, status, assigned_to, created_by, created_at, updated_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, NOW(), NOW())",
+                [$name, $phone, $email, $source, $budget > 0 ? $budget : null, $city, $notes, $propertyInterest, $userId, $userId]
+            );
+            $leadId = $this->db->lastInsertId();
+
+            $this->db->execute(
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                 VALUES (?, 'created', 'Lead created by agent', ?, NOW())",
+                [$leadId, $userId]
+            );
+
+            $_SESSION['success'] = 'Lead created successfully';
+            $this->redirect('/agent/leads');
+        } catch (\Throwable $e) {
+            error_log('Agent storeLeadForm error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to create lead: ' . $e->getMessage();
+            $this->redirect('/agent/leads/add');
+        }
+    }
+
+    public function deleteLead(int $id)
+    {
+        $this->requireAgentRole();
+        $userId = $this->userId;
+
+        try {
+            $lead = $this->db->fetchOne("SELECT id, assigned_to, created_by FROM leads WHERE id = ? AND deleted_at IS NULL", [$id]);
+            if (!$lead || ((int)$lead['assigned_to'] !== $userId && (int)$lead['created_by'] !== $userId)) {
+                $_SESSION['error'] = 'Lead not found or access denied';
+                $this->redirect('/agent/leads');
+                return;
+            }
+
+            $this->db->execute("UPDATE leads SET deleted_at = NOW() WHERE id = ?", [$id]);
+            $this->db->execute(
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                 VALUES (?, 'delete', 'Lead soft-deleted by agent', ?, NOW())",
+                [$id, $userId]
+            );
+
+            $_SESSION['success'] = 'Lead moved to trash';
+        } catch (\Throwable $e) {
+            error_log('Agent deleteLead error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to delete lead';
+        }
+
+        $this->redirect('/agent/leads');
+    }
 }

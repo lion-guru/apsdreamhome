@@ -155,7 +155,7 @@ $statusColors = [
                         <td class="px-3"><small class="text-muted"><?= date('d M Y', strtotime($lead['created_at'] ?? 'now')) ?></small></td>
                         <td class="px-3">
                             <div class="d-flex gap-1">
-                                <a href="<?= $base ?>/admin/leads/<?= $lead['id'] ?>" class="btn btn-sm btn-outline-success" title="View in CRM">
+                                <a href="<?= $base ?>/agent/leads/<?= $lead['id'] ?>" class="btn btn-sm btn-outline-success" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <?php if (!empty($lead['phone'])): ?>
@@ -163,6 +163,12 @@ $statusColors = [
                                         <i class="fas fa-phone"></i>
                                     </a>
                                 <?php endif; ?>
+                                <form method="POST" action="<?= $base ?>/agent/leads/<?= (int)$lead['id'] ?>/delete" style="display:inline;" onsubmit="return confirm('Move this lead to trash?')">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

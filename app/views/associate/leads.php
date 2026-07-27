@@ -193,6 +193,12 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                                         <a href="tel:<?= htmlspecialchars($lead['phone']) ?>" class="btn btn-sm btn-outline-success" title="Call">
                                             <i class="fas fa-phone"></i>
                                         </a>
+                                        <form method="POST" action="<?= BASE_URL ?>/associate/leads/<?= (int)$lead['id'] ?>/delete" style="display:inline;" onsubmit="return confirm('Move this lead to trash?')">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

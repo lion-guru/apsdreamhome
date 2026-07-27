@@ -2059,6 +2059,36 @@ class AssociateController extends BaseController
         $this->redirect("/associate/leads/{$id}");
     }
 
+    public function deleteLead($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'] ?? 0;
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $lead = $db->fetchOne("SELECT id, assigned_to, created_by FROM leads WHERE id = ? AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL", [$id, $userId, $userId]);
+            if (!$lead) {
+                $_SESSION['error'] = 'Lead not found or access denied';
+                $this->redirect('/associate/leads');
+                return;
+            }
+
+            $db->execute("UPDATE leads SET deleted_at = NOW() WHERE id = ?", [$id]);
+            $db->execute(
+                "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                 VALUES (?, 'delete', 'Lead soft-deleted by associate', ?, NOW())",
+                [$id, $userId]
+            );
+
+            $_SESSION['success'] = 'Lead moved to trash';
+        } catch (\Throwable $e) {
+            error_log('Associate deleteLead error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Failed to delete lead';
+        }
+
+        $this->redirect('/associate/leads');
+    }
+
     private function safeGamify(string $method, int ...$args): array
     {
         try {
