@@ -1,0 +1,2234 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="keywords" content="real estate, plots, homes, Gorakhpur, Lucknow, Kushinagar, Uttar Pradesh, property, buy plot, sell property">
+    <meta name="author" content="APS Dream Home">
+    <meta name="robots" content="index, follow">
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN-UP">
+    <meta name="geo.placename" content="Gorakhpur">
+    <meta name="geo.position" content="26.7606;83.3732">
+    <meta name="ICBM" content="26.7606, 83.3732">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_IN">
+    <meta property="og:title" content="Blog - APS Dream Home">
+    <meta property="og:description" content="Latest news and articles from our blog">
+        <meta property="og:image" content="assets/images/og-default.jpg">
+        <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="APS Dream Home">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog - APS Dream Home">
+    <meta name="twitter:description" content="Latest news and articles from our blog">
+    <meta name="twitter:image" content="http://localhost/apsdreamhome/assets/images/logo/apslogonew.jpg">
+
+    <!-- Bootstrap JS (early load for modals) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "RealEstateAgent",
+        "name": "APS Dream Home",
+        "image": "http://localhost/apsdreamhome/assets/images/logo.png",
+        "url": "http://localhost/apsdreamhome",
+        "telephone": "+919277121112",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Gorakhpur, Uttar Pradesh, India",
+            "addressLocality": "Gorakhpur",
+            "addressRegion": "Uttar Pradesh",
+            "postalCode": "273008",
+            "addressCountry": "IN"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "200"
+        },
+        "openingHoursSpecification": [
+            {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], "opens": "09:00", "closes": "19:00"}
+        ],
+        "sameAs": [
+            "https:\/\/facebook.com\/apsdreamhome",            "https:\/\/instagram.com\/apsdreamhome",            "https:\/\/youtube.com\/@apsdreamhome",            "https:\/\/linkedin.com\/company\/apsdreamhome"        ]
+    }
+    </script>
+    
+    <!-- CSRF Token -->
+        <meta name="csrf-token" content="893f1c828745ce2afb1aec23fc896b0d5b2f5b38990a0075e2f45a4b7d5bae89">
+        
+    <!-- User ID for WebSocket auth -->
+    
+        <!-- SEO Auto-Injected Meta Tags (BaseController::generateSEO) -->
+    <title>Blog - APS Dream Home</title>
+    <meta name="description" content="Latest news and articles from our blog">
+    <meta name="keywords" content="real estate, plots, flats, villas, property, APS Dream Home, India">
+
+    <!-- Open Graph (dynamic) -->
+    <meta property="og:title" content="Blog - APS Dream Home">
+    <meta property="og:description" content="Latest news and articles from our blog">
+    <meta property="og:image" content="http://localhost/apsdreamhome/assets/images/og-default.jpg">
+    <meta property="og:url" content="http://localhost/apsdreamhome/blog">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card (dynamic) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog - APS Dream Home">
+    <meta name="twitter:description" content="Latest news and articles from our blog">
+    <meta name="twitter:image" content="http://localhost/apsdreamhome/assets/images/og-default.jpg">
+
+    <!-- Canonical (dynamic — overrides static one above for accuracy) -->
+    <link rel="canonical" href="http://localhost/apsdreamhome/blog">
+
+    <!-- JSON-LD Structured Data -->
+        
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="http://localhost/apsdreamhome/assets/images/logo/apslogonew.jpg">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="APS Dream Home">
+    <link rel="manifest" href="http://localhost/apsdreamhome/pwa/manifest">
+    <link rel="apple-touch-icon" href="http://localhost/apsdreamhome/assets/images/icons/icon-192x192.png">
+
+    <!-- Preconnect to CDN origins for faster resource loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Google Fonts (preloaded) -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS for map picker -->
+    <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+    
+            <!-- CSS: base → components → header → premium theme (ALL public pages) → homepage extras -->
+    <link href="http://localhost/apsdreamhome/assets/css/style.css?v=6" rel="stylesheet">
+    <link href="http://localhost/apsdreamhome/assets/css/frontend.css?v=6" rel="stylesheet">
+    <link href="http://localhost/apsdreamhome/assets/css/header.css?v=6" rel="stylesheet">
+    <link href="http://localhost/apsdreamhome/assets/css/premium-theme.css?v=6" rel="stylesheet">
+    <!-- Homepage + public page extras (hero, projects, animations) -->
+    <link href="http://localhost/apsdreamhome/assets/css/homepage.css?v=8" rel="stylesheet">
+    <link href="http://localhost/apsdreamhome/assets/css/modern-animations.css?v=1" rel="stylesheet">
+        <link href="http://localhost/apsdreamhome/assets/css/notification-system.css?v=6" rel="stylesheet">
+
+    <!-- Scroll fix (Cleaned) -->
+    <style nonce="b8d8a22ff7c624853ccb391b51cb437c">
+        html, body { overflow-x: hidden; }
+        header.premium-header { overflow: visible; }
+        header.premium-header .navbar-collapse { overflow: visible; }
+    </style>
+
+    <!-- Extra head content from views -->
+        <script nonce="b8d8a22ff7c624853ccb391b51cb437c">
+        // Dynamically set header height for page offset (immediately + on resize)
+        (function() {
+            function setHeaderHeight() {
+                var hdr = document.querySelector('header.premium-header');
+                var h = hdr ? hdr.offsetHeight : 80;
+                document.documentElement.style.setProperty('--header-height', h + 'px');
+            }
+            // Run immediately after CSS paints
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', setHeaderHeight);
+            } else {
+                setHeaderHeight();
+            }
+            window.addEventListener('load', setHeaderHeight);
+            window.addEventListener('resize', setHeaderHeight);
+        })();
+    </script>
+</head>
+
+<body>
+        <!-- Google Analytics 4 -->
+    <script nonce="b8d8a22ff7c624853ccb391b51cb437c" async src="https://www.googletagmanager.com/gtag/js?id=G-PLACEHOLDER"></script>
+    <script nonce="b8d8a22ff7c624853ccb391b51cb437c">
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'G-PLACEHOLDER', {
+        'anonymize_ip': true
+    });
+    </script>
+        <header class="premium-header fixed-top" id="mainHeader">
+        <nav class="navbar navbar-expand-xl">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="http://localhost/apsdreamhome">
+                    <img src="http://localhost/apsdreamhome/assets/images/logo/apslogonew.jpg" alt="APS Dream Home" class="logo"
+                        style="height: 36px; width: auto; max-width: 100px;" loading="eager" fetchpriority="high" />
+                </a>
+
+                <!-- Quick Search Bar (Typeahead) -->
+                <form class="d-none d-lg-flex align-items-center ms-3 me-2 quick-search-form" role="search"
+                    id="quickSearchForm" onsubmit="return quickSearchSubmit(event)" autocomplete="off"
+                    style="position: relative; min-width: 200px; max-width: 280px; flex: 0 0 auto;">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white border-end-0"><i
+                                class="fas fa-search text-muted"></i></span>
+                        <input type="search" class="form-control border-start-0" id="quickSearchInput"
+                            placeholder="Search by name, location, type..." aria-label="Quick search"
+                            style="border-left: 0;">
+                    </div>
+                    <div id="quickSearchResults" class="quick-search-dropdown shadow-lg" style="display: none;"></div>
+                </form>
+
+                <button class="navbar-toggler" type="button" id="navbarToggler" aria-controls="navbarNav"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav align-items-center" style="margin-left: 0;">
+                        <li class="nav-item"><a class="nav-link  " href="http://localhost/apsdreamhome/"><i class="fas fa-home me-1"></i>Home</a></li><li class="nav-item dropdown"><a class="nav-link dropdown-toggle " href="#" data-bs-toggle="dropdown"><i class="fas fa-building me-1"></i>Properties</a><ul class="dropdown-menu"><li><a class="dropdown-item " href="http://localhost/apsdreamhome/properties"><i class="fas fa-th-large me-2"></i>All Properties</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/properties?listing=sale"><i class="fas fa-shopping-cart me-2"></i>Buy Properties</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/properties?listing=rent"><i class="fas fa-key me-2"></i>Rent Properties</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/properties?type=residential"><i class="fas fa-home me-2"></i>Residential</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/properties?type=commercial"><i class="fas fa-building me-2"></i>Commercial</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/properties?type=plot"><i class="fas fa-vector-square me-2"></i>Plot / Land</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/featured-properties"><i class="fas fa-star me-2"></i>Featured Properties</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/auctions"><i class="fas fa-gavel me-2"></i>Live Auctions</a></li></ul></li><li class="nav-item dropdown"><a class="nav-link dropdown-toggle " href="#" data-bs-toggle="dropdown"><i class="fas fa-vector-square me-1"></i>Plots</a><ul class="dropdown-menu"><li><a class="dropdown-item " href="http://localhost/apsdreamhome/plots/browse"><i class="fas fa-search me-2"></i>Browse Plots</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/plots"><i class="fas fa-th-large me-2"></i>All Plots</a></li><li><span class="dropdown-header"><i class="fas fa-map-marker-alt me-2"></i>Browse by Colony</span></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/colony/budh-bihar-colony/plots"><i class="fas fa-vector-square me-2"></i>Budh Bihar Colony</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/colony/motiram-jhangha-road/plots"><i class="fas fa-vector-square me-2"></i>APS Motiram Township</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/colony/raghunath-nagri-motiram/plots"><i class="fas fa-vector-square me-2"></i>Raghunath Nagri</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/colony/suryoday-colony/plots"><i class="fas fa-vector-square me-2"></i>Suryoday Colony</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/colony/braj-radha-nagri/plots"><i class="fas fa-vector-square me-2"></i>Braj Radha Nagri</a></li></ul></li><li class="nav-item dropdown"><a class="nav-link dropdown-toggle " href="#" data-bs-toggle="dropdown"><i class="fas fa-project-diagram me-1"></i>Projects</a><ul class="dropdown-menu"><li><a class="dropdown-item " href="http://localhost/apsdreamhome/projects"><i class="fas fa-th-large me-2"></i>All Projects</a></li><li><span class="dropdown-header"><i class="fas fa-map-marker-alt me-2"></i>By Location</span></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/projects?location=aurangabad"><i class="fas fa-map-pin me-2"></i>Aurangabad&nbsp;<span class="badge bg-primary ms-2">1</span></a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/projects?location=gorakhpur"><i class="fas fa-map-pin me-2"></i>Gorakhpur&nbsp;<span class="badge bg-primary ms-2">3</span></a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/projects?location=new+delhi"><i class="fas fa-map-pin me-2"></i>New delhi&nbsp;<span class="badge bg-primary ms-2">1</span></a></li><li><span class="dropdown-header"><i class="fas fa-building me-2"></i>Colonies</span></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/colony/budh-bihar-colony"><i class="fas fa-home me-2"></i>Budh Bihar Colony</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/colony/motiram-jhangha-road"><i class="fas fa-home me-2"></i>APS Motiram Township</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/colony/raghunath-nagri-motiram"><i class="fas fa-home me-2"></i>Raghunath Nagri</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/colony/suryoday-colony"><i class="fas fa-home me-2"></i>Suryoday Colony</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/colony/braj-radha-nagri"><i class="fas fa-home me-2"></i>Braj Radha Nagri</a></li></ul></li><li class="nav-item dropdown"><a class="nav-link dropdown-toggle " href="#" data-bs-toggle="dropdown"><i class="fas fa-concierge-bell me-1"></i>Services</a><ul class="dropdown-menu"><li><a class="dropdown-item " href="http://localhost/apsdreamhome/services"><i class="fas fa-concierge-bell me-2"></i>All Services</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/financial-services"><i class="fas fa-hand-holding-usd me-2"></i>Home Loan</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/legal/services"><i class="fas fa-gavel me-2"></i>Legal Services</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/interior-design"><i class="fas fa-couch me-2"></i>Interior Design</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/construction-services"><i class="fas fa-hard-hat me-2"></i>Construction Services</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/resell"><i class="fas fa-handshake me-2"></i>Resell Property</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/documents"><i class="fas fa-folder-open me-2"></i>Documents</a></li></ul></li><li class="nav-item dropdown"><a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown"><i class="fas fa-info-circle me-1"></i>About Us</a><ul class="dropdown-menu"><li><a class="dropdown-item " href="http://localhost/apsdreamhome/about"><i class="fas fa-info-circle me-2"></i>About Us</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/team"><i class="fas fa-users me-2"></i>Our Team</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/gallery"><i class="fas fa-images me-2"></i>Gallery</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/opportunity"><i class="fas fa-rocket me-2"></i>Career Opportunity</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/careers"><i class="fas fa-briefcase me-2"></i>Careers</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/news"><i class="fas fa-newspaper me-2"></i>News</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/testimonials"><i class="fas fa-comment-alt me-2"></i>Testimonials</a></li><li><a class="dropdown-item active" href="http://localhost/apsdreamhome/blog"><i class="fas fa-blog me-2"></i>Blog</a></li><li><a class="dropdown-item " href="http://localhost/apsdreamhome/faqs"><i class="fas fa-question-circle me-2"></i>FAQs</a></li></ul></li><li class="nav-item"><a class="nav-link  " href="http://localhost/apsdreamhome/contact"><i class="fas fa-phone me-1"></i>Contact Us</a></li><li class="nav-item"><a class="nav-link  highlight-link" href="http://localhost/apsdreamhome/list-property"><i class="fas fa-plus-circle me-1"></i>Post Property FREE</a></li>
+                        <!-- Language Switcher -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button">
+                                <i class="fas fa-globe me-1"></i> EN                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item active"
+                                        href="http://localhost/apsdreamhome/language/set/en"><span class="me-2">English</span>
+                                        English</a></li>
+                                <li><a class="dropdown-item "
+                                        href="http://localhost/apsdreamhome/language/set/hi"><span class="me-2">Hindi</span>
+                                        à¤¹à¤¿à¤‚à¤¦à¥€</a></li>
+                            </ul>
+                        </li>
+                                                <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-plus me-1"></i>Register                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="http://localhost/apsdreamhome/register">
+                                        <i class="fas fa-user me-2"></i>Customer Registration                                    </a></li>
+                                <li><a class="dropdown-item" href="http://localhost/apsdreamhome/associate/register">
+                                        <i class="fas fa-handshake me-2"></i>Associate Registration                                    </a></li>
+                                <li><a class="dropdown-item" href="http://localhost/apsdreamhome/agent/register">
+                                        <i class="fas fa-briefcase me-2"></i>Agent Registration                                    </a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="http://localhost/apsdreamhome/login">
+                                        <i class="fas fa-user me-2"></i>Customer Login                                    </a></li>
+                                <li><a class="dropdown-item" href="http://localhost/apsdreamhome/associate/login">
+                                        <i class="fas fa-handshake me-2"></i>Associate Login                                    </a></li>
+                                <li><a class="dropdown-item" href="http://localhost/apsdreamhome/agent/login">
+                                        <i class="fas fa-briefcase me-2"></i>Agent Login                                    </a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="http://localhost/apsdreamhome/farmer/login">
+                                        <i class="fas fa-seedling me-2 text-success"></i>Farmer Login                                    </a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item ms-2">
+                            <a href="tel:+919277121112"
+                                class="btn btn-call btn-sm">
+                                <i class="fas fa-phone me-1"></i>
+                                <span
+                                    class="d-none d-lg-inline">+91 92771 21112</span>
+                            </a>
+                        </li>
+                        <li class="nav-item ms-2 btn-compare">
+                            <a href="http://localhost/apsdreamhome/compare"
+                                class="btn btn-outline-info btn-sm position-relative">
+                                <i class="fas fa-balance-scale"></i> Compare                                <span id="compareBadge"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    style="display:none;font-size:10px;">0</span>
+                            </a>
+                        </li>
+                                                <li class="nav-item ms-2 btn-admin">
+                            <a href="http://localhost/apsdreamhome/admin/login" class="btn btn-admin btn-sm">
+                                <i class="fas fa-user-lock me-1"></i>
+                                <span class="d-none d-lg-inline">Admin</span>
+                            </a>
+                        </li>
+                                            </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- Header styles moved to /assets/css/header.css (single source of truth) -->
+
+    <script nonce="b8d8a22ff7c624853ccb391b51cb437c">
+    window.BASE_URL = 'http://localhost/apsdreamhome';
+
+    function updateHeaderNotifCount() {
+        var b = document.getElementById('headerNotifBadge');
+        if (!b) return;
+            }
+    document.addEventListener('DOMContentLoaded', function() {
+        var header = document.getElementById('mainHeader');
+        if (!header) return;
+        var toggler = document.getElementById('navbarToggler');
+        var navCollapse = document.getElementById('navbarNav');
+        if (!toggler || !navCollapse) return;
+
+        // Create backdrop overlay for mobile menu
+        var backdrop = document.createElement('div');
+        backdrop.className = 'nav-backdrop';
+        document.body.appendChild(backdrop);
+
+        function openMenu() {
+            navCollapse.classList.add('show');
+            backdrop.classList.add('show');
+            header.classList.add('menu-open');
+            toggler.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            navCollapse.classList.remove('show');
+            backdrop.classList.remove('show');
+            header.classList.remove('menu-open');
+            toggler.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        function isMobile() {
+            return window.innerWidth <= 1199.98;
+        }
+
+        // Toggle mobile menu on hamburger click
+        toggler.addEventListener('click', function() {
+            if (navCollapse.classList.contains('show')) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        });
+
+        // Close on backdrop click
+        backdrop.addEventListener('click', closeMenu);
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && navCollapse.classList.contains('show')) {
+                closeMenu();
+            }
+        });
+
+        // Prevent Bootstrap dropdown on mobile; use custom expand instead
+        function setupDropdowns() {
+            var mobile = isMobile();
+            navCollapse.querySelectorAll('.dropdown-toggle').forEach(function(dt) {
+                if (mobile) {
+                    dt.removeAttribute('data-bs-toggle');
+                } else {
+                    dt.setAttribute('data-bs-toggle', 'dropdown');
+                }
+            });
+        }
+        setupDropdowns();
+
+        // Re-evaluate on resize (cross breakpoint)
+        var resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(setupDropdowns, 150);
+        });
+
+        // Click handler for mobile dropdown toggles
+        navCollapse.addEventListener('click', function(e) {
+            var dt = e.target.closest('.dropdown-toggle');
+            if (!dt) return;
+            // Only handle clicks when in mobile mode (no data-bs-toggle)
+            if (dt.hasAttribute('data-bs-toggle')) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var menu = dt.nextElementSibling;
+            if (menu && menu.classList.contains('dropdown-menu')) {
+                menu.classList.toggle('show-mobile');
+            }
+        });
+
+        // Notification count polling
+        updateHeaderNotifCount();
+        setInterval(updateHeaderNotifCount, 30000);
+
+        // Scroll effect
+        var scrollTimer;
+        window.addEventListener('scroll', function() {
+            if (scrollTimer) cancelAnimationFrame(scrollTimer);
+            scrollTimer = requestAnimationFrame(function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('header-scrolled');
+                    header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
+                } else {
+                    header.classList.remove('header-scrolled');
+                    header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.06)';
+                }
+            });
+        });
+
+        // Sync aria-expanded for Bootstrap dropdowns (desktop only)
+        header.querySelectorAll('.dropdown-toggle[data-bs-toggle="dropdown"]').forEach(function(dt) {
+            dt.addEventListener('shown.bs.dropdown', function() {
+                dt.setAttribute('aria-expanded', 'true');
+            });
+            dt.addEventListener('hidden.bs.dropdown', function() {
+                dt.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // Close mobile menu on window resize above breakpoint
+        window.addEventListener('resize', function() {
+            if (!isMobile() && navCollapse.classList.contains('show')) {
+                closeMenu();
+            }
+        });
+    });
+    </script>
+
+    <!-- Quick Search Typeahead -->
+    <script nonce="b8d8a22ff7c624853ccb391b51cb437c">
+    (function() {
+        const input = document.getElementById('quickSearchInput');
+        const dropdown = document.getElementById('quickSearchResults');
+        if (!input || !dropdown) return;
+
+        let debounceTimer = null;
+        let activeIndex = -1;
+        let lastResults = [];
+
+        function renderResults(results) {
+            if (!results.length) {
+                dropdown.innerHTML =
+                    '<div class="quick-search-result text-muted"><i class="fas fa-info-circle"></i><span class="label">No matches found</span></div>';
+                dropdown.style.display = 'block';
+                return;
+            }
+
+            let html = '';
+            results.forEach((r, i) => {
+                const icon = r.type === 'property' ? 'fa-building' :
+                    r.type === 'location' ? 'fa-map-marker-alt' :
+                    'fa-tag';
+                html += `<a href="${r.url}" class="quick-search-result" data-idx="${i}">
+                <i class="fas ${icon}"></i>
+                <span class="label">${escapeHtml(r.label)}</span>
+                <span class="type-tag">${r.type}</span>
+            </a>`;
+            });
+            html += `<div class="quick-search-footer">
+            <a href="${BASE_URL}/properties?q=${encodeURIComponent(input.value)}" class="text-primary small text-decoration-none">
+                <i class="fas fa-search me-1"></i>See all results for "${escapeHtml(input.value)}"
+            </a>
+        </div>`;
+            dropdown.innerHTML = html;
+            dropdown.style.display = 'block';
+
+            dropdown.querySelectorAll('.quick-search-result').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    activeIndex = parseInt(el.dataset.idx);
+                    updateActive();
+                });
+            });
+        }
+
+        function escapeHtml(s) {
+            return String(s || '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            } [c]));
+        }
+
+        function updateActive() {
+            dropdown.querySelectorAll('.quick-search-result').forEach((el, i) => {
+                el.classList.toggle('active', i === activeIndex);
+            });
+        }
+
+        function search(q) {
+            if (q.length < 2) {
+                dropdown.style.display = 'none';
+                return;
+            }
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                fetch(BASE_URL + '/api/saved-searches/autocomplete?q=' + encodeURIComponent(q))
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.success) {
+                            lastResults = d.results;
+                            renderResults(d.results);
+                        }
+                    })
+                    .catch(() => {});
+            }, 200);
+        }
+
+        input.addEventListener('input', e => {
+            activeIndex = -1;
+            search(e.target.value.trim());
+        });
+
+        input.addEventListener('focus', () => {
+            if (input.value.trim().length >= 2 && lastResults.length) {
+                dropdown.style.display = 'block';
+            }
+        });
+
+        input.addEventListener('keydown', e => {
+            const items = dropdown.querySelectorAll('.quick-search-result');
+            if (e.key === 'ArrowDown' && items.length) {
+                e.preventDefault();
+                activeIndex = Math.min(activeIndex + 1, items.length - 1);
+                updateActive();
+            } else if (e.key === 'ArrowUp' && items.length) {
+                e.preventDefault();
+                activeIndex = Math.max(activeIndex - 1, 0);
+                updateActive();
+            } else if (e.key === 'Enter') {
+                if (activeIndex >= 0 && lastResults[activeIndex]) {
+                    e.preventDefault();
+                    window.location.href = lastResults[activeIndex].url;
+                }
+            } else if (e.key === 'Escape') {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', e => {
+            if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    })();
+
+    function quickSearchSubmit(e) {
+        e.preventDefault();
+        const q = document.getElementById('quickSearchInput').value.trim();
+        if (q) window.location.href = BASE_URL + '/properties?q=' + encodeURIComponent(q);
+        return false;
+    }
+    </script>
+
+    <script nonce="b8d8a22ff7c624853ccb391b51cb437c" src="http://localhost/apsdreamhome/js/visitor-tracking.js" defer></script>
+        <div class="container-fluid px-0">
+        <div class="ad-slot ad-header_banner"></div>    </div>
+    
+    <main>
+                        <!-- Hero Section -->
+<section class="premium-hero page-hero position-relative" style="background: url('http://localhost/apsdreamhome/assets/images/hero-2.jpg'); background-size: cover; background-position: center;">
+    <div class="hero-overlay"></div>
+    <div class="container position-relative z-1">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center text-white">
+                <span class="badge bg-gold text-dark mb-3 px-3 py-2 rounded-pill fw-bold">Updates</span>
+                <h1 class="display-4 fw-bold mb-4">﻿Real Estate Insights</h1>
+                <p class="lead mb-4 text-white-50">Stay updated with the latest trends, tips, and news in the real estate industry</p>
+                <p class="mb-0 text-white-50">From market analysis to investment strategies, our expert insights help you make informed decisions about your property journey.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Breadcrumb -->
+<div class="bg-light py-2">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                                    <li class="breadcrumb-item"><a href="http://localhost/apsdreamhome">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Blog</li>
+                            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- Newsletter Section -->
+<section class="py-5 bg-navy text-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <h3 class="mb-3 text-gold">Subscribe to Our Newsletter</h3>
+                <p class="mb-4 text-white-50">Get the latest real estate insights and market updates delivered to your inbox</p>
+                <form class="d-flex gap-2" id="blogNewsletterForm">
+                    <input type="email" class="form-control" name="email" placeholder="Enter your email" required style="border-radius: 8px;">
+                    <button type="submit" class="btn btn-gold px-4 fw-bold" style="border-radius: 8px;">
+                        <i class="fas fa-envelope me-1"></i>Subscribe                    </button>
+                </form>
+                <div id="blogNewsletterMsg" class="mt-2 small" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="section-padding">
+    <div class="container">
+        <!-- Filter Buttons -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="text-center">
+                    <button class="filter-btn active" data-category="all">All Posts</button>
+                                            <button class="filter-btn" data-category="Market Trends">
+                            Market Trends                        </button>
+                                            <button class="filter-btn" data-category="Legal">
+                            Legal                        </button>
+                                            <button class="filter-btn" data-category="Buyer Guide">
+                            Buyer Guide                        </button>
+                                            <button class="filter-btn" data-category="Investment Tips">
+                            Investment Tips                        </button>
+                                            <button class="filter-btn" data-category="Finance">
+                            Finance                        </button>
+                                            <button class="filter-btn" data-category="Investment">
+                            Investment                        </button>
+                                            <button class="filter-btn" data-category="Buying Guide">
+                            Buying Guide                        </button>
+                                    </div>
+            </div>
+        </div>
+
+        <!-- Featured Post -->
+                    <div class="row mb-5">
+                <div class="col-12">
+                    <h3 class="mb-4">Featured Post</h3>
+                </div>
+                <div class="col-12">
+                    <div class="card blog-card shadow-sm">
+                        <div class="position-relative">
+                                                        <img src="http://localhost/apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg" class="img-fluid card-img-top blog-image" alt="Why Gorakhpur is Becoming a Real Estate Hub in 2026" style="height:350px;object-fit:cover;">
+                            <div class="category-badge">
+                                Market Trends                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Jul 14, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min read
+                                </small>
+                            </div>
+                            <h3 class="card-title mb-3">Why Gorakhpur is Becoming a Real Estate Hub in 2026</h3>
+                            <p class="card-text mb-3"><br />
+<b>Deprecated</b>:  substr(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\xampp\htdocs\apsdreamhome\app\views\pages\blog.php</b> on line <b>106</b><br />
+...</p>
+                            <a href="http://localhost/apsdreamhome/blog/gorakhpur-real-estate-hub-2026" class="read-more-btn">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        <!-- All Posts -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <h3>Latest Posts</h3>
+            </div>
+
+                            <div class="col-lg-4 col-md-6" data-category="Legal">
+                    <div class="card blog-card shadow-sm h-100">
+                        <div class="position-relative">
+                                                        <img src="http://localhost/apsdreamhome/assets/images/hero/about.jpg" class="img-fluid card-img-top blog-image" alt="Understanding Plot Registration Process in Uttar Pradesh" style="height:220px;object-fit:cover;">
+                            <div class="category-badge">
+                                Legal                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Jul 14, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min
+                                </small>
+                            </div>
+                            <h6 class="card-title mb-2">Understanding Plot Registration Process in Uttar Pradesh</h6>
+                            <p class="card-text small text-muted mb-3">
+                                <br />
+<b>Deprecated</b>:  substr(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\xampp\htdocs\apsdreamhome\app\views\pages\blog.php</b> on line <b>148</b><br />
+...                            </p>
+                            <a href="http://localhost/apsdreamhome/blog/plot-registration-process-up" class="read-more-btn btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-lg-4 col-md-6" data-category="Buyer Guide">
+                    <div class="card blog-card shadow-sm h-100">
+                        <div class="position-relative">
+                                                        <img src="http://localhost/apsdreamhome/assets/images/colony-dev-1.jpg" class="img-fluid card-img-top blog-image" alt="Top 10 Things to Check Before Buying a Plot" style="height:220px;object-fit:cover;">
+                            <div class="category-badge">
+                                Buyer Guide                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Jul 14, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min
+                                </small>
+                            </div>
+                            <h6 class="card-title mb-2">Top 10 Things to Check Before Buying a Plot</h6>
+                            <p class="card-text small text-muted mb-3">
+                                <br />
+<b>Deprecated</b>:  substr(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\xampp\htdocs\apsdreamhome\app\views\pages\blog.php</b> on line <b>148</b><br />
+...                            </p>
+                            <a href="http://localhost/apsdreamhome/blog/top-10-things-check-buying-plot" class="read-more-btn btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-lg-4 col-md-6" data-category="Legal">
+                    <div class="card blog-card shadow-sm h-100">
+                        <div class="position-relative">
+                                                        <img src="http://localhost/apsdreamhome/assets/images/hero/about.jpg" class="img-fluid card-img-top blog-image" alt="How to Calculate Stamp Duty and Registration Charges" style="height:220px;object-fit:cover;">
+                            <div class="category-badge">
+                                Legal                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Jul 14, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min
+                                </small>
+                            </div>
+                            <h6 class="card-title mb-2">How to Calculate Stamp Duty and Registration Charges</h6>
+                            <p class="card-text small text-muted mb-3">
+                                <br />
+<b>Deprecated</b>:  substr(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\xampp\htdocs\apsdreamhome\app\views\pages\blog.php</b> on line <b>148</b><br />
+...                            </p>
+                            <a href="http://localhost/apsdreamhome/blog/calculate-stamp-duty-registration-charges" class="read-more-btn btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-lg-4 col-md-6" data-category="Investment Tips">
+                    <div class="card blog-card shadow-sm h-100">
+                        <div class="position-relative">
+                                                        <img src="http://localhost/apsdreamhome/assets/images/colony-dev-2.jpg" class="img-fluid card-img-top blog-image" alt="Benefits of Investing in Colony Plots vs Individual Land" style="height:220px;object-fit:cover;">
+                            <div class="category-badge">
+                                Investment Tips                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Jul 14, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min
+                                </small>
+                            </div>
+                            <h6 class="card-title mb-2">Benefits of Investing in Colony Plots vs Individual Land</h6>
+                            <p class="card-text small text-muted mb-3">
+                                <br />
+<b>Deprecated</b>:  substr(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\xampp\htdocs\apsdreamhome\app\views\pages\blog.php</b> on line <b>148</b><br />
+...                            </p>
+                            <a href="http://localhost/apsdreamhome/blog/colony-plots-vs-individual-land" class="read-more-btn btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-lg-4 col-md-6" data-category="Finance">
+                    <div class="card blog-card shadow-sm h-100">
+                        <div class="position-relative">
+                                                        <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800" class="img-fluid card-img-top blog-image" alt="Home Loan Guide 2025: Everything You Need" style="height:220px;object-fit:cover;">
+                            <div class="category-badge">
+                                Finance                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Jun 05, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min
+                                </small>
+                            </div>
+                            <h6 class="card-title mb-2">Home Loan Guide 2025: Everything You Need</h6>
+                            <p class="card-text small text-muted mb-3">
+                                From eligibility criteria to interest rates and tax benefits, this guide covers all aspects....                            </p>
+                            <a href="http://localhost/apsdreamhome/blog/home-loan-guide" class="read-more-btn btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-lg-4 col-md-6" data-category="Legal">
+                    <div class="card blog-card shadow-sm h-100">
+                        <div class="position-relative">
+                                                        <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800" class="img-fluid card-img-top blog-image" alt="RERA Compliance: What Buyers Should Know" style="height:220px;object-fit:cover;">
+                            <div class="category-badge">
+                                Legal                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    May 28, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min
+                                </small>
+                            </div>
+                            <h6 class="card-title mb-2">RERA Compliance: What Buyers Should Know</h6>
+                            <p class="card-text small text-muted mb-3">
+                                Learn about RERA registration, project status tracking, and your rights as a buyer....                            </p>
+                            <a href="http://localhost/apsdreamhome/blog/rera-compliance-buyers-guide" class="read-more-btn btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-lg-4 col-md-6" data-category="Investment">
+                    <div class="card blog-card shadow-sm h-100">
+                        <div class="position-relative">
+                                                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800" class="img-fluid card-img-top blog-image" alt="5 Benefits of Investing in Plots vs Apartments" style="height:220px;object-fit:cover;">
+                            <div class="category-badge">
+                                Investment                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    May 14, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min
+                                </small>
+                            </div>
+                            <h6 class="card-title mb-2">5 Benefits of Investing in Plots vs Apartments</h6>
+                            <p class="card-text small text-muted mb-3">
+                                Plot vs apartment investment comparison...                            </p>
+                            <a href="http://localhost/apsdreamhome/blog/plots-vs-apartments" class="read-more-btn btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-lg-4 col-md-6" data-category="Legal">
+                    <div class="card blog-card shadow-sm h-100">
+                        <div class="position-relative">
+                                                        <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800" class="img-fluid card-img-top blog-image" alt="Understanding Property Registration Process" style="height:220px;object-fit:cover;">
+                            <div class="category-badge">
+                                Legal                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    May 06, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min
+                                </small>
+                            </div>
+                            <h6 class="card-title mb-2">Understanding Property Registration Process</h6>
+                            <p class="card-text small text-muted mb-3">
+                                Complete guide to property registration...                            </p>
+                            <a href="http://localhost/apsdreamhome/blog/property-registration" class="read-more-btn btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-lg-4 col-md-6" data-category="Market Trends">
+                    <div class="card blog-card shadow-sm h-100">
+                        <div class="position-relative">
+                                                        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800" class="img-fluid card-img-top blog-image" alt="Why Gorakhpur is the Next Real Estate Hotspot" style="height:220px;object-fit:cover;">
+                            <div class="category-badge">
+                                Market Trends                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Apr 17, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min
+                                </small>
+                            </div>
+                            <h6 class="card-title mb-2">Why Gorakhpur is the Next Real Estate Hotspot</h6>
+                            <p class="card-text small text-muted mb-3">
+                                Real estate growth in Gorakhpur...                            </p>
+                            <a href="http://localhost/apsdreamhome/blog/gorakhpur-real-estate" class="read-more-btn btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-lg-4 col-md-6" data-category="Buying Guide">
+                    <div class="card blog-card shadow-sm h-100">
+                        <div class="position-relative">
+                                                        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800" class="img-fluid card-img-top blog-image" alt="Top 10 Tips for First-Time Home Buyers" style="height:220px;object-fit:cover;">
+                            <div class="category-badge">
+                                Buying Guide                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Mar 01, 2026                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    5 min
+                                </small>
+                            </div>
+                            <h6 class="card-title mb-2">Top 10 Tips for First-Time Home Buyers</h6>
+                            <p class="card-text small text-muted mb-3">
+                                Essential tips for first-time buyers...                            </p>
+                            <a href="http://localhost/apsdreamhome/blog/first-time-home-buyers" class="read-more-btn btn-sm">
+                                <i class="fas fa-arrow-right me-1"></i>Read More                            </a>
+                        </div>
+                    </div>
+                </div>
+                    </div>
+
+        <!-- Load More Button (hidden when all posts are already shown) -->
+                <div class="row mt-4">
+            <div class="col-12 text-center">
+                <button class="btn btn-outline-primary btn-lg" id="loadMore" onclick="showToast('All posts are currently displayed.', 'info')">
+                    <i class="fas fa-plus me-2"></i>Load More Posts                </button>
+            </div>
+        </div>
+            </div>
+</section>
+
+<!-- Categories Section -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h3 class="fw-bold">Explore by Category</h3>
+                <p class="lead text-muted">Find articles that interest you most</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center p-4 h-100">
+                    <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                    <h6>Market Trends</h6>
+                    <p class="small text-muted">Latest market analysis and price trends</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center p-4 h-100">
+                    <i class="fas fa-coins fa-3x text-success mb-3"></i>
+                    <h6>Investment Tips</h6>
+                    <p class="small text-muted">Smart investment strategies and advice</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center p-4 h-100">
+                    <i class="fas fa-home fa-3x text-info mb-3"></i>
+                    <h6>Buying Guide</h6>
+                    <p class="small text-muted">Complete guides for first-time buyers</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center p-4 h-100">
+                    <i class="fas fa-balance-scale fa-3x text-warning mb-3"></i>
+                    <h6>Legal & Finance</h6>
+                    <p class="small text-muted">Legal aspects and financing options</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const blogCards = document.querySelectorAll('[data-category]');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                blogCards.forEach(card => {
+                    if (category === 'all' || card.getAttribute('data-category') === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Newsletter subscription
+        var nlForm = document.getElementById('blogNewsletterForm');
+        if (nlForm) {
+            nlForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var btn = this.querySelector('button');
+                var msg = document.getElementById('blogNewsletterMsg');
+                var email = this.querySelector('input[name="email"]').value;
+                btn.disabled = true;
+                fetch('http://localhost/apsdreamhome/api/newsletter', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email: email})
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(d) {
+                    msg.style.display = 'block';
+                    if (d.success) {
+                        msg.className = 'mt-2 small text-success';
+                        msg.textContent = '✓ Subscribed successfully!';
+                        btn.innerHTML = '<i class="fas fa-check me-1"></i>Subscribed!';
+                        btn.classList.replace('btn-gold', 'btn-success');
+                        nlForm.reset();
+                    } else {
+                        msg.className = 'mt-2 small text-danger';
+                        msg.textContent = d.message || 'Already subscribed.';
+                        btn.disabled = false;
+                    }
+                })
+                .catch(function() {
+                    msg.style.display = 'block';
+                    msg.className = 'mt-2 small text-danger';
+                    msg.textContent = 'Network error.';
+                    btn.disabled = false;
+                });
+            });
+        }
+    });
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = 'alert alert-' + (type === 'success' ? 'success' : type === 'info' ? 'info' : 'danger') + ' position-fixed top-0 end-0 m-3 shadow';
+        toast.style.zIndex = '9999';
+        toast.innerHTML = message + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+</script>    </main>
+
+        <div class="container-fluid px-0">
+        <div class="ad-slot ad-footer_banner"></div>    </div>
+    
+    <!-- Footer Stats Banner -->
+<div class="footer-stats-banner bg-primary bg-gradient text-white py-3">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-6 col-md-3 mb-2 mb-md-0">
+                <div class="fs-3 fw-bold">4+</div>
+                <div class="small opacity-75">Years of Excellence</div>
+            </div>
+            <div class="col-6 col-md-3 mb-2 mb-md-0">
+                <div class="fs-3 fw-bold">500+</div>
+                <div class="small opacity-75">Happy Families</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="fs-3 fw-bold">4</div>
+                <div class="small opacity-75">Premium Colonies</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="fs-3 fw-bold">204+</div>
+                <div class="small opacity-75">Plots Available</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-dark text-white py-5">
+    <div class="container">
+        <!-- Newsletter Signup -->
+        <div class="row mb-5 pb-4 border-bottom border-secondary">
+            <div class="col-lg-6">
+                <h5 class="text-white mb-2"><i class="fas fa-envelope me-2"></i>Newsletter</h5>
+                <p class="text-light mb-0">Get the latest property updates and offers</p>
+            </div>
+            <div class="col-lg-6">
+                <form action="http://localhost/apsdreamhome/subscribe" method="POST" class="d-flex gap-2" id="newsletterForm">
+                                    <input type="hidden" name="csrf_token" value="893f1c828745ce2afb1aec23fc896b0d5b2f5b38990a0075e2f45a4b7d5bae89">
+                    <input type="email" name="email" class="form-control" placeholder="Enter your email address" required>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Subscribe                    </button>
+                </form>
+                <div id="newsletterMessage" class="mt-2" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Company Info -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <h5 class="mb-3 text-white">APS Dream Home</h5>
+                <p class="text-light">APS Dream Home is a trusted real estate company based in Gorakhpur, UP. We help families find their dream homes with transparent dealings and quality construction.</p>
+                <div class="social-links mt-3">
+                                        <a href="https://facebook.com/apsdreamhome" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-facebook-f"></i></a>
+                                                            <a href="https://instagram.com/apsdreamhome" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-instagram"></i></a>
+                                                            <a href="https://youtube.com/@apsdreamhome" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-youtube"></i></a>
+                                                            <a href="https://linkedin.com/company/apsdreamhome" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-linkedin-in"></i></a>
+                                                            <a href="https://t.me/apsdreamhome" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-telegram"></i></a>
+                                                            <a href="https://wa.me/919277121112" target="_blank" class="text-white me-3 social-icon"><i class="fab fa-whatsapp"></i></a>
+                                    </div>
+                <style nonce="b8d8a22ff7c624853ccb391b51cb437c">
+                    .social-icon {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        background: rgba(255,255,255,0.1);
+                        transition: all 0.3s ease;
+                    }
+                    .social-icon:hover {
+                        background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                        transform: translateY(-3px);
+                    }
+                </style>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h6 class="text-uppercase mb-3">Quick Links</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/" class="text-light text-decoration-none">Home</a></li>
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/properties" class="text-light text-decoration-none">Properties</a></li>
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/company/projects" class="text-light text-decoration-none">Projects</a></li>
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/about" class="text-light text-decoration-none">About Us</a></li>
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/contact" class="text-light text-decoration-none">Contact Us</a></li>
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/admin/login" class="text-light text-decoration-none">Admin</a></li>
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/mobile-app" class="text-light text-decoration-none"><i class="fas fa-mobile-alt me-1"></i>📱 Download App</a></li>
+                </ul>
+            </div>
+
+            <!-- Services -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h6 class="text-uppercase mb-3">Our Services</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/services" class="text-light text-decoration-none">Property Sales</a></li>
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/services" class="text-light text-decoration-none">Property Valuation</a></li>
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/interior-design" class="text-light text-decoration-none">Interior Design</a></li>
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/legal/services" class="text-light text-decoration-none">Legal Documentation</a></li>
+                    <li class="mb-2"><a href="http://localhost/apsdreamhome/resell" class="text-light text-decoration-none">Resell Properties</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h6 class="text-uppercase mb-3">Contact Info</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                        <span class="text-light">Gorakhpur, Uttar Pradesh, India</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-phone me-2 text-primary"></i>
+                        <a href="tel:+919277121112" class="text-light text-decoration-none">+91 92771 21112</a>
+                    </li>
+                                        <li class="mb-3">
+                        <i class="fas fa-phone me-2 text-primary"></i>
+                        <a href="tel:+919277121113" class="text-light text-decoration-none">+91 92771 21113</a>
+                    </li>
+                                        <li class="mb-3">
+                        <i class="fas fa-envelope me-2 text-primary"></i>
+                        <a href="mailto:info@apsdreamhome.com" class="text-light text-decoration-none">info@apsdreamhome.com</a>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-clock me-2 text-primary"></i>
+                        <span class="text-light">Mon - Sat: 9:00 AM - 7:00 PM</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="border-top border-secondary pt-4 mt-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0 text-light">&copy; 2026 APS Dream Home. All rights reserved</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="http://localhost/apsdreamhome/privacy" class="text-light me-3 text-decoration-none">Privacy Policy</a>
+                    <a href="http://localhost/apsdreamhome/legal/terms-conditions" class="text-light text-decoration-none">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- APS Premium Animations (scroll reveal + card tilt) -->
+<script src="http://localhost/apsdreamhome/assets/js/premium-animations.js?v=20260725"></script>
+<!-- APS Voice Booking Widget -->
+<link rel="stylesheet" href="http://localhost/apsdreamhome/assets/css/voice-widget.css">
+<script src="http://localhost/apsdreamhome/assets/js/voice-widget.js" defer></script>
+
+<script>
+// Newsletter Form Handler
+document.getElementById('newsletterForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    const messageDiv = document.getElementById('newsletterMessage');
+    const emailInput = form.querySelector('input[name="email"]');
+    
+    fetch('http://localhost/apsdreamhome/subscribe', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'email=' + encodeURIComponent(emailInput.value)
+    })
+    .then(response => response.json())
+    .then(data => {
+        messageDiv.style.display = 'block';
+        if (data.success) {
+            messageDiv.innerHTML = '<span class="text-success"><i class="fas fa-check-circle"></i> ' + data.message + '</span>';
+            emailInput.value = '';
+        } else {
+            messageDiv.innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-circle"></i> ' + data.message + '</span>';
+        }
+        setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
+    })
+    .catch(error => {
+        messageDiv.style.display = 'block';
+        messageDiv.innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-circle"></i> Something went wrong. Please try again.</span>';
+    });
+});
+</script>
+<script>
+  if (typeof gtag === 'function') {
+    gtag('event', 'page_view', {
+      page_title: document.title,
+      page_path: window.location.pathname + window.location.search,
+      page_location: window.location.href
+    });
+  }
+</script>
+
+    <script nonce="b8d8a22ff7c624853ccb391b51cb437c">
+    // Lazy load images that are below the fold
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('img:not([loading])').forEach(function(img) {
+            var rect = img.getBoundingClientRect();
+            if (rect.top > 600) img.setAttribute('loading', 'lazy');
+        });
+    });
+    </script>
+
+    <!-- Main AI Chatbot Integration -->
+    <!-- ═══════════════════════════════════════════════════════════════
+     APS AI Chatbot + WhatsApp — Combined Widget v2
+     Features: Voice STT/TTS, RBAC-aware, WhatsApp templates, tracking
+     ═══════════════════════════════════════════════════════════════ -->
+<style nonce="b8d8a22ff7c624853ccb391b51cb437c">
+.cw-wrap{position:fixed;bottom:20px;right:16px;z-index:9999;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+@media(min-width:768px){.cw-wrap{bottom:24px;right:24px}}
+
+/* ── Toggle Buttons (Chatbot + WhatsApp side by side) ── */
+.cw-toggles{display:flex;gap:10px;align-items:center}
+.cw-toggle{width:56px;height:56px;border-radius:50%;border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.35s cubic-bezier(0.175,0.885,0.32,1.275);position:relative;flex-shrink:0}
+@media(min-width:768px){.cw-toggle{width:60px;height:60px;font-size:24px}}
+.cw-toggle:hover{transform:scale(1.1)}
+.cw-toggle.cw-active i{animation:cwSpin 0.4s ease}
+@keyframes cwSpin{from{transform:rotate(0)}to{transform:rotate(180deg)}}
+.cw-toggle .cw-pulse{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);animation:cwPulseRing 2.5s ease-out infinite;pointer-events:none}
+@keyframes cwPulseRing{0%{transform:scale(1);opacity:1}100%{transform:scale(1.5);opacity:0}}
+.cw-toggle .cw-badge{position:absolute;top:-3px;right:-3px;width:20px;height:20px;background:#ef4444;border-radius:50%;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;border:2px solid #fff}
+.cw-toggle .cw-badge.cw-show{display:flex;animation:cwBadgePop 0.3s ease}
+@keyframes cwBadgePop{from{transform:scale(0)}to{transform:scale(1)}}
+#cwChatToggle{background:linear-gradient(135deg,#0d9488,#0f766e);box-shadow:0 6px 20px rgba(13,148,136,0.4)}
+#cwChatToggle:hover{box-shadow:0 8px 28px rgba(13,148,136,0.5)}
+#cwWhatsAppToggle{background:#25D366;box-shadow:0 6px 20px rgba(37,211,102,0.4);text-decoration:none;color:#fff}
+#cwWhatsAppToggle:hover{box-shadow:0 8px 28px rgba(37,211,102,0.5);color:#fff}
+
+/* ── Chat Box ── */
+.cw-box{position:absolute;bottom:72px;right:0;width:calc(100vw - 32px);max-width:380px;height:calc(100dvh - 140px);max-height:540px;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.2),0 0 0 1px rgba(0,0,0,0.04);display:none;flex-direction:column;overflow:hidden}
+@media(min-width:768px){.cw-box{bottom:76px}}
+.cw-box.cw-show{display:flex;animation:cwSlideUp 0.35s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes cwSlideUp{from{opacity:0;transform:translateY(16px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* ── Header ── */
+.cw-header{background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;position:relative;overflow:hidden;flex-shrink:0}
+.cw-header::before{content:'';position:absolute;top:-50%;right:-30%;width:120%;height:120%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 60%);pointer-events:none}
+.cw-header-avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;z-index:1}
+.cw-header-avatar::after{content:'';position:absolute;inset:-2px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);animation:cwAvatarGlow 3s ease-in-out infinite}
+@keyframes cwAvatarGlow{0%,100%{border-color:rgba(255,255,255,0.2)}50%{border-color:rgba(255,255,255,0.5)}}
+.cw-header-info{flex:1;min-width:0;position:relative;z-index:1}
+.cw-header-info h4{margin:0;font-size:0.9rem;font-weight:700;line-height:1.2}
+.cw-header-info small{font-size:0.7rem;opacity:0.85;display:flex;align-items:center;gap:4px}
+.cw-header-info .cw-dot{width:6px;height:6px;background:#10b981;border-radius:50%;animation:cwDotPulse 2s infinite}
+@keyframes cwDotPulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.cw-close{background:rgba(255,255,255,0.15);border:none;color:#fff;width:32px;height:32px;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;position:relative;z-index:1}
+.cw-close:hover{background:rgba(255,255,255,0.3)}
+
+/* ── Messages ── */
+.cw-messages{flex:1;overflow-y:auto;padding:12px;background:linear-gradient(180deg,#f8fafc 0%,#f1f5f9 100%);display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
+.cw-messages::-webkit-scrollbar{width:4px}
+.cw-messages::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:4px}
+.cw-msg{display:flex;gap:6px;max-width:88%;animation:cwMsgIn 0.3s ease}
+@keyframes cwMsgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.cw-msg.cw-bot{align-self:flex-start}
+.cw-msg.cw-user{align-self:flex-end;flex-direction:row-reverse}
+.cw-msg-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px}
+.cw-bot .cw-msg-avatar{background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff}
+.cw-user .cw-msg-avatar{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
+.cw-bubble{padding:10px 14px;border-radius:14px;font-size:0.84rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;color:#1e293b}
+.cw-bot .cw-bubble{background:#fff;border-bottom-left-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.cw-user .cw-bubble{background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-bottom-right-radius:4px}
+
+/* ── Quick Replies ── */
+.cw-quick{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;padding-left:32px}
+.cw-quick-btn{background:#fff;border:1.5px solid #e0e7ff;color:#0d9488;padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:600;cursor:pointer;transition:all 0.25s ease;white-space:nowrap}
+.cw-quick-btn:hover{background:#0d9488;color:#fff;border-color:#0d9488;transform:translateY(-1px);box-shadow:0 3px 8px rgba(13,148,136,0.2)}
+
+/* ── Feedback Buttons ── */
+.cw-feedback{display:flex;gap:4px;margin-top:4px;padding-left:32px;opacity:0;transition:opacity 0.3s}
+.cw-msg:hover .cw-feedback{opacity:1}
+.cw-fb-btn{background:none;border:1.5px solid #e2e8f0;width:26px;height:26px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all 0.2s;color:#94a3b8}
+.cw-fb-btn:hover{border-color:#0d9488;color:#0d9488;background:#f0fdfa}
+.cw-fb-btn.cw-fb-active{border-color:#0d9488;color:#fff;background:#0d9488}
+.cw-fb-btn.cw-fb-active.cw-fb-down{border-color:#ef4444;background:#ef4444}
+
+/* ── Typing ── */
+.cw-typing{display:flex;gap:6px;align-self:flex-start;max-width:88%}
+.cw-typing .cw-typing-bubble{background:#fff;border-radius:14px;border-bottom-left-radius:4px;padding:10px 14px;display:flex;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.cw-typing-dot{width:6px;height:6px;background:#5eead4;border-radius:50%;animation:cwTypingBounce 1.4s infinite}
+.cw-typing-dot:nth-child(2){animation-delay:0.2s}
+.cw-typing-dot:nth-child(3){animation-delay:0.4s}
+@keyframes cwTypingBounce{0%,60%,100%{transform:translateY(0);background:#5eead4}30%{transform:translateY(-5px);background:#0d9488}}
+
+/* ── Input Area ── */
+.cw-input-area{padding:10px 12px;background:#fff;border-top:1px solid #f1f5f9;display:flex;gap:6px;align-items:center;flex-shrink:0}
+.cw-voice-btn{width:38px;height:38px;border-radius:50%;background:#f1f5f9;border:1.5px solid #e2e8f0;color:#64748b;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.25s;flex-shrink:0;font-size:14px}
+.cw-voice-btn:hover{background:#e0f2fe;border-color:#0ea5e9;color:#0284c7}
+.cw-voice-btn.cw-recording{background:#fef2f2;border-color:#ef4444;color:#ef4444;animation:cwPulse 1s infinite}
+@keyframes cwPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+.cw-input{flex:1;border:1.5px solid #e2e8f0;border-radius:24px;padding:10px 16px;font-size:0.84rem;outline:none;transition:all 0.2s;background:#f8fafc;color:#1e293b}
+.cw-input:focus{border-color:#0d9488;background:#fff;box-shadow:0 0 0 3px rgba(13,148,136,0.08)}
+.cw-input::placeholder{color:#94a3b8}
+.cw-send{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#0f766e);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.25s;flex-shrink:0;font-size:14px}
+.cw-send:hover{transform:scale(1.08);box-shadow:0 4px 14px rgba(13,148,136,0.3)}
+.cw-send:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+/* ── Lead Form ── */
+.cw-lead-form{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin:0 0 0 32px}
+.cw-lead-form input{width:100%;border:1.5px solid #e2e8f0;border-radius:8px;padding:8px 10px;font-size:0.8rem;margin-bottom:6px;outline:none;transition:border 0.2s;color:#1e293b}
+.cw-lead-form input:focus{border-color:#0d9488}
+.cw-lead-form button{width:100%;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:8px;padding:9px;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.cw-lead-form button:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(16,185,129,0.3)}
+
+/* ── Conversation Chips (Action Flows) ── */
+.cw-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;padding-left:32px}
+.cw-chip{background:linear-gradient(135deg,#f0fdfa,#ccfbf1);border:1.5px solid #99f6e4;color:#0d9488;padding:6px 14px;border-radius:20px;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.25s ease;white-space:nowrap}
+.cw-chip:hover{background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-color:#0d9488;transform:translateY(-1px);box-shadow:0 3px 10px rgba(13,148,136,0.25)}
+.cw-chip.cw-chip-action{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-color:#93c5fd;color:#1d4ed8}
+.cw-chip.cw-chip-action:hover{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border-color:#2563eb}
+.cw-chip.cw-chip-confirm{background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-color:#86efac;color:#15803d;font-weight:700}
+.cw-chip.cw-chip-confirm:hover{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-color:#16a34a}
+.cw-chip.cw-chip-cancel{background:#fef2f2;border-color:#fecaca;color:#dc2626}
+.cw-chip.cw-chip-cancel:hover{background:#dc2626;color:#fff;border-color:#dc2626}
+
+/* ── Progress Bar ── */
+.cw-progress{padding:4px 12px 4px 32px;font-size:0.65rem;color:#64748b;font-weight:500;letter-spacing:0.5px}
+.cw-progress-bar{height:3px;background:#e2e8f0;border-radius:3px;margin-top:4px;overflow:hidden}
+.cw-progress-fill{height:100%;background:linear-gradient(90deg,#0d9488,#10b981);border-radius:3px;transition:width 0.4s ease}
+
+/* ── WhatsApp Templates Panel ── */
+.cw-wa-templates{padding:12px;display:flex;flex-direction:column;gap:8px}
+.cw-wa-templates h5{margin:0;font-size:0.85rem;color:#1e293b;font-weight:700}
+.cw-wa-tpl{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:12px;cursor:pointer;transition:all 0.2s;text-decoration:none;color:#1e293b}
+.cw-wa-tpl:hover{background:#dcfce7;border-color:#22c55e;transform:translateY(-1px);box-shadow:0 3px 10px rgba(34,197,94,0.15);text-decoration:none;color:#1e293b}
+.cw-wa-tpl i{width:36px;height:36px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.cw-wa-tpl .cw-wa-tpl-info{flex:1}
+.cw-wa-tpl .cw-wa-tpl-info strong{font-size:0.8rem;display:block}
+.cw-wa-tpl .cw-wa-tpl-info small{font-size:0.7rem;color:#64748b}
+
+/* ── Mobile Fullscreen ── */
+@media(max-width:480px){
+    .cw-box{width:calc(100vw - 16px);right:-8px;max-height:calc(100dvh - 110px);border-radius:16px}
+    .cw-quick{padding-left:0}
+    .cw-lead-form{margin-left:0}
+    .cw-wa-tpl{padding:8px 10px}
+}
+/* ── Mobile Improvements ── */
+@media(max-width:600px){
+    .cw-wrap{bottom:12px;right:12px}
+    .cw-toggle{width:52px;height:52px;font-size:20px}
+    .cw-box{width:calc(100vw - 24px);right:-12px;bottom:68px;max-height:calc(100dvh - 100px);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.25)}
+    .cw-header{padding:12px 14px}
+    .cw-header-avatar{width:36px;height:36px;font-size:16px}
+    .cw-header-info h4{font-size:0.85rem}
+    .cw-messages{padding:10px;gap:6px}
+    .cw-bubble{font-size:0.82rem;padding:9px 12px}
+    .cw-msg{max-width:92%}
+    .cw-input-area{padding:8px 10px}
+    .cw-input{padding:9px 14px;font-size:0.82rem}
+    .cw-send{width:38px;height:38px}
+    .cw-voice-btn{width:36px;height:36px}
+    .cw-chips{padding-left:0;gap:4px}
+    .cw-chip{padding:5px 10px;font-size:0.7rem}
+    .cw-quick-btn{padding:4px 10px;font-size:0.68rem}
+    /* Safe area for notched phones */
+    .cw-box{padding-bottom:env(safe-area-inset-bottom,0)}
+    .cw-input-area{padding-bottom:max(8px,env(safe-area-inset-bottom,0))}
+}
+/* ── Very small screens (< 360px) ── */
+@media(max-width:360px){
+    .cw-box{width:calc(100vw - 16px);right:-8px;border-radius:12px}
+    .cw-header-info h4{font-size:0.8rem}
+    .cw-bubble{font-size:0.78rem;padding:8px 10px}
+}
+/* ── Landscape mobile ── */
+@media(max-height:500px) and (orientation:landscape){
+    .cw-box{max-height:calc(100vh - 80px)}
+}
+</style>
+
+<div class="cw-wrap" id="cwWrap">
+    <div class="cw-box" id="cwBox">
+        <div class="cw-header">
+            <div class="cw-header-avatar"><i class="fas fa-robot"></i></div>
+            <div class="cw-header-info">
+                <h4>APS AI Assistant</h4>
+                <small><span class="cw-dot"></span> Online &middot; Hindi / English</small>
+            </div>
+            <button class="cw-close" onclick="cwToggle()" aria-label="Close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cw-messages" id="cwMessages">
+            <!-- Greeting changes based on role -->
+        </div>
+        <div class="cw-input-area">
+            <button class="cw-voice-btn" id="cwVoiceBtn" onclick="cwToggleVoice()" title="Voice Mode (speak in Hindi/English)">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <input type="text" class="cw-input" id="cwInput" placeholder="Type your message..." autocomplete="off">
+            <button class="cw-send" id="cwSendBtn" onclick="cwSend()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Toggle Buttons: Chatbot + WhatsApp side by side -->
+    <div class="cw-toggles">
+        <a href="https://wa.me/919277121112?text=Hello+APS+Dream+Homes%21+I+would+like+to+know+about+your+properties."
+           target="_blank" class="cw-toggle" id="cwWhatsAppToggle"
+           onclick="cwTrackWhatsApp('main_button')"
+           title="Chat on WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <button class="cw-toggle" id="cwChatToggle" onclick="cwToggle()">
+            <span class="cw-pulse"></span>
+            <i class="fas fa-comment-dots"></i>
+            <span class="cw-badge" id="cwBadge">1</span>
+        </button>
+    </div>
+</div>
+
+<script nonce="b8d8a22ff7c624853ccb391b51cb437c">
+(function(){
+    var cwSession = localStorage.getItem('cw_session') || ('web_' + Date.now());
+    localStorage.setItem('cw_session', cwSession);
+    var cwOpen = false;
+    var cwMsgCount = 0;
+    var cwVoiceMode = false;
+    var cwRecognition = null;
+    var cwUserRole = 'guest';
+    var cwUserName = "";
+    var cwWAPhone = '919277121112';
+
+    // ═══════════════════════════════════════════════
+    // RBAC-AWARE GREETING
+    // ═══════════════════════════════════════════════
+    var cwGreetings = {
+        admin: cwUserName ? ('Hello ' + cwUserName + '! Admin dashboard ready.\n\n• View analytics\n• Manage leads\n• Commission reports\n• Team performance\n\nWhat would you like to do?') : 'Hello Admin! Welcome back.\n\n• View analytics\n• Manage leads\n• Commission reports\n• Team performance\n\nChoose an option or type your question!',
+        associate: cwUserName ? ('Hello ' + cwUserName + '! Ready to grow your network.\n\n• Add new leads\n• Post properties\n• Check commissions\n• View your team\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\n• Add new leads\n• Post properties\n• Check commissions\n• View your team\n\nChoose an option or type your question!',
+        agent: cwUserName ? ('Hello ' + cwUserName + '! Property agent dashboard.\n\n• Add leads\n• Post properties\n• Site visits\n• Search properties\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\n• Add leads\n• Post properties\n• Site visits\n• Search properties\n\nChoose an option or type your question!',
+        employee: cwUserName ? ('Hello ' + cwUserName + '! Employee portal ready.\n\n• My tasks\n• Attendance\n• Add leads\n• Support tickets\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\n• My tasks\n• Attendance\n• Add leads\n• Support tickets\n\nChoose an option or type your question!',
+        customer: cwUserName ? ('Hello ' + cwUserName + '! Your dashboard is ready.\n\n• Browse properties\n• Check booking status\n• View EMI details\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\nI will help you find the perfect property.\n\n• View Plots & Prices\n• Schedule a Site Visit\n• Use the EMI Calculator\n\nChoose an option below or type your question!',
+        guest: 'Hello! Welcome to APS Dream Homes!\n\nI will help you find the perfect property.\n\n• View Plots & Prices\n• Schedule a Site Visit\n• Use the EMI Calculator\n\nChoose an option below or type your question!'
+    };
+
+    var cwQuickOptions = {
+        admin: [
+            {text:'Dashboard Stats', msg:'Show me today dashboard stats'},
+            {text:'Pending Bookings', msg:'Show pending bookings'},
+            {text:'New Leads', msg:'Show new leads today'},
+            {text:'Add Lead', msg:'I want to add a new lead'},
+            {text:'Post Property', msg:'I want to post a property'},
+            {text:'Commission Report', msg:'Show commission report'}
+        ],
+        associate: [
+            {text:'Add Lead', msg:'I want to add a new lead'},
+            {text:'Post Property', msg:'I want to post a property'},
+            {text:'My Network', msg:'Show my network tree'},
+            {text:'My Commission', msg:'Show my commission earnings'},
+            {text:'Site Visit', msg:'I want to schedule a site visit'}
+        ],
+        agent: [
+            {text:'Add Lead', msg:'I want to add a new lead'},
+            {text:'Post Property', msg:'I want to post a property'},
+            {text:'Site Visit', msg:'I want to schedule a site visit'},
+            {text:'Search Property', msg:'I want to search for a property'}
+        ],
+        employee: [
+            {text:'My Tasks', msg:'Show my pending tasks'},
+            {text:'Attendance', msg:'Show my attendance'},
+            {text:'Add Lead', msg:'I want to add a new lead'},
+            {text:'Site Visit', msg:'I want to schedule a site visit'},
+            {text:'Tickets', msg:'Show open support tickets'}
+        ],
+        customer: [
+            {text:'View Properties', msg:'Show me available properties'},
+            {text:'Post Property', msg:'I want to post a property to sell'},
+            {text:'Site Visit', msg:'I want to schedule a site visit'},
+            {text:'My Booking', msg:'Show my booking status'},
+            {text:'EMI Calculator', msg:'Show EMI options'},
+            {text:'Check Prices', msg:'What are the current prices?'}
+        ],
+        guest: [
+            {text:'View Properties', msg:'Show me available properties'},
+            {text:'Site Visit', msg:'I want to schedule a site visit'},
+            {text:'Check Prices', msg:'What are the current prices?'},
+            {text:'Register', msg:'I want to register an account'},
+            {text:'Home Loan', msg:'Need home loan help'},
+            {text:'Talk to Human', msg:'__human__'}
+        ]
+    };
+
+    // ═══════════════════════════════════════════════
+    // INIT GREETING
+    // ═══════════════════════════════════════════════
+    function cwInitGreeting() {
+        // Try to load conversation history first
+        cwLoadHistory();
+    }
+
+    function cwLoadHistory() {
+        fetch('http://localhost/apsdreamhome/api/ai/history?session_id=' + encodeURIComponent(cwSession))
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+            if (data.success && data.history && data.history.length > 0) {
+                // Render existing messages
+                data.history.forEach(function(msg) {
+                    if (msg.message) cwAddMsg(msg.message, 'user');
+                    if (msg.response) cwAddMsg(msg.response, 'bot');
+                });
+                // Still show quick options after history
+                var quicks = cwQuickOptions[cwUserRole] || cwQuickOptions.guest;
+                cwRenderQuickReplies(quicks);
+            } else {
+                // No history — show fresh greeting
+                var greeting = cwGreetings[cwUserRole] || cwGreetings.guest;
+                cwAddMsg(greeting, 'bot');
+                var quicks = cwQuickOptions[cwUserRole] || cwQuickOptions.guest;
+                cwRenderQuickReplies(quicks);
+            }
+        })
+        .catch(function(){
+            // Fallback to fresh greeting on error
+            var greeting = cwGreetings[cwUserRole] || cwGreetings.guest;
+            cwAddMsg(greeting, 'bot');
+            var quicks = cwQuickOptions[cwUserRole] || cwQuickOptions.guest;
+            cwRenderQuickReplies(quicks);
+        });
+    }
+
+    function cwRenderQuickReplies(quicks) {
+        var msgs = document.getElementById('cwMessages');
+        var qrDiv = document.createElement('div');
+        qrDiv.className = 'cw-quick';
+        qrDiv.id = 'cwQuickReplies';
+        quicks.forEach(function(q) {
+            var btn = document.createElement('button');
+            btn.className = 'cw-quick-btn';
+            btn.textContent = q.text;
+            btn.onclick = function() {
+                if (q.msg === '__human__') { cwRequestHuman(); return; }
+                document.getElementById('cwInput').value = q.msg;
+                cwSend();
+            };
+            qrDiv.appendChild(btn);
+        });
+        msgs.appendChild(qrDiv);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+    cwInitGreeting();
+
+    // ═══════════════════════════════════════════════
+    // TOGGLE CHAT
+    // ═══════════════════════════════════════════════
+    window.cwToggle = function(){
+        cwOpen = !cwOpen;
+        var box = document.getElementById('cwBox');
+        var tog = document.getElementById('cwChatToggle');
+        var badge = document.getElementById('cwBadge');
+        if(cwOpen){
+            box.classList.add('cw-show');
+            tog.classList.add('cw-active');
+            badge.classList.remove('cw-show');
+            document.getElementById('cwInput').focus();
+        } else {
+            box.classList.remove('cw-show');
+            tog.classList.remove('cw-active');
+        }
+    };
+
+    // ═══════════════════════════════════════════════
+    // VOICE MODE (STT + TTS)
+    // ═══════════════════════════════════════════════
+    window.cwToggleVoice = function() {
+        cwVoiceMode = !cwVoiceMode;
+        var btn = document.getElementById('cwVoiceBtn');
+        if (cwVoiceMode) {
+            btn.classList.add('cw-recording');
+            btn.innerHTML = '<i class="fas fa-stop"></i>';
+            cwStartListening();
+        } else {
+            btn.classList.remove('cw-recording');
+            btn.innerHTML = '<i class="fas fa-microphone"></i>';
+            if (cwRecognition) { cwRecognition.stop(); cwRecognition = null; }
+        }
+    };
+
+    function cwStartListening() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            cwAddMsg('Voice support available in Chrome browser only.', 'bot');
+            cwVoiceMode = false;
+            document.getElementById('cwVoiceBtn').classList.remove('cw-recording');
+            document.getElementById('cwVoiceBtn').innerHTML = '<i class="fas fa-microphone"></i>';
+            return;
+        }
+        var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        cwRecognition = new SpeechRecognition();
+        cwRecognition.lang = 'hi-IN';
+        cwRecognition.interimResults = false;
+        cwRecognition.maxAlternatives = 1;
+        cwRecognition.onresult = function(e) {
+            var transcript = e.results[0][0].transcript;
+            document.getElementById('cwInput').value = transcript;
+            cwSend();
+        };
+        cwRecognition.onend = function() {
+            if (cwVoiceMode) cwStartListening();
+        };
+        cwRecognition.onerror = function() {
+            if (cwVoiceMode) setTimeout(cwStartListening, 500);
+        };
+        cwRecognition.start();
+    }
+
+    function cwSpeak(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        var clean = text.replace(/[\*\#\@\!\(\)]/g, '').replace(/\n+/g, '. ').substring(0, 500);
+        var u = new SpeechSynthesisUtterance(clean);
+        u.lang = 'hi-IN';
+        u.rate = 0.95;
+        u.pitch = 1;
+        window.speechSynthesis.speak(u);
+    }
+
+    // ═══════════════════════════════════════════════
+    // SEND MESSAGE
+    // ═══════════════════════════════════════════════
+    window.cwSend = function(){
+        var input = document.getElementById('cwInput');
+        var msg = input.value.trim();
+        if(!msg) return;
+
+        var qr = document.getElementById('cwQuickReplies');
+        if(qr) qr.remove();
+
+        cwAddMsg(msg, 'user');
+        input.value = '';
+        document.getElementById('cwSendBtn').disabled = true;
+        cwShowTyping();
+
+        fetch('http://localhost/apsdreamhome/api/ai/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
+            body: JSON.stringify({message: msg, session_id: cwSession, role: cwUserRole, user_id: window.NOTIFY_USER && window.NOTIFY_USER.id ? window.NOTIFY_USER.id : ''})
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+            cwHideTyping();
+            document.getElementById('cwSendBtn').disabled = false;
+            var reply = (data.success && data.response) ? data.response : null;
+            if (reply) {
+                cwAddMsg(reply, 'bot');
+                // Render conversation chips + progress from conversation_state
+                var cs = data.conversation_state;
+                if (cs) {
+                    // Render progress bar
+                    if (cs.step !== null && cs.step !== 'done' && cs.step !== 'confirm' && cs.step_count > 0) {
+                        cwRenderProgress(cs.step, cs.step_count);
+                    }
+                    // Render suggestion chips
+                    if (cs.suggestions && cs.suggestions.length > 0) {
+                        cwRenderChips(cs.suggestions, cs.step, cs.action);
+                    }
+                }
+                if (cwVoiceMode) cwSpeak(reply);
+            } else {
+                cwFallback(msg);
+            }
+        })
+        .catch(function(){
+            cwHideTyping();
+            document.getElementById('cwSendBtn').disabled = false;
+            cwFallback(msg);
+        });
+
+        input.focus();
+    };
+
+    // ═══════════════════════════════════════════════
+    // KEYBOARD SUPPORT
+    // ═══════════════════════════════════════════════
+    document.getElementById('cwInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') cwSend();
+    });
+
+    // ═══════════════════════════════════════════════
+    // HUMAN REQUEST + LEAD FORM
+    // ═══════════════════════════════════════════════
+    window.cwRequestHuman = function(){
+        cwAddMsg('I want to talk to a human agent', 'user');
+        cwShowTyping();
+        setTimeout(function(){
+            cwHideTyping();
+            cwAddMsg('Thank you! Our team has received your details. We will contact you shortly.\n\nOr chat directly on WhatsApp: https://wa.me/919277121112', 'bot');
+            var c = document.getElementById('cwMessages');
+            var f = document.createElement('div');
+            f.className = 'cw-lead-form';
+            f.innerHTML = '<input type="text" id="cwLeadName" placeholder="Your Name" value="' + (cwUserName||'') + '"><input type="tel" id="cwLeadPhone" placeholder="Mobile Number"><button onclick="cwSubmitLead()">Request Callback</button>';
+            c.appendChild(f);
+            c.scrollTop = c.scrollHeight;
+        }, 700);
+    };
+
+    window.cwSubmitLead = function(){
+        var name = (document.getElementById('cwLeadName')||{}).value||'';
+        var phone = (document.getElementById('cwLeadPhone')||{}).value||'';
+        if(!name||!phone){alert('Please enter Name and Phone');return;}
+        document.getElementById('cwLeadName').disabled = true;
+        document.getElementById('cwLeadPhone').disabled = true;
+        cwAddMsg('Name: '+name+', Phone: '+phone, 'user');
+        cwShowTyping();
+        var fd = new URLSearchParams();
+        fd.append('name',name);fd.append('phone',phone);fd.append('email','chatbot_lead@apsdreamhome.com');
+        fd.append('subject','general');fd.append('message','Callback requested via AI Chatbot');
+        fd.append('csrf_token','893f1c828745ce2afb1aec23fc896b0d5b2f5b38990a0075e2f45a4b7d5bae89');
+        fetch('http://localhost/apsdreamhome/contact',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
+        .then(function(){cwHideTyping();cwAddMsg('Thank you '+name+'! Your details have been sent to our team. We will contact you soon.','bot');})
+        .catch(function(){cwHideTyping();cwAddMsg('Details saved! We will contact you soon.','bot');});
+    };
+
+    // ═══════════════════════════════════════════════
+    // WHATSAPP TRACKING
+    // ═══════════════════════════════════════════════
+    window.cwTrackWhatsApp = function(source) {
+        try {
+            fetch('http://localhost/apsdreamhome/api/track/whatsapp-click', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({source: source, page: window.location.href, ts: Date.now()})
+            }).catch(function(){});
+        } catch(e) {}
+    };
+
+    // ═══════════════════════════════════════════════
+    // WHATSAPP TEMPLATES PANEL
+    // ═══════════════════════════════════════════════
+    window.cwShowWATemplates = function() {
+        var msgs = document.getElementById('cwMessages');
+        var qr = document.getElementById('cwQuickReplies');
+        if(qr) qr.remove();
+
+        var panel = document.createElement('div');
+        panel.className = 'cw-wa-templates';
+        panel.innerHTML = '<h5><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp Templates</h5>';
+
+        var templates = [
+            {icon:'fa-home', title:'Property Inquiry', msg:'Hello! I would like to know about available plots. Are there any available?', key:'property'},
+            {icon:'fa-tag', title:'Price Check', msg:'Hi! What are the current rates at APS Dream Homes?', key:'price'},
+            {icon:'fa-calendar', title:'Site Visit', msg:'Hello! I would like to schedule a site visit. When can I come?', key:'visit'},
+            {icon:'fa-credit-card', title:'EMI Details', msg:'Hi! What are the EMI options? How much would the monthly payment be?', key:'emi'},
+            {icon:'fa-handshake', title:'Booking', msg:'Hello! I would like to book a plot. What is the process?', key:'booking'},
+        ];
+
+        templates.forEach(function(t) {
+            var link = document.createElement('a');
+            link.className = 'cw-wa-tpl';
+            link.target = '_blank';
+            link.href = 'https://wa.me/' + cwWAPhone + '?text=' + encodeURIComponent(t.msg);
+            link.onclick = function() { cwTrackWhatsApp('template_' + t.key); };
+            link.innerHTML = '<i class="fas ' + t.icon + '"></i><div class="cw-wa-tpl-info"><strong>' + t.title + '</strong><small>Click to open WhatsApp</small></div><i class="fas fa-arrow-right" style="color:#25D366;font-size:12px"></i>';
+            panel.appendChild(link);
+        });
+
+        msgs.appendChild(panel);
+        msgs.scrollTop = msgs.scrollHeight;
+    };
+
+    // ═══════════════════════════════════════════════
+    // FALLBACK RESPONSES (when API fails)
+    // ═══════════════════════════════════════════════
+    function cwFallback(userMsg){
+        setTimeout(function(){
+            cwHideTyping();
+            var m = userMsg.toLowerCase();
+            var r = 'Your requirement has been noted. For better assistance, call us at: +91 92771 21112 or WhatsApp us!';
+            if(m.indexOf('hi')!==-1||m.indexOf('hello')!==-1||m.indexOf('namaste')!==-1) r='Hello! How can I assist you with APS Dream Homes?';
+            else if(m.indexOf('price')!==-1||m.indexOf('rate')!==-1||m.indexOf('kitne')!==-1) r='Our premium plots start from Rs 5.5 Lakh. What is your budget?';
+            else if(m.indexOf('location')!==-1||m.indexOf('kaha')!==-1) r='Our projects are available in Gorakhpur. Which area are you looking for?';
+            else if(m.indexOf('loan')!==-1||m.indexOf('emi')!==-1) r='Yes, we offer home loan and EMI facilities. Would you like to see EMI details?';
+            else if(m.indexOf('visit')!==-1||m.indexOf('site')!==-1) r='Site visits are completely free! Call us or WhatsApp at: +91 92771 21112';
+            else if(m.indexOf('buy')!==-1||m.indexOf('plot')!==-1) r='Great! We have residential plots in Gorakhpur. Tell us your budget and I will show you the best options!';
+            else if(m.indexOf('whatsapp')!==-1) { cwShowWATemplates(); return; }
+            cwAddMsg(r,'bot');
+            if (cwVoiceMode) cwSpeak(r);
+        },700);
+    }
+
+    // ═══════════════════════════════════════════════
+    // CONVERSATION CHIPS + PROGRESS (Action Flows)
+    // ═══════════════════════════════════════════════
+    function cwRenderChips(suggestions, step, action) {
+        var c = document.getElementById('cwMessages');
+        // Remove old chips
+        var old = c.querySelectorAll('.cw-chips');
+        old.forEach(function(el){ el.remove(); });
+
+        var div = document.createElement('div');
+        div.className = 'cw-chips';
+
+        suggestions.forEach(function(s) {
+            var btn = document.createElement('button');
+            btn.className = 'cw-chip';
+            // Style based on chip type
+            if (s.indexOf('✅') !== -1 || s.indexOf('Confirm') !== -1) btn.className += ' cw-chip-confirm';
+            else if (s.indexOf('❌') !== -1 || s.indexOf('Cancel') !== -1) btn.className += ' cw-chip-cancel';
+            else if (s.indexOf('✏️') !== -1 || s.indexOf('Edit') !== -1) btn.className += ' cw-chip-action';
+            btn.textContent = s;
+            btn.onclick = function() {
+                document.getElementById('cwInput').value = s;
+                cwSend();
+            };
+            div.appendChild(btn);
+        });
+
+        c.appendChild(div);
+        c.scrollTop = c.scrollHeight;
+    }
+
+    function cwRenderProgress(currentStep, totalSteps) {
+        var c = document.getElementById('cwMessages');
+        // Remove old progress
+        var old = c.querySelectorAll('.cw-progress');
+        old.forEach(function(el){ el.remove(); });
+
+        if (totalSteps <= 1) return;
+
+        var pct = Math.round((currentStep / totalSteps) * 100);
+        var div = document.createElement('div');
+        div.className = 'cw-progress';
+        div.innerHTML = 'Step ' + currentStep + ' of ' + totalSteps +
+            '<div class="cw-progress-bar"><div class="cw-progress-fill" style="width:' + pct + '%"></div></div>';
+
+        c.appendChild(div);
+        c.scrollTop = c.scrollHeight;
+    }
+
+    // ═══════════════════════════════════════════════
+    // HELPER FUNCTIONS
+    // ═══════════════════════════════════════════════
+    function cwLinkify(t){
+        return t.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" style="color:#0d9488;text-decoration:underline;word-break:break-all">$1</a>');
+    }
+    function cwAddMsg(text, type, msgId){
+        var c = document.getElementById('cwMessages');
+        var d = document.createElement('div');
+        d.className = 'cw-msg cw-' + type;
+        var av = type==='bot' ? '<div class="cw-msg-avatar"><i class="fas fa-robot"></i></div>' : '<div class="cw-msg-avatar"><i class="fas fa-user"></i></div>';
+        var fb = '';
+        if (type === 'bot') {
+            var uid = 'fb_' + Math.random().toString(36).substr(2,6);
+            fb = '<div class="cw-feedback" id="' + uid + '">'
+                + '<button class="cw-fb-btn" title="Helpful" onclick="cwFeedback(this,1)"><i class="fas fa-thumbs-up"></i></button>'
+                + '<button class="cw-fb-btn cw-fb-down" title="Not helpful" onclick="cwFeedback(this,0)"><i class="fas fa-thumbs-down"></i></button>'
+                + '</div>';
+        }
+        d.innerHTML = av + '<div class="cw-bubble">' + cwLinkify(text.replace(/\n/g,'<br>')) + '</div>' + fb;
+        c.appendChild(d);
+        c.scrollTop = c.scrollHeight;
+        cwMsgCount++;
+        if(!cwOpen && type==='bot'){
+            var b = document.getElementById('cwBadge');
+            b.textContent = cwMsgCount;
+            b.classList.add('cw-show');
+        }
+    }
+
+    function cwShowTyping(){
+        var c = document.getElementById('cwMessages');
+        var d = document.createElement('div');
+        d.id = 'cwTyping';
+        d.className = 'cw-typing';
+        d.innerHTML = '<div class="cw-msg-avatar" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff"><i class="fas fa-robot"></i></div><div class="cw-typing-bubble"><span class="cw-typing-dot"></span><span class="cw-typing-dot"></span><span class="cw-typing-dot"></span></div>';
+        c.appendChild(d);
+        c.scrollTop = c.scrollHeight;
+    }
+
+    function cwHideTyping(){
+        var t = document.getElementById('cwTyping');
+        if(t) t.remove();
+    }
+
+    // ═══════════════════════════════════════════════
+    // FEEDBACK (Thumbs Up/Down)
+    // ═══════════════════════════════════════════════
+    window.cwFeedback = function(btn, positive) {
+        var container = btn.closest('.cw-feedback');
+        if (!container) return;
+        // Mark active
+        var buttons = container.querySelectorAll('.cw-fb-btn');
+        buttons.forEach(function(b){ b.classList.remove('cw-fb-active'); });
+        btn.classList.add('cw-fb-active');
+        // Send feedback
+        try {
+            fetch('http://localhost/apsdreamhome/api/ai/feedback', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({session_id: cwSession, positive: positive === 1})
+            }).catch(function(){});
+        } catch(e) {}
+    };
+})();
+</script>
+
+    <!-- WhatsApp button is now inside chat_widget.php (combined toggle) -->
+
+    <!-- Voice Booking Assistant (public pages only) -->
+            <div id="voiceBookingWidget" class="vbw" aria-live="polite">
+    <button id="vbwToggle" class="vbw-toggle" type="button" aria-label="Voice booking assistant" title="बोलकर बुक करें / Book via voice">
+        <i class="fas fa-microphone"></i>
+    </button>
+
+    <div id="vbwPanel" class="vbw-panel" hidden>
+        <div class="vbw-header">
+            <div class="vbw-title">
+                <i class="fas fa-assistant"></i>
+                <span>AI Voice Booking</span>
+            </div>
+            <button id="vbwClose" class="vbw-close" type="button" aria-label="Close">&times;</button>
+        </div>
+
+        <div id="vbwTranscript" class="vbw-transcript">
+            <div class="vbw-msg vbw-bot">
+                नमस्ते! मैं आपकी आवाज़ से प्लॉट बुकिंग और साइट विज़िट में मदद कर सकती हूँ।
+                माइक दबाएँ और बोलें — जैसे "मुझे प्लॉट बुक करना है"।
+            </div>
+        </div>
+
+        <div id="vbwStatus" class="vbw-status">माइक दबाकर बोलें</div>
+
+        <div class="vbw-controls">
+            <button id="vbwMic" class="vbw-mic" type="button" aria-label="Start speaking">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button id="vbwSpeak" class="vbw-speak-btn" type="button" title="Read reply aloud" disabled>
+                <i class="fas fa-volume-up"></i> बोलें
+            </button>
+        </div>
+
+        <div id="vbwFallback" class="vbw-fallback" hidden>
+            <p>आपका ब्राउज़र voice input support नहीं करता। नीचे लिखकर भी बुक कर सकते हैं:</p>
+            <textarea id="vbwText" rows="2" placeholder="अपना संदेश लिखें... (जैसे: मुझे प्लॉट बुक करना है, मेरा नंबर 98xxxxxxxx है)"></textarea>
+            <button id="vbwSend" class="vbw-send" type="button">भेजें</button>
+        </div>
+    </div>
+</div>
+
+<style nonce="b8d8a22ff7c624853ccb391b51cb437c">
+.vbw { position: fixed; left: 18px; bottom: 18px; z-index: 99990; font-family: 'Inter', system-ui, sans-serif; }
+.vbw-toggle {
+    width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer;
+    background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; font-size: 1.4rem;
+    box-shadow: 0 8px 24px rgba(13,148,136,0.45); transition: transform .2s, box-shadow .2s;
+    animation: vbwPulse 2.4s infinite;
+}
+.vbw-toggle:hover { transform: scale(1.08); }
+@keyframes vbwPulse {
+    0%,100% { box-shadow: 0 8px 24px rgba(13,148,136,0.45); }
+    50% { box-shadow: 0 8px 34px rgba(13,148,136,0.75); }
+}
+.vbw-panel {
+    position: absolute; bottom: 76px; left: 0; width: 330px; max-width: 90vw;
+    background: #fff; border-radius: 18px; box-shadow: 0 16px 50px rgba(0,0,0,0.22);
+    overflow: hidden; display: flex; flex-direction: column; max-height: 78vh;
+}
+.vbw-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; padding: 12px 16px;
+}
+.vbw-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; }
+.vbw-close { background: rgba(255,255,255,0.2); border: none; color: #fff; width: 28px; height: 28px;
+    border-radius: 8px; font-size: 1.1rem; cursor: pointer; line-height: 1; }
+.vbw-transcript { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: #f8fafc; }
+.vbw-msg { max-width: 85%; padding: 9px 13px; border-radius: 14px; font-size: 0.86rem; line-height: 1.45; white-space: pre-wrap; }
+.vbw-user { align-self: flex-end; background: #0d9488; color: #fff; border-bottom-right-radius: 4px; }
+.vbw-bot { align-self: flex-start; background: #fff; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+.vbw-bot.vbw-success { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; font-weight: 600; }
+.vbw-status { text-align: center; font-size: 0.78rem; color: #64748b; padding: 6px; background: #fff; }
+.vbw-status.listening { color: #dc2626; font-weight: 600; }
+.vbw-controls { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 12px; background: #fff; border-top: 1px solid #eef2f7; }
+.vbw-mic {
+    width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer; color: #fff; font-size: 1.3rem;
+    background: linear-gradient(135deg, #0d9488, #0f766e); box-shadow: 0 4px 14px rgba(13,148,136,0.4); transition: transform .15s;
+}
+.vbw-mic:hover { transform: scale(1.05); }
+.vbw-mic.recording { background: linear-gradient(135deg, #dc2626, #b91c1c); animation: vbwRec 1s infinite; }
+@keyframes vbwRec { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+.vbw-speak-btn {
+    border: 1px solid #0d9488; background: #fff; color: #0d9488; border-radius: 20px; padding: 8px 14px;
+    font-size: 0.8rem; font-weight: 600; cursor: pointer;
+}
+.vbw-speak-btn:disabled { opacity: .4; cursor: not-allowed; }
+.vbw-fallback { padding: 12px 14px; border-top: 1px solid #eef2f7; font-size: 0.8rem; color: #475569; }
+.vbw-fallback textarea { width: 100%; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 8px; font-size: 0.84rem; resize: vertical; font-family: inherit; }
+.vbw-send { margin-top: 8px; width: 100%; border: none; background: #0d9488; color: #fff; border-radius: 10px; padding: 9px; font-weight: 600; cursor: pointer; }
+</style>
+
+<script nonce="b8d8a22ff7c624853ccb391b51cb437c">
+(function () {
+    var BASE = window.BASE_URL || '';
+    var endpoint = BASE + '/api/v2/mobile/voice-chat';
+
+    var toggle = document.getElementById('vbwToggle');
+    var panel = document.getElementById('vbwPanel');
+    var closeBtn = document.getElementById('vbwClose');
+    var micBtn = document.getElementById('vbwMic');
+    var transcript = document.getElementById('vbwTranscript');
+    var statusEl = document.getElementById('vbwStatus');
+    var speakBtn = document.getElementById('vbwSpeak');
+    var fallback = document.getElementById('vbwFallback');
+    var textArea = document.getElementById('vbwText');
+    var sendBtn = document.getElementById('vbwSend');
+
+    var sessionId = 0;
+    var lastReply = '';
+    var recognition = null;
+    var listening = false;
+
+    function addMsg(text, who, extraClass) {
+        var div = document.createElement('div');
+        div.className = 'vbw-msg vbw-' + who + (extraClass ? ' ' + extraClass : '');
+        div.textContent = text;
+        transcript.appendChild(div);
+        transcript.scrollTop = transcript.scrollHeight;
+        return div;
+    }
+
+    function setStatus(text, cls) {
+        statusEl.textContent = text;
+        statusEl.className = 'vbw-status' + (cls ? ' ' + cls : '');
+    }
+
+    function speak(text) {
+        if (!('speechSynthesis' in window)) return;
+        try {
+            window.speechSynthesis.cancel();
+            var u = new SpeechSynthesisUtterance(text);
+            u.lang = 'hi-IN';
+            u.rate = 0.95;
+            var voices = window.speechSynthesis.getVoices();
+            var hi = voices.filter(function (v) { return /hi/i.test(v.lang); })[0];
+            if (hi) u.voice = hi;
+            window.speechSynthesis.speak(u);
+        } catch (e) {}
+    }
+
+    function sendToBot(message) {
+        if (!message) return;
+        addMsg(message, 'user');
+        setStatus('सोच रही हूँ...');
+        fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message, session_id: sessionId, lead_id: 0 })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            var reply = (data.reply || 'माफ़ कीजिए, कुछ समझ नहीं आया।').replace(/\\u([0-9a-fA-F]{4})/g, function (_, g) {
+                return String.fromCharCode(parseInt(g, 16));
+            });
+            lastReply = reply;
+            if (data.session_id) sessionId = data.session_id;
+            var isBooking = (data.intent === 'booking' || data.intent === 'site_visit');
+            addMsg(reply, 'bot', isBooking ? 'vbw-success' : '');
+            setStatus(isBooking ? '✅ आपका रिक्वेस्ट रजिस्टर हो गया!' : 'माइक दबाकर बोलें');
+            speakBtn.disabled = false;
+            speak(reply);
+        })
+        .catch(function () {
+            addMsg('तकनीकी समस्या है। कृपया थोड़ी देर बाद कोशिश करें।', 'bot');
+            setStatus('माइक दबाकर बोलें');
+        });
+    }
+
+    // ---- Web Speech API (SpeechRecognition) ----
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+        // No speech recognition -> reveal text fallback
+        fallback.hidden = false;
+        setStatus('टाइप करके बुक करें');
+    } else {
+        recognition = new SR();
+        recognition.lang = 'hi-IN';
+        recognition.interimResults = true;
+        recognition.continuous = false;
+
+        recognition.onstart = function () {
+            listening = true;
+            micBtn.classList.add('recording');
+            setStatus('सुन रही हूँ... बोलें', 'listening');
+        };
+
+        recognition.onresult = function (e) {
+            var interim = '';
+            var finalText = '';
+            for (var i = e.resultIndex; i < e.results.length; i++) {
+                var chunk = e.results[i][0].transcript;
+                if (e.results[i].isFinal) finalText += chunk; else interim += chunk;
+            }
+            if (interim) setStatus('“' + interim + '”');
+            if (finalText) {
+                setStatus('प्रोसेसिंग...');
+                sendToBot(finalText.trim());
+            }
+        };
+
+        recognition.onerror = function (e) {
+            if (e.error === 'not-allowed') setStatus('माइक की अनुमति दें');
+            else if (e.error === 'no-speech') setStatus('माइक दबाकर बोलें');
+            else setStatus('फिर कोशिश करें');
+        };
+
+        recognition.onend = function () {
+            listening = false;
+            micBtn.classList.remove('recording');
+            if (statusEl.className.indexOf('listening') === -1) setStatus('माइक दबाकर बोलें');
+        };
+    }
+
+    micBtn.addEventListener('click', function () {
+        if (!recognition) return;
+        if (listening) { recognition.stop(); }
+        else {
+            try { recognition.start(); }
+            catch (e) { /* already started */ }
+        }
+    });
+
+    speakBtn.addEventListener('click', function () { if (lastReply) speak(lastReply); });
+
+    sendBtn.addEventListener('click', function () {
+        var t = (textArea.value || '').trim();
+        if (t) { sendToBot(t); textArea.value = ''; }
+    });
+
+    toggle.addEventListener('click', function () {
+        panel.hidden = !panel.hidden;
+        if (!panel.hidden && SR && 'speechSynthesis' in window) {
+            // prime voices
+            window.speechSynthesis.getVoices();
+        }
+    });
+    closeBtn.addEventListener('click', function () { panel.hidden = true; });
+})();
+</script>
+    
+    <!-- Real-time WebSocket Notifications -->
+    <script nonce="b8d8a22ff7c624853ccb391b51cb437c">
+        window.NOTIFY_USER = {
+            id: null,
+            role: 'guest'
+        };
+    </script>
+    <script defer src="http://localhost/apsdreamhome/assets/js/notification-system.js"></script>
+
+    <!-- Custom JS -->
+    <script defer src="http://localhost/apsdreamhome/assets/js/main.js"></script>
+    <script defer src="http://localhost/apsdreamhome/assets/js/modern-effects.js?v=1"></script>
+    <script defer src="http://localhost/apsdreamhome/assets/js/toast-notifications.js"></script>
+    <script defer src="http://localhost/apsdreamhome/assets/js/aps-location-autofill.js"></script>
+    <script defer src="http://localhost/apsdreamhome/assets/js/aps-map-picker.js"></script>
+    <!-- Leaflet JS for map picker -->
+    <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- premium-header.js removed - functionality merged into header.php inline -->
+
+    <!-- Utility JS -->
+    <script nonce="b8d8a22ff7c624853ccb391b51cb437c">
+        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+            if (anchor.hasAttribute('data-bs-toggle')) return;
+            if (anchor.getAttribute('role') === 'tab') return;
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                var target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        var counters = document.querySelectorAll('.stat-number');
+        counters.forEach(function(counter) {
+            function animate() {
+                var value = +counter.getAttribute('data-target');
+                var data = +counter.innerText;
+                if (data < value) {
+                    counter.innerText = Math.ceil(data + value / 200);
+                    setTimeout(animate, 1);
+                } else {
+                    counter.innerText = value;
+                }
+            }
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) { animate(); observer.unobserve(entry.target); }
+                });
+            });
+            observer.observe(counter);
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('http://localhost/apsdreamhome/pwa/service-worker')
+                    .then(function(reg) { console.log('SW registered:', reg.scope); })
+                    .catch(function(err) { console.log('SW registration failed:', err); });
+            });
+        }
+    </script>
+    <script nonce="b8d8a22ff7c624853ccb391b51cb437c">
+    // Polyfill or fallback mapping if needed, toast is handled by toast-notifications.js
+    function showToast(message, type) {
+        if (typeof window.APS !== 'undefined' && window.APS.toast) {
+            window.APS.toast(message, type || 'info');
+        }
+    }
+    </script>
+</body>
+
+</html>
+
