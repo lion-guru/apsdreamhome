@@ -94,6 +94,11 @@ class ApiLeadController extends BaseController
     public function store()
     {
         try {
+            $guard = \App\Services\CRMGuard::getInstance();
+            if (!$guard->isCrmEnabled()) {
+                $this->jsonError('CRM is currently disabled by administrator', 403);
+            }
+
             $data = json_decode(file_get_contents('php://input'), true);
 
             // Validate required fields
@@ -236,6 +241,11 @@ class ApiLeadController extends BaseController
     public function destroy($id)
     {
         try {
+            $guard = \App\Services\CRMGuard::getInstance();
+            if (!$guard->isCrmEnabled()) {
+                $this->jsonError('CRM is currently disabled by administrator', 403);
+            }
+
             $lead = Lead::find($id);
 
             if (!$lead) {
@@ -247,8 +257,9 @@ class ApiLeadController extends BaseController
             $this->logLeadActivity($lead->id, 'lead_deleted', 'Lead soft-deleted');
 
             $userId = (int)($_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 0);
+            $userRole = $_SESSION['role'] ?? 'admin';
             $crm = new \App\Services\CRMService();
-            $result = $crm->deleteLead((int)$id);
+            $result = $crm->deleteLead((int)$id, $userRole);
 
             $this->jsonResponse([
                 'success' => true,

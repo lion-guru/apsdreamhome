@@ -1633,6 +1633,18 @@ class EmployeeController extends BaseController
         if (!isset($_SESSION['employee_id'])) { $this->redirect('/employee/login'); return; }
         $employeeId = $_SESSION['employee_id'];
 
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isCrmEnabled()) {
+            $_SESSION['error'] = 'CRM is currently disabled';
+            $this->redirect('/employee/leads');
+            return;
+        }
+        if (!$guard->canCreateLead('employee')) {
+            $_SESSION['error'] = 'You do not have permission to create leads';
+            $this->redirect('/employee/leads');
+            return;
+        }
+
         $name = trim($_POST['name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
         $email = trim($_POST['email'] ?? '');
@@ -1682,6 +1694,13 @@ class EmployeeController extends BaseController
     {
         if (!isset($_SESSION['employee_id'])) { $this->redirect('/employee/login'); return; }
         $employeeId = $_SESSION['employee_id'];
+
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isCrmEnabled() || !$guard->canDeleteLead('employee')) {
+            $_SESSION['error'] = 'You do not have permission to delete leads';
+            $this->redirect('/employee/leads');
+            return;
+        }
 
         try {
             $lead = $this->db->fetchOne("SELECT id, assigned_to, created_by FROM leads WHERE id = ? AND deleted_at IS NULL", [$id]);

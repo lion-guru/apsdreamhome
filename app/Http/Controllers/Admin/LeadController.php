@@ -496,6 +496,13 @@ class LeadController extends AdminController
     {
         $this->requireAdmin();
 
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isExportEnabled()) {
+            $_SESSION['error'] = 'Lead export is disabled by administrator';
+            $this->redirect('/admin/leads');
+            return;
+        }
+
         $filters = [
             'search' => $_GET['search'] ?? null,
             'status' => $_GET['status'] ?? null,

@@ -933,6 +933,18 @@ class AgentDashboardController extends BaseController
         $this->requireAgentRole();
         $userId = $this->userId;
 
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isCrmEnabled()) {
+            $_SESSION['error'] = 'CRM is currently disabled';
+            $this->redirect('/agent/leads');
+            return;
+        }
+        if (!$guard->canCreateLead('agent')) {
+            $_SESSION['error'] = 'You do not have permission to create leads';
+            $this->redirect('/agent/leads');
+            return;
+        }
+
         $name = trim($_POST['name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
         $email = trim($_POST['email'] ?? '');
@@ -982,6 +994,13 @@ class AgentDashboardController extends BaseController
     {
         $this->requireAgentRole();
         $userId = $this->userId;
+
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isCrmEnabled() || !$guard->canDeleteLead('agent')) {
+            $_SESSION['error'] = 'You do not have permission to delete leads';
+            $this->redirect('/agent/leads');
+            return;
+        }
 
         try {
             $lead = $this->db->fetchOne("SELECT id, assigned_to, created_by FROM leads WHERE id = ? AND deleted_at IS NULL", [$id]);

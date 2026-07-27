@@ -2064,6 +2064,13 @@ class AssociateController extends BaseController
         $this->requireAuth();
         $userId = $_SESSION['user_id'] ?? 0;
 
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isCrmEnabled() || !$guard->canDeleteLead('associate')) {
+            $_SESSION['error'] = 'You do not have permission to delete leads';
+            $this->redirect('/associate/leads');
+            return;
+        }
+
         try {
             $db = \App\Core\Database\Database::getInstance();
             $lead = $db->fetchOne("SELECT id, assigned_to, created_by FROM leads WHERE id = ? AND (created_by = ? OR assigned_to = ?) AND deleted_at IS NULL", [$id, $userId, $userId]);
