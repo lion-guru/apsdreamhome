@@ -714,4 +714,87 @@ class LeadController extends AdminController
         $this->setFlash('success', "{$assigned} lead(s) assigned successfully.");
         return $this->redirect('/admin/leads/assign');
     }
+
+    /**
+     * AJAX bulk action handler — status change, assign, delete
+     */
+    public function bulkAction()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        $action = $_POST['action'] ?? '';
+        $value = $_POST['value'] ?? '';
+        $idsRaw = $_POST['ids'] ?? '';
+
+        if (empty($idsRaw)) {
+            echo json_encode(['success' => false, 'error' => 'No leads selected']);
+            return;
+        }
+
+        $ids = array_map('intval', explode(',', $idsRaw));
+        $ids = array_filter($ids, fn($id) => $id > 0);
+
+        if (empty($ids)) {
+            echo json_encode(['success' => false, 'error' => 'Invalid lead IDs']);
+            return;
+        }
+
+        $guard = \App\Services\CRMGuard::getInstance();
+        if (!$guard->isCrmEnabled()) {
+            echo json_encode(['success' => false, 'error' => 'CRM is disabled']);
+            return;
+        }
+
+        $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $adminId = $this->getCurrentUserId();
+        $affected = 0;
+
+        try {
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+            switch ($action) {
+                case 'status':
+                    $validStatuses = ['new','contacted','qualified','proposal','negotiation','converted','closed','lost','dead'];
+                    if (!in_array($value, $validStatuses)) {
+                        echo json_encode(['success' => false, 'error' => 'Invalid status']);
+                        return;
+                    }
+                    $stmt = $db->prepare("UPDATE leads SET status = ?, updated_at = NOW() WHERE id IN ($placeholders) AND deleted_at IS NULL");
+                    $stmt->execute(array_merge([$value], $ids));
+                    $affected = $stmt->rowCount();
+                    break;
+
+                case 'assign':
+                    $assignee = (int)$value;
+                    if ($assignee <= 0) {
+                        echo json_encode(['success' => false, 'error' => 'Invalid assignee']);
+                        return;
+                    }
+                    $stmt = $db->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id IN ($placeholders) AND deleted_at IS NULL");
+                    $stmt->execute(array_merge([$assignee], $ids));
+                    $affected = $stmt->rowCount();
+                    break;
+
+                case 'delete':
+                    if (!$guard->canDeleteLead('admin')) {
+                        echo json_encode(['success' => false, 'error' => 'Delete permission denied']);
+                        return;
+                    }
+                    $stmt = $db->prepare("UPDATE leads SET deleted_at = NOW() WHERE id IN ($placeholders) AND deleted_at IS NULL");
+                    $stmt->execute($ids);
+                    $affected = $stmt->rowCount();
+                    break;
+
+                default:
+                    echo json_encode(['success' => false, 'error' => 'Unknown action: ' . $action]);
+                    return;
+            }
+
+            echo json_encode(['success' => true, 'affected' => $affected]);
+        } catch (\Throwable $e) {
+            error_log('BulkAction error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Server error']);
+        }
+    }
 }

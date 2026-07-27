@@ -1247,6 +1247,9 @@ $router->post('/admin/leads/{id}/note', 'App\\Http\\Controllers\\Admin\\LeadCont
 $router->post('/admin/leads/{id}/status', 'App\\Http\\Controllers\\Admin\\LeadController@updateStatus');
 $router->post('/admin/leads/{id}/assign', 'App\\Http\\Controllers\\Admin\\LeadController@assign');
 
+// Lead Bulk Action (AJAX)
+$router->post('/admin/leads/bulk-action', 'App\\Http\\Controllers\\Admin\\LeadController@bulkAction');
+
 // Lead Trash & Recovery
 $router->get('/admin/leads/trash', 'App\\Http\\Controllers\\Admin\\LeadController@trash');
 $router->get('/admin/leads/trash/list', 'App\\Http\\Controllers\\Admin\\LeadController@trash');
