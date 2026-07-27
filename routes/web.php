@@ -2231,6 +2231,10 @@ $router->get('/admin/legal-colony-pipeline/analytics-all',                  'App
 $router->get('/admin/legal-colony-pipeline/milestones/{id}',                'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@milestones');
 $router->post('/admin/legal-colony-pipeline/update-milestone',              'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@updateMilestone');
 
+// ── Colony Health Dashboard ───────────────────────────────────
+$router->get('/admin/legal-colony-pipeline/health',                         'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@healthOverview');
+$router->get('/admin/legal-colony-pipeline/health/api',                     'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@healthApi');
+
 // ============================================================
 // COLONY FEASIBILITY & PRICING ENGINE
 // ============================================================
