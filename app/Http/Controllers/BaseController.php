@@ -106,6 +106,15 @@ class BaseController
         // A/B testing: assign user to running experiments and auto-track view event
         $this->runExperimentMiddleware();
 
+        // Multi-tenant: resolve tenant context from request (header/subdomain/query/session/default)
+        if (class_exists('\App\Core\Middleware\TenantContext')) {
+            try {
+                \App\Core\Middleware\TenantContext::resolve();
+            } catch (\Throwable $e) {
+                // TenantContext failure should not break the app
+            }
+        }
+
         // Per-request correlation id for log entries (X-Request-Id if upstream provided)
         if (class_exists('\App\Services\Log')) {
             \App\Services\Log::setRequestId(

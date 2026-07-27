@@ -7,7 +7,10 @@ $GLOBALS['_html_doc_started'] = true;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title ?? 'APS Dream Home - Admin'; ?></title>
+    <title><?php
+        $tenantTitleName = class_exists('\App\Core\Middleware\TenantContext') ? \App\Core\Middleware\TenantContext::getName() : 'APS Dream Home';
+        echo $page_title ?? ($tenantTitleName . ' - Admin');
+    ?></title>
     <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/favicon.png">
     <meta name="description" content="<?php echo $page_description ?? 'Admin Panel'; ?>">
     <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
@@ -44,37 +47,6 @@ $GLOBALS['_html_doc_started'] = true;
             APS._sidebar = null;
             APS._overlay = null;
             APS._touchStartX = 0;
-
-            // Notification toggle (called by bell icon onclick)
-            function toggleNotifications() {
-                if (typeof notificationSystem !== 'undefined' && notificationSystem.toggleNotificationDropdown) {
-                    notificationSystem.toggleNotificationDropdown();
-                } else {
-                    window.location.href = '/admin/notifications';
-                }
-            }
-            function toggleMessages() {
-                window.location.href = '/admin/notifications/manage';
-            }
-
-            // Dark mode toggle
-            function toggleDarkMode() {
-                const isDark = document.body.classList.toggle('dark-mode');
-                localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
-                const icon = document.getElementById('darkModeIcon');
-                if (icon) {
-                    icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-                }
-            }
-            document.addEventListener('DOMContentLoaded', function() {
-                const saved = localStorage.getItem('aps-dark-mode');
-                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (saved === '1' || (saved === null && prefersDark)) {
-                    document.body.classList.add('dark-mode');
-                    const icon = document.getElementById('darkModeIcon');
-                    if (icon) icon.className = 'fas fa-sun';
-                }
-            });
 
             APS._init = function() {
                 APS._sidebar = document.getElementById('sidebarMenu');
@@ -316,11 +288,26 @@ $GLOBALS['_html_doc_started'] = true;
     function toggleMessages() {
         window.location.href = '<?php echo $base ?? BASE_URL; ?>/admin/inquiries';
     }
+    function toggleDarkMode() {
+        var isDark = document.body.classList.toggle('dark-mode');
+        localStorage.setItem('aps-dark-mode', isDark ? '1' : '0');
+        var icon = document.getElementById('darkModeIcon');
+        if (icon) { icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon'; }
+    }
+    (function() {
+        var saved = localStorage.getItem('aps-dark-mode');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === '1' || (saved === null && prefersDark)) {
+            document.body.classList.add('dark-mode');
+            var icon = document.getElementById('darkModeIcon');
+            if (icon) icon.className = 'fas fa-sun';
+        }
+    })();
     </script>
     <?php if (isset($extra_js) && $extra_js): ?><!-- Extra page-specific JS --><?php echo $extra_js; ?><?php endif; ?>
         <!-- Frontend enhancements: a11y, forms, toasts, loading -->
 
-        <!-- Real-time WebSocket Notifications -->
+        <!-- Real-time Notifications (SSE stream + polling fallback) -->
         <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
             window.NOTIFY_USER = {
                 id: <?php echo isset($_SESSION['admin_id']) ? (int)$_SESSION['admin_id'] : (isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 'null'); ?>,

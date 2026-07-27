@@ -7,6 +7,7 @@
  */
 
 use App\Services\AdminMenuService;
+use App\Core\Middleware\TenantContext;
 
 // Get current page for active state
 $currentPage = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
@@ -83,11 +84,27 @@ $groupedItems = $sortedGrouped;
 <aside class="sidebar" id="sidebarMenu">
     <div class="sidebar-header">
         <a href="<?php echo $base; ?>/admin/dashboard" class="sidebar-logo">
-            <i class="fas fa-home"></i>
-            <span>APS Dream Home</span>
+            <?php
+            $tenantLogo = TenantContext::getLogo();
+            $tenantName = TenantContext::getName();
+            $tenantColors = TenantContext::getColors();
+            ?>
+            <?php if ($tenantLogo): ?>
+                <img src="<?php echo htmlspecialchars($tenantLogo); ?>" alt="Logo" style="max-height:28px; max-width:120px;">
+            <?php else: ?>
+                <i class="fas fa-home"></i>
+            <?php endif; ?>
+            <span><?php echo htmlspecialchars($tenantName); ?></span>
         </a>
         <div class="sidebar-sub">Admin Panel v2.0</div>
     </div>
+    <!-- Tenant CSS Variables for white-labeling -->
+    <style>
+        :root {
+            --tenant-primary: <?php echo htmlspecialchars($tenantColors['primary']); ?>;
+            --tenant-secondary: <?php echo htmlspecialchars($tenantColors['secondary']); ?>;
+        }
+    </style>
 
     <?php
     $reqUri = $_SERVER['REQUEST_URI'] ?? '';
