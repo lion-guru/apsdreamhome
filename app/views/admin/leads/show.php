@@ -152,6 +152,96 @@ function timeAgo($dt) {
         </div>
     </div>
 
+    <!-- Smart Insights Banner -->
+    <?php
+    $lastActivity = $lead['last_activity_date'] ?? null;
+    $daysSinceActivity = $lastActivity ? (int)(new \DateTime())->diff(new \DateTime($lastActivity))->d : null;
+    $createdAt = $lead['created_at'] ?? null;
+    $daysSinceCreated = $createdAt ? (int)(new \DateTime())->diff(new \DateTime($createdAt))->d : null;
+    $interactionCount = count($interactions);
+    $pendingTasks = count(array_filter($tasks, fn($t) => ($t['status'] ?? '') === 'pending'));
+    $overdueTasks = count(array_filter($tasks, fn($t) => ($t['status'] ?? '') !== 'completed' && !empty($t['due_date']) && strtotime($t['due_date']) < time()));
+    ?>
+    <div class="row g-2 mb-3">
+        <?php if ($daysSinceActivity === null): ?>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#fef3c7,#fde68a)">
+                    <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                        <div><small class="fw-bold text-warning">No Activity</small><br><small class="text-muted" style="font-size:11px">Never contacted</small></div>
+                    </div>
+                </div>
+            </div>
+        <?php elseif ($daysSinceActivity >= 7): ?>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#fee2e2,#fecaca)">
+                    <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
+                        <i class="fas fa-clock text-danger"></i>
+                        <div><small class="fw-bold text-danger">Stale Lead</small><br><small class="text-muted" style="font-size:11px">No activity for <?= $daysSinceActivity ?>d</small></div>
+                    </div>
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0)">
+                    <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
+                        <i class="fas fa-check-circle text-success"></i>
+                        <div><small class="fw-bold text-success">Active</small><br><small class="text-muted" style="font-size:11px">Last: <?= $daysSinceActivity ?>d ago</small></div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#ede9fe,#ddd6fe)">
+                <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
+                    <i class="fas fa-comments text-primary"></i>
+                    <div><small class="fw-bold text-primary"><?= $interactionCount ?> Interactions</small><br><small class="text-muted" style="font-size:11px"><?= $daysSinceCreated ?>d since creation</small></div>
+                </div>
+            </div>
+        </div>
+
+        <?php if ($overdueTasks > 0): ?>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#fee2e2,#fecaca)">
+                    <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
+                        <i class="fas fa-exclamation-circle text-danger"></i>
+                        <div><small class="fw-bold text-danger"><?= $overdueTasks ?> Overdue</small><br><small class="text-muted" style="font-size:11px"><?= $pendingTasks ?> tasks pending</small></div>
+                    </div>
+                </div>
+            </div>
+        <?php elseif ($pendingTasks > 0): ?>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#fef9c3,#fde68a)">
+                    <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
+                        <i class="fas fa-tasks text-warning"></i>
+                        <div><small class="fw-bold text-warning"><?= $pendingTasks ?> Tasks Due</small><br><small class="text-muted" style="font-size:11px">Pending follow-ups</small></div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($leadScore >= 80): ?>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0)">
+                    <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
+                        <i class="fas fa-fire text-success"></i>
+                        <div><small class="fw-bold text-success">Hot Lead</small><br><small class="text-muted" style="font-size:11px">Score <?= $leadScore ?>/100</small></div>
+                    </div>
+                </div>
+            </div>
+        <?php elseif ($leadScore <= 20 && $daysSinceCreated > 30): ?>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#e0e7ff,#c7d2fe)">
+                    <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
+                        <i class="fas fa-snowflake text-info"></i>
+                        <div><small class="fw-bold text-info">Cold Lead</small><br><small class="text-muted" style="font-size:11px">Consider nurture</small></div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+
     <!-- Quick Stats Row -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3 col-xl">
@@ -395,7 +485,10 @@ function timeAgo($dt) {
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
                     <h6 class="mb-0 fw-bold"><i class="fas fa-comments me-2"></i>Interactions</h6>
-                    <span class="badge bg-primary"><?= count($interactions) ?> total</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm btn-primary" onclick="new bootstrap.Modal(document.getElementById('interactionModal')).show()"><i class="fas fa-plus me-1"></i> Log Interaction</button>
+                        <span class="badge bg-primary"><?= count($interactions) ?> total</span>
+                    </div>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($interactions)): ?>
@@ -502,7 +595,10 @@ function timeAgo($dt) {
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
                     <h6 class="mb-0 fw-bold"><i class="fas fa-tasks me-2"></i>Tasks</h6>
-                    <span class="badge bg-warning text-dark"><?= count(array_filter($tasks, fn($t) => ($t['status'] ?? '') === 'pending')) ?> pending</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm btn-success" onclick="new bootstrap.Modal(document.getElementById('taskModal')).show()"><i class="fas fa-plus me-1"></i> Add Task</button>
+                        <span class="badge bg-warning text-dark"><?= count(array_filter($tasks, fn($t) => ($t['status'] ?? '') === 'pending')) ?> pending</span>
+                    </div>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($tasks)): ?>
@@ -841,15 +937,315 @@ function timeAgo($dt) {
     </div>
 </div>
 
+<!-- Log Interaction Modal -->
+<div class="modal fade" id="interactionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff">
+                <h5 class="modal-title"><i class="fas fa-comments me-2"></i>Log Interaction</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="interactionForm" onsubmit="return submitInteraction(event)">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Type *</label>
+                            <select class="form-select" name="type" required>
+                                <option value="call">📞 Phone Call</option>
+                                <option value="email">📧 Email</option>
+                                <option value="whatsapp">💬 WhatsApp</option>
+                                <option value="meeting">🤝 Meeting</option>
+                                <option value="note">📝 Note</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Direction</label>
+                            <select class="form-select" name="direction">
+                                <option value="outbound">Outbound (We contacted)</option>
+                                <option value="inbound">Inbound (They contacted)</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Subject *</label>
+                            <input type="text" class="form-control" name="subject" placeholder="Brief summary of interaction..." required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Details</label>
+                            <textarea class="form-control" name="body" rows="3" placeholder="What was discussed? Key points..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Outcome</label>
+                            <select class="form-select" name="outcome">
+                                <option value="">-- Select --</option>
+                                <option value="interested">Interested</option>
+                                <option value="not_interested">Not Interested</option>
+                                <option value="callback">Callback Requested</option>
+                                <option value="meeting_set">Meeting Scheduled</option>
+                                <option value="site_visit">Site Visit Planned</option>
+                                <option value="no_answer">No Answer</option>
+                                <option value="voicemail">Voicemail Left</option>
+                                <option value="wrong_number">Wrong Number</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Duration (seconds)</label>
+                            <input type="number" class="form-control" name="duration_seconds" placeholder="e.g. 120">
+                        </div>
+                        <div class="col-12"><hr></div>
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">Follow-up Action</label>
+                            <input type="text" class="form-control" name="next_action" placeholder="e.g. Call back to confirm site visit">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Follow-up Date</label>
+                            <input type="date" class="form-control" name="next_action_date">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="interactionSubmitBtn"><i class="fas fa-save me-1"></i> Save Interaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Create Task Modal -->
+<div class="modal fade" id="taskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff">
+                <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Create Task</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="taskForm" onsubmit="return submitTask(event)">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Task Title *</label>
+                            <input type="text" class="form-control" name="title" placeholder="e.g. Follow up on pricing query" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Type</label>
+                            <select class="form-select" name="task_type">
+                                <option value="follow_up">Follow-up</option>
+                                <option value="call">Call</option>
+                                <option value="email">Email</option>
+                                <option value="meeting">Meeting</option>
+                                <option value="site_visit">Site Visit</option>
+                                <option value="document">Document</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Priority</label>
+                            <select class="form-select" name="priority">
+                                <option value="low">🟢 Low</option>
+                                <option value="medium" selected>🟡 Medium</option>
+                                <option value="high">🔴 High</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Due Date *</label>
+                            <input type="date" class="form-control" name="due_date" value="<?= date('Y-m-d') ?>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Due Time</label>
+                            <input type="time" class="form-control" name="due_time">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Description</label>
+                            <textarea class="form-control" name="description" rows="3" placeholder="Task details..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning" id="taskSubmitBtn"><i class="fas fa-save me-1"></i> Create Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Sticky Quick-Log Activity Bar -->
+<div id="quickLogBar" style="position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1a1a2e,#16213e);border-top:2px solid #667eea;padding:10px 20px;z-index:1050;display:flex;align-items:center;gap:10px;transition:transform .3s">
+    <div class="d-flex align-items-center gap-2 flex-grow-1 flex-wrap">
+        <span class="text-white fw-bold" style="font-size:13px;white-space:nowrap"><i class="fas fa-bolt me-1"></i>Quick Log:</span>
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-outline-light quick-type active" data-type="call" onclick="setQuickType(this)"><i class="fas fa-phone me-1"></i>Call</button>
+            <button type="button" class="btn btn-outline-light quick-type" data-type="email" onclick="setQuickType(this)"><i class="fas fa-envelope me-1"></i>Email</button>
+            <button type="button" class="btn btn-outline-light quick-type" data-type="whatsapp" onclick="setQuickType(this)"><i class="fab fa-whatsapp me-1"></i>WhatsApp</button>
+            <button type="button" class="btn btn-outline-light quick-type" data-type="meeting" onclick="setQuickType(this)"><i class="fas fa-handshake me-1"></i>Meeting</button>
+            <button type="button" class="btn btn-outline-light quick-type" data-type="note" onclick="setQuickType(this)"><i class="fas fa-sticky-note me-1"></i>Note</button>
+        </div>
+        <input type="text" id="quickSubject" class="form-control form-control-sm" placeholder="Quick subject..." style="max-width:300px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff">
+        <input type="text" id="quickBody" class="form-control form-control-sm" placeholder="Details (optional)..." style="max-width:250px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff">
+        <button type="button" class="btn btn-sm btn-primary" id="quickLogBtn" onclick="submitQuickLog()" style="white-space:nowrap">
+            <i class="fas fa-paper-plane me-1"></i> Log
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-light" onclick="toggleQuickLog()" title="Minimize" style="padding:4px 8px">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </div>
+</div>
+
+<style>
+#quickLogBar.minimized { transform: translateY(calc(100% - 4px)); }
+#quickLogBar.minimized:hover { transform: translateY(calc(100% - 40px)); cursor:pointer }
+#quickLogBar.minimized::after { content:''; position:absolute; top:-2px; left:50%; transform:translateX(-50%); width:40px; height:4px; background:#667eea; border-radius:2px }
+body { padding-bottom: 70px; }
+</style>
+
 <script>
+const CSRF_TOKEN = '<?= $_SESSION['csrf_token'] ?? '' ?>';
+const LEAD_ID = '<?= $lead['id'] ?? 0 ?>';
+const BASE = '<?= BASE_URL ?>';
+let quickType = 'call';
+
+function setQuickType(btn) {
+    document.querySelectorAll('.quick-type').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    quickType = btn.dataset.type;
+}
+
+function toggleQuickLog() {
+    document.getElementById('quickLogBar').classList.toggle('minimized');
+}
+
+// ── Quick Log (Sticky Bar) ─────────────────────────────
+function submitQuickLog() {
+    const subject = document.getElementById('quickSubject').value.trim();
+    const body = document.getElementById('quickBody').value.trim();
+    if (!subject && !body) { showToast('Please enter a subject', 'warning'); return; }
+
+    const btn = document.getElementById('quickLogBtn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Saving...';
+    btn.disabled = true;
+
+    const fd = new FormData();
+    fd.append('type', quickType);
+    fd.append('subject', subject || quickType.charAt(0).toUpperCase() + quickType.slice(1) + ' with lead');
+    fd.append('body', body);
+    fd.append('csrf_token', CSRF_TOKEN);
+
+    fetch(BASE + '/admin/leads/' + LEAD_ID + '/log-interaction', {
+        method: 'POST', body: fd
+    }).then(r => r.json()).then(data => {
+        btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Log';
+        btn.disabled = false;
+        if (data.success) {
+            showToast('✓ ' + quickType.charAt(0).toUpperCase() + quickType.slice(1) + ' logged!', 'success');
+            document.getElementById('quickSubject').value = '';
+            document.getElementById('quickBody').value = '';
+            setTimeout(() => location.reload(), 800);
+        } else {
+            showToast('Error: ' + (data.error || 'Failed'), 'danger');
+        }
+    }).catch(() => {
+        btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Log';
+        btn.disabled = false;
+        showToast('Network error', 'danger');
+    });
+}
+
+// ── Full Interaction Modal Submit ──────────────────────
+function submitInteraction(e) {
+    e.preventDefault();
+    const form = document.getElementById('interactionForm');
+    const btn = document.getElementById('interactionSubmitBtn');
+    const fd = new FormData(form);
+
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Saving...';
+    btn.disabled = true;
+
+    fetch(BASE + '/admin/leads/' + LEAD_ID + '/log-interaction', {
+        method: 'POST', body: fd
+    }).then(r => r.json()).then(data => {
+        btn.innerHTML = '<i class="fas fa-save me-1"></i> Save Interaction';
+        btn.disabled = false;
+        if (data.success) {
+            bootstrap.Modal.getInstance(document.getElementById('interactionModal')).hide();
+            showToast('✓ Interaction logged!', 'success');
+            setTimeout(() => location.reload(), 800);
+        } else {
+            showToast('Error: ' + (data.error || 'Failed'), 'danger');
+        }
+    }).catch(() => {
+        btn.innerHTML = '<i class="fas fa-save me-1"></i> Save Interaction';
+        btn.disabled = false;
+        showToast('Network error', 'danger');
+    });
+    return false;
+}
+
+// ── Task Modal Submit ──────────────────────────────────
+function submitTask(e) {
+    e.preventDefault();
+    const form = document.getElementById('taskForm');
+    const btn = document.getElementById('taskSubmitBtn');
+    const fd = new FormData(form);
+
+    if (!fd.get('title') || !fd.get('due_date')) { showToast('Title and due date required', 'warning'); return false; }
+
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Creating...';
+    btn.disabled = true;
+
+    fetch(BASE + '/admin/leads/' + LEAD_ID + '/create-task', {
+        method: 'POST', body: fd
+    }).then(r => r.json()).then(data => {
+        btn.innerHTML = '<i class="fas fa-save me-1"></i> Create Task';
+        btn.disabled = false;
+        if (data.success) {
+            bootstrap.Modal.getInstance(document.getElementById('taskModal')).hide();
+            showToast('✓ Task created!', 'success');
+            setTimeout(() => location.reload(), 800);
+        } else {
+            showToast('Error: ' + (data.error || 'Failed'), 'danger');
+        }
+    }).catch(() => {
+        btn.innerHTML = '<i class="fas fa-save me-1"></i> Create Task';
+        btn.disabled = false;
+        showToast('Network error', 'danger');
+    });
+    return false;
+}
+
+// ── Task Toggle (existing) ─────────────────────────────
+function toggleTask(taskId, completed) {
+    fetch(BASE + '/admin/leads/' + LEAD_ID + '/complete-task', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': CSRF_TOKEN},
+        body: 'task_id=' + taskId + '&csrf_token=' + CSRF_TOKEN
+    }).then(r => r.json()).then(data => {
+        if (data.success) showToast(completed ? '✓ Task completed!' : 'Task reopened', 'success');
+    });
+}
+
+// ── Toast Helper ───────────────────────────────────────
+function showToast(msg, type) {
+    const toast = document.createElement('div');
+    toast.className = 'alert alert-' + type + ' position-fixed shadow-lg';
+    toast.style.cssText = 'top:20px;right:20px;z-index:9999;min-width:280px;animation:fadeIn .3s;border-radius:10px;font-size:14px';
+    toast.innerHTML = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// ── Existing Modal Openers ─────────────────────────────
 function addNote() { new bootstrap.Modal(document.getElementById('noteModal')).show(); }
 function changeStatus() { new bootstrap.Modal(document.getElementById('statusModal')).show(); }
 function assignAgent() { new bootstrap.Modal(document.getElementById('assignModal')).show(); }
-function toggleTask(taskId, completed) {
-    fetch('<?= BASE_URL ?>/api/leads/tasks/' + taskId, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json', 'X-CSRF-Token': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
-        body: JSON.stringify({status: completed ? 'completed' : 'pending'})
-    });
-}
+
+// ── Quick Log Enter Key ────────────────────────────────
+document.getElementById('quickSubject').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); submitQuickLog(); } });
+document.getElementById('quickBody').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); submitQuickLog(); } });
+
+// ── Minimized bar click to expand ──────────────────────
+document.getElementById('quickLogBar').addEventListener('click', function(e) {
+    if (this.classList.contains('minimized') && !e.target.closest('button')) { this.classList.remove('minimized'); }
+});
 </script>

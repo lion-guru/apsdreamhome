@@ -75,6 +75,8 @@ $router->get('/api/v2/mobile/colonies/search', 'Api\MobileApiController@searchCo
 $router->get('/api/v2/mobile/colonies/{id}', 'Api\MobileApiController@getColonyDetail');
 $router->get('/api/v2/mobile/colonies/{id}/stats', 'Api\MobileApiController@getColonyStats');
 $router->get('/api/v2/mobile/colonies/{id}/plots', 'Api\MobileApiController@getColonyPlots');
+$router->get('/api/v2/mobile/colonies/{id}/health', 'Api\MobileApiController@getColonyHealth');
+$router->get('/api/v2/mobile/colonies/health/all', 'Api\MobileApiController@getAllColoniesHealth');
 
 $router->get('/api/v2/mobile/plots/{id}', 'Api\MobileApiController@getPlotDetail');
 $router->post('/api/v2/mobile/plots/{id}/hold', 'Api\MobileApiController@holdPlot')->middleware('App\Http\Middleware\ApiAuthMiddleware');

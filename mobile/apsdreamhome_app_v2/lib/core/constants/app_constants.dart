@@ -41,6 +41,7 @@ class AppConstants {
   static const String requestPayoutEndpoint = '/mlm/request-payout';
   static const String notificationsRegisterEndpoint = '/notifications/register';
   static const String coloniesEndpoint = '/colonies';
+  static const String colonyHealthEndpoint = '/colonies/health/all';
   static const String plotsEndpoint = '/plots';
   static const String crmPrefix = '/crm';
 

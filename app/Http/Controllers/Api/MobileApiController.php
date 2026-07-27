@@ -5042,6 +5042,84 @@ class MobileApiController extends BaseController
     }
 
     /**
+     * GET /api/v2/mobile/colonies/{id}/health
+     * Colony health score for mobile app
+     */
+    public function getColonyHealth($id)
+    {
+        $this->setCorsHeaders();
+        try {
+            $healthService = new \App\Services\Land\ColonyHealthService();
+            $result = $healthService->getColonyHealth((int)$id);
+
+            if (!$result['success']) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Colony not found']);
+                return;
+            }
+
+            // Simplified response for mobile (strip heavy data)
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'colony_id'     => $result['colony_id'],
+                    'colony_name'   => $result['colony_name'],
+                    'current_stage' => $result['current_stage'],
+                    'overall_score' => $result['overall_score'],
+                    'grade'         => $result['grade'],
+                    'risks'         => array_map(function($r) {
+                        return [
+                            'level'   => $r['level'],
+                            'message' => $r['message'],
+                            'type'    => $r['type'] ?? '',
+                        ];
+                    }, $result['risks']),
+                    'recommendations' => array_slice(array_map(function($r) {
+                        return [
+                            'priority' => $r['priority'],
+                            'action'   => $r['action'],
+                            'detail'   => $r['detail'],
+                        ];
+                    }, $result['recommendations']), 0, 3),
+                    'stages' => array_map(function($s) {
+                        return [
+                            'key'    => $s['key'],
+                            'label'  => $s['label'],
+                            'status' => $s['status'],
+                            'score'  => $s['score'],
+                        ];
+                    }, $result['stages']),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('getColonyHealth error (colony_id=' . $id . '): ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch colony health']);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/colonies/health/all
+     * All colonies health overview for mobile app
+     */
+    public function getAllColoniesHealth()
+    {
+        $this->setCorsHeaders();
+        try {
+            $healthService = new \App\Services\Land\ColonyHealthService();
+            $result = $healthService->getAllColoniesHealth();
+
+            echo json_encode([
+                'success'  => $result['success'],
+                'colonies' => $result['colonies'] ?? [],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('getAllColoniesHealth error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'colonies' => []]);
+        }
+    }
+
+    /**
      * POST /api/attendance/punch-in
      * Body: { "latitude": 26.84, "longitude": 83.30 }
      */

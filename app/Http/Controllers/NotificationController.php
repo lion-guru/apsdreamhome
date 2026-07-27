@@ -72,16 +72,22 @@ class NotificationController extends AdminController
     {
         header('Content-Type: application/json');
         $this->ensureSession();
-        $userId = $_SESSION['user_id'] ?? null;
+        $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
         if (!$userId) {
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
             exit;
         }
         try {
-            $stmt = $this->db->prepare("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
+            $stmt = $this->db->prepare("SELECT * FROM notifications WHERE (user_id = ? OR user_id IS NULL) ORDER BY created_at DESC LIMIT 50");
             $stmt->execute([$userId]);
             $notifications = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            echo json_encode(['success' => true, 'notifications' => $notifications]);
+            $unreadCount = 0;
+            try {
+                $stmt2 = $this->db->prepare("SELECT COUNT(*) as cnt FROM notifications WHERE is_read = 0 AND (user_id = ? OR user_id IS NULL)");
+                $stmt2->execute([$userId]);
+                $unreadCount = (int)($stmt2->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
+            } catch (\Throwable $e) {}
+            echo json_encode(['success' => true, 'notifications' => $notifications, 'unread_count' => $unreadCount]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -92,7 +98,7 @@ class NotificationController extends AdminController
     {
         header('Content-Type: application/json');
         $this->ensureSession();
-        $userId = $_SESSION['user_id'] ?? null;
+        $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
         if (!$userId) {
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
             exit;
@@ -103,9 +109,8 @@ class NotificationController extends AdminController
             exit;
         }
         try {
-            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND user_id = ?");
+            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND (user_id = ? OR user_id IS NULL)");
             $stmt->execute([$id, $userId]);
-            \App\Services\CacheService::invalidateUnreadCount((int)$userId);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -117,13 +122,13 @@ class NotificationController extends AdminController
     {
         header('Content-Type: application/json');
         $this->ensureSession();
-        $userId = $_SESSION['user_id'] ?? null;
+        $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
         if (!$userId) {
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
             exit;
         }
         try {
-            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0");
+            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM notifications WHERE is_read = 0 AND (user_id = ? OR user_id IS NULL)");
             $stmt->execute([$userId]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'count' => (int)($row['count'] ?? 0)]);
@@ -137,13 +142,13 @@ class NotificationController extends AdminController
     {
         header('Content-Type: application/json');
         $this->ensureSession();
-        $userId = $_SESSION['user_id'] ?? null;
+        $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
         if (!$userId) {
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
             exit;
         }
         try {
-            $stmt = $this->db->prepare("SELECT * FROM notifications WHERE user_id = ? AND is_important = 1 AND is_read = 0 ORDER BY created_at DESC LIMIT 10");
+            $stmt = $this->db->prepare("SELECT * FROM notifications WHERE (user_id = ? OR user_id IS NULL) AND is_important = 1 AND is_read = 0 ORDER BY created_at DESC LIMIT 10");
             $stmt->execute([$userId]);
             $popups = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'popups' => $popups]);
@@ -157,7 +162,7 @@ class NotificationController extends AdminController
     {
         header('Content-Type: application/json');
         $this->ensureSession();
-        $userId = $_SESSION['user_id'] ?? null;
+        $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? null;
         if (!$userId) {
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
             exit;
@@ -168,7 +173,7 @@ class NotificationController extends AdminController
             exit;
         }
         try {
-            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND user_id = ?");
+            $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND (user_id = ? OR user_id IS NULL)");
             $stmt->execute([$id, $userId]);
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {

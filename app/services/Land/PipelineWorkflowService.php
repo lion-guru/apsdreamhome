@@ -256,6 +256,74 @@ class PipelineWorkflowService
     }
 
     /**
+     * Auto-advance all eligible colonies — checks every colony's readiness and advances those that are ready.
+     * Returns summary of what was advanced.
+     */
+    public function autoAdvanceAll(): array
+    {
+        try {
+            $colonies = $this->db->fetchAll(
+                "SELECT id, name, pipeline_stage FROM colonies WHERE is_active = 1 ORDER BY id"
+            );
+
+            $advanced = [];
+            $skipped  = [];
+            $errors   = [];
+
+            foreach ($colonies as $colony) {
+                $cid  = (int)$colony['id'];
+                $readiness = $this->checkAdvanceReadiness($cid);
+
+                if (!$readiness['success']) {
+                    $errors[] = [
+                        'colony_id'   => $cid,
+                        'colony_name' => $colony['name'],
+                        'error'       => $readiness['error'],
+                    ];
+                    continue;
+                }
+
+                if (!$readiness['can_advance']) {
+                    $skipped[] = [
+                        'colony_id'   => $cid,
+                        'colony_name' => $colony['name'],
+                        'stage'       => $readiness['current_stage'],
+                        'blocking'    => array_column($readiness['blocking'] ?? [], 'label'),
+                    ];
+                    continue;
+                }
+
+                // Auto-advance
+                $result = $this->advanceStage($cid, 'Auto-advance: all requirements met');
+                if ($result['success']) {
+                    $advanced[] = [
+                        'colony_id'   => $cid,
+                        'colony_name' => $colony['name'],
+                        'from_stage'  => $result['from_stage'],
+                        'to_stage'    => $result['to_stage'],
+                    ];
+                } else {
+                    $errors[] = [
+                        'colony_id'   => $cid,
+                        'colony_name' => $colony['name'],
+                        'error'       => $result['error'],
+                    ];
+                }
+            }
+
+            return [
+                'success'   => true,
+                'advanced'  => $advanced,
+                'skipped'   => $skipped,
+                'errors'    => $errors,
+                'summary'   => count($advanced) . ' advanced, ' . count($skipped) . ' skipped, ' . count($errors) . ' errors',
+            ];
+        } catch (Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
      * Get stage transition history for a colony.
      */
     public function getStageHistory(int $colonyId): array

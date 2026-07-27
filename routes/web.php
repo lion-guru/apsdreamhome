@@ -1249,6 +1249,11 @@ $router->post('/admin/leads/{id}/note', 'App\\Http\\Controllers\\Admin\\LeadCont
 $router->post('/admin/leads/{id}/status', 'App\\Http\\Controllers\\Admin\\LeadController@updateStatus');
 $router->post('/admin/leads/{id}/assign', 'App\\Http\\Controllers\\Admin\\LeadController@assign');
 
+// Lead AJAX (inline interactions & tasks)
+$router->post('/admin/leads/{id}/log-interaction', 'App\\Http\\Controllers\\Admin\\LeadController@logInteraction');
+$router->post('/admin/leads/{id}/create-task', 'App\\Http\\Controllers\\Admin\\LeadController@createTask');
+$router->post('/admin/leads/{id}/complete-task', 'App\\Http\\Controllers\\Admin\\LeadController@completeTask');
+
 // Lead Bulk Action (AJAX)
 $router->post('/admin/leads/bulk-action', 'App\\Http\\Controllers\\Admin\\LeadController@bulkAction');
 
@@ -2237,6 +2242,7 @@ $router->post('/admin/legal-colony-pipeline/update-milestone',              'App
 // ── Colony Health Dashboard ───────────────────────────────────
 $router->get('/admin/legal-colony-pipeline/health',                         'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@healthOverview');
 $router->get('/admin/legal-colony-pipeline/health/api',                     'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@healthApi');
+$router->get('/admin/legal-colony-pipeline/health/alerts',                  'App\\Http\\Controllers\\Admin\\LegalColonyPipelineController@healthAlerts');
 
 // ============================================================
 // COLONY FEASIBILITY & PRICING ENGINE

@@ -638,6 +638,120 @@ class LeadController extends AdminController
         }
         return $this->redirect("/admin/leads/$id");
     }
+    /**
+     * AJAX: Log activity (call/email/meeting/whatsapp/note) — returns JSON
+     */
+    public function logInteraction($id)
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+        $adminId = $this->getCurrentUserId();
+
+        $type = trim($_POST['type'] ?? 'note');
+        $subject = trim($_POST['subject'] ?? '');
+        $body = trim($_POST['body'] ?? '');
+        $outcome = trim($_POST['outcome'] ?? '');
+        $duration = !empty($_POST['duration_seconds']) ? (int)$_POST['duration_seconds'] : null;
+        $nextAction = trim($_POST['next_action'] ?? '');
+        $nextActionDate = trim($_POST['next_action_date'] ?? '');
+
+        if (empty($subject) && empty($body)) {
+            echo json_encode(['success' => false, 'error' => 'Subject or body required']);
+            return;
+        }
+
+        $data = [
+            'direction' => $_POST['direction'] ?? 'outbound',
+            'subject' => $subject ?: ucfirst($type) . ' with lead',
+            'body' => $body,
+            'outcome' => $outcome ?: null,
+            'duration_seconds' => $duration,
+            'next_action' => $nextAction ?: null,
+            'next_action_date' => $nextActionDate ?: null,
+        ];
+
+        $result = $this->crm->addInteraction((int)$id, $adminId, $type, $data);
+
+        if ($result['success']) {
+            $this->crm->logActivity((int)$id, $adminId, $type, ucfirst($type) . ' logged', $subject ?: $body);
+
+            if (!empty($nextAction) && !empty($nextActionDate)) {
+                $this->crm->createTask([
+                    'lead_id' => (int)$id,
+                    'assigned_to' => $adminId,
+                    'created_by' => $adminId,
+                    'task_type' => 'follow_up',
+                    'title' => $nextAction,
+                    'priority' => 'medium',
+                    'due_date' => $nextActionDate,
+                ]);
+            }
+
+            try {
+                $slaTrigger = new \App\Services\SLATriggerService();
+                $slaTrigger->onInteractionLogged((int)$id, $type);
+            } catch (\Exception $e) {}
+
+            echo json_encode(['success' => true, 'interaction_id' => $result['interaction_id'] ?? 0]);
+        } else {
+            echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Failed']);
+        }
+    }
+
+    /**
+     * AJAX: Create task for lead — returns JSON
+     */
+    public function createTask($id)
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+        $adminId = $this->getCurrentUserId();
+
+        $title = trim($_POST['title'] ?? '');
+        if (empty($title)) {
+            echo json_encode(['success' => false, 'error' => 'Task title required']);
+            return;
+        }
+
+        $result = $this->crm->createTask([
+            'lead_id' => (int)$id,
+            'assigned_to' => (int)($_POST['assigned_to'] ?? $adminId),
+            'created_by' => $adminId,
+            'task_type' => trim($_POST['task_type'] ?? 'follow_up'),
+            'title' => $title,
+            'description' => trim($_POST['description'] ?? ''),
+            'priority' => trim($_POST['priority'] ?? 'medium'),
+            'due_date' => trim($_POST['due_date'] ?? date('Y-m-d')),
+            'due_time' => trim($_POST['due_time'] ?? null),
+        ]);
+
+        if ($result['success']) {
+            $this->crm->logActivity((int)$id, $adminId, 'task', 'Task created', $title);
+            echo json_encode(['success' => true, 'task_id' => $result['task_id'] ?? 0]);
+        } else {
+            echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Failed']);
+        }
+    }
+
+    /**
+     * AJAX: Complete a task — returns JSON
+     */
+    public function completeTask($id)
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+        $adminId = $this->getCurrentUserId();
+        $taskId = (int)($_POST['task_id'] ?? 0);
+
+        if ($taskId <= 0) {
+            echo json_encode(['success' => false, 'error' => 'Invalid task ID']);
+            return;
+        }
+
+        $result = $this->crm->completeTask($taskId, $adminId, trim($_POST['notes'] ?? null));
+        echo json_encode($result);
+    }
+
     public function uploadDocument($id) { try { $this->setFlash('info', 'Document upload feature available'); } catch (\Exception $e) {} return $this->redirect("/admin/leads/$id"); }
     public function deleteDocument($id, $docId) {
         try {

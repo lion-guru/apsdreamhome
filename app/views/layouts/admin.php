@@ -22,6 +22,8 @@ $GLOBALS['_html_doc_started'] = true;
     <!-- Admin CSS (page-specific overrides) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin.css" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/responsive-fixes.css" rel="stylesheet">
+    <!-- Notification system CSS (dropdowns, toasts, popups) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/notification-system.css" rel="stylesheet">
     <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo $extra_css; ?><?php endif; ?>
 </head>
 
@@ -267,8 +269,11 @@ $GLOBALS['_html_doc_started'] = true;
     <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/js/admin.js"></script>
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     function toggleNotifications() {
+        var dropdown = document.getElementById('notificationDropdown');
+        if (dropdown) { dropdown.classList.toggle('show'); return; }
         var panel = document.getElementById('notification-panel');
-        if (panel) { panel.classList.toggle('show'); } else { window.location.href = '<?php echo $base ?? BASE_URL; ?>/admin/notifications'; }
+        if (panel) { panel.classList.toggle('show'); return; }
+        window.location.href = '<?php echo $base ?? BASE_URL; ?>/admin/notifications';
     }
     function toggleMessages() {
         window.location.href = '<?php echo $base ?? BASE_URL; ?>/admin/inquiries';

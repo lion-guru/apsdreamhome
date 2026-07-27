@@ -72,7 +72,11 @@ class NotificationSystem {
       if (response.ok) {
         const data = await response.json();
         if (data && data.success) {
-          this.notifications = Array.isArray(data.data) ? data.data : [];
+          this.notifications = Array.isArray(data.notifications)
+            ? data.notifications
+            : Array.isArray(data.data)
+              ? data.data
+              : [];
           this.unreadCount = data.unread_count || 0;
           this.updateNotificationBadge();
           this.updateNotificationDropdown();
@@ -119,7 +123,7 @@ class NotificationSystem {
       return;
     }
 
-    this.ws.onopen = (event) => {
+    this.ws.onopen = event => {
       this.isConnecting = false;
       this.reconnectAttempts = 0;
       console.log('[NotificationSystem] WebSocket connection established at', this.wsUrl);
@@ -128,15 +132,15 @@ class NotificationSystem {
       this.startHeartbeat();
     };
 
-    this.ws.onmessage = (event) => {
+    this.ws.onmessage = event => {
       this.handleSocketMessage(event);
     };
 
-    this.ws.onerror = (error) => {
+    this.ws.onerror = error => {
       console.warn('[NotificationSystem] WebSocket error (will retry):', error);
     };
 
-    this.ws.onclose = (event) => {
+    this.ws.onclose = event => {
       this.isConnecting = false;
       this.stopHeartbeat();
       console.log('[NotificationSystem] WebSocket connection closed (code=' + event.code + ')');
@@ -234,7 +238,11 @@ class NotificationSystem {
 
       case 'auth':
         if (message.status === 'success') {
-          console.log('[NotificationSystem] Authenticated as user', message.user_id, '(' + (message.role || 'user') + ')');
+          console.log(
+            '[NotificationSystem] Authenticated as user',
+            message.user_id,
+            '(' + (message.role || 'user') + ')'
+          );
         } else {
           console.warn('[NotificationSystem] Auth failed:', message.message);
         }
@@ -257,7 +265,7 @@ class NotificationSystem {
         break;
 
       default:
-        // Unknown message type - ignore silently
+      // Unknown message type - ignore silently
     }
   }
 
@@ -286,7 +294,10 @@ class NotificationSystem {
   }
 
   showToast(notification) {
-    const title = (notification.payload && (notification.payload.title || notification.payload.subject)) || notification.event_type || 'Notification';
+    const title =
+      (notification.payload && (notification.payload.title || notification.payload.subject)) ||
+      notification.event_type ||
+      'Notification';
     const message = (notification.payload && (notification.payload.message || notification.payload.body)) || '';
     if (!document.body) return;
 
@@ -397,7 +408,9 @@ class NotificationSystem {
     const popupEl = document.querySelector(`[data-popup-id="${popupId}"]`);
     if (popupEl) {
       popupEl.classList.remove('show');
-      setTimeout(() => { if (popupEl.parentNode) popupEl.parentNode.removeChild(popupEl); }, 300);
+      setTimeout(() => {
+        if (popupEl.parentNode) popupEl.parentNode.removeChild(popupEl);
+      }, 300);
     }
   }
 
@@ -421,7 +434,9 @@ class NotificationSystem {
   createNotificationUI() {
     if (document.getElementById('notification-bell-root')) return;
 
-    const placeholder = document.getElementById('notification-bell-placeholder') || document.querySelector('.nav-icon[onclick="toggleNotifications()"]');
+    const placeholder =
+      document.getElementById('notification-bell-placeholder') ||
+      document.querySelector('.nav-icon[onclick="toggleNotifications()"]');
     const isAdmin = window.location.pathname.includes('/admin') || !!placeholder;
     const btnClass = isAdmin ? 'nav-icon' : 'btn btn-link position-relative';
     const badgeClass = isAdmin ? 'badge' : 'notification-badge';
@@ -441,7 +456,7 @@ class NotificationSystem {
         </div>
         <div class="notification-list" id="notificationList"></div>
         <div class="notification-footer">
-          <a href="/notifications" class="btn btn-link">View all notifications</a>
+          <a href="${isAdmin ? '/admin/notifications' : '/notifications'}" class="btn btn-link">View all notifications</a>
         </div>
       </div>
     `;
@@ -492,27 +507,33 @@ class NotificationSystem {
       return;
     }
 
-    notificationList.innerHTML = this.notifications.map(notif => {
-      const payload = notif.payload || {};
-      const title = payload.title || payload.subject || notif.event_type || 'Notification';
-      const message = payload.message || payload.body || '';
-      const isUnread = !notif.read_at;
-      return `
+    notificationList.innerHTML = this.notifications
+      .map(notif => {
+        const payload = notif.payload || {};
+        const title = payload.title || payload.subject || notif.event_type || 'Notification';
+        const message = payload.message || payload.body || '';
+        const isUnread = !notif.read_at;
+        return `
         <div class="notification-item ${isUnread ? 'unread' : 'read'}" data-notif-id="${notif.id}">
           <div class="notification-content">
             <div class="notification-title">${this.escapeHtml(title)}</div>
             <div class="notification-message">${this.escapeHtml(message)}</div>
             <div class="notification-time">${this.formatTime(notif.created_at)}</div>
           </div>
-          ${isUnread ? `<button class="btn btn-sm btn-link mark-read-btn" type="button" data-notif-id="${notif.id}">
+          ${
+            isUnread
+              ? `<button class="btn btn-sm btn-link mark-read-btn" type="button" data-notif-id="${notif.id}">
             <i class="fas fa-check"></i>
-          </button>` : ''}
+          </button>`
+              : ''
+          }
         </div>
       `;
-    }).join('');
+      })
+      .join('');
 
     notificationList.querySelectorAll('.mark-read-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', e => {
         e.stopPropagation();
         const id = btn.getAttribute('data-notif-id');
         if (id) this.markAsRead(parseInt(id, 10));
@@ -571,7 +592,9 @@ class NotificationSystem {
       });
 
       const now = new Date().toISOString();
-      this.notifications.forEach(notif => { notif.read_at = now; });
+      this.notifications.forEach(notif => {
+        notif.read_at = now;
+      });
       this.unreadCount = 0;
       this.updateNotificationBadge();
       this.updateNotificationDropdown();
@@ -611,7 +634,11 @@ class NotificationSystem {
       this.reconnectTimer = null;
     }
     if (this.ws) {
-      try { this.ws.close(); } catch (e) { /* ignore */ }
+      try {
+        this.ws.close();
+      } catch (e) {
+        /* ignore */
+      }
       this.ws = null;
     }
   }

@@ -78,18 +78,37 @@ class LegalColonyPipelineController extends AdminController
                     SUM(CASE WHEN pipeline_stage = 'sales_ready' THEN 1 ELSE 0 END) as sales_ready
                 FROM colonies WHERE is_active = 1
             ") ?: [];
+            // Attach health scores to each colony
+            $colonyHealth = [];
+            foreach ($colonies as $c) {
+                $hid = (int)($c['id'] ?? 0);
+                if ($hid > 0) {
+                    $h = $this->health->getColonyHealth($hid);
+                    if ($h['success']) {
+                        $colonyHealth[$hid] = [
+                            'score'       => $h['overall_score'],
+                            'grade'       => $h['grade']['letter'] ?? 'F',
+                            'grade_color' => $h['grade']['color'] ?? '#dc3545',
+                            'risks'       => count($h['risks']),
+                            'top_risk'    => !empty($h['risks']) ? $h['risks'][0]['message'] : null,
+                        ];
+                    }
+                }
+            }
         } catch (Exception $e) {
-            $colonies = [];
-            $stats    = [];
+            $colonies     = [];
+            $stats        = [];
+            $colonyHealth = [];
             error_log('LegalPipeline index error: ' . $e->getMessage());
         }
 
         return $this->render('admin/legal-colony-pipeline/index', [
-            'page_title'  => 'Legal Colony Development Pipeline',
-            'colonies'    => $colonies,
-            'stats'       => $stats,
+            'page_title'   => 'Legal Colony Development Pipeline',
+            'colonies'     => $colonies,
+            'stats'        => $stats,
+            'colony_health' => $colonyHealth,
             'filter_stage' => $filterStage,
-            'stages'      => LegalColonyDevelopmentService::STAGE_LAND_ACQUISITION ? [
+            'stages'       => LegalColonyDevelopmentService::STAGE_LAND_ACQUISITION ? [
                 'land_acquisition'  => 'Land Acquisition',
                 'master_planning'   => 'Master Planning',
                 'plot_cutting'      => 'Plot Cutting',
@@ -602,6 +621,18 @@ class LegalColonyPipelineController extends AdminController
         exit;
     }
 
+    /**
+     * Auto-advance all eligible colonies (POST)
+     */
+    public function autoAdvance()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        echo json_encode($this->workflow->autoAdvanceAll());
+        exit;
+    }
+
     // ── Colony Analytics ───────────────────────────────────────
 
     /**
@@ -635,9 +666,27 @@ class LegalColonyPipelineController extends AdminController
 
         $data = $this->analytics->getCrossColonyComparison();
 
+        // Load health scores for all colonies
+        $colonyHealth = [];
+        $colonies = $data['colonies'] ?? [];
+        foreach ($colonies as $c) {
+            $hid = (int)($c['id'] ?? 0);
+            if ($hid > 0) {
+                $h = $this->health->getColonyHealth($hid);
+                if ($h['success']) {
+                    $colonyHealth[$hid] = [
+                        'score'       => $h['overall_score'],
+                        'grade'       => $h['grade']['letter'] ?? 'F',
+                        'grade_color' => $h['grade']['color'] ?? '#dc3545',
+                    ];
+                }
+            }
+        }
+
         return $this->render('admin/legal-colony-pipeline/analytics_comparison', [
-            'page_title' => 'Colony Analytics Comparison',
-            'data'       => $data,
+            'page_title'    => 'Colony Analytics Comparison',
+            'data'          => $data,
+            'colony_health' => $colonyHealth,
         ]);
     }
 
@@ -785,6 +834,26 @@ class LegalColonyPipelineController extends AdminController
         } else {
             echo json_encode($this->health->getAllColoniesHealth());
         }
+        exit;
+    }
+
+    /**
+     * Health alerts — colonies below threshold (JSON)
+     */
+    public function healthAlerts()
+    {
+        $this->requireAdmin();
+        header('Content-Type: application/json');
+
+        $threshold = intval($_GET['threshold'] ?? 50);
+        $alerts = $this->health->getColoniesBelowThreshold($threshold);
+
+        echo json_encode([
+            'success'   => true,
+            'threshold' => $threshold,
+            'count'     => count($alerts),
+            'alerts'    => $alerts,
+        ]);
         exit;
     }
 }

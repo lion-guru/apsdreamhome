@@ -92,6 +92,7 @@ import '../../presentation/pages/tools/investment_calculator_page.dart';
 import '../../presentation/pages/tools/neighborhood_page.dart';
 import '../../presentation/pages/tools/virtual_tour_page.dart';
 import '../../presentation/pages/tools/news_page.dart';
+import '../../presentation/pages/common/colony_health_page.dart';
 
 // Customer Shell
 import '../../presentation/pages/customer/customer_shell.dart';
@@ -229,6 +230,7 @@ GoRouter createRouter() {
       final isSplash = uri == '/splash';
       final isHomePage = uri == '/home';
       final isColonies = uri == '/colonies';
+      final isColonyHealth = uri == '/colony-health';
       final isColonyDetail = uri.startsWith('/colony-detail');
       final isColonyPlots = uri.startsWith('/colony-plots');
       final isPlots = uri == '/plots';
@@ -287,6 +289,7 @@ GoRouter createRouter() {
           isOtp ||
           isHomePage ||
           isColonies ||
+          isColonyHealth ||
           isColonyDetail ||
           isColonyPlots ||
           isPlots ||
@@ -456,6 +459,10 @@ GoRouter createRouter() {
             path: '/colonies',
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: ColoniesPage()),
+          ),
+          GoRoute(
+            path: '/colony-health',
+            builder: (context, state) => const ColonyHealthPage(),
           ),
           GoRoute(
             path: '/plots',

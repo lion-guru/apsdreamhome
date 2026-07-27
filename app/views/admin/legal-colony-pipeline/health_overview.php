@@ -56,6 +56,37 @@ $colonies = $data['colonies'] ?? [];
     </div>
   </div>
 
+  <!-- Health Alerts (colonies below threshold) -->
+  <?php
+  $belowThreshold = array_filter($colonies, fn($c) => ($c['overall_score'] ?? 100) < 50);
+  if (!empty($belowThreshold)):
+  ?>
+  <div class="alert alert-danger border-0 shadow-sm mb-4 d-flex align-items-start" role="alert">
+    <i class="fas fa-exclamation-triangle me-3 mt-1 fa-lg"></i>
+    <div class="flex-grow-1">
+      <h6 class="alert-heading mb-2">Health Alerts — <?= count($belowThreshold) ?> colony(ies) below 50% threshold</h6>
+      <div class="row g-2">
+        <?php foreach ($belowThreshold as $alert): ?>
+          <div class="col-md-6 col-lg-4">
+            <div class="d-flex align-items-center gap-2 p-2 rounded" style="background:rgba(0,0,0,0.15)">
+              <span class="badge bg-danger fs-6"><?= $alert['overall_score'] ?? 0 ?>%</span>
+              <div>
+                <strong><?= htmlspecialchars($alert['name'] ?? '') ?></strong>
+                <?php if (!empty($alert['top_risk'])): ?>
+                  <br><small class="text-muted"><?= htmlspecialchars($alert['top_risk']) ?></small>
+                <?php endif; ?>
+              </div>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+    <a href="/admin/legal-colony-pipeline/health/alerts" class="btn btn-sm btn-outline-danger ms-3" id="alertDetailsBtn" title="View alert details">
+      <i class="fas fa-external-link-alt"></i>
+    </a>
+  </div>
+  <?php endif; ?>
+
   <!-- Colony Health Grid -->
   <div class="row g-4">
     <?php foreach ($colonies as $colony): ?>

@@ -142,6 +142,43 @@ class ColonyHealthService
 
     // ─── Stage Evaluation ────────────────────────────────────────
 
+    /**
+     * Find colonies with health score below a threshold (for alerts).
+     * @param int $threshold Score below which to alert (default 50)
+     */
+    public function getColoniesBelowThreshold(int $threshold = 50): array
+    {
+        try {
+            $allHealth = $this->getAllColoniesHealth();
+            if (!$allHealth['success']) {
+                return [];
+            }
+
+            $alerts = [];
+            foreach ($allHealth['colonies'] as $colony) {
+                if (($colony['overall_score'] ?? 100) < $threshold) {
+                    $alerts[] = [
+                        'colony_id'   => $colony['colony_id'],
+                        'name'        => $colony['name'],
+                        'score'       => $colony['overall_score'],
+                        'grade'       => $colony['grade']['letter'] ?? 'F',
+                        'risk_count'  => $colony['risk_count'],
+                        'top_risk'    => $colony['top_risk'],
+                        'recommendation' => $colony['recommendation'],
+                    ];
+                }
+            }
+
+            // Sort by score ascending (worst first)
+            usort($alerts, fn($a, $b) => $a['score'] <=> $b['score']);
+
+            return $alerts;
+        } catch (Exception $e) {
+            error_log('getColoniesBelowThreshold error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
     private function evaluateAllStages(int $colonyId, array $colony): array
     {
         $currentStage = $colony['pipeline_stage'] ?? 'land_acquisition';

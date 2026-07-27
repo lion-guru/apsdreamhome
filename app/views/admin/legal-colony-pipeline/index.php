@@ -1,8 +1,9 @@
 <?php
-$colonies    = $colonies ?? [];
-$stats       = $stats ?? [];
-$filterStage = $filter_stage ?? null;
-$stages      = $stages ?? [];
+$colonies     = $colonies ?? [];
+$stats        = $stats ?? [];
+$colonyHealth = $colony_health ?? [];
+$filterStage  = $filter_stage ?? null;
+$stages       = $stages ?? [];
 ?>
 <div class="container-fluid py-4">
   <!-- Header -->
@@ -14,6 +15,17 @@ $stages      = $stages ?? [];
     <a href="/admin/legal-colony-pipeline/start-acquisition" class="btn btn-warning">
       <i class="fas fa-plus me-1"></i> Start New Acquisition
     </a>
+    <div class="btn-group btn-group-sm ms-2">
+      <a href="/admin/legal-colony-pipeline/analytics-all" class="btn btn-outline-success" title="Compare All Colonies">
+        <i class="fas fa-chart-bar me-1"></i> Compare
+      </a>
+      <a href="/admin/legal-colony-pipeline/health" class="btn btn-outline-danger" title="Health Dashboard">
+        <i class="fas fa-heartbeat me-1"></i> Health
+      </a>
+      <button class="btn btn-outline-warning" onclick="autoAdvance()" title="Auto-advance all eligible colonies">
+        <i class="fas fa-forward me-1"></i> Auto-Advance
+      </button>
+    </div>
   </div>
 
   <!-- Stats Row -->
@@ -99,7 +111,39 @@ $stages      = $stages ?? [];
             <i class="fas fa-arrow-right text-muted mx-1"></i>
           <?php endif; ?>
         <?php endforeach; ?>
-      </div>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function autoAdvance() {
+  if (!confirm('Auto-advance all colonies where requirements are met?')) return;
+  const btn = event.target.closest('button');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Processing...';
+  fetch('/admin/legal-colony-pipeline/auto-advance', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      alert(data.summary);
+      if (data.advanced && data.advanced.length > 0) {
+        location.reload();
+      }
+    } else {
+      alert('Error: ' + (data.error || 'Unknown'));
+    }
+  })
+  .catch(err => alert('Request failed: ' + err.message))
+  .finally(() => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-forward me-1"></i> Auto-Advance';
+  });
+}
+</script>
     </div>
   </div>
 
@@ -119,6 +163,7 @@ $stages      = $stages ?? [];
             <th>Colony</th>
             <th>Location</th>
             <th>Pipeline Stage</th>
+            <th>Health</th>
             <th>Plots</th>
             <th>Available</th>
             <th>Sold</th>
@@ -128,7 +173,7 @@ $stages      = $stages ?? [];
         </thead>
         <tbody>
           <?php if (empty($colonies)): ?>
-            <tr><td colspan="9" class="text-center text-muted py-4">No colonies found. Start a new land acquisition to begin.</td></tr>
+            <tr><td colspan="10" class="text-center text-muted py-4">No colonies found. Start a new land acquisition to begin.</td></tr>
           <?php else: ?>
             <?php foreach ($colonies as $i => $c): ?>
               <?php
@@ -155,6 +200,38 @@ $stages      = $stages ?? [];
                 </td>
                 <td><?= htmlspecialchars($c['location'] ?? $c['name'] ?? '') ?></td>
                 <td><span class="badge <?= $stageBadge ?>"><?= $stageLabel ?></span></td>
+                <td>
+                  <?php
+                    $hid = (int)($c['id'] ?? 0);
+                    $health = $colonyHealth[$hid] ?? null;
+                    if ($health):
+                      $score = $health['score'];
+                      $letter = $health['grade'];
+                      $color = $health['grade_color'];
+                  ?>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="position-relative" style="width:36px;height:36px;">
+                        <svg viewBox="0 0 36 36" class="w-100 h-100">
+                          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#333" stroke-width="2.5"/>
+                          <circle cx="18" cy="18" r="15.915" fill="none" stroke="<?= $color ?>" stroke-width="2.5"
+                            stroke-dasharray="<?= $score ?> <?= 100 - $score ?>"
+                            stroke-dashoffset="25" stroke-linecap="round"/>
+                        </svg>
+                        <span class="position-absolute top-50 start-50 translate-middle fw-bold small" style="color:<?= $color ?>;font-size:11px;"><?= $letter ?></span>
+                      </div>
+                      <div>
+                        <span class="fw-bold" style="color:<?= $color ?>;"><?= $score ?>%</span>
+                        <?php if ($health['risks'] > 0): ?>
+                          <br><small class="text-danger" title="<?= htmlspecialchars($health['top_risk'] ?? '') ?>">
+                            <i class="fas fa-exclamation-triangle"></i> <?= $health['risks'] ?> risk<?= $health['risks'] > 1 ? 's' : '' ?>
+                          </small>
+                        <?php endif; ?>
+                      </div>
+                    </div>
+                  <?php else: ?>
+                    <span class="text-muted"><i class="fas fa-minus-circle"></i></span>
+                  <?php endif; ?>
+                </td>
                 <td><?= (int)($c['plot_count'] ?? 0) ?></td>
                 <td class="text-success"><?= (int)($c['available_count'] ?? 0) ?></td>
                 <td class="text-danger"><?= (int)($c['sold_count'] ?? 0) ?></td>
