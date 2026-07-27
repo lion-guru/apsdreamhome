@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use App\Core\Database;
+use App\Services\TenantScopeService;
 
 class CRMService
 {
@@ -14,6 +15,14 @@ class CRMService
 
     public function __construct() {
         $this->db = Database::getInstance();
+    }
+
+    /**
+     * Get tenant_id for current request. Returns null if isolation disabled.
+     */
+    private function tid(): ?int
+    {
+        return TenantScopeService::isolationEnabled() ? TenantScopeService::tenantId() : null;
     }
 
     // ─────────── Pipeline Stages ───────────────────────────────────────
@@ -51,6 +60,7 @@ class CRMService
         try {
             $where = ["l.deleted_at IS NULL"];
             $params = [];
+            if ($tid = $this->tid()) { $where[] = "l.tenant_id = ?"; $params[] = $tid; }
 
             // Phase 2: Role-based visibility filter
             if ($userId && !in_array($role, ['admin', 'super_admin'])) {
@@ -145,12 +155,15 @@ class CRMService
 
     public function getLeadById($id) {
         try {
+            $where = "l.id = ?";
+            $params = [$id];
+            if ($tid = $this->tid()) { $where .= " AND l.tenant_id = ?"; $params[] = $tid; }
             $stmt = $this->db->query(
                 "SELECT l.*, u.name as assigned_to_name, c.name as created_by_name
                  FROM leads l
                  LEFT JOIN users u ON u.id = l.assigned_to
                  LEFT JOIN users c ON c.id = l.created_by
-                 WHERE l.id = ?", [$id]
+                 WHERE $where", $params
             );
             $lead = $stmt->fetch();
             if (!$lead) return null;
@@ -178,11 +191,12 @@ class CRMService
         }
         try {
             $leadNumber = 'CR-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $tid = $this->tid();
             $stmt = $this->db->query(
                 "INSERT INTO leads (lead_number, name, email, phone, company, address, city, state, pincode,
                  source, property_interest, budget, budget_range, location_preference, notes, tags,
-                 assigned_to, created_by, status, priority, lead_score, lead_category)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, ?)",
+                 assigned_to, created_by, status, priority, lead_score, lead_category" . ($tid ? ", tenant_id" : "") . ")
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, ?" . ($tid ? ", ?" : "") . ")",
                 [
                     $leadNumber,
                     $data['name'] ?? '',
@@ -205,6 +219,7 @@ class CRMService
                     $data['priority'] ?? 'medium',
                     $data['lead_score'] ?? 0,
                     $data['lead_category'] ?? 'cold',
+                    ...($tid ? [$tid] : []),
                 ]
             );
             $leadId = $this->db->lastInsertId();
@@ -259,8 +274,10 @@ class CRMService
             }
             if (empty($fields)) return ['success' => false, 'error' => 'No fields to update'];
             $params[] = $id;
+            $whereClause = "id = ?";
+            if ($tid = $this->tid()) { $whereClause .= " AND tenant_id = ?"; $params[] = $tid; }
 
-            $this->db->query("UPDATE leads SET " . implode(', ', $fields) . " WHERE id = ?", $params);
+            $this->db->query("UPDATE leads SET " . implode(', ', $fields) . " WHERE $whereClause", $params);
             return ['success' => true];
         } catch (\Exception $e) {
             error_log('CRMService::updateLead error: ' . $e->getMessage());
@@ -277,7 +294,10 @@ class CRMService
             return ['success' => false, 'error' => 'Your role does not have permission to delete leads'];
         }
         try {
-            $this->db->query("UPDATE leads SET deleted_at = NOW() WHERE id = ?", [$id]);
+            $where = "id = ?";
+            $params = [$id];
+            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
+            $this->db->query("UPDATE leads SET deleted_at = NOW() WHERE $where", $params);
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -286,7 +306,10 @@ class CRMService
 
     public function restoreLead($id) {
         try {
-            $this->db->query("UPDATE leads SET deleted_at = NULL WHERE id = ?", [$id]);
+            $where = "id = ?";
+            $params = [$id];
+            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
+            $this->db->query("UPDATE leads SET deleted_at = NULL WHERE $where", $params);
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -301,6 +324,7 @@ class CRMService
 
             $where = ["l.deleted_at IS NOT NULL"];
             $params = [];
+            if ($tid = $this->tid()) { $where[] = "l.tenant_id = ?"; $params[] = $tid; }
 
             if (!empty($filters['search'])) {
                 $search = '%' . $filters['search'] . '%';
@@ -344,7 +368,10 @@ class CRMService
 
     public function permanentDeleteLead($id) {
         try {
-            $this->db->query("DELETE FROM leads WHERE id = ? AND deleted_at IS NOT NULL", [$id]);
+            $where = "id = ? AND deleted_at IS NOT NULL";
+            $params = [$id];
+            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
+            $this->db->query("DELETE FROM leads WHERE $where", $params);
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -361,6 +388,7 @@ class CRMService
             foreach ($stages as $stage) {
                 $where = ["l.deleted_at IS NULL", "l.status = ?"];
                 $params = [$stage['slug']];
+                if ($tid = $this->tid()) { $where[] = "l.tenant_id = ?"; $params[] = $tid; }
 
                 if (!empty($filters['assigned_to'])) {
                     $where[] = "l.assigned_to = ?";
@@ -401,10 +429,13 @@ class CRMService
 
     public function moveLeadToStage($leadId, $newStatus, $userId = null) {
         try {
-            $old = $this->db->fetchOne("SELECT status FROM leads WHERE id = ?", [$leadId]);
+            $where = "id = ?";
+            $params = [$leadId];
+            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
+            $old = $this->db->fetchOne("SELECT status FROM leads WHERE $where", $params);
             if (!$old) return ['success' => false, 'error' => 'Lead not found'];
 
-            $this->db->query("UPDATE leads SET status = ? WHERE id = ?", [$newStatus, $leadId]);
+            $this->db->query("UPDATE leads SET status = ? WHERE $where", array_merge([$newStatus], $params));
 
             $this->addInteraction($leadId, $userId, 'system', [
                 'subject' => "Stage changed: {$old['status']} → {$newStatus}",
@@ -421,25 +452,30 @@ class CRMService
 
     public function addInteraction($leadId, $userId, $type, $data = []) {
         try {
+            $cols = "lead_id, user_id, interaction_type, direction, subject, body, duration_seconds, outcome, next_action, next_action_date";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            $params = [
+                $leadId,
+                $userId,
+                $type,
+                $data['direction'] ?? 'outbound',
+                $data['subject'] ?? null,
+                $data['body'] ?? null,
+                $data['duration_seconds'] ?? null,
+                $data['outcome'] ?? null,
+                $data['next_action'] ?? null,
+                $data['next_action_date'] ?? null,
+            ];
+            if ($tid = $this->tid()) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
             $stmt = $this->db->query(
-                "INSERT INTO crm_interactions (lead_id, user_id, interaction_type, direction, subject, body, duration_seconds, outcome, next_action, next_action_date)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [
-                    $leadId,
-                    $userId,
-                    $type,
-                    $data['direction'] ?? 'outbound',
-                    $data['subject'] ?? null,
-                    $data['body'] ?? null,
-                    $data['duration_seconds'] ?? null,
-                    $data['outcome'] ?? null,
-                    $data['next_action'] ?? null,
-                    $data['next_action_date'] ?? null,
-                ]
+                "INSERT INTO crm_interactions ($cols) VALUES ($vals)",
+                $params
             );
 
             // Update lead's last_activity_date
-            $this->db->query("UPDATE leads SET last_activity_date = NOW() WHERE id = ?", [$leadId]);
+            $actWhere = "id = ?"; $actParams = [$leadId];
+            if ($tid = $this->tid()) { $actWhere .= " AND tenant_id = ?"; $actParams[] = $tid; }
+            $this->db->query("UPDATE leads SET last_activity_date = NOW() WHERE $actWhere", $actParams);
 
             // Auto-score on interaction
             $this->recalculateScore($leadId);
@@ -453,14 +489,17 @@ class CRMService
 
     public function getLeadInteractions($leadId, $limit = 50) {
         try {
+            $where = "ci.lead_id = ?"; $params = [$leadId];
+            if ($tid = $this->tid()) { $where .= " AND ci.tenant_id = ?"; $params[] = $tid; }
+            $params[] = (int)$limit;
             $stmt = $this->db->query(
                 "SELECT ci.*, u.name as user_name
                  FROM crm_interactions ci
                  LEFT JOIN users u ON u.id = ci.user_id
-                 WHERE ci.lead_id = ?
+                 WHERE $where
                  ORDER BY ci.created_at DESC
                  LIMIT ?",
-                [$leadId, (int)$limit]
+                $params
             );
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
@@ -470,14 +509,17 @@ class CRMService
 
     public function getMyInteractions($userId, $limit = 20) {
         try {
+            $where = "ci.user_id = ?"; $params = [$userId];
+            if ($tid = $this->tid()) { $where .= " AND ci.tenant_id = ?"; $params[] = $tid; }
+            $params[] = (int)$limit;
             $stmt = $this->db->query(
                 "SELECT ci.*, l.name as lead_name, l.phone as lead_phone
                  FROM crm_interactions ci
                  LEFT JOIN leads l ON l.id = ci.lead_id
-                 WHERE ci.user_id = ?
+                 WHERE $where
                  ORDER BY ci.created_at DESC
                  LIMIT ?",
-                [$userId, (int)$limit]
+                $params
             );
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
@@ -489,21 +531,24 @@ class CRMService
 
     public function createTask($data) {
         try {
+            $cols = "lead_id, assigned_to, created_by, task_type, title, description, priority, status, due_date, due_time, reminder_at";
+            $vals = "?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?";
+            $params = [
+                $data['lead_id'] ?? null,
+                $data['assigned_to'],
+                $data['created_by'] ?? $data['assigned_to'],
+                $data['task_type'] ?? 'follow_up',
+                $data['title'],
+                $data['description'] ?? null,
+                $data['priority'] ?? 'medium',
+                $data['due_date'],
+                $data['due_time'] ?? null,
+                $data['reminder_at'] ?? null,
+            ];
+            if ($tid = $this->tid()) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
             $stmt = $this->db->query(
-                "INSERT INTO crm_tasks (lead_id, assigned_to, created_by, task_type, title, description, priority, status, due_date, due_time, reminder_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)",
-                [
-                    $data['lead_id'] ?? null,
-                    $data['assigned_to'],
-                    $data['created_by'] ?? $data['assigned_to'],
-                    $data['task_type'] ?? 'follow_up',
-                    $data['title'],
-                    $data['description'] ?? null,
-                    $data['priority'] ?? 'medium',
-                    $data['due_date'],
-                    $data['due_time'] ?? null,
-                    $data['reminder_at'] ?? null,
-                ]
+                "INSERT INTO crm_tasks ($cols) VALUES ($vals)",
+                $params
             );
             return ['success' => true, 'task_id' => $this->db->lastInsertId()];
         } catch (\Exception $e) {
@@ -513,13 +558,15 @@ class CRMService
 
     public function getLeadTasks($leadId) {
         try {
+            $where = "ct.lead_id = ?"; $params = [$leadId];
+            if ($tid = $this->tid()) { $where .= " AND ct.tenant_id = ?"; $params[] = $tid; }
             $stmt = $this->db->query(
                 "SELECT ct.*, u.name as assigned_to_name
                  FROM crm_tasks ct
                  LEFT JOIN users u ON u.id = ct.assigned_to
-                 WHERE ct.lead_id = ?
+                 WHERE $where
                  ORDER BY ct.due_date ASC, ct.due_time ASC",
-                [$leadId]
+                $params
             );
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
@@ -531,6 +578,7 @@ class CRMService
         try {
             $where = ["ct.assigned_to = ?"];
             $params = [$userId];
+            if ($tid = $this->tid()) { $where[] = "ct.tenant_id = ?"; $params[] = $tid; }
             if ($status && $status !== 'all') {
                 $where[] = "ct.status = ?";
                 $params[] = $status;
@@ -599,10 +647,13 @@ class CRMService
 
     public function assignLead($leadId, $assignedTo, $assignedBy, $reason = null, $notes = null) {
         try {
-            $old = $this->db->fetchOne("SELECT assigned_to FROM leads WHERE id = ?", [$leadId]);
+            $leadWhere = "id = ?";
+            $leadParams = [$leadId];
+            if ($tid = $this->tid()) { $leadWhere .= " AND tenant_id = ?"; $leadParams[] = $tid; }
+            $old = $this->db->fetchOne("SELECT assigned_to FROM leads WHERE $leadWhere", $leadParams);
             $oldAssignee = $old['assigned_to'] ?? null;
 
-            $this->db->query("UPDATE leads SET assigned_to = ? WHERE id = ?", [$assignedTo, $leadId]);
+            $this->db->query("UPDATE leads SET assigned_to = ? WHERE $leadWhere", array_merge([$assignedTo], $leadParams));
             $this->logAssignment($leadId, $oldAssignee, $assignedTo, $assignedBy, $reason, $notes);
 
             $this->addInteraction($leadId, $assignedBy, 'system', [
@@ -652,20 +703,28 @@ class CRMService
             return ['success' => false, 'error' => 'Auto-assignment is disabled'];
         }
         try {
+            $assignWhere = "assigned_to IS NULL AND deleted_at IS NULL";
+            $assignParams = [];
+            if ($tid = $this->tid()) { $assignWhere .= " AND tenant_id = ?"; $assignParams[] = $tid; }
             $unassigned = $this->db->query(
-                "SELECT id FROM leads WHERE assigned_to IS NULL AND deleted_at IS NULL ORDER BY created_at ASC LIMIT 50"
+                "SELECT id FROM leads WHERE $assignWhere ORDER BY created_at ASC LIMIT 50",
+                $assignParams
             )->fetchAll() ?: [];
 
             if (empty($unassigned)) return ['success' => true, 'assigned' => 0];
 
+            $agentWhere = "u.role IN ('agent','associate','employee')";
+            $agentParams = [];
+            if ($tid = $this->tid()) { $agentWhere .= " AND (l.tenant_id = ? OR l.tenant_id IS NULL)"; $agentParams[] = $tid; }
             $agents = $this->db->query(
                 "SELECT u.id, COUNT(l.id) as lead_count
                  FROM users u
                  LEFT JOIN leads l ON l.assigned_to = u.id AND l.deleted_at IS NULL
-                 WHERE u.role IN ('agent','associate','employee')
+                 WHERE $agentWhere
                  GROUP BY u.id
                  ORDER BY lead_count ASC
-                 LIMIT 20"
+                 LIMIT 20",
+                $agentParams
             )->fetchAll() ?: [];
 
             if (empty($agents)) return ['success' => false, 'error' => 'No agents available'];
@@ -693,7 +752,10 @@ class CRMService
             return 0;
         }
         try {
-            $lead = $this->db->fetchOne("SELECT * FROM leads WHERE id = ?", [$leadId]);
+            $leadWhere = "id = ?";
+            $leadParams = [$leadId];
+            if ($tid = $this->tid()) { $leadWhere .= " AND tenant_id = ?"; $leadParams[] = $tid; }
+            $lead = $this->db->fetchOne("SELECT * FROM leads WHERE $leadWhere", $leadParams);
             if (!$lead) return 0;
 
             $score = 0;
@@ -754,8 +816,8 @@ class CRMService
             );
 
             $this->db->query(
-                "UPDATE leads SET lead_score = ?, lead_category = ?, score_factors = ?, last_scored_at = NOW(), conversion_probability = ? WHERE id = ?",
-                [$score, $category, json_encode($factors), min(100, $score), $leadId]
+                "UPDATE leads SET lead_score = ?, lead_category = ?, score_factors = ?, last_scored_at = NOW(), conversion_probability = ? WHERE $leadWhere",
+                array_merge([$score, $category, json_encode($factors), min(100, $score)], $leadParams)
             );
 
             return $score;
@@ -767,7 +829,10 @@ class CRMService
 
     public function rescoreAllLeads() {
         try {
-            $leads = $this->db->query("SELECT id FROM leads WHERE deleted_at IS NULL")->fetchAll() ?: [];
+            $where = "deleted_at IS NULL";
+            $params = [];
+            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
+            $leads = $this->db->query("SELECT id FROM leads WHERE $where", $params)->fetchAll() ?: [];
             $count = 0;
             foreach ($leads as $lead) {
                 $this->recalculateScore($lead['id']);
@@ -781,9 +846,11 @@ class CRMService
 
     public function getLeadScoreHistory($leadId) {
         try {
+            $where = "lead_id = ?"; $params = [$leadId];
+            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
             $stmt = $this->db->query(
-                "SELECT * FROM crm_lead_scores_history WHERE lead_id = ? ORDER BY created_at DESC LIMIT 20",
-                [$leadId]
+                "SELECT * FROM crm_lead_scores_history WHERE $where ORDER BY created_at DESC LIMIT 20",
+                $params
             );
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
@@ -846,11 +913,14 @@ class CRMService
         try {
             $whereLead = $role !== 'admin' && $userId ? "AND l.assigned_to = $userId" : "";
             $whereTask = $role !== 'admin' && $userId ? "AND ct.assigned_to = $userId" : "";
+            $tid = $this->tid();
+            $tenantFilter = $tid ? "AND l.tenant_id = $tid" : "";
+            $tenantFilterTask = $tid ? "AND ct.lead_id IN (SELECT id FROM leads WHERE tenant_id = $tid)" : "";
 
             $stats = [];
 
             // Lead counts by status
-            $stmt = $this->db->query("SELECT l.status, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead GROUP BY l.status");
+            $stmt = $this->db->query("SELECT l.status, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead $tenantFilter GROUP BY l.status");
             $stats['by_status'] = [];
             foreach ($stmt->fetchAll() ?: [] as $row) {
                 $stats['by_status'][$row['status']] = (int)$row['cnt'];
@@ -858,19 +928,19 @@ class CRMService
             $stats['total_leads'] = array_sum($stats['by_status']);
 
             // Today's leads
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE DATE(l.created_at) = CURDATE() $whereLead");
+            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE DATE(l.created_at) = CURDATE() $whereLead $tenantFilter");
             $stats['today_leads'] = (int)($stmt->fetch()['cnt'] ?? 0);
 
             // This week
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE l.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $whereLead");
+            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE l.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $whereLead $tenantFilter");
             $stats['week_leads'] = (int)($stmt->fetch()['cnt'] ?? 0);
 
             // Hot leads
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE l.lead_score >= 70 AND l.deleted_at IS NULL $whereLead");
+            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE l.lead_score >= 70 AND l.deleted_at IS NULL $whereLead $tenantFilter");
             $stats['hot_leads'] = (int)($stmt->fetch()['cnt'] ?? 0);
 
             // Converted
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE l.is_converted = 1 $whereLead");
+            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM leads l WHERE l.is_converted = 1 $whereLead $tenantFilter");
             $stats['converted'] = (int)($stmt->fetch()['cnt'] ?? 0);
 
             // Conversion rate
@@ -879,7 +949,7 @@ class CRMService
                 : 0;
 
             // Pending tasks
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status IN ('pending','in_progress') $whereTask");
+            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status IN ('pending','in_progress') $whereTask $tenantFilterTask");
             $stats['pending_tasks'] = (int)($stmt->fetch()['cnt'] ?? 0);
 
             // Overdue tasks
@@ -894,11 +964,11 @@ class CRMService
             $stats['week_interactions'] = (int)($stmt->fetch()['cnt'] ?? 0);
 
             // Lead sources breakdown
-            $stmt = $this->db->query("SELECT source, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead GROUP BY source ORDER BY cnt DESC");
+            $stmt = $this->db->query("SELECT source, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead $tenantFilter GROUP BY source ORDER BY cnt DESC");
             $stats['by_source'] = $stmt->fetchAll() ?: [];
 
             // Score distribution
-            $stmt = $this->db->query("SELECT lead_category, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead GROUP BY lead_category");
+            $stmt = $this->db->query("SELECT lead_category, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $whereLead $tenantFilter GROUP BY lead_category");
             $stats['by_category'] = $stmt->fetchAll() ?: [];
 
             // Top assignees
@@ -907,7 +977,7 @@ class CRMService
                     "SELECT u.name, l.assigned_to, COUNT(*) as lead_count,
                      SUM(CASE WHEN l.status IN ('won','booking') THEN 1 ELSE 0 END) as won_count
                      FROM leads l JOIN users u ON u.id = l.assigned_to
-                     WHERE l.deleted_at IS NULL AND l.assigned_to IS NOT NULL
+                     WHERE l.deleted_at IS NULL AND l.assigned_to IS NOT NULL $tenantFilter
                      GROUP BY l.assigned_to ORDER BY lead_count DESC LIMIT 10"
                 );
                 $stats['top_assignees'] = $stmt->fetchAll() ?: [];
@@ -917,7 +987,7 @@ class CRMService
             $stmt = $this->db->query(
                 "SELECT DATE(l.created_at) as date, COUNT(*) as cnt
                  FROM leads l
-                 WHERE l.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $whereLead
+                 WHERE l.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $whereLead $tenantFilter
                  GROUP BY DATE(l.created_at) ORDER BY date ASC"
             );
             $stats['weekly_trend'] = $stmt->fetchAll() ?: [];
@@ -1050,6 +1120,7 @@ class CRMService
         $skipped = 0;
         $errors = [];
         $duplicates = 0;
+        $tid = $this->tid();
 
         foreach ($rows as $idx => $row) {
             $name = trim($row['name'] ?? $row['Name'] ?? '');
@@ -1068,8 +1139,8 @@ class CRMService
             $leadNum = 'LEAD-CSV-' . date('Ymd') . '-' . str_pad($idx + 1, 4, '0', STR_PAD_LEFT);
 
             try {
-                $existingPhone = $phone ? $this->db->query("SELECT id FROM leads WHERE phone = ?", [$phone])->fetch() : null;
-                $existingEmail = $email ? $this->db->query("SELECT id FROM leads WHERE email = ?", [$email])->fetch() : null;
+                $existingPhone = $phone ? $this->db->query("SELECT id FROM leads WHERE phone = ?" . ($tid ? " AND tenant_id = $tid" : ""), $tid ? [$phone, $tid] : [$phone])->fetch() : null;
+                $existingEmail = $email ? $this->db->query("SELECT id FROM leads WHERE email = ?" . ($tid ? " AND tenant_id = $tid" : ""), $tid ? [$email, $tid] : [$email])->fetch() : null;
 
                 if ($existingPhone || $existingEmail) {
                     $duplicates++;
@@ -1077,9 +1148,9 @@ class CRMService
                 }
 
                 $this->db->query(
-                    "INSERT INTO leads (lead_number, name, phone, email, source, budget_min, status, assigned_to, created_by, lead_score, created_at, updated_at)
-                     VALUES (?, ?, ?, ?, ?, ?, 'new', ?, ?, 0, NOW(), NOW())",
-                    [$leadNum, $name, $phone, $email, $source, $budget, $userId, $userId]
+                    "INSERT INTO leads (lead_number, name, phone, email, source, budget_min, status, assigned_to, created_by, lead_score, created_at, updated_at" . ($tid ? ", tenant_id" : "") . ")
+                     VALUES (?, ?, ?, ?, ?, ?, 'new', ?, ?, 0, NOW(), NOW()" . ($tid ? ", ?" : "") . ")",
+                    array_merge([$leadNum, $name, $phone, $email, $source, $budget, $userId, $userId], $tid ? [$tid] : [])
                 );
                 $imported++;
             } catch (\Exception $e) {
@@ -1246,10 +1317,13 @@ class CRMService
     public function getDealPipelineSummary(): array
     {
         try {
+            $where = ""; $params = [];
+            if ($tid = $this->tid()) { $where = " WHERE tenant_id = ?"; $params[] = $tid; }
             $stages = $this->db->query(
                 "SELECT stage, COUNT(*) as count, COALESCE(SUM(deal_value),0) as total_value,
                         COALESCE(AVG(probability),0) as avg_probability
-                 FROM lead_deals GROUP BY stage ORDER BY FIELD(stage, 'qualification','proposal','negotiation','commitment','won','lost')"
+                 FROM lead_deals $where GROUP BY stage ORDER BY FIELD(stage, 'qualification','proposal','negotiation','commitment','won','lost')",
+                $params
             )->fetchAll() ?: [];
 
             $totalValue = array_sum(array_column($stages, 'total_value'));
@@ -1295,8 +1369,10 @@ class CRMService
 
             $interactionCount = 0;
             try {
+                $icWhere = "lead_id = ?"; $icParams = [$leadId];
+                if ($tid = $this->tid()) { $icWhere .= " AND tenant_id = ?"; $icParams[] = $tid; }
                 $interactionCount = (int)$this->db->query(
-                    "SELECT COUNT(*) FROM crm_interactions WHERE lead_id = ?", [$leadId]
+                    "SELECT COUNT(*) FROM crm_interactions WHERE $icWhere", $icParams
                 )->fetchColumn();
             } catch (\Exception $e) {}
             $engagementScore = min(25, $interactionCount * 5);
@@ -1341,6 +1417,7 @@ class CRMService
         try {
             $where = "t.status = 'pending' AND t.due_date <= DATE_ADD(CURDATE(), INTERVAL 3 DAY)";
             $params = [];
+            if ($tid = $this->tid()) { $where .= " AND t.tenant_id = ?"; $params[] = $tid; }
 
             if (!in_array($role, ['admin', 'manager'])) {
                 $where .= " AND t.assigned_to = ?";
@@ -1370,6 +1447,7 @@ class CRMService
         try {
             $where = "t.status = 'pending' AND t.due_date < CURDATE()";
             $params = [];
+            if ($tid = $this->tid()) { $where .= " AND t.tenant_id = ?"; $params[] = $tid; }
 
             if (!in_array($role, ['admin', 'manager'])) {
                 $where .= " AND t.assigned_to = ?";
@@ -1406,11 +1484,14 @@ class CRMService
 
         $sets[] = "updated_at = NOW()";
         $placeholders = implode(',', array_fill(0, count($leadIds), '?'));
+        $tenantWhere = "";
+        $tenantParams = [];
+        if ($tid = $this->tid()) { $tenantWhere = " AND tenant_id = ?"; $tenantParams[] = $tid; }
 
         try {
             $this->db->query(
-                "UPDATE leads SET " . implode(', ', $sets) . " WHERE id IN ($placeholders)",
-                array_merge($params, $leadIds)
+                "UPDATE leads SET " . implode(', ', $sets) . " WHERE id IN ($placeholders) $tenantWhere",
+                array_merge($params, $leadIds, $tenantParams)
             );
             return ['success' => true, 'updated' => count($leadIds)];
         } catch (\Exception $e) {
@@ -1467,24 +1548,30 @@ class CRMService
     public function logActivity(int $leadId, int $userId, string $type, string $subject, string $body = '', array $meta = []): array
     {
         try {
+            $actCols = "lead_id, user_id, activity_type, subject, description, meta_data, created_at";
+            $actVals = "?, ?, ?, ?, ?, ?, NOW()";
+            $actParams = [$leadId, $userId, $type, $subject, $body, json_encode($meta)];
+            if ($tid = $this->tid()) { $actCols .= ", tenant_id"; $actVals .= ", ?"; $actParams[] = $tid; }
             $this->db->query(
-                "INSERT INTO lead_activities (lead_id, user_id, activity_type, subject, description, meta_data, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, NOW())",
-                [$leadId, $userId, $type, $subject, $body, json_encode($meta)]
+                "INSERT INTO lead_activities ($actCols) VALUES ($actVals)",
+                $actParams
             );
             
             // Also add to crm_interactions if it's an interaction type
             if (in_array($type, ['call', 'email', 'whatsapp', 'meeting', 'site_visit', 'sms'])) {
-                $this->addInteraction($leadId, $userId, $type, [
-                    'subject' => $subject,
-                    'body' => $body,
-                    'direction' => $meta['direction'] ?? 'outbound',
-                    'outcome' => $meta['outcome'] ?? null,
-                ]);
+                $intCols = "lead_id, user_id, interaction_type, direction, subject, body, tenant_id";
+                $intVals = "?, ?, ?, ?, ?, ?, ?";
+                $intParams = [$leadId, $userId, $type, $meta['direction'] ?? 'outbound', $subject, $body, $tid ?: null];
+                $this->db->query(
+                    "INSERT INTO crm_interactions ($intCols) VALUES ($intVals)",
+                    $intParams
+                );
             }
             
             // Update lead's last_activity_date
-            $this->db->query("UPDATE leads SET last_activity_date = NOW() WHERE id = ?", [$leadId]);
+            $actWhere = "id = ?"; $actParams2 = [$leadId];
+            if ($tid) { $actWhere .= " AND tenant_id = ?"; $actParams2[] = $tid; }
+            $this->db->query("UPDATE leads SET last_activity_date = NOW() WHERE $actWhere", $actParams2);
             
             // Auto-score
             $this->recalculateScore($leadId);
@@ -1499,25 +1586,38 @@ class CRMService
     public function getLeadTimeline(int $leadId, int $limit = 100): array
     {
         try {
+            $tid = $this->tid();
+            $actWhere = "lead_id = ?"; $actParams = [$leadId];
+            $intWhere = "lead_id = ?"; $intParams = [$leadId];
+            $taskWhere = "lead_id = ?"; $taskParams = [$leadId];
+            if ($tid) {
+                $actWhere .= " AND tenant_id = ?"; $actParams[] = $tid;
+                $intWhere .= " AND tenant_id = ?"; $intParams[] = $tid;
+                $taskWhere .= " AND tenant_id = ?"; $taskParams[] = $tid;
+            }
+            $actParams[] = $limit;
+            $intParams[] = $limit;
+            $taskParams[] = $limit;
+
             // Lead activities (status changes, notes, updates, assignments)
             $activities = $this->db->fetchAll(
                 "SELECT id, lead_id, 'activity' as timeline_type, type, subject as title, details as description, created_at, user_id as actor_id
-                 FROM lead_activities WHERE lead_id = ? ORDER BY created_at DESC LIMIT ?",
-                [$leadId, $limit]
+                 FROM lead_activities WHERE $actWhere ORDER BY created_at DESC LIMIT ?",
+                $actParams
             ) ?: [];
 
             // Interactions (calls, emails, WhatsApp, meetings)
             $interactions = $this->db->fetchAll(
                 "SELECT id, lead_id, 'interaction' as timeline_type, type, subject, body as description, created_at, user_id as actor_id
-                 FROM crm_interactions WHERE lead_id = ? ORDER BY created_at DESC LIMIT ?",
-                [$leadId, $limit]
+                 FROM crm_interactions WHERE $intWhere ORDER BY created_at DESC LIMIT ?",
+                $intParams
             ) ?: [];
 
             // Tasks (follow-ups, to-dos)
             $tasks = $this->db->fetchAll(
                 "SELECT id, lead_id, 'task' as timeline_type, type, title, description, created_at, assigned_to as actor_id
-                 FROM crm_tasks WHERE lead_id = ? ORDER BY created_at DESC LIMIT ?",
-                [$leadId, $limit]
+                 FROM crm_tasks WHERE $taskWhere ORDER BY created_at DESC LIMIT ?",
+                $taskParams
             ) ?: [];
 
             // Merge all sources and sort by created_at DESC
@@ -1678,13 +1778,14 @@ class CRMService
                 $criteria = json_decode($seg['filter_criteria'] ?? '{}', true) ?? [];
                 $where = ["deleted_at IS NULL"];
                 $params = [];
+                if ($tid = $this->tid()) { $where[] = "tenant_id = ?"; $params[] = $tid; }
                 if (!empty($criteria['status'])) { $where[] = "status = ?"; $params[] = $criteria['status']; }
                 if (!empty($criteria['source'])) { $where[] = "source = ?"; $params[] = $criteria['source']; }
                 if (!empty($criteria['min_score'])) { $where[] = "lead_score >= ?"; $params[] = (int)$criteria['min_score']; }
                 if (!empty($criteria['city'])) { $where[] = "city = ?"; $params[] = $criteria['city']; }
                 if (!empty($criteria['min_budget'])) { $where[] = "budget >= ?"; $params[] = (float)$criteria['min_budget']; }
                 if (!empty($criteria['max_budget'])) { $where[] = "budget <= ?"; $params[] = (float)$criteria['max_budget']; }
-                $seg['lead_count'] = (int)$this->db->fetchOne("SELECT COUNT(*) FROM leads WHERE " . implode(' AND ', $where), $params)['cnt'] ?? 0;
+                $seg['lead_count'] = (int)$this->db->fetchOne("SELECT COUNT(*) as cnt FROM leads WHERE " . implode(' AND ', $where), $params)['cnt'] ?? 0;
             }
             return $segments;
         } catch (\Exception $e) {
@@ -1695,10 +1796,13 @@ class CRMService
     public function createSegment(string $name, string $description, array $criteria, int $createdBy): array
     {
         try {
+            $cols = "name, description, filter_criteria, created_by, created_at";
+            $vals = "?, ?, ?, ?, NOW()";
+            $params = [$name, $description, json_encode($criteria), $createdBy];
+            if ($tid = $this->tid()) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
             $this->db->query(
-                "INSERT INTO crm_segments (name, description, filter_criteria, created_by, created_at)
-                 VALUES (?, ?, ?, ?, NOW())",
-                [$name, $description, json_encode($criteria), $createdBy]
+                "INSERT INTO crm_segments ($cols) VALUES ($vals)",
+                $params
             );
             return ['success' => true, 'segment_id' => $this->db->lastInsertId()];
         } catch (\Exception $e) {
@@ -1715,12 +1819,14 @@ class CRMService
             $criteria = json_decode($seg['filter_criteria'] ?? '{}', true) ?? [];
             $where = ["l.deleted_at IS NULL"];
             $params = [];
+            if ($tid = $this->tid()) { $where[] = "l.tenant_id = ?"; $params[] = $tid; }
             if (!empty($criteria['status'])) { $where[] = "l.status = ?"; $params[] = $criteria['status']; }
             if (!empty($criteria['source'])) { $where[] = "l.source = ?"; $params[] = $criteria['source']; }
             if (!empty($criteria['min_score'])) { $where[] = "l.lead_score >= ?"; $params[] = (int)$criteria['min_score']; }
             if (!empty($criteria['city'])) { $where[] = "l.city = ?"; $params[] = $criteria['city']; }
             if (!empty($criteria['min_budget'])) { $where[] = "l.budget >= ?"; $params[] = (float)$criteria['min_budget']; }
             if (!empty($criteria['max_budget'])) { $where[] = "l.budget <= ?"; $params[] = (float)$criteria['max_budget']; }
+            $params[] = $limit;
             
             $stmt = $this->db->query(
                 "SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id 
@@ -1737,16 +1843,19 @@ class CRMService
     {
         $days = (int)str_replace('d', '', $period);
         try {
+            $where = "created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)";
+            $params = [$days];
+            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
             $sources = $this->db->fetchAll(
                 "SELECT source, COUNT(*) as count,
                         SUM(CASE WHEN status IN ('qualified','proposal','won') THEN 1 ELSE 0 END) as converted,
                         ROUND(AVG(lead_score),1) as avg_score,
                         MIN(created_at) as first_lead, MAX(created_at) as last_lead
                  FROM leads
-                 WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+                 WHERE $where
                  GROUP BY source
                  ORDER BY count DESC",
-                [$days]
+                $params
             ) ?: [];
 
             foreach ($sources as &$s) {
@@ -1762,8 +1871,11 @@ class CRMService
     public function getConversionFunnel(): array
     {
         try {
+            $where = ""; $params = [];
+            if ($tid = $this->tid()) { $where = " WHERE tenant_id = ?"; $params[] = $tid; }
             $stages = $this->db->fetchAll(
-                "SELECT status, COUNT(*) as count FROM leads GROUP BY status ORDER BY FIELD(status, 'new','contacted','qualified','site_visit','proposal','negotiation','won','lost','nurture')"
+                "SELECT status, COUNT(*) as count FROM leads $where GROUP BY status ORDER BY FIELD(status, 'new','contacted','qualified','site_visit','proposal','negotiation','won','lost','nurture')",
+                $params
             ) ?: [];
 
             $total = array_sum(array_column($stages, 'count'));
@@ -1785,6 +1897,9 @@ class CRMService
     public function getAgentPerformance(): array
     {
         try {
+            $leadWhere = "l.created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+            $leadParams = [];
+            if ($tid = $this->tid()) { $leadWhere .= " AND l.tenant_id = ?"; $leadParams[] = $tid; }
             $performance = $this->db->fetchAll(
                 "SELECT u.id, u.name,
                         COUNT(l.id) as total_leads,
@@ -1793,11 +1908,12 @@ class CRMService
                         ROUND(AVG(l.lead_score),1) as avg_score,
                         MAX(l.updated_at) as last_activity
                  FROM users u
-                 LEFT JOIN leads l ON l.assigned_to = u.id AND l.created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                 LEFT JOIN leads l ON l.assigned_to = u.id AND $leadWhere
                  WHERE u.role IN ('associate','employee','agent') AND u.deleted_at IS NULL
                  GROUP BY u.id, u.name
                  ORDER BY converted DESC
-                 LIMIT 50"
+                 LIMIT 50",
+                $leadParams
             ) ?: [];
 
             foreach ($performance as &$p) {
@@ -1815,6 +1931,8 @@ class CRMService
     public function findDuplicates(): array
     {
         try {
+            $tenantWhere = ""; $tenantParams = [];
+            if ($tid = $this->tid()) { $tenantWhere = " AND l1.tenant_id = ? AND l2.tenant_id = ?"; $tenantParams = [$tid, $tid]; }
             // Find leads sharing the same phone or email
             $phoneDupes = $this->db->fetchAll(
                 "SELECT l1.id as id1, l1.name as name1, l1.phone as phone1, l1.email as email1, l1.lead_score as score1, l1.created_at as created1,
@@ -1822,7 +1940,8 @@ class CRMService
                         'phone' as match_type, l1.phone as match_value
                  FROM leads l1
                  JOIN leads l2 ON l1.phone = l2.phone AND l1.id < l2.id
-                 WHERE l1.phone IS NOT NULL AND l1.phone != '' AND l1.deleted_at IS NULL AND l2.deleted_at IS NULL"
+                 WHERE l1.phone IS NOT NULL AND l1.phone != '' AND l1.deleted_at IS NULL AND l2.deleted_at IS NULL $tenantWhere",
+                $tenantParams
             ) ?: [];
 
             $emailDupes = $this->db->fetchAll(
@@ -1831,7 +1950,8 @@ class CRMService
                         'email' as match_type, l1.email as match_value
                  FROM leads l1
                  JOIN leads l2 ON l1.email = l2.email AND l1.id < l2.id
-                 WHERE l1.email IS NOT NULL AND l1.email != '' AND l1.deleted_at IS NULL AND l2.deleted_at IS NULL"
+                 WHERE l1.email IS NOT NULL AND l1.email != '' AND l1.deleted_at IS NULL AND l2.deleted_at IS NULL $tenantWhere",
+                $tenantParams
             ) ?: [];
 
             // Deduplicate pairs (same pair might match on both phone + email)
@@ -1912,7 +2032,9 @@ class CRMService
             } catch (\Throwable $e) { /* table may not exist */ }
 
             // Soft-delete the removed lead
-            $db->prepare("UPDATE leads SET deleted_at = NOW(), name = CONCAT(name, ' [MERGED INTO #$keepId]') WHERE id = ?")->execute([$removeId]);
+            $delWhere = "id = ?"; $delParams = [$removeId];
+            if ($tid = $this->tid()) { $delWhere .= " AND tenant_id = ?"; $delParams[] = $tid; }
+            $db->prepare("UPDATE leads SET deleted_at = NOW(), name = CONCAT(name, ' [MERGED INTO #$keepId]') WHERE $delWhere")->execute($delParams);
 
             // Log merge activity
             $this->logActivity($keepId, 1, 'merge', "Merged duplicate lead #$removeId into this lead");
@@ -1939,6 +2061,9 @@ class CRMService
             // Role-specific lead filter
             $leadFilter = '';
             $taskFilter = '';
+            $tid = $this->tid();
+            $tidFilter = $tid ? " AND l.tenant_id = $tid" : '';
+            $tidFilterT = $tid ? " AND ct.tenant_id = $tid" : '';
             switch ($role) {
                 case 'admin':
                 case 'super_admin':
@@ -1965,27 +2090,27 @@ class CRMService
             }
 
             // Lead counts
-            $data['total_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter")['cnt'];
-            $data['today_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE DATE(l.created_at) = CURDATE() $leadFilter")['cnt'];
-            $data['hot_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.lead_score >= 70 AND l.deleted_at IS NULL $leadFilter")['cnt'];
-            $data['converted'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.is_converted = 1 $leadFilter")['cnt'];
+            $data['total_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter $tidFilter")['cnt'];
+            $data['today_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE DATE(l.created_at) = CURDATE() $leadFilter $tidFilter")['cnt'];
+            $data['hot_leads'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.lead_score >= 70 AND l.deleted_at IS NULL $leadFilter $tidFilter")['cnt'];
+            $data['converted'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM leads l WHERE l.is_converted = 1 $leadFilter $tidFilter")['cnt'];
             $data['conversion_rate'] = $data['total_leads'] > 0 ? round(($data['converted'] / $data['total_leads']) * 100, 1) : 0;
 
             // Pipeline by status
             $data['pipeline'] = $this->db->fetchAll(
-                "SELECT l.status, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter GROUP BY l.status ORDER BY cnt DESC"
+                "SELECT l.status, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter $tidFilter GROUP BY l.status ORDER BY cnt DESC"
             ) ?: [];
 
             // Tasks
-            $data['pending_tasks'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status IN ('pending','in_progress') $taskFilter")['cnt'];
-            $data['overdue_tasks'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status = 'pending' AND ct.due_date < CURDATE() $taskFilter")['cnt'];
+            $data['pending_tasks'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status IN ('pending','in_progress') $taskFilter $tidFilterT")['cnt'];
+            $data['overdue_tasks'] = (int)$this->db->fetch("SELECT COUNT(*) as cnt FROM crm_tasks ct WHERE ct.status = 'pending' AND ct.due_date < CURDATE() $taskFilter $tidFilterT")['cnt'];
 
             // Upcoming follow-ups (next 7 days)
             $data['upcoming_followups'] = $this->db->fetchAll(
                 "SELECT l.id, l.name, l.phone, l.lead_score, l.next_activity_date, u.name as assignee_name
                  FROM leads l LEFT JOIN users u ON l.assigned_to = u.id
                  WHERE l.next_activity_date IS NOT NULL AND l.next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-                   AND l.status NOT IN ('converted','closed','dead') AND l.deleted_at IS NULL $leadFilter
+                   AND l.status NOT IN ('converted','closed','dead') AND l.deleted_at IS NULL $leadFilter $tidFilter
                  ORDER BY l.next_activity_date ASC LIMIT 10"
             ) ?: [];
 
@@ -1993,25 +2118,33 @@ class CRMService
             $data['recent_leads'] = $this->db->fetchAll(
                 "SELECT l.id, l.name, l.phone, l.email, l.status, l.lead_score, l.source, l.created_at, u.name as assigned_to_name
                  FROM leads l LEFT JOIN users u ON l.assigned_to = u.id
-                 WHERE l.deleted_at IS NULL $leadFilter
+                 WHERE l.deleted_at IS NULL $leadFilter $tidFilter
                  ORDER BY l.created_at DESC LIMIT 10"
             ) ?: [];
 
             // My interactions (last 7 days)
+            $intWhere = "ci.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+            $intParams = [];
+            if ($tid) { $intWhere .= " AND ci.tenant_id = ?"; $intParams[] = $tid; }
             $data['recent_interactions'] = $this->db->fetchAll(
                 "SELECT ci.*, l.name as lead_name FROM crm_interactions ci
                  LEFT JOIN leads l ON ci.lead_id = l.id
-                 WHERE ci.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                 ORDER BY ci.created_at DESC LIMIT 10"
+                 WHERE $intWhere
+                 ORDER BY ci.created_at DESC LIMIT 10",
+                $intParams
             ) ?: [];
 
             // Deals (if applicable)
             if (in_array($role, ['admin', 'super_admin', 'manager', 'associate', 'agent'])) {
+                $dealWhere = "ld.stage NOT IN ('won','lost')";
+                $dealParams = [];
+                if ($tid) { $dealWhere .= " AND ld.tenant_id = ?"; $dealParams[] = $tid; }
                 $data['deals'] = $this->db->fetchAll(
                     "SELECT ld.*, l.name as lead_name FROM lead_deals ld
                      LEFT JOIN leads l ON ld.lead_id = l.id
-                     WHERE ld.stage NOT IN ('won','lost')
-                     ORDER BY ld.updated_at DESC LIMIT 10"
+                     WHERE $dealWhere
+                     ORDER BY ld.updated_at DESC LIMIT 10",
+                    $dealParams
                 ) ?: [];
                 $data['deal_summary'] = $this->getDealPipelineSummary();
             }
@@ -2019,25 +2152,37 @@ class CRMService
             // Team performance (admin/manager only)
             if (in_array($role, ['admin', 'super_admin', 'manager'])) {
                 $data['team_performance'] = $this->getAgentPerformance();
+                $topWhere = "l.deleted_at IS NULL AND l.assigned_to IS NOT NULL";
+                $topParams = [];
+                if ($tid) { $topWhere .= " AND l.tenant_id = ?"; $topParams[] = $tid; }
                 $data['top_assignees'] = $this->db->fetchAll(
                     "SELECT u.name, l.assigned_to, COUNT(*) as lead_count,
                             SUM(CASE WHEN l.status IN ('won','booking') THEN 1 ELSE 0 END) as won_count
                      FROM leads l JOIN users u ON u.id = l.assigned_to
-                     WHERE l.deleted_at IS NULL AND l.assigned_to IS NOT NULL
-                     GROUP BY l.assigned_to ORDER BY lead_count DESC LIMIT 5"
+                     WHERE $topWhere
+                     GROUP BY l.assigned_to ORDER BY lead_count DESC LIMIT 5",
+                    $topParams
                 ) ?: [];
             }
 
             // Source breakdown
+            $srcWhere = "l.deleted_at IS NULL";
+            $srcParams = [];
+            if ($tid) { $srcWhere .= " AND l.tenant_id = ?"; $srcParams[] = $tid; }
             $data['by_source'] = $this->db->fetchAll(
-                "SELECT source, COUNT(*) as cnt FROM leads l WHERE l.deleted_at IS NULL $leadFilter GROUP BY source ORDER BY cnt DESC"
+                "SELECT source, COUNT(*) as cnt FROM leads l WHERE $srcWhere $leadFilter GROUP BY source ORDER BY cnt DESC",
+                $srcParams
             ) ?: [];
 
             // 7-day trend
+            $trendWhere = "l.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+            $trendParams = [];
+            if ($tid) { $trendWhere .= " AND l.tenant_id = ?"; $trendParams[] = $tid; }
             $data['weekly_trend'] = $this->db->fetchAll(
                 "SELECT DATE(l.created_at) as date, COUNT(*) as cnt
-                 FROM leads l WHERE l.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $leadFilter
-                 GROUP BY DATE(l.created_at) ORDER BY date ASC"
+                 FROM leads l WHERE $trendWhere $leadFilter
+                 GROUP BY DATE(l.created_at) ORDER BY date ASC",
+                $trendParams
             ) ?: [];
 
             return $data;

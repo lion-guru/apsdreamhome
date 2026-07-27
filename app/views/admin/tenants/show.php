@@ -177,7 +177,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
             <div class="card-body d-grid gap-2">
                 <a href="<?= $base ?>/admin/tenants" class="btn btn-outline-secondary btn-sm"><i class="fas fa-list me-2"></i>All Tenants</a>
                 <a href="<?= $base ?>/admin/tenants/dashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-chart-line me-2"></i>Dashboard</a>
-                <a href="<?= $base ?>/admin/tenants/create" class="btn btn-outline-secondary btn-sm"><i class="fas fa-plus me-2"></i>New Tenant</a>
+                <a href="<?= $base ?>/admin/tenants/onboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-plus me-2"></i>New Tenant</a>
             </div>
         </div>
     </div>

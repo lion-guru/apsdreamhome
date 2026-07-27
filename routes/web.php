@@ -4907,6 +4907,9 @@ $router->post('/admin/tenants/{id}/suspend',            'App\\Http\\Controllers\
 $router->post('/admin/tenants/{id}/restore',            'App\\Http\\Controllers\\Admin\\TenantController@restore');
 $router->post('/admin/tenants/{id}/switch',             'App\\Http\\Controllers\\Admin\\TenantController@switchTenant');
 $router->post('/admin/tenants/stop-switch',             'App\\Http\\Controllers\\Admin\\TenantController@stopSwitch');
+$router->get('/admin/tenants/onboard',                 'App\\Http\\Controllers\\Admin\\TenantController@onboard');
+$router->post('/admin/tenants/onboard/save',            'App\\Http\\Controllers\\Admin\\TenantController@onboardSave');
+$router->post('/admin/tenants/onboard/launch',          'App\\Http\\Controllers\\Admin\\TenantController@onboardLaunch');
 
 // ============================================================
 // SAAS BILLING & SUBSCRIPTIONS (Super Admin)

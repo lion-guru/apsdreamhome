@@ -52,6 +52,78 @@ class TenantService
         return (int)($this->currentTenant['id'] ?? 1);
     }
 
+    // ── Tenant Switching (SuperAdmin) ───────────────────────
+
+    /**
+     * Switch SuperAdmin to impersonate a different tenant.
+     * Saves original tenant in session for restore.
+     */
+    public function switchTenant(int $tenantId): array
+    {
+        $tenant = $this->getById($tenantId);
+        if (!$tenant) {
+            return ['success' => false, 'error' => 'Tenant not found'];
+        }
+        if (($tenant['status'] ?? '') === 'suspended') {
+            return ['success' => false, 'error' => 'Cannot switch to a suspended tenant'];
+        }
+
+        // Save original tenant for restore
+        $_SESSION['original_tenant_id'] = $_SESSION['tenant_id'] ?? 1;
+        $_SESSION['tenant_switch_active'] = true;
+        $_SESSION['tenant_switch_name'] = $tenant['name'];
+
+        // Set new tenant
+        $_SESSION['tenant_id'] = $tenantId;
+        \App\Core\Middleware\TenantContext::reset();
+        \App\Core\Middleware\TenantContext::setById($tenantId);
+        $this->setCurrentTenant($tenantId);
+
+        return [
+            'success' => true,
+            'tenant_name' => $tenant['name'],
+            'tenant_id' => $tenantId,
+        ];
+    }
+
+    /**
+     * Restore SuperAdmin to their original tenant.
+     */
+    public function stopTenantSwitch(): array
+    {
+        if (empty($_SESSION['tenant_switch_active'])) {
+            return ['success' => false, 'error' => 'No active tenant switch'];
+        }
+
+        $originalId = (int)($_SESSION['original_tenant_id'] ?? 1);
+        unset($_SESSION['original_tenant_id']);
+        unset($_SESSION['tenant_switch_active']);
+        unset($_SESSION['tenant_switch_name']);
+
+        $_SESSION['tenant_id'] = $originalId;
+        \App\Core\Middleware\TenantContext::reset();
+        \App\Core\Middleware\TenantContext::setById($originalId);
+        $this->setCurrentTenant($originalId);
+
+        return ['success' => true, 'restored_to' => $originalId];
+    }
+
+    /**
+     * Check if a tenant switch is currently active.
+     */
+    public function isSwitchActive(): bool
+    {
+        return !empty($_SESSION['tenant_switch_active']);
+    }
+
+    /**
+     * Get the name of the tenant being impersonated.
+     */
+    public function getSwitchTenantName(): string
+    {
+        return $_SESSION['tenant_switch_name'] ?? '';
+    }
+
     // ── CRUD ────────────────────────────────────────────────
 
     /**

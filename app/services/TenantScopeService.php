@@ -49,6 +49,9 @@ class TenantScopeService
      */
     public static function whereTenant(string $table = 'leads'): string
     {
+        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $table)) {
+            throw new \InvalidArgumentException("Invalid table name: {$table}");
+        }
         return "{$table}.tenant_id = ?";
     }
 
@@ -57,6 +60,9 @@ class TenantScopeService
      */
     public static function andTenant(string $table = 'leads'): string
     {
+        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $table)) {
+            throw new \InvalidArgumentException("Invalid table name: {$table}");
+        }
         return "AND {$table}.tenant_id = ?";
     }
 
@@ -144,6 +150,10 @@ class TenantScopeService
         static $cache = [];
         if (isset($cache[$table])) return $cache[$table];
 
+        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $table)) {
+            $cache[$table] = false;
+            return false;
+        }
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $stmt = $db->prepare("SHOW COLUMNS FROM {$table} LIKE 'tenant_id'");

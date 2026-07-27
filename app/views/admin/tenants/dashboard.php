@@ -17,7 +17,7 @@ $base = BASE_URL ?? '';
             <h4 class="mb-0"><i class="fas fa-cloud me-2"></i>SaaS Tenant Dashboard</h4>
             <p class="mb-0 mt-1" style="opacity:0.85;">Manage all tenants, plans, and subscriptions</p>
         </div>
-        <a href="<?= $base ?>/admin/tenants/create" class="btn btn-light btn-sm">
+        <a href="<?= $base ?>/admin/tenants/onboard" class="btn btn-light btn-sm">
             <i class="fas fa-plus me-1"></i>New Tenant
         </a>
     </div>

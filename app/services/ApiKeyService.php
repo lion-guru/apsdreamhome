@@ -7,8 +7,6 @@ class ApiKeyService
 {
     private $db;
     private $pdo;
-    private $defaultScopes = ['read:leads', 'read:properties', 'read:bookings'];
-    private $defaultRateLimit = 60;
 
     public function __construct($db)
     {
@@ -16,55 +14,51 @@ class ApiKeyService
         $this->pdo = is_object($db) && method_exists($db, 'getPdo') ? $db->getPdo() : $db;
     }
 
-    public function create(string $name, ?int $userId = null, array $scopes = [], int $rateLimit = 60, ?string $expiresAt = null): array
+    public function create(string $name, string $service = '', string $type = 'api_key', string $description = '', ?string $keyValue = null): array
     {
-        $apiKey = 'apk_' . bin2hex(random_bytes(16));
-        $apiSecret = 'aps_' . bin2hex(random_bytes(32));
-        $secretHash = password_hash($apiSecret, PASSWORD_BCRYPT);
+        $actualKey = $keyValue ?: 'apk_' . bin2hex(random_bytes(16));
 
-        $st = $this->db->prepare("INSERT INTO api_keys (name, api_key, api_secret_hash, scopes, user_id, is_active, rate_limit_per_minute, expires_at) VALUES (:n, :k, :h, :s, :u, 1, :r, :e)");
+        $st = $this->db->prepare("INSERT INTO api_keys (key_name, key_value, key_type, service_name, description, is_active) VALUES (:n, :v, :t, :s, :d, 1)");
         $st->execute([
             ':n' => $name,
-            ':k' => $apiKey,
-            ':h' => $secretHash,
-            ':s' => implode(',', $scopes ?: $this->defaultScopes),
-            ':u' => $userId,
-            ':r' => $rateLimit,
-            ':e' => $expiresAt
+            ':v' => $actualKey,
+            ':t' => $type,
+            ':s' => $service,
+            ':d' => $description,
         ]);
 
         return [
             'id' => (int)$this->db->lastInsertId(),
-            'api_key' => $apiKey,
-            'api_secret' => $apiSecret,
-            'name' => $name,
-            'scopes' => $scopes ?: $this->defaultScopes,
-            'rate_limit' => $rateLimit,
-            'expires_at' => $expiresAt,
-            'warning' => 'Save the api_secret now. It will not be shown again.'
+            'key_name' => $name,
+            'key_value' => $actualKey,
+            'key_type' => $type,
+            'service_name' => $service,
+            'description' => $description,
+            'warning' => $keyValue ? null : 'Save this key. It will not be fully shown again.'
         ];
     }
 
-    public function list(int $userId = 0, bool $activeOnly = false): array
+    public function list(bool $activeOnly = false): array
     {
-        $sql = "SELECT id, name, api_key, scopes, user_id, is_active, rate_limit_per_minute, last_used_at, expires_at, created_at FROM api_keys";
+        $sql = "SELECT id, key_name, key_value, key_type, service_name, description, is_active, last_used_at, usage_count, created_at, updated_at FROM api_keys";
         $params = [];
-        $where = [];
-        if ($userId) { $where[] = "user_id = :u"; $params[':u'] = $userId; }
-        if ($activeOnly) { $where[] = "is_active = 1"; }
-        if ($where) $sql .= " WHERE " . implode(' AND ', $where);
+        if ($activeOnly) { $sql .= " WHERE is_active = 1"; }
         $sql .= " ORDER BY created_at DESC";
         try {
             $st = $this->db->prepare($sql);
             $st->execute($params);
-            return $st->fetchAll(PDO::FETCH_ASSOC);
+            $rows = $st->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($rows as &$row) {
+                $row['key_value_masked'] = substr($row['key_value'], 0, 8) . '...' . substr($row['key_value'], -4);
+            }
+            return $rows;
         } catch (\Throwable $e) { return []; }
     }
 
     public function revoke(int $id): bool
     {
         try {
-            $st = $this->db->prepare("UPDATE api_keys SET is_active = 0 WHERE id = :id");
+            $st = $this->db->prepare("UPDATE api_keys SET is_active = 0, updated_at = NOW() WHERE id = :id");
             $st->execute([':id' => $id]);
             return $st->rowCount() > 0;
         } catch (\Throwable $e) { return false; }
@@ -73,7 +67,7 @@ class ApiKeyService
     public function activate(int $id): bool
     {
         try {
-            $st = $this->db->prepare("UPDATE api_keys SET is_active = 1 WHERE id = :id");
+            $st = $this->db->prepare("UPDATE api_keys SET is_active = 1, updated_at = NOW() WHERE id = :id");
             $st->execute([':id' => $id]);
             return $st->rowCount() > 0;
         } catch (\Throwable $e) { return false; }
@@ -88,17 +82,14 @@ class ApiKeyService
         } catch (\Throwable $e) { return false; }
     }
 
-    public function verify(string $apiKey, string $apiSecret): ?array
+    public function verify(string $keyValue): ?array
     {
         try {
-            $st = $this->db->prepare("SELECT * FROM api_keys WHERE api_key = :k AND is_active = 1");
-            $st->execute([':k' => $apiKey]);
+            $st = $this->db->prepare("SELECT * FROM api_keys WHERE key_value = :v AND is_active = 1");
+            $st->execute([':v' => $keyValue]);
             $key = $st->fetch(PDO::FETCH_ASSOC);
             if (!$key) return null;
-            if ($key['expires_at'] && strtotime($key['expires_at']) < time()) return null;
-            if (!password_verify($apiSecret, $key['api_secret_hash'])) return null;
-
-            $this->db->prepare("UPDATE api_keys SET last_used_at = NOW() WHERE id = :id")->execute([':id' => $key['id']]);
+            $this->db->prepare("UPDATE api_keys SET last_used_at = NOW(), usage_count = usage_count + 1 WHERE id = :id")->execute([':id' => $key['id']]);
             return $key;
         } catch (\Throwable $e) { return null; }
     }

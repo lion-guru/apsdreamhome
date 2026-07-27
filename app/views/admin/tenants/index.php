@@ -24,7 +24,7 @@ $base = BASE_URL ?? '';
         </div>
         <div>
             <a href="<?= $base ?>/admin/tenants/dashboard" class="btn btn-outline-light btn-sm me-2"><i class="fas fa-chart-line me-1"></i>Dashboard</a>
-            <a href="<?= $base ?>/admin/tenants/create" class="btn btn-light btn-sm"><i class="fas fa-plus me-1"></i>New Tenant</a>
+            <a href="<?= $base ?>/admin/tenants/onboard" class="btn btn-light btn-sm"><i class="fas fa-plus me-1"></i>New Tenant</a>
         </div>
     </div>
 </div>

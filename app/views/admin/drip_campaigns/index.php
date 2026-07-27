@@ -138,4 +138,4 @@ ob_start();
 </div>
 <?php
 $content = ob_get_clean();
-include APP_PATH . '/views/admin/layouts/admin.php';
+include APP_PATH . '/views/layouts/admin.php';

@@ -99,7 +99,8 @@ class BillingController extends AdminController
         $this->requireAdmin();
 
         $planId        = (int)($_POST['plan_id'] ?? 0);
-        $billingCycle  = $_POST['billing_cycle'] ?? 'monthly';
+        $billingCycle  = in_array($_POST['billing_cycle'] ?? '', ['monthly', 'yearly'])
+            ? $_POST['billing_cycle'] : 'monthly';
 
         if (!$planId) {
             $_SESSION['flash_error'] = 'Please select a plan.';
@@ -112,7 +113,7 @@ class BillingController extends AdminController
         if ($result['success']) {
             $_SESSION['flash_success'] = "Subscription activated: {$result['plan_name']} (₹{$result['amount']}/{$result['billing_cycle']}).";
         } else {
-            $_SESSION['flash_error'] = 'Subscription failed: ' . ($result['error'] ?? 'Unknown error');
+            $_SESSION['flash_error'] = 'Subscription failed. Please check the application logs.';
         }
 
         header("Location: /admin/billing/subscribe/{$tenantId}");
@@ -131,7 +132,7 @@ class BillingController extends AdminController
         if ($result['success']) {
             $_SESSION['flash_success'] = $result['message'] ?? 'Subscription cancelled.';
         } else {
-            $_SESSION['flash_error'] = 'Cancel failed: ' . ($result['error'] ?? 'Unknown error');
+            $_SESSION['flash_error'] = 'Cancel failed. Please check the application logs.';
         }
 
         header("Location: /admin/billing/subscribe/{$tenantId}");
@@ -146,7 +147,8 @@ class BillingController extends AdminController
         $this->requireAdmin();
 
         $planId       = (int)($_POST['new_plan_id'] ?? 0);
-        $billingCycle = $_POST['billing_cycle'] ?? null;
+        $billingCycle = in_array($_POST['billing_cycle'] ?? '', ['monthly', 'yearly', ''])
+            ? ($_POST['billing_cycle'] ?: null) : null;
 
         if (!$planId) {
             $_SESSION['flash_error'] = 'Please select a plan.';
@@ -159,7 +161,7 @@ class BillingController extends AdminController
         if ($result['success']) {
             $_SESSION['flash_success'] = "Plan changed to {$result['plan_name']}.";
         } else {
-            $_SESSION['flash_error'] = 'Plan change failed: ' . ($result['error'] ?? 'Unknown error');
+            $_SESSION['flash_error'] = 'Plan change failed. Please check the application logs.';
         }
 
         header("Location: /admin/billing/subscribe/{$tenantId}");

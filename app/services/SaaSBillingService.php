@@ -88,32 +88,41 @@ class SaaSBillingService
                 ? date('Y-m-d H:i:s', strtotime('+1 year'))
                 : date('Y-m-d H:i:s', strtotime('+1 month'));
 
-            // Cancel any existing active subscription for this tenant
-            $this->deactivateExistingSubscription($tenantId);
+            // Wrap in transaction to prevent race conditions
+            $this->pdo->beginTransaction();
+            try {
+                // Cancel any existing active subscription for this tenant
+                $this->deactivateExistingSubscription($tenantId);
 
-            $st = $this->pdo->prepare("
-                INSERT INTO tenant_subscriptions
-                (tenant_id, plan_id, status, billing_cycle, amount, razorpay_subscription_id, razorpay_customer_id,
-                 current_period_start, current_period_end, created_at, updated_at)
-                VALUES (?, ?, 'active', ?, ?, ?, ?, ?, ?, NOW(), NOW())
-            ");
-            $st->execute([
-                $tenantId, $planId, $billingCycle, $amount,
-                $razorpaySubId, $razorpayCustomerId, $now, $periodEnd,
-            ]);
+                $st = $this->pdo->prepare("
+                    INSERT INTO tenant_subscriptions
+                    (tenant_id, plan_id, status, billing_cycle, amount, razorpay_subscription_id, razorpay_customer_id,
+                     current_period_start, current_period_end, created_at, updated_at)
+                    VALUES (?, ?, 'active', ?, ?, ?, ?, ?, ?, NOW(), NOW())
+                ");
+                $st->execute([
+                    $tenantId, $planId, $billingCycle, $amount,
+                    $razorpaySubId, $razorpayCustomerId, $now, $periodEnd,
+                ]);
 
-            $subscriptionId = (int)$this->pdo->lastInsertId();
+                $subscriptionId = (int)$this->pdo->lastInsertId();
 
-            // Update tenant plan
-            $this->tenantService->update($tenantId, [
-                'plan_id'          => $planId,
-                'max_users'        => $plan['max_users'],
-                'max_leads'        => $plan['max_leads'],
-                'max_properties'   => $plan['max_properties'],
-                'max_associates'   => $plan['max_associates'] ?? 0,
-                'storage_limit_mb' => $plan['storage_limit_mb'] ?? 100,
-                'status'           => 'active',
-            ]);
+                // Update tenant plan
+                $this->tenantService->update($tenantId, [
+                    'plan_id'          => $planId,
+                    'max_users'        => $plan['max_users'],
+                    'max_leads'        => $plan['max_leads'],
+                    'max_properties'   => $plan['max_properties'],
+                    'max_associates'   => $plan['max_associates'] ?? 0,
+                    'storage_limit_mb' => $plan['storage_limit_mb'] ?? 100,
+                    'status'           => 'active',
+                ]);
+
+                $this->pdo->commit();
+            } catch (\Throwable $txErr) {
+                $this->pdo->rollBack();
+                throw $txErr;
+            }
 
             return [
                 'success'           => true,
@@ -239,8 +248,15 @@ class SaaSBillingService
                 return $this->subscribeTenant($tenantId, $newPlanId, $cycle);
             }
 
-            // No Razorpay sub (was free plan) — create new
-            $this->deactivateExistingSubscription($tenantId);
+            // No Razorpay sub (was free plan) — deactivate + create new in transaction
+            $this->pdo->beginTransaction();
+            try {
+                $this->deactivateExistingSubscription($tenantId);
+                $this->pdo->commit();
+            } catch (\Throwable $txErr) {
+                $this->pdo->rollBack();
+                throw $txErr;
+            }
             return $this->subscribeTenant($tenantId, $newPlanId, $cycle);
         } catch (\Throwable $e) {
             error_log('SaaSBillingService::changePlan error: ' . $e->getMessage());
@@ -256,15 +272,21 @@ class SaaSBillingService
     public function handleWebhook(array $payload, string $signature = null): array
     {
         try {
-            // Verify signature if webhook_secret is set
+            // Verify signature — REJECT if secret not configured or signature missing
             $webhookSecret = $this->getWebhookSecret();
-            if ($webhookSecret && $signature) {
-                $valid = $this->razorpay->verifyWebhookSignature(
-                    json_encode($payload), $signature
-                );
-                if (!$valid) {
-                    return ['success' => false, 'error' => 'Invalid webhook signature'];
-                }
+            if (!$webhookSecret) {
+                error_log('SaaSBillingService::handleWebhook — webhook secret not configured, rejecting');
+                return ['success' => false, 'error' => 'Webhook secret not configured'];
+            }
+            if (!$signature) {
+                error_log('SaaSBillingService::handleWebhook — missing signature header');
+                return ['success' => false, 'error' => 'Missing webhook signature'];
+            }
+            $valid = $this->razorpay->verifyWebhookSignature(
+                json_encode($payload), $signature
+            );
+            if (!$valid) {
+                return ['success' => false, 'error' => 'Invalid webhook signature'];
             }
 
             $event = $payload['event'] ?? '';
