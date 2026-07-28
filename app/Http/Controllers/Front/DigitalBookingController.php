@@ -418,6 +418,51 @@ class DigitalBookingController extends BaseController
         ]);
     }
 
+    /**
+     * Finalize digital booking — POST /booking/digital/{bookingNumber}/submit
+     */
+    public function submit($bookingNumber)
+    {
+        $this->requireLogin();
+        $this->validateCsrfOrFail();
+
+        $booking = $this->getBookingByNumber($bookingNumber);
+        if (!$booking || (int)($booking['customer_id'] ?? 0) !== (int)($_SESSION['user_id'] ?? 0)) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => 'Booking not found']);
+            exit;
+        }
+
+        $bookingId = (int)$booking['id'];
+        $token = $_POST['booking_token'] ?? '';
+        if (!$this->verifyBookingToken($bookingId, $token)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Invalid or expired token']);
+            exit;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = $db->getConnection();
+
+            // Mark terms accepted
+            $pdo->prepare("UPDATE plot_bookings SET terms_accepted = 1, updated_at = NOW() WHERE id = ?")->execute([$bookingId]);
+
+            // Check completion (signs docs + generates EMI schedule)
+            $this->checkBookingCompletion($bookingId);
+
+            echo json_encode([
+                'success'  => true,
+                'redirect' => '/booking/digital/' . urlencode($bookingNumber) . '/success',
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[DigitalBookingController::submit] ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Server error']);
+        }
+        exit;
+    }
+
     // ========== Helper Methods ==========
 
     /**

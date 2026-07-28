@@ -270,7 +270,7 @@ class ColonyFeasibilityService
                     'available_plots'     => (int) $colony['available_plots'],
                     'current_starting_price' => (float) $colony['starting_price'],
                     'recommended_price'   => $latest ? (float) $latest['recommended_price_ppsf'] : null,
-                    'cost_basis'          => $latest ? (float) $latest['raw_cost_per_sqft'] : null,
+                    'cost_basis'          => $latest ? (float) ($latest['raw_cost_per_sqft'] ?? $latest['raw_cost_basis_ppsf'] ?? 0) : null,
                     'last_calculated'     => $latest ? $latest['created_at'] : null,
                 ];
             }

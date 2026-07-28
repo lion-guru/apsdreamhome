@@ -454,8 +454,31 @@ class CoreAuthController extends BaseController
             'associate' => '/associate/dashboard',
             'agent' => '/agent/dashboard',
             'telecaller' => '/employee/dashboard',
+            'ceo' => '/admin/dashboard/ceo',
+            'cfo' => '/admin/dashboard/cfo',
+            'cto' => '/admin/dashboard/cto',
+            'coo' => '/admin/dashboard/coo',
+            'cmo' => '/admin/dashboard/cmo',
+            'chro' => '/admin/dashboard/chro',
+            'sales_director' => '/admin/dashboard/sales',
+            'marketing_director' => '/admin/dashboard/marketing',
+            'construction_director' => '/admin/dashboard/operations',
+            'finance_director' => '/admin/dashboard/finance',
+            'hr_director' => '/admin/dashboard/hr',
+            'department_manager' => '/admin/dashboard',
+            'project_manager' => '/admin/dashboard',
+            'sales_manager' => '/admin/dashboard/sales',
+            'hr_manager' => '/admin/dashboard/hr',
+            'marketing_manager' => '/admin/dashboard/marketing',
+            'finance_manager' => '/admin/dashboard/finance',
+            'property_manager' => '/admin/dashboard',
+            'it_manager' => '/admin/dashboard',
+            'operations_manager' => '/admin/dashboard',
+            'legal_advisor' => '/admin/dashboard',
+            'chartered_accountant' => '/admin/dashboard/finance',
+            'senior_developer' => '/admin/dashboard',
         ];
-        $redirect = $map[$role] ?? '/user/dashboard';
+        $redirect = $map[$role] ?? '/admin/dashboard';
         $roleLabels = [
             'admin' => 'Admin Panel',
             'super_admin' => 'Super Admin Panel',
@@ -465,6 +488,12 @@ class CoreAuthController extends BaseController
             'agent' => 'Agent Dashboard',
             'telecaller' => 'Telecaller Dashboard',
             'customer' => 'User Dashboard',
+            'ceo' => 'CEO Dashboard',
+            'cfo' => 'CFO Dashboard',
+            'cto' => 'CTO Dashboard',
+            'coo' => 'COO Dashboard',
+            'cmo' => 'CMO Dashboard',
+            'chro' => 'CHRO Dashboard',
         ];
         $label = $roleLabels[$role] ?? 'Dashboard';
         $_SESSION['login_success'] = "Welcome! Redirecting to {$label}...";

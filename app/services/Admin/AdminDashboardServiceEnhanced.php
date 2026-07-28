@@ -4,6 +4,7 @@ namespace App\Services\Admin;
 
 use App\Core\Database\Database;
 use App\Services\Auth\AuthenticationService;
+use App\Services\TenantScopeService;
 
 /**
  * Admin Dashboard Service - APS Dream Home
@@ -14,6 +15,10 @@ class AdminDashboardService
 {
     private $db;
     private $authService;
+
+    private function tid(): ?int {
+        return TenantScopeService::isolationEnabled() ? TenantScopeService::tenantId() : null;
+    }
 
     public function __construct()
     {
@@ -89,12 +94,15 @@ class AdminDashboardService
         $stats['recent_bookings'] = $result['recent_bookings'] ?? 0;
 
         // Total leads
-        $result = $this->db->fetchOne("SELECT COUNT(*) as total_leads FROM leads WHERE deleted_at IS NULL");
+        $tid = $this->tid();
+        $leadTidSql = $tid ? ' AND leads.tenant_id = ?' : '';
+        $result = $this->db->fetchOne("SELECT COUNT(*) as total_leads FROM leads WHERE deleted_at IS NULL{$leadTidSql}", $tid ? [$tid] : []);
         $stats['total_leads'] = $result['total_leads'] ?? 0;
 
         // New leads (last 7 days)
         $result = $this->db->fetchOne(
-            "SELECT COUNT(*) as new_leads FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND deleted_at IS NULL"
+            "SELECT COUNT(*) as new_leads FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND deleted_at IS NULL{$leadTidSql}",
+            $tid ? [$tid] : []
         );
         $stats['new_leads'] = $result['new_leads'] ?? 0;
 
@@ -219,18 +227,22 @@ class AdminDashboardService
     {
         $data = [];
 
+        $tid = $this->tid();
+        $leadTidSql = $tid ? ' AND leads.tenant_id = ?' : '';
+        $leadTidParams = $tid ? [$tid] : [];
+
         // Leads by status
-        $sql = "SELECT status, COUNT(*) as count FROM leads WHERE deleted_at IS NULL GROUP BY status";
-        $data['leads_by_status'] = $this->db->fetchAll($sql);
+        $sql = "SELECT status, COUNT(*) as count FROM leads WHERE deleted_at IS NULL{$leadTidSql} GROUP BY status";
+        $data['leads_by_status'] = $this->db->fetchAll($sql, $leadTidParams);
 
         // Leads by source
-        $sql = "SELECT source, COUNT(*) as count FROM leads WHERE deleted_at IS NULL GROUP BY source";
-        $data['leads_by_source'] = $this->db->fetchAll($sql);
+        $sql = "SELECT source, COUNT(*) as count FROM leads WHERE deleted_at IS NULL{$leadTidSql} GROUP BY source";
+        $data['leads_by_source'] = $this->db->fetchAll($sql, $leadTidParams);
 
         // Recent leads
         $sql = "SELECT id, name, email, phone, source, status, created_at
-                FROM leads WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT 5";
-        $data['recent_leads'] = $this->db->fetchAll($sql);
+                FROM leads WHERE deleted_at IS NULL{$leadTidSql} ORDER BY created_at DESC LIMIT 5";
+        $data['recent_leads'] = $this->db->fetchAll($sql, $leadTidParams);
 
         return $data;
     }
@@ -416,8 +428,11 @@ class AdminDashboardService
      */
     private function getLeadsToday()
     {
+        $tid = $this->tid();
+        $leadTidSql = $tid ? ' AND leads.tenant_id = ?' : '';
         $result = $this->db->fetchOne(
-            "SELECT COUNT(*) as count FROM leads WHERE DATE(created_at) = CURDATE() AND deleted_at IS NULL"
+            "SELECT COUNT(*) as count FROM leads WHERE DATE(created_at) = CURDATE() AND deleted_at IS NULL{$leadTidSql}",
+            $tid ? [$tid] : []
         );
         return $result['count'] ?? 0;
     }

@@ -17,6 +17,20 @@ class PropertyService
             ]);
         }
     }
+
+    /**
+     * Get current tenant ID for query scoping.
+     */
+    private function tid(): int
+    {
+        try {
+            if (class_exists('\App\Core\Middleware\TenantContext')) {
+                $id = \App\Core\Middleware\TenantContext::getId();
+                if ($id > 0) return $id;
+            }
+        } catch (\Throwable $e) {}
+        return 1;
+    }
     
     public function getProperties($filters = [], $limit = 20, $offset = 0) {
         $sql = "SELECT p.*, c.name as colony_name, d.name as district_name, s.name as state_name 
@@ -24,9 +38,9 @@ class PropertyService
                 LEFT JOIN colonies c ON p.colony_id = c.id 
                 LEFT JOIN districts d ON c.district_id = d.id 
                 LEFT JOIN states s ON d.state_id = s.id 
-                WHERE 1=1";
+                WHERE p.tenant_id = :tenant_id";
         
-        $params = [];
+        $params = [':tenant_id' => $this->tid()];
         
         if (!empty($filters['colony_id'])) {
             $sql .= " AND p.colony_id = :colony_id";
@@ -65,7 +79,7 @@ class PropertyService
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     public function getProperty($id) {
@@ -74,9 +88,9 @@ class PropertyService
                                      LEFT JOIN colonies c ON p.colony_id = c.id 
                                      LEFT JOIN districts d ON c.district_id = d.id 
                                      LEFT JOIN states s ON d.state_id = s.id 
-                                     WHERE p.id = :id");
-        $stmt->execute([':id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+                                     WHERE p.id = :id AND p.tenant_id = :tenant_id");
+        $stmt->execute([':id' => $id, ':tenant_id' => $this->tid()]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
     
     public function getColonies($filters = []) {
@@ -98,7 +112,7 @@ class PropertyService
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     public function getProjects($filters = []) {
@@ -121,7 +135,7 @@ class PropertyService
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     public function getResellProperties($filters = []) {
@@ -148,7 +162,7 @@ class PropertyService
         try {
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
             return [];
         }
@@ -157,7 +171,7 @@ class PropertyService
     public function getStates() {
         $stmt = $this->db->prepare("SELECT * FROM states WHERE is_active = 1 ORDER BY name");
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     public function getDistricts($state_id = null) {
@@ -175,7 +189,7 @@ class PropertyService
         $stmt = $this->db->prepare($sql);
         $stmt->execute($state_id ? [':state_id' => $state_id] : []);
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     public function searchProperties($query, $filters = []) {
@@ -184,11 +198,10 @@ class PropertyService
                 LEFT JOIN colonies c ON p.colony_id = c.id 
                 LEFT JOIN districts d ON c.district_id = d.id 
                 LEFT JOIN states s ON d.state_id = s.id 
-                WHERE (p.plot_number LIKE :query OR c.name LIKE :query OR d.name LIKE :query OR s.name LIKE :query)";
+                WHERE p.tenant_id = :tenant_id AND (p.plot_number LIKE :query OR c.name LIKE :query OR d.name LIKE :query OR s.name LIKE :query)";
         
-        $params = [':query' => '%' . $query . '%'];
+        $params = [':tenant_id' => $this->tid(), ':query' => '%' . $query . '%'];
         
-        // Add other filters
         if (!empty($filters['colony_id'])) {
             $sql .= " AND p.colony_id = :colony_id";
             $params[':colony_id'] = $filters['colony_id'];
@@ -199,7 +212,7 @@ class PropertyService
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }
 ?>

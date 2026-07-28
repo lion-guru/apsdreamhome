@@ -18,6 +18,31 @@ class AdminMenuService
     private $currentRole;
     private $currentUserId;
 
+    /**
+     * URLs that should only be visible to the platform owner (tenant_id = 1).
+     * SaaS tenant admins never see these.
+     */
+    private const SUPERADMIN_ONLY_URLS = [
+        '/admin/tenants',
+        '/admin/tenants/dashboard',
+        '/admin/godmode',
+        '/admin/billing',
+        '/admin/billing/plans',
+        '/admin/menu-permissions',
+        '/admin/features/registrations',
+        '/admin/backup',
+        '/admin/cache',
+        '/admin/production-checklist',
+        '/admin/settings',         // General Settings — platform-level
+        '/admin/company/settings',
+        '/admin/company-credentials',
+        '/admin/localization',
+        '/admin/api/integrations',
+        '/admin/api/developers',
+        '/admin/api-docs',
+        '/admin/webhooks',
+    ];
+
     public function __construct()
     {
         $this->db = Database::getInstance();
@@ -33,9 +58,10 @@ class AdminMenuService
         $role = $role ?? $this->currentRole;
         $userId = $userId ?? $this->currentUserId;
 
-        // Super admin and admin see everything
+        // Super admin and admin see everything (filtered by tenant if not platform owner)
         if ($role === RBACManager::ROLE_SUPER_ADMIN || $role === RBACManager::ROLE_ADMIN) {
-            return $this->getAllMenuItems();
+            $items = $this->getAllMenuItems();
+            return $this->filterForTenant($items);
         }
 
         // Employee role: resolve designation → sub-role for granular access
@@ -120,6 +146,41 @@ class AdminMenuService
         return Cache::remember('admin_sidebar_all', function () use ($query) {
             return $this->db->fetchAll($query);
         }, 3600);
+    }
+
+    /**
+     * Filter out superadmin-only menu items for non-platform-owner tenants.
+     * SaaS tenant admins should not see: tenants mgmt, godmode, billing plans,
+     * backup, cache, menu permissions, platform settings, etc.
+     */
+    private function filterForTenant(array $items): array
+    {
+        $tenantId = 1;
+        try {
+            if (class_exists('\App\Core\Middleware\TenantContext')) {
+                $tenantId = \App\Core\Middleware\TenantContext::getId();
+            } elseif (!empty($_SESSION['tenant_id'])) {
+                $tenantId = (int)$_SESSION['tenant_id'];
+            }
+        } catch (\Throwable $e) {
+            // Default to 1 (platform owner)
+        }
+
+        // Platform owner sees everything
+        if ($tenantId <= 1) {
+            return $items;
+        }
+
+        // Filter out superadmin-only items
+        return array_filter($items, function ($item) {
+            $url = $item['url'] ?? '';
+            foreach (self::SUPERADMIN_ONLY_URLS as $blocked) {
+                if ($url === $blocked || strpos($url, $blocked . '/') === 0) {
+                    return false;
+                }
+            }
+            return true;
+        });
     }
 
     /**

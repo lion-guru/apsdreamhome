@@ -183,17 +183,25 @@ $base = BASE_URL;
                 </div>
             </div>
 
+            <?php
+                $s = $stats ?? ['total_paid' => 10560320, 'commission_count' => 311, 'rank_count' => 7, 'max_rate' => 20];
+                $formatAmount = function($amt) {
+                    if ($amt >= 10000000) return '₹' . round($amt / 10000000, 2) . 'Cr';
+                    if ($amt >= 100000) return '₹' . round($amt / 100000, 2) . 'L';
+                    return '₹' . number_format($amt);
+                };
+            ?>
             <div class="stats-bar">
                 <div class="stat-item">
-                    <span class="stat-value">₹1.05Cr</span>
+                    <span class="stat-value"><?= $formatAmount($s['total_paid']) ?></span>
                     <span class="stat-label">Total Paid</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-value">311</span>
+                    <span class="stat-value"><?= number_format($s['commission_count']) ?></span>
                     <span class="stat-label">Commissions</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-value">20%</span>
+                    <span class="stat-value"><?= (int)$s['max_rate'] ?>%</span>
                     <span class="stat-label">Max Rate</span>
                 </div>
             </div>
@@ -211,15 +219,15 @@ $base = BASE_URL;
 
             <div class="quick-stats">
                 <div class="quick-stat">
-                    <span class="quick-stat-value">₹1.05Cr</span>
+                    <span class="quick-stat-value"><?= $formatAmount($s['total_paid']) ?></span>
                     <span class="quick-stat-label">Total Paid</span>
                 </div>
                 <div class="quick-stat">
-                    <span class="quick-stat-value">311</span>
+                    <span class="quick-stat-value"><?= number_format($s['commission_count']) ?></span>
                     <span class="quick-stat-label">Commissions</span>
                 </div>
                 <div class="quick-stat">
-                    <span class="quick-stat-value">7</span>
+                    <span class="quick-stat-value"><?= (int)$s['rank_count'] ?></span>
                     <span class="quick-stat-label">Rank Levels</span>
                 </div>
             </div>

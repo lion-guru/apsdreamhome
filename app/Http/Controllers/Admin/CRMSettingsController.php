@@ -37,6 +37,18 @@ class CRMSettingsController extends AdminController
         $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance()->getConnection();
 
+        // Ensure crm_settings table exists
+        try {
+            $db->query("CREATE TABLE IF NOT EXISTS crm_settings (
+                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                setting_key VARCHAR(100) NOT NULL UNIQUE,
+                setting_value TEXT,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        } catch (\Throwable $e) {
+            error_log('CRMSettings create table error: ' . $e->getMessage());
+        }
+
         $settings = [
             'crm_enabled' => $_POST['crm_enabled'] ?? '1',
             'crm_lead_create_roles' => $_POST['crm_lead_create_roles'] ?? 'admin,manager,associate,agent',
@@ -55,14 +67,19 @@ class CRMSettingsController extends AdminController
             'crm_kanban_enabled' => $_POST['crm_kanban_enabled'] ?? '1',
         ];
 
-        foreach ($settings as $key => $value) {
-            $db->query(
-                "INSERT INTO crm_settings (setting_key, setting_value, updated_at) VALUES (?, ?, NOW()) ON DUPLICATE KEY UPDATE setting_value = ?, updated_at = NOW()",
-                [$key, $value, $value]
-            );
+        try {
+            foreach ($settings as $key => $value) {
+                $db->query(
+                    "INSERT INTO crm_settings (setting_key, setting_value, updated_at) VALUES (?, ?, NOW()) ON DUPLICATE KEY UPDATE setting_value = ?, updated_at = NOW()",
+                    [$key, $value, $value]
+                );
+            }
+            $this->setFlash('success', 'CRM settings saved successfully');
+        } catch (\Throwable $e) {
+            error_log('CRMSettings save error: ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to save settings: ' . $e->getMessage());
         }
 
-        $this->setFlash('success', 'CRM settings saved successfully');
         return $this->redirect('/admin/crm-settings');
     }
 }

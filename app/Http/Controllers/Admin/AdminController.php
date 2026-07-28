@@ -657,7 +657,7 @@ class AdminController extends BaseController
     public function requireAdmin()
     {
         // Allow any role with RBAC menu permissions — sidebar handles item-level filtering
-        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller'];
+        $allowedRoles = ['super_admin', 'admin', 'manager', 'associate', 'agent', 'employee', 'telecaller', 'ceo', 'cfo', 'cto', 'coo', 'cmo', 'chro', 'sales_director', 'marketing_director', 'construction_director', 'finance_director', 'hr_director', 'department_manager', 'project_manager', 'sales_manager', 'hr_manager', 'marketing_manager', 'finance_manager', 'property_manager', 'it_manager', 'operations_manager', 'legal_advisor', 'chartered_accountant', 'senior_developer'];
         $role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? '';
         if (!$this->isLoggedIn() || !in_array($role, $allowedRoles)) {
             $this->setFlash('error', 'Admin access required');

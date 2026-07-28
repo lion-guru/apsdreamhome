@@ -326,6 +326,7 @@ $router->post('/booking/digital/{bookingNumber}/emi-confirm', 'Front\\DigitalBoo
 $router->get('/booking/digital/{bookingNumber}/download/{docId}', 'Front\\DigitalBookingController@downloadDocument');
 $router->get('/booking/digital/{bookingNumber}/documents', 'Front\\DigitalBookingController@getDocuments');
 $router->get('/booking/digital/{bookingNumber}/success', 'Front\\DigitalBookingController@success');
+$router->post('/booking/digital/{bookingNumber}/submit', 'Front\\DigitalBookingController@submit');
 $router->get('/navigation', 'Front\\PageController@navigation');
 $router->get('/downloads', 'Front\\PageController@downloads');
 $router->get('/under-construction', 'Front\\PageController@underConstruction');

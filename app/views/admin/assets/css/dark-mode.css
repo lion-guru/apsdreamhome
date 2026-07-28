@@ -7,7 +7,7 @@
   --sidebar-bg: linear-gradient(135deg, #17181a 0%, #232526 100%);
   --sidebar-active: linear-gradient(90deg, #1cc88a 0%, #4e73df 100%);
   --sidebar-text: #e3eafc;
-  --sidebar-hover: rgba(76,175,80,0.07);
+  --sidebar-hover: rgba(76, 175, 80, 0.07);
   --header-bg: #1f2228;
   --text-main: #e3eafc;
   --text-muted: #a9b5c9;
@@ -29,7 +29,7 @@ body.dark-mode {
 .dark-mode .modern-card {
   background: var(--card-bg) !important;
   color: var(--text-main) !important;
-  box-shadow: 0 2px 12px rgba(30,40,50,0.13);
+  box-shadow: 0 2px 12px rgba(30, 40, 50, 0.13);
 }
 
 .dark-mode .dashboard-card .card-header,
@@ -55,11 +55,13 @@ body.dark-mode {
   color: var(--sidebar-text) !important;
 }
 
-.dark-mode .sidebar-menu ul li.active, .dark-mode .sidebar-menu ul li:hover {
+.dark-mode .sidebar-menu ul li.active,
+.dark-mode .sidebar-menu ul li:hover {
   background: var(--sidebar-active) !important;
 }
 
-.dark-mode .sidebar-menu ul li a:hover, .dark-mode .sidebar-menu ul li.active > a {
+.dark-mode .sidebar-menu ul li a:hover,
+.dark-mode .sidebar-menu ul li.active > a {
   color: var(--warning) !important;
   background: var(--sidebar-hover) !important;
 }
@@ -71,11 +73,26 @@ body.dark-mode {
   background-clip: text;
 }
 
-.dark-mode .badge.bg-primary { background-color: var(--accent) !important; color: #fff; }
-.dark-mode .badge.bg-success { background-color: var(--accent2) !important; color: #fff; }
-.dark-mode .badge.bg-warning { background-color: var(--warning) !important; color: #232526; }
-.dark-mode .badge.bg-danger { background-color: var(--danger) !important; color: #fff; }
-.dark-mode .badge.bg-info { background-color: var(--info) !important; color: #fff; }
+.dark-mode .badge.bg-primary {
+  background-color: var(--accent) !important;
+  color: #fff;
+}
+.dark-mode .badge.bg-success {
+  background-color: var(--accent2) !important;
+  color: #fff;
+}
+.dark-mode .badge.bg-warning {
+  background-color: var(--warning) !important;
+  color: #232526;
+}
+.dark-mode .badge.bg-danger {
+  background-color: var(--danger) !important;
+  color: #fff;
+}
+.dark-mode .badge.bg-info {
+  background-color: var(--info) !important;
+  color: #fff;
+}
 
 .dark-mode .list-group-item {
   background: var(--secondary-bg) !important;
@@ -196,6 +213,99 @@ body.dark-mode {
   color: #fff !important;
 }
 
+/* ==========================================
+   GLOBAL DARK MODE TEXT CONTRAST FIX
+   Targets inline style colors that are too
+   dark on dark backgrounds (#1e293b, #0f172a)
+   ========================================== */
+
+/* Override inline color: #64748b (slate-500) — too dark on dark bg */
+.dark-mode [style*='color: #64748b'],
+.dark-mode [style*='color:#64748b'],
+.dark-mode [style*='color: #64748b'],
+.dark-mode [style*='color:#64748b'] {
+  color: #94a3b8 !important;
+}
+
+/* Override inline color: #475569 (slate-600) — even darker */
+.dark-mode [style*='color: #475569'],
+.dark-mode [style*='color:#475569'],
+.dark-mode [style*='color: #475569'],
+.dark-mode [style*='color:#475569'] {
+  color: #94a3b8 !important;
+}
+
+/* Override inline color: #334155 (slate-700) — almost invisible on dark bg */
+.dark-mode [style*='color: #334155'],
+.dark-mode [style*='color:#334155'],
+.dark-mode [style*='color: #334155'],
+.dark-mode [style*='color:#334155'] {
+  color: #94a3b8 !important;
+}
+
+/* Override background + color combos: #64748b bg with dark text */
+.dark-mode [style*='background: #334155'] [style*='color: #64748b'],
+.dark-mode [style*='background: #1e293b'] [style*='color: #64748b'],
+.dark-mode [style*='background: #0f172a'] [style*='color: #64748b'] {
+  color: #cbd5e1 !important;
+}
+
+/* Generic dark-mode text element overrides (when NOT inside dashboard-card) */
+.dark-mode p:not(.card-text),
+.dark-mode label,
+.dark-mode .form-label,
+.dark-mode small,
+.dark-mode .text-muted {
+  color: var(--text-muted) !important;
+}
+
+.dark-mode td,
+.dark-mode th {
+  color: var(--text-main) !important;
+}
+
+.dark-mode .card-title,
+.dark-mode .card-header h5,
+.dark-mode .card-header h6 {
+  color: var(--text-main) !important;
+}
+
+/* Override Bootstrap's .text-secondary (used in many views) */
+.dark-mode .text-secondary,
+.dark-mode .text-secondary:hover {
+  color: #94a3b8 !important;
+}
+
+/* Override Bootstrap's .text-body (used in cards/tables) */
+.dark-mode .text-body {
+  color: var(--text-main) !important;
+}
+
+/* Fix select/dropdown text on dark bg */
+.dark-mode select,
+.dark-mode .form-select {
+  background-color: #23272f !important;
+  color: var(--text-main) !important;
+  border-color: #334155 !important;
+}
+
+/* Fix placeholder text */
+.dark-mode ::placeholder {
+  color: #64748b !important;
+  opacity: 1;
+}
+
+/* Fix links that inherit dark gray */
+.dark-mode a.text-muted,
+.dark-mode .text-muted a {
+  color: var(--text-muted) !important;
+}
+
+/* Fix alert text */
+.dark-mode .alert {
+  color: var(--text-main) !important;
+}
+
 /* End improved dark mode */
 
 /* Chart.js dark mode tweaks */
@@ -204,7 +314,9 @@ body.dark-mode {
 }
 
 /* Dashboard new widgets dark mode */
-.dark-mode .card, .dark-mode .border-0, .dark-mode .table {
+.dark-mode .card,
+.dark-mode .border-0,
+.dark-mode .table {
   background: var(--card-bg, #23272f) !important;
   color: var(--text-main, #e3eafc) !important;
   border-color: #23272f !important;
@@ -225,14 +337,16 @@ body.dark-mode {
   background: #23272f !important;
 }
 
-.dark-mode .modern-page-header, .dark-mode .page-header {
+.dark-mode .modern-page-header,
+.dark-mode .page-header {
   background: linear-gradient(90deg, #232526 0%, #23272f 100%) !important;
   color: var(--text-main) !important;
   border-radius: 1.5rem;
-  box-shadow: 0 4px 24px rgba(41,98,255,0.10);
+  box-shadow: 0 4px 24px rgba(41, 98, 255, 0.1);
 }
 
-.dark-mode .modern-page-header .gradient-text, .dark-mode .page-header .gradient-text {
+.dark-mode .modern-page-header .gradient-text,
+.dark-mode .page-header .gradient-text {
   background: linear-gradient(90deg, #4e73df, #1cc88a);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

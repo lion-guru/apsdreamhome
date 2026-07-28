@@ -30,14 +30,14 @@
                                 <tbody>
                                     <?php foreach ($duplicates as $d): ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($d['lead1_name'] ?? '') ?></td>
-                                            <td><?= htmlspecialchars($d['lead2_name'] ?? '') ?></td>
-                                            <td><span class="badge bg-warning"><?= htmlspecialchars($d['match_field'] ?? '') ?></span></td>
+                                            <td><?= htmlspecialchars($d['name1'] ?? $d['lead1_name'] ?? '') ?></td>
+                                            <td><?= htmlspecialchars($d['name2'] ?? $d['lead2_name'] ?? '') ?></td>
+                                            <td><span class="badge bg-warning"><?= htmlspecialchars($d['match_type'] ?? $d['match_field'] ?? '') ?></span></td>
                                             <td>
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/crm/dedup/merge" style="display:inline">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                                                    <input type="hidden" name="keep_id" value="<?= $d['lead1_id'] ?>">
-                                                    <input type="hidden" name="remove_id" value="<?= $d['lead2_id'] ?>">
+                                                    <input type="hidden" name="keep_id" value="<?= $d['id1'] ?? $d['lead1_id'] ?? '' ?>">
+                                                    <input type="hidden" name="remove_id" value="<?= $d['id2'] ?? $d['lead2_id'] ?? '' ?>">
                                                     <button class="btn btn-sm btn-success" onclick="return confirm('Merge leads?')"><i class="fas fa-code-branch me-1"></i>Merge</button>
                                                 </form>
                                             </td>

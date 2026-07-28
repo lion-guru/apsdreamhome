@@ -32,11 +32,17 @@ use PDO;
 use Exception;
 use RuntimeException;
 use InvalidArgumentException;
+use App\Services\TenantScopeService;
 
 class BookingLifecycleService
 {
     /** @var PDO */
     protected $db;
+
+    private function tid(): ?int
+    {
+        return TenantScopeService::isolationEnabled() ? TenantScopeService::tenantId() : null;
+    }
 
     /** Valid booking status set (mirrors plot_bookings.status ENUM). */
     public const STATUSES = [
@@ -160,14 +166,12 @@ class BookingLifecycleService
             $commissionAmt  = round($totalValue * $commissionPct / 100, 2);
             $bookingNumber  = $this->generateBookingNumber();
 
-            $sql = "INSERT INTO plot_bookings
-                (plot_id, customer_id, booking_number, booking_date,
+            $cols = "plot_id, customer_id, booking_number, booking_date,
                  total_plot_value, booking_amount, agreement_value,
                  status, sales_manager_id, channel, associate_id,
-                 commission_pct, commission_amount, notes)
-                VALUES (?, ?, ?, CURDATE(), ?, ?, ?, 'token_paid', ?, ?, ?, ?, ?, ?)";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
+                 commission_pct, commission_amount, notes";
+            $vals = "?, ?, ?, CURDATE(), ?, ?, ?, 'token_paid', ?, ?, ?, ?, ?, ?";
+            $params = [
                 $plotId,
                 $customerId,
                 $bookingNumber,
@@ -180,7 +184,10 @@ class BookingLifecycleService
                 $commissionPct,
                 $commissionAmt,
                 (string)($data['notes'] ?? ''),
-            ]);
+            ];
+            if ($tid = $this->tid()) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
+            $stmt = $this->db->prepare("INSERT INTO plot_bookings ($cols) VALUES ($vals)");
+            $stmt->execute($params);
             $bookingId = (int)$this->db->lastInsertId();
 
             // Audit trail
@@ -418,6 +425,7 @@ class BookingLifecycleService
                 $where[] = 'pb.booking_date <= ?';
                 $params[] = $filters['date_to'];
             }
+            if ($tid = $this->tid()) { $where[] = 'pb.tenant_id = ?'; $params[] = $tid; }
 
             $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
             $page     = max(1, (int)($filters['page'] ?? 1));
@@ -670,17 +678,19 @@ class BookingLifecycleService
     public function getOverdueInstallments(): array
     {
         try {
+            $where = "(bps.status = 'overdue') OR (bps.status = 'pending' AND bps.due_date < CURDATE())";
+            $params = [];
+            if ($tid = $this->tid()) { $where .= " AND pb.tenant_id = ?"; $params[] = $tid; }
             $stmt = $this->db->prepare(
                 "SELECT bps.*, pb.booking_number, u.name AS customer_name, u.phone AS customer_phone
                  FROM booking_payment_schedules bps
                  JOIN plot_bookings pb ON pb.id = bps.booking_id
                  LEFT JOIN users u ON u.id = pb.customer_id
-                 WHERE (bps.status = 'overdue')
-                    OR (bps.status = 'pending' AND bps.due_date < CURDATE())
+                 WHERE $where
                  ORDER BY bps.due_date ASC
                  LIMIT 200"
             );
-            $stmt->execute();
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('[BookingLifecycleService::getOverdueInstallments] ' . $e->getMessage());
@@ -1042,7 +1052,9 @@ class BookingLifecycleService
             'by_status'         => [],
         ];
         try {
-            $totalBookings = (int)$this->db->query("SELECT COUNT(*) FROM plot_bookings")->fetchColumn();
+            $tid = $this->tid();
+            $tenantSql = $tid ? " WHERE tenant_id = $tid" : "";
+            $totalBookings = (int)$this->db->query("SELECT COUNT(*) FROM plot_bookings$tenantSql")->fetchColumn();
             $activeEmi = (int)$this->db->query(
                 "SELECT COUNT(DISTINCT booking_id) FROM booking_payment_schedules
                  WHERE status IN ('pending','overdue','partial')"
@@ -1066,7 +1078,7 @@ class BookingLifecycleService
             )->fetchColumn();
             $byStatus = [];
             $rows = $this->db->query(
-                "SELECT status, COUNT(*) c FROM plot_bookings GROUP BY status"
+                "SELECT status, COUNT(*) c FROM plot_bookings$tenantSql GROUP BY status"
             )->fetchAll(PDO::FETCH_ASSOC);
             foreach ($rows as $r) {
                 $byStatus[$r['status']] = (int)$r['c'];
@@ -1353,14 +1365,16 @@ class BookingLifecycleService
 
         try {
             // Find all active mandates with next_debit_date <= today
-            $stmt = $this->db->query("
+            $nachWhere = "nm.status = 'approved' AND nm.next_debit_date <= CURDATE() AND nm.end_date >= CURDATE()";
+            $nachParams = [];
+            if ($tid = $this->tid()) { $nachWhere .= " AND pb.tenant_id = ?"; $nachParams[] = $tid; }
+            $stmt = $this->db->prepare("
                 SELECT nm.*, pb.id AS pb_id
                 FROM nach_mandates nm
                 JOIN plot_bookings pb ON pb.id = nm.booking_id
-                WHERE nm.status = 'approved' 
-                  AND nm.next_debit_date <= CURDATE()
-                  AND nm.end_date >= CURDATE()
+                WHERE $nachWhere
             ");
+            $stmt->execute($nachParams);
             $mandates = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($mandates as $mandate) {
@@ -1469,6 +1483,9 @@ class BookingLifecycleService
 
         try {
             // Overdue installments with penalties
+            $overdueWhere = "pb.customer_id = ? AND bps.status IN ('pending', 'partial') AND bps.due_date < CURDATE()";
+            $overdueParams = [$customerId];
+            if ($tid = $this->tid()) { $overdueWhere .= " AND pb.tenant_id = ?"; $overdueParams[] = $tid; }
             $stmt = $this->db->prepare("
                 SELECT bps.*, pb.booking_number, p.plot_number, c.name AS colony_name,
                        DATEDIFF(CURDATE(), bps.due_date) AS days_overdue
@@ -1476,12 +1493,10 @@ class BookingLifecycleService
                 JOIN plot_bookings pb ON pb.id = bps.booking_id
                 LEFT JOIN plots p ON p.id = pb.plot_id
                 LEFT JOIN colonies c ON c.id = p.colony_id
-                WHERE pb.customer_id = ? 
-                  AND bps.status IN ('pending', 'partial')
-                  AND bps.due_date < CURDATE()
+                WHERE $overdueWhere
                 ORDER BY bps.due_date ASC
             ");
-            $stmt->execute([$customerId]);
+            $stmt->execute($overdueParams);
             $overdue = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($overdue as $inst) {
@@ -1504,18 +1519,19 @@ class BookingLifecycleService
             }
 
             // Upcoming installments (next 30 days)
+            $upcomingWhere = "pb.customer_id = ? AND bps.status IN ('pending', 'partial') AND bps.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)";
+            $upcomingParams = [$customerId];
+            if ($tid = $this->tid()) { $upcomingWhere .= " AND pb.tenant_id = ?"; $upcomingParams[] = $tid; }
             $stmt = $this->db->prepare("
                 SELECT bps.*, pb.booking_number, p.plot_number, c.name AS colony_name
                 FROM booking_payment_schedules bps
                 JOIN plot_bookings pb ON pb.id = bps.booking_id
                 LEFT JOIN plots p ON p.id = pb.plot_id
                 LEFT JOIN colonies c ON c.id = p.colony_id
-                WHERE pb.customer_id = ? 
-                  AND bps.status IN ('pending', 'partial')
-                  AND bps.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+                WHERE $upcomingWhere
                 ORDER BY bps.due_date ASC
             ");
-            $stmt->execute([$customerId]);
+            $stmt->execute($upcomingParams);
             $out['upcoming_installments'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         } catch (Exception $e) {

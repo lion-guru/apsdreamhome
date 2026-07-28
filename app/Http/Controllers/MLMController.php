@@ -486,4 +486,72 @@ class MLMController extends BaseController
         echo json_encode(['success' => true, 'data' => []]);
         exit;
     }
+
+    public function getMemberDetails()
+    {
+        header('Content-Type: application/json');
+
+        $memberId = (int)($_GET['id'] ?? 0);
+        if ($memberId <= 0) {
+            echo json_encode(['error' => 'Invalid member ID']);
+            exit;
+        }
+
+        try {
+            $db = Database::getInstance();
+
+            $member = $db->fetchOne(
+                "SELECT ml.id, ml.associate_id as customer_id, ml.level, ml.parent_id,
+                        u.name, u.email, u.phone, u.role, u.created_at as joined_at
+                 FROM mlm_network_tree ml
+                 LEFT JOIN users u ON ml.associate_id = u.id
+                 WHERE ml.associate_id = ? OR ml.id = ?",
+                [$memberId, $memberId]
+            );
+
+            if (!$member) {
+                echo json_encode(['error' => 'Member not found']);
+                exit;
+            }
+
+            $userId = $member['associate_id'] ?? $member['customer_id'];
+
+            $wallet = $db->fetchOne(
+                "SELECT points_balance, commission_earnings, bonus_earnings, referral_earnings, total_earned
+                 FROM wallet_points WHERE user_id = ? LIMIT 1",
+                [$userId]
+            ) ?: [];
+
+            $teamSize = (int)$db->fetchOne(
+                "SELECT COUNT(*) as cnt FROM mlm_network_tree WHERE parent_id = ?",
+                [$userId]
+            )['cnt'] ?? 0;
+
+            $directCount = (int)$db->fetchOne(
+                "SELECT COUNT(*) as cnt FROM mlm_network_tree WHERE sponsor_id = ?",
+                [$userId]
+            )['cnt'] ?? 0;
+
+            $totalTeamSize = $teamSize;
+            if ($teamSize > 0) {
+                $totalTeamSize = (int)$db->fetchOne(
+                    "SELECT COUNT(*) as cnt FROM mlm_network_tree WHERE parent_id = ?",
+                    [$userId]
+                )['cnt'] ?? 0;
+            }
+
+            $member['points_balance'] = $wallet['points_balance'] ?? 0;
+            $member['commission_earnings'] = $wallet['commission_earnings'] ?? 0;
+            $member['bonus_earnings'] = $wallet['bonus_earnings'] ?? 0;
+            $member['referral_earnings'] = $wallet['referral_earnings'] ?? 0;
+            $member['total_team_size'] = $totalTeamSize;
+            $member['direct_referrals'] = $directCount;
+
+            echo json_encode(['success' => true, 'member' => $member]);
+        } catch (\Exception $e) {
+            error_log('[MLMController::getMemberDetails] ' . $e->getMessage());
+            echo json_encode(['error' => 'Failed to load member details']);
+        }
+        exit;
+    }
 }

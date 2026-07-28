@@ -82,24 +82,32 @@ class VoiceBotController extends BaseController
         $this->requireAdmin();
         $this->layout = 'layouts/admin';
 
-        $this->db = \App\Core\Database\Database::getInstance()->getConnection();
+        $stats = ['total_sessions' => 0, 'active' => 0, 'completed' => 0, 'transferred' => 0];
+        $recent = [];
+        $channels = [];
 
-        $stats = $this->db->query("
-            SELECT
-                COUNT(*) as total_sessions,
-                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
-                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
-                SUM(CASE WHEN status = 'transferred' THEN 1 ELSE 0 END) as transferred
-            FROM auc_voice_bot_sessions
-        ")->fetch(\PDO::FETCH_ASSOC);
+        try {
+            $this->db = \App\Core\Database\Database::getInstance()->getConnection();
 
-        $recent = $this->db->query("
-            SELECT * FROM auc_voice_bot_sessions ORDER BY started_at DESC LIMIT 20
-        ")->fetchAll(\PDO::FETCH_ASSOC);
+            $stats = $this->db->query("
+                SELECT
+                    COUNT(*) as total_sessions,
+                    SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
+                    SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
+                    SUM(CASE WHEN status = 'transferred' THEN 1 ELSE 0 END) as transferred
+                FROM auc_voice_bot_sessions
+            ")->fetch(\PDO::FETCH_ASSOC) ?: $stats;
 
-        $channels = $this->db->query("
-            SELECT channel, COUNT(*) as count FROM auc_conversations GROUP BY channel ORDER BY count DESC
-        ")->fetchAll(\PDO::FETCH_ASSOC);
+            $recent = $this->db->query("
+                SELECT * FROM auc_voice_bot_sessions ORDER BY started_at DESC LIMIT 20
+            ")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+            $channels = $this->db->query("
+                SELECT channel, COUNT(*) as count FROM auc_conversations GROUP BY channel ORDER BY count DESC
+            ")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('VoiceBot dashboard error: ' . $e->getMessage());
+        }
 
         $this->render('admin/voice-bot/dashboard', [
             'activePage' => 'voice-bot',

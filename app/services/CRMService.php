@@ -628,9 +628,12 @@ class CRMService
 
     public function completeTask($taskId, $userId, $notes = null) {
         try {
+            $where = "id = ? AND assigned_to = ?";
+            $params = [$notes, $taskId, $userId];
+            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
             $this->db->query(
-                "UPDATE crm_tasks SET status = 'completed', completed_at = NOW(), completed_notes = ? WHERE id = ? AND assigned_to = ?",
-                [$notes, $taskId, $userId]
+                "UPDATE crm_tasks SET status = 'completed', completed_at = NOW(), completed_notes = ? WHERE $where",
+                $params
             );
             return ['success' => true];
         } catch (\Exception $e) {
@@ -646,6 +649,7 @@ class CRMService
                 $where[] = "ct.assigned_to = ?";
                 $params[] = $userId;
             }
+            if ($tid = $this->tid()) { $where[] = "ct.tenant_id = ?"; $params[] = $tid; }
             $whereClause = implode(' AND ', $where);
             $stmt = $this->db->query(
                 "SELECT ct.*, l.name as lead_name, l.phone as lead_phone, u.name as assigned_to_name
@@ -689,10 +693,13 @@ class CRMService
 
     public function logAssignment($leadId, $from, $to, $by, $reason = null, $notes = null) {
         try {
+            $cols = "lead_id, assigned_from, assigned_to, assigned_by, reason, notes";
+            $vals = "?, ?, ?, ?, ?, ?";
+            $params = [$leadId, $from, $to, $by, $reason, $notes];
+            if ($tid = $this->tid()) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
             $this->db->query(
-                "INSERT INTO crm_assignments (lead_id, assigned_from, assigned_to, assigned_by, reason, notes)
-                 VALUES (?, ?, ?, ?, ?, ?)",
-                [$leadId, $from, $to, $by, $reason, $notes]
+                "INSERT INTO crm_assignments ($cols) VALUES ($vals)",
+                $params
             );
         } catch (\Exception $e) {
             error_log('CRMService::logAssignment error: ' . $e->getMessage());
@@ -701,15 +708,18 @@ class CRMService
 
     public function getLeadAssignments($leadId) {
         try {
+            $where = "ca.lead_id = ?";
+            $params = [$leadId];
+            if ($tid = $this->tid()) { $where .= " AND ca.tenant_id = ?"; $params[] = $tid; }
             $stmt = $this->db->query(
                 "SELECT ca.*, u1.name as from_name, u2.name as to_name, u3.name as by_name
                  FROM crm_assignments ca
                  LEFT JOIN users u1 ON u1.id = ca.assigned_from
                  LEFT JOIN users u2 ON u2.id = ca.assigned_to
                  LEFT JOIN users u3 ON u3.id = ca.assigned_by
-                 WHERE ca.lead_id = ?
+                 WHERE $where
                  ORDER BY ca.created_at DESC",
-                [$leadId]
+                $params
             );
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
@@ -976,11 +986,12 @@ class CRMService
             $stats['overdue_tasks'] = count($this->getOverdueTasks($userId));
 
             // Interactions today
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM crm_interactions ci WHERE DATE(ci.created_at) = CURDATE()");
+            $tenantFilterInter = $tid ? "AND ci.tenant_id = $tid" : "";
+            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM crm_interactions ci WHERE DATE(ci.created_at) = CURDATE() $tenantFilterInter");
             $stats['today_interactions'] = (int)($stmt->fetch()['cnt'] ?? 0);
 
             // Interactions this week
-            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM crm_interactions ci WHERE ci.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)");
+            $stmt = $this->db->query("SELECT COUNT(*) as cnt FROM crm_interactions ci WHERE ci.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) $tenantFilterInter");
             $stats['week_interactions'] = (int)($stmt->fetch()['cnt'] ?? 0);
 
             // Lead sources breakdown
@@ -1023,7 +1034,9 @@ class CRMService
 
     public function getCampaigns() {
         try {
-            $stmt = $this->db->query("SELECT * FROM crm_campaigns ORDER BY created_at DESC");
+            $where = ""; $params = [];
+            if ($tid = $this->tid()) { $where = " WHERE tenant_id = ?"; $params[] = $tid; }
+            $stmt = $this->db->query("SELECT * FROM crm_campaigns $where ORDER BY created_at DESC", $params);
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             return [];
@@ -1032,22 +1045,25 @@ class CRMService
 
     public function createCampaign($data) {
         try {
+            $cols = "name, campaign_type, platform, budget, target_audience, target_locations, start_date, end_date, landing_page_url, status, created_by";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            $params = [
+                $data['name'],
+                $data['campaign_type'] ?? 'other',
+                $data['platform'] ?? null,
+                $data['budget'] ?? 0,
+                $data['target_audience'] ?? null,
+                $data['target_locations'] ?? null,
+                $data['start_date'] ?? null,
+                $data['end_date'] ?? null,
+                $data['landing_page_url'] ?? null,
+                $data['status'] ?? 'draft',
+                $data['created_by'] ?? null,
+            ];
+            if ($tid = $this->tid()) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
             $stmt = $this->db->query(
-                "INSERT INTO crm_campaigns (name, campaign_type, platform, budget, target_audience, target_locations, start_date, end_date, landing_page_url, status, created_by)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [
-                    $data['name'],
-                    $data['campaign_type'] ?? 'other',
-                    $data['platform'] ?? null,
-                    $data['budget'] ?? 0,
-                    $data['target_audience'] ?? null,
-                    $data['target_locations'] ?? null,
-                    $data['start_date'] ?? null,
-                    $data['end_date'] ?? null,
-                    $data['landing_page_url'] ?? null,
-                    $data['status'] ?? 'draft',
-                    $data['created_by'] ?? null,
-                ]
+                "INSERT INTO crm_campaigns ($cols) VALUES ($vals)",
+                $params
             );
             return ['success' => true, 'campaign_id' => $this->db->lastInsertId()];
         } catch (\Exception $e) {
@@ -1059,7 +1075,9 @@ class CRMService
 
     public function getForms() {
         try {
-            $stmt = $this->db->query("SELECT * FROM crm_lead_forms ORDER BY created_at DESC");
+            $where = ""; $params = [];
+            if ($tid = $this->tid()) { $where = " WHERE tenant_id = ?"; $params[] = $tid; }
+            $stmt = $this->db->query("SELECT * FROM crm_lead_forms $where ORDER BY created_at DESC", $params);
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             return [];
@@ -1068,7 +1086,9 @@ class CRMService
 
     public function submitForm($formCode, $data, $meta = []) {
         try {
-            $form = $this->db->fetchOne("SELECT * FROM crm_lead_forms WHERE form_code = ? AND is_active = 1", [$formCode]);
+            $where = "form_code = ? AND is_active = 1"; $fParams = [$formCode];
+            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $fParams[] = $tid; }
+            $form = $this->db->fetchOne("SELECT * FROM crm_lead_forms WHERE $where", $fParams);
             if (!$form) return ['success' => false, 'error' => 'Form not found'];
 
             // Create lead
@@ -1107,7 +1127,9 @@ class CRMService
             );
 
             // Update submission count
-            $this->db->query("UPDATE crm_lead_forms SET submission_count = submission_count + 1 WHERE id = ?", [$form['id']]);
+            $ucWhere = "id = ?"; $ucParams = [$form['id']];
+            if ($tid = $this->tid()) { $ucWhere .= " AND tenant_id = ?"; $ucParams[] = $tid; }
+            $this->db->query("UPDATE crm_lead_forms SET submission_count = submission_count + 1 WHERE $ucWhere", $ucParams);
 
             // Add source detail
             $this->addSourceDetail($leadResult['lead_id'], [
@@ -1194,6 +1216,7 @@ class CRMService
     {
         $where = "1=1";
         $params = [];
+        if ($tid = $this->tid()) { $where .= " AND d.tenant_id = ?"; $params[] = $tid; }
 
         if (!empty($filters['stage'])) {
             $where .= " AND d.stage = ?";
@@ -1241,14 +1264,17 @@ class CRMService
 
     public function getDealById(int $id): ?array
     {
+        $where = "d.id = ?";
+        $params = [$id];
+        if ($tid = $this->tid()) { $where .= " AND d.tenant_id = ?"; $params[] = $tid; }
         $stmt = $this->db->query(
             "SELECT d.*, l.name as lead_name, l.phone as lead_phone, l.email as lead_email,
                     l.lead_score, u.name as assigned_name
              FROM lead_deals d
              LEFT JOIN leads l ON d.lead_id = l.id
              LEFT JOIN users u ON d.assigned_to = u.id
-             WHERE d.id = ?",
-            [$id]
+             WHERE $where",
+            $params
         );
         return $stmt->fetch() ?: null;
     }
@@ -1256,10 +1282,11 @@ class CRMService
     public function createDeal(array $data): array
     {
         try {
+            $tid = $this->tid();
             $this->db->query(
                 "INSERT INTO lead_deals (lead_id, deal_name, deal_value, stage, assigned_to, created_by,
-                    expected_close_date, probability, notes, property_type, colony_id, plot_id, created_at, updated_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
+                    expected_close_date, probability, notes, property_type, colony_id, plot_id, tenant_id, created_at, updated_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
                 [
                     $data['lead_id'],
                     $data['deal_name'] ?? 'New Deal',
@@ -1273,6 +1300,7 @@ class CRMService
                     $data['property_type'] ?? null,
                     $data['colony_id'] ?? null,
                     $data['plot_id'] ?? null,
+                    $tid,
                 ]
             );
             $dealId = $this->db->lastInsertId();
@@ -1302,6 +1330,7 @@ class CRMService
 
         $sets[] = "updated_at = NOW()";
         $params[] = $id;
+        if ($tid = $this->tid()) { $sets[] = "tenant_id = ?"; array_unshift($params, $tid); }
 
         try {
             $this->db->query("UPDATE lead_deals SET " . implode(', ', $sets) . " WHERE id = ?", $params);
@@ -1314,7 +1343,9 @@ class CRMService
     public function moveDealStage(int $id, string $stage): array
     {
         try {
-            $this->db->query("UPDATE lead_deals SET stage = ?, updated_at = NOW() WHERE id = ?", [$stage, $id]);
+            $extra = ""; $params = [$stage];
+            if ($tid = $this->tid()) { $extra = " AND tenant_id = ?"; $params[] = $tid; }
+            $this->db->query("UPDATE lead_deals SET stage = ?, updated_at = NOW() WHERE id = ?$extra", $params);
             if ($stage === 'won') {
                 $this->db->query("UPDATE lead_deals SET closed_at = NOW() WHERE id = ?", [$id]);
             }
@@ -1327,7 +1358,9 @@ class CRMService
     public function deleteDeal(int $id): array
     {
         try {
-            $this->db->query("DELETE FROM lead_deals WHERE id = ?", [$id]);
+            $where = "id = ?"; $params = [$id];
+            if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
+            $this->db->query("DELETE FROM lead_deals WHERE $where", $params);
             return ['success' => true, 'message' => 'Deal deleted'];
         } catch (\Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
@@ -1701,20 +1734,27 @@ class CRMService
     {
         $days = (int)str_replace('d', '', $period);
         try {
+            $tid = $this->tid();
+            $tenantWhere = $tid ? " AND ld.tenant_id = ?" : "";
+
+            $wonParams = [$days];
+            $lostParams = [$days];
+            if ($tid) { $wonParams[] = $tid; $lostParams[] = $tid; }
+
             $won = $this->db->fetchAll(
                 "SELECT ld.close_reason, COUNT(*) as cnt, SUM(ld.deal_value) as total_value
                  FROM lead_deals ld
-                 WHERE ld.stage = 'won' AND ld.closed_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+                 WHERE ld.stage = 'won' AND ld.closed_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) $tenantWhere
                  GROUP BY ld.close_reason",
-                [$days]
+                $wonParams
             ) ?: [];
             
             $lost = $this->db->fetchAll(
                 "SELECT ld.close_reason, COUNT(*) as cnt, SUM(ld.deal_value) as total_value
                  FROM lead_deals ld
-                 WHERE ld.stage = 'lost' AND ld.closed_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+                 WHERE ld.stage = 'lost' AND ld.closed_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) $tenantWhere
                  GROUP BY ld.close_reason",
-                [$days]
+                $lostParams
             ) ?: [];
             
             return ['won' => $won, 'lost' => $lost];
@@ -1728,15 +1768,21 @@ class CRMService
     public function getRevenueForecast(int $months = 3): array
     {
         try {
+            $tid = $this->tid();
+            $tenantWhere = $tid ? " AND tenant_id = ?" : "";
+
             // Current weighted pipeline
             $weightedPipeline = 0;
             $byStage = [];
+            $stageParams = [];
+            if ($tid) { $stageParams[] = $tid; }
             $stages = $this->db->fetchAll(
                 "SELECT stage, SUM(deal_value) as total_value, COUNT(*) as cnt,
                         AVG(probability) as avg_prob
                  FROM lead_deals
-                 WHERE stage IN ('qualified','site_visit','proposal','negotiation','booking')
-                 GROUP BY stage"
+                 WHERE stage IN ('qualified','site_visit','proposal','negotiation','booking') $tenantWhere
+                 GROUP BY stage",
+                $stageParams
             ) ?: [];
             
             foreach ($stages as $s) {
@@ -1753,14 +1799,17 @@ class CRMService
             }
             
             // Monthly trend (last 6 months actual)
+            $trendParams = [];
+            if ($tid) { $trendParams[] = $tid; }
             $trend = $this->db->fetchAll(
                 "SELECT DATE_FORMAT(closed_at, '%Y-%m') as month, 
                         SUM(CASE WHEN stage='won' THEN deal_value ELSE 0 END) as won_value,
                         COUNT(CASE WHEN stage='won' THEN 1 END) as won_count
                  FROM lead_deals
-                 WHERE closed_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                 WHERE closed_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) $tenantWhere
                  GROUP BY month
-                 ORDER BY month ASC"
+                 ORDER BY month ASC",
+                $trendParams
             ) ?: [];
             
             // Simple forecast: average monthly close rate × weighted pipeline
@@ -2030,18 +2079,25 @@ class CRMService
                     $setClauses[] = "$k = ?";
                     $params[] = $v;
                 }
+                $mergeWhere = "id = ?";
                 $params[] = $keepId;
-                $db->prepare("UPDATE leads SET " . implode(', ', $setClauses) . ", updated_at = NOW() WHERE id = ?")->execute($params);
+                if ($tid = $this->tid()) { $mergeWhere .= " AND tenant_id = ?"; $params[] = $tid; }
+                $db->prepare("UPDATE leads SET " . implode(', ', $setClauses) . ", updated_at = NOW() WHERE $mergeWhere")->execute($params);
             }
 
             // Move interactions from remove → keep
-            $db->prepare("UPDATE crm_interactions SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
-            // Move tasks
-            $db->prepare("UPDATE crm_tasks SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
-            // Move activities
-            $db->prepare("UPDATE lead_activities SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
-            // Move deals
-            $db->prepare("UPDATE lead_deals SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+            $moveTid = $this->tid();
+            if ($moveTid) {
+                $db->prepare("UPDATE crm_interactions SET lead_id = ? WHERE lead_id = ? AND tenant_id = ?")->execute([$keepId, $removeId, $moveTid]);
+                $db->prepare("UPDATE crm_tasks SET lead_id = ? WHERE lead_id = ? AND tenant_id = ?")->execute([$keepId, $removeId, $moveTid]);
+                $db->prepare("UPDATE lead_activities SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+                $db->prepare("UPDATE lead_deals SET lead_id = ? WHERE lead_id = ? AND tenant_id = ?")->execute([$keepId, $removeId, $moveTid]);
+            } else {
+                $db->prepare("UPDATE crm_interactions SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+                $db->prepare("UPDATE crm_tasks SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+                $db->prepare("UPDATE lead_activities SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+                $db->prepare("UPDATE lead_deals SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);
+            }
             // Move notes
             try {
                 $db->prepare("UPDATE lead_notes SET lead_id = ? WHERE lead_id = ?")->execute([$keepId, $removeId]);

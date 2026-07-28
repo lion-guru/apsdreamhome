@@ -226,6 +226,7 @@ $router->post('/api/mlm/commission', 'App\\Http\\Controllers\\MLMController@calc
 $router->get('/api/mlm/network-tree', 'App\\Http\\Controllers\\MLMController@getNetworkTree');
 $router->get('/api/mlm/commission-history', 'App\\Http\\Controllers\\MLMController@getCommissionHistory');
 $router->get('/api/mlm/my-rank', 'App\\Http\\Controllers\\MLMController@myRank');
+$router->get('/api/mlm/member-details', 'App\\Http\\Controllers\\MLMController@getMemberDetails');
 
 // AI Valuation API Routes
 $router->post('/api/ai-valuation/calculator', 'App\\Http\\Controllers\\AIValuationController@calculateValuation');

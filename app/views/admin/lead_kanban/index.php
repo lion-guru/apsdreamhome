@@ -31,8 +31,8 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
   .col-header .stage-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
   .col-header .col-title { font-size:13px; font-weight:600; color:#e2e8f0; margin:0 0 0 8px; white-space:nowrap; }
   .col-header .col-count { background:rgba(255,255,255,0.08); color:#94a3b8; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:6px; }
-  .col-header .col-value { font-size:11px; color:#64748b; margin-top:2px; }
-  .col-header .collapse-icon { color:#475569; cursor:pointer; font-size:12px; transition:transform .2s; }
+  .col-header .col-value { font-size:11px; color:#94a3b8; margin-top:2px; }
+  .col-header .collapse-icon { color:#94a3b8; cursor:pointer; font-size:12px; transition:transform .2s; }
   .col-body { flex:1; overflow-y:auto; padding:8px; }
   .col-body::-webkit-scrollbar { width:4px; }
   .col-body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
@@ -43,7 +43,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
   .lead-card:active { cursor:grabbing; opacity:0.7; }
   .lead-card.dragging { opacity:0.4; transform:rotate(3deg) scale(0.95); }
   .lead-card .card-name { font-size:13px; font-weight:600; color:#e2e8f0; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .lead-card .card-phone { font-size:11px; color:#64748b; margin-bottom:4px; }
+  .lead-card .card-phone { font-size:11px; color:#94a3b8; margin-bottom:4px; }
   .lead-card .card-meta { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px; }
   .lead-card .card-budget { font-size:12px; font-weight:600; color:#10b981; }
   .lead-card .card-score { font-size:10px; padding:1px 6px; border-radius:8px; font-weight:600; }
@@ -51,14 +51,14 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
   .lead-card .card-score.warm { background:rgba(245,158,11,0.15); color:#f59e0b; }
   .lead-card .card-score.cold { background:rgba(100,116,139,0.15); color:#94a3b8; }
   .lead-card .card-source { font-size:9px; padding:1px 5px; border-radius:4px; background:rgba(99,102,241,0.1); color:#818cf8; text-transform:uppercase; letter-spacing:0.3px; }
-  .lead-card .card-time { font-size:10px; color:#475569; }
+  .lead-card .card-time { font-size:10px; color:#94a3b8; }
   .lead-card .card-assignee { display:flex; align-items:center; gap:4px; }
   .lead-card .card-assignee .avatar { width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; font-size:8px; display:flex; align-items:center; justify-content:center; font-weight:700; }
   .lead-card .card-priority { position:absolute; top:0; right:12px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; }
   .lead-card .card-priority.urgent { border-top:8px solid #ef4444; }
   .lead-card .card-priority.high { border-top:8px solid #f59e0b; }
 
-  .empty-col { display:flex; flex-direction:column; align-items:center; justify-content:center; height:120px; color:#334155; }
+  .empty-col { display:flex; flex-direction:column; align-items:center; justify-content:center; height:120px; color:#64748b; }
   .empty-col i { font-size:24px; margin-bottom:6px; }
 
   .toast-move { position:fixed; top:20px; right:20px; padding:12px 20px; border-radius:8px; z-index:9999; box-shadow:0 8px 24px rgba(0,0,0,0.4); font-size:13px; font-weight:500; animation:slideIn .3s ease; display:flex; align-items:center; gap:8px; }
@@ -240,7 +240,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
                 <?php if ($assigned): ?>
                   <div class="card-assignee mt-1">
                     <div class="avatar"><?= strtoupper(substr($assigned, 0, 2)) ?></div>
-                    <span style="font-size:10px; color:#64748b;"><?= $assigned ?></span>
+                    <span style="font-size:10px; color:#94a3b8;"><?= $assigned ?></span>
                   </div>
                 <?php endif; ?>
               </div>
@@ -516,6 +516,6 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
 
 <style>
   .stat-pill { display:inline-flex; align-items:center; gap:6px; background:#1a1d29; border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:6px 14px; }
-  .stat-pill .stat-label { font-size:11px; color:#64748b; text-transform:uppercase; letter-spacing:0.3px; }
+  .stat-pill .stat-label { font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.3px; }
   .stat-pill .stat-value { font-size:16px; font-weight:700; color:#e2e8f0; }
 </style>

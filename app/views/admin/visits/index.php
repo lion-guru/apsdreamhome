@@ -87,8 +87,8 @@ ob_start();
                                         <?= htmlspecialchars($v['property_title'] ?? 'Property #' . $v['property_id']) ?>
                                     </td>
                                     <td>
-                                        <strong><?= date('M j, Y', strtotime($v['visit_date'])) ?></strong>
-                                        <br><small class="text-muted"><?= date('h:i A', strtotime($v['visit_time'])) ?></small>
+                                        <strong><?= $v['visit_date'] ? date('M j, Y', strtotime($v['visit_date'])) : '—' ?></strong>
+                                        <br><small class="text-muted"><?= $v['visit_time'] ? date('h:i A', strtotime($v['visit_time'])) : '—' ?></small>
                                     </td>
                                     <td><span class="badge bg-light text-dark"><?= ucfirst(str_replace('_', ' ', $v['visit_type'] ?? 'site_visit')) ?></span></td>
                                     <td>
