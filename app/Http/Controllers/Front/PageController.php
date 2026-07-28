@@ -2934,12 +2934,28 @@ public function location($slug = null)
                                 ]);
 
                                 // Create admin user for the tenant
-                                $userId = (int)$pdo->query("SELECT COALESCE(MAX(id), 0) + 1 FROM users")->fetchColumn();
+                                $hashedPw = password_hash($password, PASSWORD_DEFAULT);
                                 $stmt = $pdo->prepare("
-                                    INSERT INTO users (id, name, email, password, role, status, created_at)
-                                    VALUES (?, ?, ?, ?, 'admin', 'active', NOW())
+                                    INSERT INTO users (name, email, password, role, status, tenant_id, created_at)
+                                    VALUES (?, ?, ?, 'admin', 'active', ?, NOW())
                                 ");
-                                $stmt->execute([$userId, $contactName, $email, password_hash($password, PASSWORD_DEFAULT)]);
+                                $stmt->execute([$contactName, $email, $hashedPw, $tenantId]);
+                                $userId = (int)$pdo->lastInsertId();
+
+                                // Link user to tenant
+                                $stmt = $pdo->prepare("
+                                    INSERT INTO tenant_users (tenant_id, user_id, role, is_primary, created_at)
+                                    VALUES (?, ?, 'admin', 1, NOW())
+                                ");
+                                $stmt->execute([$tenantId, $userId]);
+
+                                // Create subscription record
+                                $trialEnds = date('Y-m-d H:i:s', strtotime('+14 days'));
+                                $stmt = $pdo->prepare("
+                                    INSERT INTO tenant_subscriptions (tenant_id, plan_id, status, billing_cycle, amount, current_period_start, current_period_end, created_at)
+                                    VALUES (?, ?, 'trial', 'monthly', 0, NOW(), ?, NOW())
+                                ");
+                                $stmt->execute([$tenantId, (int)$plan['id'], $trialEnds]);
 
                                 // Log activity
                                 $tenantService->logActivity($tenantId, 'tenant_self_signup', "Self-service signup by {$email}");

@@ -13,7 +13,7 @@
 
             <div class="card aps-cp-card">
                 <div class="card-body aps-cp-card-body">
-                    <form method="POST" action="<?= BASE_URL ?>admin/plots/edit/<?= $plot['id'] ?>">
+                    <form method="POST" action="<?= BASE_URL ?>admin/plots/edit/<?= $plot['id'] ?? 0 ?>">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <ul class="nav nav-tabs mb-3" id="plotTabs">
                             <li class="nav-item"><a class="nav-link active" href="#basic" data-bs-toggle="tab">Basic Info</a></li>
@@ -43,9 +43,9 @@
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Plot Type *</label>
                                         <select class="form-select" name="plot_type" required>
-                                            <option value="residential" <?= $plot['plot_type'] === 'residential' ? 'selected' : '' ?>>Residential</option>
-                                            <option value="commercial" <?= $plot['plot_type'] === 'commercial' ? 'selected' : '' ?>>Commercial</option>
-                                            <option value="industrial" <?= $plot['plot_type'] === 'industrial' ? 'selected' : '' ?>>Industrial</option>
+                                            <option value="residential" <?= ($plot['plot_type'] ?? '') === 'residential' ? 'selected' : '' ?>>Residential</option>
+                                            <option value="commercial" <?= ($plot['plot_type'] ?? '') === 'commercial' ? 'selected' : '' ?>>Commercial</option>
+                                            <option value="industrial" <?= ($plot['plot_type'] ?? '') === 'industrial' ? 'selected' : '' ?>>Industrial</option>
                                         </select>
                                     </div>
                                     <div class="col-md-4 mb-3">

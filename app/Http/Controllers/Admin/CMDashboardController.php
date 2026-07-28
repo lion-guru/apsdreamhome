@@ -120,7 +120,7 @@ class CMDashboardController extends AdminController
     {
         try {
             $stmt = $this->db->prepare("
-                SELECT activity_type, description, created_at 
+                SELECT action, description, created_at 
                 FROM activity_logs_unified 
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
                 ORDER BY created_at DESC 

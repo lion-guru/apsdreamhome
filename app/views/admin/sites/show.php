@@ -7,7 +7,7 @@
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/sites">Sites</a></li>
-                    <li class="breadcrumb-item active"><?= $site['name'] ?? 'Site' ?></li>
+                    <li class="breadcrumb-item active"><?= htmlspecialchars($site['site_name'] ?? $site['name'] ?? 'Site') ?></li>
                 </ul>
             </div>
             <div class="col-auto">
@@ -22,7 +22,7 @@
     <div class="row g-4">
         <div class="col-md-8">
             <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= $site['name'] ?></h5></div>
+                <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= htmlspecialchars($site['site_name'] ?? $site['name'] ?? '') ?></h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Location</div><div class="col-sm-8"><strong><?= $site['location'] ?? '-' ?></strong></div></div>
                     <div class="row mb-3"><div class="col-sm-4 text-muted">Total Area</div><div class="col-sm-8"><?= number_format($site['total_area'] ?? 0) ?> sqft</div></div>

@@ -35,6 +35,16 @@ $GLOBALS['_html_doc_started'] = true;
     <!-- Universal mobile-first responsive overrides -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
     <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo $extra_css; ?><?php endif; ?>
+    <?php if (class_exists('\App\Core\Middleware\TenantContext')): ?>
+    <?php $tcColors = \App\Core\Middleware\TenantContext::getColors(); $tcLogo = \App\Core\Middleware\TenantContext::getLogo(); ?>
+    <style>
+        :root {
+            --tenant-primary: <?= htmlspecialchars($tcColors['primary']) ?>;
+            --tenant-secondary: <?= htmlspecialchars($tcColors['secondary']) ?>;
+        }
+        .navbar-brand img[src*="favicon"], .navbar-brand img:not([src]) { max-height: 36px; }
+    </style>
+    <?php endif; ?>
 </head>
 
 <body>

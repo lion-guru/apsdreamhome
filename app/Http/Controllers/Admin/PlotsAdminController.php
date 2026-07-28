@@ -288,23 +288,23 @@ class PlotsAdminController extends AdminController
             return;
         }
 
+        $history = [];
         try {
-            // Get status history
             $stmt = $this->db->prepare("SELECT h.*, u.name as changed_by_name FROM plot_status_history h LEFT JOIN users u ON h.changed_by = u.id WHERE h.plot_id = ? ORDER BY h.created_at DESC");
+            $stmt->execute([$id]);
+            $history = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            // Gracefully handle missing table
         }
-        $stmt->execute([$id]);
-        $history = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
+        $images = [];
         try {
-            // Get plot images
             $stmt = $this->db->prepare("SELECT * FROM plot_images WHERE plot_id = ? AND is_active = 1 ORDER BY sort_order, created_at");
+            $stmt->execute([$id]);
+            $images = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
+            // Gracefully handle missing table
         }
-        $stmt->execute([$id]);
-        $images = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         include __DIR__ . '/../../../views/admin/plots/show.php';
     }

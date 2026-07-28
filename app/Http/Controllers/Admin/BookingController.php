@@ -172,7 +172,7 @@ class BookingController extends AdminController
                 }
             } catch (\Exception $e) { error_log('BookingController::show error: ' . $e->getMessage()); }
             try {
-                $cStmt = $this->db->prepare("SELECT * FROM mlm_commission_ledger WHERE entity_type = 'booking' AND entity_id = ? ORDER BY created_at DESC");
+                $cStmt = $this->db->prepare("SELECT * FROM mlm_commission_ledger WHERE booking_id = ? ORDER BY created_at DESC");
                 $cStmt->execute([$id]);
                 $commissions = $cStmt->fetchAll(\PDO::FETCH_ASSOC);
                 foreach ($commissions as $cm) {

@@ -7,10 +7,10 @@
                     <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Plots
                     </a>
-                    <a href="<?= BASE_URL ?>/admin/plots/<?= $plot['id'] ?>/edit" class="btn btn-primary">
+                    <a href="<?= BASE_URL ?>/admin/plots/<?= $plot['id'] ?? 0 ?>/edit" class="btn btn-primary">
                         <i class="fas fa-edit"></i> Edit Plot
                     </a>
-                    <a href="<?= BASE_URL ?>/admin/mlm-realestate/bookings?plot_id=<?= $plot['id'] ?>" class="btn btn-info text-white">
+                    <a href="<?= BASE_URL ?>/admin/mlm-realestate/bookings?plot_id=<?= $plot['id'] ?? 0 ?>" class="btn btn-info text-white">
                         <i class="fas fa-book"></i> Bookings
                     </a>
                 </div>
@@ -28,12 +28,12 @@
                                 <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector']) : '' ?></td></tr>
                                 <tr><th>Type</th><td><?= ucfirst(htmlspecialchars($plot['plot_type'] ?? 'residential')) ?></td></tr>
                                 <tr><th>Status</th><td>
-                                    <span class="badge bg-<?= $plot['status'] === 'available' ? 'success' : ($plot['status'] === 'booked' ? 'warning' : ($plot['status'] === 'sold' ? 'danger' : 'secondary')) ?> fs-6">
+                                    <span class="badge bg-<?= ($plot['status'] ?? '') === 'available' ? 'success' : (($plot['status'] ?? '') === 'booked' ? 'warning' : (($plot['status'] ?? '') === 'sold' ? 'danger' : 'secondary')) ?> fs-6">
                                         <?= ucfirst(htmlspecialchars($plot['status'] ?? 'available')) ?>
                                     </span>
                                 </td></tr>
                                 <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? '') ?></td></tr>
-                                <tr><th>Location</th><td><?= htmlspecialchars(($plot['state_name'] ?? '') . ($plot['district_name'] ? ', ' . $plot['district_name'] : '')) ?></td></tr>
+                                <tr><th>Location</th><td><?= htmlspecialchars(($plot['state_name'] ?? '') . (!empty($plot['district_name']) ? ', ' . $plot['district_name'] : '')) ?></td></tr>
                             </table></div>
                         </div>
                     </div>
