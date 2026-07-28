@@ -1,4 +1,4 @@
-# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-28 — Session 57)
+# APS Dream Home - Agent Rules & Project Status (Updated 2026-07-28 — Session 58)
 
 ---
 
@@ -1385,3 +1385,14 @@ _52. **CSS files must be in `public/` directory** — Assets referenced in HTML 
 | **LegalDocumentService plot_no Fixed (2 refs)**  | `getBookings()` and `getPlots()` both queried `plots` table with `p.plot_no`. Fixed to `p.plot_number`.                                                                                                                                                                                                                                                                                                                                        |
 | **Front\BookingController plot_no Fixed**        | `bookPlot()` notification message used `$plot['plot_no']` but `SELECT * FROM plots` returns `plot_number`. Fixed to `$plot['plot_number']`.                                                                                                                                                                                                                                                                                                    |
 | **E2E Tests: 153/153 PASS (re-verified)**        | All 153 checks pass after plot_no fixes. Zero regressions.                                                                                                                                                                                                                                                                                                                                                                                     |
+
+---
+
+## New Features (2026-07-28 — Session 58: Comprehensive CSS/JS Audit + Surface Contrast Architecture)
+
+| Feature | Details |
+| :--- | :--- |
+| **Scoped CSS Theme Tokens** | Scoped `:root` dark overrides in `dark-mode.css` strictly to `body.dark-mode, [data-theme="dark"]`, resolving dark-on-dark card text across light mode pages. |
+| **Surface Contrast Architecture** | Implemented non-destructive Surface Matrix rules in `admin.css`, `premium-theme.css`, and `aps-components.css`. Light cards enforce crisp `#ffffff` background & `#0f172a` text. Dark cards automatically enforce `#ffffff` headings & `#f8fafc` text. |
+| **Hero Title Contrast Fixed** | Public hero sections and Suryoday Colony title (`/colony/suryoday-colony`) strictly enforce `#ffffff !important` heading color on dark backgrounds. |
+| **Admin & Associate Portal Verification** | Visually verified 7 major pages via Playwright Subagent screenshots (Homepage, Suryoday Colony, Admin ERP, Admin Bookings, Admin Legal Pipeline, Associate Dashboard, Customer Dashboard). All render with crisp, high-contrast typography. |
