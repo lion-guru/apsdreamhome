@@ -21,6 +21,9 @@ class ResellPropertiesAdminController extends AdminController
         $where = "WHERE listing_type = 'sell'";
         $params = [];
 
+        [$tSql, $tParams] = $this->tenantWhere();
+        if ($tSql) { $where .= $tSql; $params = array_merge($params, $tParams); }
+
         if ($search !== '') {
             $where .= " AND (name LIKE ? OR location LIKE ? OR address LIKE ?)";
             $like = "%{$search}%";
@@ -47,11 +50,12 @@ class ResellPropertiesAdminController extends AdminController
             $params
         );
 
+        [$tSql, $tParams] = $this->tenantWhere();
         $stats = [
-            'total' => $db->fetchOne("SELECT COUNT(*) as c FROM user_properties WHERE listing_type = 'sell'")['c'] ?? 0,
-            'active' => $db->fetchOne("SELECT COUNT(*) as c FROM user_properties WHERE listing_type = 'sell' AND status IN ('verified','approved')")['c'] ?? 0,
-            'pending' => $db->fetchOne("SELECT COUNT(*) as c FROM user_properties WHERE listing_type = 'sell' AND status = 'pending'")['c'] ?? 0,
-            'sold' => $db->fetchOne("SELECT COUNT(*) as c FROM user_properties WHERE listing_type = 'sell' AND status = 'sold'")['c'] ?? 0,
+            'total' => $db->fetchOne("SELECT COUNT(*) as c FROM user_properties WHERE listing_type = 'sell' {$tSql}", $tParams)['c'] ?? 0,
+            'active' => $db->fetchOne("SELECT COUNT(*) as c FROM user_properties WHERE listing_type = 'sell' AND status IN ('verified','approved') {$tSql}", $tParams)['c'] ?? 0,
+            'pending' => $db->fetchOne("SELECT COUNT(*) as c FROM user_properties WHERE listing_type = 'sell' AND status = 'pending' {$tSql}", $tParams)['c'] ?? 0,
+            'sold' => $db->fetchOne("SELECT COUNT(*) as c FROM user_properties WHERE listing_type = 'sell' AND status = 'sold' {$tSql}", $tParams)['c'] ?? 0,
         ];
 
         return $this->render('admin/resell_properties/index', [
@@ -99,9 +103,18 @@ class ResellPropertiesAdminController extends AdminController
             'created_at' => date('Y-m-d H:i:s'),
         ];
 
+        $insertExtra = $this->tenantInsertData();
+        $cols = 'name, location, address, price, area_sqft, bedrooms, bathrooms, listing_type, status, posted_by, created_at';
+        $vals = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?';
+        $insertParams = array_values($data);
+        if (!empty($insertExtra['tenant_id'])) {
+            $cols .= ', tenant_id';
+            $vals .= ', ?';
+            $insertParams[] = $insertExtra['tenant_id'];
+        }
         $db->query(
-            "INSERT INTO user_properties (name, location, address, price, area_sqft, bedrooms, bathrooms, listing_type, status, posted_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            array_values($data)
+            "INSERT INTO user_properties ({$cols}) VALUES ({$vals})",
+            $insertParams
         );
 
         $this->tenantTrackUsage('properties');

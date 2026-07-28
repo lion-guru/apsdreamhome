@@ -22,8 +22,11 @@
                                     <label for="customer_id" class="form-label">Customer *</label>
                                     <select class="form-select" id="customer_id" name="customer_id" required>
                                         <option value="">Select Customer</option>
-                                        <option value="1">Rahul Sharma</option>
-                                        <option value="2">Priya Singh</option>
+                                        <?php if (!empty($customers)): ?>
+                                            <?php foreach ($customers as $cust): ?>
+                                                <option value="<?= (int)$cust['id'] ?>"><?= htmlspecialchars($cust['full_name'] ?? $cust['name'] ?? '') ?></option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                             </div>
@@ -32,8 +35,11 @@
                                     <label for="property_id" class="form-label">Property *</label>
                                     <select class="form-select" id="property_id" name="property_id" required>
                                         <option value="">Select Property</option>
-                                        <option value="1">Plot A-101</option>
-                                        <option value="2">Project Suryoday Heights</option>
+                                        <?php if (!empty($properties)): ?>
+                                            <?php foreach ($properties as $prop): ?>
+                                                <option value="<?= (int)$prop['id'] ?>"><?= htmlspecialchars($prop['title'] ?? $prop['name'] ?? '') ?></option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                             </div>

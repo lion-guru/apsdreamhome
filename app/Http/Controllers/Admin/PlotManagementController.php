@@ -78,10 +78,9 @@ class PlotManagementController extends AdminController
                 }
             }
 
-            $sql = "INSERT INTO plots (colony_id, plot_number, plot_type, area_sqft, width_ft, length_ft, dimension_label, price_per_sqft, total_price, road_width_ft, status, is_active, created_by, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, NOW())";
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([
+            $cols = "colony_id, plot_number, plot_type, area_sqft, width_ft, length_ft, dimension_label, price_per_sqft, total_price, road_width_ft, status, is_active, created_by, created_at";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, NOW()";
+            $insertParams = [
                 intval($data['colony_id']),
                 CoreFunctionsServiceCustom::validateInput($data['plot_number'], 'string'),
                 $data['plot_type'] ?? 'residential',
@@ -94,7 +93,11 @@ class PlotManagementController extends AdminController
                 floatval($data['road_width_ft'] ?? 30),
                 $data['status'] ?? 'available',
                 $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1
-            ]);
+            ];
+            $insertExtra = $this->tenantInsertData();
+            if (!empty($insertExtra)) { $cols .= ", tenant_id"; $vals .= ", ?"; $insertParams[] = $insertExtra['tenant_id']; }
+            $stmt = $this->db->prepare("INSERT INTO plots ($cols) VALUES ($vals)");
+            $result = $stmt->execute($insertParams);
 
             if ($result) {
                 $this->tenantTrackUsage('properties');
@@ -136,6 +139,9 @@ class PlotManagementController extends AdminController
                     LEFT JOIN colonies c ON p.colony_id = c.id
                     WHERE 1=1";
             $params = [];
+            list($tSql, $tParams) = $this->tenantWhere();
+            $sql .= $tSql;
+            $params = array_merge($params, $tParams);
 
             // Apply filters
             if ($siteId > 0) {
@@ -543,24 +549,24 @@ class PlotManagementController extends AdminController
             $stats = [];
 
             // Total plots
-            $sql = "SELECT COUNT(*) as total FROM plots";
-            $result = $this->db->fetchOne($sql);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $result = $this->db->fetchOne("SELECT COUNT(*) as total FROM plots WHERE 1=1" . $tSql, $tParams);
             $stats['total_plots'] = (int)($result['total'] ?? 0);
 
             // Plots by status
-            $sql = "SELECT status, COUNT(*) as count FROM plots GROUP BY status";
-            $stats['by_status'] = $this->db->fetchAll($sql) ?: [];
+            list($tSql, $tParams) = $this->tenantWhere();
+            $stats['by_status'] = $this->db->fetchAll("SELECT status, COUNT(*) as count FROM plots WHERE 1=1" . $tSql . " GROUP BY status", $tParams) ?: [];
 
             // Total area
-            $sql = "SELECT COALESCE(SUM(area_sqft), 0) as total FROM plots";
-            $result = $this->db->fetchOne($sql);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $result = $this->db->fetchOne("SELECT COALESCE(SUM(area_sqft), 0) as total FROM plots WHERE 1=1" . $tSql, $tParams);
             $stats['total_area'] = (float)($result['total'] ?? 0);
 
             // Developed area
-            $sql = "SELECT COALESCE(SUM(p.area_sqft), 0) as developed
+            list($tSql, $tParams) = $this->tenantWhere();
+            $result = $this->db->fetchOne("SELECT COALESCE(SUM(p.area_sqft), 0) as developed
                     FROM plots p
-                    WHERE p.status = 'developed'";
-            $result = $this->db->fetchOne($sql);
+                    WHERE p.status = 'developed'" . $tSql, $tParams);
             $stats['developed_area'] = (float)($result['developed'] ?? 0);
 
             // Pending allocations
@@ -615,13 +621,14 @@ class PlotManagementController extends AdminController
             $activities = array_merge($activities, $this->db->fetchAll($sql) ?: []);
 
             // Recent plot updates
+            list($tSql, $tParams) = $this->tenantWhere();
             $sql = "SELECT 'plot_update' as type, p.updated_at as created_at, p.plot_number, u.name as user_name, p.status
                     FROM plots p
                     LEFT JOIN users u ON p.updated_by = u.id
-                    WHERE p.updated_at IS NOT NULL
+                    WHERE p.updated_at IS NOT NULL" . $tSql . "
                     ORDER BY p.updated_at DESC
                     LIMIT 5";
-            $activities = array_merge($activities, $this->db->fetchAll($sql) ?: []);
+            $activities = array_merge($activities, $this->db->fetchAll($sql, $tParams) ?: []);
 
             // Sort by date and limit
             usort($activities, function ($a, $b) {
@@ -681,13 +688,14 @@ class PlotManagementController extends AdminController
     private function getPlotsExport(string $startDate, string $endDate): array
     {
         try {
+            list($tSql, $tParams) = $this->tenantWhere();
             $sql = "SELECT p.*, c.name as colony_name
                     FROM plots p
                     LEFT JOIN colonies c ON p.colony_id = c.id
-                    WHERE p.created_at BETWEEN ? AND ?
+                    WHERE p.created_at BETWEEN ? AND ?" . $tSql . "
                     ORDER BY p.created_at DESC";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$startDate, $endDate]);
+            $stmt->execute(array_merge([$startDate, $endDate], $tParams));
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             $this->loggingService->error("Get Plots Export error: " . $e->getMessage());
@@ -996,7 +1004,8 @@ class PlotManagementController extends AdminController
             $params = [$colonyId];
             if ($block) { $where .= " AND block = ?"; $params[] = $block; }
 
-            $plots = $this->db->fetchAll("SELECT id, total_price, price_per_sqft, area_sqft FROM plots WHERE $where", $params);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $plots = $this->db->fetchAll("SELECT id, total_price, price_per_sqft, area_sqft FROM plots WHERE $where" . $tSql, array_merge($params, $tParams));
             $count = 0;
             foreach ($plots as $p) {
                 $oldTotal = $p['total_price'];
@@ -1100,7 +1109,7 @@ class PlotManagementController extends AdminController
 
             try {
                 // Create booking in bookings table
-                $bookingId = $this->db->insert('bookings', [
+                $bookingData = [
                     'plot_id' => $id,
                     'colony_id' => $plot['colony_id'],
                     'customer_id' => $customerId,
@@ -1113,7 +1122,10 @@ class PlotManagementController extends AdminController
                     'notes' => $notes . "\nPayment Plan: " . $paymentPlan,
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
-                ]);
+                ];
+                $bookingInsertExtra = $this->tenantInsertData();
+                if (!empty($bookingInsertExtra)) { $bookingData['tenant_id'] = $bookingInsertExtra['tenant_id']; }
+                $bookingId = $this->db->insert('bookings', $bookingData);
 
                 // Also create in plot_allocations
                 try {
@@ -1318,7 +1330,8 @@ class PlotManagementController extends AdminController
                 ORDER BY c.name, p.block, p.plot_number", $params) ?: [];
 
             // Stats
-            $allPlots = $this->db->fetchAll("SELECT status FROM plots WHERE is_active = 1 OR is_active IS NULL") ?: [];
+            list($tSql, $tParams) = $this->tenantWhere();
+            $allPlots = $this->db->fetchAll("SELECT status FROM plots WHERE (is_active = 1 OR is_active IS NULL)" . $tSql, $tParams) ?: [];
             $stats = ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, 'reserved' => 0, 'total' => count($allPlots)];
             foreach ($allPlots as $p) {
                 $s = $p['status'] ?? 'available';
@@ -1356,6 +1369,9 @@ class PlotManagementController extends AdminController
 
             $where = "WHERE (p.is_active = 1 OR p.is_active IS NULL)";
             $params = [];
+            list($tSql, $tParams) = $this->tenantWhere();
+            $where .= $tSql;
+            $params = array_merge($params, $tParams);
             if ($colonyId > 0) {
                 $where .= " AND p.colony_id = ?";
                 $params[] = $colonyId;
@@ -1380,11 +1396,13 @@ class PlotManagementController extends AdminController
     {
         try {
             $colonies = $this->db->fetchAll("SELECT id, name FROM colonies ORDER BY name") ?: [];
+            list($tSql, $tParams) = $this->tenantWhere();
             $all_plots = $this->db->fetchAll("SELECT p.id, p.plot_number, p.block, p.width_ft, p.length_ft,
                 p.area_sqft, p.total_price, p.status, p.facing, p.colony_id, c.name as colony_name
                 FROM plots p
                 LEFT JOIN colonies c ON p.colony_id = c.id
-                ORDER BY c.name, p.plot_number") ?: [];
+                WHERE 1=1" . $tSql . "
+                ORDER BY c.name, p.plot_number", $tParams) ?: [];
 
             return $this->render('admin/plots/map', [
                 'colonies' => $colonies,

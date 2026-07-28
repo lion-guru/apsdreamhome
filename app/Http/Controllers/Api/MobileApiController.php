@@ -113,11 +113,13 @@ class MobileApiController extends BaseController
 
             // Insert new user
             $hash = Security::hashPassword($password);
-            $stmt = $pdo->prepare("
-                INSERT INTO users (name, email, phone, password, role, status, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, 'active', NOW(), NOW())
-            ");
-            $stmt->execute([$name, $email, $phone, $hash, $role]);
+            $cols = "name, email, phone, password, role, status, created_at, updated_at";
+            $vals = "?, ?, ?, ?, ?, 'active', NOW(), NOW()";
+            $uParams = [$name, $email, $phone, $hash, $role];
+            $insertExtra = $this->tenantInsertData();
+            if (!empty($insertExtra)) { $cols .= ", tenant_id"; $vals .= ", ?"; $uParams[] = $insertExtra['tenant_id']; }
+            $stmt = $pdo->prepare("INSERT INTO users ($cols) VALUES ($vals)");
+            $stmt->execute($uParams);
             $userId = $pdo->lastInsertId();
 
             $this->tenantTrackUsage('users');
@@ -543,6 +545,12 @@ class MobileApiController extends BaseController
 
             $params = [];
 
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $sql .= " AND p.tenant_id = :tenant_id";
+                $params['tenant_id'] = $tid;
+            }
+
             // Apply filters
             if (isset($filters['property_type'])) {
                 $sql .= " AND p.property_type_id = :propertyType";
@@ -690,6 +698,12 @@ class MobileApiController extends BaseController
 
             $params = ['last_sync' => $last_sync];
 
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $sql .= " AND p.tenant_id = :tenant_id";
+                $params['tenant_id'] = $tid;
+            }
+
             // Add filters
             if (!empty($filters)) {
                 foreach ($filters as $key => $value) {
@@ -743,6 +757,12 @@ class MobileApiController extends BaseController
 
             $sql = "SELECT COUNT(*) as count FROM properties WHERE updated_at > :last_sync AND status IN ('active', '')";
             $params = ['last_sync' => $last_sync];
+
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = :tenant_id";
+                $params['tenant_id'] = $tid;
+            }
 
             // Add filters
             if (!empty($filters)) {
@@ -878,13 +898,14 @@ class MobileApiController extends BaseController
         }
 
         // Get user's leads
-        $stmt = $this->db->prepare("
-            SELECT * FROM leads 
+        list($tSql, $tParams) = $this->tenantWhere();
+        $leadsSql = "SELECT * FROM leads 
             WHERE source_user_id = :user_id 
-            " . ($last_sync ? "AND updated_at > :last_sync" : "") . "
+            " . $tSql . ($last_sync ? " AND updated_at > :last_sync" : "") . "
             ORDER BY updated_at DESC
-        ");
-        $params = ['user_id' => $user_id];
+        ";
+        $stmt = $this->db->prepare($leadsSql);
+        $params = array_merge(['user_id' => $user_id], $tParams);
         if ($last_sync) {
             $params['last_sync'] = $last_sync;
         }
@@ -960,16 +981,25 @@ class MobileApiController extends BaseController
     {
         switch ($action) {
             case 'create':
-                $stmt = $this->db->prepare("
-                    INSERT INTO leads (name, email, phone, status, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, NOW(), NOW())
-                ");
-                $stmt->execute([
+                $cols = "name, email, phone, status, created_at, updated_at";
+                $vals = "?, ?, ?, ?, NOW(), NOW()";
+                $params = [
                     $data['name'] ?? '',
                     $data['email'] ?? '',
                     $data['phone'] ?? '',
                     $data['status'] ?? 'new'
-                ]);
+                ];
+                $insertExtra = $this->tenantInsertData();
+                if (!empty($insertExtra)) {
+                    $cols .= ", tenant_id";
+                    $vals .= ", ?";
+                    $params[] = $insertExtra['tenant_id'];
+                }
+                $stmt = $this->db->prepare("
+                    INSERT INTO leads ({$cols})
+                    VALUES ({$vals})
+                ");
+                $stmt->execute($params);
                 break;
                 
             case 'update':
@@ -1162,11 +1192,21 @@ class MobileApiController extends BaseController
                 JOIN properties p ON pf.property_id = p.id
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
                 WHERE pf.user_id = :userId
-                ORDER BY pf.created_at DESC
             ";
 
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $sql .= " AND p.tenant_id = :tenant_id";
+            }
+
+            $sql .= " ORDER BY pf.created_at DESC";
+
             $stmt = $this->db->prepare($sql);
-            $stmt->execute(['userId' => $user_id]);
+            $executeParams = ['userId' => $user_id];
+            if ($tid > 1) {
+                $executeParams['tenant_id'] = $tid;
+            }
+            $stmt->execute($executeParams);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             error_log('Get user favorites error: ' . $e->getMessage());
@@ -1223,6 +1263,12 @@ class MobileApiController extends BaseController
             $sql = "SELECT COUNT(*) as count FROM properties WHERE status IN ('active', '')";
             $params = [];
 
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = :tenant_id";
+                $params['tenant_id'] = $tid;
+            }
+
             // Apply filters
             if (isset($filters['property_type'])) {
                 $sql .= " AND property_type_id = :propertyType";
@@ -1272,13 +1318,15 @@ class MobileApiController extends BaseController
         $this->setCorsHeaders();
         try {
             // Enhanced sync: Get all details for offline DB
+            list($tSql, $tParams) = $this->tenantWhere();
             $stmt = $this->db->prepare("
                 SELECT p.id, p.title as property_name, pt.type as property_type, p.status, p.price, p.city as location, p.area_sqft, p.updated_at
                 FROM properties p
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                WHERE 1=1 {$tSql}
                 ORDER BY p.updated_at DESC
             ");
-            $stmt->execute();
+            $stmt->execute($tParams);
             $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $this->successResponse($properties, 'Properties fetched for sync');
@@ -1309,20 +1357,30 @@ class MobileApiController extends BaseController
 
         try {
             $this->db->beginTransaction();
+            $cols = "name, email, phone, source, assigned_to, created_by, status, created_at";
+            $vals = "?, ?, ?, ?, ?, ?, 'new', NOW()";
+            $insParams = [];
+            $insertExtra = $this->tenantInsertData();
+            if (!empty($insertExtra)) {
+                $cols .= ", tenant_id";
+                $vals .= ", ?";
+                $insParams[] = $insertExtra['tenant_id'];
+            }
             $stmt = $this->db->prepare("
-                INSERT INTO leads (name, email, phone, source, assigned_to, created_by, status, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, 'new', NOW())
+                INSERT INTO leads ({$cols}) 
+                VALUES ({$vals})
             ");
 
             foreach ($leads as $lead) {
-                $stmt->execute([
+                $rowParams = [
                     $lead['name'] ?? '',
                     $lead['email'] ?? '',
                     $lead['phone'] ?? '',
                     $lead['source'] ?? 'mobile_app',
                     $userId,
                     $userId
-                ]);
+                ];
+                $stmt->execute(array_merge($rowParams, $insParams));
             }
 
             $this->db->commit();
@@ -1360,16 +1418,25 @@ class MobileApiController extends BaseController
         }
 
         try {
-            $stmt = $this->db->prepare("
-                INSERT INTO leads (name, email, phone, source_user_id, status, created_at) 
-                VALUES (?, ?, ?, ?, 'new', NOW())
-            ");
-            $stmt->execute([
+            $cols = "name, email, phone, source_user_id, status, created_at";
+            $vals = "?, ?, ?, ?, 'new', NOW()";
+            $params = [
                 $data['name'] ?? '',
                 $data['email'] ?? '',
                 $data['phone'] ?? '',
                 $userId
-            ]);
+            ];
+            $insertExtra = $this->tenantInsertData();
+            if (!empty($insertExtra)) {
+                $cols .= ", tenant_id";
+                $vals .= ", ?";
+                $params[] = $insertExtra['tenant_id'];
+            }
+            $stmt = $this->db->prepare("
+                INSERT INTO leads ({$cols}) 
+                VALUES ({$vals})
+            ");
+            $stmt->execute($params);
 
             return $this->successResponse(['id' => $this->db->lastInsertId()], 'Lead synced successfully');
         } catch (\Exception $e) {
@@ -2692,7 +2759,12 @@ class MobileApiController extends BaseController
     {
         header('Content-Type: application/json');
         $db = \App\Core\Database::getInstance();
-        $leads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 20");
+        list($tSql, $tParams) = $this->tenantWhere();
+        if (!empty($tSql)) {
+            $leads = $db->fetchAll("SELECT * FROM leads WHERE 1=1 {$tSql} ORDER BY created_at DESC LIMIT 20", $tParams);
+        } else {
+            $leads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 20");
+        }
         echo json_encode(['success' => true, 'data' => $leads]);
         exit;
     }
@@ -2947,18 +3019,20 @@ class MobileApiController extends BaseController
         try {
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 
-            $countStmt = $pdo->prepare("SELECT COUNT(*) AS total FROM user_properties WHERE user_id = ?");
-            $countStmt->execute([$userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+
+            $countStmt = $pdo->prepare("SELECT COUNT(*) AS total FROM user_properties WHERE user_id = ? {$tSql}");
+            $countStmt->execute(array_merge([$userId], $tParams));
             $total = (int) $countStmt->fetchColumn();
 
             $stmt = $pdo->prepare("
                 SELECT id, user_id, property_type, listing_type, address, area_sqft, price, status, created_at, updated_at
                 FROM user_properties
-                WHERE user_id = ?
+                WHERE user_id = ? {$tSql}
                 ORDER BY created_at DESC
                 LIMIT {$perPage} OFFSET {$offset}
             ");
-            $stmt->execute([$userId]);
+            $stmt->execute(array_merge([$userId], $tParams));
             $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             echo json_encode([
@@ -3003,16 +3077,18 @@ class MobileApiController extends BaseController
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 
             try {
-                $stmt = $pdo->prepare('SELECT COUNT(*) FROM user_properties WHERE user_id = ?');
-                $stmt->execute([$userId]);
+                list($tSql, $tParams) = $this->tenantWhere();
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_properties WHERE user_id = ? {$tSql}");
+                $stmt->execute(array_merge([$userId], $tParams));
                 $stats['property_count'] = (int) $stmt->fetchColumn();
             } catch (\Throwable $e) {
                 error_log("[MobileApiController] exception: " . $e->getMessage());
 }
 
             try {
-                $stmt = $pdo->prepare('SELECT COUNT(*) FROM leads WHERE created_by = ? OR source_id = ?');
-                $stmt->execute([$userId, $userId]);
+                list($tSql, $tParams) = $this->tenantWhere();
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM leads WHERE (created_by = ? OR source_id = ?) {$tSql}");
+                $stmt->execute(array_merge([$userId, $userId], $tParams));
                 $stats['lead_count'] = (int) $stmt->fetchColumn();
             } catch (\Throwable $e) {
                 error_log("[MobileApiController] exception: " . $e->getMessage());
@@ -3202,6 +3278,12 @@ class MobileApiController extends BaseController
             $where = "WHERE p.status IN ('active', '')";
             $params = [];
 
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $where .= " AND p.tenant_id = ?";
+                $params[] = $tid;
+            }
+
             if ($type) {
                 $where .= " AND p.type = ?";
                 $params[] = $type;
@@ -3299,6 +3381,12 @@ class MobileApiController extends BaseController
             $where = ["up.status = 'approved'"];
             $params = [];
 
+            $tid = $this->tenantId();
+            if ($tid > 1) {
+                $where[] = 'up.tenant_id = ?';
+                $params[] = $tid;
+            }
+
             if ($type) { $where[] = 'up.property_type = ?'; $params[] = $type; }
             if ($city) { $where[] = '(up.city_name LIKE ? OR up.address LIKE ?)'; $params[] = "%$city%"; $params[] = "%$city%"; }
             if ($minPrice > 0) { $where[] = 'up.price >= ?'; $params[] = $minPrice; }
@@ -3391,6 +3479,8 @@ class MobileApiController extends BaseController
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
             $limit = min(20, max(1, (int)($_GET['limit'] ?? 10)));
 
+            list($tSql, $tParams) = $this->tenantWhere();
+            $tCond = !empty($tSql) ? " AND up.tenant_id = ?" : "";
             $stmt = $pdo->prepare("
                 SELECT up.id, up.user_id, up.property_type, up.listing_type, up.name as title,
                        up.description, up.price, up.address, up.city_name as city, up.location,
@@ -3400,11 +3490,11 @@ class MobileApiController extends BaseController
                        up.image as main_image
                 FROM user_properties up
                 LEFT JOIN users u ON u.id = up.user_id
-                WHERE up.status = 'approved' AND (up.is_premium = 1 OR up.is_featured = 1 OR up.is_urgent = 1)
+                WHERE up.status = 'approved' AND (up.is_premium = 1 OR up.is_featured = 1 OR up.is_urgent = 1) {$tCond}
                 ORDER BY up.is_premium DESC, up.is_featured DESC, up.created_at DESC
                 LIMIT ?
             ");
-            $stmt->execute([$limit]);
+            $stmt->execute(array_merge($tParams, [$limit]));
             $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($properties as &$p) {
@@ -3440,13 +3530,15 @@ class MobileApiController extends BaseController
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
             $id = (int) $id;
 
+            list($tSql, $tParams) = $this->tenantWhere();
+            $tCond = !empty($tSql) ? " AND p.tenant_id = ?" : "";
             $stmt = $pdo->prepare("
                 SELECT p.*, pt.type as property_type_name
                 FROM properties p
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                WHERE p.id = ? AND p.status = 'active'
+                WHERE p.id = ? AND p.status = 'active' {$tCond}
             ");
-            $stmt->execute([$id]);
+            $stmt->execute(array_merge([$id], $tParams));
             $property = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$property) {
@@ -3528,12 +3620,15 @@ class MobileApiController extends BaseController
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
             $like = '%' . $query . '%';
 
+            list($tSql, $tParams) = $this->tenantWhere();
+            $tCond = !empty($tSql) ? " {$tSql}" : "";
+
             $countStmt = $pdo->prepare("
                 SELECT COUNT(*) FROM properties p
                 WHERE p.status = 'active'
-                  AND (p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.city LIKE ? OR p.type LIKE ?)
+                  AND (p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.city LIKE ? OR p.type LIKE ?){$tCond}
             ");
-            $countStmt->execute([$like, $like, $like, $like, $like]);
+            $countStmt->execute(array_merge([$like, $like, $like, $like, $like], $tParams));
             $total = (int) $countStmt->fetchColumn();
 
             $stmt = $pdo->prepare("
@@ -3542,11 +3637,11 @@ class MobileApiController extends BaseController
                        (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, id ASC LIMIT 1) as main_image
                 FROM properties p
                 WHERE p.status = 'active'
-                  AND (p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.city LIKE ? OR p.type LIKE ?)
+                  AND (p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.city LIKE ? OR p.type LIKE ?){$tCond}
                 ORDER BY p.featured DESC, p.created_at DESC
                 LIMIT {$perPage} OFFSET {$offset}
             ");
-            $stmt->execute([$like, $like, $like, $like, $like]);
+            $stmt->execute(array_merge([$like, $like, $like, $like, $like], $tParams));
             $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             echo json_encode([
@@ -3588,21 +3683,24 @@ class MobileApiController extends BaseController
         try {
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 
-            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM plot_bookings WHERE customer_id = ?");
-            $countStmt->execute([$userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+
+            $countStmt = $pdo->prepare("SELECT COUNT(*) FROM plot_bookings WHERE customer_id = ? {$tSql}");
+            $countStmt->execute(array_merge([$userId], $tParams));
             $total = (int) $countStmt->fetchColumn();
 
+            $tCond = !empty($tSql) ? " {$tSql}" : "";
             $stmt = $pdo->prepare("
                 SELECT pb.id, pb.booking_number, pb.booking_date, pb.total_plot_value,
                        pb.booking_amount, pb.status, pb.channel, pb.created_at,
                        p.plot_code as plot_title, p.total_price as plot_price
                 FROM plot_bookings pb
                 LEFT JOIN plots p ON pb.plot_id = p.id
-                WHERE pb.customer_id = ?
+                WHERE pb.customer_id = ? {$tCond}
                 ORDER BY pb.created_at DESC
                 LIMIT {$perPage} OFFSET {$offset}
             ");
-            $stmt->execute([$userId]);
+            $stmt->execute(array_merge([$userId], $tParams));
             $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             echo json_encode([
@@ -3638,14 +3736,16 @@ class MobileApiController extends BaseController
         try {
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 
+            list($tSql, $tParams) = $this->tenantWhere();
+            $tCond = !empty($tSql) ? " AND pb.tenant_id = ?" : "";
             $stmt = $pdo->prepare("
                 SELECT pb.*,
                        p.plot_code as plot_title, p.total_price as plot_price
                 FROM plot_bookings pb
                 LEFT JOIN plots p ON pb.plot_id = p.id
-                WHERE pb.id = ? AND pb.customer_id = ?
+                WHERE pb.id = ? AND pb.customer_id = ? {$tCond}
             ");
-            $stmt->execute([$id, $userId]);
+            $stmt->execute(array_merge([$id, $userId], $tParams));
             $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$booking) {
@@ -4137,8 +4237,9 @@ class MobileApiController extends BaseController
 
             // User properties
             try {
-                $stmt = $pdo->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active FROM user_properties WHERE user_id = ?");
-                $stmt->execute([$userId]);
+                list($tSql, $tParams) = $this->tenantWhere();
+                $stmt = $pdo->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active FROM user_properties WHERE user_id = ? {$tSql}");
+                $stmt->execute(array_merge([$userId], $tParams));
                 $row = $stmt->fetch(\PDO::FETCH_ASSOC);
                 $stats['properties'] = [
                     'total' => (int) ($row['total'] ?? 0),
@@ -4148,13 +4249,15 @@ class MobileApiController extends BaseController
 
             // Bookings
             try {
+                list($tSql, $tParams) = $this->tenantWhere();
+                $tCond = !empty($tSql) ? " {$tSql}" : "";
                 $stmt = $pdo->prepare("
                     SELECT COUNT(*) as total,
                            SUM(CASE WHEN status IN ('token_paid','agreement_signed','emi_active','partially_paid') THEN 1 ELSE 0 END) as active,
                            COALESCE(SUM(total_plot_value), 0) as total_value
-                    FROM plot_bookings WHERE customer_id = ?
+                    FROM plot_bookings WHERE customer_id = ? {$tCond}
                 ");
-                $stmt->execute([$userId]);
+                $stmt->execute(array_merge([$userId], $tParams));
                 $row = $stmt->fetch(\PDO::FETCH_ASSOC);
                 $stats['bookings'] = [
                     'total' => (int) ($row['total'] ?? 0),

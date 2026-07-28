@@ -9,6 +9,9 @@ $GLOBALS['_html_doc_started'] = true;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title ?? 'Employee Portal - APS Dream Home'; ?></title>
     <meta name="description" content="<?php echo $page_description ?? 'Employee Portal'; ?>">
+    <?php if (isset($_SESSION['employee_id'])): ?>
+    <meta name="user-id" content="<?= (int)$_SESSION['employee_id'] ?>">
+    <?php endif; ?>
 
     <a href="#aps-main-content" class="aps-skip-link">Skip to main content</a>
 
@@ -143,6 +146,12 @@ $GLOBALS['_html_doc_started'] = true;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
+    <!-- Notification System + WebSocket Widget -->
+    <script>window.NOTIFY_USER = { id: <?php echo isset($_SESSION['employee_id']) ? (int)$_SESSION['employee_id'] : 'null'; ?>, role: 'employee' };</script>
+    <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-system.js"></script>
+    <link href="<?php echo BASE_URL; ?>/assets/css/notification-widget.css" rel="stylesheet">
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-widget.js"></script>
     <script>
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('show');

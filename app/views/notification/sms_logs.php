@@ -96,18 +96,18 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>+91-9876543210</td>
-                                            <td>OTP: 123456</td>
-                                            <td><span class="badge bg-success">Delivered</span></td>
-                                            <td>1 hour ago</td>
-                                        </tr>
-                                        <tr>
-                                            <td>+91-9876543220</td>
-                                            <td>Payment successful</td>
-                                            <td><span class="badge bg-success">Delivered</span></td>
-                                            <td>3 hours ago</td>
-                                        </tr>
+                                        <?php if (!empty($recent_logs)): ?>
+                                            <?php foreach ($recent_logs as $log): ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($log['recipient'] ?? '') ?></td>
+                                                    <td><?= htmlspecialchars($log['message'] ?? '') ?></td>
+                                                    <td><span class="badge bg-<?= ($log['status'] ?? '') === 'delivered' ? 'success' : (($log['status'] ?? '') === 'failed' ? 'danger' : 'secondary') ?>"><?= ucfirst(htmlspecialchars($log['status'] ?? 'pending')) ?></span></td>
+                                                    <td><?= htmlspecialchars($log['time_ago'] ?? '') ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr><td colspan="4" class="text-center text-muted">No recent logs</td></tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table></div>
                             </div>

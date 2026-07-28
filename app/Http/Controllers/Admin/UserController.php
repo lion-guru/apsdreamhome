@@ -15,6 +15,8 @@ use Exception;
  */
 class UserController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private $loggingService;
 
     public function __construct()
@@ -48,6 +50,10 @@ class UserController extends AdminController
                     LEFT JOIN properties p ON u.id = p.created_by
                     WHERE 1=1";
             $params = [];
+
+            list($tSql, $tParams) = $this->tenantWhere();
+            $sql .= $tSql;
+            $params = array_merge($params, $tParams);
 
             // Apply filters
             if (!empty($search)) {
@@ -235,8 +241,12 @@ class UserController extends AdminController
                     LEFT JOIN users s ON u.sponsor_id = s.id
                     LEFT JOIN users r ON u.referred_by = r.id
                     WHERE u.id = ?";
+            $params = [$userId];
+            list($tSql, $tParams) = $this->tenantWhere();
+            $sql .= $tSql;
+            $params = array_merge($params, $tParams);
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$userId]);
+            $stmt->execute($params);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$user) {
@@ -291,8 +301,11 @@ class UserController extends AdminController
 
             // Get user details
             $sql = "SELECT * FROM users WHERE id = ?";
+            list($tSql, $tParams) = $this->tenantWhere();
+            $sql .= $tSql;
+            $params = array_merge([$userId], $tParams);
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$userId]);
+            $stmt->execute($params);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$user) {
@@ -334,8 +347,11 @@ class UserController extends AdminController
 
             // Check if user exists
             $sql = "SELECT * FROM users WHERE id = ?";
+            list($tSql, $tParams) = $this->tenantWhere();
+            $sql .= $tSql;
+            $params = array_merge([$userId], $tParams);
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$userId]);
+            $stmt->execute($params);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$user) {
@@ -358,8 +374,11 @@ class UserController extends AdminController
 
                 // Check if email already exists (excluding current user)
                 $sql = "SELECT id FROM users WHERE email = ? AND id != ?";
+                list($tSql, $tParams) = $this->tenantWhere();
+                $sql .= $tSql;
+                $params = array_merge([$data['email'], $userId], $tParams);
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute([$data['email'], $userId]);
+                $stmt->execute($params);
                 if ($stmt->fetch()) {
                     return $this->jsonError('Email already exists', 400);
                 }
@@ -407,6 +426,7 @@ class UserController extends AdminController
             $updateValues[] = $userId;
 
             $sql = "UPDATE users SET " . implode(', ', $updateFields) . " WHERE id = ?";
+            if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $updateValues[] = $tid; }
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute($updateValues);
 
@@ -447,8 +467,11 @@ class UserController extends AdminController
 
             // Check if user exists
             $sql = "SELECT * FROM users WHERE id = ?";
+            list($tSql, $tParams) = $this->tenantWhere();
+            $sql .= $tSql;
+            $params = array_merge([$userId], $tParams);
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$userId]);
+            $stmt->execute($params);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$user) {
@@ -463,8 +486,10 @@ class UserController extends AdminController
             // Soft delete instead of hard delete (preserves data integrity)
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
             $sql = "UPDATE users SET status = 'inactive', deleted_at = NOW(), updated_at = NOW() WHERE id = ?";
+            $delParams = [$userId];
+            if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $delParams[] = $tid; }
             $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([$userId]);
+            $result = $stmt->execute($delParams);
 
             if ($result) {
                 // Log activity
@@ -502,15 +527,17 @@ class UserController extends AdminController
                            (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count
                     FROM users u
                     LEFT JOIN properties p ON u.id = p.created_by
-                    WHERE u.registration_status = 'pending'
-                    ORDER BY u.created_at DESC";
+                    WHERE u.registration_status = 'pending'";
+            list($tSql, $tParams) = $this->tenantWhere();
+            $sql .= $tSql;
+            $sql .= " ORDER BY u.created_at DESC";
 
-            $countSql = "SELECT COUNT(*) as total FROM users WHERE registration_status = 'pending'";
-            $countResult = $this->db->fetchOne($countSql);
+            $countSql = "SELECT COUNT(*) as total FROM users WHERE registration_status = 'pending'" . $tSql;
+            $countResult = $this->db->fetchOne($countSql, $tParams);
             $total = (int)($countResult['total'] ?? 0);
 
             $sql .= " LIMIT ?, ?";
-            $params = [$offset, $perPage];
+            $params = array_merge($tParams, [$offset, $perPage]);
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
@@ -549,7 +576,8 @@ class UserController extends AdminController
                 return $this->jsonError('Invalid user ID', 400);
             }
 
-            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
             if (!$user) {
                 return $this->jsonError('User not found', 404);
             }
@@ -560,10 +588,10 @@ class UserController extends AdminController
 
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
 
-            $this->db->query(
-                "UPDATE users SET registration_status = 'approved', status = 'active', approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id = ?",
-                [$adminId, $userId]
-            );
+            $sql = "UPDATE users SET registration_status = 'approved', status = 'active', approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id = ?";
+            $upParams = [$adminId, $userId];
+            if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $upParams[] = $tid; }
+            $this->db->query($sql, $upParams);
 
             $this->loggingService->logUserActivity($adminId, 'user_approved', [
                 'user_id' => $userId,
@@ -597,7 +625,8 @@ class UserController extends AdminController
                 return $this->jsonError('Invalid user ID', 400);
             }
 
-            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT * FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
             if (!$user) {
                 return $this->jsonError('User not found', 404);
             }
@@ -609,10 +638,10 @@ class UserController extends AdminController
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
             $reason = trim($_POST['reason'] ?? '');
 
-            $this->db->query(
-                "UPDATE users SET registration_status = 'rejected', status = 'inactive', rejection_reason = ?, approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id = ?",
-                [$reason, $adminId, $userId]
-            );
+            $sql = "UPDATE users SET registration_status = 'rejected', status = 'inactive', rejection_reason = ?, approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id = ?";
+            $upParams = [$reason, $adminId, $userId];
+            if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $upParams[] = $tid; }
+            $this->db->query($sql, $upParams);
 
             $this->loggingService->logUserActivity($adminId, 'user_rejected', [
                 'user_id' => $userId,
@@ -649,10 +678,10 @@ class UserController extends AdminController
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
             $placeholders = implode(',', array_fill(0, count($userIds), '?'));
 
-            $this->db->query(
-                "UPDATE users SET registration_status = 'approved', status = 'active', approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id IN ($placeholders) AND registration_status = 'pending'",
-                array_merge([$adminId], $userIds)
-            );
+            $sql = "UPDATE users SET registration_status = 'approved', status = 'active', approved_by = ?, approved_at = NOW(), updated_at = NOW() WHERE id IN ($placeholders) AND registration_status = 'pending'";
+            $upParams = array_merge([$adminId], $userIds);
+            if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $upParams[] = $tid; }
+            $this->db->query($sql, $upParams);
 
             $this->loggingService->logUserActivity($adminId, 'bulk_user_approved', [
                 'user_ids' => $userIds,
@@ -677,31 +706,31 @@ class UserController extends AdminController
         try {
             $stats = [];
 
+            list($tSql, $tParams) = $this->tenantWhere();
+
             // Total users
-            $sql = "SELECT COUNT(*) as total FROM users";
-            $result = $this->db->fetchOne($sql);
+            $sql = "SELECT COUNT(*) as total FROM users WHERE 1=1" . $tSql;
+            $result = $this->db->fetchOne($sql, $tParams);
             $stats['total_users'] = (int)($result['total'] ?? 0);
 
             // Users by role
-            $sql = "SELECT role, COUNT(*) as count FROM users GROUP BY role";
-            $result = $this->db->fetchAll($sql);
+            $sql = "SELECT role, COUNT(*) as count FROM users WHERE 1=1" . $tSql . " GROUP BY role";
+            $result = $this->db->fetchAll($sql, $tParams);
             $stats['by_role'] = $result ?: [];
 
             // Users by status
-            $sql = "SELECT status, COUNT(*) as count FROM users GROUP BY status";
-            $result = $this->db->fetchAll($sql);
+            $sql = "SELECT status, COUNT(*) as count FROM users WHERE 1=1" . $tSql . " GROUP BY status";
+            $result = $this->db->fetchAll($sql, $tParams);
             $stats['by_status'] = $result ?: [];
 
             // New users this month
-            $sql = "SELECT COUNT(*) as new_this_month FROM users 
-                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
-            $result = $this->db->fetchOne($sql);
+            $sql = "SELECT COUNT(*) as new_this_month FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $tSql;
+            $result = $this->db->fetchOne($sql, $tParams);
             $stats['new_this_month'] = (int)($result['new_this_month'] ?? 0);
 
             // Active users (logged in within last 7 days)
-            $sql = "SELECT COUNT(*) as active_users FROM users 
-                    WHERE last_login >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
-            $result = $this->db->fetchOne($sql);
+            $sql = "SELECT COUNT(*) as active_users FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 7 DAY)" . $tSql;
+            $result = $this->db->fetchOne($sql, $tParams);
             $stats['active_users'] = (int)($result['active_users'] ?? 0);
 
             return $this->jsonResponse([
@@ -728,7 +757,8 @@ class UserController extends AdminController
     {
         try {
             $userId = intval($id);
-            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, customer_id FROM users WHERE id = ?", [$userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, customer_id FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
             if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
 
             // Wallet balance from wallet_points
@@ -848,10 +878,11 @@ class UserController extends AdminController
             if ($newSponsorId <= 0) return $this->jsonError('Invalid sponsor', 400);
             if ($newSponsorId === $userId) return $this->jsonError('Cannot be own sponsor', 400);
 
-            $user = $this->db->fetchOne("SELECT id, role FROM users WHERE id = ?", [$userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, role FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
             if (!$user) return $this->jsonError('User not found', 404);
 
-            $newSponsor = $this->db->fetchOne("SELECT id, name FROM users WHERE id = ?", [$newSponsorId]);
+            $newSponsor = $this->db->fetchOne("SELECT id, name FROM users WHERE id = ?" . $tSql, array_merge([$newSponsorId], $tParams));
             if (!$newSponsor) return $this->jsonError('Sponsor not found', 404);
 
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
@@ -859,7 +890,10 @@ class UserController extends AdminController
             $this->db->beginTransaction();
             try {
                 // 1. Update users table
-                $this->db->execute("UPDATE users SET referred_by = ?, sponsor_id = ?, updated_at = NOW() WHERE id = ?", [$newSponsorId, $newSponsorId, $userId]);
+                $sql = "UPDATE users SET referred_by = ?, sponsor_id = ?, updated_at = NOW() WHERE id = ?";
+                $upParams = [$newSponsorId, $newSponsorId, $userId];
+                if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $upParams[] = $tid; }
+                $this->db->execute($sql, $upParams);
 
                 // 2. Update mlm_profiles
                 $this->db->execute("UPDATE mlm_profiles SET sponsor_user_id = ?, updated_at = NOW() WHERE user_id = ?", [$newSponsorId, $userId]);
@@ -898,12 +932,16 @@ class UserController extends AdminController
             if (empty($newCode) || strlen($newCode) < 3) return $this->jsonError('Referral code too short (min 3 chars)', 400);
 
             // Check uniqueness
-            $exists = $this->db->fetchOne("SELECT id FROM users WHERE referral_code = ? AND id != ?", [$newCode, $userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $exists = $this->db->fetchOne("SELECT id FROM users WHERE referral_code = ? AND id != ?" . $tSql, array_merge([$newCode, $userId], $tParams));
             if ($exists) return $this->jsonError('Referral code already in use', 400);
 
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
 
-            $this->db->execute("UPDATE users SET referral_code = ?, updated_at = NOW() WHERE id = ?", [$newCode, $userId]);
+            $sql = "UPDATE users SET referral_code = ?, updated_at = NOW() WHERE id = ?";
+            $upParams = [$newCode, $userId];
+            if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $upParams[] = $tid; }
+            $this->db->execute($sql, $upParams);
             $this->db->execute("UPDATE mlm_profiles SET referral_code = ?, updated_at = NOW() WHERE user_id = ?", [$newCode, $userId]);
 
             $this->loggingService->logUserActivity($adminId, 'referral_code_changed', ['user_id' => $userId, 'new_code' => $newCode]);
@@ -920,7 +958,8 @@ class UserController extends AdminController
     {
         try {
             $userId = intval($id);
-            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, referral_code FROM users WHERE id = ?", [$userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, referral_code FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
             if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
 
             // Direct referrals from mlm_network_tree
@@ -987,16 +1026,17 @@ class UserController extends AdminController
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);
         try {
             $userId = intval($id);
-            $user = $this->db->fetchOne("SELECT id, name, email, role FROM users WHERE id = ?", [$userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, name, email, role FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
             if (!$user) return $this->jsonError('User not found', 404);
             if ($user['role'] === 'admin' || $user['role'] === 'super_admin') return $this->jsonError('Cannot delete admin users', 400);
 
             $adminId = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
 
-            $this->db->execute(
-                "UPDATE users SET status = 'inactive', deleted_at = NOW(), updated_at = NOW() WHERE id = ?",
-                [$userId]
-            );
+            $sql = "UPDATE users SET status = 'inactive', deleted_at = NOW(), updated_at = NOW() WHERE id = ?";
+            $delParams = [$userId];
+            if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $delParams[] = $tid; }
+            $this->db->execute($sql, $delParams);
 
             $this->loggingService->logUserActivity($adminId, 'user_soft_deleted', ['user_id' => $userId, 'name' => $user['name'], 'email' => $user['email']]);
             return $this->jsonResponse(['success' => true, 'message' => 'User deactivated (soft deleted)']);
@@ -1021,15 +1061,24 @@ class UserController extends AdminController
 
             switch ($action) {
                 case 'activate':
-                    $this->db->execute("UPDATE users SET status = 'active', updated_at = NOW() WHERE id IN ($placeholders)", $userIds);
+                    $sql = "UPDATE users SET status = 'active', updated_at = NOW() WHERE id IN ($placeholders)";
+                    $upParams = $userIds;
+                    if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $upParams[] = $tid; }
+                    $this->db->execute($sql, $upParams);
                     $msg = count($userIds) . ' users activated';
                     break;
                 case 'deactivate':
-                    $this->db->execute("UPDATE users SET status = 'inactive', updated_at = NOW() WHERE id IN ($placeholders)", $userIds);
+                    $sql = "UPDATE users SET status = 'inactive', updated_at = NOW() WHERE id IN ($placeholders)";
+                    $upParams = $userIds;
+                    if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $upParams[] = $tid; }
+                    $this->db->execute($sql, $upParams);
                     $msg = count($userIds) . ' users deactivated';
                     break;
                 case 'suspend':
-                    $this->db->execute("UPDATE users SET status = 'suspended', updated_at = NOW() WHERE id IN ($placeholders)", $userIds);
+                    $sql = "UPDATE users SET status = 'suspended', updated_at = NOW() WHERE id IN ($placeholders)";
+                    $upParams = $userIds;
+                    if ($tid = $this->tenantId()) { $sql .= " AND tenant_id = ?"; $upParams[] = $tid; }
+                    $this->db->execute($sql, $upParams);
                     $msg = count($userIds) . ' users suspended';
                     break;
                 default:
@@ -1050,7 +1099,8 @@ class UserController extends AdminController
     {
         try {
             $userId = intval($id);
-            $user = $this->db->fetchOne("SELECT id, name, email, phone, role FROM users WHERE id = ?", [$userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
             if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
 
             $page = (int)($_GET['page'] ?? 1);
@@ -1100,7 +1150,8 @@ class UserController extends AdminController
     {
         try {
             $userId = intval($id);
-            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, customer_id FROM users WHERE id = ?", [$userId]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $user = $this->db->fetchOne("SELECT id, name, email, phone, role, customer_id FROM users WHERE id = ?" . $tSql, array_merge([$userId], $tParams));
             if (!$user) { $this->setFlash('error', 'User not found'); return $this->redirect('admin/users'); }
 
             $commissions = $this->db->fetchAll(

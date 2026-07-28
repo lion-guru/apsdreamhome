@@ -43,6 +43,7 @@ class PropertyManagementController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             // Build query
+            list($tSql, $tParams) = $this->tenantWhere();
             $sql = "SELECT p.*, 
                            s.site_name,
                            s.location as site_location,
@@ -61,8 +62,8 @@ class PropertyManagementController extends AdminController
                     LEFT JOIN bookings b ON p.id = b.property_id
                     LEFT JOIN users u ON b.customer_id = u.id
                     LEFT JOIN property_images pi ON p.id = pi.property_id
-                    WHERE 1=1";
-            $params = [];
+                    WHERE 1=1 $tSql";
+            $params = $tParams;
 
             // Apply filters
             if ($siteId > 0) {
@@ -181,10 +182,9 @@ class PropertyManagementController extends AdminController
                 }
             }
 
-            $sql = "INSERT INTO properties (title, description, price, location, property_type, status, site_id, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
-            $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([
+            $cols = "title, description, price, location, property_type, status, site_id, created_at, updated_at";
+            $vals = "?, ?, ?, ?, ?, ?, ?, NOW(), NOW()";
+            $params = [
                 CoreFunctionsServiceCustom::validateInput($data['title'], 'string'),
                 CoreFunctionsServiceCustom::validateInput($data['description'] ?? '', 'string'),
                 floatval($data['price'] ?? 0),
@@ -192,7 +192,16 @@ class PropertyManagementController extends AdminController
                 CoreFunctionsServiceCustom::validateInput($data['property_type'] ?? '', 'string'),
                 $data['status'] ?? 'available',
                 intval($data['site_id'] ?? 0)
-            ]);
+            ];
+            $insertExtra = $this->tenantInsertData();
+            if (!empty($insertExtra)) {
+                $cols .= ", tenant_id";
+                $vals .= ", ?";
+                $params[] = $insertExtra['tenant_id'];
+            }
+            $sql = "INSERT INTO properties ($cols) VALUES ($vals)";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute($params);
 
             if ($result) {
                 $propertyId = $this->db->lastInsertId();
@@ -545,17 +554,20 @@ class PropertyManagementController extends AdminController
             $stats = [];
 
             // Total properties
-            $sql = "SELECT COUNT(*) as total FROM properties";
-            $result = $this->db->fetchOne($sql);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $sql = "SELECT COUNT(*) as total FROM properties WHERE 1=1 $tSql";
+            $result = $this->db->fetchOne($sql, $tParams);
             $stats['total_properties'] = (int)($result['total'] ?? 0);
 
             // Properties by status
-            $sql = "SELECT status, COUNT(*) as count FROM properties GROUP BY status";
-            $stats['by_status'] = $this->db->fetchAll($sql) ?: [];
+            list($tSql2, $tParams2) = $this->tenantWhere();
+            $sql = "SELECT status, COUNT(*) as count FROM properties WHERE 1=1 $tSql2 GROUP BY status";
+            $stats['by_status'] = $this->db->fetchAll($sql, $tParams2) ?: [];
 
             // Total value
-            $sql = "SELECT COALESCE(SUM(price), 0) as total FROM properties";
-            $result = $this->db->fetchOne($sql);
+            list($tSql3, $tParams3) = $this->tenantWhere();
+            $sql = "SELECT COALESCE(SUM(price), 0) as total FROM properties WHERE 1=1 $tSql3";
+            $result = $this->db->fetchOne($sql, $tParams3);
             $stats['total_value'] = (float)($result['total'] ?? 0);
 
             // Pending allocations
@@ -615,13 +627,14 @@ class PropertyManagementController extends AdminController
             $activities = array_merge($activities, $this->db->fetchAll($sql) ?: []);
 
             // Recent property updates
+            list($tSql, $tParams) = $this->tenantWhere();
             $sql = "SELECT 'property_update' as type, p.updated_at as created_at, p.title as property_title, u.name as user_name, p.status
                     FROM properties p
                     LEFT JOIN users u ON p.updated_by = u.id
-                    WHERE p.updated_at IS NOT NULL
+                    WHERE p.updated_at IS NOT NULL $tSql
                     ORDER BY p.updated_at DESC
                     LIMIT 5";
-            $activities = array_merge($activities, $this->db->fetchAll($sql) ?: []);
+            $activities = array_merge($activities, $this->db->fetchAll($sql, $tParams) ?: []);
 
             // Sort by date and limit
             usort($activities, function ($a, $b) {
@@ -681,15 +694,17 @@ class PropertyManagementController extends AdminController
     private function getPropertiesExport(string $startDate, string $endDate): array
     {
         try {
+            list($tSql, $tParams) = $this->tenantWhere();
             $sql = "SELECT p.*, s.site_name, pr.name as project_name, c.name as category_name
                     FROM properties p
                     LEFT JOIN sites s ON p.site_id = s.id
                     LEFT JOIN projects pr ON p.project_id = pr.id
                     LEFT JOIN property_categories c ON p.category_id = c.id
-                    WHERE p.created_at BETWEEN ? AND ?
+                    WHERE p.created_at BETWEEN ? AND ? $tSql
                     ORDER BY p.created_at DESC";
+            $params = array_merge([$startDate, $endDate], $tParams);
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$startDate, $endDate]);
+            $stmt->execute($params);
             return $stmt->fetchAll() ?: [];
         } catch (\Exception $e) {
             $this->loggingService->error("Get Properties Export error: " . $e->getMessage());

@@ -8,9 +8,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
 use App\Services\CRMService;
+use \App\Traits\TenantAwareTrait;
 
 class CRMController extends BaseController
 {
+    use TenantAwareTrait;
+
     private $crm;
 
     public function __construct() {
@@ -342,6 +345,9 @@ class CRMController extends BaseController
         ];
         $recent_activity = [];
 
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND leads.tenant_id = $tid" : "";
+
         try {
             $r = $pdo->query("SELECT COUNT(*) as c FROM users WHERE deleted_at IS NULL")->fetch();
             $stats['total_users'] = (int)($r['c'] ?? 0);
@@ -359,11 +365,11 @@ class CRMController extends BaseController
             $stats['total_revenue'] = (float)($r['v'] ?? 0);
         } catch (\Throwable $e) {}
         try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM leads WHERE deleted_at IS NULL")->fetch();
+            $r = $pdo->query("SELECT COUNT(*) as c FROM leads WHERE deleted_at IS NULL{$tidSql}")->fetch();
             $stats['total_leads'] = (int)($r['c'] ?? 0);
         } catch (\Throwable $e) {}
         try {
-            $r = $pdo->query("SELECT COUNT(*) as c FROM leads WHERE lead_category='hot' AND deleted_at IS NULL")->fetch();
+            $r = $pdo->query("SELECT COUNT(*) as c FROM leads WHERE lead_category='hot' AND deleted_at IS NULL{$tidSql}")->fetch();
             $stats['hot_leads'] = (int)($r['c'] ?? 0);
         } catch (\Throwable $e) {}
         try {
@@ -385,6 +391,7 @@ class CRMController extends BaseController
                 SELECT i.interaction_type, i.subject, i.body, i.created_at, l.name as lead_name
                 FROM crm_interactions i
                 JOIN leads l ON l.id = i.lead_id
+                WHERE 1=1{$tidSql}
                 ORDER BY i.created_at DESC LIMIT 10
             ");
             $stmt->execute();
@@ -556,6 +563,12 @@ class CRMController extends BaseController
         $s = "%$q%";
         $where = "deleted_at IS NULL AND (name LIKE ? OR phone LIKE ? OR email LIKE ? OR lead_number LIKE ?)";
         $params = [$s, $s, $s, $s];
+
+        $tid = $this->tenantId();
+        if ($tid > 1) {
+            $where .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
 
         if (!in_array($user['role'], ['admin', 'manager'])) {
             $where .= " AND assigned_to = ?";

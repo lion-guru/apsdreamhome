@@ -62,9 +62,11 @@
                                     <label for="sponsor_id" class="form-label">Sponsor</label>
                                     <select class="form-select" id="sponsor_id" name="sponsor_id">
                                         <option value="">No Sponsor</option>
-                                        <option value="1">John Doe</option>
-                                        <option value="2">Jane Smith</option>
-                                        <option value="3">Bob Johnson</option>
+                                        <?php if (!empty($sponsors)): ?>
+                                            <?php foreach ($sponsors as $sponsor): ?>
+                                                <option value="<?= (int)$sponsor['id'] ?>"><?= htmlspecialchars($sponsor['full_name'] ?? $sponsor['name'] ?? '') ?></option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                             </div>

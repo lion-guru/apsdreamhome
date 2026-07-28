@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\AdminController;
 
 class LeadController extends AdminController
 {
+    use \App\Traits\TenantAwareTrait;
+
     private $crm;
 
     public function __construct() {
@@ -73,7 +75,8 @@ class LeadController extends AdminController
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $sources = $db->query("SELECT id, name FROM lead_sources ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $statuses = $db->query("SELECT status_name FROM lead_statuses ORDER BY id")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $tid = $this->tenantId();
+            $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL" . ($tid ? " AND tenant_id = $tid" : "") . " ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $sources = []; $statuses = []; $assignees = [];
         }
@@ -187,7 +190,8 @@ class LeadController extends AdminController
         $agents = [];
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $agents = $db->query("SELECT id, name FROM users WHERE role IN ('associate','employee','agent') AND deleted_at IS NULL ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $tid = $this->tenantId();
+            $agents = $db->query("SELECT id, name FROM users WHERE role IN ('associate','employee','agent') AND deleted_at IS NULL" . ($tid ? " AND tenant_id = $tid" : "") . " ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {}
 
         return $this->render('admin/leads/show', [
@@ -214,21 +218,23 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
+            $tid = $this->tenantId();
+            $tidSql = $tid ? " AND tenant_id = $tid" : "";
             
             // Source distribution
-            $stmt = $db->query("SELECT source, COUNT(*) as count FROM leads GROUP BY source ORDER BY count DESC");
+            $stmt = $db->query("SELECT source, COUNT(*) as count FROM leads WHERE 1=1$tidSql GROUP BY source ORDER BY count DESC");
             $sourceRows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
             // For each source, get monthly and conversion
             $sourceData = [];
             foreach ($sourceRows as $row) {
                 $src = $row['source'];
-                $mStmt = $db->prepare("SELECT COUNT(*) as cnt FROM leads WHERE source = ? AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())");
-                $mStmt->execute([$src]);
+                $mStmt = $db->prepare("SELECT COUNT(*) as cnt FROM leads WHERE source = ? AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())$tidSql");
+                $mStmt->execute(array_merge([$src], $tid ? [$tid] : []));
                 $monthly = (int)$mStmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
                 
-                $cStmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status IN ('converted','closed') THEN 1 ELSE 0 END) as converted FROM leads WHERE source = ?");
-                $cStmt->execute([$src]);
+                $cStmt = $db->prepare("SELECT COUNT(*) as total, SUM(CASE WHEN status IN ('converted','closed') THEN 1 ELSE 0 END) as converted FROM leads WHERE source = ?$tidSql");
+                $cStmt->execute(array_merge([$src], $tid ? [$tid] : []));
                 $cData = $cStmt->fetch(\PDO::FETCH_ASSOC);
                 $convPct = $cData['total'] > 0 ? round(($cData['converted'] / $cData['total']) * 100, 1) : 0;
                 
@@ -241,13 +247,13 @@ class LeadController extends AdminController
             }
             
             // Monthly trend (last 6 months)
-            $trendStmt = $db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM leads WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) GROUP BY month ORDER BY month ASC");
+            $trendStmt = $db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM leads WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)$tidSql GROUP BY month ORDER BY month ASC");
             $monthlyTrend = $trendStmt->fetchAll(\PDO::FETCH_ASSOC);
             
-            $totalStmt = $db->query("SELECT COUNT(*) as total FROM leads");
+            $totalStmt = $db->query("SELECT COUNT(*) as total FROM leads WHERE 1=1$tidSql");
             $totalLeads = (int)$totalStmt->fetch(\PDO::FETCH_ASSOC)['total'];
             
-            $monthTotalStmt = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())");
+            $monthTotalStmt = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())$tidSql");
             $monthlyLeads = (int)$monthTotalStmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
             
         } catch (\Exception $e) {
@@ -271,9 +277,11 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $statuses = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            $total = (int)$db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL")->fetchColumn();
-            $by_source = $db->query("SELECT source, status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY source, status ORDER BY source, cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $tid = $this->tenantId();
+            $tidSql = $tid ? " AND tenant_id = $tid" : "";
+            $statuses = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL$tidSql GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $total = (int)$db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL$tidSql")->fetchColumn();
+            $by_source = $db->query("SELECT source, status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL$tidSql GROUP BY source, status ORDER BY source, cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $statuses = []; $total = 0; $by_source = [];
         }
@@ -285,8 +293,10 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $pending = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.next_activity_date IS NOT NULL AND l.next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) AND l.status NOT IN ('converted','closed','dead') AND l.deleted_at IS NULL ORDER BY l.next_activity_date ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            $recent = $db->query("SELECT la.*, l.name as lead_name FROM lead_activities la LEFT JOIN leads l ON la.lead_id=l.id ORDER BY la.activity_date DESC LIMIT 30")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $tid = $this->tenantId();
+            $tidSql = $tid ? " AND l.tenant_id = $tid" : "";
+            $pending = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.next_activity_date IS NOT NULL AND l.next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) AND l.status NOT IN ('converted','closed','dead') AND l.deleted_at IS NULL$tidSql ORDER BY l.next_activity_date ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $recent = $db->query("SELECT la.*, l.name as lead_name FROM lead_activities la LEFT JOIN leads l ON la.lead_id=l.id WHERE l.id IS NULL OR l.deleted_at IS NULL" . ($tid ? " AND l.tenant_id = $tid" : "") . " ORDER BY la.activity_date DESC LIMIT 30")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $pending = []; $recent = [];
         }
@@ -298,7 +308,9 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $scored = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL ORDER BY l.lead_score DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $tid = $this->tenantId();
+            $tidSql = $tid ? " AND l.tenant_id = $tid" : "";
+            $scored = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL$tidSql ORDER BY l.lead_score DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $scored = [];
         }
@@ -310,7 +322,9 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $leads = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL ORDER BY l.created_at DESC LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $tid = $this->tenantId();
+            $tidSql = $tid ? " AND l.tenant_id = $tid" : "";
+            $leads = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL$tidSql ORDER BY l.created_at DESC LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $leads = [];
         }
@@ -328,12 +342,14 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $total = (int)$db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL")->fetchColumn();
-            $converted = (int)$db->query("SELECT COUNT(*) FROM leads WHERE status='converted' AND deleted_at IS NULL")->fetchColumn();
+            $tid = $this->tenantId();
+            $tidSql = $tid ? " AND tenant_id = $tid" : "";
+            $total = (int)$db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL$tidSql")->fetchColumn();
+            $converted = (int)$db->query("SELECT COUNT(*) FROM leads WHERE status='converted' AND deleted_at IS NULL$tidSql")->fetchColumn();
             $conv_rate = $total > 0 ? round(($converted / $total) * 100, 1) : 0;
-            $by_source = $db->query("SELECT source, COUNT(*) as total, SUM(CASE WHEN status='converted' THEN 1 ELSE 0 END) as converted FROM leads WHERE deleted_at IS NULL GROUP BY source ORDER BY total DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            $monthly = $db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as total, SUM(CASE WHEN status='converted' THEN 1 ELSE 0 END) as converted FROM leads WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) AND deleted_at IS NULL GROUP BY month ORDER BY month ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            $by_city = $db->query("SELECT city, COUNT(*) as cnt FROM leads WHERE city IS NOT NULL AND city != '' AND deleted_at IS NULL GROUP BY city ORDER BY cnt DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $by_source = $db->query("SELECT source, COUNT(*) as total, SUM(CASE WHEN status='converted' THEN 1 ELSE 0 END) as converted FROM leads WHERE deleted_at IS NULL$tidSql GROUP BY source ORDER BY total DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $monthly = $db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as total, SUM(CASE WHEN status='converted' THEN 1 ELSE 0 END) as converted FROM leads WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) AND deleted_at IS NULL$tidSql GROUP BY month ORDER BY month ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $by_city = $db->query("SELECT city, COUNT(*) as cnt FROM leads WHERE city IS NOT NULL AND city != '' AND deleted_at IS NULL$tidSql GROUP BY city ORDER BY cnt DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {
             $total = 0; $converted = 0; $conv_rate = 0; $by_source = []; $monthly = []; $by_city = [];
         }
@@ -348,8 +364,10 @@ class LeadController extends AdminController
         $this->requireAdmin();
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $lead = $db->prepare("SELECT * FROM leads WHERE id = ?");
-            $lead->execute([$id]);
+            $tid = $this->tenantId();
+            $tidSql = $tid ? " AND tenant_id = $tid" : "";
+            $lead = $db->prepare("SELECT * FROM leads WHERE id = ?$tidSql");
+            $lead->execute($tid ? [$id, $tid] : [$id]);
             $lead = $lead->fetch(\PDO::FETCH_ASSOC);
             $notesStmt = $db->prepare("SELECT * FROM lead_notes WHERE lead_id = ? ORDER BY created_at DESC");
             $notesStmt->execute([$id]);
@@ -374,7 +392,8 @@ class LeadController extends AdminController
         $assignees = [];
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $tid = $this->tenantId();
+            $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL" . ($tid ? " AND tenant_id = $tid" : "") . " ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Exception $e) {}
         return $this->render('admin/leads/edit', ['lead' => $lead, 'assignees' => $assignees]);
     }
@@ -770,15 +789,18 @@ class LeadController extends AdminController
     {
         $this->requireAdmin();
         $db = \App\Core\Database\Database::getInstance()->getConnection();
+        $tid = $this->tenantId();
+        $tidSql = $tid ? " AND l.tenant_id = $tid" : "";
+        $tidSqlUsers = $tid ? " AND u.tenant_id = $tid" : "";
 
         $unassigned = $db->query("SELECT l.id, l.name, l.phone, l.email, l.source, l.status, l.lead_score, l.created_at,
             u.name as created_by_name
             FROM leads l
             LEFT JOIN users u ON u.id = l.created_by
-            WHERE l.assigned_to IS NULL AND l.deleted_at IS NULL
+            WHERE l.assigned_to IS NULL AND l.deleted_at IS NULL$tidSql
             ORDER BY l.created_at DESC LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-        $assignees = $db->query("SELECT id, name, email, role FROM users WHERE role IN ('associate','agent','employee','telecaller') AND deleted_at IS NULL ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        $assignees = $db->query("SELECT id, name, email, role FROM users WHERE role IN ('associate','agent','employee','telecaller') AND deleted_at IS NULL$tidSqlUsers ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
         $recentAssignments = $db->query("SELECT ca.*, l.name as lead_name, u1.name as from_name, u2.name as to_name, u3.name as by_name
             FROM crm_assignments ca
@@ -786,6 +808,7 @@ class LeadController extends AdminController
             LEFT JOIN users u1 ON u1.id = ca.assigned_from
             LEFT JOIN users u2 ON u2.id = ca.assigned_to
             LEFT JOIN users u3 ON u3.id = ca.assigned_by
+            WHERE 1=1" . ($tid ? " AND ca.tenant_id = $tid" : "") . "
             ORDER BY ca.created_at DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
         return $this->render('admin/leads/assign', [
@@ -863,6 +886,8 @@ class LeadController extends AdminController
         $db = \App\Core\Database\Database::getInstance()->getConnection();
         $adminId = $this->getCurrentUserId();
         $affected = 0;
+        $tid = $this->tenantId();
+        $tidSql = $tid ? " AND tenant_id = $tid" : "";
 
         try {
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
@@ -874,8 +899,10 @@ class LeadController extends AdminController
                         echo json_encode(['success' => false, 'error' => 'Invalid status']);
                         return;
                     }
-                    $stmt = $db->prepare("UPDATE leads SET status = ?, updated_at = NOW() WHERE id IN ($placeholders) AND deleted_at IS NULL");
-                    $stmt->execute(array_merge([$value], $ids));
+                    $stmt = $db->prepare("UPDATE leads SET status = ?, updated_at = NOW() WHERE id IN ($placeholders) AND deleted_at IS NULL$tidSql");
+                    $params = array_merge([$value], $ids);
+                    if ($tid) $params[] = $tid;
+                    $stmt->execute($params);
                     $affected = $stmt->rowCount();
                     break;
 
@@ -885,8 +912,10 @@ class LeadController extends AdminController
                         echo json_encode(['success' => false, 'error' => 'Invalid assignee']);
                         return;
                     }
-                    $stmt = $db->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id IN ($placeholders) AND deleted_at IS NULL");
-                    $stmt->execute(array_merge([$assignee], $ids));
+                    $stmt = $db->prepare("UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id IN ($placeholders) AND deleted_at IS NULL$tidSql");
+                    $params = array_merge([$assignee], $ids);
+                    if ($tid) $params[] = $tid;
+                    $stmt->execute($params);
                     $affected = $stmt->rowCount();
                     break;
 
@@ -895,8 +924,10 @@ class LeadController extends AdminController
                         echo json_encode(['success' => false, 'error' => 'Delete permission denied']);
                         return;
                     }
-                    $stmt = $db->prepare("UPDATE leads SET deleted_at = NOW() WHERE id IN ($placeholders) AND deleted_at IS NULL");
-                    $stmt->execute($ids);
+                    $stmt = $db->prepare("UPDATE leads SET deleted_at = NOW() WHERE id IN ($placeholders) AND deleted_at IS NULL$tidSql");
+                    $params = $ids;
+                    if ($tid) $params[] = $tid;
+                    $stmt->execute($params);
                     $affected = $stmt->rowCount();
                     break;
 

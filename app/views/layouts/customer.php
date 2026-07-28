@@ -8,6 +8,9 @@ $GLOBALS['_html_doc_started'] = true;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title ?? 'My Account - APS Dream Home'; ?></title>
     <meta name="description" content="<?php echo $page_description ?? 'Customer Portal'; ?>">
+    <?php if (isset($_SESSION['user_id'])): ?>
+    <meta name="user-id" content="<?= (int)$_SESSION['user_id'] ?>">
+    <?php endif; ?>
 
     <!-- CSRF Token -->
     <?php
@@ -157,6 +160,9 @@ $GLOBALS['_html_doc_started'] = true;
         };
     </script>
     <script defer src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/notification-system.js"></script>
+    <!-- WebSocket Notification Widget (real-time push) -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/notification-widget.css" rel="stylesheet">
+    <script defer src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/notification-widget.js"></script>
 
     <!-- Sidebar Toggle Script -->
     <script>

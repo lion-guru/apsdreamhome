@@ -807,8 +807,9 @@ public function propertyDetails($id = null)
                             $property_images[] = ['image_path' => $property['image'], 'is_primary' => 1, 'caption' => ''];
                         }
                         // Related from user_properties
-                        $relStmt = $this->db->prepare("SELECT * FROM user_properties WHERE id != ? AND status IN ('approved','verified') ORDER BY RAND() LIMIT 3");
-                        $relStmt->execute([$id]);
+                        list($tSql, $tParams) = $this->tenantWhere();
+                        $relStmt = $this->db->prepare("SELECT * FROM user_properties WHERE id != ? AND status IN ('approved','verified'){$tSql} ORDER BY RAND() LIMIT 3");
+                        $relStmt->execute(array_merge([$id], $tParams));
                         $related_properties = $relStmt->fetchAll(\PDO::FETCH_ASSOC);
                     } else {
                         // Admin properties - use property_images table
@@ -816,8 +817,9 @@ public function propertyDetails($id = null)
                         $imgStmt->execute([$id]);
                         $property_images = $imgStmt->fetchAll(\PDO::FETCH_ASSOC);
 
-                        $relStmt = $this->db->prepare("SELECT * FROM properties WHERE id != ? AND status = 'available' ORDER BY RAND() LIMIT 3");
-                        $relStmt->execute([$id]);
+                        list($tSql, $tParams) = $this->tenantWhere();
+                        $relStmt = $this->db->prepare("SELECT * FROM properties WHERE id != ? AND status = 'available'{$tSql} ORDER BY RAND() LIMIT 3");
+                        $relStmt->execute(array_merge([$id], $tParams));
                         $related_properties = $relStmt->fetchAll(\PDO::FETCH_ASSOC);
 
                         // Reviews for admin properties
@@ -986,58 +988,26 @@ public function handlePropertyListing()
                 try {
                     $this->db->query("SELECT 1 FROM user_properties LIMIT 1");
 
-                    $stmt = $this->db->prepare("
-                        INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, state_id, district_id, city_name, status, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
-                    ");
-                    $stmt->execute([
-                        $userId,
-                        $postedBy,
-                        $postedByType,
-                        $name,
-                        $phone,
-                        $email,
-                        $propertyType,
-                        $listingType,
-                        $location,
-                        $area,
-                        $price,
-                        $listingType === 'rent' ? 'month' : 'lakh',
-                        $description,
-                        $imagePath,
-                        $stateId ?: null,
-                        $districtId ?: null,
-                        $cityName ?: null
-                    ]);
+                    $insCols = "user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, state_id, district_id, city_name, status, created_at";
+                    $insVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW()";
+                    $insParams = [$userId, $postedBy, $postedByType, $name, $phone, $email, $propertyType, $listingType, $location, $area, $price, $listingType === 'rent' ? 'month' : 'lakh', $description, $imagePath, $stateId ?: null, $districtId ?: null, $cityName ?: null];
+                    $insExtra = $this->tenantInsertData();
+                    if (!empty($insExtra)) { $insCols .= ", tenant_id"; $insVals .= ", ?"; $insParams[] = $insExtra['tenant_id']; }
+                    $stmt = $this->db->prepare("INSERT INTO user_properties ($insCols) VALUES ($insVals)");
+                    $stmt->execute($insParams);
                     $propertyId = $this->db->lastInsertId();
                     $savedToUserProperties = true;
                 } catch (\Exception $e1) {
                     // Table might not exist, create it
                     if (strpos($e1->getMessage(), "doesn't exist") !== false) {
                         $this->createUserPropertiesTable();
-                        $stmt = $this->db->prepare("
-                            INSERT INTO user_properties (user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, state_id, district_id, city_name, status, created_at)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
-                        ");
-                        $stmt->execute([
-                            $userId,
-                            $postedBy,
-                            $postedByType,
-                            $name,
-                            $phone,
-                            $email,
-                            $propertyType,
-                            $listingType,
-                            $location,
-                            $area,
-                            $price,
-                            $listingType === 'rent' ? 'month' : 'lakh',
-                            $description,
-                            $imagePath,
-                            $stateId ?: null,
-                            $districtId ?: null,
-                            $cityName ?: null
-                        ]);
+                        $insCols2 = "user_id, posted_by, posted_by_type, name, phone, email, property_type, listing_type, address, area_sqft, price, price_type, description, image, state_id, district_id, city_name, status, created_at";
+                        $insVals2 = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW()";
+                        $insParams2 = [$userId, $postedBy, $postedByType, $name, $phone, $email, $propertyType, $listingType, $location, $area, $price, $listingType === 'rent' ? 'month' : 'lakh', $description, $imagePath, $stateId ?: null, $districtId ?: null, $cityName ?: null];
+                        $insExtra2 = $this->tenantInsertData();
+                        if (!empty($insExtra2)) { $insCols2 .= ", tenant_id"; $insVals2 .= ", ?"; $insParams2[] = $insExtra2['tenant_id']; }
+                        $stmt = $this->db->prepare("INSERT INTO user_properties ($insCols2) VALUES ($insVals2)");
+                        $stmt->execute($insParams2);
                         $propertyId = $this->db->lastInsertId();
                         $savedToUserProperties = true;
                         error_log("PageController.php: " . $e1->getMessage());
@@ -1169,7 +1139,8 @@ public function propertyInterest()
         // Check if lead already exists for this phone
         $existingLead = null;
         try {
-            $existingLead = $this->db->fetch("SELECT id FROM leads WHERE phone = ? AND deleted_at IS NULL ORDER BY id DESC LIMIT 1", [$phoneClean]);
+            list($tSql, $tParams) = $this->tenantWhere();
+            $existingLead = $this->db->fetch("SELECT id FROM leads WHERE phone = ? AND deleted_at IS NULL{$tSql} ORDER BY id DESC LIMIT 1", array_merge([$phoneClean], $tParams));
         } catch (\Exception $e) { /* skip */ }
 
         $userId = $_SESSION['user_id'] ?? 0;
@@ -1188,17 +1159,12 @@ public function propertyInterest()
                 $leadId = $existingLead['id'];
             } else {
                 // Create new lead
-                $this->db->query(
-                    "INSERT INTO leads (name, phone, email, source, status, priority, property_interest, budget_range, notes, created_by, lead_score, created_at) VALUES (?, ?, '', ?, 'new', 'high', ?, ?, ?, 0, 50, NOW())",
-                    [
-                        $name ?: 'Unknown',
-                        $phoneClean,
-                        $source,
-                        $propName,
-                        $budget,
-                        "Expressed interest in: $propName" . ($budget ? " (Budget: $budget)" : '')
-                    ]
-                );
+                $insColsLead = "name, phone, email, source, status, priority, property_interest, budget_range, notes, created_by, lead_score, created_at";
+                $insValsLead = "?, ?, '', ?, 'new', 'high', ?, ?, ?, 0, 50, NOW()";
+                $insParamsLead = [$name ?: 'Unknown', $phoneClean, $source, $propName, $budget, "Expressed interest in: $propName" . ($budget ? " (Budget: $budget)" : '')];
+                $insExtraLead = $this->tenantInsertData();
+                if (!empty($insExtraLead)) { $insColsLead .= ", tenant_id"; $insValsLead .= ", ?"; $insParamsLead[] = $insExtraLead['tenant_id']; }
+                $this->db->query("INSERT INTO leads ($insColsLead) VALUES ($insValsLead)", $insParamsLead);
                 $leadId = $this->db->lastInsertId();
             }
 
@@ -1301,6 +1267,7 @@ public function plotMap()
             $colony['plots'] = [];
             $colony['stats'] = ['available' => 0, 'booked' => 0, 'sold' => 0, 'blocked' => 0, 'total' => 0];
             try {
+                list($tSql, $tParams) = $this->tenantWhere();
                 $pStmt = $this->db->prepare(
                     "SELECT p.id, p.colony_id, p.plot_number, p.block, p.area_sqft, p.width_ft, p.length_ft,
                             p.total_price, p.status, p.facing, p.corner_plot, p.park_facing,
@@ -1308,10 +1275,10 @@ public function plotMap()
                             (SELECT psh.changed_at FROM plot_status_history psh WHERE psh.plot_id = p.id ORDER BY psh.changed_at DESC LIMIT 1) AS last_status_change
                      FROM plots p
                      JOIN colonies c ON c.id = p.colony_id
-                     WHERE p.colony_id = ? AND p.is_active = 1
+                     WHERE p.colony_id = ? AND p.is_active = 1{$tSql}
                      ORDER BY p.block, p.plot_number"
                 );
-                $pStmt->execute([$colony['id']]);
+                $pStmt->execute(array_merge([$colony['id']], $tParams));
                 $plots = $pStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
                 foreach ($plots as &$plot) {
@@ -1463,11 +1430,13 @@ public function serviceInterest()
             $serviceId = $this->db->lastInsertId();
 
             // Create lead
-            $leadStmt = $this->db->prepare("
-                INSERT INTO leads (name, email, phone, source, status, created_at) 
-                VALUES (?, ?, ?, 'website', 'new', NOW())
-            ");
-            $leadStmt->execute([$name, $email, $phone]);
+            $leadInsCols = "name, email, phone, source, status, created_at";
+            $leadInsVals = "?, ?, ?, 'website', 'new', NOW()";
+            $leadInsParams = [$name, $email, $phone];
+            $leadInsExtra = $this->tenantInsertData();
+            if (!empty($leadInsExtra)) { $leadInsCols .= ", tenant_id"; $leadInsVals .= ", ?"; $leadInsParams[] = $leadInsExtra['tenant_id']; }
+            $leadStmt = $this->db->prepare("INSERT INTO leads ($leadInsCols) VALUES ($leadInsVals)");
+            $leadStmt->execute($leadInsParams);
             $leadId = $this->db->lastInsertId();
 
             // Link lead to service
@@ -1487,11 +1456,13 @@ public function serviceInterest()
                 $stmt->execute([$serviceType, $propertyId, $message]);
                 $serviceId = $this->db->lastInsertId();
 
-                $leadStmt = $this->db->prepare("
-                    INSERT INTO leads (name, email, phone, source, status, created_at) 
-                    VALUES (?, ?, ?, 'website', 'new', NOW())
-                ");
-                $leadStmt->execute([$name, $email, $phone]);
+                $leadInsCols2 = "name, email, phone, source, status, created_at";
+                $leadInsVals2 = "?, ?, ?, 'website', 'new', NOW()";
+                $leadInsParams2 = [$name, $email, $phone];
+                $leadInsExtra2 = $this->tenantInsertData();
+                if (!empty($leadInsExtra2)) { $leadInsCols2 .= ", tenant_id"; $leadInsVals2 .= ", ?"; $leadInsParams2[] = $leadInsExtra2['tenant_id']; }
+                $leadStmt = $this->db->prepare("INSERT INTO leads ($leadInsCols2) VALUES ($leadInsVals2)");
+                $leadStmt->execute($leadInsParams2);
                 $leadId = $this->db->lastInsertId();
 
                 $this->db->prepare("UPDATE service_interests SET lead_id = ? WHERE id = ?")
@@ -2090,10 +2061,11 @@ public function userInvestments()
 
         $investments = [];
         try {
+            list($tSql, $tParams) = $this->tenantWhere();
             $stmt = $this->db->prepare("SELECT p.*, s.site_name, s.district as site_location 
                 FROM plots p LEFT JOIN sites s ON p.colony_id = s.id 
-                WHERE p.customer_id = ? AND p.is_active = 1 ORDER BY p.updated_at DESC LIMIT 20");
-            $stmt->execute([$userId]);
+                WHERE p.customer_id = ? AND p.is_active = 1{$tSql} ORDER BY p.updated_at DESC LIMIT 20");
+            $stmt->execute(array_merge([$userId], $tParams));
             $investments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             error_log('Investments fetch error: ' . $e->getMessage());
@@ -2424,7 +2396,8 @@ public function colonyDetail($slug = null)
             $this->notFound();
             return;
         }
-        $availablePlots = $this->db->fetchAll("SELECT id, plot_number, block, area_sqft, width_ft, length_ft, total_price, status, price_per_sqft, corner_plot, park_facing FROM plots WHERE colony_id = ? AND status = 'available' ORDER BY plot_number LIMIT 20", [$colony['id']]);
+        list($tSql, $tParams) = $this->tenantWhere();
+        $availablePlots = $this->db->fetchAll("SELECT id, plot_number, block, area_sqft, width_ft, length_ft, total_price, status, price_per_sqft, corner_plot, park_facing FROM plots WHERE colony_id = ? AND status = 'available'{$tSql} ORDER BY plot_number LIMIT 20", array_merge([$colony['id']], $tParams));
         $this->render('pages/colony_detail', [
             'page_title'       => $colony['meta_title'] ?: $colony['name'] . ' - APS Dream Home',
             'page_description' => $colony['meta_description'] ?: $colony['name'] . ' - Premium residential plots',
@@ -2447,8 +2420,9 @@ public function colonyPlots($slug = null)
         $page = max(1, (int)($_GET['page'] ?? 1));
         $perPage = 24;
         $offset = ($page - 1) * $perPage;
-        $totalPlots = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM plots WHERE colony_id = ? AND status = 'available'", [$colony['id']]);
-        $plots = $this->db->fetchAll("SELECT * FROM plots WHERE colony_id = ? AND status = 'available' ORDER BY plot_number LIMIT $perPage OFFSET $offset", [$colony['id']]);
+        list($tSql, $tParams) = $this->tenantWhere();
+        $totalPlots = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM plots WHERE colony_id = ? AND status = 'available'{$tSql}", array_merge([$colony['id']], $tParams));
+        $plots = $this->db->fetchAll("SELECT * FROM plots WHERE colony_id = ? AND status = 'available'{$tSql} ORDER BY plot_number LIMIT $perPage OFFSET $offset", array_merge([$colony['id']], $tParams));
         $this->render('pages/colony_plots', [
             'page_title' => 'Available Plots - ' . $colony['name'],
             'colony' => $colony,
@@ -2641,6 +2615,8 @@ public function location($slug = null)
         // Column names: property_type, listing_type, city_name (not type, listing_type, city)
         $where = ["p.status IN ('approved', 'verified')"];
         $params = [];
+        list($tSql, $tParams) = $this->tenantWhere();
+        if ($tSql) { $where[] = "p.tenant_id = ?"; $params[] = $tParams[0]; }
 
         if ($keyword) {
             $where[] = '(p.name LIKE ? OR p.description LIKE ? OR p.address LIKE ?)';

@@ -14,6 +14,9 @@ $GLOBALS['_html_doc_started'] = true;
     <link rel="icon" type="image/png" href="<?= BASE_URL ?>/assets/img/favicon.png">
     <meta name="description" content="<?php echo $page_description ?? 'Admin Panel'; ?>">
     <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
+    <?php if (isset($_SESSION['admin_id']) || isset($_SESSION['user_id'])): ?>
+    <meta name="user-id" content="<?= (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0) ?>">
+    <?php endif; ?>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -267,6 +270,47 @@ $GLOBALS['_html_doc_started'] = true;
                 </div>
             <?php endif; ?>
 
+            <?php
+            // Tenant status banner — read-only mode for suspended/cancelled tenants
+            $tenantBanner = null;
+            if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
+                try {
+                    $tid = \App\Core\Middleware\TenantContext::getId();
+                    if ($tid > 1) {
+                        $tenant = \App\Services\TenantService::getInstance()->getById($tid);
+                        if ($tenant && in_array($tenant['status'] ?? '', ['suspended', 'cancelled', 'trial_expired'])) {
+                            $tenantBanner = $tenant['status'];
+                        }
+                    }
+                } catch (\Throwable $e) { /* ignore */ }
+            }
+            ?>
+            <?php if ($tenantBanner === 'suspended'): ?>
+                <div style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;padding:12px 20px;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+                    <i class="fas fa-ban" style="font-size:1.4rem;"></i>
+                    <div>
+                        <strong>Account Suspended</strong>
+                        <div style="font-size:0.85rem;opacity:0.9;">Your account has been suspended. All create/edit/delete operations are disabled. Contact support to restore access.</div>
+                    </div>
+                </div>
+            <?php elseif ($tenantBanner === 'cancelled'): ?>
+                <div style="background:linear-gradient(135deg,#6b21a8,#9333ea);color:#fff;padding:12px 20px;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+                    <i class="fas fa-times-circle" style="font-size:1.4rem;"></i>
+                    <div>
+                        <strong>Account Cancelled</strong>
+                        <div style="font-size:0.85rem;opacity:0.9;">Your subscription has been cancelled. Your data is in read-only mode. Contact support to reactivate.</div>
+                    </div>
+                </div>
+            <?php elseif ($tenantBanner === 'trial_expired'): ?>
+                <div style="background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;padding:12px 20px;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+                    <i class="fas fa-clock" style="font-size:1.4rem;"></i>
+                    <div>
+                        <strong>Trial Expired</strong>
+                        <div style="font-size:0.85rem;opacity:0.9;">Your free trial has expired. Upgrade your plan to continue creating and editing data. <a href="<?= $base ?>/admin/billing" style="color:#fff;text-decoration:underline;">View Plans</a></div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <?php echo $content ?? ''; ?>
         </div>
     </main>
@@ -317,6 +361,9 @@ $GLOBALS['_html_doc_started'] = true;
             };
         </script>
         <script defer src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/notification-system.js"></script>
+        <!-- WebSocket Notification Widget (real-time push) -->
+        <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/notification-widget.css" rel="stylesheet">
+        <script defer src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/js/notification-widget.js"></script>
 
         <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
             // AJAX Navigation for Sidebar - sidebar remains fixed, only content updates

@@ -25,6 +25,9 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <meta name="keywords" content="<?= htmlspecialchars($sc('seo_keywords', 'real estate, plots, homes, Gorakhpur, Lucknow, Kushinagar, Varanasi, Uttar Pradesh, property, residential, commercial')) ?>">
     <meta name="author" content="APS Dream Home">
     <meta name="robots" content="index, follow">
+    <?php if (isset($_SESSION['user_id'])): ?>
+    <meta name="user-id" content="<?= (int)$_SESSION['user_id'] ?>">
+    <?php endif; ?>
     <!-- Geo Tags -->
     <meta name="geo.region" content="IN-UP">
     <meta name="geo.placename" content="Gorakhpur">
@@ -170,6 +173,10 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css?v=1" rel="stylesheet">
     <?php endif; ?>
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=6" rel="stylesheet">
+    <!-- Live Chat Widget CSS -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/live-chat-widget.css" rel="stylesheet">
+    <!-- Notification Toast Widget CSS -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/notification-widget.css" rel="stylesheet">
 
     <!-- Scroll fix (Cleaned) -->
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -286,6 +293,15 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         };
     </script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-system.js"></script>
+    <!-- WebSocket Notification Widget (complements notification-system.js) -->
+    <?php if (isset($_SESSION['user_id'])): ?>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/notification-widget.js"></script>
+    <?php endif; ?>
+    <!-- Live Chat Widget -->
+    <?php include __DIR__ . '/../components/live_chat_widget.php'; ?>
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/live-chat-widget.js"></script>
+    <!-- Image Gallery Lightbox -->
+    <script defer src="<?php echo BASE_URL; ?>/assets/js/image-gallery.js"></script>
 
     <!-- Custom JS -->
     <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>

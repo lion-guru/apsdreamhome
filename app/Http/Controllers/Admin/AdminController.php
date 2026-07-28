@@ -11,11 +11,14 @@ use App\Http\Controllers\BaseController;
 use App\Core\Cache;
 use App\Models\Property;
 use App\Models\User;
+use \App\Traits\TenantAwareTrait;
 
 use Exception;
 
 class AdminController extends BaseController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();
@@ -69,7 +72,9 @@ class AdminController extends BaseController
             // Get recent leads for dashboard widget
             $recentLeads = [];
             try {
-                $recentLeads = $this->db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?: [];
+                $tid = $this->tenantId();
+                $tidSql = $tid > 1 ? " AND tenant_id = $tid" : "";
+                $recentLeads = $this->db->fetchAll("SELECT * FROM leads WHERE 1=1{$tidSql} ORDER BY created_at DESC LIMIT 5") ?: [];
             } catch (\Exception $e) {
                 $recentLeads = [];
             }
@@ -411,8 +416,10 @@ class AdminController extends BaseController
                 'total_properties' => Cache::remember('admin_api_total_properties', function () {
                     return $this->db->fetch("SELECT COUNT(*) as c FROM properties")['c'] ?? 0;
                 }, 300),
-                'total_leads' => Cache::remember('admin_api_total_leads', function () {
-                    return $this->db->fetch("SELECT COUNT(*) as c FROM leads")['c'] ?? 0;
+                'total_leads' => Cache::remember('admin_api_total_leads_' . ($this->tenantId()), function () {
+                    $tid = $this->tenantId();
+                    $tidSql = $tid > 1 ? " WHERE tenant_id = $tid" : "";
+                    return $this->db->fetch("SELECT COUNT(*) as c FROM leads{$tidSql}")['c'] ?? 0;
                 }, 300),
                 'pending_bookings' => Cache::remember('admin_api_pending_bookings', function () {
                     return $this->db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0;
