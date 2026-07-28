@@ -189,6 +189,17 @@ class CRMService
         if (!$guard->canCreateLead($role)) {
             return ['success' => false, 'error' => 'Your role does not have permission to create leads'];
         }
+
+        // Tenant plan enforcement
+        $tid = $this->tid();
+        if ($tid) {
+            $enforcement = \App\Services\TenantEnforcement::getInstance();
+            $check = $enforcement->canPerform($tid, 'create_lead');
+            if (!$check['allowed']) {
+                return ['success' => false, 'error' => $check['reason']];
+            }
+        }
+
         try {
             $leadNumber = 'CR-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
             $tid = $this->tid();
@@ -248,6 +259,15 @@ class CRMService
                     $routingService->routeLead($leadId);
                 } catch (\Exception $routeEx) {
                     error_log('CRMService::createLead routing error: ' . $routeEx->getMessage());
+                }
+            }
+
+            // Track tenant usage
+            if ($tid) {
+                try {
+                    \App\Services\TenantService::getInstance()->incrementUsage($tid, 'leads_created');
+                } catch (\Throwable $useEx) {
+                    error_log('CRMService::createLead usage tracking error: ' . $useEx->getMessage());
                 }
             }
 

@@ -140,6 +140,7 @@ class Router
                 '/check-user',
                 '/check-referrer',
                 '/firebase-login',
+                '/tenant-signup',
             ];
             $skip = false;
             foreach ($excludedPaths as $path) {

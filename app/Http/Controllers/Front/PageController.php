@@ -2844,4 +2844,119 @@ public function location($slug = null)
             error_log('trackServiceInterests error: ' . $e->getMessage());
         }
     }
+
+    // ── SaaS Pricing & Tenant Signup ────────────────────────
+
+    /**
+     * Public pricing page — /pricing
+     */
+    public function pricing()
+    {
+        $plans = [];
+        try {
+            $plans = \App\Services\TenantService::getInstance()->getPlans();
+        } catch (\Throwable $e) {
+            error_log('pricing() error: ' . $e->getMessage());
+        }
+
+        $this->render('pages/pricing', [
+            'page_title' => 'Pricing Plans — APS Dream Home SaaS',
+            'plans'      => $plans,
+        ]);
+    }
+
+    /**
+     * Tenant self-service signup — GET shows form, POST creates tenant.
+     */
+    public function tenantSignup()
+    {
+        $tenantService = \App\Services\TenantService::getInstance();
+        $plans = $tenantService->getPlans();
+        $selectedPlan = $_GET['plan'] ?? 'free';
+        $error = null;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF
+            $csrfToken = $_POST['csrf_token'] ?? '';
+            if (!hash_equals($_SESSION['csrf_token'] ?? '', $csrfToken)) {
+                $error = 'Invalid form submission. Please try again.';
+            } else {
+                $name = trim($_POST['name'] ?? '');
+                $email = trim($_POST['contact_email'] ?? '');
+                $contactName = trim($_POST['contact_name'] ?? '');
+                $phone = trim($_POST['contact_phone'] ?? '');
+                $password = $_POST['password'] ?? '';
+                $planSlug = $_POST['plan_slug'] ?? 'free';
+
+                // Validation
+                if (strlen($name) < 2) {
+                    $error = 'Company name must be at least 2 characters.';
+                } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $error = 'Please enter a valid email address.';
+                } elseif (strlen($contactName) < 2) {
+                    $error = 'Please enter your name.';
+                } elseif (strlen($password) < 8) {
+                    $error = 'Password must be at least 8 characters.';
+                } else {
+                    // Check for duplicate email
+                    $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+                    $stmt = $pdo->prepare("SELECT id FROM tenants WHERE contact_email = ? AND deleted_at IS NULL LIMIT 1");
+                    $stmt->execute([$email]);
+                    if ($stmt->fetch()) {
+                        $error = 'An account with this email already exists.';
+                    } else {
+                        // Find plan by slug
+                        $plan = null;
+                        foreach ($plans as $p) {
+                            if (($p['slug'] ?? '') === $planSlug) {
+                                $plan = $p;
+                                break;
+                            }
+                        }
+                        if (!$plan) {
+                            $error = 'Invalid plan selected.';
+                        } else {
+                            // Create tenant
+                            try {
+                                $tenantId = $tenantService->create([
+                                    'name'           => $name,
+                                    'contact_name'   => $contactName,
+                                    'contact_email'  => $email,
+                                    'contact_phone'  => $phone,
+                                    'plan_id'        => (int)$plan['id'],
+                                    'status'         => 'trial',
+                                ]);
+
+                                // Create admin user for the tenant
+                                $userId = (int)$pdo->query("SELECT COALESCE(MAX(id), 0) + 1 FROM users")->fetchColumn();
+                                $stmt = $pdo->prepare("
+                                    INSERT INTO users (id, name, email, password, role, status, created_at)
+                                    VALUES (?, ?, ?, ?, 'admin', 'active', NOW())
+                                ");
+                                $stmt->execute([$userId, $contactName, $email, password_hash($password, PASSWORD_DEFAULT)]);
+
+                                // Log activity
+                                $tenantService->logActivity($tenantId, 'tenant_self_signup', "Self-service signup by {$email}");
+
+                                // Redirect to success page
+                                $_SESSION['flash_success'] = "Account created! Welcome to {$name}. Your 14-day free trial has started.";
+                                header("Location: /admin/login");
+                                exit;
+                            } catch (\Throwable $e) {
+                                error_log('tenantSignup create error: ' . $e->getMessage());
+                                $error = 'Failed to create account. Please try again.';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $this->render('pages/tenant_signup', [
+            'page_title'  => 'Create Your Account — APS Dream Home SaaS',
+            'plans'       => $plans,
+            'selectedPlan'=> $selectedPlan,
+            'error'       => $error,
+        ]);
+    }
 }

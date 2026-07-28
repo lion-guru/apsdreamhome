@@ -4922,3 +4922,8 @@ $router->post('/admin/billing/cancel/{id}',                 'App\\Http\\Controll
 $router->post('/admin/billing/change-plan/{id}',            'App\\Http\\Controllers\\Admin\\BillingController@changePlan');
 $router->get('/admin/billing/invoices/{id}',                'App\\Http\\Controllers\\Admin\\BillingController@invoices');
 $router->post('/admin/billing/webhook',                     'App\\Http\\Controllers\\Admin\\BillingController@webhook');
+
+// ── Public SaaS Pricing & Tenant Signup ──────────────────────
+$router->get('/pricing',                                    'App\\Http\\Controllers\\Front\\PageController@pricing');
+$router->get('/tenant-signup',                              'App\\Http\\Controllers\\Front\\PageController@tenantSignup');
+$router->post('/tenant-signup',                             'App\\Http\\Controllers\\Front\\PageController@tenantSignup');

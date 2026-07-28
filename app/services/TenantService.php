@@ -534,18 +534,37 @@ class TenantService
 
     private function countUsers(int $tenantId): int
     {
-        // For now count from users table (will add tenant_id column later)
-        return (int)$this->pdo->query("SELECT COUNT(*) FROM users WHERE status != 'deleted'")->fetchColumn();
+        // Users don't have tenant_id — count distinct users who own leads in this tenant
+        // This is a rough estimate; proper solution needs tenant_users pivot table
+        try {
+            $stmt = $this->pdo->prepare("SELECT COUNT(DISTINCT assigned_to) FROM leads WHERE tenant_id = ? AND deleted_at IS NULL AND assigned_to IS NOT NULL");
+            $stmt->execute([$tenantId]);
+            return max(1, (int)$stmt->fetchColumn());
+        } catch (\Throwable $e) {
+            return 1;
+        }
     }
 
     private function countLeads(int $tenantId): int
     {
-        return (int)$this->pdo->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL")->fetchColumn();
+        try {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM leads WHERE tenant_id = ? AND deleted_at IS NULL");
+            $stmt->execute([$tenantId]);
+            return (int)$stmt->fetchColumn();
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 
     private function countProperties(int $tenantId): int
     {
-        return (int)$this->pdo->query("SELECT COUNT(*) FROM user_properties WHERE status != 'deleted'")->fetchColumn();
+        try {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM user_properties WHERE tenant_id = ? AND status != 'deleted'");
+            $stmt->execute([$tenantId]);
+            return (int)$stmt->fetchColumn();
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 
     private function generateSlug(string $name): string
@@ -559,7 +578,7 @@ class TenantService
         return $slug;
     }
 
-    private function logActivity(int $tenantId, string $action, string $details): void
+    public function logActivity(int $tenantId, string $action, string $details): void
     {
         try {
             $adminId = $_SESSION['admin_id'] ?? null;
