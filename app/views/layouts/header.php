@@ -55,6 +55,8 @@ if (!isset($GLOBALS['_html_doc_started'])) {
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/frontend.css?v=6" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/header.css?v=6" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/premium-theme.css?v=6" rel="stylesheet">
+    <!-- Universal mobile-first responsive overrides -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
 
     <?php if ($ga4_enabled): ?>
     <!-- Google Analytics 4 -->

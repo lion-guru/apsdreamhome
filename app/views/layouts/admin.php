@@ -32,6 +32,8 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/notification-system.css" rel="stylesheet">
     <!-- Dark mode CSS (toggle via button or system preference) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/dark-mode.css" rel="stylesheet">
+    <!-- Universal mobile-first responsive overrides -->
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
     <?php if (isset($extra_css) && $extra_css): ?><!-- Extra page-specific CSS --><?php echo $extra_css; ?><?php endif; ?>
 </head>
 

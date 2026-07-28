@@ -19,6 +19,8 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Universal mobile-first responsive overrides -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
 
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * {
@@ -481,7 +483,7 @@ $GLOBALS['_html_doc_started'] = true;
             .aps-cp-card-header { padding: 12px 14px !important; font-size: 0.85rem !important; flex-wrap: wrap; }
             .aps-cp-card-body { padding: 14px !important; }
             .table-responsive { font-size: 0.8rem; }
-            .table th, .table td { padding: 6px 8px !important; white-space: nowrap; }
+            .table th, .table td { padding: 6px 8px !important; white-space: normal; overflow-wrap: break-word; word-break: break-word; }
             .btn { padding: 6px 12px !important; font-size: 0.8rem !important; }
             .row.g-3 > [class*="col-"] { padding: 6px; }
             .row.g-4 > [class*="col-"] { padding: 8px; }

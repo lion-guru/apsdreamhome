@@ -22,6 +22,8 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-core.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-components.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/consolidated/aps-layout.css" rel="stylesheet">
+    <!-- Universal mobile-first responsive overrides -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
 
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         * { margin: 0; padding: 0; box-sizing: border-box; }

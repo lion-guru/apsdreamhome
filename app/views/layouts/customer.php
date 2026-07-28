@@ -31,6 +31,8 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css" rel="stylesheet">
+    <!-- Universal mobile-first responsive overrides -->
+    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css" rel="stylesheet">
     <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         /* ===== CUSTOMER PORTAL MOBILE RESPONSIVENESS ===== */
         @media (max-width: 768px) {
