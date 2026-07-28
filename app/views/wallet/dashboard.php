@@ -9,7 +9,8 @@
 }
 
 .wallet-card {
-    background: white;
+    background: var(--card-bg, #ffffff);
+    color: var(--text-primary, #0f172a);
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;

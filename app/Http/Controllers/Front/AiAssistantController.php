@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
+use App\Traits\TenantAwareTrait;
 
 class AiAssistantController extends BaseController
 {
+    use TenantAwareTrait;
     public function index()
     {
         $this->data['page_title'] = 'AI Assistant - ' . APP_NAME;

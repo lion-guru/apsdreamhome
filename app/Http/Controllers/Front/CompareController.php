@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\ComparisonService;
+use App\Traits\TenantAwareTrait;
 
 class CompareController extends BaseController
 {
+    use TenantAwareTrait;
     public function __construct()
     {
         if (session_status() === PHP_SESSION_NONE) {

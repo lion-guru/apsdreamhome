@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
+use App\Traits\TenantAwareTrait;
 
 class EventController extends BaseController
 {
+    use TenantAwareTrait;
     public function __construct()
     {
         parent::__construct();

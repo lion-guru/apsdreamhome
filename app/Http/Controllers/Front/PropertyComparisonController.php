@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\PropertyComparisonService;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Property Comparison - Side-by-side compare up to 4 properties
  */
 class PropertyComparisonController extends BaseController
 {
+    use TenantAwareTrait;
     private $service;
 
     public function __construct($db = null, $auth = null, array $config = [])

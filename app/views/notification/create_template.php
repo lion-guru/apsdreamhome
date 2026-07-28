@@ -4,118 +4,68 @@
         <div class="col-12">
             <div class="page-header">
                 <h1 class="h2 mb-4">
-                    <i class="fas fa-bell"></i> Create template
+                    <i class="fas fa-plus"></i> Create Template
                 </h1>
             </div>
             
             <div class="card aps-cp-card">
                 <div class="card-body aps-cp-card-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Create template - Notification Management System
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="card bg-primary text-white">
-                                <div class="card-body aps-cp-card-body">
-                                    <h5 class="card-title">Email Sent Today</h5>
-                                    <h3>25</h3>
-                                    <small>Messages Delivered</small>
-                                </div>
+                    <form method="POST" action="<?= BASE_URL ?>/admin/notification-management/templates/store">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Template Name</label>
+                                <input type="text" name="template_name" class="form-control" required placeholder="e.g. Welcome Email">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Channel</label>
+                                <select name="channel" class="form-select" required>
+                                    <option value="email">Email</option>
+                                    <option value="sms">SMS</option>
+                                    <option value="push">Push Notification</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card bg-success text-white">
-                                <div class="card-body aps-cp-card-body">
-                                    <h5 class="card-title">SMS Sent Today</h5>
-                                    <h3>18</h3>
-                                    <small>Messages Delivered</small>
-                                </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Template Code</label>
+                                <input type="text" name="template_code" class="form-control" required placeholder="e.g. welcome_email">
+                                <small class="text-muted">Unique identifier for this template</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Language</label>
+                                <select name="language" class="form-select">
+                                    <option value="en">English</option>
+                                    <option value="hi">Hindi</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card bg-warning text-white">
-                                <div class="card-body aps-cp-card-body">
-                                    <h5 class="card-title">Failed Messages</h5>
-                                    <h3>2</h3>
-                                    <small>Need Attention</small>
-                                </div>
-                            </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Subject</label>
+                            <input type="text" name="subject" class="form-control" placeholder="Email subject line">
                         </div>
-                        <div class="col-md-3">
-                            <div class="card bg-info text-white">
-                                <div class="card-body aps-cp-card-body">
-                                    <h5 class="card-title">Total Templates</h5>
-                                    <h3>6</h3>
-                                    <small>Active Templates</small>
-                                </div>
-                            </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Body</label>
+                            <textarea name="body" class="form-control" rows="8" required placeholder="Template body. Use {{variable}} for dynamic content."></textarea>
+                            <small class="text-muted">Available variables: {{name}}, {{email}}, {{phone}}, {{city}}, {{budget}}, {{date}}, {{otp}}</small>
                         </div>
-                    </div>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <h5>Recent Email Logs</h5>
-                            <div class="table-responsive">
-                                <div class="table-responsive"><table class="table table-sm table-responsive">
-                                    <thead>
-                                        <tr>
-                                            <th>Recipient</th>
-                                            <th>Subject</th>
-                                            <th>Status</th>
-                                            <th>Sent</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>rahul.sharma@example.com</td>
-                                            <td>Payment Successful</td>
-                                            <td><span class="badge bg-success">Delivered</span></td>
-                                            <td>2 hours ago</td>
-                                        </tr>
-                                        <tr>
-                                            <td>priya.singh@example.com</td>
-                                            <td>Welcome to APS Dream Home</td>
-                                            <td><span class="badge bg-success">Delivered</span></td>
-                                            <td>1 day ago</td>
-                                        </tr>
-                                    </tbody>
-                                </table></div>
-                            </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Variables (comma-separated)</label>
+                            <input type="text" name="variables" class="form-control" placeholder="e.g. name, email, otp">
                         </div>
-                        <div class="col-md-6">
-                            <h5>Recent SMS Logs</h5>
-                            <div class="table-responsive">
-                                <div class="table-responsive"><table class="table table-sm table-responsive">
-                                    <thead>
-                                        <tr>
-                                            <th>Recipient</th>
-                                            <th>Message</th>
-                                            <th>Status</th>
-                                            <th>Sent</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if (!empty($recent_logs)): ?>
-                                            <?php foreach ($recent_logs as $log): ?>
-                                                <tr>
-                                                    <td><?= htmlspecialchars($log['recipient'] ?? '') ?></td>
-                                                    <td><?= htmlspecialchars($log['message'] ?? '') ?></td>
-                                                    <td><span class="badge bg-<?= ($log['status'] ?? '') === 'delivered' ? 'success' : (($log['status'] ?? '') === 'failed' ? 'danger' : 'secondary') ?>"><?= ucfirst(htmlspecialchars($log['status'] ?? 'pending')) ?></span></td>
-                                                    <td><?= htmlspecialchars($log['time_ago'] ?? '') ?></td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <tr><td colspan="4" class="text-center text-muted">No recent logs</td></tr>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table></div>
-                            </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Save Template</button>
+                            <a href="/admin/notification-management/templates" class="btn btn-outline-secondary">Cancel</a>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-

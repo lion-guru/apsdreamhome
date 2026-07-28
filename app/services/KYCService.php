@@ -140,19 +140,32 @@ class KYCService
     {
         try {
             $this->db->prepare("
-                INSERT INTO kyc_verification_logs (type, identifier, success, message, ip_address, created_at)
-                VALUES (?, ?, ?, ?, ?, NOW())
+                INSERT INTO kyc_verification_logs (type, identifier, success, message, ip_address, tenant_id, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, NOW())
             ")->execute([
                 $type,
                 $this->maskIdentifier($type, $identifier),
                 $success ? 1 : 0,
                 $message,
                 $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+                $this->getTenantId(),
             ]);
         } catch (\Exception $e) {
             // Log failure shouldn't break verification flow
             error_log("[KYCService] log failed: " . $e->getMessage());
         }
+    }
+
+    private function getTenantId(): int
+    {
+        if (class_exists('\App\Core\Middleware\TenantContext')) {
+            try {
+                return \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+                return 1;
+            }
+        }
+        return 1;
     }
 
     private function maskIdentifier(string $type, string $identifier): string

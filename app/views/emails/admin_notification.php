@@ -22,14 +22,15 @@
     <div class="container">
         <div class="header">
             <h2>🚨 Admin Notification</h2>
-            <p>System - Action Required</p>
+            <p><?= htmlspecialchars($notification_type ?? 'System') ?> - Action Required</p>
         </div>
 
         <div class="content">
             <div class="notification-card priority-high">
                 <h3>📋 Notification Details</h3>
-                <p><strong>Type:</strong> System</p>
-                <p><strong>Timestamp:</strong> 2025-10-20 22:24:36</p>
+                <p><strong>Type:</strong> <?= htmlspecialchars($notification_type ?? 'System') ?></p>
+                <p><strong>Message:</strong> <?= htmlspecialchars($notification_message ?? '') ?></p>
+                <p><strong>Timestamp:</strong> <?= date('Y-m-d H:i:s') ?></p>
             </div>
 
             <p><strong>Recommended Actions:</strong></p>
@@ -47,7 +48,7 @@
 
         <div class="footer">
             <p>This is an automated notification from APS Dream Home admin system.</p>
-            <p>Generated on: 2025-10-20 22:24:36</p>
+            <p>Generated on: <?= date('Y-m-d H:i:s') ?></p>
         </div>
     </div>
 </body>

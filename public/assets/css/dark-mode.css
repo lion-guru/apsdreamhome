@@ -1,5 +1,5 @@
-/* Dark mode and color system for dashboard and sidebar */
-:root {
+/* Dark mode and color system for dashboard and sidebar - scoped to dark mode */
+body.dark-mode, [data-theme="dark"] {
   --primary-bg: #181c24;
   --secondary-bg: #23272f;
   --card-bg: #23272f;
@@ -10,6 +10,8 @@
   --sidebar-hover: rgba(76, 175, 80, 0.07);
   --header-bg: #1f2228;
   --text-main: #e3eafc;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
   --text-muted: #a9b5c9;
   --accent: #4e73df;
   --accent2: #1cc88a;
@@ -26,7 +28,8 @@ body.dark-mode {
 
 .dark-mode .dashboard-card,
 .dark-mode .card,
-.dark-mode .modern-card {
+.dark-mode .modern-card,
+.dark-mode .aps-cp-card {
   background: var(--card-bg) !important;
   color: var(--text-main) !important;
   box-shadow: 0 2px 12px rgba(30, 40, 50, 0.13);
@@ -34,7 +37,8 @@ body.dark-mode {
 
 .dark-mode .dashboard-card .card-header,
 .dark-mode .card .card-header,
-.dark-mode .modern-card .card-header {
+.dark-mode .modern-card .card-header,
+.dark-mode .aps-cp-card-header {
   background: var(--header-bg) !important;
   color: var(--text-main) !important;
   border-bottom: 1px solid #23272f;
@@ -358,3 +362,67 @@ body.dark-mode {
 .dark-mode .sidebar .logo {
   filter: brightness(0.9) contrast(1.1);
 }
+
+/* High Contrast & Inline Safe Overrides for Dark Mode */
+.dark-mode .text-dark,
+.dark-mode .text-body,
+.dark-mode .text-black {
+  color: var(--text-main, #e3eafc) !important;
+}
+
+.dark-mode .dropdown-item {
+  color: var(--text-main, #e3eafc) !important;
+}
+
+.dark-mode .dropdown-item:hover,
+.dark-mode .dropdown-item:focus {
+  background: var(--sidebar-hover, rgba(255, 255, 255, 0.1)) !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .modal-content {
+  background: var(--card-bg, #23272f) !important;
+  color: var(--text-main, #e3eafc) !important;
+  border-color: #334155 !important;
+}
+
+.dark-mode .form-select,
+.dark-mode select {
+  background-color: #23272f !important;
+  color: var(--text-main, #e3eafc) !important;
+  border-color: #334155 !important;
+}
+
+.dark-mode select option {
+  background-color: #181c24 !important;
+  color: var(--text-main, #e3eafc) !important;
+}
+
+.dark-mode .badge.bg-light {
+  color: #0f172a !important;
+  background-color: #e2e8f0 !important;
+}
+
+.dark-mode .badge.bg-warning {
+  color: #0f172a !important;
+}
+
+/* Dark Mode Card, Header & Text High-Contrast Enforcements */
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4, .dark-mode h5, .dark-mode h6,
+.dark-mode .card-title,
+.dark-mode .aps-cp-card-header h1, .dark-mode .aps-cp-card-header h2, .dark-mode .aps-cp-card-header h3, .dark-mode .aps-cp-card-header h4, .dark-mode .aps-cp-card-header h5, .dark-mode .aps-cp-card-header h6,
+.dark-mode .aps-cp-card-header .m-0, .dark-mode .card-header .m-0,
+.dark-mode .card-header h1, .dark-mode .card-header h2, .dark-mode .card-header h3, .dark-mode .card-header h4, .dark-mode .card-header h5, .dark-mode .card-header h6,
+.dark-mode .card-header i, .dark-mode .aps-cp-card-header i, .dark-mode .card-header span, .dark-mode .aps-cp-card-header span,
+.dark-mode .card-body, .dark-mode .card-body p, .dark-mode .card-body span,
+.dark-mode .card-body td, .dark-mode .card-body th, .dark-mode .card-body strong,
+.dark-mode .card-body label, .dark-mode .card-body li {
+  color: #ffffff !important;
+}
+
+.dark-mode .card .text-muted,
+.dark-mode .aps-cp-card .text-muted,
+.dark-mode small {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+

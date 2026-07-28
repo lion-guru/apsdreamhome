@@ -11,9 +11,11 @@ use App\Http\Controllers\BaseController;
 use App\Core\Security;
 use PDO;
 use Exception;
+use App\Traits\TenantAwareTrait;
 
 class SupportController extends BaseController
 {
+    use TenantAwareTrait;
     public function __construct()
     {
         parent::__construct();

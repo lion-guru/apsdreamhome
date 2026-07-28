@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\BaseController;
 use App\Services\ResellPropertyService;
 use App\Services\NotificationService;
+use App\Traits\TenantAwareTrait;
 
 class ResellPropertyController extends BaseController
 {
+    use TenantAwareTrait;
     public function __construct() { parent::__construct(); }
 
     private function resell(): ResellPropertyService { return new ResellPropertyService($this->db); }

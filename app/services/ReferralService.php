@@ -50,11 +50,11 @@ class ReferralService
         $batchReference = $summary['batch_reference'];
 
         try {
-            $auditStmt = $this->conn->prepare("INSERT INTO mlm_import_audit (batch_reference, user_id, sponsor_user_id, referral_code, status, message, payload, processed_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $auditStmt = $this->conn->prepare("INSERT INTO mlm_import_audit (batch_reference, user_id, sponsor_user_id, referral_code, status, message, payload, processed_at, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }
-        $updateProfileStmt = $this->conn->prepare("UPDATE mlm_profiles SET sponsor_user_id = ?, sponsor_code = ?, updated_at = NOW() WHERE user_id = ?");
+        $updateProfileStmt = $this->conn->prepare("UPDATE mlm_profiles SET sponsor_user_id = ?, sponsor_code = ?, updated_at = NOW() WHERE user_id = ? AND tenant_id = ?");
 
         foreach ($records as $record) {
             $summary['processed']++;
@@ -125,12 +125,13 @@ class ReferralService
                                 $updateProfileStmt->execute([
                                     $sponsorId,
                                     $sponsorCode,
-                                    $userId
+                                    $userId,
+                                    $this->getTenantId()
                                 ]);
 
                                 if ($referralCodeOverride) {
-                                    $stmtOverride = $this->conn->prepare("UPDATE mlm_profiles SET referral_code = ? WHERE user_id = ?");
-                                    $stmtOverride->execute([$referralCodeOverride, $userId]);
+                                    $stmtOverride = $this->conn->prepare("UPDATE mlm_profiles SET referral_code = ? WHERE user_id = ? AND tenant_id = ?");
+                                    $stmtOverride->execute([$referralCodeOverride, $userId, $this->getTenantId()]);
                                 }
 
                                 $this->conn->commit();
@@ -166,7 +167,8 @@ class ReferralService
                     $status,
                     $message,
                     $payload,
-                    $processedAt
+                    $processedAt,
+                    $this->getTenantId()
                 ]);
             }
         }
@@ -241,11 +243,11 @@ class ReferralService
     public function trackReferral($referrer_user_id, $referred_user_id, $referral_type, $channel = 'direct_link')
     {
         try {
-            $stmt = $this->conn->prepare("INSERT INTO mlm_referrals (referrer_user_id, referred_user_id, referral_type, channel, created_at) VALUES (?, ?, ?, ?, NOW())");
+            $stmt = $this->conn->prepare("INSERT INTO mlm_referrals (referrer_user_id, referred_user_id, referral_type, channel, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
         }
-        return $stmt->execute([$referrer_user_id, $referred_user_id, $referral_type, $channel]);
+        return $stmt->execute([$referrer_user_id, $referred_user_id, $referral_type, $channel, $this->getTenantId()]);
     }
 
     /**
@@ -585,14 +587,15 @@ class ReferralService
 
             $this->conn->prepare("
                 INSERT INTO mlm_commission_ledger 
-                    (beneficiary_user_id, source_user_id, commission_type, amount, status, booking_id, notes, created_at)
-                VALUES (?, ?, 'referral', ?, 'pending', ?, ?, NOW())
+                    (beneficiary_user_id, source_user_id, commission_type, amount, status, booking_id, notes, tenant_id, created_at)
+                VALUES (?, ?, 'referral', ?, 'pending', ?, ?, ?, NOW())
             ")->execute([
                 $referrerId,
                 $referredUserId,
                 $commissionAmount,
                 $bookingId,
-                "Referral commission for booking {$bookingNumber}"
+                "Referral commission for booking {$bookingNumber}",
+                $this->getTenantId()
             ]);
 
             // Send referral commission email to referrer
@@ -923,13 +926,14 @@ class ReferralService
 
             $this->conn->prepare("
                 INSERT INTO mlm_commission_ledger 
-                    (beneficiary_user_id, source_user_id, commission_type, amount, status, notes, created_at)
-                VALUES (?, ?, 'referral_signup', ?, 'approved', ?, NOW())
+                    (beneficiary_user_id, source_user_id, commission_type, amount, status, notes, tenant_id, created_at)
+                VALUES (?, ?, 'referral_signup', ?, 'approved', ?, ?, NOW())
             ")->execute([
                 $referrerId,
                 $referredUserId,
                 $bonusAmount,
-                "Tiered signup bonus ({$tier['label']}) for referral: {$referredName}"
+                "Tiered signup bonus ({$tier['label']}) for referral: {$referredName}",
+                $this->getTenantId()
             ]);
 
             return [
@@ -982,14 +986,15 @@ class ReferralService
 
             $this->conn->prepare("
                 INSERT INTO mlm_commission_ledger 
-                    (beneficiary_user_id, source_user_id, commission_type, amount, status, booking_id, notes, created_at)
-                VALUES (?, ?, 'referral_booking', ?, 'approved', ?, ?, NOW())
+                    (beneficiary_user_id, source_user_id, commission_type, amount, status, booking_id, notes, tenant_id, created_at)
+                VALUES (?, ?, 'referral_booking', ?, 'approved', ?, ?, ?, NOW())
             ")->execute([
                 $referrerId,
                 $referredUserId,
                 $bonusAmount,
                 $bookingId,
-                "Tiered booking bonus ({$tier['label']}) for {$referredName}'s booking {$bookingNumber}"
+                "Tiered booking bonus ({$tier['label']}) for {$referredName}'s booking {$bookingNumber}",
+                $this->getTenantId()
             ]);
 
             return [
@@ -1090,5 +1095,17 @@ class ReferralService
         } catch (\Throwable $e) {
             return [];
         }
+    }
+
+    private function getTenantId(): int
+    {
+        if (class_exists('\App\Core\Middleware\TenantContext')) {
+            try {
+                return \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+                return 1;
+            }
+        }
+        return 1;
     }
 }

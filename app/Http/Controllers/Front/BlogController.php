@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Front\PageController;
 use App\Core\Database\Database;
 use Exception;
+use App\Traits\TenantAwareTrait;
 
 class BlogController extends PageController
 {
+    use TenantAwareTrait;
     public function index()
     {
         $blog_posts = [];

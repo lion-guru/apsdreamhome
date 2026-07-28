@@ -5,9 +5,11 @@ use App\Http\Controllers\BaseController;
 use App\Services\InsuranceService;
 use App\Services\InvestmentService;
 use App\Services\AddressService;
+use App\Traits\TenantAwareTrait;
 
 class PortalController extends BaseController
 {
+    use TenantAwareTrait;
     public function insurance()
     {
         @session_start();

@@ -12,9 +12,11 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\Pdf\PdfService;
+use App\Traits\TenantAwareTrait;
 
 class PdfController extends BaseController
 {
+    use TenantAwareTrait;
     /**
      * Public download endpoint.
      *

@@ -47,11 +47,11 @@ class DirectoryService
     {
         try {
             if (!empty($data['id'])) {
-                $stmt = $this->db->prepare("UPDATE directory_categories SET name=?, slug=?, description=?, icon=?, parent_id=?, sort_order=?, is_active=? WHERE id=?");
-                return $stmt->execute([$data['name'], $data['slug'], $data['description'] ?? '', $data['icon'] ?? 'fas fa-building', $data['parent_id'] ?: null, (int)($data['sort_order'] ?? 0), (int)($data['is_active'] ?? 1), $data['id']]);
+                $stmt = $this->db->prepare("UPDATE directory_categories SET name=?, slug=?, description=?, icon=?, parent_id=?, sort_order=?, is_active=? WHERE id=? AND tenant_id=?");
+                return $stmt->execute([$data['name'], $data['slug'], $data['description'] ?? '', $data['icon'] ?? 'fas fa-building', $data['parent_id'] ?: null, (int)($data['sort_order'] ?? 0), (int)($data['is_active'] ?? 1), $data['id'], $this->getTenantId()]);
             } else {
-                $stmt = $this->db->prepare("INSERT INTO directory_categories (name, slug, description, icon, parent_id, sort_order, is_active) VALUES (?,?,?,?,?,?,?)");
-                return $stmt->execute([$data['name'], $data['slug'], $data['description'] ?? '', $data['icon'] ?? 'fas fa-building', $data['parent_id'] ?: null, (int)($data['sort_order'] ?? 0), (int)($data['is_active'] ?? 1)]);
+                $stmt = $this->db->prepare("INSERT INTO directory_categories (name, slug, description, icon, parent_id, sort_order, is_active, tenant_id) VALUES (?,?,?,?,?,?,?,?)");
+                return $stmt->execute([$data['name'], $data['slug'], $data['description'] ?? '', $data['icon'] ?? 'fas fa-building', $data['parent_id'] ?: null, (int)($data['sort_order'] ?? 0), (int)($data['is_active'] ?? 1), $this->getTenantId()]);
             }
         } catch (\Exception $e) { error_log('DirectoryService::upsertCategory: ' . $e->getMessage()); return false; }
     }
@@ -59,10 +59,10 @@ class DirectoryService
     public function deleteCategory(int $id): bool
     {
         try {
-            $stmt = $this->db->prepare("UPDATE directory_listings SET category_id = NULL WHERE category_id = ?");
-            $stmt->execute([$id]);
-            $stmt2 = $this->db->prepare("DELETE FROM directory_categories WHERE id = ?");
-            return $stmt2->execute([$id]);
+            $stmt = $this->db->prepare("UPDATE directory_listings SET category_id = NULL WHERE category_id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $this->getTenantId()]);
+            $stmt2 = $this->db->prepare("DELETE FROM directory_categories WHERE id = ? AND tenant_id = ?");
+            return $stmt2->execute([$id, $this->getTenantId()]);
         } catch (\Exception $e) { return false; }
     }
 
@@ -164,12 +164,12 @@ class DirectoryService
     {
         try {
             if (!empty($data['id'])) {
-                $stmt = $this->db->prepare("UPDATE directory_listings SET category_id=?, business_name=?, owner_name=?, description=?, phone=?, whatsapp=?, email=?, website=?, address=?, city=?, state=?, pincode=?, latitude=?, longitude=?, experience_years=?, price_range=?, photo=?, is_verified=?, is_featured=?, status=? WHERE id=?");
-                $stmt->execute([$data['category_id'], $data['business_name'], $data['owner_name'] ?? '', $data['description'] ?? '', $data['phone'] ?? '', $data['whatsapp'] ?? '', $data['email'] ?? '', $data['website'] ?? '', $data['address'] ?? '', $data['city'] ?? '', $data['state'] ?? '', $data['pincode'] ?? '', $data['latitude'] ?: null, $data['longitude'] ?: null, (int)($data['experience_years'] ?? 0), $data['price_range'] ?? '', $data['photo'] ?? '', (int)($data['is_verified'] ?? 0), (int)($data['is_featured'] ?? 0), $data['status'] ?? 'pending', $data['id']]);
+                $stmt = $this->db->prepare("UPDATE directory_listings SET category_id=?, business_name=?, owner_name=?, description=?, phone=?, whatsapp=?, email=?, website=?, address=?, city=?, state=?, pincode=?, latitude=?, longitude=?, experience_years=?, price_range=?, photo=?, is_verified=?, is_featured=?, status=? WHERE id=? AND tenant_id=?");
+                $stmt->execute([$data['category_id'], $data['business_name'], $data['owner_name'] ?? '', $data['description'] ?? '', $data['phone'] ?? '', $data['whatsapp'] ?? '', $data['email'] ?? '', $data['website'] ?? '', $data['address'] ?? '', $data['city'] ?? '', $data['state'] ?? '', $data['pincode'] ?? '', $data['latitude'] ?: null, $data['longitude'] ?: null, (int)($data['experience_years'] ?? 0), $data['price_range'] ?? '', $data['photo'] ?? '', (int)($data['is_verified'] ?? 0), (int)($data['is_featured'] ?? 0), $data['status'] ?? 'pending', $data['id'], $this->getTenantId()]);
                 return $data['id'];
             } else {
-                $stmt = $this->db->prepare("INSERT INTO directory_listings (category_id, user_id, business_name, owner_name, description, phone, whatsapp, email, website, address, city, state, pincode, latitude, longitude, experience_years, price_range, photo, is_verified, is_featured, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                $stmt->execute([$data['category_id'], $data['user_id'] ?? null, $data['business_name'], $data['owner_name'] ?? '', $data['description'] ?? '', $data['phone'] ?? '', $data['whatsapp'] ?? '', $data['email'] ?? '', $data['website'] ?? '', $data['address'] ?? '', $data['city'] ?? '', $data['state'] ?? '', $data['pincode'] ?? '', $data['latitude'] ?: null, $data['longitude'] ?: null, (int)($data['experience_years'] ?? 0), $data['price_range'] ?? '', $data['photo'] ?? '', (int)($data['is_verified'] ?? 0), (int)($data['is_featured'] ?? 0), $data['status'] ?? 'pending']);
+                $stmt = $this->db->prepare("INSERT INTO directory_listings (category_id, user_id, business_name, owner_name, description, phone, whatsapp, email, website, address, city, state, pincode, latitude, longitude, experience_years, price_range, photo, is_verified, is_featured, status, tenant_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                $stmt->execute([$data['category_id'], $data['user_id'] ?? null, $data['business_name'], $data['owner_name'] ?? '', $data['description'] ?? '', $data['phone'] ?? '', $data['whatsapp'] ?? '', $data['email'] ?? '', $data['website'] ?? '', $data['address'] ?? '', $data['city'] ?? '', $data['state'] ?? '', $data['pincode'] ?? '', $data['latitude'] ?: null, $data['longitude'] ?: null, (int)($data['experience_years'] ?? 0), $data['price_range'] ?? '', $data['photo'] ?? '', (int)($data['is_verified'] ?? 0), (int)($data['is_featured'] ?? 0), $data['status'] ?? 'pending', $this->getTenantId()]);
                 return (int)$this->db->lastInsertId();
             }
         } catch (\Exception $e) { error_log('DirectoryService::upsertListing: ' . $e->getMessage()); return 0; }
@@ -178,9 +178,9 @@ class DirectoryService
     public function deleteListing(int $id): bool
     {
         try {
-            $this->db->prepare("DELETE FROM directory_reviews WHERE listing_id = ?")->execute([$id]);
-            $this->db->prepare("DELETE FROM directory_materials WHERE listing_id = ?")->execute([$id]);
-            $this->db->prepare("DELETE FROM directory_listings WHERE id = ?")->execute([$id]);
+            $this->db->prepare("DELETE FROM directory_reviews WHERE listing_id = ? AND tenant_id = ?")->execute([$id, $this->getTenantId()]);
+            $this->db->prepare("DELETE FROM directory_materials WHERE listing_id = ? AND tenant_id = ?")->execute([$id, $this->getTenantId()]);
+            $this->db->prepare("DELETE FROM directory_listings WHERE id = ? AND tenant_id = ?")->execute([$id, $this->getTenantId()]);
             return true;
         } catch (\Exception $e) { return false; }
     }
@@ -188,15 +188,15 @@ class DirectoryService
     private function incrementListingViews(int $id): void
     {
         try {
-            $this->db->prepare("UPDATE directory_listings SET views = views + 1 WHERE id = ?")->execute([$id]);
+            $this->db->prepare("UPDATE directory_listings SET views = views + 1 WHERE id = ? AND tenant_id = ?")->execute([$id, $this->getTenantId()]);
         } catch (\Exception $e) {}
     }
 
     public function addReview(array $data): bool
     {
         try {
-            $stmt = $this->db->prepare("INSERT INTO directory_reviews (listing_id, user_id, reviewer_name, rating, review, status) VALUES (?,?,?,?,?,?)");
-            $r = $stmt->execute([$data['listing_id'], $data['user_id'] ?? null, $data['reviewer_name'] ?? 'Anonymous', (int)$data['rating'], $data['review'] ?? '', $data['status'] ?? 'approved']);
+            $stmt = $this->db->prepare("INSERT INTO directory_reviews (listing_id, user_id, reviewer_name, rating, review, status, tenant_id) VALUES (?,?,?,?,?,?,?)");
+            $r = $stmt->execute([$data['listing_id'], $data['user_id'] ?? null, $data['reviewer_name'] ?? 'Anonymous', (int)$data['rating'], $data['review'] ?? '', $data['status'] ?? 'approved', $this->getTenantId()]);
             $this->recalculateRating($data['listing_id']);
             return $r;
         } catch (\Exception $e) { return false; }
@@ -207,7 +207,7 @@ class DirectoryService
         $stmt = $this->db->prepare("SELECT AVG(rating) as avg_r, COUNT(*) as cnt FROM directory_reviews WHERE listing_id = ? AND status = 'approved'");
         $stmt->execute([$listingId]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $this->db->prepare("UPDATE directory_listings SET rating = ?, review_count = ? WHERE id = ?")->execute([round($row['avg_r'] ?? 0, 1), (int)($row['cnt'] ?? 0), $listingId]);
+        $this->db->prepare("UPDATE directory_listings SET rating = ?, review_count = ? WHERE id = ? AND tenant_id = ?")->execute([round($row['avg_r'] ?? 0, 1), (int)($row['cnt'] ?? 0), $listingId, $this->getTenantId()]);
     }
 
     public function getReviewsForAdmin(int $listingId = 0, string $status = ''): array
@@ -224,10 +224,10 @@ class DirectoryService
     public function updateReviewStatus(int $id, string $status): bool
     {
         try {
-            $stmt = $this->db->prepare("UPDATE directory_reviews SET status = ? WHERE id = ?");
-            $stmt->execute([$status, $id]);
-            $rStmt = $this->db->prepare("SELECT listing_id FROM directory_reviews WHERE id = ?");
-            $rStmt->execute([$id]);
+            $stmt = $this->db->prepare("UPDATE directory_reviews SET status = ? WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$status, $id, $this->getTenantId()]);
+            $rStmt = $this->db->prepare("SELECT listing_id FROM directory_reviews WHERE id = ? AND tenant_id = ?");
+            $rStmt->execute([$id, $this->getTenantId()]);
             $row = $rStmt->fetch(PDO::FETCH_ASSOC);
             if ($row) $this->recalculateRating($row['listing_id']);
             return true;
@@ -259,18 +259,18 @@ class DirectoryService
     {
         try {
             if (!empty($data['id'])) {
-                $stmt = $this->db->prepare("UPDATE directory_jobs SET listing_id=?, title=?, job_type=?, category=?, description=?, location=?, salary_range=?, contact_phone=?, contact_person=?, is_seeking=?, status=? WHERE id=?");
-                return $stmt->execute([$data['listing_id'] ?: null, $data['title'], $data['job_type'] ?? 'gig', $data['category'] ?? '', $data['description'] ?? '', $data['location'] ?? '', $data['salary_range'] ?? '', $data['contact_phone'] ?? '', $data['contact_person'] ?? '', (int)($data['is_seeking'] ?? 1), $data['status'] ?? 'active', $data['id']]);
+                $stmt = $this->db->prepare("UPDATE directory_jobs SET listing_id=?, title=?, job_type=?, category=?, description=?, location=?, salary_range=?, contact_phone=?, contact_person=?, is_seeking=?, status=? WHERE id=? AND tenant_id=?");
+                return $stmt->execute([$data['listing_id'] ?: null, $data['title'], $data['job_type'] ?? 'gig', $data['category'] ?? '', $data['description'] ?? '', $data['location'] ?? '', $data['salary_range'] ?? '', $data['contact_phone'] ?? '', $data['contact_person'] ?? '', (int)($data['is_seeking'] ?? 1), $data['status'] ?? 'active', $data['id'], $this->getTenantId()]);
             } else {
-                $stmt = $this->db->prepare("INSERT INTO directory_jobs (listing_id, user_id, title, job_type, category, description, location, salary_range, contact_phone, contact_person, is_seeking, status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-                return $stmt->execute([$data['listing_id'] ?: null, $data['user_id'] ?? null, $data['title'], $data['job_type'] ?? 'gig', $data['category'] ?? '', $data['description'] ?? '', $data['location'] ?? '', $data['salary_range'] ?? '', $data['contact_phone'] ?? '', $data['contact_person'] ?? '', (int)($data['is_seeking'] ?? 1), $data['status'] ?? 'active']);
+                $stmt = $this->db->prepare("INSERT INTO directory_jobs (listing_id, user_id, title, job_type, category, description, location, salary_range, contact_phone, contact_person, is_seeking, status, tenant_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                return $stmt->execute([$data['listing_id'] ?: null, $data['user_id'] ?? null, $data['title'], $data['job_type'] ?? 'gig', $data['category'] ?? '', $data['description'] ?? '', $data['location'] ?? '', $data['salary_range'] ?? '', $data['contact_phone'] ?? '', $data['contact_person'] ?? '', (int)($data['is_seeking'] ?? 1), $data['status'] ?? 'active', $this->getTenantId()]);
             }
         } catch (\Exception $e) { error_log('DirectoryService::upsertJob: ' . $e->getMessage()); return false; }
     }
 
     public function deleteJob(int $id): bool
     {
-        try { return $this->db->prepare("DELETE FROM directory_jobs WHERE id = ?")->execute([$id]); }
+        try { return $this->db->prepare("DELETE FROM directory_jobs WHERE id = ? AND tenant_id = ?")->execute([$id, $this->getTenantId()]); }
         catch (\Exception $e) { return false; }
     }
 
@@ -297,18 +297,18 @@ class DirectoryService
     {
         try {
             if (!empty($data['id'])) {
-                $stmt = $this->db->prepare("UPDATE directory_materials SET listing_id=?, material_name=?, category=?, brand=?, unit=?, price=?, price_date=?, notes=?, status=? WHERE id=?");
-                return $stmt->execute([$data['listing_id'] ?: null, $data['material_name'], $data['category'] ?? '', $data['brand'] ?? '', $data['unit'] ?? '', $data['price'], $data['price_date'] ?? date('Y-m-d'), $data['notes'] ?? '', $data['status'] ?? 'active', $data['id']]);
+                $stmt = $this->db->prepare("UPDATE directory_materials SET listing_id=?, material_name=?, category=?, brand=?, unit=?, price=?, price_date=?, notes=?, status=? WHERE id=? AND tenant_id=?");
+                return $stmt->execute([$data['listing_id'] ?: null, $data['material_name'], $data['category'] ?? '', $data['brand'] ?? '', $data['unit'] ?? '', $data['price'], $data['price_date'] ?? date('Y-m-d'), $data['notes'] ?? '', $data['status'] ?? 'active', $data['id'], $this->getTenantId()]);
             } else {
-                $stmt = $this->db->prepare("INSERT INTO directory_materials (listing_id, material_name, category, brand, unit, price, price_date, notes, status) VALUES (?,?,?,?,?,?,?,?,?)");
-                return $stmt->execute([$data['listing_id'] ?: null, $data['material_name'], $data['category'] ?? '', $data['brand'] ?? '', $data['unit'] ?? '', $data['price'], $data['price_date'] ?? date('Y-m-d'), $data['notes'] ?? '', $data['status'] ?? 'active']);
+                $stmt = $this->db->prepare("INSERT INTO directory_materials (listing_id, material_name, category, brand, unit, price, price_date, notes, status, tenant_id) VALUES (?,?,?,?,?,?,?,?,?,?)");
+                return $stmt->execute([$data['listing_id'] ?: null, $data['material_name'], $data['category'] ?? '', $data['brand'] ?? '', $data['unit'] ?? '', $data['price'], $data['price_date'] ?? date('Y-m-d'), $data['notes'] ?? '', $data['status'] ?? 'active', $this->getTenantId()]);
             }
         } catch (\Exception $e) { error_log('DirectoryService::upsertMaterial: ' . $e->getMessage()); return false; }
     }
 
     public function deleteMaterial(int $id): bool
     {
-        try { return $this->db->prepare("DELETE FROM directory_materials WHERE id = ?")->execute([$id]); }
+        try { return $this->db->prepare("DELETE FROM directory_materials WHERE id = ? AND tenant_id = ?")->execute([$id, $this->getTenantId()]); }
         catch (\Exception $e) { return false; }
     }
 
@@ -330,5 +330,17 @@ class DirectoryService
         $stats['total_reviews'] = $this->db->query("SELECT COUNT(*) FROM directory_reviews")->fetchColumn();
         $stats['total_materials'] = $this->db->query("SELECT COUNT(*) FROM directory_materials")->fetchColumn();
         return $stats;
+    }
+
+    private function getTenantId(): int
+    {
+        if (class_exists('\App\Core\Middleware\TenantContext')) {
+            try {
+                return \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+                return 1;
+            }
+        }
+        return 1;
     }
 }

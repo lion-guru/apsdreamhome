@@ -11,52 +11,110 @@ class NotificationController extends AdminController
         $this->layout = 'layouts/admin';
     }
 
-    public function index() 
+    private function getDashboardData(): array
     {
-        $this->render('notification/index', ['page_title' => 'Notification Management']);
+        $stats = [
+            'emails_sent_today' => 0,
+            'sms_sent_today' => 0,
+            'failed_messages' => 0,
+            'total_templates' => 0,
+        ];
+
+        try {
+            $row = $this->db->query("SELECT COUNT(*) as cnt FROM email_queue WHERE DATE(sent_at) = CURDATE() AND status = 'sent'")->fetch(\PDO::FETCH_ASSOC);
+            $stats['emails_sent_today'] = (int)($row['cnt'] ?? 0);
+        } catch (\Throwable $e) {}
+
+        try {
+            $row = $this->db->query("SELECT COUNT(*) as cnt FROM sms_queue WHERE DATE(sent_at) = CURDATE() AND status = 'sent'")->fetch(\PDO::FETCH_ASSOC);
+            $stats['sms_sent_today'] = (int)($row['cnt'] ?? 0);
+        } catch (\Throwable $e) {}
+
+        try {
+            $row = $this->db->query("SELECT COUNT(*) as cnt FROM email_queue WHERE status = 'failed'")->fetch(\PDO::FETCH_ASSOC);
+            $failedEmails = (int)($row['cnt'] ?? 0);
+            $row2 = $this->db->query("SELECT COUNT(*) as cnt FROM sms_queue WHERE status = 'failed'")->fetch(\PDO::FETCH_ASSOC);
+            $failedSms = (int)($row2['cnt'] ?? 0);
+            $stats['failed_messages'] = $failedEmails + $failedSms;
+        } catch (\Throwable $e) {}
+
+        try {
+            $row = $this->db->query("SELECT COUNT(*) as cnt FROM email_templates WHERE is_active = 1")->fetch(\PDO::FETCH_ASSOC);
+            $emailTpls = (int)($row['cnt'] ?? 0);
+            $row2 = $this->db->query("SELECT COUNT(*) as cnt FROM sms_templates WHERE is_active = 1")->fetch(\PDO::FETCH_ASSOC);
+            $smsTpls = (int)($row2['cnt'] ?? 0);
+            $stats['total_templates'] = $emailTpls + $smsTpls;
+        } catch (\Throwable $e) {}
+
+        $emailLogs = [];
+        try {
+            $emailLogs = $this->db->query("SELECT to_email as recipient, subject, status, sent_at, created_at FROM email_queue ORDER BY created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {}
+
+        $smsLogs = [];
+        try {
+            $smsLogs = $this->db->query("SELECT recipient, message, status, sent_at, created_at FROM sms_queue ORDER BY created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {}
+
+        return ['stats' => $stats, 'email_logs' => $emailLogs, 'sms_logs' => $smsLogs];
     }
-    
+
+    public function index()
+    {
+        $data = $this->getDashboardData();
+        $data['page_title'] = 'Notification Management';
+        $this->render('notification/index', $data);
+    }
+
     public function create()
     {
         return $this->createNotification();
     }
-    
-    public function templates() 
+
+    public function templates()
     {
-        $this->render('notification/templates', ['page_title' => 'Notification Templates']);
+        $data = $this->getDashboardData();
+        $data['page_title'] = 'Notification Templates';
+        $this->render('notification/templates', $data);
     }
-    
-    public function createTemplate() 
+
+    public function createTemplate()
     {
         $this->render('notification/create_template', ['page_title' => 'Create Template']);
     }
-    
-    public function editTemplate($id) 
+
+    public function editTemplate($id)
     {
         $this->render('notification/edit_template', ['page_title' => 'Edit Template']);
     }
-    
-    public function emailLogs() 
+
+    public function emailLogs()
     {
-        $this->render('notification/notification_center', ['page_title' => 'Email Logs']);
+        $data = $this->getDashboardData();
+        $data['page_title'] = 'Email Logs';
+        $this->render('notification/email_logs', $data);
     }
-    
-    public function smsLogs() 
+
+    public function smsLogs()
     {
-        $this->render('notification/notification_center', ['page_title' => 'SMS Logs']);
+        $data = $this->getDashboardData();
+        $data['page_title'] = 'SMS Logs';
+        $this->render('notification/sms_logs', $data);
     }
-    
-    public function settings() 
+
+    public function settings()
     {
-        $this->render('notification/settings', ['page_title' => 'Notification Settings']);
+        $data = $this->getDashboardData();
+        $data['page_title'] = 'Notification Settings';
+        $this->render('notification/settings', $data);
     }
-    
-    public function sendTest() 
+
+    public function sendTest()
     {
         $this->render('notification/send_test', ['page_title' => 'Send Test Notification']);
     }
-    
-    public function preview() 
+
+    public function preview()
     {
         $this->render('notification/preview', ['page_title' => 'Preview Template']);
     }

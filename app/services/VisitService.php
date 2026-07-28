@@ -91,8 +91,8 @@ class VisitService
                 return ['success' => false, 'error' => 'Time slot is fully booked'];
             }
             $visitStmt = $this->pdo->prepare("INSERT INTO property_visits
-                (customer_id, property_id, customer_name, customer_email, customer_phone, visit_date, visit_time, visit_type, status, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'scheduled', ?)");
+                (customer_id, property_id, customer_name, customer_email, customer_phone, visit_date, visit_time, visit_type, status, notes, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'scheduled', ?, ?)");
             $visitStmt->execute([
                 $data['customer_id'] ?? null,
                 $data['property_id'],
@@ -102,10 +102,11 @@ class VisitService
                 $data['visit_date'] . ' ' . $data['visit_time'],
                 $data['visit_time'],
                 $data['visit_type'] ?? 'site_visit',
-                $data['notes'] ?? null
+                $data['notes'] ?? null,
+                $this->getTenantId()
             ]);
             $visitId = (int)$this->pdo->lastInsertId();
-            $this->pdo->prepare("UPDATE visit_time_slots SET current_bookings = current_bookings + 1 WHERE id = ?")->execute([$slot['id']]);
+            $this->pdo->prepare("UPDATE visit_time_slots SET current_bookings = current_bookings + 1 WHERE id = ? AND tenant_id = ?")->execute([$slot['id'], $this->getTenantId()]);
             $this->pdo->commit();
 
             // Send site visit confirmation email
@@ -193,8 +194,9 @@ class VisitService
         $sql = "UPDATE property_visits SET status = ?";
         $params = [$status];
         if ($notes !== null) { $sql .= ", notes = ?"; $params[] = $notes; }
-        $sql .= " WHERE id = ?";
+        $sql .= " WHERE id = ? AND tenant_id = ?";
         $params[] = $id;
+        $params[] = $this->getTenantId();
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
@@ -207,8 +209,8 @@ class VisitService
     public function cancel(int $id, string $reason): bool
     {
         try {
-            $stmt = $this->pdo->prepare("UPDATE property_visits SET status = 'cancelled', cancellation_reason = ? WHERE id = ?");
-            $stmt->execute([$reason, $id]);
+            $stmt = $this->pdo->prepare("UPDATE property_visits SET status = 'cancelled', cancellation_reason = ? WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$reason, $id, $this->getTenantId()]);
             $this->pdo->prepare("UPDATE visit_time_slots SET current_bookings = GREATEST(0, current_bookings - 1) WHERE date = DATE((SELECT visit_date FROM property_visits WHERE id = ?)) AND time_slot = (SELECT visit_time FROM property_visits WHERE id = ?)")->execute([$id, $id]);
             return true;
         } catch (\Throwable $e) {
@@ -228,8 +230,8 @@ class VisitService
             if (!$slot) { $this->pdo->rollBack(); return ['success' => false, 'error' => 'New time not available']; }
             if ($slot['current_bookings'] >= $slot['max_bookings']) { $this->pdo->rollBack(); return ['success' => false, 'error' => 'New slot full']; }
             $this->pdo->prepare("UPDATE visit_time_slots SET current_bookings = GREATEST(0, current_bookings - 1) WHERE date = DATE(?) AND time_slot = ?")->execute([$current['visit_date'], $current['visit_time']]);
-            $this->pdo->prepare("UPDATE property_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ?")->execute([$newDate . ' ' . $newTime, $newTime, $id]);
-            $this->pdo->prepare("UPDATE visit_time_slots SET current_bookings = current_bookings + 1 WHERE id = ?")->execute([$slot['id']]);
+            $this->pdo->prepare("UPDATE property_visits SET visit_date = ?, visit_time = ?, status = 'rescheduled' WHERE id = ? AND tenant_id = ?")->execute([$newDate . ' ' . $newTime, $newTime, $id, $this->getTenantId()]);
+            $this->pdo->prepare("UPDATE visit_time_slots SET current_bookings = current_bookings + 1 WHERE id = ? AND tenant_id = ?")->execute([$slot['id'], $this->getTenantId()]);
             $this->pdo->commit();
             return ['success' => true];
         } catch (\Throwable $e) {
@@ -240,7 +242,7 @@ class VisitService
 
     public function submitFeedback(int $visitId, array $data): int
     {
-        $stmt = $this->pdo->prepare("INSERT INTO visit_feedback (visit_id, user_id, rating, agent_rating, property_rating, would_recommend, comments) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $this->pdo->prepare("INSERT INTO visit_feedback (visit_id, user_id, rating, agent_rating, property_rating, would_recommend, comments, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([
             $visitId,
             $data['user_id'] ?? null,
@@ -248,9 +250,10 @@ class VisitService
             $data['agent_rating'] ?? null,
             $data['property_rating'] ?? null,
             !empty($data['would_recommend']) ? 1 : 0,
-            $data['comments'] ?? null
+            $data['comments'] ?? null,
+            $this->getTenantId()
         ]);
-        $this->pdo->prepare("UPDATE property_visits SET feedback_rating = ?, feedback_comments = ? WHERE id = ?")->execute([$data['rating'], $data['comments'] ?? null, $visitId]);
+        $this->pdo->prepare("UPDATE property_visits SET feedback_rating = ?, feedback_comments = ? WHERE id = ? AND tenant_id = ?")->execute([$data['rating'], $data['comments'] ?? null, $visitId, $this->getTenantId()]);
         return (int)$this->pdo->lastInsertId();
     }
 
@@ -275,5 +278,17 @@ class VisitService
             // ignore
         }
         return $stats;
+    }
+
+    private function getTenantId(): int
+    {
+        if (class_exists('\App\Core\Middleware\TenantContext')) {
+            try {
+                return \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+                return 1;
+            }
+        }
+        return 1;
     }
 }

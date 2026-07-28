@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use PDO;
+use App\Traits\TenantAwareTrait;
 
 /**
  * NotificationPreferenceController
@@ -19,6 +20,7 @@ use PDO;
  */
 class NotificationPreferenceController extends BaseController
 {
+    use TenantAwareTrait;
     public const NOTIFICATION_TYPES = [
         'booking'     => ['Booking Updates',     'Plot/property booking confirmations and status changes'],
         'payment'     => ['Payment Confirmations', 'Receipts, reminders, payment confirmations'],

@@ -55,15 +55,15 @@ ob_start();
                         <td><strong><?= htmlspecialchars($s['tds_section']) ?></strong></td>
                         <td class="small"><?= htmlspecialchars(($rates[$s['tds_section']]['desc'] ?? $s['tds_section'])) ?></td>
                         <td class="text-end"><?= $s['count'] ?></td>
-                        <td class="text-end">?<?= number_format($s['total_gross'], 0) ?></td>
-                        <td class="text-end fw-bold">?<?= number_format($s['total_tds'], 0) ?></td>
+                        <td class="text-end">₹<?= number_format($s['total_gross'], 0) ?></td>
+                        <td class="text-end fw-bold">₹<?= number_format($s['total_tds'], 0) ?></td>
                         <td class="text-end"><span class="badge bg-<?= $s['pending_count'] > 0 ? 'warning' : 'success' ?>"><?= $s['pending_count'] ?></span></td>
                         <td><span class="badge bg-<?= $s['filed_count'] > 0 ? 'success' : 'secondary' ?>"><?= $s['filed_count'] > 0 ? 'Filed' : 'Pending' ?></span></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
                 <tfoot class="table-light">
-                    <tr><th colspan="2">Total</th><th class="text-end"><?= $summary['totals']['total_records'] ?></th><th class="text-end">?<?= number_format($summary['totals']['total_gross'], 0) ?></th><th class="text-end">?<?= number_format($summary['totals']['total_tds'], 0) ?></th><th class="text-end"><span class="badge bg-warning"><?= $summary['totals']['pending_count'] ?></span></th><th></th></tr>
+                    <tr><th colspan="2">Total</th><th class="text-end"><?= $summary['totals']['total_records'] ?></th><th class="text-end">₹<?= number_format($summary['totals']['total_gross'], 0) ?></th><th class="text-end">₹<?= number_format($summary['totals']['total_tds'], 0) ?></th><th class="text-end"><span class="badge bg-warning"><?= $summary['totals']['pending_count'] ?></span></th><th></th></tr>
                 </tfoot>
             </table>
         </div>
@@ -119,7 +119,7 @@ ob_start();
                             <td>#<?= $s['id'] ?></td>
                             <td class="small"><?= date('d M Y', strtotime($s['filing_date'])) ?></td>
                             <td><?= $s['total_records'] ?></td>
-                            <td>?<?= number_format($s['total_amount'], 0) ?></td>
+                            <td>₹<?= number_format($s['total_amount'], 0) ?></td>
                             <td><span class="badge bg-<?= $s['status'] === 'accepted' ? 'success' : ($s['status'] === 'rejected' ? 'danger' : ($s['status'] === 'submitted' ? 'primary' : 'secondary')) ?>"><?= ucfirst($s['status']) ?></span></td>
                             <td class="small"><?= htmlspecialchars($s['portal_reference'] ?? '-') ?></td>
                             <td><a href="<?= BASE_URL ?>/admin/efiling/submissions/<?= $s['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a></td>
@@ -134,5 +134,5 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/unified.php';
+require_once APP_PATH . '/views/layouts/unified.php';
 ?>

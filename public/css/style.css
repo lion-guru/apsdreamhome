@@ -154,7 +154,10 @@ body.sidebar-open main {
         margin-left: 0;
     }
 }
+
+.icon-circle, .stat-icon {
   height: 60px;
+  width: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -330,3 +333,37 @@ body.sidebar-open main {
 .text-gray-800 {
   color: #5a5c69 !important;
 }
+
+/* High Contrast Surface & Inline CSS Protection Guards */
+.bg-white, .bg-light, [style*="background: white"], [style*="background-color: white"], [style*="background: #fff"], [style*="background-color: #fff"], [style*="background: #ffffff"], [style*="background-color: #ffffff"] {
+  color: #0f172a !important;
+}
+
+.bg-white .text-muted, .bg-light .text-muted {
+  color: #64748b !important;
+}
+
+.bg-dark, .bg-primary, .bg-secondary, .bg-gradient-primary {
+  color: #ffffff !important;
+}
+
+.card {
+  color: var(--dark-color, #212529);
+}
+
+.card-title, .card-header, .card-footer {
+  color: inherit;
+}
+
+.card-body,
+.card-body p,
+.card-body span,
+.card-body td,
+.card-body th,
+.card-body strong,
+.card-body label,
+.card-body li {
+  color: #0f172a;
+}
+
+

@@ -232,4 +232,4 @@ document.querySelectorAll('#gstr1SubmitForm, #gstr3bSubmitForm').forEach(functio
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/admin.php';
+require_once APP_PATH . '/views/layouts/admin.php';

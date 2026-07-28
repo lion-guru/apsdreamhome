@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\BaseController;
 use App\Services\Communication\PushSender;
 use PDO;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Web Push Notification Controller (RFC 8291 / RFC 8292 / VAPID).
@@ -18,6 +19,7 @@ use PDO;
  */
 class PushNotificationController extends BaseController
 {
+    use TenantAwareTrait;
     private PushSender $sender;
 
     public function __construct()

@@ -84,10 +84,32 @@ class ProfessionalToolsController extends BaseController
     public function expenses()
     {
         $user = $this->getCurrentUser();
+        $db = \App\Core\Database\Database::getInstance()->getConnection();
+
+        $totalExpenses = 0;
+        $upcomingPayments = 0;
+        $recentExpenses = [];
+
+        try {
+            $row = $db->query("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE MONTH(expense_date) = MONTH(CURDATE()) AND YEAR(expense_date) = YEAR(CURDATE()) AND status != 'rejected'")->fetch(\PDO::FETCH_ASSOC);
+            $totalExpenses = (float)($row['total'] ?? 0);
+        } catch (\Throwable $e) {}
+
+        try {
+            $row = $db->query("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE status = 'pending'")->fetch(\PDO::FETCH_ASSOC);
+            $upcomingPayments = (float)($row['total'] ?? 0);
+        } catch (\Throwable $e) {}
+
+        try {
+            $recentExpenses = $db->query("SELECT * FROM expenses ORDER BY expense_date DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {}
+
         $data = [
             'page_title' => 'Expense Tracker',
             'user' => $user,
-            'expenses' => []
+            'total_expenses' => $totalExpenses,
+            'upcoming_payments' => $upcomingPayments,
+            'recent_expenses' => $recentExpenses,
         ];
         return $this->render('saas/tools/expenses', $data);
     }

@@ -194,4 +194,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/unified.php';
+require_once APP_PATH . '/views/layouts/unified.php';

@@ -64,6 +64,12 @@
     align-items: center;
     gap: 0.5rem;
 }
+.dark-mode .aps-cp-card-header h5,
+.dark-mode .aps-cp-card-header h4,
+.dark-mode .aps-cp-card-header h5 i,
+.dark-mode .aps-cp-card-header h4 i {
+    color: #ffffff !important;
+}
 .aps-cp-card-header h5 i,
 .aps-cp-card-header h4 i {
     color: var(--aps-cp-primary);

@@ -261,4 +261,4 @@ document.getElementById('form16aDownload').addEventListener('submit', function(e
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/admin.php';
+require_once APP_PATH . '/views/layouts/admin.php';

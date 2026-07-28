@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Front;
 
 use App\Services\AuctionService;
 use App\Http\Controllers\BaseController;
+use App\Traits\TenantAwareTrait;
 
 class AuctionController extends BaseController
 {
+    use TenantAwareTrait;
     private $service;
 
     public function __construct($db = null, $auth = null, array $config = [])

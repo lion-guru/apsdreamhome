@@ -20,22 +20,22 @@
     <div class="container">
         <div class="header">
             <h2>📧 New Property Inquiry</h2>
-            <p>Action required for property: Unknown Property</p>
+            <p>Action required for property: <?= htmlspecialchars($property_name ?? 'Unknown Property') ?></p>
         </div>
 
         <div class="content">
             <div class="property-card">
-                <h3>Property Title</h3>
+                <h3><?= htmlspecialchars($property_name ?? 'Property Details') ?></h3>
                 <p><strong>Property URL:</strong> <a href="<?= $baseUrl ?>/properties"><?= $baseUrl ?>/properties</a></p>
             </div>
 
             <div class="inquiry-details">
                 <h4>👤 Customer Details:</h4>
-                <p><strong>Name:</strong> Unknown</p>
-                <p><strong>Email:</strong> unknown@example.com</p>
-                <p><strong>Phone:</strong> N/A</p>
+                <p><strong>Name:</strong> <?= htmlspecialchars($customer_name ?? 'Unknown') ?></p>
+                <p><strong>Email:</strong> <?= htmlspecialchars($customer_email ?? 'unknown@example.com') ?></p>
+                <p><strong>Phone:</strong> <?= htmlspecialchars($customer_phone ?? 'N/A') ?></p>
                 <p><strong>Message:</strong></p>
-                <p>No message provided</p>
+                <p><?= nl2br(htmlspecialchars($message ?? 'No message provided')) ?></p>
             </div>
 
             <p><strong>Next Steps:</strong></p>
@@ -48,13 +48,13 @@
 
             <div style="text-align: center; margin: 30px 0;">
                 <a href="<?= $baseUrl ?>/admin" class="button">View in Admin Panel</a>
-                <a href="mailto:unknown@example.com" class="button" style="background: #28a745;">Reply to Customer</a>
+                <a href="mailto:<?= htmlspecialchars($customer_email ?? '') ?>" class="button" style="background: #28a745;">Reply to Customer</a>
             </div>
         </div>
 
         <div class="footer">
             <p>This is an automated notification from APS Dream Home CRM system.</p>
-            <p>Generated on: 2025-10-20 22:24:36</p>
+            <p>Generated on: <?= date('Y-m-d H:i:s') ?></p>
         </div>
     </div>
 </body>

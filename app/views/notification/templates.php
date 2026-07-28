@@ -1,116 +1,59 @@
 
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="page-header">
-                <h1 class="h2 mb-4">
-                    <i class="fas fa-bell"></i> Templates
+            <div class="page-header d-flex justify-content-between align-items-center">
+                <h1 class="h2 mb-0">
+                    <i class="fas fa-file-alt"></i> Notification Templates
                 </h1>
+                <a href="/admin/notification-management/templates/create" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i> Create Template
+                </a>
             </div>
             
-            <div class="card aps-cp-card">
+            <div class="card aps-cp-card mt-3">
                 <div class="card-body aps-cp-card-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Templates - Notification Management System
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="card bg-primary text-white">
-                                <div class="card-body aps-cp-card-body">
-                                    <h5 class="card-title">Email Sent Today</h5>
-                                    <h3>25</h3>
-                                    <small>Messages Delivered</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-success text-white">
-                                <div class="card-body aps-cp-card-body">
-                                    <h5 class="card-title">SMS Sent Today</h5>
-                                    <h3>18</h3>
-                                    <small>Messages Delivered</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-warning text-white">
-                                <div class="card-body aps-cp-card-body">
-                                    <h5 class="card-title">Failed Messages</h5>
-                                    <h3>2</h3>
-                                    <small>Need Attention</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-info text-white">
-                                <div class="card-body aps-cp-card-body">
-                                    <h5 class="card-title">Total Templates</h5>
-                                    <h3>6</h3>
-                                    <small>Active Templates</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
+                    <?php include __DIR__ . '/_stat_cards.php'; ?>
+
                     <div class="row mt-4">
-                        <div class="col-md-6">
-                            <h5>Recent Email Logs</h5>
+                        <div class="col-12">
+                            <h5>Recent Activity</h5>
                             <div class="table-responsive">
-                                <div class="table-responsive"><table class="table table-sm table-responsive">
+                                <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Recipient</th>
-                                            <th>Subject</th>
+                                            <th>Channel</th>
+                                            <th>Subject/Message</th>
                                             <th>Status</th>
-                                            <th>Sent</th>
+                                            <th>Date</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>rahul.sharma@example.com</td>
-                                            <td>Payment Successful</td>
-                                            <td><span class="badge bg-success">Delivered</span></td>
-                                            <td>2 hours ago</td>
-                                        </tr>
-                                        <tr>
-                                            <td>priya.singh@example.com</td>
-                                            <td>Welcome to APS Dream Home</td>
-                                            <td><span class="badge bg-success">Delivered</span></td>
-                                            <td>1 day ago</td>
-                                        </tr>
-                                    </tbody>
-                                </table></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h5>Recent SMS Logs</h5>
-                            <div class="table-responsive">
-                                <div class="table-responsive"><table class="table table-sm table-responsive">
-                                    <thead>
-                                        <tr>
-                                            <th>Recipient</th>
-                                            <th>Message</th>
-                                            <th>Status</th>
-                                            <th>Sent</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if (!empty($recent_logs)): ?>
-                                            <?php foreach ($recent_logs as $log): ?>
+                                        <?php
+                                        $allLogs = [];
+                                        foreach (($email_logs ?? []) as $log) {
+                                            $allLogs[] = ['channel' => 'Email', 'subject' => $log['subject'] ?? '', 'status' => $log['status'] ?? '', 'date' => $log['sent_at'] ?? $log['created_at'] ?? ''];
+                                        }
+                                        foreach (($sms_logs ?? []) as $log) {
+                                            $allLogs[] = ['channel' => 'SMS', 'subject' => $log['message'] ?? '', 'status' => $log['status'] ?? '', 'date' => $log['sent_at'] ?? $log['created_at'] ?? ''];
+                                        }
+                                        usort($allLogs, function($a, $b) { return strtotime($b['date'] ?? 'now') - strtotime($a['date'] ?? 'now'); });
+                                        $allLogs = array_slice($allLogs, 0, 10);
+                                        ?>
+                                        <?php if (!empty($allLogs)): ?>
+                                            <?php foreach ($allLogs as $log): ?>
                                                 <tr>
-                                                    <td><?= htmlspecialchars($log['recipient'] ?? '') ?></td>
-                                                    <td><?= htmlspecialchars($log['message'] ?? '') ?></td>
-                                                    <td><span class="badge bg-<?= ($log['status'] ?? '') === 'delivered' ? 'success' : (($log['status'] ?? '') === 'failed' ? 'danger' : 'secondary') ?>"><?= ucfirst(htmlspecialchars($log['status'] ?? 'pending')) ?></span></td>
-                                                    <td><?= htmlspecialchars($log['time_ago'] ?? '') ?></td>
+                                                    <td><span class="badge bg-<?= $log['channel'] === 'Email' ? 'primary' : 'success' ?>"><?= $log['channel'] ?></span></td>
+                                                    <td><?= htmlspecialchars(substr($log['subject'], 0, 60)) ?><?= strlen($log['subject']) > 60 ? '...' : '' ?></td>
+                                                    <td><span class="badge bg-<?= $log['status'] === 'sent' ? 'success' : ($log['status'] === 'failed' ? 'danger' : 'secondary') ?>"><?= ucfirst(htmlspecialchars($log['status'])) ?></span></td>
+                                                    <td><?= htmlspecialchars($log['date']) ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         <?php else: ?>
-                                            <tr><td colspan="4" class="text-center text-muted">No recent logs</td></tr>
+                                            <tr><td colspan="4" class="text-center text-muted">No activity yet</td></tr>
                                         <?php endif; ?>
                                     </tbody>
-                                </table></div>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -119,4 +62,3 @@
         </div>
     </div>
 </div>
-

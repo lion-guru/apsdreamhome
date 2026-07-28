@@ -29,8 +29,8 @@ class SavedSearchService
 
     public function save(int $userId, string $role, string $name, string $entityType, array $filters, ?string $description = null, bool $isFavorite = false, bool $isPublic = false, int $emailAlerts = 0): int
     {
-        $stmt = $this->db->prepare("INSERT INTO saved_searches (user_id, user_role, name, description, entity_type, filters, email_alerts, is_favorite, is_public) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$userId, $role, $name, $description, $entityType, json_encode($filters, JSON_UNESCAPED_UNICODE), $emailAlerts ? 1 : 0, $isFavorite ? 1 : 0, $isPublic ? 1 : 0]);
+        $stmt = $this->db->prepare("INSERT INTO saved_searches (user_id, user_role, name, description, entity_type, filters, email_alerts, is_favorite, is_public, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$userId, $role, $name, $description, $entityType, json_encode($filters, JSON_UNESCAPED_UNICODE), $emailAlerts ? 1 : 0, $isFavorite ? 1 : 0, $isPublic ? 1 : 0, $this->getTenantId()]);
         return (int)$this->db->lastInsertId();
     }
 
@@ -60,29 +60,30 @@ class SavedSearchService
         $vals[] = $id;
         $vals[] = $userId;
         $vals[] = $role;
-        $stmt = $this->db->prepare("UPDATE saved_searches SET " . implode(', ', $sets) . " WHERE id = ? AND user_id = ? AND user_role = ?");
+        $vals[] = $this->getTenantId();
+        $stmt = $this->db->prepare("UPDATE saved_searches SET " . implode(', ', $sets) . " WHERE id = ? AND user_id = ? AND user_role = ? AND tenant_id = ?");
         $stmt->execute($vals);
         return $stmt->rowCount() > 0;
     }
 
     public function delete(int $id, int $userId, string $role): bool
     {
-        $stmt = $this->db->prepare("DELETE FROM saved_searches WHERE id = ? AND (user_id = ? AND user_role = ? OR is_public = 1)");
-        $stmt->execute([$id, $userId, $role]);
+        $stmt = $this->db->prepare("DELETE FROM saved_searches WHERE id = ? AND tenant_id = ? AND (user_id = ? AND user_role = ? OR is_public = 1)");
+        $stmt->execute([$id, $this->getTenantId(), $userId, $role]);
         return $stmt->rowCount() > 0;
     }
 
     public function toggleFavorite(int $id, int $userId, string $role): bool
     {
-        $stmt = $this->db->prepare("UPDATE saved_searches SET is_favorite = NOT is_favorite WHERE id = ? AND (user_id = ? AND user_role = ? OR is_public = 1)");
-        $stmt->execute([$id, $userId, $role]);
+        $stmt = $this->db->prepare("UPDATE saved_searches SET is_favorite = NOT is_favorite WHERE id = ? AND tenant_id = ? AND (user_id = ? AND user_role = ? OR is_public = 1)");
+        $stmt->execute([$id, $this->getTenantId(), $userId, $role]);
         return $stmt->rowCount() > 0;
     }
 
     public function recordUse(int $id): bool
     {
-        $stmt = $this->db->prepare("UPDATE saved_searches SET use_count = use_count + 1, last_used_at = NOW() WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $this->db->prepare("UPDATE saved_searches SET use_count = use_count + 1, last_used_at = NOW() WHERE id = ? AND tenant_id = ?");
+        $stmt->execute([$id, $this->getTenantId()]);
         return true;
     }
 
@@ -109,8 +110,8 @@ class SavedSearchService
 
     public function recordHistory(int $userId, string $role, string $entityType, array $filters, ?int $resultsCount = null): void
     {
-        $stmt = $this->db->prepare("INSERT INTO search_history (user_id, user_role, entity_type, filters, results_count, ip_address) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$userId, $role, $entityType, json_encode($filters, JSON_UNESCAPED_UNICODE), $resultsCount, $_SERVER['REMOTE_ADDR'] ?? null]);
+        $stmt = $this->db->prepare("INSERT INTO search_history (user_id, user_role, entity_type, filters, results_count, ip_address, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$userId, $role, $entityType, json_encode($filters, JSON_UNESCAPED_UNICODE), $resultsCount, $_SERVER['REMOTE_ADDR'] ?? null, $this->getTenantId()]);
     }
 
     public function getHistory(int $userId, string $role, string $entityType = '', int $limit = 20): array
@@ -351,14 +352,14 @@ class SavedSearchService
     {
         try {
             $stmt = $this->db->prepare("
-                INSERT INTO search_alert_log (search_id, user_id, property_id, sent_at, email_status, error_message)
-                VALUES (?, ?, ?, NOW(), ?, ?)
+                INSERT INTO search_alert_log (search_id, user_id, property_id, sent_at, email_status, error_message, tenant_id)
+                VALUES (?, ?, ?, NOW(), ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
                     sent_at = NOW(),
                     email_status = VALUES(email_status),
                     error_message = VALUES(error_message)
             ");
-            $stmt->execute([$searchId, $userId, $propertyId, $status, $error]);
+            $stmt->execute([$searchId, $userId, $propertyId, $status, $error, $this->getTenantId()]);
             return true;
         } catch (\Throwable $e) {
             error_log("SavedSearchService::logAlertSent: " . $e->getMessage());
@@ -375,9 +376,9 @@ class SavedSearchService
         $stmt = $this->db->prepare("
             UPDATE saved_searches 
             SET email_alerts = ?, last_run_at = NOW() 
-            WHERE id = ? AND user_id = ? AND user_role = ?
+            WHERE id = ? AND user_id = ? AND user_role = ? AND tenant_id = ?
         ");
-        $stmt->execute([$enabled ? 1 : 0, $id, $userId, $role]);
+        $stmt->execute([$enabled ? 1 : 0, $id, $userId, $role, $this->getTenantId()]);
         return $stmt->rowCount() > 0;
     }
 
@@ -389,9 +390,9 @@ class SavedSearchService
         $stmt = $this->db->prepare("
             UPDATE saved_searches 
             SET result_count = ?, last_run_at = NOW(), use_count = use_count + 1, last_used_at = NOW()
-            WHERE id = ?
+            WHERE id = ? AND tenant_id = ?
         ");
-        $stmt->execute([$resultCount, $id]);
+        $stmt->execute([$resultCount, $id, $this->getTenantId()]);
         return true;
     }
 
@@ -528,12 +529,13 @@ class SavedSearchService
     {
         $stmt = $this->db->prepare("
             DELETE FROM saved_searches
-            WHERE is_favorite = 0 
+            WHERE tenant_id = ?
+              AND is_favorite = 0 
               AND is_public = 0
               AND (last_used_at IS NULL OR last_used_at < DATE_SUB(NOW(), INTERVAL ? DAY))
               AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY)
         ");
-        $stmt->execute([$daysOld, $daysOld]);
+        $stmt->execute([$this->getTenantId(), $daysOld, $daysOld]);
         return $stmt->rowCount();
     }
 
@@ -554,5 +556,17 @@ class SavedSearchService
         ");
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
+    }
+
+    private function getTenantId(): int
+    {
+        if (class_exists('\App\Core\Middleware\TenantContext')) {
+            try {
+                return \App\Core\Middleware\TenantContext::getId();
+            } catch (\Throwable $e) {
+                return 1;
+            }
+        }
+        return 1;
     }
 }
